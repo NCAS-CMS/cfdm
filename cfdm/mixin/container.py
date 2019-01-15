@@ -138,7 +138,7 @@ x.__str__() <==> str(x)
     #--- End: def
     
 
-    def _equals_preprocess(self, other, traceback=False,
+    def _equals_preprocess(self, other, verbose=False,
                            ignore_type=False):
         '''TODO
 
@@ -152,7 +152,7 @@ x.__str__() <==> str(x)
             if not isinstance(other, self.__class__):
                 other = type(self)(source=other, copy=False)
         elif not isinstance(other, self.__class__):
-            if traceback:
+            if verbose:
                 print("{0}: Incompatible type: {1}".format(
 		    self.__class__.__name__, other.__class__.__name__))
             return False

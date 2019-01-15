@@ -816,7 +816,7 @@ data arrays.
 
 #    def equal_datums(self, coordinate_reference0,
 #                     coordinate_reference1, rtol=None, atol=None,
-#                     traceback=False, ignore_data_type=False,
+#                     verbose=False, ignore_data_type=False,
 #                     ignore_fill_value=False,
 #                     ignore_type=False):
 #        '''
@@ -828,7 +828,7 @@ data arrays.
 #        
 #    #--- End: def
     
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
                ignore_type=False):
@@ -887,7 +887,7 @@ construct.
         are omitted from the comparison, for the field construct and
         metadata constructs.
 
-    traceback: `bool`, optional
+    verbose: `bool`, optional
         If True then print information about differences that lead to
         inequality.
 
@@ -936,7 +936,7 @@ False
 >>> g.set_property('foo', 'bar')
 >>> f.equals(g)
 False
->>> f.equals(g, traceback=True)
+>>> f.equals(g, verbose=True)
 Field: Non-common property name: foo
 Field: Different properties
 False
@@ -946,7 +946,7 @@ False
             
         if not super().equals(
                 other,
-                rtol=rtol, atol=atol, traceback=traceback,
+                rtol=rtol, atol=atol, verbose=verbose,
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
                 ignore_properties=ignore_properties,
@@ -959,12 +959,12 @@ False
         # ------------------------------------------------------------              
         if not self._equals(self._get_constructs(),
                             other._get_constructs(), rtol=rtol,
-                            atol=atol, traceback=traceback,
+                            atol=atol, verbose=verbose,
                             ignore_data_type=ignore_data_type,
                             ignore_fill_value=ignore_fill_value,
                             ignore_compression=ignore_compression,
                             ignore_type=ignore_type):
-            if traceback:
+            if verbose:
                 print(
                     "{0}: Different {1}".format(self.__class__.__name__, 'constructs'))
             return False

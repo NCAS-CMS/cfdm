@@ -452,7 +452,7 @@ last values.
             return string
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_type=False):
         '''TODO
@@ -462,7 +462,7 @@ last values.
         ignore_properties = tuple(ignore_properties) + ('Conventions',)
             
         if not super().equals(other, rtol=rtol, atol=atol,
-                              traceback=traceback,
+                              verbose=verbose,
                               ignore_data_type=ignore_data_type,
                               ignore_fill_value=ignore_fill_value,
                               ignore_properties=ignore_properties,
@@ -474,11 +474,11 @@ last values.
         # ------------------------------------------------------------              
         if not self._equals(self._get_constructs(), other._get_constructs(),
                             rtol=rtol, atol=atol,
-                            traceback=traceback,
+                            verbose=verbose,
                             ignore_data_type=ignore_data_type,
                             ignore_type=ignore_type,
                             ignore_fill_value=ignore_fill_value):
-            if traceback:
+            if verbose:
                 print(
                     "{0}: Different {1}".format(self.__class__.__name__, 'constructs'))
             return False

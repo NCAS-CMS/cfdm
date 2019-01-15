@@ -176,7 +176,7 @@ Return a string containing a full description of the instance.
             return string
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
                ignore_type=False):
@@ -231,7 +231,7 @@ constitute part of the CF data model and so are not checked.
         If True then the "_FillValue" and "missing_value" properties
         are omitted from the comparison.
 
-    traceback: `bool`, optional
+    verbose: `bool`, optional
         If True then print information about differences that lead to
         inequality.
 
@@ -272,7 +272,7 @@ True
 False
 
         '''
-        pp = super()._equals_preprocess(other, traceback=traceback,
+        pp = super()._equals_preprocess(other, verbose=verbose,
                                         ignore_type=ignore_type)
         if pp in (True, False):
             return pp
@@ -286,14 +286,14 @@ False
         external0 = self._get_component('external', False)
         external1 = other._get_component('external', False)
         if external0 != external1:
-            if traceback:
+            if verbose:
                 print("{0}: Only one external variable)".format(
                     self.__class__.__name__))
             return False
         elif external0:
             # Both variables are external
             if self.nc_get_variable(None) != other.nc_get_variable(None):
-                if traceback:
+                if verbose:
                     print(
 "{0}: External variable have different netCDF variable names: {} != {})".format(
     self.__class__.__name__, self.nc_get_variable(None), other.nc_get_variable(None)))
@@ -306,12 +306,12 @@ False
         # ------------------------------------------------------------
         if not super().equals(
                 other, rtol=rtol, atol=atol,
-                traceback=traceback,
+                verbose=verbose,
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
                 ignore_properties=ignore_properties,
                 ignore_type=ignore_type):
-            if traceback:
+            if verbose:
                 print(
 "{0}: Different properties".format(self.__class__.__name__))
             return False
@@ -320,7 +320,7 @@ False
         # Check the data
         # ------------------------------------------------------------
         if self.has_data() != other.has_data():
-            if traceback:
+            if verbose:
                 print(
 "{0}: Different data: Only one {0} has data".format(self.__class__.__name__))
             return False
@@ -328,11 +328,11 @@ False
         if self.has_data():
             if not self._equals(self.get_data(), other.get_data(),
                                 rtol=rtol, atol=atol,
-                                traceback=traceback,
+                                verbose=verbose,
                                 ignore_data_type=ignore_data_type,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
-                if traceback:
+                if verbose:
                     print("{0}: Different data".format(self.__class__.__name__))
                 return False
         #--- End: if

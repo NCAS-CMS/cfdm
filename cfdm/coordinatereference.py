@@ -252,7 +252,7 @@ components.
             return string
     #--- End: def
             
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_type=False):
         '''Whether two coordinate reference constructs are the same.
 
@@ -296,7 +296,7 @@ constitute part of the CF data model and so are not checked.
         The tolerance on relative differences between real
         numbers. The default value is set by the `cfdm.RTOL` function.
 
-    traceback: `bool`, optional
+    verbose: `bool`, optional
         If True then print information about differences that lead to
         inequality.
 
@@ -322,7 +322,7 @@ True
 False
 
         '''
-        pp = super()._equals_preprocess(other, traceback=traceback,
+        pp = super()._equals_preprocess(other, verbose=verbose,
                                         ignore_type=ignore_type)
         if pp in (True, False):
             return pp
@@ -338,7 +338,7 @@ False
 #            if not isinstance(other, self.__class__):
 #                other = type(self)(source=other, copy=False)
 #        elif not isinstance(other, self.__class__):
-#            if traceback:
+#            if verbose:
 #                print("{0}: Incompatible types: {0}, {1}".format(
 #		    self.__class__.__name__,
 #		    other.__class__.__name__))
@@ -346,14 +346,14 @@ False
         
 #        if not super().equals(
 #                other, #rtol=rtol, atol=atol,
-#                traceback=traceback,
+#                verbose=verbose,
 #                ignore_type=ignore_type):
 #            return False
 
         coords0 = self.coordinates()
         coords1 = other.coordinates()
         if len(coords0) != len(coords1):
-            if traceback:
+            if verbose:
                 print(
 "{}: Different sized collections of coordinates ({}, {})".format(
     self.__class__.__name__, coords0, coords1))
@@ -362,9 +362,9 @@ False
         if not self.coordinate_conversion.equals(
                 other.coordinate_conversion,
                 rtol=rtol, atol=atol,
-                traceback=traceback,
+                verbose=verbose,
                 ignore_type=ignore_type):
-            if traceback:
+            if verbose:
                 print(
 "{}: Different coordinate conversions".format(self.__class__.__name__))
             return False
@@ -372,9 +372,9 @@ False
         if not self.datum.equals(
                 other.datum,
                 rtol=rtol, atol=atol,
-                traceback=traceback,
+                verbose=verbose,
                 ignore_type=ignore_type):
-            if traceback:
+            if verbose:
                 print(
 "{}: Different datums".format(self.__class__.__name__))
             return False

@@ -1420,7 +1420,7 @@ TODO
         return ma.get_compression_type()
     #--- End: def
     
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_compression=False, ignore_type=False,
                _check_values=True):
@@ -1474,7 +1474,7 @@ one. See the *ignore_type* parameter.
     ignore_fill_value: `bool`, optional
         If True then the fill value is omitted from the comparison.
 
-    traceback: `bool`, optional
+    verbose: `bool`, optional
         If True then print information about differences that lead to
         inequality.
 
@@ -1513,7 +1513,7 @@ True
 False
 
         '''
-        pp = super()._equals_preprocess(other, traceback=traceback,
+        pp = super()._equals_preprocess(other, verbose=verbose,
                                         ignore_type=ignore_type)
         if pp in (True, False):
             return pp
@@ -1522,7 +1522,7 @@ False
         
         # Check that each instance has the same shape
         if self.shape != other.shape:
-            if traceback:
+            if verbose:
                 print("{0}: Different shapes: {1} != {2}".format(
                     self.__class__.__name__, self.shape, other.shape))
             return False
@@ -1532,7 +1532,7 @@ False
             x = getattr(self, 'get_'+attr)(None)
             y = getattr(other, 'get_'+attr)(None)
             if x != y:
-                if traceback:
+                if verbose:
                     print("{0}: Different {1}: {2!r} != {3!r}".format(
                         self.__class__.__name__, attr, x, y))
                 return False
@@ -1541,7 +1541,7 @@ False
         # Check that each instance has the same fill value
         if (not ignore_fill_value and
             self.get_fill_value(None) != other.get_fill_value(None)):
-            if traceback:
+            if verbose:
                 print("{0}: Different fill value: {1} != {2}".format(
                     self.__class__.__name__, 
                     self.get_fill_value(None), other.get_fill_value(None)))
@@ -1549,7 +1549,7 @@ False
 
         # Check that each instance has the same data type
         if not ignore_data_type and self.dtype != other.dtype:
-            if traceback:
+            if verbose:
                 print("{0}: Different data types: {1} != {2}".format(
                     self.__class__.__name__, self.dtype, other.dtype))
             return False
@@ -1565,7 +1565,7 @@ False
             # --------------------------------------------------------
             compression_type = self.get_compression_type()
             if compression_type != other.get_compression_type():
-                if traceback:
+                if verbose:
                     print("{0}: Different compression types: {1} != {2}".format(
                         self.__class__.__name__,
                         compression_type,
@@ -1579,7 +1579,7 @@ False
                 if not self._equals(self.get_compressed_array(),
                                     other.get_compressed_array(),
                                     rtol=rtol, atol=atol):
-                    if traceback:
+                    if verbose:
                         print("{0}: Different compressed array values".format(
                             self.__class__.__name__))
                     return False
@@ -1590,7 +1590,7 @@ False
         # ------------------------------------------------------------
         if not self._equals(self.get_array(), other.get_array(),
                             rtol=rtol, atol=atol):
-            if traceback:
+            if verbose:
                 print("{0}: Different array values".format(
                     self.__class__.__name__))
             return False

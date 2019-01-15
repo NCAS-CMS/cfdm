@@ -46,7 +46,7 @@ x.__str__() <==> str(x)
         return '; '.join(out)
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_type=False):
         '''Whether two instances are the same.
@@ -84,7 +84,7 @@ one. See the *ignore_type* parameter.
         The tolerance on relative differences between real
         numbers. The default value is set by the `cfdm.RTOL` function.
 
-    traceback: `bool`, optional
+    verbose: `bool`, optional
         If True then print information about differences that lead to
         inequality.
 
@@ -94,8 +94,8 @@ one. See the *ignore_type* parameter.
         subclass of one. If *ignore_type* is True then equality is
         possible for any object with a compatible API.
 
-    traceback: `bool`, optional
-        If True then print a traceback highlighting where the two
+    verbose: `bool`, optional
+        If True then print a verbose highlighting where the two
         instances differ.
 
 :Returns: 
@@ -114,14 +114,14 @@ False
 
         '''
         if not super().equals(other, rtol=rtol, atol=atol,
-                              traceback=traceback,
+                              verbose=verbose,
                               ignore_type=ignore_type):
             return False
         
         domain_ancillaries0 = self.domain_ancillaries()
         domain_ancillaries1 = other.domain_ancillaries()
         if set(domain_ancillaries0) != set(domain_ancillaries1):
-            if traceback:
+            if verbose:
                 print(
 "{0}: Different domain ancillary terms ({1} != {2})".format(
     self.__class__.__name__,
@@ -134,7 +134,7 @@ False
                 continue
 
             if value0 is None or value1 is None:
-                if traceback:
+                if verbose:
                     print(
 "{}: Unequal {!r} domain ancillary terms ({!r} != {!r})".format( 
     self.__class__.__name__, term, 

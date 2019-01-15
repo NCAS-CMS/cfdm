@@ -141,26 +141,19 @@ class create_fieldTest(unittest.TestCase):
         ref1 = f.set_construct(ref1)
 
         # Field ancillary variables
-#        g = f.transpose([1, 0])
         g = f.copy()
-#        g.standard_name = 'ancillary0'
-#        g *= 0.01
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryA'
         f.set_construct(anc, axes=[axisY, axisX])
         
         g = f[0]
         g = g.squeeze()
-#        g.standard_name = 'ancillary2'
-#        g *= 0.001
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryB'
         f.set_construct(anc, axes=[axisX])
 
         g = f[..., 0]
         g = g.squeeze()
-#        g.standard_name = 'ancillary3'
-#        g *= 0.001
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryC'
         f.set_construct(anc, axes=[axisY])
@@ -171,23 +164,16 @@ class create_fieldTest(unittest.TestCase):
         f.set_property('flag_masks', [2, 1, 0])
 
         cm0 =  cfdm.CellMethod(axes=[axisX],
-                               properties={'method'  : 'mean',
-                                           'interval': [cfdm.Data(1, 'day')],
+                               method='mean',
+                               properties={'interval': [cfdm.Data(1, 'day')],
                                            'comment' : 'ok'})
     
         cm1 =  cfdm.CellMethod(axes=[axisY],
-                               properties={'method': 'maximum',
-                                           'where' : 'sea'})
+                               method='maximum',
+                               properties={'where' : 'sea'})
 
-
-        
-#        f.set_cell_method(cm0)
-#        f.set_cell_method(cm1)
         f.set_construct(cm0)
         f.set_construct(cm1)
-
-#        for cm in cfdm.CellMethod.parse(axisX+': mean (interval: 1 day comment:# ok) '+axisY+': max where sea'):
-#            f.set_cell_method(cm)
 
         if verbose:
             print(repr(f))
@@ -197,10 +183,10 @@ class create_fieldTest(unittest.TestCase):
         
             f.dump()
 
-        self.assertTrue(f.equals(f, traceback=True),
+        self.assertTrue(f.equals(f, verbose=True),
                         "Field f not equal to itself")
 
-        self.assertTrue(f.equals(f.copy(), traceback=True),
+        self.assertTrue(f.equals(f.copy(), verbose=True),
                         "Field f not equal to a copy of itself")
 
         if verbose:
@@ -233,13 +219,13 @@ class create_fieldTest(unittest.TestCase):
                             sorted(g.constructs()),
                             sorted(g.constructs().items())))
 
-        self.assertTrue(f.equals(f, traceback=True),
+        self.assertTrue(f.equals(f, verbose=True),
                         "Field f not equal to itself after having been written to disk")
 
-        self.assertTrue(f.equals(f.copy(), traceback=True),
+        self.assertTrue(f.equals(f.copy(), verbose=True),
                         "Field f not equal to a copy of itself after having been written to disk")
 
-        self.assertTrue(g.equals(g.copy(), traceback=True),
+        self.assertTrue(g.equals(g.copy(), verbose=True),
                         "Field g not equal to a copy of itself")
 
         if verbose:                    
@@ -254,7 +240,7 @@ class create_fieldTest(unittest.TestCase):
             print('f')
             f.dump()
             
-        self.assertTrue(g.equals(f, traceback=True),
+        self.assertTrue(g.equals(f, verbose=True),
                         "Field (f) not equal to itself read back in (g)")
 
         

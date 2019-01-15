@@ -341,13 +341,13 @@ class FieldTest(unittest.TestCase):
             return
 
         f = self.f.copy()
-        self.assertTrue(f.equals(f, traceback=True))
+        self.assertTrue(f.equals(f, verbose=True))
 
         g = f.copy()
-        self.assertTrue(f.equals(g, traceback=True))
+        self.assertTrue(f.equals(g, verbose=True))
 
         g = f[...]
-        self.assertTrue(f.equals(g, traceback=True))
+        self.assertTrue(f.equals(g, verbose=True))
 
         g = g.squeeze()
         self.assertFalse(f.equals(g))

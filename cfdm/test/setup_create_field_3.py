@@ -183,15 +183,13 @@ class create_fieldTest(unittest.TestCase):
         f.set_property('flag_masks', [2, 1, 0])
 
         cm0 =  cfdm.CellMethod(axes=[axisX],
-                               properties={'method'  : 'mean',
-                                           'interval': [cfdm.Data(1, 'day')],
+                               method='mean',
+                               properties={'interval': [cfdm.Data(1, 'day')],
                                            'comment' : 'ok'})
     
         cm1 =  cfdm.CellMethod(axes=[axisY],
-                               properties={'method': 'maximum',
-                                           'where' : 'sea'})
-
-
+                               method='maximum',
+                               properties={'where' : 'sea'})
         
         f.set_construct(cm0)
         f.set_construct(cm1)
@@ -233,10 +231,10 @@ class create_fieldTest(unittest.TestCase):
                             sorted(g.constructs()),
                             sorted(g.constructs().items())))
 
-        self.assertTrue(f.equals(f.copy(), traceback=True),
+        self.assertTrue(f.equals(f.copy(), verbose=True),
                         "Field f not equal to a copy of itself")
 
-        self.assertTrue(g.equals(g.copy(), traceback=True),
+        self.assertTrue(g.equals(g.copy(), verbose=True),
                         "Field g not equal to a copy of itself")
 #        print f.dump()
     
@@ -252,7 +250,7 @@ class create_fieldTest(unittest.TestCase):
             g.dump()
 #        sys.exit(0)
         
-        self.assertTrue(g.equals(f, traceback=True),
+        self.assertTrue(g.equals(f, verbose=True),
                         "Field not equal to itself read back in")
   
 #        sys.exit(0)

@@ -157,15 +157,15 @@ class create_fieldTest(unittest.TestCase):
 
         cm0 =  cfdm.core.CellMethod(
             axes=[axisX],
+            method='mean',
             properties={
-                'method'  : 'mean',
                 'interval': [cfdm.core.Data(cfdm.core.NumpyArray(numpy.array(1)), 'day')],
                 'comment' : 'ok'})
         
         cm1 =  cfdm.core.CellMethod(
             axes=[axisY],
-            properties={'method': 'maximum',
-                        'where' : 'sea'})
+            method='maximum',            
+            properties={'where' : 'sea'})
         
         f.set_construct(cm0)
         f.set_construct(cm1)

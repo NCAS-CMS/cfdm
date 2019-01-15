@@ -1152,26 +1152,6 @@ netCDF unlimited dimensions.
 
     out: `str`
         '''
-#        return field.set_cell_method(construct, copy=copy)
-        return field.set_construct(construct, copy=copy)
-    #--- End: def
-
-    def set_cell_method(self, field, construct, copy=True):
-        '''Insert a cell_method object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `CellMethod`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-#        return field.set_cell_method(construct, copy=copy)
         return field.set_construct(construct, copy=copy)
     #--- End: def
 
@@ -1179,6 +1159,12 @@ netCDF unlimited dimensions.
         '''
 '''
         cell_method.set_axes(axes)
+    #--- End: for
+    
+    def set_cell_method_method(self, cell_method, method):
+        '''
+'''
+        cell_method.set_method(method)
     #--- End: for
     
     def set_coordinate_conversion(self, coordinate_reference, coordinate_conversion):

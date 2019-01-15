@@ -84,7 +84,7 @@ class read_writeTest(unittest.TestCase):
                     'NETCDF4_CLASSIC'):
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)[0]
-            self.assertTrue(f.equals(g, traceback=True),
+            self.assertTrue(f.equals(g, verbose=True),
                             'Bad read/write of format: {}'.format(fmt))
         #--- End: for
     #--- End: def
@@ -103,7 +103,7 @@ class read_writeTest(unittest.TestCase):
                                shuffle=shuffle)
                     g = cfdm.read(tmpfile)[0]
                     self.assertTrue(
-                        f.equals(g, traceback=True),
+                        f.equals(g, verbose=True),
                         'Bad read/write with lossless compression: {}, {}, {}'.format(fmt, compress, shuffle))
         #--- End: for
     #--- End: def

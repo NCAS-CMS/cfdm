@@ -406,7 +406,7 @@ than 1 that is representable as a float).
 
 #def equals(x, y, rtol=None, atol=None, **kwargs): #ignore_data_type=False,
 ##           ignore_fill_value=False, ignore_type=False,
-##           traceback=False):
+##           verbose=False):
 #    '''True if and only if two objects are logically equal.
 #
 #If the first argument, *x*, has an :meth:`equals` method then it is
@@ -432,8 +432,8 @@ than 1 that is representable as a float).
 #        If True then `Data` arrays with different fill values are
 #        considered equal. By default they are considered unequal.
 #
-#    traceback : bool, optional
-#        If True then print a traceback highlighting where the two
+#    verbose : bool, optional
+#        If True then print a verbose highlighting where the two
 #        objects differ.
 #
 #:Returns:

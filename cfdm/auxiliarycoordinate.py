@@ -117,7 +117,7 @@ components, and provides selected values of all data arrays.
                             _axes=_axes, _axis_names=_axis_names)
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
                ignore_type=False):
@@ -179,7 +179,7 @@ constitute part of the CF data model and so are not checked.
         If True then the "_FillValue" and "missing_value" properties
         are omitted from the comparison.
 
-    traceback: `bool`, optional
+    verbose: `bool`, optional
         If True then print information about differences that lead to
         inequality.
 
@@ -224,14 +224,14 @@ False
 >>> g.set_property('foo', 'bar')
 >>> f.equals(g)
 False
->>> f.equals(g, traceback=True)
+>>> f.equals(g, verbose=True)
 AuxiliaryCoordinate: Non-common property name: foo
 AuxiliaryCoordinate: Different properties
 False
 
         '''
         return super().equals(other, rtol=rtol, atol=atol,
-                              traceback=traceback,
+                              verbose=verbose,
                               ignore_data_type=ignore_data_type,
                               ignore_fill_value=ignore_fill_value,
                               ignore_properties=ignore_properties,

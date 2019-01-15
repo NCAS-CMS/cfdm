@@ -1157,7 +1157,7 @@ parent coordinate construct, but it may also have its own properties
 .. _Coordinate-systems:
 
 **Coordinate systems**
-^^^^^^^^^^^^^^^^^^^^^^
+----------------------
 
 A field construct may contain various coordinate systems. Each
 coordinate system is either defined by a coordinate reference
@@ -1231,29 +1231,6 @@ A corodinate reference construct contains
     'b': 'domainancillary1',
     'orog': 'domainancillary2'}    
 
-  
-.. ======================  ==============================  ======================
-   cfdm class              Description                     cfdm parent classes
-   ======================  ==============================  ======================
-   `Bounds`                Cell bounds.                    `DimensionCoordinate`,
-                                                           `AuxiliaryCoordinate`,
-                                                           `DomainAncillary`
-   
-   `CoordinateConversion`  A formula for                   `CoordinateReference`
-   		        converting coordinate values
-   		        taken from the dimension or
-   		        auxiliary coordinate
-   			constructs
-   		        to a different coordinate
-   			system.
-   
-   `Datum`                 The zeroes                      `CoordinateReference`
-                           of the dimension
-                           and auxiliary coordinate
-   			constructs which define a
-   			coordinate system.
-   ======================  ==============================  ======================
-
 .. _Cell-methods:
    
 **Cell methods**
@@ -1279,6 +1256,27 @@ which cell method constructs were added to the field construct during
    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
+The axes to which the method applies, the method itself, and any
+qualifying properties are accessed with the
+`~cfdm.CellMethod.get_axes`, `~cfdm.CellMethod.get_method`,
+`~cfdm.CellMethod.properties`, and `~cfdm.CellMethod.get_property`
+methods of methods of the cell method construct.
+
+.. code-block:: python
+     
+   >>> cm = t.get_construct(key='cellmethod0')
+   >>> cm
+   <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>)
+   >>> cm.get_axes()
+   ('domainaxis1', 'domainaxis2')
+   >>> cm.get_method()
+   'mean'
+   >>> cm.properties()
+   {'interval': [<Data(): 0.1 degrees>], 'where': 'land'}
+   >>> cm.get_property('where')
+   'land'
+
+		
 .. _Field-construct-creation:
 
 **Field construct creation**

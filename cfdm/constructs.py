@@ -309,8 +309,6 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                 return out
         #--- End: if
 
-#'        out = {key: construct}
-        
         if axis is not None:
             if isinstance(axis, basestring):
                 axis = (axis,)
@@ -563,7 +561,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         return 'key%{0}'.format(axis)
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_compression=False, ignore_type=False):
         '''TODO
@@ -576,7 +574,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         
         # Check that each instance is the same type
         if type(self) != type(other):
-            if traceback:
+            if verbose:
                 print("{0}: Different object types: {0}, {1}".format(
                     self.__class__.__name__, other.__class__.__name__))
             return False
@@ -590,7 +588,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         # Domain axis constructs
         # ------------------------------------------------------------
         if not self._equals_domain_axis(other, rtol=rtol, atol=atol,
-                                        traceback=traceback,
+                                        verbose=verbose,
                                         ignore_type=ignore_type,
                                         axis1_to_axis0=axis1_to_axis0,
                                         key1_to_key0=key1_to_key0):
@@ -637,7 +635,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                         for key1, item1 in tuple(role_constructs1.items()):
                             if item0.equals(item1,
                                             rtol=rtol, atol=atol,
-                                            traceback=False,
+                                            verbose=False,
                                             ignore_data_type=ignore_data_type,
                                             ignore_fill_value=ignore_fill_value,
                                             ignore_compression=ignore_compression,
@@ -671,7 +669,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
             #--- End: for
 
             if not matched_all_constructs_with_these_axes:
-                if traceback:
+                if verbose:
                     names = [self.domain_axis_name(axis0) for axis0 in axes0]
                     print("Can't match constructs spanning axes {0}".format(names))
                     print('\n'.join(log))
@@ -688,14 +686,14 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         for axes0, axes1 in axes0_to_axes1.items():
             for axis0, axis1 in zip(axes0, axes1):
                 if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:
-                    if traceback:
+                    if verbose:
                         print(
 "Field: Ambiguous axis mapping ({} -> both {} and {})".format(
     self.domain_axis_name(axes0), other.domain_axis_name(axis1),
     other.domain_axis_name(axis0_to_axis1[axis0])))
                     return False
                 elif axis1 in axis1_to_axis0 and axis0 != axis1_to_axis0[axis1]:
-                    if traceback:
+                    if verbose:
                         print(
 "Field: Ambiguous axis mapping ({} -> both {} and {})".format(
     self.domain_axis_name(axis0), self.domain_axis_name(axis1_to_axis0[axis0]),
@@ -713,7 +711,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
             if not getattr(self, '_equals_'+construct_type)(
                     other,
                     rtol=rtol, atol=atol,
-                    traceback=traceback,
+                    verbose=verbose,
                     ignore_type=ignore_type,
                     axis1_to_axis0=axis1_to_axis0,
                     key1_to_key0=key1_to_key0):
@@ -726,7 +724,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     #--- End: def
     
     def _equals_coordinate_reference(self, other, rtol=None, atol=None,
-                                     traceback=False,
+                                     verbose=False,
                                      ignore_type=False,
                                      axis1_to_axis0=None,
                                      key1_to_key0=None):
@@ -736,9 +734,9 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         refs1 = other.constructs(construct_type='coordinate_reference')
 
         if len(refs0) != len(refs1):
-            if traceback:
+            if verbose:
                 print(
-"Traceback: Different coordinate references: {0!r}, {1!r}".format(
+"Verbose: Different coordinate references: {0!r}, {1!r}".format(
     list(refs0.values()), list(refs1.values())))
             return False
 
@@ -747,7 +745,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                 found_match = False
                 for key1, ref1 in tuple(refs1.items()):
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
-                                       traceback=False,
+                                       verbose=False,
                                        ignore_type=ignore_type):
                         continue
 
@@ -788,9 +786,9 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                 #--- End: for
     
                 if not found_match:
-                    if traceback:
+                    if verbose:
                         print(
-"Traceback: No match for {0!r})".format(ref0))
+"Verbose: No match for {0!r})".format(ref0))
                     return False
             #--- End: for
         #--- End: if
@@ -799,7 +797,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     #--- End: def
 
     def _equals_cell_method(self, other, rtol=None, atol=None,
-                            traceback=False, ignore_type=False,
+                            verbose=False, ignore_type=False,
                             axis1_to_axis0=None, key1_to_key0=None):
         '''TODO
 
@@ -808,9 +806,9 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         cell_methods1 = other.constructs(construct_type='cell_method')
 
         if len(cell_methods0) != len(cell_methods1):
-            if traceback:
+            if verbose:
                 print(
-"Traceback: Different numbers of cell methods: {0!r} != {1!r}".format(
+"Verbose: Different numbers of cell methods: {0!r} != {1!r}".format(
     cell_methods0, cell_methods1))
             return False
         
@@ -823,11 +821,12 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
             
         for cm0, cm1 in zip(tuple(cell_methods0.values()),
                             tuple(cell_methods1.values())):
+            
             # Check that there are the same number of axes
             axes0 = cm0.get_axes(())
             axes1 = list(cm1.get_axes(()))
             if len(axes0) != len(axes1):
-                if traceback:
+                if verbose:
                     print(
 "{0}: Different cell methods (mismatched axes): {1!r}, {2!r}".format(
     cm0.__class__.__name__, cell_methods0, cell_methods1))
@@ -844,9 +843,9 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                             indices.append(cm1.get_axes(()).index(axis1))
                             break
                     elif axis0 in axis0_to_axis1 or axis1 in axis1_to_axis0:
-                        if traceback:
+                        if verbose:
                             print(
-"Traceback: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
+"Verbose: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
     cell_methods0, cell_methods1))
                         return False
                     elif axis0 == axis1:
@@ -854,15 +853,15 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                         axes1.remove(axis1)
                         indices.append(cm1.get_axes(()).index(axis1))
                     elif axis1 is None:
-                        if traceback:
+                        if verbose:
                             print(
-"Traceback: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
+"Verbose: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
     cell_methods0, cell_methods1))
                         return False
             #--- End: for
 
             if len(cm1.get_axes(())) != len(indices):
-                if traceback:
+                if verbose:
                     print("Field: Different cell methods: {0!r}, {1!r}".format(
                         cell_methods0, cell_methods1))
                 return False
@@ -871,11 +870,11 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
             cm1.set_axes(axes0)
 
             if not cm0.equals(cm1, atol=atol, rtol=rtol,
-                              traceback=traceback,
+                              verbose=verbose,
                               ignore_type=ignore_type):
-                if traceback:
+                if verbose:
                     print(
-"Traceback: Different cell methods: {0!r}, {1!r}".format(
+"Verbose: Different cell methods: {0!r}, {1!r}".format(
     cell_methods0, cell_methods1))
                 return False                
         #--- End: for
@@ -884,7 +883,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     #--- End: def
 
     def _equals_domain_axis(self, other, rtol=None, atol=None,
-                            traceback=False, ignore_type=False,
+                            verbose=False, ignore_type=False,
                             axis1_to_axis0=None, key1_to_key0=None):
         '''TODO
         '''
@@ -898,7 +897,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes
-            if traceback:
+            if verbose:
                 print("{0}: Different domain axes: {1} != {2}".format(
                     self.__class__.__name__,
                     sorted(self.values()),

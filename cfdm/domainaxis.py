@@ -60,7 +60,7 @@ x.__str__() <==> str(x)
         return str(self.get_size(''))
     #--- End: def
 
-    def equals(self, other, traceback=False, ignore_type=False):
+    def equals(self, other, verbose=False, ignore_type=False):
         '''Whether two domain axis constructs are the same.
 
 Equality is strict by default. This means that:
@@ -81,7 +81,7 @@ constitute part of the CF data model and so are not checked.
     other: 
         The object to compare for equality.
 
-    traceback: `bool`, optional
+    verbose: `bool`, optional
         If True then print information about differences that lead to
         inequality.
 
@@ -108,12 +108,12 @@ False
 
 >>> d = cfdm.DomainAxis(1)
 >>> e = cfdm.DomainAxis(99)
->>> d.equals(e, traceback=True)
+>>> d.equals(e, verbose=True)
 DomainAxis: Different axis sizes: 1 != 99
 False
 
         '''
-        pp = super()._equals_preprocess(other, traceback=traceback,
+        pp = super()._equals_preprocess(other, verbose=verbose,
                                         ignore_type=ignore_type)
         if pp in (True, False):
             return pp
@@ -124,7 +124,7 @@ False
         self_size  = self.get_size(None)
         other_size = other.get_size(None)
         if not self_size == other_size:
-            if traceback:
+            if verbose:
                 print("{0}: Different axis sizes: {1} != {2}".format(
 			self.__class__.__name__, self_size, other_size))
             return False

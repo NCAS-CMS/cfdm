@@ -43,7 +43,7 @@ names will need to be modified to be netCDF dimension names.
         '''     
         string = ['{0}:'.format(axis) for axis in self.get_axes(())]
 
-        string.append(self.get_property('method', ''))
+        string.append(self.get_method(''))
 
         for portion in ('within', 'where', 'over'):
             p = self.get_property(portion, None)
@@ -289,7 +289,7 @@ applies.
 #        return out
 #    #--- End: def
 
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_properties=(), ignore_type=False):
         '''Whether two cell method constructs are the same.
 
@@ -331,7 +331,7 @@ constitute part of the CF data model and so are not checked.
         The tolerance on relative differences between real
         numbers. The default value is set by the `cfdm.RTOL` function.
 
-    traceback: `bool`, optional
+    verbose: `bool`, optional
         If True then print information about differences that lead to
         inequality.
 
@@ -360,22 +360,30 @@ True
 False
 
         '''
+        # Check that the methods are the same
+        if self.get_method(None) != other.get_method(None):
+            if verbose:
+                print(
+"{0}: Different methods: {1!r} != {2!r}".format(
+    cm0.__class__.__name__, self.get_method(None), other.get_method(None)))
+            return False
+
         ignore_properties = tuple(ignore_properties) + ('interval',)
 
         if not super().equals(
                 other,
                 rtol=rtol, atol=atol,
-                traceback=traceback,
+                verbose=verbose,
                 ignore_properties=ignore_properties,
                 ignore_type=ignore_type,
                 ignore_data_type=True,
                 ignore_fill_value=True):
             return False
-        
+
 #        axes0 = self.get_axes(())
 #        axes1 = other.get_axes(())
 #        if len(axes0) != len(axes1):
-#            if traceback:
+#            if verbose:
 #                print(
 #                    "{0}: Different axes: {1!r} != {2!r}".format(
 #                        self.__class__.__name__, axes0, axes1))
@@ -389,7 +397,7 @@ False
         intervals1 = other.get_property('interval', ())
         if intervals0:
             if not intervals1:
-                if traceback:
+                if verbose:
                     print(
                         "{0}: Different intervals: {1!r} != {2!r}".format(
                             self.__class__.__name__, intervals0, intervals1))
@@ -400,7 +408,7 @@ False
 #                intervals0 = self.expand_intervals().get_property('interval', ())
 #                intervals1 = other.expand_intervals().get_property('interval', ())        
 #                if len(intervals0) != len(intervals1):
-                if traceback:
+                if verbose:
                     print(
                         "{0}: Different numbers of intervals: {1!r} != {2!r}".format(
                             self.__class__.__name__, intervals0, intervals1))
@@ -410,17 +418,17 @@ False
             for data0, data1 in zip(intervals0, intervals1):
                 if not self._equals(data0, data1,
                                     rtol=rtol, atol=atol,
-                                    traceback=traceback,
+                                    verbose=verbose,
                                     ignore_data_type=True,
                                     ignore_fill_value=True):
-                    if traceback:
+                    if verbose:
                         print(
                             "{0}: Different intervals: {1!r} != {2!r}".format(
                                 self.__class__.__name__, intervals0, intervals1))
                     return False
 
         elif intervals1:
-            if traceback:
+            if verbose:
                 print("{}: Different intervals: {!r} != {!r}".format(
                     self.__class__.__name__, intervals0, intervals1))
             return False
@@ -429,7 +437,7 @@ False
         return True
     #--- End: def
 
-#    def equivalent(self, other, rtol=None, atol=None, traceback=False):
+#    def equivalent(self, other, rtol=None, atol=None, verbose=False):
 #        '''True if two cell methods are equivalent, False otherwise.
 #
 #The `axes` and `interval` attributes are ignored in the comparison.
@@ -460,7 +468,7 @@ False
 #
 #        # Check that each instance is the same type
 #        if self.__class__ != other.__class__:
-#            if traceback:
+#            if verbose:
 #                print("{0}: Different types: {0} != {1}".format(
 #                    self.__class__.__name__, other.__class__.__name__))
 #            return False
@@ -470,7 +478,7 @@ False
 #        axes1 = other.axes
 #            
 #        if len(axes0) != len(axes1) or set(axes0) != set(axes1):
-#            if traceback:
+#            if verbose:
 #                print("{}: Nonequivalent axes: {!r}, {!r}".format(
 #                    self.__class__.__name__, axes0, axes1))
 #            return False
@@ -481,7 +489,7 @@ False
 #        self1 = self
 #
 #        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('interval',)):
-#            if traceback:
+#            if verbose:
 #                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
 #                    self.__class__.__name__, self, other))
 #            return False
@@ -498,7 +506,7 @@ False
 #            other_interval = other1.get_property('interval', ())        
 #
 #            if len(self_interval) != len(other_interval):
-#                if traceback:
+#                if verbose:
 #                    print(
 #"{0}: Different numbers of intervals: {1!r} != {2!r}".format(
 #    self.__class__.__name__, self_interval, other_interval))
@@ -509,7 +517,7 @@ False
 #        if self_interval:
 #            for data0, data1 in zip(self_interval, other_interval):
 #                if not data0.allclose(data1, rtol=rtol, atol=atol):
-#                    if traceback:
+#                    if verbose:
 #                        print(
 #"{0}: Different interval data: {1!r} != {2!r}".format(
 #    self.__class__.__name__, self_interval, other_interval))
@@ -525,7 +533,7 @@ False
 
 By default the name is the first found of the following:
 
-  1. The "method" propoerty, preceeded by 'method%'
+  1. The method, preceeded by 'method%'
   2. The value of the *default* parameter.
 
 .. versionadded:: 1.7.0
@@ -536,19 +544,14 @@ By default the name is the first found of the following:
         If no other name can be found then return the value of the
         default parameter. By default `None` is returned in this case.
 
-    custom: sequence of `str`, optional
-        Replace the ordered list of properties from which to seatch
-        for a name. The default list is ``['method']`.
+    all_names: `bool`, optional
+        If True then return a list of all possible names.
 
-        *Example:*
-          ``custom=['comment']``
-
-        *Example:*
-          ``custom=['comment', 'where']``
-
+    custom: optional
+        This is a dummy parameter and is ignored.
+    
 :Returns:
 
-    out:
         The name. If the *all_names* parameter is True then a list of
         all possible names.
 
@@ -558,29 +561,16 @@ By default the name is the first found of the following:
 <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>
 >>> c.name()
 'method%mean'
->>> c.name(custom=['comment'])
-'comment%El nino years'
->>> c.name(custom=['comment', 'method'])
-'comment%ok'
->>> c.name(custom=['comment', 'method'])
-comment%ok'
->>> c.name(custom=['comment', 'method'], all_names=True, default='no name')
-['comment%ok', 'method%mean', 'no name']
+>>> c.name(all_names=True, default='no name')
+['method%mean', 'no name']
 
         '''
         out = []
 
-        if custom is None:
-            custom = ('method',)
+        n = self.get_method(None)
+        if n is not None:
+            out.append('method%{0}'.format(n))
             
-        for prop in custom:
-            n = self.get_property(prop, None)
-            if n is not None:
-                out.append('{0}%{1}'.format(prop, n))
-                if not all_names:
-                    break
-        #--- End: if
-        
         if all_names:
             if default is not None:
                 out.append(default)
@@ -615,18 +605,16 @@ name, and any intervals are sorted accordingly.
 **Examples:**
 
 >>> cm = cfdm.CellMethod(axes=['domainaxis1', 'domainaxis0'],
-...                      properties={'method': 'mean',
-...                                  'interval': [1, 2]})
-... 
+...                      method='mean',
+...                      properties={'interval': [1, 2]})
 >>> cm
 <CellMethod: domainaxis1: domainaxis0: mean (interval: 1 interval: 2)>
 >>> cm.sorted()
 <CellMethod: domainaxis0: domainaxis1: mean (interval: 2 interval: 1)>
 
 >>> cm = cfdm.CellMethod(axes=['domainaxis0', 'area'],
-...                      properties={'method': 'mean',
-...                                  'interval': [1, 2]})
-... 
+...                      method='mean',
+...                      properties={'interval': [1, 2]})
 >>> cm
 <CellMethod: domainaxis0: area: mean (interval: 1 interval: 2)>
 >>> cm.sorted()

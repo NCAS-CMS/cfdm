@@ -170,17 +170,14 @@ class create_fieldTest_2(unittest.TestCase):
         f.set_property('flag_meanings', 'a bb ccc')
         f.set_property('flag_masks', [2, 1, 0])
 
-#        for cm in cfdm.CellMethod.parse(axisX+': mean (interval: 1 day comment: ok) '+axisY+': max w#here sea'):
-#            f.set_cell_method(cm)
-
         cm0 =  cfdm.CellMethod(axes=[axisX],
-                               properties={'method'  : 'mean',
-                                           'interval': [cfdm.Data(1, 'day')],
+                               method='mean',
+                               properties={'interval': [cfdm.Data(1, 'day')],
                                            'comment' : 'ok'})
     
         cm1 =  cfdm.CellMethod(axes=[axisY],
-                               properties={'method': 'maximum',
-                                           'where' : 'sea'})
+                               method='maximum',                               
+                               properties={'where' : 'sea'})
 
         f.set_construct(cm0)
         f.set_construct(cm1)
@@ -191,7 +188,7 @@ class create_fieldTest_2(unittest.TestCase):
             print(f.constructs())
             print(f.construct_data_axes())
         
-        self.assertTrue(f.equals(f.copy(), traceback=True),
+        self.assertTrue(f.equals(f.copy(), verbose=True),
                         "Field f not equal to a copy of itself")
         
 #        f.dump()
@@ -230,7 +227,7 @@ class create_fieldTest_2(unittest.TestCase):
                             sorted(g.constructs().items())))
 
 
-            self.assertTrue(g.equals(g.copy(), traceback=True),
+            self.assertTrue(g.equals(g.copy(), verbose=True),
                             "Field g not equal to a copy of itself")
             if verbose:
                 print('f')
@@ -238,7 +235,7 @@ class create_fieldTest_2(unittest.TestCase):
                 print('g')
                 g.dump()
             
-            self.assertTrue(g.equals(f, traceback=True),                            
+            self.assertTrue(g.equals(f, verbose=True),                            
                             "Field not equal to itself read back in")
         #--- End: for
         

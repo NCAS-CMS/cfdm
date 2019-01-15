@@ -2254,8 +2254,8 @@ variable should be pre-filled with missing values.
                 axes = [name_to_axis.get(axis, axis)
                         for axis in properties.pop('axes')]
 
-                method = properties.pop('axes', None)
-                
+                method = properties.pop('method', None)
+
                 cell_method = self._create_cell_method(axes, method, properties)
                 if verbose:
                     print('    [ ] Inserting', repr(cell_method))
@@ -3084,7 +3084,7 @@ variable's netCDF dimensions.
         incorrect_interval = ('Cell method interval', 'is incorrectly formatted')
 
         out = []
-        
+
         if not cell_methods_string:
             return out
         

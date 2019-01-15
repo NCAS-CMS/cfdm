@@ -269,7 +269,7 @@ class DSGTest(unittest.TestCase):
 #            a = x.get_array()
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], traceback=True))
+            self.assertTrue(g[i].equals(f[i], verbose=True))
     #--- End: def        
 
     def test_GATHERING_create(self):

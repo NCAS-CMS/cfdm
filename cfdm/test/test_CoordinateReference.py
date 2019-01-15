@@ -21,7 +21,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                 parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
                 domain_ancillaries={'a': 'aux0', 'b': 'aux1', 'orog': 'orog'})
         )
-        self.assertTrue(t.equals(t.copy(), traceback=True))
+        self.assertTrue(t.equals(t.copy(), verbose=True))
         
         # Create a horizontal grid mapping coordinate reference
         t = cfdm.CoordinateReference(
@@ -31,7 +31,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                              'grid_north_pole_latitude': 38.0,
                              'grid_north_pole_longitude': 190.0})
         )            
-        self.assertTrue(t.equals(t.copy(), traceback=True))
+        self.assertTrue(t.equals(t.copy(), verbose=True))
 
         datum=cfdm.Datum(parameters={'earth_radius': 6371007})
         conversion=cfdm.CoordinateConversion(
@@ -45,7 +45,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             coordinates=['x', 'y', 'lat', 'lon']
         )
 
-        self.assertTrue(t.equals(t.copy(), traceback=True))
+        self.assertTrue(t.equals(t.copy(), verbose=True))
 
         # Create a horizontal grid mapping coordinate reference
         t = cfdm.CoordinateReference(
@@ -57,7 +57,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                                'false_easting': -20000,
                                'false_northing': -30000})
         )
-        self.assertTrue(t.equals(t.copy(), traceback=True))
+        self.assertTrue(t.equals(t.copy(), verbose=True))
 
         # Create a horizontal grid mapping coordinate reference
         t = cfdm.CoordinateReference(
@@ -69,7 +69,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                                'false_easting': -20000,
                                'false_northing': -30000})
         )
-        self.assertTrue(t.equals(t.copy(), traceback=True))
+        self.assertTrue(t.equals(t.copy(), verbose=True))
     #--- End: def
 
 #--- End: class

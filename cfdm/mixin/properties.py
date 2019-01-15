@@ -59,7 +59,7 @@ class Properties(Container):
         return '\n'.join(string)
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_type=False):
         '''Whether two instances are the same.
@@ -100,9 +100,9 @@ one. See the *ignore_type* parameter.
         If True then the "_FillValue" and "missing_value" properties
         are omitted from the comparison.
 
-    traceback: `bool`, optional
-        If True and the collections of properties are different then
-        print a traceback stating how they are different.
+    verbose: `bool`, optional
+        If True then print information about differences that lead to
+        inequality.
 
     ignore_properties: sequence of `str`, optional
         The names of properties to omit from the comparison.
@@ -137,13 +137,13 @@ False
 >>> q.set_property('foo', 'bar')
 >>> p.equals(q)
 False
->>> p.equals(q, traceback=True)
+>>> p.equals(q, verbose=True)
 Field: Non-common property name: foo
 Field: Different properties
 False
 
         '''
-        pp = super()._equals_preprocess(other, traceback=traceback,
+        pp = super()._equals_preprocess(other, verbose=verbose,
                                         ignore_type=ignore_type)
         if pp in (True, False):
             return pp
@@ -166,7 +166,7 @@ False
         #--- End: if
                 
         if set(self_properties) != set(other_properties):
-            if traceback:
+            if verbose:
                 _ =  set(self_properties).symmetric_difference(other_properties)
                 for prop in set(self_properties).symmetric_difference(other_properties):                    
                     print("{0}: Non-common property name: {1}".format( 
@@ -180,8 +180,8 @@ False
                                 rtol=rtol, atol=atol,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_data_type=True, #ignore_data_type,
-                                traceback=traceback):
-                if traceback:
+                                verbose=verbose):
+                if verbose:
                     print("{0}: Different {1}: {2!r}, {3!r}".format(
                         self.__class__.__name__, prop, x, y))
                 return False

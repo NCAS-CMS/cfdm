@@ -208,7 +208,7 @@ rules, the only differences being:
             return string
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
                ignore_type=False):
@@ -271,7 +271,7 @@ constitute part of the CF data model and so are not checked.
         If True then the "_FillValue" and "missing_value" properties
         are omitted from the comparison.
 
-    traceback: `bool`, optional
+    verbose: `bool`, optional
         If True then print information about differences that lead to
         inequality.
 
@@ -316,13 +316,13 @@ False
         # Check the properties and data
         # ------------------------------------------------------------
         if not super().equals(other, rtol=rtol, atol=atol,
-                              traceback=traceback,
+                              verbose=verbose,
                               ignore_data_type=ignore_data_type,
                               ignore_fill_value=ignore_fill_value,
                               ignore_properties=ignore_properties,
                               ignore_type=ignore_type,
                               ignore_compression=ignore_compression):
-            if traceback:
+            if verbose:
                 print("???????/")
             return False
     
@@ -330,7 +330,7 @@ False
         # Check the geometry type
         # ------------------------------------------------------------
         if self.get_geometry(None) != other.get_geometry(None):
-            if traceback:
+            if verbose:
                 print(
 "{0}: Different geometry types: {1}, {2}".format(
     self.__class__.__name__, self.get_geometry(None), other.get_geometry(None)))
@@ -341,19 +341,19 @@ False
         # ------------------------------------------------------------
         self_has_bounds = self.has_bounds()
         if self_has_bounds != other.has_bounds():
-            if traceback:
+            if verbose:
                 print("{0}: Different {1}".format(self.__class__.__name__, attr))
             return False
                 
         if self_has_bounds:            
             if not self._equals(self.get_bounds(), other.get_bounds(),
                                 rtol=rtol, atol=atol,
-                                traceback=traceback,
+                                verbose=verbose,
                                 ignore_data_type=ignore_data_type,
                                 ignore_type=ignore_type,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
-                if traceback:
+                if verbose:
                     print("{0}: Different {1}".format(self.__class__.__name__, attr))
                 return False
         #--- End: if
@@ -363,19 +363,19 @@ False
         # ------------------------------------------------------------
         self_has_interior_ring = self.has_interior_ring()
         if self_has_interior_ring != other.has_interior_ring():
-            if traceback:
+            if verbose:
                 print("{0}: Different {1}".format(self.__class__.__name__, attr))
             return False
                 
         if self_has_interior_ring:            
             if not self._equals(self.get_interior_ring(), other.get_interior_ring(),
                                 rtol=rtol, atol=atol,
-                                traceback=traceback,
+                                verbose=verbose,
                                 ignore_data_type=ignore_data_type,
                                 ignore_type=ignore_type,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
-                if traceback:
+                if verbose:
                     print("{0}: Different {1}".format(self.__class__.__name__, attr))
                 return False
         #--- End: if
