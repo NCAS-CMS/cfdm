@@ -430,12 +430,15 @@ TODO
         *Example:*
           ``key='cellmeasure0'``
 
-    axes: sequence of `str`
+    axes: (sequence of) `str`
         The construct identifiers of the domain axis constructs
         spanned by the data array. An exception is raised if used for
         a metadata construct that can not have a data array,
         i.e. domain axis, cell method and coordinate reference
         constructs.
+
+        *Example:*
+          ``axes='domainaxis1'``
 
         *Example:*
           ``axes=['domainaxis1']``
@@ -449,13 +452,17 @@ TODO
 
 **Examples:**
 
-TODO
+>>> key = f.set_construct(c)
+>>> f.set_construct_data_axes(key, axes='domainaxis1')
 
         '''
         if self.construct_type(key) is None:
             raise ValueError(
                 "Can't set axes for non-existent construct identifier {!r}".format(key))
 
+        if isinstance(axes, basestring):
+            axes = (axes,)
+            
         self._set_construct_axes(key, axes)
     #--- End: def
 
@@ -640,9 +647,7 @@ False
             return True        
     #--- End: def
 
-    def set_construct(self, construct, key=None,
-                      axes=None, #extra_axes=0, #replace=True,
-                      copy=True):
+    def set_construct(self, construct, key=None, axes=None, copy=True):
         '''Set a metadata construct.
 
 .. versionadded:: 1.7.0
@@ -665,7 +670,7 @@ False
         *Example:*
           ``key='cellmeasure0'``
 
-    axes: sequence of `str`, optional
+    axes: (sequence of) `str`, optional
         The construct identifiers of the domain axis constructs
         spanned by the data array. An exception is raised if used for
         a metadata construct that can not have a data array,
@@ -676,10 +681,13 @@ False
         `set_construct_data_axes` method.
 
         *Example:*
+          ``axes='domainaxis1'``
+        
+        *Example:*
           ``axes=['domainaxis1']``
         
         *Example:*
-          ``axes=['domainaxis1', 'domainaxis0']``
+          ``axes=('domainaxis1', 'domainaxis0')``
         
     copy: `bool`, optional
         If True then return a copy of the unique selected
@@ -694,7 +702,7 @@ False
 
 >>> key = f.set_construct(c)
 >>> key = f.set_construct(c, copy=False)
->>> key = f.set_construct(c, axes=['domainaxis2'])
+>>> key = f.set_construct(c, axes='domainaxis2')
 >>> key = f.set_construct(c, key='cellmeasure0')
 
         '''
@@ -724,6 +732,9 @@ False
 "Can't set {} construct: Must specify the domain axes for the data array".format(
     self._construct_type_description(construct_type)))
 
+            if isinstance(axes, basestring):
+                axes = (axes,)
+            
             domain_axes = self.constructs(construct_type='domain_axis')
 
             axes_shape = []

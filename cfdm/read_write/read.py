@@ -64,7 +64,7 @@ implementation = CFDMImplementation(
 )
 
 def read(filename, external=None, extra=None, verbose=False,
-         _implementation=implementation):
+         warnings=True, _implementation=implementation):
     '''Read field constructs from a dataset.
 
 The dataset may be a netCDF file on disk or on an OPeNDAP server.
@@ -168,9 +168,25 @@ a field construct.
         netCDF file were parsed and mapped to CF data model
         constructs.
 
+    warnings: `bool`, optional
+        If False then do not print warnings when an output field
+        construct is incomplete due to "structural non-CF-compliance"
+        of the dataset. By default such warnings are displayed.
+
+        Structural non-CF-compliance occurs when it is not possible to
+        unambiguously map an element of the netCDF dataset to an
+        element of the CF data model. Other type on non-CF-compliance
+        are not checked, for example, whether or not controlled
+        vocabularies have been adhered to is not checked.
+        
+    _implementation: optional
+        *WARNING*
+
+        TODO
+
 :Returns:
     
-    out: `list`
+    `list`
         The field constructs found in the dataset. The list may be
         empty.
 
@@ -205,18 +221,13 @@ list
     # ----------------------------------------------------------------
     # Read the fields in the file
     # ----------------------------------------------------------------
-    return _read_a_file(filename,
-                        external=external,
-                        extra=extra,
-                        verbose=verbose,
+    return _read_a_file(filename, external=external, extra=extra,
+                        verbose=verbose, warnings=warnings,
                         _implementation=_implementation)
 #--- End: def
 
-def _read_a_file(filename,
-                 external=(),
-                 extra=(),
-                 verbose=False,
-                 _implementation=None):
+def _read_a_file(filename, external=(), extra=(), verbose=False,
+                 warnings=False, _implementation=None):
     '''Read the contents of a single file into a field list.
 
 :Parameters:
@@ -240,7 +251,7 @@ def _read_a_file(filename,
     # ----------------------------------------------------------------
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external=external, extra=extra,
-                             verbose=verbose)
+                             verbose=verbose, warnings=warnings)
     else:
         raise IOError("Can't determine format of file {}".format(filename))
 

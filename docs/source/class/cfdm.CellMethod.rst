@@ -20,17 +20,15 @@ Inspection
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.CellMethod.del_axes
-   ~cfdm.CellMethod.del_property
    ~cfdm.CellMethod.dump
    ~cfdm.CellMethod.get_axes
+   ~cfdm.CellMethod.get_method
    ~cfdm.CellMethod.get_property
    ~cfdm.CellMethod.has_axes
+   ~cfdm.CellMethod.has_method
    ~cfdm.CellMethod.has_property
    ~cfdm.CellMethod.name
    ~cfdm.CellMethod.properties
-   ~cfdm.CellMethod.set_axes
-   ~cfdm.CellMethod.set_property
 
 .. rubric:: Attributes
    
@@ -52,9 +50,11 @@ Modification
    :template: method.rst
 
    ~cfdm.CellMethod.del_axes
+   ~cfdm.CellMethod.del_method
    ~cfdm.CellMethod.del_property
    ~cfdm.CellMethod.properties
    ~cfdm.CellMethod.set_axes
+   ~cfdm.CellMethod.set_method
    ~cfdm.CellMethod.set_property
    ~cfdm.CellMethod.sorted
 

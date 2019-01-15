@@ -198,7 +198,7 @@ x.__str__() <==> str(x)
         #--- End: def
                           
         # Field ancillary variables
-        x = [_print_item(self, cid, anc, self.get_construct_data_axes(cid=cid), False)
+        x = [_print_item(self, cid, anc, self.get_construct_data_axes(key=cid), False)
              for cid, anc in sorted(self.field_ancillaries().items())]
         if x:
             string.append('Field ancils    : {}'.format(
@@ -248,7 +248,7 @@ x.__str__() <==> str(x)
 #            string.append('Domain ancils   : {}'.format(
 #                '\n                : '.join(x)))
 #                                      
-        string.append('')
+#        string.append('')
         
         return '\n'.join(string)
     #--- End def
@@ -1388,9 +1388,10 @@ from a dataset.
     
         for key0, value0 in d.items():
             print('{{{0!r}:'.format(key0))
+            print('    CF version: {0!r},'.format(value0['CF version']))
             print('    dimensions: {0!r},'.format(value0['dimensions']))
-            print('    components: {')
-            for key1, value1 in sorted(value0['components'].items()):
+            print('    non-compliance: {')
+            for key1, value1 in sorted(value0['non-compliance'].items()):
                 for x in value1:
                     print('        {!r}: ['.format(key1))
                     print('            {{{0}}},'.format(
@@ -1398,10 +1399,9 @@ from a dataset.
                                                 for key2, value2 in sorted(x.items())])))
                 #--- End: for
                 print('        ],')
-            #--- End: for
+
             print('    },')
             print('}\n')
-        #--- End: for
     #--- End: def
      
     def squeeze(self, axes=None):

@@ -619,7 +619,7 @@ netcdf library: 4.6.1
 netCDF4: 1.4.0 /home/user/anaconda2/lib/python2.7/site-packages/netCDF4/__init__.pyc
 numpy: 1.11.3 /home/user/anaconda2/lib/python2.7/site-packages/numpy/__init__.pyc
 future: 0.16.0 /home/user/anaconda2/lib/python2.7/site-packages/future/__init__.pyc
-cfdm: 1.7.1 /home/user/cfdm/cfdm/__init__.pyc
+cfdm: 1.7.0 /home/user/cfdm/cfdm/__init__.pyc
 
     '''
     out = []
@@ -646,17 +646,23 @@ cfdm: 1.7.1 /home/user/cfdm/cfdm/__init__.pyc
 def CF():
     '''The version of the CF conventions.
 
+This indicates which version of the CF conventions are represented by
+this release of the cfdm package, and therefore the version can not be
+changed.
+
 .. versionadded:: 1.7.0
 
 :Returns:
 
-    out:`str`
-        The version of the CF conventions.
+    `str`
+        The version of the CF conventions represented by this release
+        of the cfdm package.
 
 **Examples:**
 
 >>> cfdm.CF()
 '1.7'
+
     '''
     return __cf_version__
 #--- End: def

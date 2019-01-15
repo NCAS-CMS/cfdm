@@ -31,11 +31,14 @@ that the method was applied only over El Nino years).
 
 :Parameters:
 
-    axes: sequence of `str`, optional
-        Set the axes of the cell method construct. Either one or more
-        domain axis construct identifiers or standard names. Ignored
-        if the *source* parameter is set.
+    axes: (sequence of) `str`, optional
+        Set the axes of the cell method construct, specified either by
+        the construct identifiers of domain axis constructs, standard
+        names, or the special string ``'area'``.
 
+          *Example:*
+             ``axes='domainaxis0'``
+        
           *Example:*
              ``axes=['domainaxis0']``
         
@@ -43,7 +46,7 @@ that the method was applied only over El Nino years).
              ``axes=('domainaxis0', 'domainaxis1')``
         
           *Example:*
-             ``axes=('area',)``
+             ``axes='area'``
         
           *Example:*
              ``axes=['domainaxis2', 'time']``
@@ -142,11 +145,11 @@ that the method was applied only over El Nino years).
 
 **Examples:**
 
->>> c.set_axes(['domainaxis1'])
+>>> c.set_axes('domainaxis1')
 >>> c.has_axes()
 True
 >>> c.get_axes()
-('time',)
+('domainaxis1',)
 >>> c.del_axes()
 >>> c.has_axes()
 False
@@ -284,11 +287,11 @@ False
 
 **Examples:**
 
->>> c.set_axes(['domainaxis1'])
+>>> c.set_axes('domainaxis1')
 >>> c.has_axes()
 True
 >>> c.get_axes()
-('time',)
+('domainaxis1',)
 >>> c.del_axes()
 >>> c.has_axes()
 False
@@ -343,7 +346,7 @@ False
 
     value: (sequence of) `str`
         The axes, specified either by the construct identifiers of
-        domain axis constructs; standard names; or the special string
+        domain axis constructs, standard names, or the special string
         ``'area'``.
 
         *Example:*
@@ -370,11 +373,11 @@ False
 
 **Examples:**
 
->>> c.set_axes(['domainaxis1'])
+>>> c.set_axes('domainaxis1')
 >>> c.has_axes()
 True
 >>> c.get_axes()
-('time',)
+('domainaxis1',)
 >>> c.del_axes()
 >>> c.has_axes()
 False

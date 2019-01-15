@@ -225,7 +225,7 @@ contents and any file suffix is not not considered.
 
     def read(self, filename, extra=None, default_version=None,
              external=None, _extra_read_vars=None, _scan_only=False,
-             verbose=False):
+             verbose=False, warnings=True):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
 location.
 
@@ -275,6 +275,17 @@ ancillaries, field ancillaries).
           To create fields from domain ancillary and cell measure
           constructs: ``extra=['domain_ancillary', 'cell_measure']``.
 
+    warnings: `bool`, optional
+        If False then do not print warnings when an output field
+        construct is incomplete due to "structural non-CF-compliance"
+        of the dataset. By default such warnings are displayed.
+
+        Structural non-CF-compliance occurs when it is not possible to
+        unambiguously map an element of the netCDF dataset to an
+        element of the CF data model. Other type on non-CF-compliance
+        are not checked, for example, whether or not controlled
+        vocabularies have been adhered to is not checked.
+        
 :Returns:
 
     out: `list`
@@ -297,8 +308,11 @@ TODO
             'compression': {},
             # Verbose?
             'verbose': verbose,
+
+            # Warnings?
+            'warnings': warnings,
             
-            'read_report': {None: {'components': {}}},
+            'read_report': {None: {'non-compliance': {}}},
             'component_report' : {},
             
             'auxiliary_coordinate' : {},
@@ -736,9 +750,18 @@ TODO
                         
                         fields[ncvar] = all_fields[ncvar]
         #--- End: if
-            
-        for x in list(fields.values()):
-            x._set_component('component_report', g['component_report'])
+
+        out = [x[1] for x in sorted(fields.items())]
+
+        if warnings:
+            for x in out:
+                qq = x.read_report(display=False)
+                if qq:
+                    print('WARNING: Field incomplete due to non-CF-compliant dataset:')
+                    print(str(x))
+                    print('Report:')
+                    x.read_report()
+        #--- End: if
 
         # ------------------------------------------------------------
         # Close the netCDF file(s)
@@ -748,7 +771,7 @@ TODO
         # ------------------------------------------------------------
         # Return the fields
         # ------------------------------------------------------------
-        return [x[1] for x in sorted(fields.items())]
+        return out #[x[1] for x in sorted(fields.items())]
     #--- End: def
 
     def _get_variables_from_external_files(self,
@@ -1760,8 +1783,9 @@ variable should be pre-filled with missing values.
         nc = g['variable_dataset'][field_ncvar]
         
         dimensions = g['variable_dimensions'][field_ncvar]
-        g['read_report'][field_ncvar] = {'dimensions': dimensions,
-                                         'components': {}}
+        g['read_report'][field_ncvar] = {'CF version'    : self.implementation.get_cf_version(),
+                                         'dimensions'    : dimensions,
+                                         'non-compliance': {}}
         
         verbose = g['verbose']
         if verbose:
@@ -2302,10 +2326,21 @@ variable should be pre-filled with missing values.
             print('    Field properties:', self.implementation.get_properties(f))
         
         # Add the structural read report to the field
-        self.implementation.set_read_report(
-            f,
-            {field_ncvar: g['read_report'][field_ncvar]})
-        
+        read_report = g['read_report'][field_ncvar]
+        components = read_report['non-compliance']
+        if components:
+            read_report = {field_ncvar: read_report}
+        else:
+            read_report = {}
+            
+        self.implementation.set_read_report(f, read_report)
+
+        #if not g['warnings'] and components:            
+        #    print('WARNING: Field incomplete due to non-CF-compliant dataset:')
+        #    print(repr(f))
+        #    f.read_report()
+        ##--- End: if
+
         # Return the finished field
         return f
     #--- End: def
@@ -2355,11 +2390,11 @@ variable should be pre-filled with missing values.
         else:
             code = None
             
-        d = {'code'       : code,
-             'attribute'  : attribute,
-             'message'    : message,
-             'conformance': conformance,
-             'version'    : str(g['file_version']),
+        d = {'code'          : code,
+             'attribute'     : attribute,
+             'reason'        : message,
+#             'conformance': conformance,
+#             'CF version'    : str(g['file_version']),
         }
 
         if dimensions is not None:
@@ -2368,7 +2403,7 @@ variable should be pre-filled with missing values.
         if variable is None:
             variable = ncvar
         
-        g['read_report'][field_ncvar]['components'].setdefault(ncvar, []).append(d)
+        g['read_report'][field_ncvar]['non-compliance'].setdefault(ncvar, []).append(d)
 
         e = g['component_report'].setdefault(variable, {})
         e.setdefault(ncvar, []).append(d)
@@ -2380,7 +2415,7 @@ variable should be pre-filled with missing values.
                 dimensions = '(' + ', '.join(dimensions) + ')'
                 
             print('    Error processing netCDF variable {}{}: {}'.format(
-                ncvar, dimensions, d['message']))
+                ncvar, dimensions, d['reason']))
         
         return d
     #--- End: def
@@ -3508,7 +3543,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
 
         if component_report is not None:
             for var, report in component_report.items():                
-                g['read_report'][field_ncvar]['components'].setdefault(var, []).extend(
+                g['read_report'][field_ncvar]['non-compliance'].setdefault(var, []).extend(
                     report)
         #--- End: if
 
@@ -3723,7 +3758,7 @@ Checks that
 
             if verbose:
                 print('    Error processing netCDF variable {}: {}'.format(
-                    field_ncvar, d['message']))                
+                    field_ncvar, d['reason']))                
 
             return False
 

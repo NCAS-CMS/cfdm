@@ -85,15 +85,15 @@ class create_fieldTest(unittest.TestCase):
 
         f.set_data(data, axes=[axisY, axisX])
         
-        x = f.set_construct(dim0, axes=[axisX])
-        y = f.set_construct(dim1, axes=[axisY])
+        x = f.set_construct(dim0, axes=axisX)
+        y = f.set_construct(dim1, axes=axisY)
         z = f.set_construct(dim2, axes=[axisZ])
 
         lat   = f.set_construct(aux2, axes=[axisY, axisX])
         lon   = f.set_construct(aux3, axes=[axisX, axisY])
         greek = f.set_construct(aux4, axes=[axisY])
 
-        ak = f.set_construct(ak, axes=[axisZ])
+        ak = f.set_construct(ak, axes=axisZ)
         bk = f.set_construct(bk, axes=[axisZ])
 
         # Coordinate references
@@ -150,7 +150,7 @@ class create_fieldTest(unittest.TestCase):
         g = g.squeeze()
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryB'
-        f.set_construct(anc, axes=[axisX])
+        f.set_construct(anc, axes=axisX)
 
         g = f[..., 0]
         g = g.squeeze()
@@ -163,7 +163,7 @@ class create_fieldTest(unittest.TestCase):
         f.set_property('flag_meanings', 'a bb ccc')
         f.set_property('flag_masks', [2, 1, 0])
 
-        cm0 =  cfdm.CellMethod(axes=[axisX],
+        cm0 =  cfdm.CellMethod(axes=axisX,
                                method='mean',
                                properties={'interval': [cfdm.Data(1, 'day')],
                                            'comment' : 'ok'})

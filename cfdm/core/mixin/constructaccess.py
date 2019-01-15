@@ -384,13 +384,16 @@ False
         *Example:*
           ``key='cellmeasure0'``
 
-    axes: sequence of `str`, optional
+    axes: (sequence of) `str`, optional
         The construct identifiers of the domain axis constructs
         spanned by the data array. An exception is raised if used for
         a metadata construct that can not have a data array,
         i.e. domain axis, cell method and coordinate reference
         constructs.
 
+        *Example:*
+          ``axes='domainaxis1'``
+        
         *Example:*
           ``axes=['domainaxis1']``
         
@@ -410,7 +413,7 @@ False
 
 >>> key = f.set_construct(c)
 >>> key = f.set_construct(c, copy=False)
->>> key = f.set_construct(c, axes=['domainaxis2'])
+>>> key = f.set_construct(c, axes='domainaxis2')
 >>> key = f.set_construct(c, key='cellmeasure0')
 
         '''
@@ -435,11 +438,14 @@ array.
         *Example:*
           ``key='dimensioncoordinate2'``
 
-     axes: sequence of `str`
+     axes: (sequence of) `str`
         The construct identifiers of the domain axis constructs
         spanned by the data array.
 
         The axes may also be set with the `set_construct` method.
+
+        *Example:*
+          ``axes='domainaxis1'``
 
         *Example:*
           ``axes=['domainaxis1']``
@@ -454,7 +460,7 @@ array.
 **Examples:**
 
 >>> key = f.set_construct(c)
->>> f.set_construct_data_axes(key, axes=['domainaxis1'])
+>>> f.set_construct_data_axes(key, axes='domainaxis1')
 
         '''
         return self._get_constructs().set_construct_data_axes(key, axes)

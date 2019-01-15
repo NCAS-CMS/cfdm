@@ -343,8 +343,8 @@ object.
 #...                     axes=['domainaxis1'])
 #
 #        '''
-#        key = self.get_construct_id(description=description, cid=cid,
-#                                    construct_type=construct_type,
+#        key = self.get_construc_key(description=description, cid=cid,
+#                                     construct_type=construct_type,
 #                                    axes=axes)
 #        if key is None:
 #            raise ValueError("No such construct {} {} {}".format(description, construct_type, axes))
@@ -529,9 +529,10 @@ criteria.
         return default
     #--- End: def
     
-    def get_construct_data_axes(self, description=None, cid=None,
-                                axes=None, construct_type=None,
-                                default=ValueError):
+    def get_construct_data_axes(self, name=None, properties=None,
+                                measure=None, ncvar=None, key=None,
+                                axis=None, construct_type=None,
+                                default=ValueError()):
         '''Return the domain axes spanned by a metadata construct data array.
 
 The construct is selected via optional parameters. The *unique*
@@ -670,9 +671,10 @@ None
 'no axes'
 
         '''
-        cid = self.get_construct_id(description=description, cid=cid,
-                                    construct_type=construct_type,
-                                    axes=axes, default=None)
+        cid = self.get_construct_key(name=name, key=key,
+                                     measure=measure, ncvar=ncvar,
+                                     construct_type=construct_type,
+                                     axis=axis, default=default)
 
         if cid is None:
             return self._default(default, 'No unique construct meets criteria')
@@ -984,7 +986,7 @@ returned.
 .. versionadded:: 1.7.0
 
 .. seealso:: `del_construct`, `get_construct`,
-             `get_construct_data_axes`, `get_construct_id`,
+             `get_construct_data_axes`, `get_construct_key`,
              `has_construct`, `set_construct`
 
 :Parameters:
