@@ -9,7 +9,8 @@ import numpy
 
 import cfdm
 
-verbose = False
+verbose  = False
+warnings = False
 
 class create_fieldTest_2(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -242,7 +243,8 @@ class create_fieldTest_2(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
-        g = cfdm.read(self.filename, verbose=verbose, extra=['domain_ancillary'])
+        g = cfdm.read(self.filename, verbose=verbose,
+                      extra=['domain_ancillary'], warnings=warnings)
         if verbose:
             for x in g:
                 x.print_read_report()

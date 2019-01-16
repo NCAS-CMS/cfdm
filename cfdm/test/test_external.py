@@ -223,7 +223,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(g[0].get_construct('measure%area').nc_external())
 
         cfdm.write(g, self.tempfilename_parent,
-                   external_file=self.tempfilename_external,
+                   external=self.tempfilename_external,
                    verbose=False)
 
         h = cfdm.read(self.tempfilename_parent, verbose=False)

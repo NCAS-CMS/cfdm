@@ -195,14 +195,15 @@ method of a field construct.
          Specify conventions to be recorded by the netCDF global
          "Conventions" attribute. These conventions are in addition to
          version of CF being used e.g. ``'CF-1.7'``, which must not be
-         specified. Note that a convention name is not allowed to
-         contain any commas.
+         specified. If the "Conventions" property is set on a field
+         construct then it is ignored. Note that a convention name is
+         not allowed to contain any commas.
 
          *Example:*
-            ``Conventions='TODO'``
+            ``Conventions='UGRID-1.0'``
 
          *Example:*
-            ``Conventions=['TODO', 'TODO']``
+            ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
 
     datatype: `dict`, optional
         Specify data type conversions to be applied prior to writing

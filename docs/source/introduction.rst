@@ -104,7 +104,8 @@ not strict about CF-compliance, however, so that partially conformant
 datasets may be modified in memory, as well as ingested from existing
 datasets and written to new datasets. However, when reading datasets,
 it requires CF-compliance only to the extent necessary to interpret
-the dataset, reporting errors that prevent it from working.
+the dataset. This is so that datasets which are partially conformant
+may nonetheless be modified in memory and written to new datasets.
 
 The cfdm package can
 

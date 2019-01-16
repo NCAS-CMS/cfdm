@@ -67,7 +67,6 @@ the CF-netCDF data variables in the file.
 
 All formats of netCDF3 and netCDF4 files can be read.
 
-
 For example, to read the file ``file.nc`` (:download:`download
 <netcdf_files/file.nc>`, 9kB) [#files]_, which contains two field
 constructs:
@@ -97,6 +96,14 @@ The `cfdm.read` function has optional parameters to
   netCDF variables <Creation-by-reading>`, i.e. those that are
   referenced from CF-netCDF data variables, but which are not regarded
   by default as data variables in their own right.
+
+CF-compliance is required when reading only to the extent necessary to
+interpret the dataset. If it is not possible to unambiguously map an
+element of the netCDF dataset to an element of the CF data model, then
+a field construct is still returned, but may be incomplete. This is so
+that datasets which are partially conformant may nonetheless be
+modified in memory and written to new datasets. By default,
+`cfdm.read` does not report such "structural" non-CF-compliance.
 
 .. _Inspection:
 
@@ -1599,10 +1606,12 @@ method of the field construct.
 The "Conventions" property is not set because it is automatically
 included in output files as a netCDF global "Conventions" attribute
 corresponding to the version number of CF being used, as returned by
-the `cfdm.CF` function. For example, a CF version of ``'1.7'`` will
-produce a "Conventions" attribute value of ``'CF-1.7'``. Additional
-conventions can be added with the "Conventions" parameter of the
-`cfdm.write` function.
+the `cfdm.CF` function. If the "Conventions" property is set on a
+field construct then it is ignored during the write process. For
+example, a CF version of ``'1.7'`` will produce a netCDF global
+"Conventions" attribute value of ``'CF-1.7'``. Additional conventions
+can be added with the "Conventions" parameter of the `cfdm.write`
+function.
 
 If this field were to be written to a netCDF dataset then, in the
 absence of pre-defined names, default netCDF variable and dimension
@@ -1918,9 +1927,14 @@ construct that has fewer metadata constructs than one created with the
 `~Field.convert` method.
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Read the file, treating formula terms netCDF variables
+             (which map to domain axis constructs) as CF-netCDF data
+             variables. (The "warnings" parameter has been used to
+             suppress warnings relating to the fact that
+             "formula_terms" attributecan not apply to the
+             extra one-dimensional field constructs.)*
 
-   >>> fields = cfdm.read('tas.nc', extra='domain_ancillary')
+   >>> fields = cfdm.read('tas.nc', extra='domain_ancillary', warnings=False)
    >>> fields
    [<Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m>,
     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
@@ -3067,7 +3081,6 @@ The content of the new file is:
                   occasions when the original abstract meaning is
                   intended.
 	    
-
 .. External links to the CF conventions (will need updating with new version of CF)
    
 .. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#external-variables

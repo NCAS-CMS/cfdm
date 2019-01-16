@@ -64,7 +64,7 @@ implementation = CFDMImplementation(
 )
 
 def read(filename, external=None, extra=None, verbose=False,
-         warnings=True, _implementation=implementation):
+         warnings=False, _implementation=implementation):
     '''Read field constructs from a dataset.
 
 The dataset may be a netCDF file on disk or on an OPeNDAP server.
@@ -169,19 +169,17 @@ a field construct.
         constructs.
 
     warnings: `bool`, optional
-        If False then do not print warnings when an output field
-        construct is incomplete due to "structural non-CF-compliance"
-        of the dataset. By default such warnings are displayed.
+        If True then print warnings when an output field construct is
+        incomplete due to "structural non-CF-compliance" of the
+        dataset. By default such warnings are not displayed.
 
         Structural non-CF-compliance occurs when it is not possible to
         unambiguously map an element of the netCDF dataset to an
-        element of the CF data model. Other type on non-CF-compliance
-        are not checked, for example, whether or not controlled
+        element of the CF data model. Other types of non-CF-compliance
+        are not checked. For example, whether or not controlled
         vocabularies have been adhered to is not checked.
         
     _implementation: optional
-        *WARNING*
-
         TODO
 
 :Returns:
