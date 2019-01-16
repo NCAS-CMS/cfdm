@@ -189,6 +189,7 @@ False
 >>> print(d.del_size(None))
 None
 >>> print(d.get_size(None))
+None
 
         '''
         return self._get_component('size', *default)

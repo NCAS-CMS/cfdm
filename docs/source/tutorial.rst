@@ -967,12 +967,19 @@ be checked with the `~Field.has_construct` method and a construct may
 be removed with the `~Field.del_construct` method.
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Check the existence of, and retrieve, the "latitude"
+             metadata construct.*
 
    >>> t.has_construct('latitude')
    True
    >>> t.get_construct('latitude')
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+
+.. code-block:: python
+   :caption: *Get the metadata construct with units of "km2", find its
+             name and then check that it can be also be retrieved via
+             its name.*
+
    >>> c = t.get_construct('units:km2')
    >>> c
    <CellMeasure: measure%area(9, 10) km2>
@@ -980,11 +987,19 @@ be removed with the `~Field.del_construct` method.
    'measure%area'
    >>> t.get_construct('measure%area')
    <CellMeasure: measure%area(9, 10) km2>
+   
+.. code-block:: python
+   :caption: *By default an exception is raised if there is not a
+             unique construct that meets the criteria. Alternatively,
+             the value of the "default" parameter is returned.*
+	     
+   >>> t.get_construct(measure='volume')
+   ValueError: No construct meets criteria
    >>> t.constructs('units:degrees')
    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
-   >>> t.get_construct('units:degrees')
-   ValueError: More than one construct meets criteria
+   >>> print(t.get_construct('units:degrees', default=None))
+   None
    >>> t.has_construct('units:degrees')
    False
 
@@ -1007,7 +1022,8 @@ Metadata constructs share the :ref:`same API as the field construct
 <Properties>` for accessing their properties:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Retrieve the "longitude" metadata construct, set a new
+             property, and then inspect all of the properties.*
 
    >>> lon = q.get_construct('longitude')   
    >>> lon
@@ -1017,8 +1033,6 @@ Metadata constructs share the :ref:`same API as the field construct
    {'units': 'degrees_east',
     'long_name': 'Longitude',
     'standard_name': 'longitude'}
-   >>> lon.name()
-   'longitude'
 
 .. _Metadata-construct-data:
 
@@ -1029,8 +1043,10 @@ Metadata constructs share the :ref:`a similar API as the field
 construct <Data>` as the field construct for accessing their data:
 
 .. code-block:: python
-   :caption: TODO
-
+   :caption: *Retrieve the "longitude" metadata construct, inspect its
+             data, change the third element of the array, and get the
+             data as a numpy array.*
+	     
    >>> lon = q.get_construct('longitude')   
    >>> lon
    <DimensionCoordinate: longitude(8) degrees_east>
@@ -1145,13 +1161,21 @@ All of the methods and attributes related to the domain are listed
 ----
 
 A domain axis metadata construct specifies the number of points along
-an independent axis of the field construct's domain.
+an independent axis of the field construct's domain and is stored in a
+`~cfdm.DomainAxis` instance. The size of the axis is retrieved with
+the `~cfdm.DomainAxis.get_size()` method of the domain axis construct.
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Get the size of a domain axis construct.*
 
-   <TODO>
-   
+   >>> q.domain_axes()
+   {'domainaxis0': <DomainAxis: 5>,
+    'domainaxis1': <DomainAxis: 8>,
+    'domainaxis2': <DomainAxis: 1>}
+   >>> d = q.get_construct(key='domainaxis1')
+   >>> d.get_size()
+   8
+
 .. _Coordinates:
 		
 **Coordinates**
@@ -1463,13 +1487,11 @@ The domain axis constructs spanned by a metadata construct's data may
 be changed after insertion with the `~Field.set_construct_data_axes`
 method of the field construct.
 
-The following code creates a field construct with properties; data;
-and domain axis, cell method and dimension coordinate metadata
-constructs (data arrays have been generated with dummy values using
-`numpy.arange`):
-
 .. code-block:: python
-   :caption: TODO
+   :caption: *Create a field construct with properties; data; and
+             domain axis, cell method and dimension coordinate
+             metadata constructs (data arrays have been generated with
+             dummy values using numpy.arange).*
 
    import numpy
    import cfdm
@@ -1537,10 +1559,8 @@ constructs (data arrays have been generated with dummy values using
    Q.set_construct(dimY, axes=axisY)
    Q.set_construct(dimX, axes=axisX)
 
-The new field construct may now be inspected:
-
 .. code-block:: python
-   :caption: TODO
+   :caption: *Inspect the new field construct.* 
 	  
    >>> Q.dump()
    ------------------------
@@ -1581,16 +1601,17 @@ automatically included in output files as a netCDF global
 "Conventions" attribute corresponding to the version number of CF
 being used, as returned by the `cfdm.CF` function. For example, a CF
 version of ``'1.7'`` will produce a "Conventions" attribute value of
-``'CF-1.7'``.
+``'CF-1.7'``. TODO
 
 If this field were to be written to a netCDF dataset then, in the
 absence of pre-defined names, default netCDF variable and dimension
 names would be automatically generated (based on standard names where
 they exist). The setting of bespoke names is, however, easily done
-with the :ref:`netCDF interface <NetCDF-interface>`:
+with the :ref:`netCDF interface <NetCDF-interface>`.
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Set netCDF variable and dimension names for the field
+             and metadata constructs.*
 
    Q.nc_set_variable('q')
 
@@ -1607,7 +1628,8 @@ contains every type of metadata construct (again, data arrays have
 been generated with dummy values using `numpy.arange`):
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Create a field construct that contains at least one
+             instance of each type of metadata construct.*
 
    import numpy
    import cfdm
@@ -1761,7 +1783,7 @@ been generated with dummy values using `numpy.arange`):
 The new field construct may now be inspected:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Inspect the new field construct.*
 
    >>> print(tas)
    Field: air_temperature
@@ -1782,17 +1804,18 @@ The new field construct may now be inspected:
    Domain ancils   : domainancillary0(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                    : domainancillary1(atmosphere_hybrid_height_coordinate(1)) = [20.0] 1
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] m
-
+		  
+.. _Creating-data-from-an-array-on-disk:
 
 Creating data from an array on disk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-All the of above examples created construct data from arrays that are
-already in memory. It is, however, possible to create data from arrays
-that reside on disk. The `cfdm.read` function creates data in this
-manner. A pointer to an array on disk is stored in a
-`~cfdm.NetCDFArray` instance, which is is used in turn to initialize a
-`~cfdm.Data` instance.
+All the of above examples use arrays in memory to construct the data
+instances for the field and metadata constructs. It is, however,
+possible to create data from arrays that reside on disk. The
+`cfdm.read` function creates data in this manner. A pointer to an
+array in a netCDF file can be stored in a `~cfdm.NetCDFArray`
+instance, which is is used to initialize a `~cfdm.Data` instance.
 
 .. code-block:: python
    :caption: *Define a variable from a dataset with the netCDF package
@@ -1800,8 +1823,8 @@ manner. A pointer to an array on disk is stored in a
              initialize a Data instance.*
 		
    >>> nc = netCDF4.Dataset('file.nc', 'r')
-   >>> v = nc.variables['tas']
-   >>> netcdf_array = cfdm.NetCDFArray(filename='file.nc', ncvar='tas',
+   >>> v = nc.variables['ta']
+   >>> netcdf_array = cfdm.NetCDFArray(filename='file.nc', ncvar='ta',
    ...	                               dtype=v.dtype, ndim=v.ndim,
    ...	     		  	       shape=v.shape, size=v.size)
    >>> data_disk = cfdm.Data(netcdf_array)
@@ -1820,9 +1843,10 @@ manner. A pointer to an array on disk is stored in a
 Note that data type, number of dimensions, dimension sizes and number
 of elements of the array on disk that are used to initialize the
 `~cfdm.NetCDFArray` instance are those expected by the CF data model,
-which may be different to those of the netCDF variable in the
-file. For example, a netCDF character array of shape ``(12, 9)`` is
-viewed in cfdm as a one-dimensional string array of shape ``(12,)``.
+which may be different to those of the netCDF variable in the file
+(although they are the same in the above example). For example, a
+netCDF character array of shape ``(12, 9)`` is viewed in cfdm as a
+one-dimensional string array of shape ``(12,)``.
 
 .. _Creation-by-conversion:
 
