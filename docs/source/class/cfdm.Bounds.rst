@@ -21,24 +21,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.Bounds.dump
-   ~cfdm.Bounds.get_array
-   ~cfdm.Bounds.get_data
-   ~cfdm.Bounds.has_data
-   ~cfdm.Bounds.get_property
-   ~cfdm.Bounds.has_property
-   ~cfdm.Bounds.properties
-   ~cfdm.Bounds.inherited_properties
    ~cfdm.Bounds.name
    
-.. rubric:: Attributes
-   
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cfdm.Bounds.data
-
 Properties
 ----------
 
@@ -52,8 +36,9 @@ Properties
    ~cfdm.Bounds.del_property
    ~cfdm.Bounds.get_property
    ~cfdm.Bounds.has_property
-   ~cfdm.Bounds.properties
    ~cfdm.Bounds.set_property
+   ~cfdm.Bounds.properties
+   ~cfdm.Bounds.inherited_properties
 
 Data
 ----
@@ -65,12 +50,15 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Bounds.del_data
    ~cfdm.Bounds.get_array
+   ~cfdm.Bounds.del_data
    ~cfdm.Bounds.get_data
    ~cfdm.Bounds.has_data
    ~cfdm.Bounds.set_data
-   
+   ~cfdm.Bounds.expand_dims
+   ~cfdm.Bounds.squeeze
+   ~cfdm.Bounds.transpose
+
 .. rubric:: Attributes
    
 .. autosummary::
@@ -79,25 +67,6 @@ Data
    :template: attribute.rst
 
    ~cfdm.Bounds.data
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.Bounds.del_data
-   ~cfdm.Bounds.del_property
-   ~cfdm.Bounds.expand_dims
-   ~cfdm.Bounds.properties
-   ~cfdm.Bounds.set_data
-   ~cfdm.Bounds.set_property
-   ~cfdm.Bounds.squeeze
-   ~cfdm.Bounds.transpose
 
 Miscellaneous
 -------------
@@ -111,8 +80,6 @@ Miscellaneous
 
    ~cfdm.Bounds.copy
    ~cfdm.Bounds.equals
-
-
 
 NetCDF
 ------

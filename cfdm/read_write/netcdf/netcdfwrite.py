@@ -2311,8 +2311,8 @@ write them to the netCDF4.Dataset.
             global_attributes.update(f_global)
 
         # ------------------------------------------------------------
-        # Remove attributes that have been specifically requested not
-        # to be global attributes
+        # Remove attributes that have been specifically requested to
+        # not be global attributes
         # ------------------------------------------------------------
         global_attributes.difference(g['variable_attributes'])
             
@@ -2337,10 +2337,33 @@ write them to the netCDF4.Dataset.
         #--- End: for
 
         # ------------------------------------------------------------
-        # Write the global attributes to the file
+        # Write the Conventions global attribute to the file
         # ------------------------------------------------------------
-        g['netcdf'].setncattr('Conventions', 'CF-'+self.implementation.get_cf_version())
+        Conventions = ['CF-'+self.implementation.get_cf_version()]
+        delimiter = ' '
         
+        if g['Conventions']:
+            if isinstance(g['Conventions'], basestring):
+                g['Conventions'] = [g['Conventions']]
+
+            if [x for x in g['Conventions'] if ',' in x]:
+                raise ValueError("Conventions can not contain commas: {0}".format(
+                    g['Conventions']))
+
+            Conventions += list(g['Conventions'])
+            
+            if [x for x in g['Conventions'] if ' ' in x]:
+                # One of the conventions contains blanks space, so
+                # join them with commas.
+                delimiter = ','
+        #--- End: if
+        
+        g['netcdf'].setncattr('Conventions', delimiter.join(Conventions))
+#        g['netcdf'].setncattr('Conventions', 'CF-'+self.implementation.get_cf_version())
+        
+        # ------------------------------------------------------------
+        # Write the other global attributes to the file
+        # ------------------------------------------------------------
         for attr in global_attributes - set(('Conventions',)):
             g['netcdf'].setncattr(attr, self.implementation.get_property(f0, attr)) 
             
@@ -2422,7 +2445,7 @@ write them to the netCDF4.Dataset.
 
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
               global_attributes=None, variable_attributes=None,
-              external_file=None, datatype=None,
+              external=None, Conventions=None, datatype=None,
               least_significant_digit=None, endian='native',
               compress=0, fletcher32=False, shuffle=True, scalar=True,
               HDF_chunks=None, extra_write_vars=None, verbose=False):
@@ -2570,6 +2593,9 @@ and auxiliary coordinate roles for different data variables.
             # Print statements
             'verbose': False,
 
+            # Extra Conventions
+            'Conventions': Conventions,
+            
             'xxx': [],
 
             'count_variable_sample_dimension': {},
@@ -2658,12 +2684,12 @@ and auxiliary coordinate roles for different data variables.
         # ---------------------------------------------------------------
         filename = os.path.expanduser(os.path.expandvars(filename))
         
-        if external_file is not None:
-            external_file = os.path.expanduser(os.path.expandvars(external_file))
-            if os.path.realpath(external_file) == os.path.realpath(filename):
-                raise ValueError("Can't set filename and external_file to the same path")
+        if external is not None:
+            external = os.path.expanduser(os.path.expandvars(external))
+            if os.path.realpath(external) == os.path.realpath(filename):
+                raise ValueError("Can't set filename and external to the same path")
         #--- End: if
-        g['external_file'] = external_file
+        g['external_file'] = external
 
         if os.path.isfile(filename):
             if not overwrite:
@@ -2747,7 +2773,7 @@ and auxiliary coordinate roles for different data variables.
                        fmt=fmt,
                        overwrite=overwrite,
                        datatype=datatype,
-                       endian='native',
+                       endian=endian,
                        compress=compress,
                        fletcher32=fletcher32,
                        shuffle=shuffle,

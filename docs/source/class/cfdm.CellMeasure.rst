@@ -21,15 +21,7 @@ Inspection
    :template: method.rst
 
    ~cfdm.CellMeasure.dump
-   ~cfdm.CellMeasure.get_array
-   ~cfdm.CellMeasure.get_data
-   ~cfdm.CellMeasure.has_data
-   ~cfdm.CellMeasure.has_measure
-   ~cfdm.CellMeasure.get_measure
-   ~cfdm.CellMeasure.get_property
-   ~cfdm.CellMeasure.has_property
    ~cfdm.CellMeasure.name
-   ~cfdm.CellMeasure.properties
 
 .. rubric:: Attributes
    
@@ -39,7 +31,6 @@ Inspection
    :template: attribute.rst
 
    ~cfdm.CellMeasure.construct_type
-   ~cfdm.CellMeasure.data
 
 Properties
 ----------
@@ -53,14 +44,14 @@ Properties
 
 
    ~cfdm.CellMeasure.del_measure
-   ~cfdm.CellMeasure.del_property
    ~cfdm.CellMeasure.get_measure
-   ~cfdm.CellMeasure.get_property
    ~cfdm.CellMeasure.has_measure
-   ~cfdm.CellMeasure.has_property
-   ~cfdm.CellMeasure.properties
    ~cfdm.CellMeasure.set_measure
+   ~cfdm.CellMeasure.del_property
+   ~cfdm.CellMeasure.get_property
+   ~cfdm.CellMeasure.has_property
    ~cfdm.CellMeasure.set_property
+   ~cfdm.CellMeasure.properties
 
 Data
 ----
@@ -77,7 +68,10 @@ Data
    ~cfdm.CellMeasure.get_data
    ~cfdm.CellMeasure.has_data
    ~cfdm.CellMeasure.set_data
-   
+   ~cfdm.CellMeasure.expand_dims
+   ~cfdm.CellMeasure.squeeze
+   ~cfdm.CellMeasure.transpose
+
 .. rubric:: Attributes
    
 .. autosummary::
@@ -86,27 +80,6 @@ Data
    :template: attribute.rst
 
    ~cfdm.CellMeasure.data
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.CellMeasure.del_data
-   ~cfdm.CellMeasure.del_measure
-   ~cfdm.CellMeasure.del_property
-   ~cfdm.CellMeasure.expand_dims
-   ~cfdm.CellMeasure.properties
-   ~cfdm.CellMeasure.set_measure
-   ~cfdm.CellMeasure.set_data
-   ~cfdm.CellMeasure.set_property
-   ~cfdm.CellMeasure.squeeze
-   ~cfdm.CellMeasure.transpose
 
 Miscellaneous
 -------------
@@ -120,8 +93,6 @@ Miscellaneous
 
    ~cfdm.CellMeasure.copy
    ~cfdm.CellMeasure.equals
-
-
 
 NetCDF
 ------

@@ -17,7 +17,7 @@ implementation = CFDMImplementation(cf_version=CF(),
 
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           global_attributes=None, variable_attributes=None,
-          external_file=None, datatype=None,
+          external=None, Conventions=None, datatype=None,
           least_significant_digit=None, endian='native', compress=0,
           fletcher32=False, shuffle=True, HDF_chunksizes=None,
           verbose=False, _implementation=implementation):
@@ -57,9 +57,7 @@ or netCDF data variable attributes. See the *global_attributes* and
 Metadata constructs marked as external are omitted from the file and
 referred to via the netCDF "external_variables" global
 attribute. However, omitted constructs may be written to an external
-file (see the *external_file* parameter for details). Constructs that
-are allowed to be external have the `!nc_external` method to get and
-set their external status:
+file (see the *external* parameter for details).
 
 **NetCDF unlimited dimensions**
 
@@ -181,18 +179,30 @@ method of a field construct.
          variables. See the *global_attributes* parameter for details.
 
          Any property named by the *variable_attributes* parameter
-         will always be created as a netCDF data variable attribute.
-
+         will always be created as a netCDF data variable attribute
          *Example:*
             ``variable_attributes='project'``
 
          *Example:*
             ``variable_attributes=['project', 'doi']``
 
-    external_file: `str`, optional   
+    external: `str`, optional   
         Write metadata constructs that have data and are marked as
         external to the named external file. Ignored if there are no
         such constructs.
+
+    Conventions: (sequence of) `str`, optional
+         Specify conventions to be recorded by the netCDF global
+         "Conventions" attribute. These conventions are in addition to
+         version of CF being used e.g. ``'CF-1.7'``, which must not be
+         specified. Note that a convention name is not allowed to
+         contain any commas.
+
+         *Example:*
+            ``Conventions='TODO'``
+
+         *Example:*
+            ``Conventions=['TODO', 'TODO']``
 
     datatype: `dict`, optional
         Specify data type conversions to be applied prior to writing
@@ -208,7 +218,6 @@ method of a field construct.
         output data types.
 
         *Example:*
-
           To convert 64-bit integers to 32-bit integers:
           ``datatype={numpy.dtype('int64'): numpy.dtype('int32')}``.
        
@@ -265,7 +274,6 @@ method of a field construct.
         <http://unidata.github.io/netcdf4-python>`_ for more details.
 
     HDF_chunksizes: `dict`, optional
-
         Manually specify HDF5 chunks for the field construct data
         arrays.
 
@@ -315,7 +323,7 @@ method of a field construct.
 
 >>> cfdm.write(f, 'file.nc')
 >>> cfdm.write(f, 'file.nc', fmt='NETCDF3_CLASSIC')
->>> cfdm.write(f, 'file.nc', external_file='cell_measures.nc')
+>>> cfdm.write(f, 'file.nc', external='cell_measures.nc')
 
     '''
     # ----------------------------------------------------------------
@@ -327,7 +335,7 @@ method of a field construct.
         netcdf.write(fields, filename, fmt=fmt, overwrite=overwrite,
                      global_attributes=global_attributes,
                      variable_attributes=variable_attributes,
-                     external_file=external_file,
+                     external=external, Conventions=Conventions,
                      datatype=datatype,
                      least_significant_digit=least_significant_digit,
                      endian=endian, compress=compress,

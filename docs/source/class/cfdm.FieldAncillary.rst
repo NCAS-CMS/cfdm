@@ -21,14 +21,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.FieldAncillary.dump
-   ~cfdm.FieldAncillary.get_array
-   ~cfdm.FieldAncillary.get_data
-   ~cfdm.FieldAncillary.has_data
-   ~cfdm.FieldAncillary.get_property
-   ~cfdm.FieldAncillary.has_property
    ~cfdm.FieldAncillary.name
-   ~cfdm.FieldAncillary.properties
-
+   
 .. rubric:: Attributes
    
 .. autosummary::
@@ -37,7 +31,6 @@ Inspection
    :template: attribute.rst
 
    ~cfdm.FieldAncillary.construct_type
-   ~cfdm.FieldAncillary.data
 
 Properties
 ----------
@@ -52,8 +45,8 @@ Properties
    ~cfdm.FieldAncillary.del_property
    ~cfdm.FieldAncillary.get_property
    ~cfdm.FieldAncillary.has_property
-   ~cfdm.FieldAncillary.properties
    ~cfdm.FieldAncillary.set_property
+   ~cfdm.FieldAncillary.properties
 
 Data
 ----
@@ -65,12 +58,15 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.FieldAncillary.del_data
    ~cfdm.FieldAncillary.get_array
+   ~cfdm.FieldAncillary.del_data
    ~cfdm.FieldAncillary.get_data
    ~cfdm.FieldAncillary.has_data
    ~cfdm.FieldAncillary.set_data
-   
+   ~cfdm.FieldAncillary.expand_dims
+   ~cfdm.FieldAncillary.squeeze
+   ~cfdm.FieldAncillary.transpose
+
 .. rubric:: Attributes
    
 .. autosummary::
@@ -79,25 +75,6 @@ Data
    :template: attribute.rst
 
    ~cfdm.FieldAncillary.data
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.FieldAncillary.del_data
-   ~cfdm.FieldAncillary.del_property
-   ~cfdm.FieldAncillary.expand_dims
-   ~cfdm.FieldAncillary.properties
-   ~cfdm.FieldAncillary.set_data
-   ~cfdm.FieldAncillary.set_property
-   ~cfdm.FieldAncillary.squeeze
-   ~cfdm.FieldAncillary.transpose
 
 Miscellaneous
 -------------

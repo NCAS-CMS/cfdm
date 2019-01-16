@@ -49,8 +49,8 @@ Properties
    ~cfdm.Field.del_property
    ~cfdm.Field.get_property
    ~cfdm.Field.has_property
-   ~cfdm.Field.properties
    ~cfdm.Field.set_property
+   ~cfdm.Field.properties
 
 .. _Field-Data:
 

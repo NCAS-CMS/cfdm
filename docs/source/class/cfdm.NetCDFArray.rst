@@ -10,6 +10,9 @@ cfdm.NetCDFArray
    :no-members:
    :no-inherited-members:
 
+Inspection
+----------
+
 .. rubric:: Methods
 
 .. autosummary::
@@ -17,16 +20,13 @@ cfdm.NetCDFArray
    :toctree: ../method/
    :template: method.rst
    
-   ~NetCDFArray.close
-   ~NetCDFArray.copy
-   ~NetCDFArray.get_array
-   ~NetCDFArray.get_compressed_array
-   ~NetCDFArray.get_compressed_axes
-   ~NetCDFArray.get_compression_type
-   ~NetCDFArray.get_sample_axis
-   ~NetCDFArray.get_subspace
-   ~NetCDFArray.next
-   ~NetCDFArray.open
+
+   ~cfdm.NetCDFArray.get_array
+   ~cfdm.NetCDFArray.get_compressed_array
+   ~cfdm.NetCDFArray.get_compressed_axes
+   ~cfdm.NetCDFArray.get_compression_type
+   ~cfdm.NetCDFArray.get_sample_axis
+   ~cfdm.NetCDFArray.get_subspace
    
 .. rubric:: Attributes
 
@@ -34,12 +34,43 @@ cfdm.NetCDFArray
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
+   
+   ~cfdm.NetCDFArray.dtype
+   ~cfdm.NetCDFArray.ndim
+   ~cfdm.NetCDFArray.shape
+   ~cfdm.NetCDFArray.size
+   ~cfdm.NetCDFArray.ncvar
+   ~cfdm.NetCDFArray.varid
 
-   ~NetCDFArray.dtype
-   ~NetCDFArray.ncvar
-   ~NetCDFArray.ndim
-   ~NetCDFArray.shape
-   ~NetCDFArray.size
-   ~NetCDFArray.varid
+File
+----
    
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
+   ~cfdm.NetCDFArray.close
+   ~cfdm.NetCDFArray.open
+   
+Miscellaneous
+-------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~cfdm.NetCDFArray.copy
+   
+Special
+-------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~cfdm.NetCDFArray.__getitem__

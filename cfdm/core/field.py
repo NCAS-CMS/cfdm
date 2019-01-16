@@ -139,7 +139,7 @@ and institution).
 
 :Returns:
 
-    out: `Constucts`
+    `Constucts`
 
 **Examples:**
 
@@ -160,7 +160,7 @@ and institution).
         
 :Returns:
 
-    out: `str`
+    `str`
         The construct type.
 
         '''
@@ -179,7 +179,7 @@ and institution).
 
 :Returns:
 
-    out: `Domain`
+    `Domain`
         The domain.
 
 **Examples:**
@@ -197,8 +197,7 @@ True
     # Methods
     # ----------------------------------------------------------------
     def del_data_axes(self, *default):
-        '''Remove the identifiers of the domain axes spanned by the data
-array.
+        '''Remove the keys of the domain axes spanned by the data array.
 
 .. versionadded:: 1.7.0
 
@@ -211,8 +210,8 @@ array.
 
 :Returns:
 
-    out: `tuple` 
-        The removed identifiers of the domain axes spanned by the data
+    `tuple`
+        The removed keys of the domain axes spanned by the data
         array. If unset then *default* is returned, if provided.
 
 **Examples:**
@@ -240,7 +239,8 @@ None
 
 :Returns:
 
-    out: `Domain`
+    `Domain`
+        TODO
 
 **Examples:**
 
@@ -265,7 +265,7 @@ array.
 
 :Returns:
 
-    out: `tuple` 
+    `tuple` 
         The identifiers of the domain axes spanned by the data
         array. If unset then *default* is returned, if provided.
 
@@ -285,11 +285,8 @@ None
         return self._get_component('data_axes', *default)
     #--- End: def
     
-    def del_construct(self, cid):
+    def del_construct(self, key):
         '''Remove a metadata construct.
-
-If a removed domain axis construct is referenced by a cell method
-construct, then that reference is also removed.
 
 .. versionadded:: 1.7.0
 
@@ -297,28 +294,28 @@ construct, then that reference is also removed.
 
 :Parameters:
 
-    cid: `str`
+    key: `str`
         The construct identifier of the metadata construct to be
         removed.
 
         *Example:*
-          ``cid='auxiliarycoordinate0'``
+          ``key='auxiliarycoordinate0'``
         
 :Returns:
 
-    out: 
+    metadata construct
         The removed metadata construct.
 
 **Examples:**
 
-TODO
+>>> f.del_construct('auxiliarycoordinate0')
 
         '''
-        if cid in self.get_data_axes(()):
+        if key in self.get_data_axes(()):
             raise ValueError(
-                "Can't remove domain axis {!r} that is spanned by the field's data".format(cid))
+                "Can't remove domain axis {!r} that is spanned by the field's data".format(key))
 
-        return super().del_construct(cid=cid)
+        return super().del_construct(key)
     #--- End: def
 
     def set_data(self, data, axes, copy=True):

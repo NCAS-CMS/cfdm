@@ -1596,12 +1596,13 @@ method of the field construct.
        units = 'degrees_east'
        Data(longitude(8)) = [0.0, ..., 7.0] degrees_east
 
-It is not necessary to set the "Conventions" property, because this is
-automatically included in output files as a netCDF global
-"Conventions" attribute corresponding to the version number of CF
-being used, as returned by the `cfdm.CF` function. For example, a CF
-version of ``'1.7'`` will produce a "Conventions" attribute value of
-``'CF-1.7'``. TODO
+The "Conventions" property is not set because it is automatically
+included in output files as a netCDF global "Conventions" attribute
+corresponding to the version number of CF being used, as returned by
+the `cfdm.CF` function. For example, a CF version of ``'1.7'`` will
+produce a "Conventions" attribute value of ``'CF-1.7'``. Additional
+conventions can be added with the "Conventions" parameter of the
+`cfdm.write` function.
 
 If this field were to be written to a netCDF dataset then, in the
 absence of pre-defined names, default netCDF variable and dimension
