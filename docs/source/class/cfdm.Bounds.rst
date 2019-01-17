@@ -55,7 +55,7 @@ Data
    ~cfdm.Bounds.get_data
    ~cfdm.Bounds.has_data
    ~cfdm.Bounds.set_data
-   ~cfdm.Bounds.expand_dims
+   ~cfdm.Bounds.insert_dimension
    ~cfdm.Bounds.squeeze
    ~cfdm.Bounds.transpose
 

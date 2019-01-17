@@ -72,7 +72,7 @@ Data
    ~cfdm.Field.del_data_axes
    ~cfdm.Field.get_data_axes
    ~cfdm.Field.set_data_axes
-   ~cfdm.Field.expand_dims
+   ~cfdm.Field.insert_dimension
    ~cfdm.Field.squeeze
    ~cfdm.Field.transpose
    

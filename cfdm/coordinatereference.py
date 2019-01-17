@@ -268,8 +268,8 @@ constructs that contain the coordinate reference constructs in
 question. They are, however, taken into account when two fields
 constructs are tested for equality.
 
-Two real numbers ``a`` and ``b`` are considered equal if
-``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+Two real numbers ``x`` and ``y`` are considered equal if
+``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. The data type of the numbers
 is not taken into consideration. See the *atol* and *rtol* parameters.

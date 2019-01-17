@@ -1594,7 +1594,7 @@ extra trailing dimension.
     #--- End: def
     
     def _write_field(self, f, add_to_seen=False,
-                     allow_data_expand_dims=True):
+                     allow_data_insert_dimension=True):
         '''
     
 :Parameters:
@@ -1603,7 +1603,7 @@ extra trailing dimension.
 
     add_to_seen : bool, optional
 
-    allow_data_expand_dims: `bool`, optional
+    allow_data_insert_dimension: `bool`, optional
 
 :Returns:
 
@@ -1751,8 +1751,8 @@ extra trailing dimension.
     
                         # Expand the field's data array to include
                         # this domain axis
-                        f = self.implementation.field_expand_dims(f,
-                                                                  position=0, axis=axis) 
+                        f = self.implementation.field_insert_dimension(
+                                f, position=0, axis=axis) 
                     else:
                         # Scalar coordinate variables are being
                         # allowed; and there are NO auxiliary
@@ -1781,8 +1781,8 @@ extra trailing dimension.
                     # an auxiliary coordinate, cell measure, domain
                     # ancillary or field ancillary does, so expand the
                     # data array to include it.
-                    f = self.implementation.field_expand_dims(f,
-                                                              position=0, axis=axis)
+                    f = self.implementation.field_insert_dimension(
+                            f, position=0, axis=axis)
                     data_axes.append(axis)
     
                 # If the data array (now) spans this domain axis then create a

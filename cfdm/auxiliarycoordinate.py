@@ -143,8 +143,8 @@ Equality is strict by default. This means that:
   type, the same missing data mask, and be element-wise equal (see the
   *ignore_properties* and *ignore_data_type* parameters).
 
-Two real numbers ``a`` and ``b`` are considered equal if
-``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+Two real numbers ``x`` and ``y`` are considered equal if
+``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*
 parameters.

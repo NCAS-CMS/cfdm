@@ -54,7 +54,7 @@ Data
    ~cfdm.Count.get_data
    ~cfdm.Count.has_data
    ~cfdm.Count.set_data  
-   ~cfdm.Count.expand_dims
+   ~cfdm.Count.insert_dimension
    ~cfdm.Count.squeeze
    ~cfdm.Count.transpose
    

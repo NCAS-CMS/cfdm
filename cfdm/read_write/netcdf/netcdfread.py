@@ -1987,8 +1987,8 @@ variable should be pre-filled with missing values.
                         auxiliary_coordinate=coord,
                         copy=False)
 
-                    coord = self.implementation.construct_expand_dims(construct=coord,
-                                                                      position=0)
+                    coord = self.implementation.construct_insert_dimension(
+                                construct=coord, position=0)
                     
                     domain_axis = self._create_domain_axis(
                         self.implementation.get_construct_data_size(coord))

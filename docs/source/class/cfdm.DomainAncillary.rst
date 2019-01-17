@@ -63,7 +63,7 @@ Data
    ~cfdm.DomainAncillary.get_data
    ~cfdm.DomainAncillary.has_data
    ~cfdm.DomainAncillary.set_data
-   ~cfdm.DomainAncillary.expand_dims
+   ~cfdm.DomainAncillary.insert_dimension
    ~cfdm.DomainAncillary.squeeze
    ~cfdm.DomainAncillary.transpose
    

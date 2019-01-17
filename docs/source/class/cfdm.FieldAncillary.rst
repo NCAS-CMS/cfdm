@@ -63,7 +63,7 @@ Data
    ~cfdm.FieldAncillary.get_data
    ~cfdm.FieldAncillary.has_data
    ~cfdm.FieldAncillary.set_data
-   ~cfdm.FieldAncillary.expand_dims
+   ~cfdm.FieldAncillary.insert_dimension
    ~cfdm.FieldAncillary.squeeze
    ~cfdm.FieldAncillary.transpose
 

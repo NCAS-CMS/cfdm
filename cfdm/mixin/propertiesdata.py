@@ -195,8 +195,8 @@ Equality is strict by default. This means that:
   type, the same missing data mask, and be element-wise equal (see the
   *ignore_data_type* parameter).
 
-Two real numbers ``a`` and ``b`` are considered equal if
-``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+Two real numbers ``x`` and ``y`` are considered equal if
+``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*
 parameters.
@@ -340,7 +340,7 @@ False
         return True
     #--- End: def
 
-    def expand_dims(self, position=0):
+    def insert_dimension(self, position=0):
         '''Expand the shape of the data array.
 
 Inserts a new size 1 axis into the data array.
@@ -372,9 +372,9 @@ Inserts a new size 1 axis into the data array.
 
 >>> f.data.shape
 (19, 73, 96)
->>> f.expand_dims(position=3).data.shape
+>>> f.insert_dimension(position=3).data.shape
 (19, 73, 96, 1)
->>> f.expand_dims(position=-1).data.shape
+>>> f.insert_dimension(position=-1).data.shape
 (19, 73, 1, 96)
 
         '''       
@@ -382,7 +382,7 @@ Inserts a new size 1 axis into the data array.
 
         data = v.get_data(None)
         if data is not None:
-            v.set_data(data.expand_dims(position))
+            v.set_data(data.insert_dimension(position))
         
         return v
     #--- End: def
@@ -526,7 +526,7 @@ may be selected for removal.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `expand_dims`, `transpose`
+.. seealso:: `insert_dimension`, `transpose`
 
 :Parameters:
 
@@ -576,7 +576,7 @@ may be selected for removal.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `expand_dims`, `squeeze`
+.. seealso:: `insert_dimension`, `squeeze`
 
 :Parameters:
 

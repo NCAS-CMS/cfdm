@@ -55,8 +55,8 @@ Equality is strict by default. This means that:
   types, and vector-valued parameters must also have same the size and
   be element-wise equal (see the *ignore_data_type* parameter).
 
-Two real numbers ``a`` and ``b`` are considered equal if
-``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+Two real numbers ``x`` and ``y`` are considered equal if
+``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*
 parameters.

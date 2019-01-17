@@ -100,8 +100,8 @@ class CFDMImplementation(Implementation):
         )
     #--- End: def
 
-    def construct_expand_dims(self, construct, position):
-        '''
+    def construct_insert_dimension(self, construct, position):
+        '''TODO
 
 :Parameters:
 
@@ -116,7 +116,7 @@ class CFDMImplementation(Implementation):
     out: construct
 
         '''
-        return construct.expand_dims(position=position)
+        return construct.insert_dimension(position=position)
     #--- End: def
 
     def copy_construct(self, construct):
@@ -157,10 +157,10 @@ AttributeError: Field doesn't have property 'standard_name'
         return construct.del_property(prop, default)
     #--- End: def
 
-    def field_expand_dims(self, field, position=0, axis=None):
+    def field_insert_dimension(self, field, position=0, axis=None):
         '''
         '''
-        return field.expand_dims(position=position, axis=axis)
+        return field.insert_dimension(position=position, axis=axis)
     #--- End: def
 
     def get_array(self, data):

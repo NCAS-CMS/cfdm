@@ -849,8 +849,8 @@ metadata constructs and for each pair of constructs:
   type, the same missing data mask, and be element-wise equal (see the
   *ignore_data_type* parameter).
 
-Two real numbers ``a`` and ``b`` are considered equal if
-``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+Two real numbers ``x`` and ``y`` are considered equal if
+``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*
 parameters.
@@ -972,7 +972,7 @@ False
         return True
     #--- End: def
         
-    def expand_dims(self, axis, position=0):
+    def insert_dimension(self, axis, position=0):
         '''Expand the shape of the data array.
 
 Inserts a new size 1 axis, corresponding to an existing domain axis
@@ -1012,11 +1012,11 @@ construct, into the data array.
 
 >>> f.data.shape
 (19, 73, 96)
->>> f.expand_dims('domainaxis3').data.shape
+>>> f.insert_dimension('domainaxis3').data.shape
 (1, 96, 73, 19)
->>> f.expand_dims('domainaxis3', position=3).data.shape
+>>> f.insert_dimension('domainaxis3', position=3).data.shape
 (19, 73, 96, 1)
->>> f.expand_dims('domainaxis3', position=-1).data.shape
+>>> f.insert_dimension('domainaxis3', position=-1).data.shape
 (19, 73, 1, 96)
 
         '''
@@ -1040,7 +1040,7 @@ construct, into the data array.
         f.set_data_axes(data_axes)
 
         # Expand the dims in the field's data array
-        new_data = self.data.expand_dims(position)
+        new_data = self.data.insert_dimension(position)
         
         f.set_data(new_data, data_axes)
 
@@ -1049,7 +1049,7 @@ construct, into the data array.
 
     def convert(self, name=None, properties=None, measure=None,
                 ncvar=None, ncdim=None, key=None, axis=None,
-                construct_type=None, domain=True):
+                construct_type=None, full_domain=True):
         '''Return a new field construct based on a metadata construct.
 
 A unique metdata construct is identified with the *description* and
@@ -1065,7 +1065,7 @@ a domain limited to that which can be inferred from the corresponding
 netCDF variable, but without the connections that are defined by the
 parent netCDF data variable. This will usually result in different
 field constructs than are created with the `~Field.convert` method,
-regardless of the setting of the *domain* parameter.
+regardless of the setting of the *full_domain* parameter.
 
 .. versionadded:: 1.7.0
 
@@ -1138,14 +1138,14 @@ regardless of the setting of the *domain* parameter.
           construct with construct identifier "domainancillary0". This
           is equivalent to ``description='cid%domainancillary0'``.
 
-    domain: `bool`, optional
+    full_domain: `bool`, optional
         If False then do not create a domain, other than domain axis
         constructs, for the new field construct. By default as much of
         the domain as possible is copied to the new field construct.
 
 :Returns:
 
-    out: `Field`
+    `Field`
         The new field construct.
 
 **Examples:**
@@ -1185,7 +1185,7 @@ Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ...
                 : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
 Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
 Coord references: rotated_latitude_longitude
->>> y = f.convert('domainancillary2', domain=False)
+>>> y = f.convert('domainancillary2', full_domain=False)
 >>> print(y)
 Field: surface_altitude (ncvar%surface_altitude)
 ------------------------------------------------
@@ -1238,7 +1238,7 @@ The `~Field.convert` method has an option to only include domain axis
 constructs in the new field construct, with no other metadata
 constructs.
 
-   >>> orog1 = tas.convert('surface_altitude', domain=False) 
+   >>> orog1 = tas.convert('surface_altitude', full_domain=False) 
    >>> print(orog1)
    Field: surface_altitude
    -----------------------
@@ -1309,7 +1309,7 @@ that has fewer metadata constructs than one created with the
         # ------------------------------------------------------------
         # Add a more complete domain
         # ------------------------------------------------------------
-        if domain:
+        if full_domain:
             for construct_type in ('dimension_coordinate',
                                    'auxiliary_coordinate',
                                    'cell_measure'):
@@ -1412,7 +1412,7 @@ may be selected for removal.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `expand_dims`, `transpose`
+.. seealso:: `insert_dimension`, `transpose`
 
 :Parameters:
 
@@ -1494,7 +1494,7 @@ may be selected for removal.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `expand_dims`, `squeeze`
+.. seealso:: `insert_dimension`, `squeeze`
 
 :Parameters:
 

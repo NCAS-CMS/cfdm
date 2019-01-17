@@ -86,6 +86,25 @@ Domain axis constructs that correspond to NetCDF unlimited dimensions
 may be viewed with the `cfdm.Field.nc_unlimited_dimensions` method of
 a field construct.
 
+**CF-compliance**
+
+If the dataset is partially CF-compliant to the extent that it is not
+possible to unambiguously map an element of the netCDF dataset to an
+element of the CF data model, then a field construct is still
+returned, but may be incomplete. This is so that datasets which are
+partially conformant may nonetheless be modified in memory and written
+to new datasets.
+
+Such "structural" non-compliance would occur, for example, if the
+"coordinates" attribute of a CF-netCDF data variable refers to another
+variable that does not exist, or refers to a variable that spans a
+netCDF dimension that does not apply to the data variable. Other types
+of non-compliance are not checked, such whether or not controlled
+vocabularies have been adhered to. The structural compliance of the
+dataset may be checked with the `~cfdm.Field.structural_compliance`
+method of the field construct, as well as optionally displayed when
+the dataset is read by setting the *warnings* parameter.
+
 .. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.write`, `cfdm.Field.convert`,
@@ -115,7 +134,7 @@ a field construct.
         external variables.  
        
         If an external variable is not found in any external files, or
-        is found in multiple external files, then the relevent
+        is found in multiple external files, then the relevant
         metadata construct is still created, but without any metadata
         or data. In this case the construct's `!is_external` method
         will return `True`.
@@ -170,14 +189,8 @@ a field construct.
 
     warnings: `bool`, optional
         If True then print warnings when an output field construct is
-        incomplete due to "structural non-CF-compliance" of the
-        dataset. By default such warnings are not displayed.
-
-        Structural non-CF-compliance occurs when it is not possible to
-        unambiguously map an element of the netCDF dataset to an
-        element of the CF data model. Other types of non-CF-compliance
-        are not checked. For example, whether or not controlled
-        vocabularies have been adhered to is not checked.
+        incomplete due to structural non-compliance of the dataset. By
+        default such warnings are not displayed.
         
     _implementation: optional
         TODO

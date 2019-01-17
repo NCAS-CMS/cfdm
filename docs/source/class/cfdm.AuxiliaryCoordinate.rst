@@ -63,7 +63,7 @@ Data
    ~cfdm.AuxiliaryCoordinate.get_data
    ~cfdm.AuxiliaryCoordinate.has_data
    ~cfdm.AuxiliaryCoordinate.set_data
-   ~cfdm.AuxiliaryCoordinate.expand_dims
+   ~cfdm.AuxiliaryCoordinate.insert_dimension
    ~cfdm.AuxiliaryCoordinate.squeeze
    ~cfdm.AuxiliaryCoordinate.transpose
 

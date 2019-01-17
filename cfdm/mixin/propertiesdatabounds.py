@@ -234,8 +234,8 @@ Equality is strict by default. This means that:
   type, the same missing data mask, and be element-wise equal (see the
   *ignore_properties* and *ignore_data_type* parameters).
 
-Two real numbers ``a`` and ``b`` are considered equal if
-``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+Two real numbers ``x`` and ``y`` are considered equal if
+``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*
 parameters.
@@ -389,7 +389,7 @@ False
         return self._del_component('part_ncdim')
     #--- End: def
 
-    def expand_dims(self, position):
+    def insert_dimension(self, position):
         '''Expand the shape of the data array.
 
 Inserts a new size 1 axis into the data array. A corresponding axis is
@@ -422,9 +422,9 @@ also inserted into the bounds data array, if present.
 
 >>> f.data.shape
 (19, 73, 96)
->>> f.expand_dims(position=3).data.shape
+>>> f.insert_dimension(position=3).data.shape
 (96, 73, 19, 1)
->>> g = f.expand_dims(position=-1)
+>>> g = f.insert_dimension(position=-1)
 >>> g.data.shape
 (19, 73, 1, 96)
 >>> f.bounds.data.shape
@@ -435,21 +435,21 @@ also inserted into the bounds data array, if present.
         '''
         position = self._parse_axes([position])[0]
         
-        c = super().expand_dims(position)
+        c = super().insert_dimension(position)
         
         # ------------------------------------------------------------
         # Expand the dims of the bounds
         # ------------------------------------------------------------
         bounds = c.get_bounds(None)
         if bounds is not None:
-            c.set_bounds(bounds.expand_dims(position), copy=False)
+            c.set_bounds(bounds.insert_dimension(position), copy=False)
 
         # ------------------------------------------------------------
         # Expand the dims of the interior_ring
         # ------------------------------------------------------------
         interior_ring = c.get_interior_ring(None)
         if interior_ring is not None:
-            c.set_interior_ring(interior_ring.expand_dims(position), copy=False)
+            c.set_interior_ring(interior_ring.insert_dimension(position), copy=False)
 
         return c
     #--- End: def
@@ -551,7 +551,7 @@ the bounds data array, if present.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `expand_dims`, `transpose`
+.. seealso:: `insert_dimension`, `transpose`
 
 :Parameters:
 
@@ -625,7 +625,7 @@ columns 1 and 3 (counting from 0) of the bounds axis are swapped to
 preserve contiguity bounds in adjacent cells. See section 7.1 "Cell
 Boundaries" of the CF conventions for details.
 
-.. seealso:: `expand_dims`, `squeeze`
+.. seealso:: `insert_dimension`, `squeeze`
 
 :Parameters:
 

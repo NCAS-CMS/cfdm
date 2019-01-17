@@ -81,29 +81,45 @@ constructs:
    >>> len(x)
    2
 
-Descriptive properties are always read into memory, but lazy loading
-is employed for all data arrays, which means that no data is read into
-memory until the data is required for inspection or to modify the
-array contents. This maximises the number of field constructs that may
-be read within a session, and makes the read operation fast.
+Descriptive properties are always read into memory, but `lazy loading
+<https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all
+data arrays, which means that no data is read into memory until the
+data is required for inspection or to modify the array contents. This
+maximises the number of field constructs that may be read within a
+session, and makes the read operation fast.
 
 The `cfdm.read` function has optional parameters to
 
 * allow the user to provide files that contain :ref:`external
-  variables <External-variables>`, and
+  variables <External-variables>`;
 
 * request :ref:`extra field constructs to be created from "metadata"
   netCDF variables <Creation-by-reading>`, i.e. those that are
   referenced from CF-netCDF data variables, but which are not regarded
-  by default as data variables in their own right.
+  by default as data variables in their own right; and 
 
-CF-compliance is required when reading only to the extent necessary to
-interpret the dataset. If it is not possible to unambiguously map an
-element of the netCDF dataset to an element of the CF data model, then
-a field construct is still returned, but may be incomplete. This is so
-that datasets which are partially conformant may nonetheless be
-modified in memory and written to new datasets. By default,
-`cfdm.read` does not report such "structural" non-CF-compliance.
+* display information and warnings about the mapping of the netCDF
+  file contents to CF data amodel constructs.
+
+.. _CF-compliance:
+
+**CF-compliance**
+^^^^^^^^^^^^^^^^^
+  
+If the dataset is partially CF-compliant to the extent that it is not
+possible to unambiguously map an element of the netCDF dataset to an
+element of the CF data model, then a field construct is still
+returned, but may be incomplete. This is so that datasets which are
+partially conformant may nonetheless be modified in memory and written
+to new datasets. Such "structural" non-compliance would occur, for
+example, if the "coordinates" attribute of a CF-netCDF data variable
+refers to another variable that does not exist, or refers to a
+variable that spans a netCDF dimension that does not apply to the data
+variable. Other types of non-compliance are not checked, such whether
+or not controlled vocabularies have been adhered to. The structural
+compliance of the dataset may be checked with the
+`~cfdm.Field.structural_compliance` method of the field construct, as
+well as optionally displayed when the dataset is read.
 
 .. _Inspection:
 
@@ -748,25 +764,40 @@ The dimensions of a field construct's data may be reordered, have size
 one dimensions removed and have new new size one dimensions included
 by using the following field construct methods:
 
-====================  ================================================
-Method                Description
-====================  ================================================
-`~Field.transpose`    Reorder data dimensions
-`~Field.squeeze`      Remove size one data dimensions
-`~Field.expand_dims`  Insert a new size one data dimension. The new
-                      dimension must correspond to an existing size
-                      one domain axis construct.
-====================  ================================================
+=========================  ===========================================
+Method                     Description
+=========================  ===========================================
+`~Field.transpose`         Reorder data dimensions
+
+`~Field.squeeze`           Remove size one data dimensions
+	   
+`~Field.insert_dimension`  Insert a new size one data dimension. The
+                           new dimension must correspond to an
+                           existing size one domain axis construct.
+=========================  ===========================================
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Remove all size one dimensions from the data, noting
+             that metadata constructs which span the corresponding
+             domain axis construct are not affected.*
 
    >>> t
    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
-   >>> t2 = t.squeeze(0)
+   >>> t2 = t.squeeze()
    >>> t2
    <Field: air_temperature(grid_latitude(10), grid_longitude(9)) K>   
-   >>> t3 = t2.expand_dims(axis='domainaxis3', position=1)
+   >>> t2.dimension_coordinates()
+   {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+
+.. code-block:: python
+   :caption: *Insert a new size one dimension, corresponding to a size
+             one domain axis construct, and then reorder the
+             dimensions.*
+
+   >>> t3 = t2.insert_dimension(axis='domainaxis3', position=1)
    >>> t3
    <Field: air_temperature(grid_latitude(10), time(1), grid_longitude(9)) K>  
    >>> t3.transpose([2, 0, 1])
@@ -1374,18 +1405,20 @@ methods of methods of the cell method construct.
 
 There are three methods for creating a field construct in memory:
 
-* Manual creation: Instantiate instances of field and metadata construct
-  classes and manually provide the connections between them.
+* :ref:`Manual creation <Manual-creation>`: Instantiate instances of
+  field and metadata construct classes and manually provide the
+  connections between them.
 
 ..
 
-* Creation by conversion: Convert a single metadata construct already
-  in memory to an independent field construct
+* :ref:`Creation by conversion <Creation-by-conversion>`: Convert a
+  single metadata construct already in memory to an independent field
+  construct
 
 ..
   
-* Creation by reading: Create field constructs from the netCDF
-  variables in a dataset.
+* :ref:`Creation by reading <Creation-by-reading>`: Create field
+  constructs from the netCDF variables in a dataset.
 
 .. _Manual-creation:
 
@@ -1503,51 +1536,55 @@ method of the field construct.
    import numpy
    import cfdm
 
-   # Initialise the field with properties
+   # Initialise the field construct with properties
    Q = cfdm.Field(properties={'project': 'research',
                               'standard_name': 'specific_humidity',
                               'units': '1'})
 			      
-   # Create the domain axes
+   # Create the domain axis constructs
    domain_axisT = cfdm.DomainAxis(1)
    domain_axisY = cfdm.DomainAxis(5)
    domain_axisX = cfdm.DomainAxis(8)
 
-   # Insert the domain axes into the field. The set_construct method
-   # returns the domain axis construct key that will be used
-   # later to specify which domain axis corresponds to which dimension
-   # coordinate construct.  
+   # Insert the domain axis constructs into the field. The
+   # set_construct method returns the domain axis construct key that
+   # will be used later to specify which domain axis corresponds to
+   # which dimension coordinate construct.
    axisT = Q.set_construct(domain_axisT)
    axisY = Q.set_construct(domain_axisY)
    axisX = Q.set_construct(domain_axisX)
 
-   # Create and insert the field data
+   # Create and insert the field construct data
    data = cfdm.Data(numpy.arange(40.).reshape(5, 8))
    Q.set_data(data, axes=[axisY, axisX])
 
-   # Create the cell methods
+   # Create the cell method constructs
    cell_method1 = cfdm.CellMethod(axes='area', method='mean')
 
    cell_method2 = cfdm.CellMethod()
    cell_method2.set_axes(axisT)
    cell_method2.set_method('maximum')
 
-   # Insert the cell methods into the field in the same order that
-   # their methods were applied to the data
+   # Insert the cell method constructs into the field in the same
+   # order that their methods were applied to the data
    Q.set_construct(cell_method1)
    Q.set_construct(cell_method2)
 
-   # Create the dimension Coordinates
+   # Create a "time" dimension coordinate construct, with coordinate
+   # bounds
    dimT = cfdm.DimensionCoordinate(
                                properties={'standard_name': 'time',
                                            'units': 'days since 2018-12-01'},
                                data=cfdm.Data([15.5]),
                                bounds=cfdm.Bounds(data=cfdm.Data([[0,31.]])))
 
+   # Create a "longitude" dimension coordinate construct, without
+   # coordinate bounds
    dimX = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(8.)))
    dimX.properties({'standard_name': 'longitude',
                     'units': 'degrees_east'})
 
+   # Create a "longitude" dimension coordinate construct
    dimY = cfdm.DimensionCoordinate(properties={'standard_name': 'latitude',
 		                               'units': 'degrees_north'})
    array = numpy.arange(5.)
@@ -1560,8 +1597,8 @@ method of the field construct.
    bounds = cfdm.Bounds(data=cfdm.Data(bounds_array))
    dimY.set_bounds(bounds)
 
-   # Insert the dimension coordinates into the field, specifying to
-   # which domain axis each one corresponds
+   # Insert the dimension coordinate constructs into the field,
+   # specifying to # which domain axis each one corresponds
    Q.set_construct(dimT, axes=axisT)
    Q.set_construct(dimY, axes=axisY)
    Q.set_construct(dimX, axes=axisX)
@@ -1644,23 +1681,23 @@ been generated with dummy values using `numpy.arange`):
    import numpy
    import cfdm
    
-   # Initialize the field
+   # Initialize the field construct
    tas = cfdm.Field(
        properties={'project': 'research',
                    'standard_name': 'air_temperature',
                    'units': 'K'})
    
-   # Create and set domain axes
+   # Create and set domain axis constructs
    axis_T = tas.set_construct(cfdm.DomainAxis(1))
    axis_Z = tas.set_construct(cfdm.DomainAxis(1))
    axis_Y = tas.set_construct(cfdm.DomainAxis(10))
    axis_X = tas.set_construct(cfdm.DomainAxis(9))
    
-   # Set the field data
+   # Set the field construct data
    tas.set_data(cfdm.Data(numpy.arange(90.).reshape(10, 9)),
                 axes=[axis_Y, axis_X])
    
-   # Create and set the cell methods
+   # Create and set the cell method constructs
    cell_method1 = cfdm.CellMethod(
              axes=[axis_Y, axis_X],
 	     method='mean',
@@ -1672,7 +1709,7 @@ been generated with dummy values using `numpy.arange`):
    tas.set_construct(cell_method1)
    tas.set_construct(cell_method2)
    
-   # Create and set the field ancillaries
+   # Create and set the field ancillary constructs
    field_ancillary = cfdm.FieldAncillary(
                 properties={'standard_name': 'air_temperature standard_error',
                              'units': 'K'},
@@ -1680,7 +1717,7 @@ been generated with dummy values using `numpy.arange`):
    
    tas.set_construct(field_ancillary, axes=[axis_Y, axis_X])
    
-   # Create and set the dimension coordinates
+   # Create and set the dimension coordinate constructs
    dimension_coordinate_T = cfdm.DimensionCoordinate(
                               properties={'standard_name': 'time',
                                           'units': 'days since 2018-12-01'},
@@ -1710,7 +1747,7 @@ been generated with dummy values using `numpy.arange`):
    dim_Y = tas.set_construct(dimension_coordinate_Y, axes=axis_Y)
    dim_X = tas.set_construct(dimension_coordinate_X, axes=axis_X)
    
-   # Create and set the auxiliary coordinates
+   # Create and set the auxiliary coordinate constructs
    auxiliary_coordinate_lat = cfdm.AuxiliaryCoordinate(
                          properties={'standard_name': 'latitude',
                                      'units': 'degrees_north'},
@@ -1731,7 +1768,7 @@ been generated with dummy values using `numpy.arange`):
    aux_LON  = tas.set_construct(auxiliary_coordinate_lon, axes=[axis_X, axis_Y])
    aux_NAME = tas.set_construct(auxiliary_coordinate_name, axes=[axis_Y])
    
-   # Create and set domain ancillaries
+   # Create and set domain ancillary constructs
    domain_ancillary_a = cfdm.DomainAncillary(
                       properties={'units': 'm'},
                       data=cfdm.Data([10.]),
@@ -1751,23 +1788,19 @@ been generated with dummy values using `numpy.arange`):
    domain_anc_B    = tas.set_construct(domain_ancillary_b, axes=axis_Z)
    domain_anc_OROG = tas.set_construct(domain_ancillary_orog,
                                        axes=[axis_Y, axis_X])
-   
-   # Create and set the coordinate references
+
+   # Create the datum for the coordinate reference consrtructs
    datum = cfdm.Datum(parameters={'earth_radius': 6371007.})
-   
+
+   # Create the coordinate conversion for the horizontal coordinate
+   # reference construct
    coordinate_conversion_h = cfdm.CoordinateConversion(
                  parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                              'grid_north_pole_latitude': 38.0,
                              'grid_north_pole_longitude': 190.0})
    
-   horizontal_crs = cfdm.CoordinateReference(
-                      datum=datum,
-                      coordinate_conversion=coordinate_conversion_h,
-                      coordinates=[dim_X,
-                                   dim_Y,
-                                   aux_LAT,
-                                   aux_LON])
-   
+   # Create the coordinate conversion for the vertical coordinate
+   # reference construct
    coordinate_conversion_v = cfdm.CoordinateConversion(
             parameters={'standard_name': 'atmosphere_hybrid_height_coordinate',
                         'computed_standard_name': 'altitude'},
@@ -1775,15 +1808,26 @@ been generated with dummy values using `numpy.arange`):
                                 'b': domain_anc_B,
                                 'orog': domain_anc_OROG})
    
+   # Create the vertical coordinate reference construct
+   horizontal_crs = cfdm.CoordinateReference(
+                      datum=datum,
+                      coordinate_conversion=coordinate_conversion_h,
+                      coordinates=[dim_X,
+                                   dim_Y,
+                                   aux_LAT,
+                                   aux_LON])
+
+   # Create the vertical coordinate reference construct
    vertical_crs = cfdm.CoordinateReference(
                     datum=datum,
                     coordinate_conversion=coordinate_conversion_v,
                     coordinates=[dim_Z])
-   
+
+   # Sset the coordinate reference constructs
    tas.set_construct(horizontal_crs)
    tas.set_construct(vertical_crs)
    
-   # Create and set the cell measures
+   # Create and set the cell measure constructs
    cell_measure = cfdm.CellMeasure(measure='area',
                     properties={'units': 'km2'},
                     data=cfdm.Data(numpy.arange(90.).reshape(9, 10)))
@@ -1872,7 +1916,8 @@ and (by default) any other metadata constructs that further define its
 domain.
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Create an independent field construct from the "surface
+             altitude" metadata construct.*
 
    >>> orog = tas.convert('surface_altitude')	  
    >>> print(orog)
@@ -1891,7 +1936,12 @@ The `~Field.convert` method has an option to only include domain axis
 constructs in the new field construct, with no other metadata
 constructs.
 
-   >>> orog1 = tas.convert('surface_altitude', domain=False) 
+.. code-block:: python
+   :caption: *Create an independent field construct from the "surface
+             altitude" metadata construct, but without a complete
+             domain.*
+
+   >>> orog1 = tas.convert('surface_altitude', full_domain=False) 
    >>> print(orog1)
    Field: surface_altitude
    -----------------------
@@ -1910,7 +1960,8 @@ was created manually can be :ref:`written to a netCDF dataset
 <Writing-to-disk>` and then read back into memory:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Write the field construct that was created manually to
+             disk, and then read it back into a new field construct.*
 
    >>> cfdm.write(tas, 'tas.nc')
    >>> f = cfdm.read('tas.nc')
@@ -1928,13 +1979,10 @@ construct that has fewer metadata constructs than one created with the
 
 .. code-block:: python
    :caption: *Read the file, treating formula terms netCDF variables
-             (which map to domain axis constructs) as CF-netCDF data
-             variables. (The "warnings" parameter has been used to
-             suppress warnings relating to the fact that
-             "formula_terms" attributecan not apply to the
-             extra one-dimensional field constructs.)*
+             (which map to domain ancillary constructs) as additional
+             CF-netCDF data variables.*
 
-   >>> fields = cfdm.read('tas.nc', extra='domain_ancillary', warnings=False)
+   >>> fields = cfdm.read('tas.nc', extra='domain_ancillary')
    >>> fields
    [<Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m>,
     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
@@ -1989,7 +2037,7 @@ independent of the original field.
 Equivalently, the `copy.deepcopy` function may be used:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Copy a field construct with the built-in copy module.*
 	    
    >>> import copy
    >>> u = copy.deepcopy(t)
@@ -1997,7 +2045,7 @@ Equivalently, the `copy.deepcopy` function may be used:
 Metadata constructs may be copied individually in the same manner:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Copy a metadata construct.*
 
    >>> orog = t.get_construct('surface_altitude').copy()
 
@@ -2097,7 +2145,8 @@ criteria for considering two fields to be equal:
 Metadata constructs may also be tested for equality:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Metadata constructs also have an equals method, that
+             behaves in a similar manner.*
 	  
    >>> orog = t.get_construct('surface_altitude')
    >>> orog.equals(orog.copy())
@@ -2127,13 +2176,14 @@ metadata construct identification with the `~Field.constructs` and
 `~Field.get_construct` methods of the field construct:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Retrieve metadata constructs based on their netCDF
+             names.*
 	  
-   >>> t.constructs('ncvar%b')
+   >>> t.constructs(ncvar='b')
    {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
    >>> t.get_construct('ncvar%x')
    <DimensionCoordinate: grid_longitude(9) degrees>
-   >>> t.get_construct('ncdim%x')
+   >>> t.get_construct(ncdim='x')
    <DomainAxis: 9>
      
 Each construct has methods to access the netCDF elements which it
@@ -2159,7 +2209,8 @@ Method                            Description
 ================================  ====================================
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Access netCDF elements associated with the field and
+             metadata constructs.*
 
    >>> q.nc_get_variable()
    'q'
@@ -2170,6 +2221,8 @@ Method                            Description
    >>> q.nc_set_variable('humidity')
    >>> q.nc_get_variable()
    'humidity'
+   >>> q.get_construct('latitude').nc_get_variable()
+   'lat'
 
 The complete collection of netCDF interface methods is:
 
@@ -2242,7 +2295,7 @@ The `cfdm.write` function writes a field construct, or a sequence of
 field constructs, to a new netCDF file on disk:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Write a field construct to a netCDF dataset on disk.*
 
    >>> print(q)
    Field: specific_humidity (ncvar%humidity)
@@ -2257,7 +2310,8 @@ field constructs, to a new netCDF file on disk:
 The new dataset is structured as follows:
 
 .. code-block:: shell
-   :caption: TODO
+   :caption: *Inspect the new dataset with the ncdump command line
+             tool.*
 
    $ ncdump -h q_file.nc
    netcdf q_file {
@@ -2293,7 +2347,8 @@ The new dataset is structured as follows:
 A sequence of field constructs is written in exactly the same way:
    
 .. code-block:: python
-   :caption: TODO
+   :caption: *Write multiple field constructs to a netCDF dataset on
+             disk.*
 	     
    >>> x
    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
@@ -2344,8 +2399,8 @@ that was written to the file ``q_file.nc``.
 To change this so that the "time" dimension coordinate construct is
 written as a CF-netCDF size one coordinate variable, the field
 construct's data must be expanded to span the corresponding size one
-domain axis construct, by using the `~Field.expand_dims` method of the
-field construct:
+domain axis construct, by using the `~Field.insert_dimension` method
+of the field construct:
 
 .. code-block:: python
    :caption: TODO
@@ -2361,7 +2416,7 @@ field construct:
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
    >>> q.get_construct_data_axes('time')
    ('domainaxis2',)
-   >>> q2 = q.expand_dims(axis='domainaxis2')
+   >>> q2 = q.insert_dimension(axis='domainaxis2')
    >>> q2
    <Field: specific_humidity(time(1), latitude(5), longitude(8)) 1>
    >>> cfdm.write(q2, 'q2_file.nc')
@@ -2371,7 +2426,8 @@ The new dataset is structured as follows (note, relative to file
 "coordinates" attribute on the, now three-dimensional, data variable):
    
 .. code-block:: shell
-   :caption: TODO
+   :caption: *Inspect the new dataset with the ncdump command line
+             tool.*
 
    $ ncdump -h q2_file.nc
    netcdf q2_file {
@@ -2422,7 +2478,8 @@ This is illustrated with the files ``parent.nc`` (:download:`download
 <netcdf_files/parent.nc>`, 2kB) [#files]_:
 
 .. code-block:: shell
-   :caption: TODO
+   :caption: *Inspect the parent dataset with the ncdump command line
+             tool.*
    
    $ ncdump -h parent.nc
    netcdf parent {
@@ -2450,7 +2507,8 @@ and ``external.nc`` (:download:`download <netcdf_files/external.nc>`,
 1kB) [#files]_:
 
 .. code-block:: shell
-   :caption: TODO
+   :caption: *Inspect the external dataset with the ncdump command
+             line tool.*
 
    $ ncdump -h external.nc 
    netcdf external {
@@ -2642,7 +2700,8 @@ The contiguous case is is illustrated with the file ``contiguous.nc``
 (:download:`download <netcdf_files/contiguous.nc>`, 2kB) [#files]_:
 
 .. code-block:: shell
-   :caption: TODO
+   :caption: *Inspect the compressed dataset with the ncdump command
+             line tool.*
    
    $ ncdump -h contiguous.nc
    dimensions:
@@ -2811,7 +2870,8 @@ The new field construct can now be inspected and written to a netCDF file:
 The content of the new file is:
   
 .. code-block:: shell
-   :caption: TODO
+   :caption: *Inspect the new compressed dataset with the ncdump
+             command line tool.*   
 
    $ ncdump T_contiguous.nc
    netcdf T_contiguous {
@@ -2855,8 +2915,9 @@ This is illustrated with the file ``gathered.nc`` (:download:`download
 <netcdf_files/gathered.nc>`, 1kB) [#files]_:
 
 .. code-block:: shell
-   :caption: TODO
-   
+   :caption: *Inspect the compressed dataset with the ncdump command
+             line tool.*
+      
    $ ncdump -h gathered.nc
    netcdf gathered {
    dimensions:
@@ -3021,8 +3082,9 @@ The new field construct can now be inspected and written a netCDF file:
 The content of the new file is:
    
 .. code-block:: shell
-   :caption: TODO
-
+   :caption: *Inspect new the compressed dataset with the ncdump
+             command line tool.*
+   
    $ ncdump P_gathered.nc
    netcdf P_gathered {
    dimensions:

@@ -1,5 +1,5 @@
 from __future__ import print_function
-from builtins import (next, range, super, zip)
+from builtins import (range, super, zip)
 
 import itertools
 
@@ -570,7 +570,7 @@ masked
         return new
     #--- End: def
 
-    def expand_dims(self, position=0):
+    def insert_dimension(self, position=0):
         '''Expand the shape of the data array.
 
 Inserts a new size 1 axis, corresponding to a given position in the
@@ -603,11 +603,11 @@ data array shape.
 
 >>> d.shape
 (19, 73, 96)
->>> d.expand_dims('domainaxis3').shape
+>>> d.insert_dimension('domainaxis3').shape
 (1, 96, 73, 19)
->>> d.expand_dims('domainaxis3', position=3).shape
+>>> d.insert_dimension('domainaxis3', position=3).shape
 (19, 73, 96, 1)
->>> d.expand_dims('domainaxis3', position=-1).shape
+>>> d.insert_dimension('domainaxis3', position=-1).shape
 (19, 73, 1, 96)
 
         '''
@@ -1152,7 +1152,7 @@ selected with the keyword arguments.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `expand_dims`, `transpose`
+.. seealso:: `insert_dimension`, `transpose`
 
 :Parameters:
 
@@ -1273,7 +1273,7 @@ Missing data array elements are omitted from the calculation.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `expand_dims`, `squeeze`
+.. seealso:: `insert_dimension`, `squeeze`
 
 :Parameters:
 
@@ -1442,8 +1442,8 @@ considered equal:
   mask, and be element-wise equal (see the *ignore_data_type*
   parameter).
 
-Two numerical elements ``a`` and ``b`` are considered equal if
-``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+Two numerical elements ``x`` and ``y`` are considered equal if
+``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*
 parameters.

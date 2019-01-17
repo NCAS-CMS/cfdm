@@ -68,7 +68,7 @@ Data
    ~cfdm.CellMeasure.get_data
    ~cfdm.CellMeasure.has_data
    ~cfdm.CellMeasure.set_data
-   ~cfdm.CellMeasure.expand_dims
+   ~cfdm.CellMeasure.insert_dimension
    ~cfdm.CellMeasure.squeeze
    ~cfdm.CellMeasure.transpose
 
