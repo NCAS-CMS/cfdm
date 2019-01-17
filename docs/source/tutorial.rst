@@ -1221,16 +1221,29 @@ the `~cfdm.DomainAxis.get_size()` method of the domain axis construct.
 
 ----
 
+There are two types of coordinate construct, dimension and
+auxiliary coordinate constructs, which can be retrieved together with
+the `~cfdm.Field.coordinates` method of the field construct.
+
+.. code-block:: python
+   :caption: *Retrieve both types of coordinate constructs.*
+      
+   >>> t.coordinates()
+   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+    'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+    'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
+    'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+
 A coordinate construct may contain an array of cell bounds that
 provides the extent of each cell by defining the locations of the cell
 vertices. This is in addition to the main data array that contains a
 grid point location for each cell. The cell bounds are stored in a
 `Bounds` class instance that is accessed with the
-`~Coordinate.get_bounds` method, or `~Coordinate.bounds` attribute, of
-any construct that can represent coordinates, i.e. a dimension
-coordinate, auxiliary coordinate or domain ancillary construct (the
-last of these can provide extra coordinates needed for computing the
-location of cells in an alternative coordinate systems).
+`~Coordinate.get_bounds` method, or `~Coordinate.bounds` attribute the
+coordinate construct.
 
 A `Bounds` instance shares the :ref:`the same API as the field
 construct <Data>` for accessing its data.
@@ -1269,6 +1282,30 @@ parent coordinate construct, but it may also have its own properties
     'units': 'degrees'}  
    >>> bounds.properties()
    {}
+
+.. _Domain-ancillaries:
+		
+**Domain ancillaries**
+----------------------
+
+----
+
+A domain ancillary construct provides information which is needed for
+computing the location of cells in an alternative :ref:`coordinate
+system <Coordinate-systems>`. If a domain ancillary constuct provides
+extra coordinates then it may contain cell bounds in addition to its
+main data array.
+
+.. code-block:: python
+   :caption: *Get the data and bounds data of a domain ancillary
+             construct.*
+      
+   >>> a = t.get_construct(key='domainancillary0')
+   >>> print(a.get_array)
+   [10.]
+   >>> bounds = a.get_bounds()
+   >>> print(bounds.get_array())
+   [[ 5. 15.]]
 
 .. _Coordinate-systems:
 

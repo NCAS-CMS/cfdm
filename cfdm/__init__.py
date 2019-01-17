@@ -25,7 +25,14 @@ The cfdm package can
 __author__       = 'David Hassell'
 __date__         = '2019-01-17'
 __cf_version__   = '1.7'
-__version__      = '1.7.0b9'
+__version__      = '1.7.0b10'
+
+requires = ('numpy',
+            'netCDF4',
+            'cftime',
+            'future')
+
+error0 = 'cfdm requires the modules {}. '.format(', '.join(requires))
 
 from distutils.version import LooseVersion
 import platform
@@ -38,12 +45,31 @@ if LooseVersion(platform.python_version()) < LooseVersion(min_vn):
             min_vn,  platform.python_version()))
 
 # Check the version of netCDF4
-import netCDF4
+try:
+    import netCDF4
+except ImportError as error1:
+    raise ImportError(error0+str(error1))
+
 min_vn = '1.4.0'
 if LooseVersion(netCDF4.__version__) < LooseVersion(min_vn):
     raise ValueError(
         "Bad netCDF4 version: cfdm requires netCDF4 version {} or later. Got {}".format(
             min_vn, netCDF4.__version__))
+
+try:
+    import numpy
+except ImportError as error1:
+    raise ImportError(error0+str(error1))
+
+try:
+    import cftime
+except ImportError as error1:
+    raise ImportError(error0+str(error1))
+
+try:
+    import future
+except ImportError as error1:
+    raise ImportError(error0+str(error1))
 
 from .constants  import *
 from .constructs import Constructs

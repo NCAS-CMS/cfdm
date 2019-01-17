@@ -31,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b10</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cfdm.Field.constructs<a class="headerlink" href="#cfdm-field-constructs" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.constructs">
-<code class="descclassname">Field.</code><code class="descname">constructs</code><span class="sig-paren">(</span><em>name=None</em>, <em>properties=None</em>, <em>measure=None</em>, <em>ncvar=None</em>, <em>ncdim=None</em>, <em>key=None</em>, <em>axis=None</em>, <em>construct_type=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/mixin/constructaccess.py#L974"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.constructs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">constructs</code><span class="sig-paren">(</span><em>name=None</em>, <em>properties=None</em>, <em>measure=None</em>, <em>ncvar=None</em>, <em>ncdim=None</em>, <em>key=None</em>, <em>axis=None</em>, <em>construct_type=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b10/cfdm/mixin/constructaccess.py#L974"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.constructs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return metadata constructs</p>
 <p>By default all metadata constructs are returned, but a subset may be
 selected via the optional parameters. If multiple parameters are
@@ -110,15 +110,15 @@ returned.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>description: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Select constructs that have the given property, or other
 attribute, value.</p>
-<p>The description may be one of:</p>
+<p>The name may be one of:</p>
 <ul class="last">
 <li><p class="first">The value of the standard name property on its own.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='air_pressure'</span></code> will select constructs that
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='air_pressure'</span></code> will select constructs that
 have a “standard_name” property with the value
 “air_pressure”.</p>
 </dd>
@@ -128,15 +128,15 @@ have a “standard_name” property with the value
 a colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>).</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='positive:up'</span></code> will select constructs that
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='positive:up'</span></code> will select constructs that
 have a “positive” property with the value “up”.</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='foo:bar'</span></code> will select constructs that have
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='foo:bar'</span></code> will select constructs that have
 a “foo” property with the value “bar”.</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='standard_name:air_pressure'</span></code> will select
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='standard_name:air_pressure'</span></code> will select
 constructs that have a “standard_name” property with the
 value “air_pressure”.</p>
 </dd>
@@ -146,7 +146,7 @@ value “air_pressure”.</p>
 <code class="docutils literal notranslate"><span class="pre">measure%</span></code>.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='measure%area'</span></code> will select “area” cell
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='measure%area'</span></code> will select “area” cell
 measure constructs.</p>
 </dd>
 </dl>
@@ -155,7 +155,7 @@ measure constructs.</p>
 <em>key</em> parameter).</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em> </dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='key%cellmethod1'</span></code> will select cell method
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='key%cellmethod1'</span></code> will select cell method
 construct with construct identifier “cellmethod1”. This is
 equivalent to <code class="docutils literal notranslate"><span class="pre">key='cellmethod1'</span></code>.</p>
 </dd>
@@ -164,7 +164,7 @@ equivalent to <code class="docutils literal notranslate"><span class="pre">key='
 <li><p class="first">The netCDF variable name, prefixed by <code class="docutils literal notranslate"><span class="pre">ncvar%</span></code>.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncvar%lat'</span></code> will select constructs with
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='ncvar%lat'</span></code> will select constructs with
 netCDF variable name “lat”.</p>
 </dd>
 </dl>
@@ -173,20 +173,20 @@ netCDF variable name “lat”.</p>
 prefixed by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code>.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncdim%time'</span></code> will select domain axis
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='ncdim%time'</span></code> will select domain axis
 constructs with netCDF dimension name “time”.</p>
 </dd>
 </dl>
 </li>
 </ul>
 </dd>
-<dt>cid: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Select the construct with the given construct identifier.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='domainancillary0'</span></code> will the domain ancillary
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">key='domainancillary0'</span></code> will the domain ancillary
 construct with construct identifier “domainancillary1”. This
-is equivalent to <code class="docutils literal notranslate"><span class="pre">description='cid%domainancillary0'</span></code>.</p>
+is equivalent to <code class="docutils literal notranslate"><span class="pre">name='key%domainancillary0'</span></code>.</p>
 </dd>
 </dl>
 </dd>

@@ -35,31 +35,29 @@ The cfdm package requires:
 
 ----
 
-To install cfdm and all of its dependencies, download
-:download:`requirements.txt <../../requirements.txt>` (0.3kB)
-[#installfiles]_ and then run, for example:
+To install cfdm and all of its dependencies run, for example:
 
 .. code-block:: shell
-   :caption: *Install as root.*
-	     
-   pip install -r requirements.txt
-
-.. code-block:: shell
-   :caption: *Install as a user.*
-	     
-   pip install -r requirements.txt --user
-
-To install cfdm without any of its dependencies then run, for example:
-
-.. code-block:: shell
-   :caption: *Install as root.*
+   :caption: *Install as root, with any missing dependencies.*
 	     
    pip install cfdm
 
 .. code-block:: shell
-   :caption: *Install as a user.*
+   :caption: *Install as a user, with any missing dependencies.*
 	     
    pip install cfdm --user
+
+To install cfdm without any of its dependencies then run, for example:
+
+.. code-block:: shell
+   :caption: *Install as root without installing any of the
+             dependencies.*
+	     
+   pip install cfdm --no-deps
+
+See the `documentation for pip install
+<https://pip.pypa.io/en/stable/reference/pip_install/>`_ for further
+options.
 
 .. _conda:
 

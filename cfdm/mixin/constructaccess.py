@@ -369,16 +369,16 @@ criteria.
 
 :Parameters:
 
-    description: `str`, optional
+    name: `str`, optional
         Select the construct that have the given property, or other
         attribute, value.
 
-        The description may be one of:
+        The name may be one of:
 
         * The value of the standard name property on its own. 
 
           *Parameter example:*
-            ``description='air_pressure'`` will select constructs that
+            ``name='air_pressure'`` will select constructs that
             have a "standard_name" property with the value
             "air_pressure".
 
@@ -386,11 +386,11 @@ criteria.
           a colon (``:``).
 
           *Parameter example:*
-            ``description='positive:up'`` will select constructs that
+            ``name='positive:up'`` will select constructs that
             have a "positive" property with the value "up".
 
           *Parameter example:*
-            ``description='foo:bar'`` will select constructs that have
+            ``name='foo:bar'`` will select constructs that have
             a "foo" property with the value "bar".
 
           *Parameter example:*
@@ -989,16 +989,16 @@ returned.
 
 :Parameters:
 
-    description: `str`, optional
+    name: `str`, optional
         Select constructs that have the given property, or other
         attribute, value.
 
-        The description may be one of:
+        The name may be one of:
 
         * The value of the standard name property on its own. 
 
           *Parameter example:*
-            ``description='air_pressure'`` will select constructs that
+            ``name='air_pressure'`` will select constructs that
             have a "standard_name" property with the value
             "air_pressure".
 
@@ -1006,15 +1006,15 @@ returned.
           a colon (``:``).
 
           *Parameter example:*
-            ``description='positive:up'`` will select constructs that
+            ``name='positive:up'`` will select constructs that
             have a "positive" property with the value "up".
 
           *Parameter example:*
-            ``description='foo:bar'`` will select constructs that have
+            ``name='foo:bar'`` will select constructs that have
             a "foo" property with the value "bar".
 
           *Parameter example:*
-            ``description='standard_name:air_pressure'`` will select
+            ``name='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
             value "air_pressure".
 
@@ -1022,37 +1022,37 @@ returned.
           ``measure%``.
 
           *Parameter example:*
-            ``description='measure%area'`` will select "area" cell
+            ``name='measure%area'`` will select "area" cell
             measure constructs.
 
         * A construct identifier, prefixed by ``key%`` (see also the
           *key* parameter).
 
           *Parameter example:* 
-            ``description='key%cellmethod1'`` will select cell method
+            ``name='key%cellmethod1'`` will select cell method
             construct with construct identifier "cellmethod1". This is
             equivalent to ``key='cellmethod1'``.
 
         * The netCDF variable name, prefixed by ``ncvar%``.
 
           *Parameter example:*
-            ``description='ncvar%lat'`` will select constructs with
+            ``name='ncvar%lat'`` will select constructs with
             netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
           prefixed by ``ncdim%``.
 
           *Parameter example:*
-            ``description='ncdim%time'`` will select domain axis
+            ``name='ncdim%time'`` will select domain axis
             constructs with netCDF dimension name "time".
 
-    cid: `str`, optional
+    key: `str`, optional
         Select the construct with the given construct identifier.
 
         *Parameter example:*
-          ``cid='domainancillary0'`` will the domain ancillary
+          ``key='domainancillary0'`` will the domain ancillary
           construct with construct identifier "domainancillary1". This
-          is equivalent to ``description='cid%domainancillary0'``.
+          is equivalent to ``name='key%domainancillary0'``.
 
     construct_type: (sequence of) `str`, optional
         Select constructs of the given type, or types. Valid types
