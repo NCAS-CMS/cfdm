@@ -47,7 +47,7 @@ between ``a`` and ``b``.
 
 :Returns:
 
-    out: `bool`
+    `bool`
         Returns True if the arrays are equal, otherwise False.
 
 **Examples:**
@@ -123,7 +123,7 @@ between ``a`` and ``b``.
 
 :Returns:
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
 
 **Examples:**
     '''      
@@ -144,7 +144,7 @@ between ``a`` and ``b``.
 #
 #:Returns:
 #
-#    out: `list`
+#    `list`
 #
 #**Examples:**
 #
@@ -337,7 +337,7 @@ than 1 that is representable as a float).
 
 :Returns:
 
-    out: `float`
+    `float`
         The value prior to the change, or the current value if no
         new value was specified.
 
@@ -382,7 +382,7 @@ than 1 that is representable as a float).
 
 :Returns:
 
-    out: `float`
+    `float`
         The value prior to the change, or the current value if no
         new value was specified.
 
@@ -438,7 +438,7 @@ than 1 that is representable as a float).
 #
 #:Returns:
 #
-#    out: `bool`
+#    `bool`
 #        Whether or not the two objects are equal.
 #
 #**Examples:**
@@ -517,7 +517,7 @@ than 1 that is representable as a float).
 #
 #:Returns:
 #
-#    out: `str`
+#    `str`
 #        The normalized absolutized version of *filename*.
 # 
 #**Examples:**
@@ -566,7 +566,7 @@ between ``a`` and ``b``.
 
 :Returns:
 
-    out: `bool`
+    `bool`
         Returns True if the arrays are equal, otherwise False.
 
 **Examples:**
@@ -604,7 +604,6 @@ def environment(display=True):
 
 :Returns:
 
-    out:
         If *display* is True then the description of the environment
         is printed and `None` is returned. Otherwise the description
         is returned as a string.

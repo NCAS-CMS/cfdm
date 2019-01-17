@@ -39,7 +39,7 @@ number of vertices of each cell.
        names, with corresponding values. Ignored if the *source*
        parameter is set.
 
-       *Example:*
+       *Parameter example:*
           ``properties={'standard_name': 'altitude'}``
 
        Properties may also be set after initialisation with the
@@ -95,7 +95,7 @@ components, and provides selected values of all data arrays.
 
 :Returns:
 
-    out: `None` or `str`
+    `None` or `str`
         The description. If *display* is True then the description is
         printed and `None` is returned. Otherwise the description is
         returned as a string.
@@ -209,7 +209,7 @@ constitute part of the CF data model and so are not checked.
 
 :Returns: 
   
-    out: `bool`
+    `bool`
         Whether the two domain ancillary constructs are equal.
 
 **Examples:**

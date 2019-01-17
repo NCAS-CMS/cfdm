@@ -170,7 +170,7 @@ field.
 
 :Returns:
     
-    out: `str`
+    `str`
         A string containing the description.
     
 **Examples:**
@@ -217,7 +217,7 @@ by any data arrays.
 
         * The value of the standard name property on its own. 
 
-          *Example:*
+          *Parameter example:*
             ``description='air_pressure'`` will select constructs that
             have a "standard_name" property with the value
             "air_pressure".
@@ -225,15 +225,15 @@ by any data arrays.
         * The value of any property prefixed by the property name and
           a colon (``:``).
 
-          *Example:*
+          *Parameter example:*
             ``description='positive:up'`` will select constructs that
             have a "positive" property with the value "up".
 
-          *Example:*
+          *Parameter example:*
             ``description='foo:bar'`` will select constructs that have
             a "foo" property with the value "bar".
 
-          *Example:*
+          *Parameter example:*
             ``description='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
             value "air_pressure".
@@ -241,14 +241,14 @@ by any data arrays.
         * The measure of cell measure constructs, prefixed by
           ``measure%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='measure%area'`` will select "area" cell
             measure constructs.
 
         * A construct identifier, prefixed by ``cid%`` (see also the
           *cid* parameter).
 
-          *Example:* 
+          *Parameter example:* 
             ``description='cid%domainancillary1'`` will select domain
             ancillary construct with construct identifier
             "domainancillary1". This is equivalent to
@@ -256,21 +256,21 @@ by any data arrays.
 
         * The netCDF variable name, prefixed by ``ncvar%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncvar%lat'`` will select constructs with
               netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
           prefixed by ``ncdim%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncdim%time'`` will select domain axis
             constructs with netCDF dimension name "time".
 
     cid: `str`, optional
         Select the construct with the given construct identifier.
 
-        *Example:*
+        *Parameter example:*
           ``cid='domainancillary0'`` will the domain ancillary
           construct with construct identifier "domainancillary1". This
           is equivalent to ``description='cid%domainancillary0'``.
@@ -289,13 +289,13 @@ by any data arrays.
           ``'coordinate_reference'``  Coordinate reference constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           ``construct_type='dimension_coordinate'``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=['auxiliary_coordinate']``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=('domain_ancillary', 'cell_measure')``
 
     axes: sequence of `str`, optional
@@ -303,22 +303,21 @@ by any data arrays.
         the given domain axes, in any order. Domain axes are specified
         by their construct identifiers.
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis2']``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis0', 'domainaxis1']``
 
     default: optional
         Return *default* if no metadata construct can be found. By
         default an exception is raised in this case.
 
-        *Example:*
+        *Parameter example:*
           ``default=None``
 
 :Returns:
 
-    out:
         The removed metadata construct.
 
 **Examples:**
@@ -362,13 +361,13 @@ last values.
         If False then return the description as a string. By default
         the description is printed.
 
-          *Example:*
+          *Parameter example:*
             ``f.dump()`` is equivalent to ``print
             f.dump(display=False)``.
 
 :Returns:
 
-    out: `None` or `str`
+    `None` or `str`
         If *display* is True then the description is printed and
         `None` is returned. Otherwise the description is returned as a
         string.

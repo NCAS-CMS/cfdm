@@ -30,7 +30,7 @@ to the order of the elements.
     size: `int`, optional
         The size of the domain axis.
 
-        *Example:*
+        *Parameter example:*
           ``size=192``
 
         The size may also be set after initialisation with the
@@ -94,7 +94,7 @@ constitute part of the CF data model and so are not checked.
 
 :Returns: 
   
-    out: `bool`
+    `bool`
         Whether the two domain axis constructs are equal.
 
 **Examples:**
@@ -160,7 +160,6 @@ By default the name is the first found of the following:
 
 :Returns:
 
-    out:
         The name. If the *all_names* parameter is True then a list of
         all possible names.
 

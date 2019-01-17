@@ -32,7 +32,7 @@ variable that gives the size of each block.
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``properties={'long_name': 'number of obs for this station'}``
 
         Properties may also be set after initialisation with the
@@ -77,7 +77,7 @@ components, and provides selected values of all data arrays.
 
 :Returns:
 
-    out: `None` or `str`
+    `None` or `str`
         The description. If *display* is True then the description is
         printed and `None` is returned. Otherwise the description is
         returned as a string.

@@ -34,7 +34,7 @@ dimension belongs to.
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``properties={'long_name': 'which station this obs is for'}``
 
         Properties may also be set after initialisation with the
@@ -79,7 +79,7 @@ components, and provides selected values of all data arrays.
 
 :Returns:
 
-    out: `None` or `str`
+    `None` or `str`
         The description. If *display* is True then the description is
         printed and `None` is returned. Otherwise the description is
         returned as a string.

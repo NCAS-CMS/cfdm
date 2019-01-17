@@ -64,7 +64,7 @@ and institution).
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-        *Example:*
+        *Parameter example:*
            ``properties={'standard_name': 'air_temperature'}``
         
         Properties may also be set after initialisation with the
@@ -275,7 +275,7 @@ rules, the only differences being:
 
 :Returns:
 
-    out: `Field`
+    `Field`
         The subspace of the field construct.
 
 **Examples:**
@@ -445,7 +445,7 @@ field.
 
 :Returns:
     
-    out: `str`
+    `str`
         A string containing the description.
     
 **Examples:**
@@ -527,7 +527,6 @@ operation is fast.
 
 :Returns:
 
-    out:
         The deep copy.
 
 **Examples:**
@@ -573,7 +572,7 @@ by any data arrays, nor be referenced by any cell method constructs.
 
         * The value of the standard name property on its own. 
 
-          *Example:*
+          *Parameter example:*
             ``description='air_pressure'`` will select constructs that
             have a "standard_name" property with the value
             "air_pressure".
@@ -581,15 +580,15 @@ by any data arrays, nor be referenced by any cell method constructs.
         * The value of any property prefixed by the property name and
           a colon (``:``).
 
-          *Example:*
+          *Parameter example:*
             ``description='positive:up'`` will select constructs that
             have a "positive" property with the value "up".
 
-          *Example:*
+          *Parameter example:*
             ``description='foo:bar'`` will select constructs that have
             a "foo" property with the value "bar".
 
-          *Example:*
+          *Parameter example:*
             ``description='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
             value "air_pressure".
@@ -597,35 +596,35 @@ by any data arrays, nor be referenced by any cell method constructs.
         * The measure of cell measure constructs, prefixed by
           ``measure%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='measure%area'`` will select "area" cell
             measure constructs.
 
         * A construct identifier, prefixed by ``cid%`` (see also the
           *cid* parameter).
 
-          *Example:* 
+          *Parameter example:* 
             ``description='cid%cellmethod1'`` will select cell method
             construct with construct identifier "cellmethod1". This is
             equivalent to ``cid='cellmethod1'``.
 
         * The netCDF variable name, prefixed by ``ncvar%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncvar%lat'`` will select constructs with
             netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
           prefixed by ``ncdim%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncdim%time'`` will select domain axis
             constructs with netCDF dimension name "time".
 
     cid: `str`, optional
         Select the construct with the given construct identifier.
 
-        *Example:*
+        *Parameter example:*
           ``cid='domainancillary0'`` will the domain ancillary
           construct with construct identifier "domainancillary1". This
           is equivalent to ``description='cid%domainancillary0'``.
@@ -646,13 +645,13 @@ by any data arrays, nor be referenced by any cell method constructs.
           ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           ``construct_type='dimension_coordinate'``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=['auxiliary_coordinate']``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=('domain_ancillary', 'cell_method')``
 
     axes: sequence of `str`, optional
@@ -660,22 +659,21 @@ by any data arrays, nor be referenced by any cell method constructs.
         the given domain axes, in any order. Domain axes are specified
         by their construct identifiers.
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis2']``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis0', 'domainaxis1']``
 
     default: optional
         Return *default* if no metadata construct can be found. By
         default an exception is raised in this case.
 
-        *Example:*
+        *Parameter example:*
           ``default=None``
 
 :Returns:
 
-    out:
         The removed metadata construct.
 
 **Examples:**
@@ -722,7 +720,7 @@ data arrays.
 
 :Returns:
 
-    out: `None` or `str`
+    `None` or `str`
         The description. If *display* is True then the description is
         printed and `None` is returned. Otherwise the description is
         returned as a string.
@@ -918,7 +916,7 @@ construct.
 
 :Returns: 
   
-    out: `bool`
+    `bool`
         Whether the two field constructs are equal.
 
 **Examples:**
@@ -988,7 +986,7 @@ construct, into the data array.
         The construct identifier of the domain axis construct
         corresponding to the inserted axis.
 
-        *Example:*
+        *Parameter example:*
           ``axis='domainaxis2'``
 
     position: `int`, optional
@@ -997,15 +995,15 @@ construct, into the data array.
         varying position. Negative integers counting from the last
         position are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``position=2``
 
-        *Example:*
+        *Parameter example:*
           ``position=-1``
 
 :Returns:
 
-    out: `Field`
+    `Field`
         The new field construct with expanded data axes.
 
 **Examples:**
@@ -1081,7 +1079,7 @@ regardless of the setting of the *full_domain* parameter.
 
         * The value of the standard name property on its own. 
 
-          *Example:*
+          *Parameter example:*
             ``description='air_pressure'`` will select constructs that
             have a "standard_name" property with the value
             "air_pressure".
@@ -1089,15 +1087,15 @@ regardless of the setting of the *full_domain* parameter.
         * The value of any property prefixed by the property name and
           a colon (``:``).
 
-          *Example:*
+          *Parameter example:*
             ``description='positive:up'`` will select constructs that
             have a "positive" property with the value "up".
 
-          *Example:*
+          *Parameter example:*
             ``description='foo:bar'`` will select constructs that have
             a "foo" property with the value "bar".
 
-          *Example:*
+          *Parameter example:*
             ``description='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
             value "air_pressure".
@@ -1105,35 +1103,35 @@ regardless of the setting of the *full_domain* parameter.
         * The measure of cell measure constructs, prefixed by
           ``measure%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='measure%area'`` will select "area" cell
             measure constructs.
 
         * A construct identifier, prefixed by ``cid%`` (see also the
           *cid* parameter).
 
-          *Example:*
+          *Parameter example:*
             ``description='cid%cellmethod1'`` will select cell method
             construct with construct identifier "cellmethod1". This is
             equivalent to ``cid='cellmethod1'``.
 
         * The netCDF variable name, prefixed by ``ncvar%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncvar%lat'`` will select constructs with
             netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
           prefixed by ``ncdim%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncdim%time'`` will select domain axis
             constructs with netCDF dimension name "time".
 
     cid: `str`, optional
         Select the construct with the given construct identifier.
 
-        *Example:*
+        *Parameter example:*
           ``cid='domainancillary0'`` will the domain ancillary
           construct with construct identifier "domainancillary0". This
           is equivalent to ``description='cid%domainancillary0'``.
@@ -1371,7 +1369,7 @@ from a dataset.
 
 :Returns:
 
-    out: `None` or `dict`
+    `None` or `dict`
         The report. If *display* is True then the report is printed
         and `None` is returned. Otherwise the report is returned as a
         dictionary.
@@ -1422,18 +1420,18 @@ may be selected for removal.
         original integer position. Negative integers counting from the
         last position are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``axes=0``
 
-        *Example:*
+        *Parameter example:*
           ``axes=-2``
 
-        *Example:*
+        *Parameter example:*
           ``axes=[2, 0]``
 
 :Returns:
 
-    out: `Field`
+    `Field`
         The new field construct with removed data axes.
 
 **Examples:**
@@ -1504,15 +1502,15 @@ may be selected for removal.
         position. Negative integers counting from the last position
         are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``axes=[2, 0, 1]``
 
-        *Example:*
+        *Parameter example:*
           ``axes=[-1, 0, 1]``
 
 :Returns:
 
-    out: `Field`
+    `Field`
          The new field construct with permuted data axes.
 
 **Examples:**
@@ -1558,7 +1556,7 @@ may be selected for removal.
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
 
@@ -1590,7 +1588,7 @@ may be selected for removal.
 
 :Returns:
 
-    out: `collections.OrderDict`
+    `collections.OrderDict`
         Constructs are returned as values of an ordered dictionary,
         keyed by their construct identifiers. The order is determined
         by the order in which the cell method constructs were added to
