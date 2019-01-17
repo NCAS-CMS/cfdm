@@ -9,16 +9,17 @@
     <title>cfdm.CoordinateReference.set_coordinate &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.CoordinateReference.set_coordinate_conversion" href="cfdm.CoordinateReference.set_coordinate_conversion.html" />
-    <link rel="prev" title="cfdm.CoordinateReference.datum" href="../attribute/cfdm.CoordinateReference.datum.html" />
+    <link rel="next" title="cfdm.CoordinateReference.coordinates" href="cfdm.CoordinateReference.coordinates.html" />
+    <link rel="prev" title="cfdm.CoordinateReference.del_coordinate" href="cfdm.CoordinateReference.del_coordinate.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -52,8 +53,8 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.CoordinateReference.html">cfdm.CoordinateReference</a><ul>
-      <li>Previous: <a href="../attribute/cfdm.CoordinateReference.datum.html" title="previous chapter">cfdm.CoordinateReference.datum</a></li>
-      <li>Next: <a href="cfdm.CoordinateReference.set_coordinate_conversion.html" title="next chapter">cfdm.CoordinateReference.set_coordinate_conversion</a></li>
+      <li>Previous: <a href="cfdm.CoordinateReference.del_coordinate.html" title="previous chapter">cfdm.CoordinateReference.del_coordinate</a></li>
+      <li>Next: <a href="cfdm.CoordinateReference.coordinates.html" title="next chapter">cfdm.CoordinateReference.coordinates</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.CoordinateReference.set_coordinate<a class="headerlink" href="#cfdm-coordinatereference-set-coordinate" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CoordinateReference.set_coordinate">
-<code class="descclassname">CoordinateReference.</code><code class="descname">set_coordinate</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/core/coordinatereference.py#L407"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference.set_coordinate" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CoordinateReference.</code><code class="descname">set_coordinate</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/core/coordinatereference.py#L403"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference.set_coordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a reference to a coordinate construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -107,10 +108,10 @@
 <dd><p class="first">The construct identifier of the coordinate construct.</p>
 <blockquote class="last">
 <div><dl class="docutils">
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='dimensioncoordinate1'</span></code></p>
 </dd>
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='auxiliarycoordinate0'</span></code></p>
 </dd>
 </dl>
@@ -125,7 +126,7 @@
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>
 <span class="go">{&#39;dimensioncoordinate0&#39;,</span>
 <span class="go"> &#39;dimensioncoordinate1&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_coordinates</span><span class="p">(</span><span class="s1">&#39;auxiliarycoordinate0&#39;</span><span class="p">)</span>
@@ -149,8 +150,8 @@
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.CoordinateReference.set_coordinate.rst.txt"

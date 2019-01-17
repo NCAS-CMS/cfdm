@@ -9,12 +9,13 @@
     <title>cfdm.Index &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Index.dump" href="../method/cfdm.Index.dump.html" />
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -88,7 +89,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Index">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Index</code><span class="sig-paren">(</span><em>properties={}</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/index.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Index" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Index</code><span class="sig-paren">(</span><em>properties={}</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/index.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFInstanceDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFSampleDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>An index variable required to uncompress a ragged array.</p>
 <p>A collection of features stored using an indexed ragged array combines
@@ -111,7 +112,7 @@ dimension belongs to.</p>
 names, with corresponding values. Ignored if the <em>source</em>
 parameter is set.</p>
 <dl class="docutils">
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'which</span> <span class="pre">station</span> <span class="pre">this</span> <span class="pre">obs</span> <span class="pre">is</span> <span class="pre">for'}</span></code></p>
 </dd>
 </dl>
@@ -149,38 +150,8 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.dump.html#cfdm.Index.dump" title="cfdm.Index.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
 <td>A full description of the index variable.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.get_array.html#cfdm.Index.get_array" title="cfdm.Index.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
-<td>Return an independent numpy array the data.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.get_data.html#cfdm.Index.get_data" title="cfdm.Index.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
-<td>Return the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.has_data.html#cfdm.Index.has_data" title="cfdm.Index.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
-<td>Whether a data has been set.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.get_property.html#cfdm.Index.get_property" title="cfdm.Index.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
-<td>Return a property.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.has_property.html#cfdm.Index.has_property" title="cfdm.Index.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
-<td>Whether a property has been set.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.name.html#cfdm.Index.name" title="cfdm.Index.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.name.html#cfdm.Index.name" title="cfdm.Index.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></td>
 <td>Return a name.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.properties.html#cfdm.Index.properties" title="cfdm.Index.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Index.data.html#cfdm.Index.data" title="cfdm.Index.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
-<td>Return the data.</td>
 </tr>
 </tbody>
 </table>
@@ -203,11 +174,11 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.has_property.html#cfdm.Index.has_property" title="cfdm.Index.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.properties.html#cfdm.Index.properties" title="cfdm.Index.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.set_property.html#cfdm.Index.set_property" title="cfdm.Index.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.set_property.html#cfdm.Index.set_property" title="cfdm.Index.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.properties.html#cfdm.Index.properties" title="cfdm.Index.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<td>Return or replace all properties.</td>
 </tr>
 </tbody>
 </table>
@@ -221,11 +192,11 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.del_data.html#cfdm.Index.del_data" title="cfdm.Index.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
-<td>Remove the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.get_array.html#cfdm.Index.get_array" title="cfdm.Index.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.get_array.html#cfdm.Index.get_array" title="cfdm.Index.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an independent numpy array the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.del_data.html#cfdm.Index.del_data" title="cfdm.Index.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<td>Remove the data.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.get_data.html#cfdm.Index.get_data" title="cfdm.Index.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>Return the data.</td>
@@ -235,6 +206,15 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.set_data.html#cfdm.Index.set_data" title="cfdm.Index.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Index.expand_dims</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.squeeze.html#cfdm.Index.squeeze" title="cfdm.Index.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<td>Remove size one axes from the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.transpose.html#cfdm.Index.transpose" title="cfdm.Index.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<td>Permute the axes of the data array.</td>
 </tr>
 </tbody>
 </table>
@@ -247,42 +227,6 @@ initialization. By default arguments are deep copied.</p>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Index.data.html#cfdm.Index.data" title="cfdm.Index.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>Return the data.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="modification">
-<h2>Modification<a class="headerlink" href="#modification" title="Permalink to this headline">¶</a></h2>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.del_data.html#cfdm.Index.del_data" title="cfdm.Index.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
-<td>Remove the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.del_property.html#cfdm.Index.del_property" title="cfdm.Index.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
-<td>Remove a property.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.expand_dims.html#cfdm.Index.expand_dims" title="cfdm.Index.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
-<td>Expand the shape of the data array.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.properties.html#cfdm.Index.properties" title="cfdm.Index.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.set_data.html#cfdm.Index.set_data" title="cfdm.Index.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
-<td>Set the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.set_property.html#cfdm.Index.set_property" title="cfdm.Index.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
-<td>Set a property.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Index.squeeze.html#cfdm.Index.squeeze" title="cfdm.Index.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
-<td>Remove size one axes from the data array.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Index.transpose.html#cfdm.Index.transpose" title="cfdm.Index.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
-<td>Permute the axes of the data array.</td>
 </tr>
 </tbody>
 </table>
@@ -389,8 +333,8 @@ initialization. By default arguments are deep copied.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.Index.rst.txt"

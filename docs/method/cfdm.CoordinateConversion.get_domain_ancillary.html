@@ -9,16 +9,17 @@
     <title>cfdm.CoordinateConversion.get_domain_ancillary &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.CoordinateConversion.get_parameter" href="cfdm.CoordinateConversion.get_parameter.html" />
-    <link rel="prev" title="cfdm.CoordinateConversion.del_parameter" href="cfdm.CoordinateConversion.del_parameter.html" />
+    <link rel="next" title="cfdm.CoordinateConversion.set_domain_ancillary" href="cfdm.CoordinateConversion.set_domain_ancillary.html" />
+    <link rel="prev" title="cfdm.CoordinateConversion.del_domain_ancillary" href="cfdm.CoordinateConversion.del_domain_ancillary.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -52,8 +53,8 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.CoordinateConversion.html">cfdm.CoordinateConversion</a><ul>
-      <li>Previous: <a href="cfdm.CoordinateConversion.del_parameter.html" title="previous chapter">cfdm.CoordinateConversion.del_parameter</a></li>
-      <li>Next: <a href="cfdm.CoordinateConversion.get_parameter.html" title="next chapter">cfdm.CoordinateConversion.get_parameter</a></li>
+      <li>Previous: <a href="cfdm.CoordinateConversion.del_domain_ancillary.html" title="previous chapter">cfdm.CoordinateConversion.del_domain_ancillary</a></li>
+      <li>Next: <a href="cfdm.CoordinateConversion.set_domain_ancillary.html" title="next chapter">cfdm.CoordinateConversion.set_domain_ancillary</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.CoordinateConversion.get_domain_ancillary<a class="headerlink" href="#cfdm-coordinateconversion-get-domain-ancillary" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CoordinateConversion.get_domain_ancillary">
-<code class="descclassname">CoordinateConversion.</code><code class="descname">get_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/core/abstract/parametersdomainancillaries.py#L177"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion.get_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CoordinateConversion.</code><code class="descname">get_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/core/abstract/parametersdomainancillaries.py#L174"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion.get_domain_ancillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a parameter value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -103,21 +104,17 @@
 <p>default: optional</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The value of the term &lt;SOMETING BAOUT DEFAULT&gt;</p>
-</dd>
-</dl>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The value of the term &lt;SOMETING BAOUT DEFAULT&gt;</p>
 </td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;grid_north_pole_latitude&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;grid_north_pole_latitude&#39;</span><span class="p">)</span>
 <span class="go">70.0</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
 <span class="go">ERROR</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;nonexistent term&#39;</span><span class="p">)</span>
 <span class="go">&#39;nonexistent term&#39;</span>
@@ -137,8 +134,8 @@
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.CoordinateConversion.get_domain_ancillary.rst.txt"

@@ -21,14 +21,7 @@ Inspection
    :template: method.rst
 
    ~cfdm.AuxiliaryCoordinate.dump
-   ~cfdm.AuxiliaryCoordinate.get_array
-   ~cfdm.AuxiliaryCoordinate.get_bounds
-   ~cfdm.AuxiliaryCoordinate.get_data
-   ~cfdm.AuxiliaryCoordinate.has_data
-   ~cfdm.AuxiliaryCoordinate.get_property
-   ~cfdm.AuxiliaryCoordinate.has_property
    ~cfdm.AuxiliaryCoordinate.name
-   ~cfdm.AuxiliaryCoordinate.properties
 
 .. rubric:: Attributes
    
@@ -38,8 +31,6 @@ Inspection
    :template: attribute.rst
 
    ~cfdm.AuxiliaryCoordinate.construct_type
-   ~cfdm.AuxiliaryCoordinate.bounds
-   ~cfdm.AuxiliaryCoordinate.data
 
 Properties
 ----------
@@ -54,8 +45,8 @@ Properties
    ~cfdm.AuxiliaryCoordinate.del_property
    ~cfdm.AuxiliaryCoordinate.get_property
    ~cfdm.AuxiliaryCoordinate.has_property
-   ~cfdm.AuxiliaryCoordinate.properties
    ~cfdm.AuxiliaryCoordinate.set_property
+   ~cfdm.AuxiliaryCoordinate.properties
 
 Data
 ----
@@ -67,12 +58,15 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.AuxiliaryCoordinate.del_data
    ~cfdm.AuxiliaryCoordinate.get_array
+   ~cfdm.AuxiliaryCoordinate.del_data
    ~cfdm.AuxiliaryCoordinate.get_data
    ~cfdm.AuxiliaryCoordinate.has_data
    ~cfdm.AuxiliaryCoordinate.set_data
-   
+   ~cfdm.AuxiliaryCoordinate.insert_dimension
+   ~cfdm.AuxiliaryCoordinate.squeeze
+   ~cfdm.AuxiliaryCoordinate.transpose
+
 .. rubric:: Attributes
    
 .. autosummary::
@@ -105,27 +99,6 @@ Bounds
    :template: attribute.rst
 
    ~cfdm.AuxiliaryCoordinate.bounds
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.AuxiliaryCoordinate.del_bounds
-   ~cfdm.AuxiliaryCoordinate.del_data
-   ~cfdm.AuxiliaryCoordinate.del_property
-   ~cfdm.AuxiliaryCoordinate.expand_dims
-   ~cfdm.AuxiliaryCoordinate.properties
-   ~cfdm.AuxiliaryCoordinate.set_bounds
-   ~cfdm.AuxiliaryCoordinate.set_data
-   ~cfdm.AuxiliaryCoordinate.set_property
-   ~cfdm.AuxiliaryCoordinate.squeeze
-   ~cfdm.AuxiliaryCoordinate.transpose
 
 Miscellaneous
 -------------

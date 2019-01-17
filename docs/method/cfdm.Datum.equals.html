@@ -9,12 +9,13 @@
     <title>cfdm.Datum.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Datum.__bool__" href="cfdm.Datum.__bool__.html" />
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.Datum.equals<a class="headerlink" href="#cfdm-datum-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Datum.equals">
-<code class="descclassname">Datum.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/mixin/parameters.py#L47"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Datum.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/mixin/parameters.py#L47"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -97,8 +98,8 @@
 types, and vector-valued parameters must also have same the size and
 be element-wise equal (see the <em>ignore_data_type</em> parameter).</li>
 </ul>
-<p>Two real numbers <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are considered equal if
-<code class="docutils literal notranslate"><span class="pre">|a-b|&lt;=atol+rtol|b|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
+<p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
+<code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
 differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
 positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
 parameters.</p>
@@ -121,7 +122,7 @@ numbers. The default value is set by the <a class="reference internal" href="../
 <dd><p class="first last">The tolerance on relative differences between real
 numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a> function.</p>
 </dd>
-<dt>traceback: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then print information about differences that lead to
 inequality.</p>
 </dd>
@@ -137,15 +138,15 @@ only possible with another object of the same type, or a
 subclass of one. If <em>ignore_type</em> is True then equality is
 possible for any object with a compatible API.</p>
 </dd>
-<dt>traceback: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then print a traceback highlighting where the two
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then print a verbose highlighting where the two
 instances differ.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
 <dd><p class="first last">Whether the two instances are equal.</p>
 </dd>
 </dl>
@@ -154,11 +155,11 @@ instances differ.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
@@ -176,8 +177,8 @@ instances differ.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Datum.equals.rst.txt"

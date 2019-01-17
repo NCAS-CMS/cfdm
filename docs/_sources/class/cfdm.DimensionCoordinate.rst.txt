@@ -21,14 +21,7 @@ Inspection
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.dump
-   ~cfdm.DimensionCoordinate.get_array
-   ~cfdm.DimensionCoordinate.get_bounds
-   ~cfdm.DimensionCoordinate.get_data
-   ~cfdm.DimensionCoordinate.has_data
-   ~cfdm.DimensionCoordinate.get_property
-   ~cfdm.DimensionCoordinate.has_property
    ~cfdm.DimensionCoordinate.name
-   ~cfdm.DimensionCoordinate.properties
 
 .. rubric:: Attributes
    
@@ -38,9 +31,7 @@ Inspection
    :template: attribute.rst
 
    ~cfdm.DimensionCoordinate.construct_type
-   ~cfdm.DimensionCoordinate.bounds
-   ~cfdm.DimensionCoordinate.data
-
+   
 Properties
 ----------
 
@@ -54,8 +45,8 @@ Properties
    ~cfdm.DimensionCoordinate.del_property
    ~cfdm.DimensionCoordinate.get_property
    ~cfdm.DimensionCoordinate.has_property
-   ~cfdm.DimensionCoordinate.properties
    ~cfdm.DimensionCoordinate.set_property
+   ~cfdm.DimensionCoordinate.properties
 
 Data
 ----
@@ -67,12 +58,15 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.DimensionCoordinate.del_data
    ~cfdm.DimensionCoordinate.get_array
+   ~cfdm.DimensionCoordinate.del_data
    ~cfdm.DimensionCoordinate.get_data
    ~cfdm.DimensionCoordinate.has_data
    ~cfdm.DimensionCoordinate.set_data
-   
+   ~cfdm.DimensionCoordinate.insert_dimension
+   ~cfdm.DimensionCoordinate.squeeze
+   ~cfdm.DimensionCoordinate.transpose
+
 .. rubric:: Attributes
    
 .. autosummary::
@@ -105,27 +99,6 @@ Bounds
    :template: attribute.rst
 
    ~cfdm.DimensionCoordinate.bounds
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.DimensionCoordinate.del_bounds
-   ~cfdm.DimensionCoordinate.del_data
-   ~cfdm.DimensionCoordinate.del_property
-   ~cfdm.DimensionCoordinate.expand_dims
-   ~cfdm.DimensionCoordinate.properties
-   ~cfdm.DimensionCoordinate.set_bounds
-   ~cfdm.DimensionCoordinate.set_data
-   ~cfdm.DimensionCoordinate.set_property
-   ~cfdm.DimensionCoordinate.squeeze
-   ~cfdm.DimensionCoordinate.transpose
 
 Miscellaneous
 -------------

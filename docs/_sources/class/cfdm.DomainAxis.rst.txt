@@ -20,8 +20,6 @@ Inspection
    :toctree: ../method/
    :template: method.rst
    
-   ~cfdm.DomainAxis.get_size
-   ~cfdm.DomainAxis.has_size
    ~cfdm.DomainAxis.name
 
 .. rubric:: Attributes
@@ -33,19 +31,21 @@ Inspection
 
    ~cfdm.DomainAxis.construct_type
 
-Modification
-------------
+Size
+----
 
 .. rubric:: Methods
-	    
+
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-
+   
    ~cfdm.DomainAxis.del_size
+   ~cfdm.DomainAxis.has_size
+   ~cfdm.DomainAxis.get_size
    ~cfdm.DomainAxis.set_size
-
+   
 Miscellaneous
 -------------
 

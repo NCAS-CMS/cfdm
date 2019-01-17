@@ -9,12 +9,13 @@
     <title>cfdm.Domain.auxiliary_coordinates &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Domain.cell_measures" href="cfdm.Domain.cell_measures.html" />
@@ -29,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -87,7 +88,7 @@
 <h1>cfdm.Domain.auxiliary_coordinates<a class="headerlink" href="#cfdm-domain-auxiliary-coordinates" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Domain.auxiliary_coordinates">
-<code class="descclassname">Domain.</code><code class="descname">auxiliary_coordinates</code><span class="sig-paren">(</span><em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/mixin/constructaccess.py#L1211"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.auxiliary_coordinates" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Domain.</code><code class="descname">auxiliary_coordinates</code><span class="sig-paren">(</span><em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/mixin/constructaccess.py#L1224"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.auxiliary_coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return auxiliary coordinate constructs.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -109,7 +110,7 @@ constructs are not copied.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
 <dd><p class="first last">Constructs are returned as values of a dictionary, keyed by
 their construct identifiers.</p>
 </dd>
@@ -119,11 +120,11 @@ their construct identifiers.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">auxiliary_coordinates</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">auxiliary_coordinates</span><span class="p">()</span>
 <span class="go">{}</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">auxiliary_coordinates</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">auxiliary_coordinates</span><span class="p">()</span>
 <span class="go">{&#39;auxiliarycoordinate0&#39;: &lt;AuxiliaryCoordinate: latitude(10, 9) degrees_N&gt;,</span>
 <span class="go"> &#39;auxiliarycoordinate1&#39;: &lt;AuxiliaryCoordinate: longitude(9, 10) degrees_E&gt;,</span>
 <span class="go"> &#39;auxiliarycoordinate2&#39;: &lt;AuxiliaryCoordinate: long_name:Grid latitude name(10) &gt;}</span>
@@ -143,8 +144,8 @@ their construct identifiers.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Domain.auxiliary_coordinates.rst.txt"

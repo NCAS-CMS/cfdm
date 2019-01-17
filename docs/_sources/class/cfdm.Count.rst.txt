@@ -21,22 +21,7 @@ Inspection
    :template: method.rst
 
    ~cfdm.Count.dump
-   ~cfdm.Count.get_array
-   ~cfdm.Count.get_data
-   ~cfdm.Count.has_data
-   ~cfdm.Count.get_property
-   ~cfdm.Count.has_property
    ~cfdm.Count.name
-   ~cfdm.Count.properties
-
-.. rubric:: Attributes
-   
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cfdm.Count.data
   
 Properties
 ----------
@@ -51,8 +36,8 @@ Properties
    ~cfdm.Count.del_property
    ~cfdm.Count.get_property
    ~cfdm.Count.has_property
-   ~cfdm.Count.properties
    ~cfdm.Count.set_property
+   ~cfdm.Count.properties
 
 Data
 ----
@@ -64,11 +49,14 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Count.del_data
    ~cfdm.Count.get_array
+   ~cfdm.Count.del_data
    ~cfdm.Count.get_data
    ~cfdm.Count.has_data
-   ~cfdm.Count.set_data
+   ~cfdm.Count.set_data  
+   ~cfdm.Count.insert_dimension
+   ~cfdm.Count.squeeze
+   ~cfdm.Count.transpose
    
 .. rubric:: Attributes
    
@@ -78,25 +66,6 @@ Data
    :template: attribute.rst
 
    ~cfdm.Count.data
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.Count.del_data
-   ~cfdm.Count.del_property
-   ~cfdm.Count.expand_dims
-   ~cfdm.Count.properties
-   ~cfdm.Count.set_data
-   ~cfdm.Count.set_property
-   ~cfdm.Count.squeeze
-   ~cfdm.Count.transpose
 
 Miscellaneous
 -------------

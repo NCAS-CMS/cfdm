@@ -9,16 +9,17 @@
     <title>cfdm.DomainAxis.name &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.DomainAxis.construct_type" href="../attribute/cfdm.DomainAxis.construct_type.html" />
-    <link rel="prev" title="cfdm.DomainAxis.has_size" href="cfdm.DomainAxis.has_size.html" />
+    <link rel="prev" title="cfdm.DomainAxis" href="../class/cfdm.DomainAxis.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -52,7 +53,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.DomainAxis.html">cfdm.DomainAxis</a><ul>
-      <li>Previous: <a href="cfdm.DomainAxis.has_size.html" title="previous chapter">cfdm.DomainAxis.has_size</a></li>
+      <li>Previous: <a href="../class/cfdm.DomainAxis.html" title="previous chapter">cfdm.DomainAxis</a></li>
       <li>Next: <a href="../attribute/cfdm.DomainAxis.construct_type.html" title="next chapter">cfdm.DomainAxis.construct_type</a></li>
   </ul></li>
   </ul></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.DomainAxis.name<a class="headerlink" href="#cfdm-domainaxis-name" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.DomainAxis.name">
-<code class="descclassname">DomainAxis.</code><code class="descname">name</code><span class="sig-paren">(</span><em>default=None</em>, <em>ncdim=True</em>, <em>custom=None</em>, <em>all_names=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/domainaxis.py#L135"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAxis.name" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DomainAxis.</code><code class="descname">name</code><span class="sig-paren">(</span><em>default=None</em>, <em>ncdim=True</em>, <em>custom=None</em>, <em>all_names=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/domainaxis.py#L135"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAxis.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a name for the domain axis construct.</p>
 <p>By default the name is the first found of the following:</p>
 <ol class="arabic simple">
@@ -120,28 +121,24 @@ parameter. By default the default is <a class="reference external" href="https:/
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The name. If the <em>all_names</em> parameter is True then a list of
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The name. If the <em>all_names</em> parameter is True then a list of
 all possible names.</p>
-</dd>
-</dl>
 </td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
 <span class="go">&#39;ncdim%time&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="n">all_names</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="n">all_names</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">[&#39;ncdim%time&#39;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s1">&#39;default_value&#39;</span><span class="p">,</span> <span class="n">all_names</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s1">&#39;default_value&#39;</span><span class="p">,</span> <span class="n">all_names</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">[&#39;ncdim%time&#39;, &#39;default_value&#39;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">nc_del_dimension</span><span class="p">()</span>
 <span class="go">&#39;time&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s1">&#39;default value&#39;</span><span class="p">)</span>
 <span class="go">&#39;default value&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s1">&#39;default value&#39;</span><span class="p">,</span> <span class="n">all_names</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s1">&#39;default value&#39;</span><span class="p">,</span> <span class="n">all_names</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">[&#39;default value&#39;]</span>
 </pre></div>
 </div>
@@ -159,8 +156,8 @@ all possible names.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.DomainAxis.name.rst.txt"

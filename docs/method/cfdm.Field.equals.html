@@ -9,15 +9,16 @@
     <title>cfdm.Field.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Field.create_field" href="cfdm.Field.create_field.html" />
+    <link rel="next" title="cfdm.Field.convert" href="cfdm.Field.convert.html" />
     <link rel="prev" title="cfdm.Field.copy" href="cfdm.Field.copy.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -53,7 +54,7 @@
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Field.html">cfdm.Field</a><ul>
       <li>Previous: <a href="cfdm.Field.copy.html" title="previous chapter">cfdm.Field.copy</a></li>
-      <li>Next: <a href="cfdm.Field.create_field.html" title="next chapter">cfdm.Field.create_field</a></li>
+      <li>Next: <a href="cfdm.Field.convert.html" title="next chapter">cfdm.Field.convert</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.Field.equals<a class="headerlink" href="#cfdm-field-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.equals">
-<code class="descclassname">Field.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/field.py#L828"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/field.py#L829"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two field constructs are the same.</p>
 <p>Equality is strict by default. This means that for two field
 constructs to be considered equal they must have corresponding
@@ -105,8 +106,8 @@ and <em>ignore_data_type</em> parameters), and</li>
 type, the same missing data mask, and be element-wise equal (see the
 <em>ignore_data_type</em> parameter).</li>
 </ul>
-<p>Two real numbers <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are considered equal if
-<code class="docutils literal notranslate"><span class="pre">|a-b|&lt;=atol+rtol|b|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
+<p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
+<code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
 differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
 positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
 parameters.</p>
@@ -143,7 +144,7 @@ numbers. The default value is set by the <a class="reference internal" href="../
 are omitted from the comparison, for the field construct and
 metadata constructs.</p>
 </dd>
-<dt>traceback: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then print information about differences that lead to
 inequality.</p>
 </dd>
@@ -176,7 +177,7 @@ parameter.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
 <dd><p class="first last">Whether the two field constructs are equal.</p>
 </dd>
 </dl>
@@ -185,7 +186,7 @@ parameter.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 <span class="go">True</span>
@@ -195,11 +196,11 @@ parameter.</p>
 <span class="go">False</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">traceback</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">Field: Non-common property name: foo</span>
 <span class="go">Field: Different properties</span>
 <span class="go">False</span>
@@ -219,8 +220,8 @@ parameter.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Field.equals.rst.txt"

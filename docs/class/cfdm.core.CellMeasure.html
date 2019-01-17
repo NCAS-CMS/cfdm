@@ -9,12 +9,13 @@
     <title>cfdm.core.CellMeasure &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.core.CellMeasure.get_array" href="../method/cfdm.core.CellMeasure.get_array.html" />
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -88,7 +89,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.CellMeasure">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CellMeasure</code><span class="sig-paren">(</span><em>measure=None</em>, <em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/core/cellmeasure.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMeasure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CellMeasure</code><span class="sig-paren">(</span><em>measure=None</em>, <em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/core/cellmeasure.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMeasure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>A cell measure construct of the CF data model.</p>
 <p>A cell measure construct provides information that is needed about the
@@ -120,7 +121,7 @@ cell measure variables correspond to cell measure constructs.</p>
 array. Ignored if the <em>source</em> parameter is set.</p>
 <blockquote>
 <div><dl class="docutils">
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">measure='area'</span></code></p>
 </dd>
 </dl>
@@ -134,7 +135,7 @@ names, with corresponding values. Ignored if the <em>source</em>
 parameter is set.</p>
 <blockquote>
 <div><dl class="docutils">
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'units':</span> <span class="pre">'metres</span> <span class="pre">2'}</span></code></p>
 </dd>
 </dl>
@@ -153,8 +154,8 @@ parameter is set.</p>
 object, or a subclass of one of its parent classes.</p>
 <blockquote class="last">
 <div><dl class="docutils">
-<dt><em>Example:</em></dt>
-<dd><div class="first last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">CellMeasure</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+<dt><em>Parameter example:</em></dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">CellMeasure</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd>
@@ -171,7 +172,7 @@ initialization By default parameters are deep copied.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">CellMeasure</span><span class="p">(</span><span class="n">measure</span><span class="o">=</span><span class="s1">&#39;area&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">CellMeasure</span><span class="p">(</span><span class="n">measure</span><span class="o">=</span><span class="s1">&#39;area&#39;</span>
 <span class="gp">... </span>                <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;km 2&#39;</span><span class="p">},</span>
 <span class="gp">... </span>                <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
 </pre></div>
@@ -382,8 +383,8 @@ initialization By default parameters are deep copied.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.core.CellMeasure.rst.txt"

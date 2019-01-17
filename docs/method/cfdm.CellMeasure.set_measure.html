@@ -9,16 +9,17 @@
     <title>cfdm.CellMeasure.set_measure &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.CellMeasure.set_property" href="cfdm.CellMeasure.set_property.html" />
-    <link rel="prev" title="cfdm.CellMeasure.del_property" href="cfdm.CellMeasure.del_property.html" />
+    <link rel="next" title="cfdm.CellMeasure.del_property" href="cfdm.CellMeasure.del_property.html" />
+    <link rel="prev" title="cfdm.CellMeasure.has_measure" href="cfdm.CellMeasure.has_measure.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -52,8 +53,8 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.CellMeasure.html">cfdm.CellMeasure</a><ul>
-      <li>Previous: <a href="cfdm.CellMeasure.del_property.html" title="previous chapter">cfdm.CellMeasure.del_property</a></li>
-      <li>Next: <a href="cfdm.CellMeasure.set_property.html" title="next chapter">cfdm.CellMeasure.set_property</a></li>
+      <li>Previous: <a href="cfdm.CellMeasure.has_measure.html" title="previous chapter">cfdm.CellMeasure.has_measure</a></li>
+      <li>Next: <a href="cfdm.CellMeasure.del_property.html" title="next chapter">cfdm.CellMeasure.del_property</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.CellMeasure.set_measure<a class="headerlink" href="#cfdm-cellmeasure-set-measure" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CellMeasure.set_measure">
-<code class="descclassname">CellMeasure.</code><code class="descname">set_measure</code><span class="sig-paren">(</span><em>measure</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/core/cellmeasure.py#L217"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.set_measure" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CellMeasure.</code><code class="descname">set_measure</code><span class="sig-paren">(</span><em>measure</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/core/cellmeasure.py#L215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.set_measure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the measure.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -118,7 +119,7 @@
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_measure</span><span class="p">(</span><span class="s1">&#39;area&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_measure</span><span class="p">(</span><span class="s1">&#39;area&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_measure</span><span class="p">()</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_measure</span><span class="p">()</span>
@@ -127,9 +128,9 @@
 <span class="go">&#39;area&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_measure</span><span class="p">()</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">del_measure</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">del_measure</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
 <span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_measure</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_measure</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
 <span class="go">None</span>
 </pre></div>
 </div>
@@ -147,8 +148,8 @@
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.CellMeasure.set_measure.rst.txt"

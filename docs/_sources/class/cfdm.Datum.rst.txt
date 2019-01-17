@@ -10,8 +10,8 @@ cfdm.Datum
    :no-members:
    :no-inherited-members:
 
-Inspection
-----------
+Parameter terms
+---------------
 
 .. rubric:: Methods
 
@@ -22,8 +22,8 @@ Inspection
 
    ~cfdm.Datum.del_parameter
    ~cfdm.Datum.get_parameter
-   ~cfdm.Datum.parameters
    ~cfdm.Datum.set_parameter
+   ~cfdm.Datum.parameters
 
 Miscellaneous
 -------------

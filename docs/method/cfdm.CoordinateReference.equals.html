@@ -9,12 +9,13 @@
     <title>cfdm.CoordinateReference.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.CoordinateReference.nc_del_variable" href="cfdm.CoordinateReference.nc_del_variable.html" />
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.CoordinateReference.equals<a class="headerlink" href="#cfdm-coordinatereference-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CoordinateReference.equals">
-<code class="descclassname">CoordinateReference.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/coordinatereference.py#L255"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CoordinateReference.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/coordinatereference.py#L255"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two coordinate reference constructs are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -102,8 +103,8 @@ considered, because they may ony be correctly interpreted by the field
 constructs that contain the coordinate reference constructs in
 question. They are, however, taken into account when two fields
 constructs are tested for equality.</p>
-<p>Two real numbers <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are considered equal if
-<code class="docutils literal notranslate"><span class="pre">|a-b|&lt;=atol+rtol|b|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
+<p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
+<code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
 differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
 positive, typically very small numbers. The data type of the numbers
 is not taken into consideration. See the <em>atol</em> and <em>rtol</em> parameters.</p>
@@ -131,7 +132,7 @@ numbers. The default value is set by the <a class="reference internal" href="../
 <dd><p class="first last">The tolerance on relative differences between real
 numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a> function.</p>
 </dd>
-<dt>traceback: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then print information about differences that lead to
 inequality.</p>
 </dd>
@@ -146,7 +147,7 @@ the <code class="docutils literal notranslate"><span class="pre">other</span></c
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
 <dd><p class="first last">Whether the two coordinate reference constructs are equal.</p>
 </dd>
 </dl>
@@ -155,7 +156,7 @@ the <code class="docutils literal notranslate"><span class="pre">other</span></c
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 <span class="go">True</span>
@@ -177,8 +178,8 @@ the <code class="docutils literal notranslate"><span class="pre">other</span></c
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.CoordinateReference.equals.rst.txt"

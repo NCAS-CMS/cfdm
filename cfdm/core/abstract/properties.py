@@ -229,9 +229,9 @@ None
 :Parameters:
 
     properties: `dict`, optional   
-        Replace all existing properties with those specified in the
-        dictionary. If the dictionary is empty then all properties
-        will be removed.
+        Delete all existing properties, and instead store the
+        properties from the dictionary supplied.
+
 
         *Parameter example:*
           ``properties={'standard_name': 'altitude', 'foo': 'bar'}``

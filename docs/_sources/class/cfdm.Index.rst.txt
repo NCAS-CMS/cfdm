@@ -21,22 +21,7 @@ Inspection
    :template: method.rst
 
    ~cfdm.Index.dump
-   ~cfdm.Index.get_array
-   ~cfdm.Index.get_data
-   ~cfdm.Index.has_data
-   ~cfdm.Index.get_property
-   ~cfdm.Index.has_property
    ~cfdm.Index.name
-   ~cfdm.Index.properties
-
-.. rubric:: Attributes
-   
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cfdm.Index.data
   
 Properties
 ----------
@@ -51,8 +36,8 @@ Properties
    ~cfdm.Index.del_property
    ~cfdm.Index.get_property
    ~cfdm.Index.has_property
-   ~cfdm.Index.properties
    ~cfdm.Index.set_property
+   ~cfdm.Index.properties
 
 Data
 ----
@@ -64,12 +49,15 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Index.del_data
    ~cfdm.Index.get_array
+   ~cfdm.Index.del_data
    ~cfdm.Index.get_data
    ~cfdm.Index.has_data
    ~cfdm.Index.set_data
-   
+   ~cfdm.Index.expand_dims   
+   ~cfdm.Index.squeeze
+   ~cfdm.Index.transpose
+
 .. rubric:: Attributes
    
 .. autosummary::
@@ -78,25 +66,6 @@ Data
    :template: attribute.rst
 
    ~cfdm.Index.data
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.Index.del_data
-   ~cfdm.Index.del_property
-   ~cfdm.Index.expand_dims
-   ~cfdm.Index.properties
-   ~cfdm.Index.set_data
-   ~cfdm.Index.set_property
-   ~cfdm.Index.squeeze
-   ~cfdm.Index.transpose
 
 Miscellaneous
 -------------

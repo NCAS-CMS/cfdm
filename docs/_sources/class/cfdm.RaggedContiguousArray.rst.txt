@@ -10,21 +10,23 @@ cfdm.RaggedContiguousArray
    :no-members:
    :no-inherited-members:
 
+Inspection
+----------
+
 .. rubric:: Methods
 
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
+      
+   ~cfdm.RaggedContiguousArray.get_array
+   ~cfdm.RaggedContiguousArray.get_compressed_array
+   ~cfdm.RaggedContiguousArray.get_compressed_axes
+   ~cfdm.RaggedContiguousArray.get_compressed_dimension
+   ~cfdm.RaggedContiguousArray.get_compression_type
+   ~cfdm.RaggedContiguousArray.get_count_variable
    
-   ~RaggedContiguousArray.copy
-   ~RaggedContiguousArray.get_array
-   ~RaggedContiguousArray.get_compressed_array
-   ~RaggedContiguousArray.get_compressed_axes
-   ~RaggedContiguousArray.get_compression_type
-   ~RaggedContiguousArray.get_sample_axis
-   ~RaggedContiguousArray.get_subspace
-
 .. rubric:: Attributes
 
 .. autosummary::
@@ -32,9 +34,35 @@ cfdm.RaggedContiguousArray
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~RaggedContiguousArray.dtype
-   ~RaggedContiguousArray.ndim
-   ~RaggedContiguousArray.shape
-   ~RaggedContiguousArray.size
-   
-   
+   ~cfdm.RaggedContiguousArray.dtype
+   ~cfdm.RaggedContiguousArray.ndim
+   ~cfdm.RaggedContiguousArray.shape
+   ~cfdm.RaggedContiguousArray.size
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.RaggedContiguousArray.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.RaggedContiguousArray.__array__
+   ~cfdm.RaggedContiguousArray.__deepcopy__
+   ~cfdm.RaggedContiguousArray.__getitem__
+   ~cfdm.RaggedContiguousArray.__repr__
+   ~cfdm.RaggedContiguousArray.__str__

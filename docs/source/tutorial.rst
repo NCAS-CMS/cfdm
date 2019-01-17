@@ -2388,22 +2388,25 @@ chunk size using the `nc_unlimited_dimensions` and
 **Scalar coordinate variables**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-CF-netCDF scalar (i.e. zero-dimensional) coordinate variables are
-created when there is a size one domain axis construct which is
-spanned by a dimension coordinate construct's data array, but not the
-field construct's data, nor the data of any other metadata construct.
-
-This is the case for the "specific humidity" field construct ``q``
-that was written to the file ``q_file.nc``.
+A CF-netCDF scalar (i.e. zero-dimensional) coordinate variable is
+created from a size one dimension coordinate construct that spans a
+domain axis construct which is not spanned by the field construct's
+data, nor the data of any other metadata construct. This occurs for
+the field construct ``q``, for which the "time" dimension coordinate
+construct was to the file ``q_file.nc`` as a scalar coordinate
+variable.
 
 To change this so that the "time" dimension coordinate construct is
 written as a CF-netCDF size one coordinate variable, the field
 construct's data must be expanded to span the corresponding size one
 domain axis construct, by using the `~Field.insert_dimension` method
-of the field construct:
+of the field construct.
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Write the "time" dimension coordinate construct to a
+             (non-scalar) CF-netCDF coordinate variable by inserting
+             the corresponding dimension into the field construct's
+             data.*
 		   
    >>> print(q)
    Field: specific_humidity (ncvar%humidity)
@@ -2529,7 +2532,8 @@ external file ``external.nc``. In this case a cell measure construct
 is still created, but one without any metadata or data:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Read the parent dataset without specifying the location
+             of any external datasets.*
 
    >>> u = cfdm.read('parent.nc')[0]
    >>> print(u)
@@ -2564,7 +2568,8 @@ and data from the external file, as if the netCDF cell measure
 variable had been present in the parent dataset:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Read the parent dataset whilst providing the external
+             dataset containing the external variables.*
    
    >>> g = cfdm.read('parent.nc', external='external.nc')[0]
    >>> print(g)
@@ -2592,19 +2597,28 @@ and data, would be written to the named output file, along with all of
 the other constructs. There would be no "external_variables" global
 attribute.
 
-In order to write a metadata construct to an external file, and refer
-to it with the "external_variables" global attribute in the parent
-output file, simply set the status of the cell measure construct to
-"external" with its `~CellMeasure.nc_external` method, and provide an
-external file name to the `cfdm.write` function:
+To create a reference to an external variable in an output netCDF
+file, set the status of the cell measure construct to "external" with
+its `~CellMeasure.nc_external` method.
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Flag the cell measure as external and write teh field
+             construct to a new file.*
 
    >>> area.nc_external(True)
    False
-   >>> cfdm.write(g, 'new_parent.nc', external='new_external.nc')
+   >>> cfdm.write(g, 'new_parent.nc')
 
+To create a reference to an external variable in the an output netCDF
+file and simultaneously create an external file containing the
+variable set the status of the cell measure construct to "external"
+and provide an external file name to the `cfdm.write` function:
+
+.. code-block:: python
+   :caption: *Write the field construct to a new file and the cell
+             measure construct to an external file.*
+
+   >>> cfdm.write(g, 'new_parent.nc', external='new_external.nc')
 
 .. _Compression:
    
@@ -2648,10 +2662,9 @@ both:
 * A :ref:`subspace <Subspacing>` of a field construct is created with
   indices of the uncompressed form of the data. The new subspace will
   no longer be compressed, i.e. its underlying arrays will be
-  uncompressed, but the original data will remain
-  compressed. Therefore, all of the data in a field construct may be
-  uncompressed by creating a subspace that is identical to the entire
-  field constuct, such as one created with an index of `Ellipsis`.
+  uncompressed, but the original data will remain compressed. It
+  follows that to uncompress all of the data in a field construct,
+  index the field construct with (indices equivalent to) `Ellipsis`.
   
 ..
 
@@ -2745,7 +2758,9 @@ still in the one-dimension ragged representation described in the
 file:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Read a field construct from a dataset that has been
+             compressed with contiguous ragged arrays, and inspect its
+             data in uncompressed form.*
    
    >>> h = cfdm.read('contiguous.nc')[0]
    >>> print(h)
@@ -2763,6 +2778,11 @@ file:
     [0.05 0.11 0.2  0.15 0.08 0.04 0.06   --   --]
     [0.15 0.19 0.15 0.17 0.07   --   --   --   --]
     [0.11 0.03 0.14 0.16 0.02 0.09 0.1  0.04 0.11]]
+
+.. code-block:: python
+   :caption: *Inspect the underlying compressed array and the count
+             variable that defines how to uncompress the data.*
+	     
    >>> h.data.get_compression_type()
    'ragged contiguous'
    >>> print(h.data.get_compressed_array())
@@ -2778,12 +2798,12 @@ The timeseries for the second station is easily selected by indexing
 the "station" axis of the field construct:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: **
 	  
-   >>> station = h[1]
-   >>> station
+   >>> station2 = h[1]
+   >>> station2
    <Field: specific_humidity(ncdim%station(1), ncdim%timeseries(9))>
-   >>> print(station.get_array())
+   >>> print(station2.get_array())
    [[0.05 0.11 0.2 0.15 0.08 0.04 0.06 -- --]]
 
 The underlying array of original data remains in compressed form until
@@ -2951,7 +2971,9 @@ still in the two-dimensional gathered representation described in the
 file:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Read a field construct from a dataset that has been
+             compressed by gathering, and inspect its data in
+             uncompressed form.*
 
    >>> p = cfdm.read('gathered.nc')[0]
    >>> print(p)
@@ -2971,6 +2993,11 @@ file:
      [0.00084  --       0.000201 0.0057   --      ]
      [--       --       --       --       --      ]
      [--       0.000223 --       0.000102 --      ]]]
+
+.. code-block:: python
+   :caption: *Inspect the underlying compressed array and the list
+             variable that defines how to uncompress the data.*
+	     
    >>> p.data.get_compression_type()
    'gathered'
    >>> print(p.data.get_compressed_array())

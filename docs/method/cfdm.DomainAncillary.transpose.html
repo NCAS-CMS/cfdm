@@ -9,15 +9,16 @@
     <title>cfdm.DomainAncillary.transpose &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.DomainAncillary.copy" href="cfdm.DomainAncillary.copy.html" />
+    <link rel="next" title="cfdm.DomainAncillary.data" href="../attribute/cfdm.DomainAncillary.data.html" />
     <link rel="prev" title="cfdm.DomainAncillary.squeeze" href="cfdm.DomainAncillary.squeeze.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -53,7 +54,7 @@
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.DomainAncillary.html">cfdm.DomainAncillary</a><ul>
       <li>Previous: <a href="cfdm.DomainAncillary.squeeze.html" title="previous chapter">cfdm.DomainAncillary.squeeze</a></li>
-      <li>Next: <a href="cfdm.DomainAncillary.copy.html" title="next chapter">cfdm.DomainAncillary.copy</a></li>
+      <li>Next: <a href="../attribute/cfdm.DomainAncillary.data.html" title="next chapter">cfdm.DomainAncillary.data</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.DomainAncillary.transpose<a class="headerlink" href="#cfdm-domainancillary-transpose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.DomainAncillary.transpose">
-<code class="descclassname">DomainAncillary.</code><code class="descname">transpose</code><span class="sig-paren">(</span><em>axes=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/mixin/propertiesdatabounds.py#L616"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.transpose" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DomainAncillary.</code><code class="descname">transpose</code><span class="sig-paren">(</span><em>axes=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/mixin/propertiesdatabounds.py#L612"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permute the axes of the data array.</p>
 <p>Corresponding axes of the bounds data array, if present, are also
 permuted.</p>
@@ -100,7 +101,7 @@ preserve contiguity bounds in adjacent cells. See section 7.1 “Cell
 Boundaries” of the CF conventions for details.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cfdm.DomainAncillary.expand_dims.html#cfdm.DomainAncillary.expand_dims" title="cfdm.DomainAncillary.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a>, <a class="reference internal" href="cfdm.DomainAncillary.squeeze.html#cfdm.DomainAncillary.squeeze" title="cfdm.DomainAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.DomainAncillary.insert_dimension.html#cfdm.DomainAncillary.insert_dimension" title="cfdm.DomainAncillary.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>, <a class="reference internal" href="cfdm.DomainAncillary.squeeze.html#cfdm.DomainAncillary.squeeze" title="cfdm.DomainAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -113,10 +114,10 @@ axis in the new order is identified by its original integer
 position. Negative integers counting from the last position
 are allowed.</p>
 <dl class="last docutils">
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=[2,</span> <span class="pre">0,</span> <span class="pre">1]</span></code></p>
 </dd>
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=[-1,</span> <span class="pre">0,</span> <span class="pre">1]</span></code></p>
 </dd>
 </dl>
@@ -124,17 +125,13 @@ are allowed.</p>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: </dt>
-<dd><p class="first last">The new construct with permuted data axes.</p>
-</dd>
-</dl>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The new construct with permuted data axes.</p>
 </td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(19, 73, 96)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">tranpose</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(96, 73, 19)</span>
@@ -161,8 +158,8 @@ are allowed.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.DomainAncillary.transpose.rst.txt"

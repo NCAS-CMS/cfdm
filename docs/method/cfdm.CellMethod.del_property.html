@@ -9,16 +9,17 @@
     <title>cfdm.CellMethod.del_property &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.CellMethod.dump" href="cfdm.CellMethod.dump.html" />
-    <link rel="prev" title="cfdm.CellMethod.del_axes" href="cfdm.CellMethod.del_axes.html" />
+    <link rel="next" title="cfdm.CellMethod.get_property" href="cfdm.CellMethod.get_property.html" />
+    <link rel="prev" title="cfdm.CellMethod.set_method" href="cfdm.CellMethod.set_method.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -52,8 +53,8 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.CellMethod.html">cfdm.CellMethod</a><ul>
-      <li>Previous: <a href="cfdm.CellMethod.del_axes.html" title="previous chapter">cfdm.CellMethod.del_axes</a></li>
-      <li>Next: <a href="cfdm.CellMethod.dump.html" title="next chapter">cfdm.CellMethod.dump</a></li>
+      <li>Previous: <a href="cfdm.CellMethod.set_method.html" title="previous chapter">cfdm.CellMethod.set_method</a></li>
+      <li>Next: <a href="cfdm.CellMethod.get_property.html" title="next chapter">cfdm.CellMethod.get_property</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.CellMethod.del_property<a class="headerlink" href="#cfdm-cellmethod-del-property" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CellMethod.del_property">
-<code class="descclassname">CellMethod.</code><code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/core/abstract/properties.py#L79"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMethod.del_property" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CellMethod.</code><code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/core/abstract/properties.py#L78"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMethod.del_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -107,7 +108,7 @@
 <dt>prop: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
 <dd><p class="first">The name of the property to be removed.</p>
 <dl class="last docutils">
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">prop='long_name'</span></code></p>
 </dd>
 </dl>
@@ -118,18 +119,14 @@
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The removed property. If unset then <em>default</em> is returned, if
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The removed property. If unset then <em>default</em> is returned, if
 provided.</p>
-</dd>
-</dl>
 </td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
@@ -138,9 +135,9 @@ provided.</p>
 <span class="go">&#39;CMIP7&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 <span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 <span class="go">None</span>
 </pre></div>
 </div>
@@ -158,8 +155,8 @@ provided.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.CellMethod.del_property.rst.txt"

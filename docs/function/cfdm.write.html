@@ -9,12 +9,13 @@
     <title>cfdm.write &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.CF" href="cfdm.CF.html" />
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -87,7 +88,7 @@
 <h1>cfdm.write<a class="headerlink" href="#cfdm-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.write">
-<code class="descclassname">cfdm.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>variable_attributes=None</em>, <em>external_file=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>HDF_chunksizes=None</em>, <em>verbose=False</em>, <em>_implementation=&lt;cfdm.read_write.cfdmimplementation.CFDMImplementation object&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/read_write/write.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cfdm.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>variable_attributes=None</em>, <em>external=None</em>, <em>Conventions=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>HDF_chunksizes=None</em>, <em>verbose=False</em>, <em>_implementation=&lt;cfdm.read_write.cfdmimplementation.CFDMImplementation object&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/read_write/write.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -114,9 +115,7 @@ or netCDF data variable attributes. See the <em>global_attributes</em> and
 <p>Metadata constructs marked as external are omitted from the file and
 referred to via the netCDF “external_variables” global
 attribute. However, omitted constructs may be written to an external
-file (see the <em>external_file</em> parameter for details). Constructs that
-are allowed to be external have the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_external</span></code> method to get and
-set their external status:</p>
+file (see the <em>external</em> parameter for details).</p>
 <p><strong>NetCDF unlimited dimensions</strong></p>
 <p>Domain axis constructs will be written as netCDF unlimited dimensions
 if they are returned by the <a class="reference internal" href="../method/cfdm.Field.nc_unlimited_dimensions.html#cfdm.Field.nc_unlimited_dimensions" title="cfdm.Field.nc_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></a>
@@ -214,20 +213,37 @@ field construct properties.</p>
 global properties are created as attributes netCDF data
 variables. See the <em>global_attributes</em> parameter for details.</p>
 <p>Any property named by the <em>variable_attributes</em> parameter
-will always be created as a netCDF data variable attribute.</p>
+will always be created as a netCDF data variable attribute
+<em>Example:</em></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">variable_attributes='project'</span></code></p>
+</div></blockquote>
 <dl class="last docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">variable_attributes='project'</span></code></p>
-</dd>
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">variable_attributes=['project',</span> <span class="pre">'doi']</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>external_file: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional   </dt>
+<dt>external: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional   </dt>
 <dd><p class="first last">Write metadata constructs that have data and are marked as
 external to the named external file. Ignored if there are no
 such constructs.</p>
+</dd>
+<dt>Conventions: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Specify conventions to be recorded by the netCDF global
+“Conventions” attribute. These conventions are in addition to
+version of CF being used e.g. <code class="docutils literal notranslate"><span class="pre">'CF-1.7'</span></code>, which must not be
+specified. If the “Conventions” property is set on a field
+construct then it is ignored. Note that a convention name is
+not allowed to contain any commas.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions='UGRID-1.0'</span></code></p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions=['CMIP-6.2',</span> <span class="pre">'UGRID-1.0']</span></code></p>
+</dd>
+</dl>
 </dd>
 <dt>datatype: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Specify data type conversions to be applied prior to writing
@@ -240,11 +256,12 @@ and not to the input field constructs themselves.</p>
 <p>Data types conversions are defined by <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a> objects in
 a dictionary whose keys are input data types with values of
 output data types.</p>
-<p><em>Example:</em></p>
-<blockquote class="last">
-<div><p>To convert 64-bit integers to 32-bit integers:
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To convert 64-bit integers to 32-bit integers:
 <code class="docutils literal notranslate"><span class="pre">datatype={numpy.dtype('int64'):</span> <span class="pre">numpy.dtype('int32')}</span></code>.</p>
-</div></blockquote>
+</dd>
+</dl>
 </dd>
 <dt>endian: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">The endian-ness of the output file. Valid values are
@@ -299,10 +316,8 @@ different, using the filter can make the data more easily
 compressible.  Ignored if the <em>compress</em> parameter is <code class="docutils literal notranslate"><span class="pre">0</span></code>
 (which is its default value). See the <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for more details.</p>
 </dd>
-</dl>
-<p>HDF_chunksizes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</p>
-<blockquote>
-<div><p>Manually specify HDF5 chunks for the field construct data
+<dt>HDF_chunksizes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dd><p class="first">Manually specify HDF5 chunks for the field construct data
 arrays.</p>
 <p>Chunking refers to a storage layout where a data array is
 partitioned into fixed-size multi-dimensional chunks when
@@ -324,15 +339,14 @@ default chunk is used
 <p>If any chunk sizes have already been set on a field construct
 with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.HDF_chunks</span></code> method then these are used in
 instead.</p>
-<p>A detailed discussion of HDF chunking and I/O performance is
+<p class="last">A detailed discussion of HDF chunking and I/O performance is
 available at
 <a class="reference external" href="https://www.hdfgroup.org/HDF5/doc/H5.user/Chunking.html">https://www.hdfgroup.org/HDF5/doc/H5.user/Chunking.html</a> and
 <a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf/workshops/2011/nc4chunking">http://www.unidata.ucar.edu/software/netcdf/workshops/2011/nc4chunking</a>.
 Basically, you want the chunks for each dimension to match as
 closely as possible the size and shape of the data block that
 users will read from the file.</p>
-</div></blockquote>
-<dl class="docutils">
+</dd>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then print a summary of how constructs map to output
 netCDF dimensions, variables and attributes.</p>
@@ -346,9 +360,9 @@ netCDF dimensions, variables and attributes.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;NETCDF3_CLASSIC&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">external_file</span><span class="o">=</span><span class="s1">&#39;cell_measures.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">external</span><span class="o">=</span><span class="s1">&#39;cell_measures.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -365,8 +379,8 @@ netCDF dimensions, variables and attributes.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/function/cfdm.write.rst.txt"

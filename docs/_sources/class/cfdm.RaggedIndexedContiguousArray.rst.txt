@@ -10,21 +10,23 @@ cfdm.RaggedIndexedContiguousArray
    :no-members:
    :no-inherited-members:
 
+Inspection
+----------
+
 .. rubric:: Methods
 
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
-   ~RaggedIndexedContiguousArray.__init__
-   ~RaggedIndexedContiguousArray.copy
-   ~RaggedIndexedContiguousArray.get_array
-   ~RaggedIndexedContiguousArray.get_compressed_array
-   ~RaggedIndexedContiguousArray.get_compressed_axes
-   ~RaggedIndexedContiguousArray.get_compression_type
-   ~RaggedIndexedContiguousArray.get_sample_axis
-   ~RaggedIndexedContiguousArray.get_subspace
+      
+   ~cfdm.RaggedIndexedContiguousArray.get_array
+   ~cfdm.RaggedIndexedContiguousArray.get_compressed_array
+   ~cfdm.RaggedIndexedContiguousArray.get_compressed_axes
+   ~cfdm.RaggedIndexedContiguousArray.get_compressed_dimension
+   ~cfdm.RaggedIndexedContiguousArray.get_compression_type
+   ~cfdm.RaggedIndexedContiguousArray.get_count_variable
+   ~cfdm.RaggedIndexedContiguousArray.get_index_variable
    
 .. rubric:: Attributes
 
@@ -32,9 +34,36 @@ cfdm.RaggedIndexedContiguousArray
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
-   
-   ~RaggedIndexedContiguousArray.dtype
-   ~RaggedIndexedContiguousArray.ndim
-   ~RaggedIndexedContiguousArray.shape
-   ~RaggedIndexedContiguousArray.size
-   
+
+   ~cfdm.RaggedIndexedContiguousArray.dtype
+   ~cfdm.RaggedIndexedContiguousArray.ndim
+   ~cfdm.RaggedIndexedContiguousArray.shape
+   ~cfdm.RaggedIndexedContiguousArray.size
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.RaggedIndexedContiguousArray.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.RaggedIndexedContiguousArray.__array__
+   ~cfdm.RaggedIndexedContiguousArray.__deepcopy__
+   ~cfdm.RaggedIndexedContiguousArray.__getitem__
+   ~cfdm.RaggedIndexedContiguousArray.__repr__
+   ~cfdm.RaggedIndexedContiguousArray.__str__

@@ -9,16 +9,17 @@
     <title>cfdm.Field.set_data_axes &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Field.del_construct" href="cfdm.Field.del_construct.html" />
-    <link rel="prev" title="cfdm.Field.set_data" href="cfdm.Field.set_data.html" />
+    <link rel="next" title="cfdm.Field.insert_dimension" href="cfdm.Field.insert_dimension.html" />
+    <link rel="prev" title="cfdm.Field.get_data_axes" href="cfdm.Field.get_data_axes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -52,8 +53,8 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Field.html">cfdm.Field</a><ul>
-      <li>Previous: <a href="cfdm.Field.set_data.html" title="previous chapter">cfdm.Field.set_data</a></li>
-      <li>Next: <a href="cfdm.Field.del_construct.html" title="next chapter">cfdm.Field.del_construct</a></li>
+      <li>Previous: <a href="cfdm.Field.get_data_axes.html" title="previous chapter">cfdm.Field.get_data_axes</a></li>
+      <li>Next: <a href="cfdm.Field.insert_dimension.html" title="next chapter">cfdm.Field.insert_dimension</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.Field.set_data_axes<a class="headerlink" href="#cfdm-field-set-data-axes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.set_data_axes">
-<code class="descclassname">Field.</code><code class="descname">set_data_axes</code><span class="sig-paren">(</span><em>axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/core/field.py#L366"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.set_data_axes" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">set_data_axes</code><span class="sig-paren">(</span><em>axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/core/field.py#L363"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.set_data_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the domain axes spanned by the data array.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -106,7 +107,7 @@
 <dt>axes: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
 <dd><p class="first">The identifiers of the domain axes spanned by the data array.</p>
 <dl class="last docutils">
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis0',</span> <span class="pre">'domainaxis1']</span></code></p>
 </dd>
 </dl>
@@ -120,14 +121,14 @@
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data_axes</span><span class="p">([</span><span class="s1">&#39;domainaxis0&#39;</span><span class="p">,</span> <span class="s1">&#39;domainaxis1&#39;</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data_axes</span><span class="p">([</span><span class="s1">&#39;domainaxis0&#39;</span><span class="p">,</span> <span class="s1">&#39;domainaxis1&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data_axes</span><span class="p">()</span>
 <span class="go">(&#39;domainaxis0&#39;, &#39;domainaxis1&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_data_axes</span><span class="p">()</span>
 <span class="go">(&#39;domainaxis0&#39;, &#39;domainaxis1&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_dataxes</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_dataxes</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
 <span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_data_axes</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_data_axes</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
 <span class="go">None</span>
 </pre></div>
 </div>
@@ -145,8 +146,8 @@
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Field.set_data_axes.rst.txt"

@@ -9,16 +9,17 @@
     <title>cfdm.DimensionCoordinate.bounds &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.DimensionCoordinate.data" href="cfdm.DimensionCoordinate.data.html" />
-    <link rel="prev" title="cfdm.DimensionCoordinate.construct_type" href="cfdm.DimensionCoordinate.construct_type.html" />
+    <link rel="next" title="cfdm.DimensionCoordinate.copy" href="../method/cfdm.DimensionCoordinate.copy.html" />
+    <link rel="prev" title="cfdm.DimensionCoordinate.set_bounds" href="../method/cfdm.DimensionCoordinate.set_bounds.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -52,8 +53,8 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.DimensionCoordinate.html">cfdm.DimensionCoordinate</a><ul>
-      <li>Previous: <a href="cfdm.DimensionCoordinate.construct_type.html" title="previous chapter">cfdm.DimensionCoordinate.construct_type</a></li>
-      <li>Next: <a href="cfdm.DimensionCoordinate.data.html" title="next chapter">cfdm.DimensionCoordinate.data</a></li>
+      <li>Previous: <a href="../method/cfdm.DimensionCoordinate.set_bounds.html" title="previous chapter">cfdm.DimensionCoordinate.set_bounds</a></li>
+      <li>Next: <a href="../method/cfdm.DimensionCoordinate.copy.html" title="next chapter">cfdm.DimensionCoordinate.copy</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -107,7 +108,7 @@ of the <a class="reference internal" href="../class/cfdm.Bounds.html#cfdm.Bounds
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <a class="reference internal" href="../class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a></dt>
+<dt><a class="reference internal" href="../class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a></dt>
 <dd><p class="first last">The bounds.</p>
 </dd>
 </dl>
@@ -116,7 +117,7 @@ of the <a class="reference internal" href="../class/cfdm.Bounds.html#cfdm.Bounds
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
@@ -144,8 +145,8 @@ of the <a class="reference internal" href="../class/cfdm.Bounds.html#cfdm.Bounds
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/attribute/cfdm.DimensionCoordinate.bounds.rst.txt"

@@ -9,15 +9,15 @@
     <title>cfdm.core.CellMethod &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.CellMethod.del_axes" href="../method/cfdm.core.CellMethod.del_axes.html" />
     <link rel="prev" title="cfdm.core.CellMeasure.__deepcopy__" href="../method/cfdm.core.CellMeasure.__deepcopy__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -52,7 +52,6 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.core.CellMeasure.__deepcopy__.html" title="previous chapter">cfdm.core.CellMeasure.__deepcopy__</a></li>
-      <li>Next: <a href="../method/cfdm.core.CellMethod.del_axes.html" title="next chapter">cfdm.core.CellMethod.del_axes</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -88,7 +87,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.CellMethod">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CellMethod</code><span class="sig-paren">(</span><em>axes=None</em>, <em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/core/cellmethod.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CellMethod</code><span class="sig-paren">(</span><em>axes=None</em>, <em>method=None</em>, <em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/core/cellmethod.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.properties.Properties</span></code></p>
 <p>A cell method construct of the CF data model.</p>
 <p>One or more cell method constructs describe how the cell values of the
@@ -111,23 +110,26 @@ that the method was applied only over El Nino years).</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>axes: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Set the axes of the cell method construct. Either one or more
-domain axis construct identifiers or standard names. Ignored
-if the <em>source</em> parameter is set.</p>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Set the axes of the cell method construct, specified either by
+the construct identifiers of domain axis constructs, standard
+names, or the special string <code class="docutils literal notranslate"><span class="pre">'area'</span></code>.</p>
 <blockquote class="last">
 <div><blockquote>
 <div><dl class="docutils">
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes='domainaxis0'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis0']</span></code></p>
 </dd>
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=('domainaxis0',</span> <span class="pre">'domainaxis1')</span></code></p>
 </dd>
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=('area',)</span></code></p>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes='area'</span></code></p>
 </dd>
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis2',</span> <span class="pre">'time']</span></code></p>
 </dd>
 </dl>
@@ -136,23 +138,40 @@ if the <em>source</em> parameter is set.</p>
 <a class="reference internal" href="../method/cfdm.core.CellMethod.set_axes.html#cfdm.core.CellMethod.set_axes" title="cfdm.core.CellMethod.set_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axes</span></code></a> method.</p>
 </div></blockquote>
 </dd>
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Set the axes of the cell method construct. Either one or more
+domain axis construct identifiers or standard names. Ignored
+if the <em>source</em> parameter is set.</p>
+<blockquote class="last">
+<div><blockquote>
+<div><dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><a href="#id1"><span class="problematic" id="id2">``</span></a>method=’mean’</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>The method may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.core.CellMethod.set_method.html#cfdm.core.CellMethod.set_method" title="cfdm.core.CellMethod.set_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_method</span></code></a> method.</p>
+</div></blockquote>
+</dd>
 <dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Set descriptive properties. The dictionary keys are property
 names, with corresponding values. Ignored if the <em>source</em>
 parameter is set.</p>
 <dl class="docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'method':</span> <span class="pre">'variance'}</span></code></p>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'comment':</span> <span class="pre">'sampled</span> <span class="pre">instantaneously'}</span></code></p>
 </dd>
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'method':</span> <span class="pre">'mean',</span> <span class="pre">'where':</span> <span class="pre">'sea'}</span></code></p>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'where':</span> <span class="pre">'sea',</span> <span class="pre">''over':</span> <span class="pre">'ice'}</span></code></p>
 </dd>
 </dl>
 <p class="last">Properties may also be set after initialisation with the
 <a class="reference internal" href="../method/cfdm.core.CellMethod.properties.html#cfdm.core.CellMethod.properties" title="cfdm.core.CellMethod.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a> and <a class="reference internal" href="../method/cfdm.core.CellMethod.set_property.html#cfdm.core.CellMethod.set_property" title="cfdm.core.CellMethod.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
 </dd>
 <dt>source: optional</dt>
-<dd><p class="first last">Initialize the axes and properties from those of <em>source</em>.</p>
+<dd><p class="first last">Initialize the axes, method and properties from those of
+<em>source</em>.</p>
 </dd>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
@@ -174,35 +193,29 @@ initialization By default parameters are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.del_axes.html#cfdm.core.CellMethod.del_axes" title="cfdm.core.CellMethod.del_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_axes</span></code></a></td>
-<td>Remove the axes of the cell method.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.del_property.html#cfdm.core.CellMethod.del_property" title="cfdm.core.CellMethod.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
-<td>Remove a property.</td>
-</tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.CellMethod.dump</span></code></td>
 <td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.get_axes.html#cfdm.core.CellMethod.get_axes" title="cfdm.core.CellMethod.get_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_axes</span></code></a></td>
 <td>Return the axes of the cell method.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.get_property.html#cfdm.core.CellMethod.get_property" title="cfdm.core.CellMethod.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.get_method.html#cfdm.core.CellMethod.get_method" title="cfdm.core.CellMethod.get_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_method</span></code></a></td>
+<td>Return the method of the cell method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.get_property.html#cfdm.core.CellMethod.get_property" title="cfdm.core.CellMethod.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
 <td>Return a property.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.has_axes.html#cfdm.core.CellMethod.has_axes" title="cfdm.core.CellMethod.has_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_axes</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.has_axes.html#cfdm.core.CellMethod.has_axes" title="cfdm.core.CellMethod.has_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_axes</span></code></a></td>
 <td>Whether the axes of the cell method have been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.has_method.html#cfdm.core.CellMethod.has_method" title="cfdm.core.CellMethod.has_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_method</span></code></a></td>
+<td>Whether the method of the cell method has been set.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.has_property.html#cfdm.core.CellMethod.has_property" title="cfdm.core.CellMethod.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.properties.html#cfdm.core.CellMethod.properties" title="cfdm.core.CellMethod.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.set_axes.html#cfdm.core.CellMethod.set_axes" title="cfdm.core.CellMethod.set_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axes</span></code></a></td>
-<td>Set the axes of the cell method.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.set_property.html#cfdm.core.CellMethod.set_property" title="cfdm.core.CellMethod.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
-<td>Set a property.</td>
 </tr>
 </tbody>
 </table>
@@ -231,14 +244,20 @@ initialization By default parameters are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.del_axes.html#cfdm.core.CellMethod.del_axes" title="cfdm.core.CellMethod.del_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_axes</span></code></a></td>
 <td>Remove the axes of the cell method.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.del_property.html#cfdm.core.CellMethod.del_property" title="cfdm.core.CellMethod.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.del_method.html#cfdm.core.CellMethod.del_method" title="cfdm.core.CellMethod.del_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_method</span></code></a></td>
+<td>Remove the method of the cell method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.del_property.html#cfdm.core.CellMethod.del_property" title="cfdm.core.CellMethod.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
 <td>Remove a property.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.properties.html#cfdm.core.CellMethod.properties" title="cfdm.core.CellMethod.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.properties.html#cfdm.core.CellMethod.properties" title="cfdm.core.CellMethod.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.set_axes.html#cfdm.core.CellMethod.set_axes" title="cfdm.core.CellMethod.set_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axes</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.set_axes.html#cfdm.core.CellMethod.set_axes" title="cfdm.core.CellMethod.set_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axes</span></code></a></td>
 <td>Set the axes of the cell method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.set_method.html#cfdm.core.CellMethod.set_method" title="cfdm.core.CellMethod.set_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_method</span></code></a></td>
+<td>Set the method of the cell method.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.set_property.html#cfdm.core.CellMethod.set_property" title="cfdm.core.CellMethod.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
@@ -291,8 +310,8 @@ initialization By default parameters are deep copied.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.core.CellMethod.rst.txt"

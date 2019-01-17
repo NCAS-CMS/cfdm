@@ -9,15 +9,16 @@
     <title>cfdm.Count.dump &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Count.get_array" href="cfdm.Count.get_array.html" />
+    <link rel="next" title="cfdm.Count.name" href="cfdm.Count.name.html" />
     <link rel="prev" title="cfdm.Count" href="../class/cfdm.Count.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -53,7 +54,7 @@
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Count.html">cfdm.Count</a><ul>
       <li>Previous: <a href="../class/cfdm.Count.html" title="previous chapter">cfdm.Count</a></li>
-      <li>Next: <a href="cfdm.Count.get_array.html" title="next chapter">cfdm.Count.get_array</a></li>
+      <li>Next: <a href="cfdm.Count.name.html" title="next chapter">cfdm.Count.name</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.Count.dump<a class="headerlink" href="#cfdm-count-dump" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Count.dump">
-<code class="descclassname">Count.</code><code class="descname">dump</code><span class="sig-paren">(</span><em>display=True</em>, <em>field=None</em>, <em>key=None</em>, <em>_title=None</em>, <em>_create_title=True</em>, <em>_prefix=''</em>, <em>_level=0</em>, <em>_omit_properties=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/count.py#L62"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count.dump" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Count.</code><code class="descname">dump</code><span class="sig-paren">(</span><em>display=True</em>, <em>field=None</em>, <em>key=None</em>, <em>_title=None</em>, <em>_create_title=True</em>, <em>_prefix=''</em>, <em>_level=0</em>, <em>_omit_properties=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/count.py#L62"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count.dump" title="Permalink to this definition">¶</a></dt>
 <dd><p>A full description of the count variable.</p>
 <p>Returns a description of all properties, including those of
 components, and provides selected values of all data arrays.</p>
@@ -109,7 +110,7 @@ the description is printed.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
 <dd><p class="first last">The description. If <em>display</em> is True then the description is
 printed and <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned. Otherwise the description is
 returned as a string.</p>
@@ -133,8 +134,8 @@ returned as a string.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Count.dump.rst.txt"

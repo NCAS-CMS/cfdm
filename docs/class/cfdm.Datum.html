@@ -9,16 +9,17 @@
     <title>cfdm.Datum &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Datum.del_parameter" href="../method/cfdm.Datum.del_parameter.html" />
-    <link rel="prev" title="cfdm.Data.__str__" href="../method/cfdm.Data.__str__.html" />
+    <link rel="prev" title="cfdm.CoordinateConversion.__str__" href="../method/cfdm.CoordinateConversion.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -51,7 +52,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.Data.__str__.html" title="previous chapter">cfdm.Data.__str__</a></li>
+      <li>Previous: <a href="../method/cfdm.CoordinateConversion.__str__.html" title="previous chapter">cfdm.CoordinateConversion.__str__</a></li>
       <li>Next: <a href="../method/cfdm.Datum.del_parameter.html" title="next chapter">cfdm.Datum.del_parameter</a></li>
   </ul></li>
   </ul></li>
@@ -88,7 +89,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Datum">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Datum</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/datum.py#L5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Datum</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b9/cfdm/datum.py#L5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.parameters.Parameters</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.datum.Datum</span></code></p>
 <p>A datum component of a coordinate reference construct of the CF
 data model.</p>
@@ -114,7 +115,7 @@ of the dimension and auxiliary coordinate constructs referenced by the
 <dd><p class="first">Set parameters. The dictionary keys are parameter names, with
 corresponding values. Ignored if the <em>source</em> parameter is set.</p>
 <dl class="docutils">
-<dt><em>Example:</em></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
 </dd>
 </dl>
@@ -135,8 +136,8 @@ initialization. By default arguments are deep copied.</p>
 </table>
 </dd></dl>
 
-<div class="section" id="inspection">
-<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="parameter-terms">
+<h2>Parameter terms<a class="headerlink" href="#parameter-terms" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -150,11 +151,11 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Datum.get_parameter.html#cfdm.Datum.get_parameter" title="cfdm.Datum.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></td>
 <td>Get a parameter value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Datum.parameters.html#cfdm.Datum.parameters" title="cfdm.Datum.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></td>
-<td>Return or replace the parameter-valued terms.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Datum.set_parameter.html#cfdm.Datum.set_parameter" title="cfdm.Datum.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Datum.set_parameter.html#cfdm.Datum.set_parameter" title="cfdm.Datum.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></td>
 <td>Set a parameter-valued term.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Datum.parameters.html#cfdm.Datum.parameters" title="cfdm.Datum.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></td>
+<td>Return or replace the parameter-valued terms.</td>
 </tr>
 </tbody>
 </table>
@@ -216,8 +217,8 @@ initialization. By default arguments are deep copied.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.Datum.rst.txt"
