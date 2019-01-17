@@ -113,7 +113,7 @@ object.
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
 
@@ -152,7 +152,7 @@ object.
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
 
@@ -186,7 +186,7 @@ object.
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
 
@@ -230,7 +230,7 @@ object.
 #
 #        * The value of the standard name property on its own. 
 #
-#            *Example:*
+#            *Parameter example:*
 #              ``description='air_pressure'`` will select constructs
 #              that have a "standard_name" property with the value
 #              "air_pressure".
@@ -238,15 +238,15 @@ object.
 #        * The value of any property prefixed by the property name and
 #          a colon (``:``).
 #
-#            *Example:*
+#            *Parameter example:*
 #              ``description='positive:up'`` will select constructs
 #              that have a "positive" property with the value "up".
 #
-#            *Example:*
+#            *Parameter example:*
 #              ``description='foo:bar'`` will select constructs that
 #              have a "foo" property with the value "bar".
 #
-#            *Example:*
+#            *Parameter example:*
 #              ``description='standard_name:air_pressure'`` will select
 #              constructs that have a "standard_name" property with the
 #              value "air_pressure".
@@ -254,14 +254,14 @@ object.
 #        * The measure of cell measure constructs, prefixed by
 #          ``measure%``.
 #
-#            *Example:*
+#            *Parameter example:*
 #              ``description='measure%area'`` will select "area" cell
 #              measure constructs.
 #
 #        * A construct identifier, prefixed by ``cid%`` (see also the
 #          *cid* parameter).
 #
-#            *Example:* 
+#            *Parameter example:* 
 #              ``description='cid%cellmethod1'`` will select cell
 #              method construct with construct identifier
 #              "cellmethod1". This is equivalent to
@@ -269,21 +269,21 @@ object.
 #
 #        * The netCDF variable name, prefixed by ``ncvar%``.
 #
-#            *Example:*
+#            *Parameter example:*
 #              ``description='ncvar%lat'`` will select constructs with
 #              netCDF variable name "lat".
 #
 #        * The netCDF dimension name of domain axis constructs,
 #          prefixed by ``ncdim%``.
 #
-#            *Example:*
+#            *Parameter example:*
 #              ``description='ncdim%time'`` will select domain axis
 #              constructs with netCDF dimension name "time".
 #
 #    cid: `str`, optional
 #        Select the construct with the given construct identifier.
 #
-#        *Example:*
+#        *Parameter example:*
 #          ``cid='domainancillary0'`` will the domain ancillary
 #          construct with construct identifier "domainancillary1". This
 #          is equivalent to ``description='cid%domainancillary0'``.
@@ -304,13 +304,13 @@ object.
 #          ``'field_ancillary'``       Field ancillary constructs
 #          ==========================  ================================
 #
-#        *Example:*
+#        *Parameter example:*
 #          ``construct_type='dimension_coordinate'``
 #
-#        *Example:*
+#        *Parameter example:*
 #          ``construct_type=['auxiliary_coordinate']``
 #
-#        *Example:*
+#        *Parameter example:*
 #          ``construct_type=('domain_ancillary', 'cell_method')``
 #
 #        Note that a domain never contains cell method nor field
@@ -321,15 +321,14 @@ object.
 #        the given domain axes, in any order. Domain axes are specified
 #        by their construct identifiers.
 #
-#        *Example:*
+#        *Parameter example:*
 #          ``axes=['domainaxis2']``
 #
-#        *Example:*
+#        *Parameter example:*
 #          ``axes=['domainaxis0', 'domainaxis1']``
 #
 #:Returns:
 #
-#    out:
 #        The removed metadata construct.
 #
 #**Examples:**
@@ -378,7 +377,7 @@ criteria.
 
         * The value of the standard name property on its own. 
 
-          *Example:*
+          *Parameter example:*
             ``description='air_pressure'`` will select constructs that
             have a "standard_name" property with the value
             "air_pressure".
@@ -386,15 +385,15 @@ criteria.
         * The value of any property prefixed by the property name and
           a colon (``:``).
 
-          *Example:*
+          *Parameter example:*
             ``description='positive:up'`` will select constructs that
             have a "positive" property with the value "up".
 
-          *Example:*
+          *Parameter example:*
             ``description='foo:bar'`` will select constructs that have
             a "foo" property with the value "bar".
 
-          *Example:*
+          *Parameter example:*
             ``description='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
             value "air_pressure".
@@ -402,35 +401,35 @@ criteria.
         * The measure of cell measure constructs, prefixed by
           ``measure%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='measure%area'`` will select "area" cell
             measure constructs.
 
         * A construct identifier, prefixed by ``cid%`` (see also the
           *cid* parameter).
 
-          *Example:* 
+          *Parameter example:* 
             ``description='cid%cellmethod1'`` will select cell method
             construct with construct identifier "cellmethod1". This is
             equivalent to ``cid='cellmethod1'``.
 
         * The netCDF variable name, prefixed by ``ncvar%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncvar%lat'`` will select constructs with
             netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
           prefixed by ``ncdim%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncdim%time'`` will select domain axis
             constructs with netCDF dimension name "time".
 
     cid: `str`, optional
         Select the construct with the given construct identifier.
 
-        *Example:*
+        *Parameter example:*
           ``cid='domainancillary0'`` will the domain ancillary
           construct with construct identifier "domainancillary0". This
           is equivalent to ``description='cid%domainancillary0'``.
@@ -451,13 +450,13 @@ criteria.
           ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           ``construct_type='dimension_coordinate'``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=['auxiliary_coordinate']``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=('domain_ancillary', 'cell_method')``
 
         Note that a domain can not contain cell method nor field
@@ -468,10 +467,10 @@ criteria.
         the given domain axes, in any order. Domain axes are specified
         by their construct identifiers.
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis2']``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis0', 'domainaxis1']``
 
     copy: `bool`, optional
@@ -482,12 +481,11 @@ criteria.
         Return *default* if no metadata construct can be found. By
         default an exception is raised in this case.
 
-        *Example:*
+        *Parameter example:*
           ``default=None``
 
 :Returns:
 
-    out:
         The unique selected construct. If there is none, then
         *default* is returned, if provided.
 
@@ -555,7 +553,7 @@ criteria, then an empty tuple is returned.
 
         * The value of the standard name property on its own. 
 
-          *Example:*
+          *Parameter example:*
             ``description='air_pressure'`` will select constructs that
             have a "standard_name" property with the value
             "air_pressure".
@@ -563,15 +561,15 @@ criteria, then an empty tuple is returned.
         * The value of any property prefixed by the property name and
           a colon (``:``).
 
-          *Example:*
+          *Parameter example:*
             ``description='positive:up'`` will select constructs that
             have a "positive" property with the value "up".
 
-          *Example:*
+          *Parameter example:*
             ``description='foo:bar'`` will select constructs that have
             a "foo" property with the value "bar".
 
-          *Example:*
+          *Parameter example:*
             ``description='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
             value "air_pressure".
@@ -579,35 +577,35 @@ criteria, then an empty tuple is returned.
         * The measure of cell measure constructs, prefixed by
           ``measure%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='measure%area'`` will select "area" cell
             measure constructs.
 
         * A construct identifier, prefixed by ``cid%`` (see also the
           *cid* parameter).
 
-          *Example:* 
+          *Parameter example:* 
             ``description='cid%cellmethod1'`` will select cell method
             construct with construct identifier "cellmethod1". This is
             equivalent to ``cid='cellmethod1'``.
 
         * The netCDF variable name, prefixed by ``ncvar%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncvar%lat'`` will select constructs with
             netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
           prefixed by ``ncdim%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncdim%time'`` will select domain axis
             constructs with netCDF dimension name "time".
 
     cid: `str`, optional
         Select the construct with the given construct identifier.
 
-        *Example:*
+        *Parameter example:*
           ``cid='domainancillary0'`` will the domain ancillary
           construct with construct identifier "domainancillary0". This
           is equivalent to ``description='cid%domainancillary0'``.
@@ -628,13 +626,13 @@ criteria, then an empty tuple is returned.
           ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           ``construct_type='dimension_coordinate'``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=['auxiliary_coordinate']``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=('domain_ancillary', 'cell_method')``
 
         Note that a domain never contains cell method nor field
@@ -645,15 +643,15 @@ criteria, then an empty tuple is returned.
         the given domain axes, in any order. Domain axes are specified
         by their construct identifiers.
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis2']``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis0', 'domainaxis1']``
 
 :Returns:
 
-    out: `tuple`
+    `tuple`
         The identifiers of the domain axis constructs spanned by the
         unique selected construct's data array. If there are no such
         domain axis constructs, then an empty tuple is returned
@@ -707,7 +705,7 @@ criteria, then the `None` is returned.
 
         * The value of the standard name property on its own. 
 
-          *Example:*
+          *Parameter example:*
             ``description='air_pressure'`` will select constructs that
             have a "standard_name" property with the value
             "air_pressure".
@@ -715,15 +713,15 @@ criteria, then the `None` is returned.
         * The value of any property prefixed by the property name and
           a colon (``:``).
 
-          *Example:*
+          *Parameter example:*
             ``description='positive:up'`` will select constructs that
             have a "positive" property with the value "up".
 
-          *Example:*
+          *Parameter example:*
             ``description='foo:bar'`` will select constructs that have
             a "foo" property with the value "bar".
 
-          *Example:*
+          *Parameter example:*
             ``description='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
             value "air_pressure".
@@ -731,35 +729,35 @@ criteria, then the `None` is returned.
         * The measure of cell measure constructs, prefixed by
           ``measure%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='measure%area'`` will select "area" cell
             measure constructs.
 
         * A construct identifier, prefixed by ``cid%`` (see also the
           *cid* parameter).
 
-          *Example:* 
+          *Parameter example:* 
             ``description='cid%cellmethod1'`` will select cell method
             construct with construct identifier "cellmethod1". This is
             equivalent to ``cid='cellmethod1'``.
 
         * The netCDF variable name, prefixed by ``ncvar%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncvar%lat'`` will select constructs with
             netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
           prefixed by ``ncdim%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncdim%time'`` will select domain axis
             constructs with netCDF dimension name "time".
 
     cid: `str`, optional
         Select the construct with the given construct identifier.
 
-        *Example:*
+        *Parameter example:*
           ``cid='domainancillary0'`` will the domain ancillary
           construct with construct identifier "domainancillary0". This
           is equivalent to ``description='cid%domainancillary0'``.
@@ -780,13 +778,13 @@ criteria, then the `None` is returned.
           ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           ``construct_type='dimension_coordinate'``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=['auxiliary_coordinate']``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=('domain_ancillary', 'cell_method')``
 
         Note that a domain never contains cell method nor field
@@ -797,15 +795,15 @@ criteria, then the `None` is returned.
         the given domain axes, in any order. Domain axes are specified
         by their construct identifiers.
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis2']``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis0', 'domainaxis1']``
 
 :Returns:
 
-    out: `str` or `None`
+        TODO
         The identifier of the unique selected construct. If there are
         no such domain axis constructs, then `None` is returned.
 
@@ -851,7 +849,7 @@ criteria, then `True` is returned.
 
         * The value of the standard name property on its own. 
 
-            *Example:*
+            *Parameter example:*
               ``description='air_pressure'`` will select constructs
               that have a "standard_name" property with the value
               "air_pressure".
@@ -859,15 +857,15 @@ criteria, then `True` is returned.
         * The value of any property prefixed by the property name and
           a colon (``:``).
 
-            *Example:*
+            *Parameter example:*
               ``description='positive:up'`` will select constructs
               that have a "positive" property with the value "up".
 
-            *Example:*
+            *Parameter example:*
               ``description='foo:bar'`` will select constructs that
               have a "foo" property with the value "bar".
 
-            *Example:*
+            *Parameter example:*
               ``description='standard_name:air_pressure'`` will select
               constructs that have a "standard_name" property with the
               value "air_pressure".
@@ -875,14 +873,14 @@ criteria, then `True` is returned.
         * The measure of cell measure constructs, prefixed by
           ``measure%``.
 
-            *Example:*
+            *Parameter example:*
               ``description='measure%area'`` will select "area" cell
               measure constructs.
 
         * A construct identifier, prefixed by ``cid%`` (see also the
           *cid* parameter).
 
-            *Example:* 
+            *Parameter example:* 
               ``description='cid%cellmethod1'`` will select cell
               method construct with construct identifier
               "cellmethod1". This is equivalent to
@@ -890,21 +888,21 @@ criteria, then `True` is returned.
 
         * The netCDF variable name, prefixed by ``ncvar%``.
 
-            *Example:*
+            *Parameter example:*
               ``description='ncvar%lat'`` will select constructs with
               netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
           prefixed by ``ncdim%``.
 
-            *Example:*
+            *Parameter example:*
               ``description='ncdim%time'`` will select domain axis
               constructs with netCDF dimension name "time".
 
     cid: `str`, optional
         Select the construct with the given construct identifier.
 
-        *Example:*
+        *Parameter example:*
           ``cid='domainancillary0'`` will the domain ancillary
           construct with construct identifier "domainancillary1". This
           is equivalent to ``description='cid%domainancillary0'``.
@@ -925,13 +923,13 @@ criteria, then `True` is returned.
           ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           ``construct_type='dimension_coordinate'``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=['auxiliary_coordinate']``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=('domain_ancillary', 'cell_method')``
 
         Note that a domain never contains cell method nor field
@@ -942,15 +940,15 @@ criteria, then `True` is returned.
         the given domain axes, in any order. Domain axes are specified
         by their construct identifiers.
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis2']``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis0', 'domainaxis1']``
 
 :Returns:
 
-    out: `bool`
+    `bool`
         True if a unique construct has been identified, otherwise
         False.
 
@@ -999,7 +997,7 @@ returned.
 
         * The value of the standard name property on its own. 
 
-          *Example:*
+          *Parameter example:*
             ``description='air_pressure'`` will select constructs that
             have a "standard_name" property with the value
             "air_pressure".
@@ -1007,15 +1005,15 @@ returned.
         * The value of any property prefixed by the property name and
           a colon (``:``).
 
-          *Example:*
+          *Parameter example:*
             ``description='positive:up'`` will select constructs that
             have a "positive" property with the value "up".
 
-          *Example:*
+          *Parameter example:*
             ``description='foo:bar'`` will select constructs that have
             a "foo" property with the value "bar".
 
-          *Example:*
+          *Parameter example:*
             ``description='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
             value "air_pressure".
@@ -1023,35 +1021,35 @@ returned.
         * The measure of cell measure constructs, prefixed by
           ``measure%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='measure%area'`` will select "area" cell
             measure constructs.
 
         * A construct identifier, prefixed by ``key%`` (see also the
           *key* parameter).
 
-          *Example:* 
+          *Parameter example:* 
             ``description='key%cellmethod1'`` will select cell method
             construct with construct identifier "cellmethod1". This is
             equivalent to ``key='cellmethod1'``.
 
         * The netCDF variable name, prefixed by ``ncvar%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncvar%lat'`` will select constructs with
             netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
           prefixed by ``ncdim%``.
 
-          *Example:*
+          *Parameter example:*
             ``description='ncdim%time'`` will select domain axis
             constructs with netCDF dimension name "time".
 
     cid: `str`, optional
         Select the construct with the given construct identifier.
 
-        *Example:*
+        *Parameter example:*
           ``cid='domainancillary0'`` will the domain ancillary
           construct with construct identifier "domainancillary1". This
           is equivalent to ``description='cid%domainancillary0'``.
@@ -1073,13 +1071,13 @@ returned.
           ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           ``construct_type='dimension_coordinate'``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=['auxiliary_coordinate']``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=('domain_ancillary', 'cell_method')``
 
         Note that a domain never contains cell method nor field
@@ -1090,10 +1088,10 @@ returned.
         the given domain axes, in any order. Domain axes are specified
         by their construct identifiers.
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis2']``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis0', 'domainaxis1']``
 
     copy: `bool`, optional
@@ -1102,7 +1100,7 @@ returned.
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
         
@@ -1202,7 +1200,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
 
@@ -1238,7 +1236,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
 
@@ -1272,7 +1270,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
 

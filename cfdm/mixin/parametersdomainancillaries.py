@@ -100,7 +100,7 @@ one. See the *ignore_type* parameter.
 
 :Returns: 
 
-    out: `bool`
+    `bool`
         Whether the two instances are equal.
 
 **Examples:**

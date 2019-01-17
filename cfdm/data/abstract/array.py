@@ -74,7 +74,7 @@ array.
 
 :Returns:
 
-    out: `str`
+    `str`
         The compression type. An empty string means that no
         compression has been applied.
 
@@ -101,7 +101,7 @@ compressed array.
 
 :Returns:
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
         The compressed array.
 
 **Examples:**
@@ -121,7 +121,7 @@ True
 
 :Returns:
 
-    out: `list`
+    `list`
         The compressed axes described by their integer positions in
         the list of uncompressed axes. If no axes have been compressed
         then the list is empty.
@@ -148,7 +148,7 @@ array.
 
 :Returns:
 
-    out: `int`
+    `int`
         The position of the compressed dimension in the compressed
         array. If the underlying is not compressed then *default* is
         returned, if provided.
@@ -191,19 +191,19 @@ difference to numpy indexing is
         must either be a `slice` object or a sequence of two or more
         integers.
 
-          *Example:*
+          *Parameter example:*
             indices=Ellipsis
   
-          *Example:*
+          *Parameter example:*
             indices=[[5, 7, 8]]
   
-          *Example:*
+          *Parameter example:*
             indices=[slice(4, 7)]
 
-          *Example:*
+          *Parameter example:*
             indices=[slice(None), [5, 7, 8]]
   
-          *Example:*
+          *Parameter example:*
             indices=[[2, 5, 6], slice(15, 4, -2), [8, 7, 5]]
 
     copy: `bool`
@@ -213,7 +213,7 @@ difference to numpy indexing is
 
 :Returns:
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
 
         '''
         if indices is not Ellipsis:

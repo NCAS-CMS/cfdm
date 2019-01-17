@@ -69,7 +69,7 @@ and institution).
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-        *Example:*
+        *Parameter example:*
            ``properties={'standard_name': 'air_temperature'}``
         
         Properties may also be set after initialisation with the
@@ -298,7 +298,7 @@ None
         The construct identifier of the metadata construct to be
         removed.
 
-        *Example:*
+        *Parameter example:*
           ``key='auxiliarycoordinate0'``
         
 :Returns:
@@ -372,7 +372,7 @@ TODO
      axes: sequence of `str`
         The identifiers of the domain axes spanned by the data array.
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis0', 'domainaxis1']``
 
 :Returns:

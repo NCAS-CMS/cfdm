@@ -24,8 +24,8 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-        *Example:*
-           ``properties={'standard_name': 'altitude'}``
+        *Parameter example:*
+          ``properties={'standard_name': 'altitude'}``
         
         Properties may also be set after initialisation with the
         `properties` and `set_property` methods.
@@ -89,7 +89,7 @@ into the data.
 
 :Returns:
 
-    out: `Data`
+    `Data`
         The data.
 
 **Examples:**
@@ -130,7 +130,6 @@ operation is fast.
 
 :Returns:
 
-    out:
         The deep copy.
 
 **Examples:**
@@ -158,7 +157,6 @@ False
 
 :Returns: 
 
-    out: 
         The removed data. If unset then *default* is returned, if
         provided.
 
@@ -194,7 +192,7 @@ Use the `get_data` method to return the data as a `Data` instance.
 
 :Returns:
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
         A numpy array copy of the data.
 
 **Examples:**
@@ -240,7 +238,6 @@ into the data.
 
 :Returns:
 
-    out:
         The data. If unset then *default* is returned, if provided.
 
 **Examples:**
@@ -293,7 +290,7 @@ None
 
 :Returns:
 
-    out: `bool`
+    `bool`
         True if a data have been set, otherwise False.
 
 **Examples:**

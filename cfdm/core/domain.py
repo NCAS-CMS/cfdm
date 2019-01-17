@@ -109,7 +109,6 @@ constructs.
 
 :Returns:	
 
-    out:
         The deep copy.
 
 **Examples:**
@@ -163,7 +162,7 @@ constructs.
 
 :Returns:
 
-    out: `Domain`
+    `Domain`
         TODO
 
 **Examples:**

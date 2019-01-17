@@ -36,7 +36,6 @@ rules, the only differences being:
 
 :Returns:
 
-    out:
         The subspace of the construct.
 
 **Examples:**
@@ -150,7 +149,7 @@ rules, the only differences being:
 
 :Returns:
 
-    out: `None` or `str`
+    `None` or `str`
         A string containing the description.
 
         '''
@@ -299,7 +298,7 @@ constitute part of the CF data model and so are not checked.
 
 :Returns: 
   
-    out: `bool`
+    `bool`
         Whether the two instances are equal.
 
 **Examples:**
@@ -407,15 +406,14 @@ also inserted into the bounds data array, if present.
         varying position. Negative integers counting from the last
         position are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``position=2``
 
-        *Example:*
+        *Parameter example:*
           ``position=-1``
 
 :Returns:
 
-    out:
         The new construct with expanded data axes.
 
 **Examples:**
@@ -469,7 +467,6 @@ also inserted into the bounds data array, if present.
 
 :Returns:
 
-    out:
         The bounds. If the bounds have not been set, then return the
         value of *default* parameter if provided.
 
@@ -561,18 +558,17 @@ the bounds data array, if present.
         original integer position. Negative integers counting from the
         last position are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``axes=0``
 
-        *Example:*
+        *Parameter example:*
           ``axes=-2``
 
-        *Example:*
+        *Parameter example:*
           ``axes=[2, 0]``
 
 :Returns:
 
-    out:
         The new construct with removed data axes.
 
 **Examples:**
@@ -635,15 +631,14 @@ Boundaries" of the CF conventions for details.
         position. Negative integers counting from the last position
         are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``axes=[2, 0, 1]``
 
-        *Example:*
+        *Parameter example:*
           ``axes=[-1, 0, 1]``
 
 :Returns:
 
-    out: 
          The new construct with permuted data axes.
 
 **Examples:**

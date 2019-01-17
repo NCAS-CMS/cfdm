@@ -132,7 +132,7 @@ class CFDMImplementation(Implementation):
     def convert(self, field=None, construct_id=None):
         '''TODO
         '''
-        return field.convert(key=construct_id, domain=False)
+        return field.convert(key=construct_id, full_domain=False)
     #--- End: def
         
     def del_property(self, construct, prop, default):

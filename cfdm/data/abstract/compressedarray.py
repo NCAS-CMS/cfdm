@@ -93,7 +93,6 @@ rules, the only differences being:
 
 :Returns:
 
-    out:
         The data. If the data has not been set then *default* is
         returned, if set.
 
@@ -259,7 +258,7 @@ dtype('float64')
 
 :Returns:
 
-    out: `list`
+    `list`
         The compressed axes described by their integer positions.
 
 **Examples:**
@@ -283,7 +282,7 @@ dtype('float64')
 
 :Returns:
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
         The uncompressed array.
 
 **Examples:**
@@ -301,7 +300,7 @@ True
 
 :Returns:
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
         The compressed array.
 
 **Examples:**

@@ -305,13 +305,13 @@ construct identifiers.
           ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           ``construct_type='dimension_coordinate'``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=['auxiliary_coordinate']``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=['domain_ancillary', 'cell_method']``
 
         Note that a domain never contains cell method nor field
@@ -323,7 +323,7 @@ construct identifiers.
 
 :Returns:
 
-    out: `dict`
+    `dict`
 
 **Examples:**
 
@@ -427,7 +427,7 @@ TODO
     key: `str`, optional
         The construct identifier of metadata construct.
 
-        *Example:*
+        *Parameter example:*
           ``key='cellmeasure0'``
 
     axes: (sequence of) `str`
@@ -437,13 +437,13 @@ TODO
         i.e. domain axis, cell method and coordinate reference
         constructs.
 
-        *Example:*
+        *Parameter example:*
           ``axes='domainaxis1'``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis1']``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis1', 'domainaxis0']``
         
 :Returns:
@@ -473,7 +473,7 @@ TODO
 
 :Returns:
 
-    out: `Constructs`
+    `Constructs`
         The copy.
 
 **Examples:**
@@ -490,7 +490,7 @@ TODO
 
 :Returns:
 
-    out: `dict`
+    `dict`
 
 **Examples:**
 
@@ -563,12 +563,11 @@ TODO
     key: `str`
         The identifier of the metadata construct.
 
-        *Example:*
+        *Parameter example:*
           ``key='domainaxis1'``
 
 :Returns:
 
-    out:
         The metadata construct.
 
 **Examples:**
@@ -614,12 +613,12 @@ TODO
     key: `str`
         The identifier of the metadata construct.
 
-        *Example:*
+        *Parameter example:*
           ``key='cellmeasure1'``
 
 :Returns:
 
-    out: `bool`
+    `bool`
         True if the metadata construct exists, otherwise False.
 
 **Examples:**
@@ -667,7 +666,7 @@ False
         the identifier already exisits then the exisiting construct
         will be replaced.
 
-        *Example:*
+        *Parameter example:*
           ``key='cellmeasure0'``
 
     axes: (sequence of) `str`, optional
@@ -680,13 +679,13 @@ False
         The axes may also be set afterwards with the
         `set_construct_data_axes` method.
 
-        *Example:*
+        *Parameter example:*
           ``axes='domainaxis1'``
         
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis1']``
         
-        *Example:*
+        *Parameter example:*
           ``axes=('domainaxis1', 'domainaxis0')``
         
     copy: `bool`, optional
@@ -695,7 +694,7 @@ False
 
 :Returns:
 
-     out: `str`
+     `str`
         The construct identifier for the construct.
     
 **Examples:**
@@ -713,7 +712,7 @@ False
 #        one or two extra axes. By default it assumed that there are no
 #        extra axes.
 #
-#          *Example:*
+#          *Parameter example:*
 #             ``extra_axes=1``
 
         construct_type = construct.construct_type
@@ -787,7 +786,7 @@ False
 
 :Returns:
 
-    out: `str`
+    `str`
         The new identifier.
 
 **Examples:**
@@ -836,12 +835,11 @@ False
    key: `str`, optional
         The identifier of the construct.
 
-        *Example:*
+        *Parameter example:*
           ``key='auxiliarycoordinate0'``
   
 :Returns:
 
-    out:
         The removed construct, or `None` if the given key did not
         exist.
 

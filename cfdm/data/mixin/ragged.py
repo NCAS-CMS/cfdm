@@ -19,7 +19,6 @@ class RaggedContiguous(object):
 
 :Returns:
 
-    out:
         TODO
 
 **Examples:**
@@ -56,7 +55,6 @@ class RaggedIndexed(object):
 
 :Returns:
 
-    out:
         TODO
 
 **Examples:**

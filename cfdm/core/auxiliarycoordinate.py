@@ -38,7 +38,7 @@ indicated by the cell method constructs.
         
 :Returns:
 
-    out: `str`
+    `str`
         The construct type.
 
         '''

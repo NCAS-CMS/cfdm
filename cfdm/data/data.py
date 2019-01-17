@@ -31,23 +31,23 @@ class Data(mixin.Container, core.Data):
     array: numpy array-like or subclass of `Array`, optional
         The array of values. Ignored if the *source* parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``array=[34.6]``
 
-        *Example:*
+        *Parameter example:*
           ``array=[[1, 2], [3, 4]]``
 
-        *Example:*
+        *Parameter example:*
           ``array=numpy.ma.arange(10).reshape(2, 1, 5)``
 
     units: `str`, optional
         The physical units of the data. Ignored if the *source*
         parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``units='km hr-1'``
 
-        *Example:*
+        *Parameter example:*
           ``units='days since 2018-12-01'``
 
         The units may also be set after initialisation with the
@@ -57,7 +57,7 @@ class Data(mixin.Container, core.Data):
         The calendar for reference time units. Ignored if the *source*
         parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``calendar='360_day'``
         
         The calendar may also be set after initialisation with the
@@ -68,7 +68,7 @@ class Data(mixin.Container, core.Data):
         fill value appropriate to the array's data type will be used.
         TODO. Ignored if the *source* parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``fill_value=-999.``
                 
         The fill value may also be set after initialisation with the
@@ -104,7 +104,7 @@ class Data(mixin.Container, core.Data):
 
 :Returns: 
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
         An independent numpy array of the data.
 
 **Examples:**
@@ -177,7 +177,7 @@ rules, the only differences being:
 
 :Returns:
 
-    out: `Data`
+    `Data`
         The subspace of the data.
 
 **Examples:**
@@ -421,7 +421,7 @@ masked
 
 :Returns:
 
-    out: `tuple`
+    `tuple`
 
 **Examples:**
 
@@ -556,7 +556,6 @@ masked
 
 :Returns:
 
-    out: 
         The deep copy.
 
 **Examples:**
@@ -588,15 +587,15 @@ data array shape.
         varying position. Negative integers counting from the last
         position are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``position=2``
 
-        *Example:*
+        *Parameter example:*
           ``position=-1``
 
 :Returns:
 
-    out: `Data`
+    `Data`
         The new data array with expanded data axes.
 
 **Examples:**
@@ -724,7 +723,6 @@ Conversions are carried out with the `netCDF4.num2date` function.
 
 :Returns:
 
-    out:
         The count variable. If unset then *default* is returned, if
         provided.
 
@@ -766,7 +764,6 @@ Conversions are carried out with the `netCDF4.num2date` function.
 
 :Returns:
 
-    out:
         The index variable. If unset then *default* is returned, if
         provided.
 
@@ -808,7 +805,6 @@ Conversions are carried out with the `netCDF4.num2date` function.
 
 :Returns:
 
-    out:
         The list variable. If unset then *default* is returned, if
         provided.
 
@@ -852,7 +848,7 @@ array.
 
 :Returns:
 
-    out: `int`
+    `int`
         The position of the compressed dimension in the compressed
         array. If the underlying is not compressed then *default* is
         returned, if provided.
@@ -881,7 +877,7 @@ array.
     
 :Returns:
     
-    out: `list`
+    `list`
     
 **Examples:**
     
@@ -986,7 +982,7 @@ Missing data array elements are omitted from the calculation.
 
 :Returns:
 
-    out: `Data`
+    `Data`
         Maximum of the data along the specified axes.
 
 **Examples:**
@@ -1029,7 +1025,7 @@ Missing data array elements are omitted from the calculation.
 
 :Returns:
 
-    out: `Data`
+    `Data`
         Minimum of the data along the specified axes.
 
 **Examples:**
@@ -1162,18 +1158,18 @@ selected with the keyword arguments.
         original integer position. Negative integers counting from the
         last position are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``axes=0``
 
-        *Example:*
+        *Parameter example:*
           ``axes=-2``
 
-        *Example:*
+        *Parameter example:*
           ``axes=[2, 0]``
 
 :Returns:
 
-    out: `Data`
+    `Data`
         The new data array with removed data axes.
 
 **Examples:**
@@ -1238,7 +1234,7 @@ Missing data array elements are omitted from the calculation.
 
 :Returns:
 
-    out: `Data`
+    `Data`
         The sum of the data along the specified axes.
 
 **Examples:**
@@ -1283,15 +1279,15 @@ Missing data array elements are omitted from the calculation.
         position. Negative integers counting from the last position
         are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``axes=[2, 0, 1]``
 
-        **Example:**
+        **Parameter example:**
           ``axes=[-1, 0, 1]``
 
 :Returns:
 
-    out: `Data`
+    `Data`
         The new data array with permuted data axes.
 
 **Examples:**
@@ -1347,7 +1343,7 @@ Missing data array elements are omitted from the calculation.
 
 :Returns:
 
-     out: `numpy.ndarray`
+     `numpy.ndarray`
         An independent numpy array of the compressed data.
 
 **Examples:**
@@ -1370,7 +1366,7 @@ Missing data array elements are omitted from the calculation.
 
 :Returns:
 
-    out: `list`
+    `list`
         TODO The axes of the data that are compressed to a single axis
         in the internal array.
 
@@ -1397,7 +1393,7 @@ TODO
 
 :Returns:
 
-    out: `str` or `None`
+    `str` or `None`
         The compression type. An empty string means that no
         compression has been applied.
         
@@ -1500,7 +1496,7 @@ one. See the *ignore_type* parameter.
 
 :Returns: 
   
-    out: `bool`
+    `bool`
         Whether the two data arrays are equal.
 
 **Examples:**
@@ -1639,7 +1635,7 @@ missing values.
 
 :Returns:
 
-    out: `Data`
+    `Data`
         The unique elements.
 
 **Examples:**

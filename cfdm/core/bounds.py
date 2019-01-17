@@ -29,7 +29,7 @@ cell method constructs.
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-        *Example:*
+        *Parameter example:*
            ``properties={'standard_name': 'altitude'}``
         
         Properties may also be set after initialisation with the

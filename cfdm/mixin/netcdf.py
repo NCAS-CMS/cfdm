@@ -57,7 +57,7 @@ class NetCDFDimension(NetCDF):
 
 :Returns:
 
-     out: `str`
+    `str`
         The removed netCDF dimension name. If unset then *default* is
         returned, if provided.
 
@@ -102,7 +102,7 @@ None
 
 :Returns:
 
-     out: `str`
+    `str`
         The netCDF dimension name. If unset then *default* is
         returned, if provided.
 
@@ -143,7 +143,7 @@ None
 
 :Returns:
 
-     out: `
+    `bool`
         True if the netCDF dimension name has been set, otherwise
         False.
 
@@ -182,7 +182,7 @@ None
 
 :Returns:
 
-     `None`
+    `None`
 
 **Examples:**
 
@@ -227,7 +227,7 @@ class NetCDFVariable(NetCDF):
 
 :Returns:
 
-     out: `str`
+    `str`
         The removed netCDF variable name. If unset then *default* is
         returned, if provided.
 
@@ -270,7 +270,7 @@ None
 
 :Returns:
 
-     out: `str`
+    `str`
         The netCDF variable name. If unset then *default* is returned,
         if provided.
 
@@ -310,7 +310,7 @@ None
 
 :Returns:
 
-     out: `bool`
+    `bool`
         True if the netCDF variable name has been set, otherwise
         False.
 
@@ -348,7 +348,7 @@ None
 
 :Returns:
 
-     `None`
+    `None`
 
 **Examples:**
 
@@ -395,7 +395,7 @@ class NetCDFSampleDimension(NetCDF):
 
 :Returns:
 
-     out: `str`
+    `str`
         The removed netCDF sample dimension name. If unset then
         *default* is returned, if provided.
 
@@ -439,7 +439,7 @@ None
 
 :Returns:
 
-     out: `str`
+    `str`
         The netCDF sample dimension name. If unset then *default* is
         returned, if provided.
 
@@ -480,7 +480,7 @@ None
 
 :Returns:
      
-     out: `bool`
+    `bool`
         True if the netCDF sample dimension name has been set,
         otherwise False.
 
@@ -519,13 +519,7 @@ None
 
 :Returns:
 
-     `None`
-
-:Returns:
-
-     out: `str`
-        The removed netCDF sample dimension name. If unset then
-        *default* is returned, if provided.
+    `None`
 
 **Examples:**
 
@@ -571,7 +565,7 @@ class NetCDFInstanceDimension(NetCDF):
 
 :Returns:
 
-     out: `str`
+    `str`
         The netCDF instance dimension name. If unset then *default* is
         returned, if provided.
 
@@ -615,7 +609,7 @@ None
 
 :Returns:
 
-     out: `str`
+    `str`
         The netCDF instance dimension name. If unset then *default* is
         returned, if provided.
 
@@ -655,7 +649,7 @@ None
 
 :Returns:
      
-     out: `bool`
+    `bool`
         True if the netCDF instance dimension name has been set,
         otherwise False.
 
@@ -693,13 +687,7 @@ None
 
 :Returns:
 
-     `None`
-
-:Returns:
-
-     out: `str`
-        The removed netCDF instance dimension name. If unset then
-        *default* is returned, if provided.
+    `None`
 
 **Examples:**
 
@@ -758,15 +746,15 @@ possible, so selecting them is optional.
         Replace the exisiting selection of properties to be written
         out as netCDF global attributes.
 
-        *Example:*
+        *Parameter example:*
           ``attributes=['project']``
         
-        *Example:*
+        *Parameter example:*
           ``attributes=()``        
 
 :Returns:
 
-    out: `set`
+    `set`
         The selection of domain axis constructs prior to being
         changed, or the current selection if no changes were
         specified.
@@ -810,15 +798,15 @@ By default output netCDF dimensions are not unlimited.
         be written out as netCDF unlimited dimensions. Domain axis
         constructs are identified by their construct identifiers.
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis0', 'domainaxis1']``
         
-        *Example:*
+        *Parameter example:*
           ``axes=()``        
 
 :Returns:
 
-    out: `set`
+    `set`
         The selection of domain axis construct identifiers prior to
         being changed, or the current selection if no changes were
         specified.
@@ -866,7 +854,7 @@ class NetCDFExternal(NetCDF):
 
 :Returns:
 
-    out: `bool`
+    `bool`
         The external status or, if the *external* parameter was set,
         the original status.
 

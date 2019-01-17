@@ -25,8 +25,8 @@ properties.
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-          *Example:*
-             ``properties={'standard_name': 'longitude'}``
+        *Parameter example:*
+           ``properties={'standard_name': 'longitude'}``
         
         Properties may also be set after initialisation with the
         `properties` and `set_property` methods.
@@ -48,8 +48,8 @@ properties.
         Set the geometry type. Ignored if the *source* parameter is
         set.
         
-          *Example:*
-             ``geometry='polygon'``
+        *Parameter example:*
+           ``geometry='polygon'``
         
         The geometry type may also be set after initialisation with
         the `set_geometry` method.
@@ -131,7 +131,7 @@ of the `Bounds` instance to return the bounds as a `numpy` array.
 
 :Returns:
 
-    out: `Bounds`
+    `Bounds`
         The bounds.
 
 **Examples:**
@@ -184,7 +184,6 @@ True
 #
 #:Returns:
 #
-#    out:
 #        The deep copy.
 #
 #**Examples:**
@@ -214,7 +213,6 @@ True
 
 :Returns:
 
-     out:
         The removed bounds. If the bounds has not been set then the
         *default* is returned, if provided.
 
@@ -255,8 +253,6 @@ None
 
 :Returns:
 
-     out:
-
         The removed geometry type. If the geometry type has not been
         set then the *default* is returned, if provided.
 
@@ -281,7 +277,6 @@ None
 
 :Returns:
 
-    out:
         The bounds. If the bounds have not been set, then return the
         value of *default* parameter if provided.
 
@@ -322,10 +317,11 @@ None
 
 :Returns:
 
-    out:
+        TODO
 
 **Examples:**
 
+TODO
         '''
         return self._get_component('geometry', *default)
     #--- End: def
@@ -345,8 +341,8 @@ None
 
 :Returns:
 
-    out:
-    
+        TODO
+
 **Examples:**
 
 >>> i = c.get_interior_ring()
@@ -363,7 +359,7 @@ None
 
 :Returns:
 
-    out: `bool`
+    `bool`
         True if there are bounds, otherwise False.
 
 **Examples:**
@@ -398,7 +394,7 @@ None
 
 :Returns:
 
-    out: `bool`
+    `bool`
 
 **Examples:**
 
@@ -417,7 +413,7 @@ None
 
 :Returns:
 
-    out: `bool`
+    `bool`
         True if there are interior_ring, otherwise False.
 
 **Examples:**

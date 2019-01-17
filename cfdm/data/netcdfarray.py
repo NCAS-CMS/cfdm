@@ -369,7 +369,7 @@ None
 
 :Returns:
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
         An independent numpy array of the data.
 
 **Examples:**
@@ -387,7 +387,7 @@ True
 
 :Returns:
 
-    out: `netCDF4.Dataset`
+    `netCDF4.Dataset`
 
 **Examples:**
 

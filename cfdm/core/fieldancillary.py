@@ -33,7 +33,7 @@ auxiliary coordinate construct or domain ancillary construct.
 
 :Returns:
 
-    out: `str`
+    `str`
         The construct type.
 
         '''

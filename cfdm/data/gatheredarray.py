@@ -138,7 +138,6 @@ indexing (given the restrictions on the type of indices allowed) is:
 
 :Returns:
 
-    out:
         TODO
 
 **Examples:**

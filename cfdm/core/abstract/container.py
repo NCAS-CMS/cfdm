@@ -55,7 +55,6 @@ x.__deepcopy__() <==> copy.deepcopy(x)
 
 :Returns:
 
-     out:
         The removed component. If unset then *default* is returned, if
         provided.
 
@@ -96,7 +95,6 @@ False
 
 :Returns:
 
-     out:
         The component. If unset then *default* is returned, if
         provided.
 
@@ -139,7 +137,7 @@ False
 
 :Returns:
 
-     out: `bool`
+     `bool`
         True if the component has been set, otherwise False.
 
 **Examples:**
@@ -207,7 +205,6 @@ False
 
 :Returns:
 
-    out:
         The deep copy.
 
 **Examples:**

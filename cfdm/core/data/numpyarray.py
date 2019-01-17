@@ -146,7 +146,7 @@ dtype('float64')
 
 :Returns:
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
         An independent numpy array of the data.
 
 **Examples:**

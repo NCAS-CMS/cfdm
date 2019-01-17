@@ -41,7 +41,7 @@ cell measure variables correspond to cell measure constructs.
         Set the measure that indicates which metric given by the data
         array. Ignored if the *source* parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``measure='area'``
 
         The measure may also be set after initialisation with the
@@ -52,7 +52,7 @@ cell measure variables correspond to cell measure constructs.
        names, with corresponding values. Ignored if the *source*
        parameter is set.
 
-       *Example:*
+       *Parameter example:*
           ``properties={'standard_name': 'cell_area'}``
 
        Properties may also be set after initialisation with the
@@ -98,7 +98,7 @@ components, and provides selected values of all data arrays.
 
 :Returns:
 
-    out: `None` or `str`
+    `None` or `str`
         The description. If *display* is True then the description is
         printed and `None` is returned. Otherwise the description is
         returned as a string.
@@ -208,7 +208,7 @@ constitute part of the CF data model and so are not checked.
 
 :Returns: 
   
-    out: `bool`
+    `bool`
         Whether the two cell measure constructs are equal.
 
 **Examples:**
@@ -285,15 +285,14 @@ By default the name is the first found of the following:
         for a name. The default list is ``['standard_name', 'cf_role',
         'long_name']``.
 
-        *Example:*
+        *Parameter example:*
           ``custom=['project']``
 
-        *Example:*
+        *Parameter example:*
           ``custom=['project', 'long_name']``
 
 :Returns:
 
-    out:
         The name. If the *all_names* parameter is True then a list of
         all possible names.
 

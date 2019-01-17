@@ -24,7 +24,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-        *Example:*
+        *Parameter example:*
            ``properties={'standard_name': 'altitude'}``
         
         Properties may also be set after initialisation with the
@@ -65,7 +65,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
 
 :Returns:
 
-    out:
         The deep copy.
 
 **Examples:**
@@ -89,7 +88,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
     prop: `str`
         The name of the property to be removed.
 
-        *Example:*
+        *Parameter example:*
            ``prop='long_name'``
 
     default: optional
@@ -97,7 +96,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
 
 :Returns:
 
-     out:
         The removed property. If unset then *default* is returned, if
         provided.
 
@@ -141,7 +139,7 @@ None
     prop: `str`
         The name of the property to be returned.
 
-        *Example:*
+        *Parameter example:*
            ``prop='standard_name'``
 
     default: optional
@@ -149,7 +147,6 @@ None
 
 :Returns:
 
-    out:
         The value of the property. If unset then *default* is
         returned, if provided.
 
@@ -193,12 +190,12 @@ None
     prop: `str`
         The name of the property.
 
-        *Example:*
+        *Parameter example:*
            ``prop='long_name'``
 
 :Returns:
 
-     out: `bool`
+     `bool`
         True if the property has been set, otherwise False.
 
 **Examples:**
@@ -236,10 +233,10 @@ None
         dictionary. If the dictionary is empty then all properties
         will be removed.
 
-        *Example:*
+        *Parameter example:*
           ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
         
-        *Example:*
+        *Parameter example:*
           ``properties={}``        
 
     copy: `bool`, optional
@@ -249,7 +246,7 @@ None
 
 :Returns:
 
-    out: `dict`
+    `dict`
         The properties or, if the *properties* parameter was set, the
         original properties.
 

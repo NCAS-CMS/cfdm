@@ -89,7 +89,7 @@ applies.
 
 :Returns:
 
-    out: `None` or `str`
+    `None` or `str`
         The description. If *display* is True then the description is
         printed and `None` is returned. Otherwise the description is
         returned as a string.
@@ -132,7 +132,7 @@ applies.
 #
 #:Returns:
 #
-#    out: `list`
+#    `list`
 #
 #**Examples:**
 #
@@ -347,7 +347,7 @@ constitute part of the CF data model and so are not checked.
 
 :Returns: 
   
-    out: `bool`
+    `bool`
         Whether the two cell method constructs are equal.
 
 **Examples:**
@@ -599,7 +599,7 @@ name, and any intervals are sorted accordingly.
 
 :Returns:
 
-    out: `CellMethod`
+    `CellMethod`
         A new cell method construct with sorted axes.
 
 **Examples:**

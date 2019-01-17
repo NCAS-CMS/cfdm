@@ -36,19 +36,19 @@ that the method was applied only over El Nino years).
         the construct identifiers of domain axis constructs, standard
         names, or the special string ``'area'``.
 
-          *Example:*
+          *Parameter example:*
              ``axes='domainaxis0'``
         
-          *Example:*
+          *Parameter example:*
              ``axes=['domainaxis0']``
         
-          *Example:*
+          *Parameter example:*
              ``axes=('domainaxis0', 'domainaxis1')``
         
-          *Example:*
+          *Parameter example:*
              ``axes='area'``
         
-          *Example:*
+          *Parameter example:*
              ``axes=['domainaxis2', 'time']``
         
          The axes may also be set after initialisation with the
@@ -59,7 +59,7 @@ that the method was applied only over El Nino years).
         domain axis construct identifiers or standard names. Ignored
         if the *source* parameter is set.
 
-          *Example:*
+          *Parameter example:*
              ``method='mean'
 
          The method may also be set after initialisation with the
@@ -70,10 +70,10 @@ that the method was applied only over El Nino years).
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``properties={'comment': 'sampled instantaneously'}``
        
-        *Example:*
+        *Parameter example:*
           ``properties={'where': 'sea', ''over': 'ice'}``
         
         Properties may also be set after initialisation with the
@@ -349,22 +349,22 @@ False
         domain axis constructs, standard names, or the special string
         ``'area'``.
 
-        *Example:*
+        *Parameter example:*
           ``axes='domainaxis0'``
 
-        *Example:*
+        *Parameter example:*
           ``axes='time'``
 
-        *Example:*
+        *Parameter example:*
           ``axes='area'``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis0', 'domainaxis2']``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['time', 'area']``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis0', 'time']``
 
 :Returns:
@@ -416,7 +416,7 @@ False
     value: `str`
         The method.
 
-        *Example:*
+        *Parameter example:*
           ``method='variance'``
 
 :Returns:

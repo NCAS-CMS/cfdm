@@ -74,10 +74,10 @@ frame and consists of the following:
         constructs by their construct identifiers. Ignored if the
         *source* parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``coordinates=['dimensioncoordinate2']``
 
-        *Example:*
+        *Parameter example:*
           ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1')``
 
         The coordinates may also be set after initialisation with the
@@ -143,7 +143,7 @@ frame and consists of the following:
         
 :Returns:
 
-    out: `str`
+    `str`
         The construct type.
 
         '''
@@ -159,7 +159,7 @@ frame and consists of the following:
 
 :Returns:
 
-    out: `CoordinateConversion`
+    `CoordinateConversion`
         The coordinate conversion.
 
 **Examples:**
@@ -180,7 +180,7 @@ frame and consists of the following:
 
 :Returns:
 
-   out: `Datum`
+   `Datum`
         The datum.
 
 **Examples:**
@@ -205,7 +205,7 @@ frame and consists of the following:
 
 :Returns:
 
-    out: `set`
+    `set`
         The identifiers of the coordinate objects.
 
 **Examples:**
@@ -234,7 +234,6 @@ frame and consists of the following:
 
 :Returns:
 
-    out:
         The deep copy.
 
 **Examples:**
@@ -257,10 +256,10 @@ frame and consists of the following:
     cid: `str`
         The construct identifier of the coordinate construct.
 
-          *Example:*
+          *Parameter example:*
              ``cid='dimensioncoordinate1'``
 
-          *Example:*
+          *Parameter example:*
              ``cid='auxiliarycoordinate0'``
 
     default: optional
@@ -269,7 +268,6 @@ frame and consists of the following:
 
 :Returns:
 
-    out:
       The removed coordinate construct identifier property. If unset
       then *default* is returned, if provided.
 
@@ -308,7 +306,6 @@ frame and consists of the following:
 
 :Returns:
 
-    out: 
         The removed coordinate conversion component.
 
 **Examples:**
@@ -334,7 +331,6 @@ frame and consists of the following:
 
 :Returns:
 
-    out: 
         The removed datum component.
 
 **Examples:**
@@ -361,7 +357,7 @@ frame and consists of the following:
 
 :Returns:
 
-    out: `CoordinateConversion`
+    `CoordinateConversion`
         The coordinate conversion component.
 
 **Examples:**
@@ -387,7 +383,7 @@ frame and consists of the following:
 
 :Returns:
 
-   out: `Datum`
+   `Datum`
         The datum component.
 
 **Examples:**
@@ -416,10 +412,10 @@ frame and consists of the following:
     cid: `str`
         The construct identifier of the coordinate construct.
 
-          *Example:*
+          *Parameter example:*
              ``cid='dimensioncoordinate1'``
 
-          *Example:*
+          *Parameter example:*
              ``cid='auxiliarycoordinate0'``
 
 :Returns:

@@ -26,7 +26,7 @@ to the order of the elements.
     size: `int`, optional
         The size of the domain axis.
 
-        *Example:*
+        *Parameter example:*
           ``size=192``
 
         The size may also be set after initialisation with the
@@ -61,7 +61,7 @@ to the order of the elements.
 
 :Returns:
 
-    out: `str`
+    `str`
         The construct type.
 
         '''
@@ -77,7 +77,6 @@ to the order of the elements.
 
 :Returns:	
 
-    out:
         The deep copy.
 
 **Examples:**
@@ -102,7 +101,6 @@ to the order of the elements.
 
 :Returns:
 
-     out:
         The removed size. If unset then *default* is returned, if
         provided.
 
@@ -135,7 +133,7 @@ None
 
 :Returns:
 
-     out: `bool`
+     `bool`
         True if the size has been set, otherwise False.
 
 **Examples:**
@@ -172,7 +170,6 @@ None
 
 :Returns:
 
-     out:
         The size. If unset then *default* is returned, if provided.
 
 **Examples:**

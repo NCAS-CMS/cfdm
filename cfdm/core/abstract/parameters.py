@@ -22,7 +22,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
        Set parameters. The dictionary keys are parameter names, with
        corresponding values. Ignored if the *source* parameter is set.
 
-       *Example:*
+       *Parameter example:*
          ``parameters={'earth_radius': 6371007.}``
 
        Parameters may also be set after initialisation with the
@@ -76,7 +76,6 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
 
 :Returns:
 
-    out:
         The deep copy.
 
 **Examples:**
@@ -105,7 +104,6 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
 
 :Returns:
 
-     out:
         The removed parameter. If the parameter has not been then
         *default* is returned, if provided.
 
@@ -129,8 +127,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
 
 :Returns:
 
-    out:
-        The value of the term <SOMETING BAOUT DEFAULT>
+        The value of the term <SOMETING BAOUT DEFAULT> TODO
 
 **Examples:**
 
@@ -167,14 +164,15 @@ ERROR
     parameters: `dict`, optional
         Replace all parameter-valued terms with those provided.
 
-          *Example:*
-            ``parameters={'earth_radius': 6371007}``
+        *Parameter example:*
+          ``parameters={'earth_radius': 6371007}``
 
     copy: `bool`, optional
+        TODO
 
 :Returns:
 
-    out: `dict`
+    `dict`
         The parameter-valued terms and their values. If the
         *parameters* keyword has been set then the parameter-valued
         terms prior to replacement are returned.

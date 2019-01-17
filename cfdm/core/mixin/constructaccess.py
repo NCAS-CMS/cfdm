@@ -24,7 +24,6 @@ class ConstructAccess(object):
 
 :Returns:
 
-    out:
         The `Constructs` object. If unset then return *default* if provided.
 
 **Examples:**
@@ -51,7 +50,7 @@ class ConstructAccess(object):
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
 
@@ -75,7 +74,7 @@ TODO
 
 :Returns:
 
-    out: `dict`
+    `dict`
 
 **Examples:**
 
@@ -121,13 +120,13 @@ TODO
           ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           ``construct_type='dimension_coordinate'``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=['auxiliary_coordinate']``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=('domain_ancillary', 'cell_method')``
 
         Note that a domain never contains cell method nor field
@@ -138,7 +137,7 @@ TODO
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
         
@@ -204,12 +203,11 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     key: `str`, optional
         The identifier of the metadata construct.
 
-        *Example:*
+        *Parameter example:*
           ``key='auxiliarycoordinate0'``
         
 :Returns:
 
-    out: 
         The removed metadata construct.
 
 **Examples:**
@@ -234,12 +232,11 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     key: `str`
         The identifier of the metadata construct.
 
-        *Example:*
+        *Parameter example:*
           ``key='domainaxis1'``
 
 :Returns:
 
-    out:
         The metadata construct.
 
 **Examples:**
@@ -274,7 +271,7 @@ data array.
     key: `str`
         The construct identifier of the metadata construct.
 
-        *Example:*
+        *Parameter example:*
           ``key='domainancillary1'``
 
     default: optional
@@ -283,7 +280,6 @@ data array.
 
 :Returns:
 
-    out:
         The identifiers of the domain axis constructs spanned by data
         array. If a metadata construct does not have a data array, or
         no domain axes have been set, then `None` is returned.
@@ -324,12 +320,12 @@ None
     key: `str`
         The identifier of the metadata construct.
 
-        *Example:*
+        *Parameter example:*
           ``key='cellmeasure1'``
 
 :Returns:
 
-    out: `bool`
+    `bool`
         True if the metadata construct exists, otherwise False.
 
 **Examples:**
@@ -381,7 +377,7 @@ False
         the identifier already exisits then the exisiting construct
         will be replaced.
 
-        *Example:*
+        *Parameter example:*
           ``key='cellmeasure0'``
 
     axes: (sequence of) `str`, optional
@@ -391,13 +387,13 @@ False
         i.e. domain axis, cell method and coordinate reference
         constructs.
 
-        *Example:*
+        *Parameter example:*
           ``axes='domainaxis1'``
         
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis1']``
         
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis1', 'domainaxis0']``
         
     copy: `bool`, optional
@@ -406,7 +402,7 @@ False
         
 :Returns:
 
-     out: `str`
+     `str`
         The construct identifier for the construct.
     
 **Examples:**
@@ -435,7 +431,7 @@ array.
     key: `str`
         The construct identifier of the metadata construct.
 
-        *Example:*
+        *Parameter example:*
           ``key='dimensioncoordinate2'``
 
      axes: (sequence of) `str`
@@ -444,13 +440,13 @@ array.
 
         The axes may also be set with the `set_construct` method.
 
-        *Example:*
+        *Parameter example:*
           ``axes='domainaxis1'``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis1']``
 
-        *Example:*
+        *Parameter example:*
           ``axes=['domainaxis1', 'domainaxis0']``
 
 :Returns:

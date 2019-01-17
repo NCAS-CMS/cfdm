@@ -30,7 +30,7 @@ number of vertices of each cell.
         
 :Returns:
 
-    out: `str`
+    `str`
         The construct type.
 
         '''

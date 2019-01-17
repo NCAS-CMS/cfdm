@@ -26,14 +26,13 @@ domain ancillary constructs.
        Set parameters. The dictionary keys are parameter names, with
        corresponding values. Ignored if the *source* parameter is set.
 
-       *Example:*
+       *Parameter example:*
          ``parameters={'earth_radius': 6371007.}``
 
        Parameters may also be set after initialisation with the
        `parameters` and `set_parameter` methods.
 
     domain_ancillaries: `dict`, optional
-
        TODO
 
     source: optional
@@ -89,7 +88,6 @@ domain ancillary constructs.
 
 :Returns:
 
-    out:
         The deep copy.
 
 **Examples:**
@@ -113,15 +111,14 @@ domain ancillary constructs.
     domain_ancillary: `str`
         The name of the domain ancillary to be deleted.
 
-          *Example:*
-             ``domain_ancillary='orog'``
+        *Parameter example:*
+           ``domain_ancillary='orog'``
 
     default: optional
         Return *default* if the domain ancillary has not been set.
 
 :Returns:
 
-     out:
         The removed domain. If the property has not been then the
         *default* is returned, if provided.
 
@@ -144,14 +141,14 @@ domain ancillary constructs.
     ancillaries: `dict`, optional
         Replace all named domain ancillaries with those provided.
 
-          *Example:*
-            ``domain_ancillaries={'x': x_ancillary}``
+        *Parameter example:*
+          ``domain_ancillaries={'x': x_ancillary}``
 
     copy: `bool`, optional
 
 :Returns:
 
-    out: `dict`
+    `dict`
         The parameter-valued terms and their values. If the
         *parameters* keyword has been set then the parameter-valued
         terms prior to replacement are returned.
@@ -186,7 +183,6 @@ domain ancillary constructs.
 
 :Returns:
 
-    out:
         The value of the term <SOMETING BAOUT DEFAULT>
 
 **Examples:**

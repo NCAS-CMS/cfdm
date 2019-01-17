@@ -29,7 +29,6 @@ rules, the only differences being:
 
 :Returns:
 
-    out:
         The subspace.
 
 **Examples:**
@@ -112,8 +111,8 @@ Return a string containing a full description of the instance.
 
 :Returns:
 
-    out: `None` or `str`
-        A string containing the description.
+    `None` or `str`
+        A string containing the description. TODO
 
 '''
         indent0 = '    ' * _level
@@ -259,7 +258,7 @@ constitute part of the CF data model and so are not checked.
 
 :Returns: 
   
-    out: `bool`
+    `bool`
         Whether the two instances are equal.
 
 **Examples:**
@@ -357,15 +356,14 @@ Inserts a new size 1 axis into the data array.
         varying position. Negative integers counting from the last
         position are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``position=2``
 
-        *Example:*
+        *Parameter example:*
           ``position=-1``
 
 :Returns:
 
-    out:
         A new instance with expanded data axes.
 
 **Examples:**
@@ -398,7 +396,7 @@ Inserts a new size 1 axis into the data array.
 #
 #:Returns:
 #
-#    out: `dict`
+#    `dict`
 #        The chunk sizes prior to the new setting, or the current
 #        current sizes if no new values are specified.
 #
@@ -446,15 +444,14 @@ By default the name is the first found of the following:
         for a name. The default list is ``['standard_name', 'cf_role',
         'long_name']``.
 
-        *Example:*
+        *Parameter example:*
           ``custom=['project']``
 
-        *Example:*
+        *Parameter example:*
           ``custom=['project', 'long_name']``
 
 :Returns:
 
-    out:
         The name. If the *all_names* parameter is True then a list of
         all possible names.
 
@@ -536,18 +533,17 @@ may be selected for removal.
         original integer position. Negative integers counting from the
         last position are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``axes=0``
 
-        *Example:*
+        *Parameter example:*
           ``axes=-2``
 
-        *Example:*
+        *Parameter example:*
           ``axes=[2, 0]``
 
 :Returns:
 
-    out:
         A new instance with removed data axes.
 
 **Examples:**
@@ -586,15 +582,14 @@ may be selected for removal.
         position. Negative integers counting from the last position
         are allowed.
 
-        *Example:*
+        *Parameter example:*
           ``axes=[2, 0, 1]``
 
-        *Example:*
+        *Parameter example:*
           ``axes=[-1, 0, 1]``
 
 :Returns:
 
-    out: 
          A new instance with permuted data axes.
 
 **Examples:**

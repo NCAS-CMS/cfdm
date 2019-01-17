@@ -25,10 +25,10 @@ class Data(abstract.Container):
         The physical units of the data. Ignored if the *source*
         parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``units='km hr-1'``
 
-        *Example:*
+        *Parameter example:*
           ``units='days since 2018-12-01'``
 
         The units may also be set after initialisation with the
@@ -38,7 +38,7 @@ class Data(abstract.Container):
         The calendar for reference time units. Ignored if the *source*
         parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``calendar='360_day'``
         
         The calendar may also be set after initialisation with the
@@ -49,7 +49,7 @@ class Data(abstract.Container):
         fill value appropriate to the array's data type will be used.
         TODO. Ignored if the *source* parameter is set.
 
-        *Example:*
+        *Parameter example:*
           ``fill_value=-999.``
                 
         The fill value may also be set after initialisation with the
@@ -105,7 +105,7 @@ class Data(abstract.Container):
 #
 #:Returns: 
 #
-#    out: `numpy.ndarray`
+#    `numpy.ndarray`
 #        An independent numpy array of the data.
 #
 #        '''
@@ -277,7 +277,7 @@ attribute.
 
 :Returns:
 
-    out: `Data`
+    `Data`
         The deep copy.
 
 **Examples:**
@@ -296,7 +296,6 @@ attribute.
 
 :Returns:
 
-    out:
         The value of the deleted calendar, or `None` if calendar was
         not set.
 
@@ -323,7 +322,7 @@ None
 
 :Returns:
 
-    out:
+        TODO
 
 **Examples:**
 
@@ -340,7 +339,6 @@ None
 
 :Returns:
 
-    out:
         The value of the deleted fill value, or `None` if fill value
         was not set.
 
@@ -375,7 +373,6 @@ None
 
 :Returns:
 
-    out:
         The value of the deleted units, or `None` if units was not
         set.
 
@@ -406,7 +403,7 @@ type will be used.
 
 :Returns:
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
         An independent numpy array of the data.
 
 **Examples:**
@@ -443,7 +440,6 @@ True
 
 :Returns:
 
-    out:
         The calendar. If calendar has not been set then return the
         value of *default* parameter, if provided.
 
@@ -481,7 +477,6 @@ None
 
 :Returns:
 
-    out:
         The data. If the data has not been set then *default* is
         returned, if set.
 
@@ -514,7 +509,6 @@ None
 
 :Returns:
 
-    out:
         The fill value. If fill value has not been set then return the
         value of *default* parameter, if provided.
 
@@ -560,7 +554,6 @@ None
 
 :Returns:
 
-    out:
         The units. If units has not been set then return the value of
         *default* parameter, if provided.
 

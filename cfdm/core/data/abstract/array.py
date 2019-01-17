@@ -39,7 +39,7 @@ See `cfdm.core.NumpyArray` for an example implementation.
 
 :Returns: 
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
         An independent numpy array of the data.
 
 **Examples:**
@@ -217,7 +217,6 @@ original or the new copy.
 
 :Returns:
 
-    out:
         The deep copy.
 
 **Examples:**
@@ -239,7 +238,7 @@ original or the new copy.
 
 :Returns:
 
-    out: `numpy.ndarray`
+    `numpy.ndarray`
         An independent numpy array of the data.
 
 **Examples:**

@@ -40,7 +40,7 @@ provide properties to a bounds component.
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-          *Example:*
+          *Parameter example:*
              ``properties={'standard_name': 'grid_latitude'}``
         
         Properties may also be set after initialisation with the
@@ -95,7 +95,7 @@ of all data arrays.
 
 :Returns:
 
-    out: `None` or `str`
+    `None` or `str`
         The description. If *display* is True then the description is
         printed and `None` is returned. Otherwise the description is
         returned as a string.
@@ -129,7 +129,6 @@ Note that the data are returned in a `Data` object. Use the
 
 :Returns:
 
-    out: 
         The data object. If unset then *default* is returned, if
         provided.
 
@@ -180,7 +179,7 @@ None
 
 :Returns:
 
-    out: `dict`
+    `dict`
         The inherited properties.
 
 **Examples:**
@@ -227,15 +226,14 @@ By default the name is the first found of the following:
         for a name. The default list is ``['standard_name', 'cf_role',
         'long_name']``.
 
-        *Example:*
+        *Parameter example:*
           ``custom=['project']``
 
-        *Example:*
+        *Parameter example:*
           ``custom=['project', 'long_name']``
 
 :Returns:
 
-    out:
         The name. If the *all_names* parameters is True then a list of
         all possible names.
 

@@ -36,7 +36,7 @@ cell measure variables correspond to cell measure constructs.
         Set the measure that indicates which metric given by the data
         array. Ignored if the *source* parameter is set.
 
-          *Example:*
+          *Parameter example:*
              ``measure='area'``
         
         The measure may also be set after initialisation with the
@@ -47,7 +47,7 @@ cell measure variables correspond to cell measure constructs.
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-          *Example:*
+          *Parameter example:*
              ``properties={'units': 'metres 2'}``
         
         Properties may also be set after initialisation with the
@@ -64,7 +64,7 @@ cell measure variables correspond to cell measure constructs.
         (if present) from *source*, which will be a `CellMeasure`
         object, or a subclass of one of its parent classes.
 
-          *Example:*
+          *Parameter example:*
             >>> d = CellMeasure(source=c)
 
     copy: `bool`, optional
@@ -100,7 +100,7 @@ cell measure variables correspond to cell measure constructs.
         
 :Returns:
 
-    out: `str`
+    `str`
         The construct type.
 
         '''
@@ -121,7 +121,6 @@ cell measure variables correspond to cell measure constructs.
 
 :Returns:
 
-     out:
         The removed measure. If unset then *default* is returned, if
         provided.
 
@@ -154,7 +153,7 @@ None
 
 :Returns:
 
-     out: `bool`
+     `bool`
         True if the measure has been set, otherwise False.
 
 **Examples:**
@@ -190,7 +189,6 @@ None
 
 :Returns:
 
-     out:
         The value of the measure. If unset then *default* is returned,
         if provided.
 
