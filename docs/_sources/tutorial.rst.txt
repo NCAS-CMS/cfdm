@@ -99,7 +99,7 @@ The `cfdm.read` function has optional parameters to
   by default as data variables in their own right; and 
 
 * display information and warnings about the mapping of the netCDF
-  file contents to CF data amodel constructs.
+  file contents to CF data model constructs.
 
 .. _CF-compliance:
 
@@ -500,8 +500,8 @@ metadata constructs of one type, keyed by a unique identifier called a
     'domainaxis3': <DomainAxis: 1>}
 
 The construct keys (e.g. ``'domainaxis1'``) are usually generated
-internally and are unique within the field constuct. However,
-construct keys may be different for equivalent metadata constucts from
+internally and are unique within the field construct. However,
+construct keys may be different for equivalent metadata constructs from
 different field constructs, and for different Python sessions.
 
 Metadata constructs of all types may be returned by the
@@ -852,7 +852,7 @@ class.
 ----
 
 Further to the functionality described in the :ref:`first section on
-medatadata constructs <Metadata-constructs-(1)>`, the
+metadata constructs <Metadata-constructs-(1)>`, the
 `~Field.constructs` method of the field construct has optional
 parameters to filter the metadata constructs by
 
@@ -933,14 +933,14 @@ means.
    >>> t.constructs(key='auxiliarycoordinate999')
    {}
 
-A less verbose, and often more convienient, method of selection is by
+A less verbose, and often more convenient, method of selection is by
 metadata construct "name". A construct's name is typically the
 description that is displayed when the construct is inspected. For
 example, the :ref:`three auxiliary coordinate constructs
 <Medium-detail>` in the field construct ``t`` have names
 ``'latitude'``, ``'longitude'`` and ``'long_name:Grid latitude
 name'``. Selection by name does not require a keyword parameter,
-although the keyord ``name`` can be used:
+although the keyword ``name`` can be used:
 
 .. code-block:: python
    :caption: *Get constructs by their name.*
@@ -957,13 +957,13 @@ although the keyord ``name`` can be used:
 More generally, a construct name may be constructed by any of
 
 * The value of the "standard_name" property, e.g. ``'air_temperature'``,
-* The value of any property, preceeded by the property name and a
+* The value of any property, preceded by the property name and a
   colon, e.g. ``'long_name:Air Temperature'``,
-* The cell measure, preceeded by "measure%", e.g. ``'measure%volume'``
-* The netCDF variable name, preceeded by "ncvar%",
+* The cell measure, preceded by "measure%", e.g. ``'measure%volume'``
+* The netCDF variable name, preceded by "ncvar%",
   e.g. ``'ncvar%tas'`` (see the :ref:`netCDF interface
   <NetCDF-interface>`), and
-* The netCDF dimension name, preceeded by "ncdim%" e.g. ``'ncdim%z'``
+* The netCDF dimension name, preceded by "ncdim%" e.g. ``'ncdim%z'``
   (see the :ref:`netCDF interface <NetCDF-interface>`).
 
 Each construct has a `!name` method that, by default, returns the
@@ -1292,7 +1292,7 @@ parent coordinate construct, but it may also have its own properties
 
 A domain ancillary construct provides information which is needed for
 computing the location of cells in an alternative :ref:`coordinate
-system <Coordinate-systems>`. If a domain ancillary constuct provides
+system <Coordinate-systems>`. If a domain ancillary construct provides
 extra coordinates then it may contain cell bounds in addition to its
 main data array.
 
@@ -1319,7 +1319,7 @@ domain ancillary constructs (as is the case for the field construct
 ``t``), or is inferred from dimension and auxiliary coordinate
 constructs alone (as is the case for the field construct ``q``).
 
-A corodinate reference construct contains
+A coordinate reference construct contains
 
 * references (by construct keys) to the dimension and auxiliary
   coordinate constructs to which it applies, accessed with the
@@ -1366,12 +1366,12 @@ A corodinate reference construct contains
 * a formula for converting coordinate values taken from the dimension
   or auxiliary coordinate constructs to a different coordinate system,
   stored in a `CoordinateConversion` class instance, which is accessed
-  with the `~CoordinateReference.get_coordinate_conversionm` method,
+  with the `~CoordinateReference.get_coordinate_conversion` method,
   or `~CoordinateReference.coordinate_conversion` attribute, of the
   coordinate reference construct.
 
 .. code-block:: python
-   :caption: *Get the coordinate converion and inspect its parameters
+   :caption: *Get the coordinate conversion and inspect its parameters
              and referenced domain ancillary constructs.*
 	     
    >>> crs.get_coordinate_conversion()
@@ -1539,7 +1539,7 @@ constructs forming part of a coordinate reference construct):
 
 .. code-block:: python
    :caption: *Set a domain axis construct and use its construct key
-             when setting the dimension corodiante construct. Also
+             when setting the dimension coordinate construct. Also
              create a cell method construct that applies to the domain
              axis construct.*
 	     
@@ -1826,7 +1826,7 @@ been generated with dummy values using `numpy.arange`):
    domain_anc_OROG = tas.set_construct(domain_ancillary_orog,
                                        axes=[axis_Y, axis_X])
 
-   # Create the datum for the coordinate reference consrtructs
+   # Create the datum for the coordinate reference constructs
    datum = cfdm.Datum(parameters={'earth_radius': 6371007.})
 
    # Create the coordinate conversion for the horizontal coordinate
@@ -1860,7 +1860,7 @@ been generated with dummy values using `numpy.arange`):
                     coordinate_conversion=coordinate_conversion_v,
                     coordinates=[dim_Z])
 
-   # Sset the coordinate reference constructs
+   # Set the coordinate reference constructs
    tas.set_construct(horizontal_crs)
    tas.set_construct(vertical_crs)
    
@@ -2040,7 +2040,7 @@ coordinate, cell measure and coordinate reference constructs of the
 latter. This is because the surface altitude netCDF variable in
 ``tas.nc`` does not have the "coordinates", "cell_measures" nor
 "grid_mapping" netCDF attributes that would link it to auxiliary
-coordinate, cell meausure and grid mapping netCDF variables.
+coordinate, cell measure and grid mapping netCDF variables.
 
 .. _Copying:
 
@@ -2639,7 +2639,7 @@ file, set the status of the cell measure construct to "external" with
 its `~CellMeasure.nc_external` method.
 
 .. code-block:: python
-   :caption: *Flag the cell measure as external and write teh field
+   :caption: *Flag the cell measure as external and write the field
              construct to a new file.*
 
    >>> area.nc_external(True)
@@ -2835,7 +2835,7 @@ The timeseries for the second station is easily selected by indexing
 the "station" axis of the field construct:
 
 .. code-block:: python
-   :caption: **
+   :caption: *Get the data for the second station.*
 	  
    >>> station2 = h[1]
    >>> station2
@@ -2847,7 +2847,8 @@ The underlying array of original data remains in compressed form until
 data array elements are modified:
    
 .. code-block:: python
-   :caption: TODO
+   :caption: *Change an element of the data and show that the
+             underlying array is no longer compressed.*
 
    >>> h.data.get_compression_type()
    'ragged contiguous'
@@ -2867,7 +2868,7 @@ or `RaggedIndexedContiguousArray`. The following code creates a simple
 field construct with an underlying contiguous ragged array:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Create a field construct with compressed data.*
 
    import numpy
    import cfdm
@@ -2906,7 +2907,7 @@ field construct with an underlying contiguous ragged array:
 The new field construct can now be inspected and written to a netCDF file:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Inspect the new field construct and wite it to disk.*
    
    >>> T
    <Field: air_temperature(key%domainaxis1(2), key%domainaxis0(4)) K>
@@ -3050,7 +3051,8 @@ Subspaces based on the uncompressed axes of the field construct are
 easily created:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Get subspaces based on iundices of the uncompressed
+             data.*
 	  
    >>> p[0]
    <Field: precipitation_flux(time(1), latitude(4), longitude(5)) kg m2 s-1>
@@ -3061,7 +3063,8 @@ The underlying array of original data remains in compressed form until
 data array elements are modified:
    
 .. code-block:: python
-   :caption: TODO
+   :caption: *Change an element of the data and show that the
+             underlying array is no longer compressed.*
 
    >>> p.data.get_compression_type()
    'gathered'
@@ -3075,7 +3078,7 @@ the special `GatheredArray` array object. The following code creates a
 simple field construct with an underlying gathered array:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Create a field construct with compressed data.*
 
    import numpy	  
    import cfdm
@@ -3119,7 +3122,7 @@ initialisation).
 The new field construct can now be inspected and written a netCDF file:
 
 .. code-block:: python
-   :caption: TODO
+   :caption: *Inspect the new field construct and wite it to disk.*
    
    >>> P
    <Field: precipitation_flux(key%domainaxis0(2), key%domainaxis1(3), key%domainaxis2(2)) kg m-2 s-1>
