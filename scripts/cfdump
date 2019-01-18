@@ -148,16 +148,16 @@ cfdm package version {1} of {2}'''.format(
         sys.exit(0)
 
     # Defaults
-    short_output      = False
-    complete_output   = False
-    external_files    = []
+    short_output    = False
+    complete_output = False
+    external        = []
 
     for option, arg in opts: 
         if option in ('-h', '--help'):
             print_help(cfdm.__version__, cfdm.__date__)
             sys.exit(0)
         elif option in ('-e', '--external'):
-            external_files.append(arg)
+            external.append(arg)
         elif option in ('-s', '--short'):
             short_output = True
         elif option in ('-c', '--complete'):
@@ -171,7 +171,7 @@ cfdm package version {1} of {2}'''.format(
     # Read the input file
     # ----------------------------------------------------------------
     try:        
-        f = cfdm.read(infile[0], external_files=external_files)
+        f = cfdm.read(infile[0], external=external)
     except Exception as error:
         print('{} ERROR reading file: {}'.format(iam, error))
         sys.exit(1)
