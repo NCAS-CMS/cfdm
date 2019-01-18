@@ -148,12 +148,10 @@ Tests are run from within the ``cfdm/test`` directory:
 
 The complete source code is available at https://github.com/NCAS-CMS/cfdm
 
-----
+.. .. rubric:: Footnotes
 
-.. rubric:: Footnotes
+   .. [#installfiles] The ``requirements.txt`` file contains
 
-.. [#installfiles] The ``requirements.txt`` file contains
-
-  .. include:: ../../requirements.txt
-     :literal:
+     .. include:: ../../requirements.txt
+        :literal:
      
