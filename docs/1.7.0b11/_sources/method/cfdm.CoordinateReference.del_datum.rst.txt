@@ -1,0 +1,7 @@
+cfdm.CoordinateReference.del_datum
+==================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CoordinateReference.del_datum
