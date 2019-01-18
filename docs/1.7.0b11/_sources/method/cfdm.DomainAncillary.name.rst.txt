@@ -1,0 +1,7 @@
+cfdm.DomainAncillary.name
+=========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.DomainAncillary.name

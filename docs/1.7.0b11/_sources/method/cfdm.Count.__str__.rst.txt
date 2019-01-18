@@ -1,0 +1,7 @@
+cfdm.Count.__str__
+==================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Count.__str__
