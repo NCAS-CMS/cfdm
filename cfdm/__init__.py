@@ -23,9 +23,9 @@ The cfdm package can
 '''
 
 __author__       = 'David Hassell'
-__date__         = '2019-01-17'
+__date__         = '2019-01-18'
 __cf_version__   = '1.7'
-__version__      = '1.7.0b10'
+__version__      = '1.7.0b11'
 
 requires = ('numpy',
             'netCDF4',
