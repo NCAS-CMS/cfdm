@@ -166,7 +166,7 @@ maximises the number of field constructs that may be read within a
 session, and makes the read operation fast.</p>
 <p>The <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function has optional parameters to</p>
 <ul class="simple">
-<li>allow the user to provide files that contain <a class="reference internal" href="tutorial_orgish.html#external-variables"><span class="std std-ref">external
+<li>allow the user to provide files that contain <a class="reference internal" href="#external-variables"><span class="std std-ref">external
 variables</span></a>;</li>
 <li>request <a class="reference internal" href="#creation-by-reading"><span class="std std-ref">extra field constructs to be created from “metadata”
 netCDF variables</span></a>, i.e. those that are
@@ -913,7 +913,7 @@ must also subspace any metadata constructs of the field construct
 (e.g. coordinate metadata constructs) which span any of the domain
 axis constructs that are affected. The new field construct is created
 with the same properties as the original field. Subspacing uses the
-same <a class="reference internal" href="tutorial_orgish.html#indexing"><span class="std std-ref">cfdm indexing rules</span></a> that apply to the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+same <a class="reference internal" href="#indexing"><span class="std std-ref">cfdm indexing rules</span></a> that apply to the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 class.</p>
 <div class="literal-block-wrapper docutils container" id="id74">
 <div class="code-block-caption"><span class="caption-text"><em>Create a new field whose domain spans the first longitude
@@ -953,7 +953,7 @@ metadata constructs by</p>
 <li>whether the data array spans particular domain axis constructs,</li>
 <li>measure value (for cell measure constructs),</li>
 <li>construct key, and</li>
-<li>netCDF variable or dimension name (see the <a class="reference internal" href="tutorial_orgish.html#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>).</li>
+<li>netCDF variable or dimension name (see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>).</li>
 </ul>
 <div class="literal-block-wrapper docutils container" id="id75">
 <div class="code-block-caption"><span class="caption-text"><em>Get constructs by their type</em>.</span><a class="headerlink" href="#id75" title="Permalink to this code">¶</a></div>
@@ -1027,7 +1027,7 @@ means.</p>
 <p>A less verbose, and often more convenient, method of selection is by
 metadata construct “name”. A construct’s name is typically the
 description that is displayed when the construct is inspected. For
-example, the <a class="reference internal" href="tutorial_orgish.html#medium-detail"><span class="std std-ref">three auxiliary coordinate constructs</span></a> in the field construct <code class="docutils literal notranslate"><span class="pre">t</span></code> have names
+example, the <a class="reference internal" href="#medium-detail"><span class="std std-ref">three auxiliary coordinate constructs</span></a> in the field construct <code class="docutils literal notranslate"><span class="pre">t</span></code> have names
 <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code>, <code class="docutils literal notranslate"><span class="pre">'longitude'</span></code> and <code class="docutils literal notranslate"><span class="pre">'long_name:Grid</span> <span class="pre">latitude</span>
 <span class="pre">name'</span></code>. Selection by name does not require a keyword parameter,
 although the keyword <code class="docutils literal notranslate"><span class="pre">name</span></code> can be used:</p>
@@ -1051,9 +1051,9 @@ although the keyword <code class="docutils literal notranslate"><span class="pre
 colon, e.g. <code class="docutils literal notranslate"><span class="pre">'long_name:Air</span> <span class="pre">Temperature'</span></code>,</li>
 <li>The cell measure, preceded by “measure%”, e.g. <code class="docutils literal notranslate"><span class="pre">'measure%volume'</span></code></li>
 <li>The netCDF variable name, preceded by “ncvar%”,
-e.g. <code class="docutils literal notranslate"><span class="pre">'ncvar%tas'</span></code> (see the <a class="reference internal" href="tutorial_orgish.html#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>), and</li>
+e.g. <code class="docutils literal notranslate"><span class="pre">'ncvar%tas'</span></code> (see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>), and</li>
 <li>The netCDF dimension name, preceded by “ncdim%” e.g. <code class="docutils literal notranslate"><span class="pre">'ncdim%z'</span></code>
-(see the <a class="reference internal" href="tutorial_orgish.html#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>).</li>
+(see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>).</li>
 </ul>
 <p>Each construct has a <code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code> method that, by default, returns the
 least ambiguous name, as defined in the each method’s documentation.</p>
@@ -1141,7 +1141,7 @@ the value of the “default” parameter is returned.</em></span><a class="heade
 </div>
 <div class="section" id="metadata-construct-properties">
 <span id="id26"></span><h3><strong>Metadata construct properties</strong><a class="headerlink" href="#metadata-construct-properties" title="Permalink to this headline">¶</a></h3>
-<p>Metadata constructs share the <a class="reference internal" href="tutorial_orgish.html#properties"><span class="std std-ref">same API as the field construct</span></a> for accessing their properties:</p>
+<p>Metadata constructs share the <a class="reference internal" href="#properties"><span class="std std-ref">same API as the field construct</span></a> for accessing their properties:</p>
 <div class="literal-block-wrapper docutils container" id="id88">
 <div class="code-block-caption"><span class="caption-text"><em>Retrieve the “longitude” metadata construct, set a new
 property, and then inspect all of the properties.</em></span><a class="headerlink" href="#id88" title="Permalink to this code">¶</a></div>
@@ -1159,7 +1159,7 @@ property, and then inspect all of the properties.</em></span><a class="headerlin
 </div>
 <div class="section" id="metadata-construct-data">
 <span id="id27"></span><h3><strong>Metadata construct data</strong><a class="headerlink" href="#metadata-construct-data" title="Permalink to this headline">¶</a></h3>
-<p>Metadata constructs share the <a class="reference internal" href="tutorial_orgish.html#data"><span class="std std-ref">a similar API as the field
+<p>Metadata constructs share the <a class="reference internal" href="#data"><span class="std std-ref">a similar API as the field
 construct</span></a> as the field construct for accessing their data:</p>
 <div class="literal-block-wrapper docutils container" id="id89">
 <div class="code-block-caption"><span class="caption-text"><em>Retrieve the “longitude” metadata construct, inspect its
@@ -1316,7 +1316,7 @@ grid point location for each cell. The cell bounds are stored in a
 <a class="reference internal" href="class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> class instance that is accessed with the
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code> method, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code> attribute the
 coordinate construct.</p>
-<p>A <a class="reference internal" href="class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> instance shares the <a class="reference internal" href="tutorial_orgish.html#data"><span class="std std-ref">the same API as the field
+<p>A <a class="reference internal" href="class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> instance shares the <a class="reference internal" href="#data"><span class="std std-ref">the same API as the field
 construct</span></a> for accessing its data.</p>
 <div class="literal-block-wrapper docutils container" id="id95">
 <div class="code-block-caption"><span class="caption-text"><em>Get the Bounds instance of a coordinate construct and
@@ -1465,7 +1465,7 @@ is not commutative (e.g. a mean of variances is generally not the same
 as a variance of means), so the <a class="reference internal" href="method/cfdm.Field.cell_methods.html#cfdm.Field.cell_methods" title="cfdm.Field.cell_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_methods</span></code></a> method of
 the field construct returns an ordered dictionary of constructs. The
 order is the same as that in which cell method constructs were added
-to the field construct during <a class="reference internal" href="tutorial_orgish.html#field-construct-creation"><span class="std std-ref">field construct creation</span></a>.</p>
+to the field construct during <a class="reference internal" href="#field-construct-creation"><span class="std std-ref">field construct creation</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id101">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the cell methods. The description follows the CF
 conventions for cell_method attribute strings, apart from
@@ -1740,7 +1740,7 @@ function.</p>
 absence of pre-defined names, default netCDF variable and dimension
 names would be automatically generated (based on standard names where
 they exist). The setting of bespoke names is, however, easily done
-with the <a class="reference internal" href="tutorial_orgish.html#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>.</p>
+with the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id108">
 <div class="code-block-caption"><span class="caption-text"><em>Set netCDF variable and dimension names for the field
 and metadata constructs.</em></span><a class="headerlink" href="#id108" title="Permalink to this code">¶</a></div>
@@ -2032,10 +2032,10 @@ domain.</em></span><a class="headerlink" href="#id114" title="Permalink to this 
 </div>
 <div class="section" id="creation-by-reading">
 <span id="id38"></span><h3><strong>Creation by reading</strong><a class="headerlink" href="#creation-by-reading" title="Permalink to this headline">¶</a></h3>
-<p>The <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function <a class="reference internal" href="tutorial_orgish.html#reading-datasets"><span class="std std-ref">reads a netCDF dataset</span></a> and returns the contents as a list of zero or more
+<p>The <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function <a class="reference internal" href="#reading-datasets"><span class="std std-ref">reads a netCDF dataset</span></a> and returns the contents as a list of zero or more
 field constructs, each one corresponding to a unique CF-netCDF data
 variable in the dataset. For example, the field construct <code class="docutils literal notranslate"><span class="pre">tas</span></code> that
-was created manually can be <a class="reference internal" href="tutorial_orgish.html#writing-to-disk"><span class="std std-ref">written to a netCDF dataset</span></a> and then read back into memory:</p>
+was created manually can be <a class="reference internal" href="#writing-to-disk"><span class="std std-ref">written to a netCDF dataset</span></a> and then read back into memory:</p>
 <div class="literal-block-wrapper docutils container" id="id115">
 <div class="code-block-caption"><span class="caption-text"><em>Write the field construct that was created manually to
 disk, and then read it back into a new field construct.</em></span><a class="headerlink" href="#id115" title="Permalink to this code">¶</a></div>
@@ -2483,7 +2483,7 @@ possible);</li>
 <li>specify which field construct properties should become netCDF data
 variable attributes and which should, if possible, become netCDF
 global attributes;</li>
-<li>create <a class="reference internal" href="tutorial_orgish.html#external-variables"><span class="std std-ref">external variables</span></a> in an external
+<li>create <a class="reference internal" href="#external-variables"><span class="std std-ref">external variables</span></a> in an external
 file;</li>
 <li>change the data type of output data arrays;</li>
 <li>apply netCDF compression and packing; and</li>
@@ -2739,8 +2739,8 @@ arrays contained in <a class="reference internal" href="class/cfdm.Data.html#cfd
 the cfdm package includes algorithms that are required to uncompress
 each type of compressed array.</p>
 <p>There are two basic types of compression supported by the CF
-conventions: ragged arrays (as used by <a class="reference internal" href="tutorial_orgish.html#discrete-sampling-geometries"><span class="std std-ref">discrete sampling
-geometries</span></a>) and <a class="reference internal" href="tutorial_orgish.html#gathering"><span class="std std-ref">compression by
+conventions: ragged arrays (as used by <a class="reference internal" href="#discrete-sampling-geometries"><span class="std std-ref">discrete sampling
+geometries</span></a>) and <a class="reference internal" href="#gathering"><span class="std std-ref">compression by
 gathering</span></a>, each of which has particular implementation
 details, but the following access patterns and behaviours apply to
 both:</p>
@@ -2757,7 +2757,7 @@ a numpy array with the <a class="reference internal" href="method/cfdm.Data.get_
 <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</li>
 </ul>
 <ul class="simple">
-<li>A <a class="reference internal" href="tutorial_orgish.html#subspacing"><span class="std std-ref">subspace</span></a> of a field construct is created with
+<li>A <a class="reference internal" href="#subspacing"><span class="std std-ref">subspace</span></a> of a field construct is created with
 indices of the uncompressed form of the data. The new subspace will
 no longer be compressed, i.e. its underlying arrays will be
 uncompressed, but the original data will remain compressed. It
@@ -2765,7 +2765,7 @@ follows that to uncompress all of the data in a field construct,
 index the field construct with (indices equivalent to) <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a>.</li>
 </ul>
 <ul class="simple">
-<li>If data elements are modified by <a class="reference internal" href="tutorial_orgish.html#assignment"><span class="std std-ref">assigning</span></a> to
+<li>If data elements are modified by <a class="reference internal" href="#assignment"><span class="std std-ref">assigning</span></a> to
 indices of the uncompressed form of the data, then the underlying
 compressed array is replaced by its uncompressed form.</li>
 </ul>
@@ -2781,8 +2781,8 @@ modified will be written to an output dataset as uncompressed
 arrays.</li>
 </ul>
 <p>Examples of all of the above may be found in the sections on
-<a class="reference internal" href="tutorial_orgish.html#discrete-sampling-geometries"><span class="std std-ref">discrete sampling geometries</span></a> and
-<a class="reference internal" href="tutorial_orgish.html#gathering"><span class="std std-ref">gathering</span></a>.</p>
+<a class="reference internal" href="#discrete-sampling-geometries"><span class="std std-ref">discrete sampling geometries</span></a> and
+<a class="reference internal" href="#gathering"><span class="std std-ref">gathering</span></a>.</p>
 </div>
 <div class="section" id="discrete-sampling-geometries">
 <span id="id47"></span><h2><strong>Discrete sampling geometries</strong><a class="headerlink" href="#discrete-sampling-geometries" title="Permalink to this headline">¶</a></h2>
