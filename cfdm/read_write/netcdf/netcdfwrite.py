@@ -270,7 +270,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
 #        print('dtype=', dtype)
 #        if not hasattr(variable, 'dtype'):
 #            dtype = numpy.asanyarray(variable).dtype
-        if dtype is None or dtype.char == 'S':
+        if dtype is None or dtype.char == 'S' or dtype.char == 'U':
             return 'S1'            
     
 #        dtype = variable.dtype
@@ -1380,17 +1380,28 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         data = self.implementation.get_data(cfvar, None)
 
         original_ncdimensions = ncdimensions 
-        
+
         if data is not None and datatype == 'S1':
             # --------------------------------------------------------
             # Convert a string data type numpy array into a
             # character data type ('S1') numpy array with an extra
             # trailing dimension.
             # --------------------------------------------------------
+
             strlen = data.dtype.itemsize
+            array = data.get_array()
+            if numpy.ma.is_masked(array):
+                array = array.compressed()
+            strlen = len(max(array, key=len))
+#            print ('strlen=',strlen)
+#                
+#            print(data.get_array())
+#            strlen = len(max(data.get_array(), key=len))
 #            if strlen > 1:
+#            print ('A', repr(data))
             data = self._convert_to_char(data)
             ncdim = self._string_length_dimension(strlen)            
+#            print ('B', repr(data))
             ncdimensions = original_ncdimensions + (ncdim,)
         #--- End: if
         
@@ -1428,7 +1439,11 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                   'datatype'  : datatype,
                   'dimensions': ncdimensions,
                   'endian'    : g['endian'],
-                  'chunksizes': chunksizes}
+                  'chunksizes': chunksizes,
+#                  'fill_value': fill_value,
+#                  'least_significant_digit': lsd,
+        }
+        
         kwargs.update(g['netcdf_compression'])
 
         try:
@@ -1467,7 +1482,9 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # Write attributes to the netCDF variable
         #-------------------------------------------------------------
         self._write_attributes(cfvar, ncvar, extra=extra, omit=omit)
-    
+
+#        g['nc'][ncvar]._Encoding = 'ascii'
+        
         #-------------------------------------------------------------
         # Write data to the netCDF variable
         #
@@ -1536,7 +1553,9 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 raise ValueError(
 "ERROR: Can't write data that has _FillValue or missing_value at unmasked point: {!r}".format(cfvar))
         #--- End: if
-    
+
+#        print (repr(array))
+#        print (g['nc'][ncvar].shape, array.shape)        
         # Copy the array into the netCDF variable
         g['nc'][ncvar][...] = array
 

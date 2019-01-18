@@ -1313,14 +1313,14 @@ that has fewer metadata constructs than one created with the
                                    'auxiliary_coordinate',
                                    'cell_measure'):
                 for ccid, con in self.constructs(construct_type=construct_type,
-                                                 axes=data_axes,
+                                                 axis=data_axes,
                                                  copy=False).items():
                     axes = constructs_data_axes.get(ccid)
                     if axes is None:
                         continue
     
                     if set(axes).issubset(data_axes):
-                        f.set_construct(con, cid=ccid, axes=axes,
+                        f.set_construct(con, key=ccid, axes=axes,
                                         copy=True)
                 #--- End: for
             #--- End: for
@@ -1347,7 +1347,7 @@ that has fewer metadata constructs than one created with the
                 if ok:
                     ref = ref.copy()
                     ref.coordinates(new_coordinates)
-                    f.set_construct(ref, cid=rcid, copy=False)                    
+                    f.set_construct(ref, key=rcid, copy=False)                    
             #--- End: for
         #--- End: if
               

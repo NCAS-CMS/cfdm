@@ -432,10 +432,10 @@ providing a new set of properties to the `~Field.properties` method:
 All of the methods related to the properties are listed :ref:`here
 <Field-Properties>`.
 
-.. _Metadata-constructs-(1):
+.. _Metadata-constructs-1:
 
-**Metadata constructs (1)**
----------------------------
+**Metadata constructs 1**
+-------------------------
 
 ----
 
@@ -544,7 +544,7 @@ Metadata constructs of all types may be returned by the
 The `~Field.constructs` method has optional parameters to filter the
 output by specifying criteria on the contents of metadata
 constructs. See the :ref:`further section on metadata constructs
-<Metadata-constructs-(2)>` for more details.
+<Metadata-constructs-2>` for more details.
 
 .. _Data:
 
@@ -844,17 +844,17 @@ class.
                    : longitude(1) = [22.5] degrees_east
 
 
-.. _Metadata-constructs-(2):
+.. _Metadata-constructs-2:
 
-**Metadata constructs (2)**
----------------------------
+**Metadata constructs 2**
+-------------------------
 
 ----
 
 Further to the functionality described in the :ref:`first section on
-metadata constructs <Metadata-constructs-(1)>`, the
-`~Field.constructs` method of the field construct has optional
-parameters to filter the metadata constructs by
+metadata constructs <Metadata-constructs-1>`, the `~Field.constructs`
+method of the field construct has optional parameters to filter the
+metadata constructs by
 
 * metadata construct type,
 
@@ -1519,6 +1519,7 @@ methods:
    <DimensionCoordinate:  >
    >>> dc.set_property('long_name', 'Longitude')
    >>> dc.set_data(cfdm.Data([1, 2, 3.]))
+   >>> dc
    <DimensionCoordinate: long_name:Longitude(3) >
    >>> fa = cfdm.FieldAncillary(
    ...        data=cfdm.Data(numpy.array([0, 0, 2], dtype='int8')))
@@ -1739,7 +1740,7 @@ been generated with dummy values using `numpy.arange`):
              axes=[axis_Y, axis_X],
 	     method='mean',
              properties={'where': 'land',
-                         'intervals': [cfdm.Data(0.1, units='degrees')]})
+                         'interval': [cfdm.Data(0.1, units='degrees')]})
    
    cell_method2 = cfdm.CellMethod(axes=axis_T, method='maximum')
    
@@ -1913,6 +1914,7 @@ instance, which is is used to initialize a `~cfdm.Data` instance.
              and use it to create a NetCDFArray instance with which to
              initialize a Data instance.*
 		
+   >>> import netCDF4
    >>> nc = netCDF4.Dataset('file.nc', 'r')
    >>> v = nc.variables['ta']
    >>> netcdf_array = cfdm.NetCDFArray(filename='file.nc', ncvar='ta',
