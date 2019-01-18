@@ -155,7 +155,7 @@ Miscellaneous
    ~cfdm.Field.copy
    ~cfdm.Field.equals
    ~cfdm.Field.convert
-   ~cfdm.Field.read_report
+   ~cfdm.Field.dataset_compliance
 
 .. _Field-NetCDF:
    

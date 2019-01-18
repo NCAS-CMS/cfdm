@@ -481,17 +481,18 @@ field.
 #        return constructs.domain_axis_name(key)
 #    #--- End: def
 
-    def _set_read_report(self, value):
+    def _set_dataset_compliance(self, value):
         '''Set the report of problems encountered whilst reading the field
 construct from a dataset.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `read_report`
+.. seealso:: `dataset_compliance`
 
 :Parameters:
 
     value:
+        TODO
 
 :Returns:
 
@@ -500,7 +501,7 @@ construct from a dataset.
 **Examples:**
 
         '''
-        self._set_component('read_report', value, copy=True)
+        self._set_component('dataset_compliance', value, copy=True)
     #--- End: def    
 
     # ----------------------------------------------------------------
@@ -539,7 +540,7 @@ False
         '''
         new = super().copy(data=data)
 
-        new._set_read_report(self.read_report(display=False))
+        new._set_dataset_compliance(self.dataset_compliance())
 
         return new
     #--- End: def
@@ -1353,7 +1354,7 @@ that has fewer metadata constructs than one created with the
         return f
     #--- End: def
    
-    def read_report(self, display=True):
+    def dataset_compliance(self, display=False):
         '''A report of problems encountered whilst reading the field construct
 from a dataset.
 
@@ -1364,8 +1365,8 @@ from a dataset.
 :Parameters:
 
     display: `bool`, optional
-        If False then return the report as a dictionary. By default
-        the report is printed.
+        If True print the compliance report. By default the report is
+        returned as a dictionary.  the report is printed.
 
 :Returns:
 
@@ -1375,7 +1376,7 @@ from a dataset.
         dictionary.
 
         '''
-        d = self._get_component('read_report', {})
+        d = self._get_component('dataset_compliance', {})
 
         if not display:
             return d

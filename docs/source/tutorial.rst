@@ -118,7 +118,7 @@ variable that spans a netCDF dimension that does not apply to the data
 variable. Other types of non-compliance are not checked, such whether
 or not controlled vocabularies have been adhered to. The structural
 compliance of the dataset may be checked with the
-`~cfdm.Field.structural_compliance` method of the field construct, as
+`~cfdm.Field.dataset_compliance` method of the field construct, as
 well as optionally displayed when the dataset is read.
 
 .. _Inspection:

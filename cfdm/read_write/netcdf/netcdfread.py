@@ -312,7 +312,7 @@ TODO
             # Warnings?
             'warnings': warnings,
             
-            'read_report': {None: {'non-compliance': {}}},
+            'dataset_compliance': {None: {'non-compliance': {}}},
             'component_report' : {},
             
             'auxiliary_coordinate' : {},
@@ -755,12 +755,12 @@ TODO
 
         if warnings:
             for x in out:
-                qq = x.read_report(display=False)
+                qq = x.dataset_compliance()
                 if qq:
                     print('WARNING: Field incomplete due to non-CF-compliant dataset:')
                     print(str(x))
                     print('Report:')
-                    x.read_report()
+                    x.dataset_compliance(display=True)
         #--- End: if
 
         # ------------------------------------------------------------
@@ -1783,7 +1783,7 @@ variable should be pre-filled with missing values.
         nc = g['variable_dataset'][field_ncvar]
         
         dimensions = g['variable_dimensions'][field_ncvar]
-        g['read_report'][field_ncvar] = {'CF version'    : self.implementation.get_cf_version(),
+        g['dataset_compliance'][field_ncvar] = {'CF version'    : self.implementation.get_cf_version(),
                                          'dimensions'    : dimensions,
                                          'non-compliance': {}}
         
@@ -2326,19 +2326,19 @@ variable should be pre-filled with missing values.
             print('    Field properties:', self.implementation.get_properties(f))
         
         # Add the structural read report to the field
-        read_report = g['read_report'][field_ncvar]
-        components = read_report['non-compliance']
+        dataset_compliance = g['dataset_compliance'][field_ncvar]
+        components = dataset_compliance['non-compliance']
         if components:
-            read_report = {field_ncvar: read_report}
+            dataset_compliance = {field_ncvar: dataset_compliance}
         else:
-            read_report = {}
+            dataset_compliance = {}
             
-        self.implementation.set_read_report(f, read_report)
+        self.implementation.set_dataset_compliance(f, dataset_compliance)
 
         #if not g['warnings'] and components:            
         #    print('WARNING: Field incomplete due to non-CF-compliant dataset:')
         #    print(repr(f))
-        #    f.read_report()
+        #    f.dataset_compliance()
         ##--- End: if
 
         # Return the finished field
@@ -2403,7 +2403,7 @@ variable should be pre-filled with missing values.
         if variable is None:
             variable = ncvar
         
-        g['read_report'][field_ncvar]['non-compliance'].setdefault(ncvar, []).append(d)
+        g['dataset_compliance'][field_ncvar]['non-compliance'].setdefault(ncvar, []).append(d)
 
         e = g['component_report'].setdefault(variable, {})
         e.setdefault(ncvar, []).append(d)
@@ -3543,7 +3543,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
 
         if component_report is not None:
             for var, report in component_report.items():                
-                g['read_report'][field_ncvar]['non-compliance'].setdefault(var, []).extend(
+                g['dataset_compliance'][field_ncvar]['non-compliance'].setdefault(var, []).extend(
                     report)
         #--- End: if
 
