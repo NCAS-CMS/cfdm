@@ -222,7 +222,7 @@ returned.
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
         
@@ -507,7 +507,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
 :Returns:
 
-    out: `str`
+    `str`
         The canonical name for the axis.
 
 **Examples:**

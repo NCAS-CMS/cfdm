@@ -1,5 +1,5 @@
-version 1.7.0b9 - 
-============================
+version 1.7.0b12 - 2019-01-18
+=============================
 
 * Added requirements.txt and updated installation instructions.
 * Fix to cfdm.CoordinateReference.dump for when a domain ancillary

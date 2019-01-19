@@ -79,7 +79,7 @@ object.
 
 :Returns:
 
-    out: `dict`
+    `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
 
@@ -971,6 +971,15 @@ criteria, then `True` is returned.
         return len(out) == 1
     #--- End: def
 
+    # parameter: name
+    # parameter: properties
+    # parameter: measure
+    # parameter: ncvar
+    # parameter: ncdim
+    # parameter: key
+    # parameter: axis
+    # parameter: construct_type
+    # parameter: copy
     def constructs(self, name=None, properties=None, measure=None,
                    ncvar=None, ncdim=None, key=None, axis=None,
                    construct_type=None, copy=False):
@@ -983,19 +992,18 @@ returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_construct`, `get_construct`,
-             `get_construct_data_axes`, `get_construct_key`,
-             `has_construct`, `set_construct`
+.. seealso:: `constructs_data_axes`, `del_construct`, `get_construct`
+             `get_construct_key`, `has_construct`, `set_construct`
 
 :Parameters:
 
     name: `str`, optional
-        Select constructs that have the given property, or other
-        attribute, value.
+        Select constructs that have the given name. In general, a
+        contruct's name is the string returned by its `!name` method.
 
         The name may be one of:
 
-        * The value of the standard name property on its own. 
+        * The value of the standard name property.
 
           *Parameter example:*
             ``name='air_pressure'`` will select constructs that
@@ -1025,29 +1033,30 @@ returned.
             ``name='measure%area'`` will select "area" cell
             measure constructs.
 
-        * A construct identifier, prefixed by ``key%`` (see also the
-          *key* parameter).
+        * A construct key, prefixed by ``key%`` (see also the *key*
+          parameter).
 
           *Parameter example:* 
             ``name='key%cellmethod1'`` will select cell method
-            construct with construct identifier "cellmethod1". This is
+            construct with construct key "cellmethod1". This is
             equivalent to ``key='cellmethod1'``.
 
-        * The netCDF variable name, prefixed by ``ncvar%``.
+        * The netCDF variable name, prefixed by ``ncvar%`` (see also
+          the *ncvar* parameter).
 
           *Parameter example:*
-            ``name='ncvar%lat'`` will select constructs with
-            netCDF variable name "lat".
+            ``name='ncvar%lat'`` will select constructs with netCDF
+            variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
-          prefixed by ``ncdim%``.
+          prefixed by ``ncdim%`` (see also the *ncdim* parameter).
 
           *Parameter example:*
-            ``name='ncdim%time'`` will select domain axis
-            constructs with netCDF dimension name "time".
+            ``name='ncdim%time'`` will select domain axis constructs
+            with netCDF dimension name "time".
 
     key: `str`, optional
-        Select the construct with the given construct identifier.
+        Select the construct with the given construct key.
 
         *Parameter example:*
           ``key='domainancillary0'`` will the domain ancillary
@@ -1083,16 +1092,19 @@ returned.
         Note that a domain never contains cell method nor field
         ancillary constructs.
 
-    axes: sequence of `str`, optional
+    axis: (sequence of) `str`, optional
         Select constructs which have data that spans one or more of
-        the given domain axes, in any order. Domain axes are specified
-        by their construct identifiers.
+        the given domain axis constructs, in any order. Domain axis
+        contructs are specified by their construct keys.
 
         *Parameter example:*
-          ``axes=['domainaxis2']``
+          ``axis='domainaxis2'``
 
         *Parameter example:*
-          ``axes=['domainaxis0', 'domainaxis1']``
+          ``axis=['domainaxis2']``
+
+        *Parameter example:*
+          ``axis=['domainaxis0', 'domainaxis1']``
 
     copy: `bool`, optional
         If True then return copies of the constructs. By default the
@@ -1101,20 +1113,16 @@ returned.
 :Returns:
 
     `dict`
-        Constructs are returned as values of a dictionary, keyed by
-        their construct identifiers.
+        The selected constructs, keyed by their construct keys. All
+        constructs are returned if no selection criteria are given. An
+        empty dictionary is returned if no constructs meet the given
+        criteria.
         
-        If cell method contructs, and no other construct types, have
-        been selected with the *construct_type* parameter then the
-        constructs are returned in an ordered dictionary
-        (`collections.OrderedDict`). The order is determined by the
-        order in which the cell method constructs were originally
-        added.
+        Use the `cell_methods` method to retrieve cell method
+        constructs in the same order that they were applied, in an
+        ordered dictionary.
 
 **Examples:**
-
->>> f.constructs()
-{}
 
 >>> f.constructs()
 {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
@@ -1147,17 +1155,17 @@ returned.
 {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
  'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
 >>> f.constructs(construct_type='cell_method')
-OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+{'cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+ 'cellmethod1', <CellMethod: domainaxis3: maximum>}
 >>> f.constructs(construct_type=['cell_method', 'field_ancillary'])
 {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
  'cellmethod1': <CellMethod: domainaxis3: maximum>,
  'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
->>> f.constructs(axes=['domainaxis0'])
+>>> f.constructs(axis='domainaxis0')
 {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
  'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
  'domainancillary1': <DomainAncillary: ncvar%b(1) >}
->>> f.constructs(axes=['domainaxis0', 'domainaxis1'])
+>>> f.constructs(axis=['domainaxis0', 'domainaxis1'])
 {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
  'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
  'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
@@ -1170,7 +1178,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
  'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 >>> f.constructs('longitude',
 ...              construct_type='auxiliary_coordinate', 
-...              axes=['domainaxis1'])
+...              axis=['domainaxis1'])
 {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
 >>> f.constructs('air_pressure')
 {}
