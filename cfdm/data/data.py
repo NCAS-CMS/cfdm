@@ -64,9 +64,10 @@ class Data(mixin.Container, core.Data):
         `set_calendar` method.
 
     fill_value: optional 
-        The fill value of the data. By default, or if None, the numpy
-        fill value appropriate to the array's data type will be used.
-        TODO. Ignored if the *source* parameter is set.
+        The fill value of the data. By default, or if set to `None`,
+        the `numpy` fill value appropriate to the array's data type
+        will be used (see `numpy.ma.default_fill_value`). Ignored if
+        the *source* parameter is set.
 
         *Parameter example:*
           ``fill_value=-999.``
@@ -112,8 +113,8 @@ class Data(mixin.Container, core.Data):
 >>> import numpy
 >>> d = cfdm.Data([1, 2, 3])
 >>> a = numpy.array(d)
->>> type(a)
-numpy.ndarray
+>>> print(type(a))
+<type 'numpy.ndarray'>
 >>> a[0] = -99
 >>> d
 <Data(3): [1, 2, 3]>
@@ -128,16 +129,7 @@ numpy.ndarray
         else:
             return array.astype(dtype[0], copy=False)
     #--- End: def
-                  
-    def __data__(self):
-        '''TODO
-
-Return self
-
-        '''
-        return self
-    #--- End: def
- 
+              
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -375,10 +367,18 @@ x.__str__() <==> str(x)
     # Private methods
     # ----------------------------------------------------------------
     def _item(self, index):
-        '''Copy an element of an array to a standard Python scalar and return it.
+        '''Return an element of the data as a scalar.
 
 It is assumed, but not checked, that the given index selects exactly
 one element.
+
+:Parameters:
+
+    index: 
+
+:Returns:
+
+        The selected element of the data.
 
 **Examples:**
 
@@ -657,12 +657,14 @@ data array shape.
 #    #--- End: def
 
     def get_dtarray(self):
-        '''An independent numpy array of date-time objects.
+        '''Return an independent numpy array containing the date-time objects
+corresponding to time since a refernce date.
 
 Only applicable for reference time units.
 
 If the calendar has not been set then the CF default calendar of
-"gregorian" will be used.
+"standard" (i.e. the mixed Gregorian/Julian calendar as defined by
+Udunits) will be used.
 
 Conversions are carried out with the `netCDF4.num2date` function.
 
@@ -672,14 +674,24 @@ Conversions are carried out with the `netCDF4.num2date` function.
 
 **Examples:**
 
->>> d.get_units()
-'days since 2018-12-01'
->>> d.get_calendar()
-'360_day'
->>> d.get_array()
-30.0
->>> print(d.get_dtarray())
-[2019-01-01 00:00:00]
+>>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
+>>> a = d.get_dtarray()
+>>> print(a)
+[cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0, 1, 1)
+ cftime.DatetimeGregorian(2019, 2, 1, 0, 0, 0, 0, 4, 32)
+ cftime.DatetimeGregorian(2019, 3, 1, 0, 0, 0, 0, 4, 60)]
+>>> print(a[1])
+2019-02-01 00:00:00
+
+>>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01',
+...               calendar='360_day')
+>>> a = d.get_dtarray()
+>>> print(a)
+[cftime.Datetime360Day(2019, 1, 2, 0, 0, 0, 0, 3, 2)
+ cftime.Datetime360Day(2019, 2, 3, 0, 0, 0, 0, 6, 33)
+ cftime.Datetime360Day(2019, 3, 1, 0, 0, 0, 0, 6, 61)]
+>>> print(a[1])
+2019-02-03 00:00:00
 
         '''
         array = self.get_array()
@@ -838,8 +850,8 @@ array.
 
 . versionadded:: 1.7.0
 
-.. seealso:: `get_compressed_axearray`, `get_compressed_axes`,
-             `get_compressed_type`
+.. seealso:: `get_compressed_array`, `get_compressed_axes`,
+             `get_compression_type`
 
 :Parameters:
 
@@ -968,7 +980,7 @@ array.
     
         return parsed_indices
     #--- End: def
-
+    
     def max(self, axes=None):
         '''Return the maximum of an array or the maximum along axes.
 
@@ -1339,7 +1351,7 @@ Missing data array elements are omitted from the calculation.
 .. versionadded:: 1.7.0
 
 .. seealso:: `get_compressed_axes`, `get_compressed_dimension`,
-             `get_compression_type`,
+             `get_compression_type`
 
 :Returns:
 
@@ -1360,19 +1372,33 @@ Missing data array elements are omitted from the calculation.
     #--- End: def
 
     def get_compressed_axes(self):
-        '''Return the dimensions that are compressed.
+        '''Return the dimensions that have compressed in the underlying array.
 
 .. versionadded:: 1.7.0
+
+.. seealso:: `get_compressed_array`, `get_compressed_dimension`,
+             `get_compression_type`
 
 :Returns:
 
     `list`
-        TODO The axes of the data that are compressed to a single axis
-        in the internal array.
+        The dimensions of the data that are compressed to a single
+        dimension in the underlying array. If the data are not
+        compressed then an empty list is returned.
 
 **Examples:**
 
-TODO
+>>> d.shape
+(2, 3, 4, 5, 6)
+>>> d.get_compressed_array().shape
+(2, 14, 6)
+>>> d.get_compressed_axes()
+[1, 2, 3]
+
+>>> d.get_compression_type()
+''
+>>> d.get_compressed_axes()
+[]
 
         '''
         ca = self._get_Array(None)
@@ -1393,7 +1419,7 @@ TODO
 
 :Returns:
 
-    `str` or `None`
+    `str`
         The compression type. An empty string means that no
         compression has been applied.
         
@@ -1598,20 +1624,104 @@ False
     #--- End: def
 
     def first_element(self):
-        '''TODO
+        '''Return the first element of the data as a scalar.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `last_element`, `second_element`
+
+:Returns:
+        
+        The first element of the data.
+
+**Examples:**
+
+>>> d = cfdm.Data(9.0)
+>>> x = d.first_element()
+>>> print(x, type(x))
+(9.0, <type 'float'>)
+
+>>> d = cfdm.Data([[1, 2], [3, 4]])
+>>> x = d.first_element()
+>>> print(x, type(x))
+(1, <type 'int'>)
+>>> d[0, 0] = numpy.ma.masked
+>>> y = d.first_element()
+>>> print(y, type(y))
+(masked, <class 'numpy.ma.core.MaskedConstant'>)
+
+>>> d = cfdm.Data(['foo', 'bar'])
+>>> x = d.first_element()
+>>> print(x, type(x))
+('foo', <type 'str'>)
+
         '''
         return self._item((slice(0, 1),)*self.ndim)
     #--- End: def
     
     def last_element(self):
-        '''TODO
-        '''
+        '''Return the last element of the data as a scalar.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `first_element`, `second_element`
+
+:Returns:
         
+        The last element of the data.
+
+**Examples:**
+
+>>> d = cfdm.Data(9.0)
+>>> x = d.last_element()
+>>> print(x, type(x))
+(9.0, <type 'float'>)
+
+>>> d = cfdm.Data([[1, 2], [3, 4]])
+>>> x = d.last_element()
+>>> print(x, type(x))
+(4, <type 'int'>)
+>>> d[-1, -1] = numpy.ma.masked
+>>> y = d.last_element()
+>>> print(y, type(y))
+(masked, <class 'numpy.ma.core.MaskedConstant'>)
+
+>>> d = cfdm.Data(['foo', 'bar'])
+>>> x = d.last_element()
+>>> print(x, type(x))
+('bar', <type 'str'>)
+
+        '''        
         return self._item((slice(-1, None),)*self.ndim)
     #--- End: def
  
     def second_element(self):
-        '''TODO
+        '''Return the second element of the data as a scalar.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `first_element`, `last_element`
+
+:Returns:
+        
+        The second element of the data.
+
+**Examples:**
+
+>>> d = cfdm.Data([[1, 2], [3, 4]])
+>>> x = d.second_element()
+>>> print(x, type(x))
+(2, <type 'int'>)
+>>> d[0, 1] = numpy.ma.masked
+>>> y = d.second_element()
+>>> print(y, type(y))
+(masked, <class 'numpy.ma.core.MaskedConstant'>)
+
+>>> d = cfdm.Data(['foo', 'bar'])
+>>> x = d.second_element()
+>>> print(x, type(x))
+('bar', <type 'str'>)
+
         '''
         return self._item((slice(0, 1),)*(self.ndim-1) + (slice(1, 2),))
     #--- End: def

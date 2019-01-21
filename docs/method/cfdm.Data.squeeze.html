@@ -9,16 +9,17 @@
     <title>cfdm.Data.squeeze &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Data.transpose" href="cfdm.Data.transpose.html" />
-    <link rel="prev" title="cfdm.Data.expand_dims" href="cfdm.Data.expand_dims.html" />
+    <link rel="prev" title="cfdm.Data.insert_dimension" href="cfdm.Data.insert_dimension.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -52,7 +53,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Data.html">cfdm.Data</a><ul>
-      <li>Previous: <a href="cfdm.Data.expand_dims.html" title="previous chapter">cfdm.Data.expand_dims</a></li>
+      <li>Previous: <a href="cfdm.Data.insert_dimension.html" title="previous chapter">cfdm.Data.insert_dimension</a></li>
       <li>Next: <a href="cfdm.Data.transpose.html" title="next chapter">cfdm.Data.transpose</a></li>
   </ul></li>
   </ul></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.Data.squeeze<a class="headerlink" href="#cfdm-data-squeeze" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.squeeze">
-<code class="descclassname">Data.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b12/cfdm/data/data.py#L1143"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.squeeze" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b12/cfdm/data/data.py#L1155"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.squeeze" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove size 1 axes from the data.</p>
 <p>By default all size 1 axes are removed, but particular axes may be
 selected with the keyword arguments.</p>
@@ -98,7 +99,7 @@ selected with the keyword arguments.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code>, <a class="reference internal" href="cfdm.Data.transpose.html#cfdm.Data.transpose" title="cfdm.Data.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.Data.insert_dimension.html#cfdm.Data.insert_dimension" title="cfdm.Data.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>, <a class="reference internal" href="cfdm.Data.transpose.html#cfdm.Data.transpose" title="cfdm.Data.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -135,7 +136,7 @@ last position are allowed.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(1, 73, 1, 96)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(73, 96)</span>
@@ -159,8 +160,8 @@ last position are allowed.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Data.squeeze.rst.txt"

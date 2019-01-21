@@ -9,16 +9,17 @@
     <title>cfdm.Data.second_element &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Data.get_calendar" href="cfdm.Data.get_calendar.html" />
-    <link rel="prev" title="cfdm.Data.last_element" href="cfdm.Data.last_element.html" />
+    <link rel="next" title="cfdm.Data.last_element" href="cfdm.Data.last_element.html" />
+    <link rel="prev" title="cfdm.Data.first_element" href="cfdm.Data.first_element.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -52,8 +53,8 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Data.html">cfdm.Data</a><ul>
-      <li>Previous: <a href="cfdm.Data.last_element.html" title="previous chapter">cfdm.Data.last_element</a></li>
-      <li>Next: <a href="cfdm.Data.get_calendar.html" title="next chapter">cfdm.Data.get_calendar</a></li>
+      <li>Previous: <a href="cfdm.Data.first_element.html" title="previous chapter">cfdm.Data.first_element</a></li>
+      <li>Next: <a href="cfdm.Data.last_element.html" title="next chapter">cfdm.Data.last_element</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,8 +90,40 @@
 <h1>cfdm.Data.second_element<a class="headerlink" href="#cfdm-data-second-element" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.second_element">
-<code class="descclassname">Data.</code><code class="descname">second_element</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b12/cfdm/data/data.py#L1613"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.second_element" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<code class="descclassname">Data.</code><code class="descname">second_element</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b12/cfdm/data/data.py#L1698"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.second_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the second element of the data as a scalar.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cfdm.Data.first_element.html#cfdm.Data.first_element" title="cfdm.Data.first_element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">first_element</span></code></a>, <a class="reference internal" href="cfdm.Data.last_element.html#cfdm.Data.last_element" title="cfdm.Data.last_element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">last_element</span></code></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The second element of the data.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">second_element</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="go">(2, &lt;type &#39;int&#39;&gt;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">second_element</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+<span class="go">(masked, &lt;class &#39;numpy.ma.core.MaskedConstant&#39;&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">second_element</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="go">(&#39;bar&#39;, &lt;type &#39;str&#39;&gt;)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -105,8 +138,8 @@
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Data.second_element.rst.txt"

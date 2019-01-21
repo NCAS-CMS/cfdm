@@ -9,12 +9,13 @@
     <title>cfdm.Data.get_dtarray &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Data.first_element" href="cfdm.Data.first_element.html" />
@@ -90,10 +91,12 @@
 <dl class="method">
 <dt id="cfdm.Data.get_dtarray">
 <code class="descclassname">Data.</code><code class="descname">get_dtarray</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b12/cfdm/data/data.py#L659"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.get_dtarray" title="Permalink to this definition">¶</a></dt>
-<dd><p>An independent numpy array of date-time objects.</p>
+<dd><p>Return an independent numpy array containing the date-time objects
+corresponding to time since a refernce date.</p>
 <p>Only applicable for reference time units.</p>
 <p>If the calendar has not been set then the CF default calendar of
-“gregorian” will be used.</p>
+“standard” (i.e. the mixed Gregorian/Julian calendar as defined by
+Udunits) will be used.</p>
 <p>Conversions are carried out with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.num2date</span></code> function.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -103,14 +106,25 @@
 <p class="last"><a class="reference internal" href="cfdm.Data.get_array.html#cfdm.Data.get_array" title="cfdm.Data.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></p>
 </div>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_units</span><span class="p">()</span>
-<span class="go">&#39;days since 2018-12-01&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_calendar</span><span class="p">()</span>
-<span class="go">&#39;360_day&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_array</span><span class="p">()</span>
-<span class="go">30.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get_dtarray</span><span class="p">())</span>
-<span class="go">[2019-01-01 00:00:00]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2018-12-01&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get_dtarray</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">[cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0, 1, 1)</span>
+<span class="go"> cftime.DatetimeGregorian(2019, 2, 1, 0, 0, 0, 0, 4, 32)</span>
+<span class="go"> cftime.DatetimeGregorian(2019, 3, 1, 0, 0, 0, 0, 4, 60)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">2019-02-01 00:00:00</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2018-12-01&#39;</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get_dtarray</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">[cftime.Datetime360Day(2019, 1, 2, 0, 0, 0, 0, 3, 2)</span>
+<span class="go"> cftime.Datetime360Day(2019, 2, 3, 0, 0, 0, 0, 6, 33)</span>
+<span class="go"> cftime.Datetime360Day(2019, 3, 1, 0, 0, 0, 0, 6, 61)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">2019-02-03 00:00:00</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -127,8 +141,8 @@
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Data.get_dtarray.rst.txt"

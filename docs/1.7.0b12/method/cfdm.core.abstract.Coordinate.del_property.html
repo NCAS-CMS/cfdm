@@ -9,16 +9,17 @@
     <title>cfdm.core.abstract.Coordinate.del_property &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.abstract.Coordinate.set_property" href="cfdm.core.abstract.Coordinate.set_property.html" />
-    <link rel="prev" title="cfdm.core.abstract.Coordinate.set_bounds" href="cfdm.core.abstract.Coordinate.set_bounds.html" />
+    <link rel="next" title="cfdm.core.abstract.Coordinate.get_property" href="cfdm.core.abstract.Coordinate.get_property.html" />
+    <link rel="prev" title="cfdm.core.abstract.Coordinate" href="../class/cfdm.core.abstract.Coordinate.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -52,8 +53,8 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
   <li><a href="../class/cfdm.core.abstract.Coordinate.html">cfdm.core.abstract.Coordinate</a><ul>
-      <li>Previous: <a href="cfdm.core.abstract.Coordinate.set_bounds.html" title="previous chapter">cfdm.core.abstract.Coordinate.set_bounds</a></li>
-      <li>Next: <a href="cfdm.core.abstract.Coordinate.set_property.html" title="next chapter">cfdm.core.abstract.Coordinate.set_property</a></li>
+      <li>Previous: <a href="../class/cfdm.core.abstract.Coordinate.html" title="previous chapter">cfdm.core.abstract.Coordinate</a></li>
+      <li>Next: <a href="cfdm.core.abstract.Coordinate.get_property.html" title="next chapter">cfdm.core.abstract.Coordinate.get_property</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -125,7 +126,7 @@ provided.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
@@ -134,9 +135,9 @@ provided.</p>
 <span class="go">&#39;CMIP7&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 <span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 <span class="go">None</span>
 </pre></div>
 </div>
@@ -154,8 +155,8 @@ provided.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.core.abstract.Coordinate.del_property.rst.txt"

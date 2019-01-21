@@ -23,11 +23,8 @@ Inspection
    ~cfdm.Data.get_array
    ~cfdm.Data.get_dtarray
    ~cfdm.Data.first_element
-   ~cfdm.Data.last_element
    ~cfdm.Data.second_element
-   ~cfdm.Data.get_calendar
-   ~cfdm.Data.get_fill_value
-   ~cfdm.Data.get_units
+   ~cfdm.Data.last_element
 
 .. rubric:: Attributes
 
@@ -41,8 +38,37 @@ Inspection
    ~cfdm.Data.shape
    ~cfdm.Data.size
  
-Modification
+Units
+-----
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~cfdm.Data.get_units
+   ~cfdm.Data.set_units
+   ~cfdm.Data.set_calendar 
+   ~cfdm.Data.get_calendar
+
+Fill value
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~cfdm.Data.get_fill_value
+   ~cfdm.Data.set_fill_value
+
+Dimensions
 ------------
+
 .. rubric:: Methods
 
 .. autosummary::
@@ -50,13 +76,10 @@ Modification
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Data.set_calendar
-   ~cfdm.Data.set_fill_value
-   ~cfdm.Data.set_units
-   ~cfdm.Data.expand_dims
+   ~cfdm.Data.insert_dimension
    ~cfdm.Data.squeeze
    ~cfdm.Data.transpose
-   ~cfdm.Data.unique
+
       
 Calculation
 -----------
@@ -84,7 +107,7 @@ Miscellaneous
 
    ~cfdm.Data.copy
    ~cfdm.Data.equals
- 
+   
 Compression
 -----------
 .. rubric:: Methods

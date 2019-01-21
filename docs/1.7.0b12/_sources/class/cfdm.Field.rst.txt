@@ -155,7 +155,6 @@ Miscellaneous
    ~cfdm.Field.copy
    ~cfdm.Field.equals
    ~cfdm.Field.convert
-   ~cfdm.Field.dataset_compliance
 
 .. _Field-NetCDF:
    
@@ -169,12 +168,13 @@ NetCDF
    :toctree: ../method/
    :template: method.rst
 
-   ~Field.nc_del_variable
-   ~Field.nc_get_variable
-   ~Field.nc_has_variable
-   ~Field.nc_set_variable 
-   ~Field.nc_global_attributes
-   ~Field.nc_unlimited_dimensions
+   ~cfdm.Field.nc_del_variable
+   ~cfdm.Field.nc_get_variable
+   ~cfdm.Field.nc_has_variable
+   ~cfdm.Field.nc_set_variable 
+   ~cfdm.Field.nc_global_attributes
+   ~cfdm.Field.nc_unlimited_dimensions
+   ~cfdm.Field.dataset_compliance
 
 .. _Field-Special:
 

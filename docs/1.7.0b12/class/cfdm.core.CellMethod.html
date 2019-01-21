@@ -9,14 +9,16 @@
     <title>cfdm.core.CellMethod &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.core.CellMethod.construct_type" href="../attribute/cfdm.core.CellMethod.construct_type.html" />
     <link rel="prev" title="cfdm.core.CellMeasure.__deepcopy__" href="../method/cfdm.core.CellMeasure.__deepcopy__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -51,6 +53,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.core.CellMeasure.__deepcopy__.html" title="previous chapter">cfdm.core.CellMeasure.__deepcopy__</a></li>
+      <li>Next: <a href="../attribute/cfdm.core.CellMethod.construct_type.html" title="next chapter">cfdm.core.CellMethod.construct_type</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -185,39 +188,6 @@ initialization By default parameters are deep copied.</p>
 
 <div class="section" id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.CellMethod.dump</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.get_axes.html#cfdm.core.CellMethod.get_axes" title="cfdm.core.CellMethod.get_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_axes</span></code></a></td>
-<td>Return the axes of the cell method.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.get_method.html#cfdm.core.CellMethod.get_method" title="cfdm.core.CellMethod.get_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_method</span></code></a></td>
-<td>Return the method of the cell method.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.get_property.html#cfdm.core.CellMethod.get_property" title="cfdm.core.CellMethod.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
-<td>Return a property.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.has_axes.html#cfdm.core.CellMethod.has_axes" title="cfdm.core.CellMethod.has_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_axes</span></code></a></td>
-<td>Whether the axes of the cell method have been set.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.has_method.html#cfdm.core.CellMethod.has_method" title="cfdm.core.CellMethod.has_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_method</span></code></a></td>
-<td>Whether the method of the cell method has been set.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.has_property.html#cfdm.core.CellMethod.has_property" title="cfdm.core.CellMethod.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
-<td>Whether a property has been set.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.properties.html#cfdm.core.CellMethod.properties" title="cfdm.core.CellMethod.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
-</tr>
-</tbody>
-</table>
 <p class="rubric">Attributes</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -231,8 +201,8 @@ initialization By default parameters are deep copied.</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="modification">
-<h2>Modification<a class="headerlink" href="#modification" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -243,26 +213,41 @@ initialization By default parameters are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.del_axes.html#cfdm.core.CellMethod.del_axes" title="cfdm.core.CellMethod.del_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_axes</span></code></a></td>
 <td>Remove the axes of the cell method.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.del_method.html#cfdm.core.CellMethod.del_method" title="cfdm.core.CellMethod.del_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_method</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.get_axes.html#cfdm.core.CellMethod.get_axes" title="cfdm.core.CellMethod.get_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_axes</span></code></a></td>
+<td>Return the axes of the cell method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.has_axes.html#cfdm.core.CellMethod.has_axes" title="cfdm.core.CellMethod.has_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_axes</span></code></a></td>
+<td>Whether the axes of the cell method have been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.set_axes.html#cfdm.core.CellMethod.set_axes" title="cfdm.core.CellMethod.set_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axes</span></code></a></td>
+<td>Set the axes of the cell method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.del_method.html#cfdm.core.CellMethod.del_method" title="cfdm.core.CellMethod.del_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_method</span></code></a></td>
 <td>Remove the method of the cell method.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.del_property.html#cfdm.core.CellMethod.del_property" title="cfdm.core.CellMethod.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
-<td>Remove a property.</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.get_method.html#cfdm.core.CellMethod.get_method" title="cfdm.core.CellMethod.get_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_method</span></code></a></td>
+<td>Return the method of the cell method.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.properties.html#cfdm.core.CellMethod.properties" title="cfdm.core.CellMethod.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.set_axes.html#cfdm.core.CellMethod.set_axes" title="cfdm.core.CellMethod.set_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axes</span></code></a></td>
-<td>Set the axes of the cell method.</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.has_method.html#cfdm.core.CellMethod.has_method" title="cfdm.core.CellMethod.has_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_method</span></code></a></td>
+<td>Whether the method of the cell method has been set.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.set_method.html#cfdm.core.CellMethod.set_method" title="cfdm.core.CellMethod.set_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_method</span></code></a></td>
 <td>Set the method of the cell method.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.set_property.html#cfdm.core.CellMethod.set_property" title="cfdm.core.CellMethod.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.del_property.html#cfdm.core.CellMethod.del_property" title="cfdm.core.CellMethod.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<td>Remove a property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.set_property.html#cfdm.core.CellMethod.set_property" title="cfdm.core.CellMethod.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.CellMethod.sorted</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.get_property.html#cfdm.core.CellMethod.get_property" title="cfdm.core.CellMethod.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<td>Return a property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.has_property.html#cfdm.core.CellMethod.has_property" title="cfdm.core.CellMethod.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
+<td>Whether a property has been set.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.CellMethod.properties.html#cfdm.core.CellMethod.properties" title="cfdm.core.CellMethod.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<td>Return or replace all properties.</td>
 </tr>
 </tbody>
 </table>
@@ -309,8 +294,8 @@ initialization By default parameters are deep copied.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.core.CellMethod.rst.txt"

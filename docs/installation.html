@@ -9,12 +9,13 @@
     <title>Installation &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Tutorial" href="tutorial.html" />
@@ -94,6 +95,8 @@
 <ul class="simple">
 <li><a class="reference external" href="https://www.python.org/">Python</a>, version 2.7 or 3 or newer,</li>
 <li><a class="reference external" href="http://www.numpy.org/">numpy</a>, version 1.11 or newer,</li>
+<li><a class="reference external" href="https://unidata.github.io/cftime/">cftime</a>, version 1.0 or
+newer,</li>
 <li><a class="reference external" href="http://unidata.github.io/netcdf4-python/">netCDF4</a>, version 1.4.0
 or newer, and</li>
 <li><a class="reference external" href="https://python-future.org/">future</a>, version 0.16.0 or newer.</li>
@@ -139,8 +142,8 @@ options.</p>
 <li><p class="first">Download the cfdm package from <a class="reference external" href="https://pypi.org/project/cfdm">https://pypi.org/project/cfdm</a></p>
 </li>
 <li><p class="first">Unpack the library:</p>
-<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tar</span> <span class="n">zxvf</span> <span class="n">cfdm</span><span class="o">-</span><span class="mf">1.7</span><span class="o">.</span><span class="mi">0</span><span class="n">b8</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
-<span class="n">cd</span> <span class="n">cfdm</span><span class="o">-</span><span class="mf">1.7</span><span class="o">.</span><span class="mi">0</span><span class="n">b8</span>
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tar</span> <span class="n">zxvf</span> <span class="n">cfdm</span><span class="o">-</span><span class="mf">1.7</span><span class="o">.</span><span class="mb">0b1</span><span class="mf">2.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">cd</span> <span class="n">cfdm</span><span class="o">-</span><span class="mf">1.7</span><span class="o">.</span><span class="mb">0b1</span><span class="mi">2</span>
 </pre></div>
 </div>
 </li>
@@ -200,8 +203,8 @@ contained in a netCDF dataset.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="_sources/installation.rst.txt"

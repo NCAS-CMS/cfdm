@@ -9,16 +9,17 @@
     <title>cfdm.core.abstract.PropertiesDataBounds.bounds &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.abstract.PropertiesDataBounds.del_data" href="../method/cfdm.core.abstract.PropertiesDataBounds.del_data.html" />
-    <link rel="prev" title="cfdm.core.abstract.PropertiesDataBounds.has_bounds" href="../method/cfdm.core.abstract.PropertiesDataBounds.has_bounds.html" />
+    <link rel="next" title="cfdm.core.abstract.PropertiesDataBounds.copy" href="../method/cfdm.core.abstract.PropertiesDataBounds.copy.html" />
+    <link rel="prev" title="cfdm.core.abstract.PropertiesDataBounds.set_bounds" href="../method/cfdm.core.abstract.PropertiesDataBounds.set_bounds.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -52,8 +53,8 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
   <li><a href="../class/cfdm.core.abstract.PropertiesDataBounds.html">cfdm.core.abstract.PropertiesDataBounds</a><ul>
-      <li>Previous: <a href="../method/cfdm.core.abstract.PropertiesDataBounds.has_bounds.html" title="previous chapter">cfdm.core.abstract.PropertiesDataBounds.has_bounds</a></li>
-      <li>Next: <a href="../method/cfdm.core.abstract.PropertiesDataBounds.del_data.html" title="next chapter">cfdm.core.abstract.PropertiesDataBounds.del_data</a></li>
+      <li>Previous: <a href="../method/cfdm.core.abstract.PropertiesDataBounds.set_bounds.html" title="previous chapter">cfdm.core.abstract.PropertiesDataBounds.set_bounds</a></li>
+      <li>Next: <a href="../method/cfdm.core.abstract.PropertiesDataBounds.copy.html" title="next chapter">cfdm.core.abstract.PropertiesDataBounds.copy</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -116,7 +117,7 @@ of the <code class="xref py py-obj docutils literal notranslate"><span class="pr
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
@@ -144,8 +145,8 @@ of the <code class="xref py py-obj docutils literal notranslate"><span class="pr
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/attribute/cfdm.core.abstract.PropertiesDataBounds.bounds.rst.txt"

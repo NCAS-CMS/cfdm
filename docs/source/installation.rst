@@ -23,6 +23,9 @@ The cfdm package requires:
 
 * `numpy <http://www.numpy.org/>`_, version 1.11 or newer,
 
+* `cftime <https://unidata.github.io/cftime/>`_, version 1.0 or
+  newer,
+
 * `netCDF4 <http://unidata.github.io/netcdf4-python/>`_, version 1.4.0
   or newer, and
 
@@ -91,8 +94,8 @@ To install from source:
 
    .. code:: bash
 	 
-      tar zxvf cfdm-1.7.0b8.tar.gz
-      cd cfdm-1.7.0b8
+      tar zxvf cfdm-1.7.0b12.tar.gz
+      cd cfdm-1.7.0b12
 
 3. Install the package:
   

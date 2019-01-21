@@ -9,12 +9,13 @@
     <title>cfdm.Data.get_compressed_axes &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Data.get_compressed_array" href="cfdm.Data.get_compressed_array.html" />
@@ -89,10 +90,15 @@
 <h1>cfdm.Data.get_compressed_axes<a class="headerlink" href="#cfdm-data-get-compressed-axes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.get_compressed_axes">
-<code class="descclassname">Data.</code><code class="descname">get_compressed_axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b12/cfdm/data/data.py#L1362"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.get_compressed_axes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the dimensions that are compressed.</p>
+<code class="descclassname">Data.</code><code class="descname">get_compressed_axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b12/cfdm/data/data.py#L1374"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.get_compressed_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the dimensions that have compressed in the underlying array.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cfdm.Data.get_compressed_array.html#cfdm.Data.get_compressed_array" title="cfdm.Data.get_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code></a>, <a class="reference internal" href="cfdm.Data.get_compressed_dimension.html#cfdm.Data.get_compressed_dimension" title="cfdm.Data.get_compressed_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_dimension</span></code></a>,
+<a class="reference internal" href="cfdm.Data.get_compression_type.html#cfdm.Data.get_compression_type" title="cfdm.Data.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -100,8 +106,9 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt>
-<dd><p class="first last">TODO The axes of the data that are compressed to a single axis
-in the internal array.</p>
+<dd><p class="first last">The dimensions of the data that are compressed to a single
+dimension in the underlying array. If the data are not
+compressed then an empty list is returned.</p>
 </dd>
 </dl>
 </td>
@@ -109,7 +116,20 @@ in the internal array.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<p>TODO</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(2, 3, 4, 5, 6)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_compressed_array</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(2, 14, 6)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_compressed_axes</span><span class="p">()</span>
+<span class="go">[1, 2, 3]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
+<span class="go">&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_compressed_axes</span><span class="p">()</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -124,8 +144,8 @@ in the internal array.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Data.get_compressed_axes.rst.txt"

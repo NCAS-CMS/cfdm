@@ -9,16 +9,17 @@
     <title>cfdm.core.abstract.Coordinate &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.abstract.Coordinate.get_property" href="../method/cfdm.core.abstract.Coordinate.get_property.html" />
-    <link rel="prev" title="cfdm.core.abstract.Container._set_component" href="../method/cfdm.core.abstract.Container._set_component.html" />
+    <link rel="next" title="cfdm.core.abstract.Coordinate.del_property" href="../method/cfdm.core.abstract.Coordinate.del_property.html" />
+    <link rel="prev" title="cfdm.core.abstract.PropertiesDataBounds.__deepcopy__" href="../method/cfdm.core.abstract.PropertiesDataBounds.__deepcopy__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -51,8 +52,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.core.abstract.Container._set_component.html" title="previous chapter">cfdm.core.abstract.Container._set_component</a></li>
-      <li>Next: <a href="../method/cfdm.core.abstract.Coordinate.get_property.html" title="next chapter">cfdm.core.abstract.Coordinate.get_property</a></li>
+      <li>Previous: <a href="../method/cfdm.core.abstract.PropertiesDataBounds.__deepcopy__.html" title="previous chapter">cfdm.core.abstract.PropertiesDataBounds.__deepcopy__</a></li>
+      <li>Next: <a href="../method/cfdm.core.abstract.Coordinate.del_property.html" title="next chapter">cfdm.core.abstract.Coordinate.del_property</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -156,8 +157,8 @@ initialization. By default arguments are deep copied.</p>
 </table>
 </dd></dl>
 
-<div class="section" id="inspection">
-<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -165,44 +166,20 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.get_property.html#cfdm.core.abstract.Coordinate.get_property" title="cfdm.core.abstract.Coordinate.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.del_property.html#cfdm.core.abstract.Coordinate.del_property" title="cfdm.core.abstract.Coordinate.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<td>Remove a property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.get_property.html#cfdm.core.abstract.Coordinate.get_property" title="cfdm.core.abstract.Coordinate.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
 <td>Return a property.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.has_property.html#cfdm.core.abstract.Coordinate.has_property" title="cfdm.core.abstract.Coordinate.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.has_property.html#cfdm.core.abstract.Coordinate.has_property" title="cfdm.core.abstract.Coordinate.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_property.html#cfdm.core.abstract.Coordinate.set_property" title="cfdm.core.abstract.Coordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<td>Set a property.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.properties.html#cfdm.core.abstract.Coordinate.properties" title="cfdm.core.abstract.Coordinate.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.get_array.html#cfdm.core.abstract.Coordinate.get_array" title="cfdm.core.abstract.Coordinate.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
-<td>Return an independent numpy array the data.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.get_data.html#cfdm.core.abstract.Coordinate.get_data" title="cfdm.core.abstract.Coordinate.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
-<td>Return the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.has_data.html#cfdm.core.abstract.Coordinate.has_data" title="cfdm.core.abstract.Coordinate.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
-<td>Whether a data has been set.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.get_bounds.html#cfdm.core.abstract.Coordinate.get_bounds" title="cfdm.core.abstract.Coordinate.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
-<td>Return the bounds.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.has_bounds.html#cfdm.core.abstract.Coordinate.has_bounds" title="cfdm.core.abstract.Coordinate.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></td>
-<td>Whether or not there are bounds.</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.abstract.Coordinate.data.html#cfdm.core.abstract.Coordinate.data" title="cfdm.core.abstract.Coordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
-<td>Return the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.core.abstract.Coordinate.bounds.html#cfdm.core.abstract.Coordinate.bounds" title="cfdm.core.abstract.Coordinate.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
-<td>Return the bounds.</td>
 </tr>
 </tbody>
 </table>
@@ -231,18 +208,6 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_data.html#cfdm.core.abstract.Coordinate.set_data" title="cfdm.core.abstract.Coordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.del_bounds.html#cfdm.core.abstract.Coordinate.del_bounds" title="cfdm.core.abstract.Coordinate.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></td>
-<td>Remove the bounds.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.get_bounds.html#cfdm.core.abstract.Coordinate.get_bounds" title="cfdm.core.abstract.Coordinate.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
-<td>Return the bounds.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.has_bounds.html#cfdm.core.abstract.Coordinate.has_bounds" title="cfdm.core.abstract.Coordinate.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></td>
-<td>Whether or not there are bounds.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_bounds.html#cfdm.core.abstract.Coordinate.set_bounds" title="cfdm.core.abstract.Coordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></td>
-<td>Set the bounds.</td>
-</tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
@@ -255,7 +220,40 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.abstract.Coordinate.data.html#cfdm.core.abstract.Coordinate.data" title="cfdm.core.abstract.Coordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.core.abstract.Coordinate.bounds.html#cfdm.core.abstract.Coordinate.bounds" title="cfdm.core.abstract.Coordinate.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
+</tbody>
+</table>
+</div>
+<div class="section" id="bounds">
+<h2>Bounds<a class="headerlink" href="#bounds" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.del_bounds.html#cfdm.core.abstract.Coordinate.del_bounds" title="cfdm.core.abstract.Coordinate.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></td>
+<td>Remove the bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.get_bounds.html#cfdm.core.abstract.Coordinate.get_bounds" title="cfdm.core.abstract.Coordinate.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
+<td>Return the bounds.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.has_bounds.html#cfdm.core.abstract.Coordinate.has_bounds" title="cfdm.core.abstract.Coordinate.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></td>
+<td>Whether or not there are bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_bounds.html#cfdm.core.abstract.Coordinate.set_bounds" title="cfdm.core.abstract.Coordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></td>
+<td>Set the bounds.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.abstract.Coordinate.bounds.html#cfdm.core.abstract.Coordinate.bounds" title="cfdm.core.abstract.Coordinate.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
 <td>Return the bounds.</td>
 </tr>
 </tbody>
@@ -270,25 +268,16 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.del_property.html#cfdm.core.abstract.Coordinate.del_property" title="cfdm.core.abstract.Coordinate.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
-<td>Remove a property.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_property.html#cfdm.core.abstract.Coordinate.set_property" title="cfdm.core.abstract.Coordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
-<td>Set a property.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.properties.html#cfdm.core.abstract.Coordinate.properties" title="cfdm.core.abstract.Coordinate.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.del_data.html#cfdm.core.abstract.Coordinate.del_data" title="cfdm.core.abstract.Coordinate.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.del_data.html#cfdm.core.abstract.Coordinate.del_data" title="cfdm.core.abstract.Coordinate.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
 <td>Remove the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_data.html#cfdm.core.abstract.Coordinate.set_data" title="cfdm.core.abstract.Coordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_data.html#cfdm.core.abstract.Coordinate.set_data" title="cfdm.core.abstract.Coordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.del_bounds.html#cfdm.core.abstract.Coordinate.del_bounds" title="cfdm.core.abstract.Coordinate.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.del_bounds.html#cfdm.core.abstract.Coordinate.del_bounds" title="cfdm.core.abstract.Coordinate.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></td>
 <td>Remove the bounds.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_bounds.html#cfdm.core.abstract.Coordinate.set_bounds" title="cfdm.core.abstract.Coordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_bounds.html#cfdm.core.abstract.Coordinate.set_bounds" title="cfdm.core.abstract.Coordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></td>
 <td>Set the bounds.</td>
 </tr>
 </tbody>
@@ -336,8 +325,8 @@ initialization. By default arguments are deep copied.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.core.abstract.Coordinate.rst.txt"

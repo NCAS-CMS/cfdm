@@ -76,7 +76,7 @@ constructs:
              list.*
 		
    >>> x = cfdm.read('file.nc')
-   >>> type(x)
+   >>> print(type(x))
    <type 'list'>
    >>> len(x)
    2
@@ -2909,7 +2909,7 @@ field construct with an underlying contiguous ragged array:
 The new field construct can now be inspected and written to a netCDF file:
 
 .. code-block:: python
-   :caption: *Inspect the new field construct and wite it to disk.*
+   :caption: *Inspect the new field construct and write it to disk.*
    
    >>> T
    <Field: air_temperature(key%domainaxis1(2), key%domainaxis0(4)) K>
@@ -3053,7 +3053,7 @@ Subspaces based on the uncompressed axes of the field construct are
 easily created:
 
 .. code-block:: python
-   :caption: *Get subspaces based on iundices of the uncompressed
+   :caption: *Get subspaces based on indices of the uncompressed
              data.*
 	  
    >>> p[0]
@@ -3124,7 +3124,7 @@ initialisation).
 The new field construct can now be inspected and written a netCDF file:
 
 .. code-block:: python
-   :caption: *Inspect the new field construct and wite it to disk.*
+   :caption: *Inspect the new field construct and write it to disk.*
    
    >>> P
    <Field: precipitation_flux(key%domainaxis0(2), key%domainaxis1(3), key%domainaxis2(2)) kg m-2 s-1>

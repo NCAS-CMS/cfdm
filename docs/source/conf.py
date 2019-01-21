@@ -227,7 +227,7 @@ html_theme = 'alabaster' #'default' #'haiku' #'default'
 html_theme_options = {
 #    "page_width"      : "auto",
     "show_related"    : 'true',
-    "show_relbars"    : 'true',
+#    "show_relbars"    : 'true',
     "sidebar_collapse": 'true',
 #    "link"            : '#ED1010', #'#5682AD', # light blue
 #    "link_hover"      : '#46DD6c',

@@ -13,22 +13,6 @@ cfdm.core.CellMeasure
 Inspection
 ----------
 
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.CellMeasure.get_array
-   ~cfdm.core.CellMeasure.get_data
-   ~cfdm.core.CellMeasure.has_data
-   ~cfdm.core.CellMeasure.has_measure
-   ~cfdm.core.CellMeasure.get_measure
-   ~cfdm.core.CellMeasure.get_property
-   ~cfdm.core.CellMeasure.has_property
-   ~cfdm.core.CellMeasure.properties
-
 .. rubric:: Attributes
    
 .. autosummary::
@@ -37,7 +21,6 @@ Inspection
    :template: attribute.rst
 
    ~cfdm.core.CellMeasure.construct_type
-   ~cfdm.core.CellMeasure.data
 
 Properties
 ----------
@@ -49,15 +32,15 @@ Properties
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.CellMeasure.del_measure
-   ~cfdm.core.CellMeasure.del_property
+   ~cfdm.core.CellMeasure.del_measure  
    ~cfdm.core.CellMeasure.get_measure
-   ~cfdm.core.CellMeasure.get_property
    ~cfdm.core.CellMeasure.has_measure
-   ~cfdm.core.CellMeasure.has_property
-   ~cfdm.core.CellMeasure.properties
    ~cfdm.core.CellMeasure.set_measure
+   ~cfdm.core.CellMeasure.del_property
+   ~cfdm.core.CellMeasure.get_property
+   ~cfdm.core.CellMeasure.has_property
    ~cfdm.core.CellMeasure.set_property
+   ~cfdm.core.CellMeasure.properties
 
 Data
 ----
@@ -69,8 +52,8 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.CellMeasure.del_data
    ~cfdm.core.CellMeasure.get_array
+   ~cfdm.core.CellMeasure.del_data
    ~cfdm.core.CellMeasure.get_data
    ~cfdm.core.CellMeasure.has_data
    ~cfdm.core.CellMeasure.set_data
@@ -83,24 +66,6 @@ Data
    :template: attribute.rst
 
    ~cfdm.core.CellMeasure.data
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.CellMeasure.del_data
-   ~cfdm.core.CellMeasure.del_measure
-   ~cfdm.core.CellMeasure.del_property
-   ~cfdm.core.CellMeasure.properties
-   ~cfdm.core.CellMeasure.set_measure
-   ~cfdm.core.CellMeasure.set_data
-   ~cfdm.core.CellMeasure.set_property
 
 Miscellaneous
 -------------

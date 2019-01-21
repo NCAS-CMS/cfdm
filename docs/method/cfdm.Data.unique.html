@@ -9,16 +9,17 @@
     <title>cfdm.Data.unique &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Data.max" href="cfdm.Data.max.html" />
-    <link rel="prev" title="cfdm.Data.transpose" href="cfdm.Data.transpose.html" />
+    <link rel="next" title="cfdm.Data.copy" href="cfdm.Data.copy.html" />
+    <link rel="prev" title="cfdm.Data.sum" href="cfdm.Data.sum.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -52,8 +53,8 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Data.html">cfdm.Data</a><ul>
-      <li>Previous: <a href="cfdm.Data.transpose.html" title="previous chapter">cfdm.Data.transpose</a></li>
-      <li>Next: <a href="cfdm.Data.max.html" title="next chapter">cfdm.Data.max</a></li>
+      <li>Previous: <a href="cfdm.Data.sum.html" title="previous chapter">cfdm.Data.sum</a></li>
+      <li>Next: <a href="cfdm.Data.copy.html" title="next chapter">cfdm.Data.copy</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.Data.unique<a class="headerlink" href="#cfdm-data-unique" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.unique">
-<code class="descclassname">Data.</code><code class="descname">unique</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b12/cfdm/data/data.py#L1628"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.unique" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">unique</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b12/cfdm/data/data.py#L1738"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.unique" title="Permalink to this definition">¶</a></dt>
 <dd><p>The unique elements of the data.</p>
 <p>The unique elements are sorted into a one dimensional array. with no
 missing values.</p>
@@ -110,7 +111,7 @@ missing values.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span> <span class="s1">&#39;metre&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span> <span class="s1">&#39;metre&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
 <span class="go">&lt;Data(4): [1, 2, 3, 4] metre&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">masked</span>
@@ -132,8 +133,8 @@ missing values.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Data.unique.rst.txt"

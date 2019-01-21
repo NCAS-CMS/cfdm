@@ -9,15 +9,16 @@
     <title>cfdm.Field.convert &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Field.dataset_compliance" href="cfdm.Field.dataset_compliance.html" />
+    <link rel="next" title="cfdm.Field.nc_del_variable" href="cfdm.Field.nc_del_variable.html" />
     <link rel="prev" title="cfdm.Field.equals" href="cfdm.Field.equals.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -53,7 +54,7 @@
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Field.html">cfdm.Field</a><ul>
       <li>Previous: <a href="cfdm.Field.equals.html" title="previous chapter">cfdm.Field.equals</a></li>
-      <li>Next: <a href="cfdm.Field.dataset_compliance.html" title="next chapter">cfdm.Field.dataset_compliance</a></li>
+      <li>Next: <a href="cfdm.Field.nc_del_variable.html" title="next chapter">cfdm.Field.nc_del_variable</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -214,11 +215,11 @@ the domain as possible is copied to the new field construct.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">[&lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%ta)</span>
 <span class="go">---------------------------------</span>
 <span class="go">Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
@@ -238,7 +239,7 @@ the domain as possible is copied to the new field construct.</p>
 <span class="go">                : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]</span>
 <span class="go">                : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;domainancillary2&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="go">Field: surface_altitude (ncvar%surface_altitude)</span>
 <span class="go">------------------------------------------------</span>
 <span class="go">Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m</span>
@@ -249,8 +250,8 @@ the domain as possible is copied to the new field construct.</p>
 <span class="go">                : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]</span>
 <span class="go">Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
 <span class="go">Coord references: rotated_latitude_longitude</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;domainancillary2&#39;</span><span class="p">,</span> <span class="n">full_domain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;domainancillary2&#39;</span><span class="p">,</span> <span class="n">full_domain</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 <span class="go">Field: surface_altitude (ncvar%surface_altitude)</span>
 <span class="go">------------------------------------------------</span>
 <span class="go">Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m</span>
@@ -260,7 +261,7 @@ the domain as possible is copied to the new field construct.</p>
 <span class="go"> &lt;Field: ncvar%b(atmosphere_hybrid_height_coordinate(1))&gt;,</span>
 <span class="go"> &lt;Field: surface_altitude(grid_latitude(10), grid_longitude(9)) m&gt;,</span>
 <span class="go"> &lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 <span class="go">Field: surface_altitude (ncvar%surface_altitude)</span>
 <span class="go">------------------------------------------------</span>
 <span class="go">Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m</span>
@@ -294,8 +295,8 @@ metadata constructs that further define its domain.</p>
 <p>The <a class="reference internal" href="#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a> method has an option to only include domain axis
 constructs in the new field construct, with no other metadata
 constructs.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">orog1</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">,</span> <span class="n">full_domain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">orog1</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">orog1</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">,</span> <span class="n">full_domain</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">orog1</span><span class="p">)</span>
 <span class="go">Field: surface_altitude</span>
 <span class="go">-----------------------</span>
 <span class="go">Data            : surface_altitude(key%domainaxis2(10), key%domainaxis3(9)) m</span>
@@ -338,8 +339,8 @@ that has fewer metadata constructs than one created with the
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Field.convert.rst.txt"
