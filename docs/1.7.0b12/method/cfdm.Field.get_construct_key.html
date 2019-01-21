@@ -89,12 +89,12 @@
 <h1>cfdm.Field.get_construct_key<a class="headerlink" href="#cfdm-field-get-construct-key" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.get_construct_key">
-<code class="descclassname">Field.</code><code class="descname">get_construct_key</code><span class="sig-paren">(</span><em>name=None</em>, <em>properties=None</em>, <em>measure=None</em>, <em>ncvar=None</em>, <em>ncdim=None</em>, <em>key=None</em>, <em>axis=None</em>, <em>construct_type=None</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b12/cfdm/mixin/constructaccess.py#L683"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.get_construct_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the identifier for a metadata construct.</p>
-<p>The construct is selected via optional parameters. The <em>unique</em>
-construct that satisfies <em>all</em> of the given criteria is selected. If
-there is not a unique construct that satisfies all of the given
-criteria, then the <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+<code class="descclassname">Field.</code><code class="descname">get_construct_key</code><span class="sig-paren">(</span><em>name=None</em>, <em>properties=None</em>, <em>measure=None</em>, <em>ncvar=None</em>, <em>ncdim=None</em>, <em>key=None</em>, <em>axis=None</em>, <em>construct_type=None</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b12/cfdm/mixin/constructaccess.py#L749"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.get_construct_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the key for a metadata construct.</p>
+<p>The key for the <em>unique</em> construct that satisfies <em>all</em> of the given
+criteria is returned. All metadata constructs are selected if no
+parameters are specified. By default an exception is raised if no
+unique construct is selected.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -107,17 +107,17 @@ criteria, then the <a class="reference external" href="https://docs.python.org/3
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>description: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Select the construct that have the given property, or other
-attribute, value.</p>
-<p>The description may be one of:</p>
+<dt>name: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select constructs that have the given name. In general, a
+contruct’s name is the string returned by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code> method.</p>
+<p>The name may be one of:</p>
 <ul class="last">
-<li><p class="first">The value of the standard name property on its own.</p>
+<li><p class="first">The value of the standard name property.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='air_pressure'</span></code> will select constructs that
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='air_pressure'</span></code> will select constructs that
 have a “standard_name” property with the value
-“air_pressure”.</p>
+“air_pressure”, as will <code class="docutils literal notranslate"><span class="pre">name=['air_pressure']</span></code>.</p>
 </dd>
 </dl>
 </li>
@@ -125,17 +125,23 @@ have a “standard_name” property with the value
 a colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>).</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='positive:up'</span></code> will select constructs that
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='positive:up'</span></code> will select constructs that
 have a “positive” property with the value “up”.</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='foo:bar'</span></code> will select constructs that have
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='foo:bar'</span></code> will select constructs that have
 a “foo” property with the value “bar”.</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='standard_name:air_pressure'</span></code> will select
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='standard_name:air_pressure'</span></code> will select
 constructs that have a “standard_name” property with the
 value “air_pressure”.</p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name=['air_pressure',</span> <span class="pre">long_name:Air</span> <span class="pre">Temperature']</span></code> will
+select constructs that have a “standard_name” property
+with the value “air_pressure” or a “long_name” property
+with a value of “air Temperature”.</p>
 </dd>
 </dl>
 </li>
@@ -143,52 +149,54 @@ value “air_pressure”.</p>
 <code class="docutils literal notranslate"><span class="pre">measure%</span></code>.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='measure%area'</span></code> will select “area” cell
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='measure%area'</span></code> will select “area” cell
 measure constructs.</p>
 </dd>
 </dl>
 </li>
-<li><p class="first">A construct identifier, prefixed by <code class="docutils literal notranslate"><span class="pre">cid%</span></code> (see also the
-<em>cid</em> parameter).</p>
+<li><p class="first">A construct key, prefixed by <code class="docutils literal notranslate"><span class="pre">key%</span></code> (see also the <em>key</em>
+parameter).</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em> </dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='cid%cellmethod1'</span></code> will select cell method
-construct with construct identifier “cellmethod1”. This is
-equivalent to <code class="docutils literal notranslate"><span class="pre">cid='cellmethod1'</span></code>.</p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='key%cellmethod1'</span></code> will select cell method
+construct with construct key “cellmethod1”. This is
+equivalent to <code class="docutils literal notranslate"><span class="pre">key='cellmethod1'</span></code>.</p>
 </dd>
 </dl>
 </li>
-<li><p class="first">The netCDF variable name, prefixed by <code class="docutils literal notranslate"><span class="pre">ncvar%</span></code>.</p>
+<li><p class="first">The netCDF variable name, prefixed by <code class="docutils literal notranslate"><span class="pre">ncvar%</span></code> (see also
+the <em>ncvar</em> parameter).</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncvar%lat'</span></code> will select constructs with
-netCDF variable name “lat”.</p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='ncvar%lat'</span></code> will select constructs with netCDF
+variable name “lat”.</p>
 </dd>
 </dl>
 </li>
 <li><p class="first">The netCDF dimension name of domain axis constructs,
-prefixed by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code>.</p>
+prefixed by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code> (see also the <em>ncdim</em> parameter).</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncdim%time'</span></code> will select domain axis
-constructs with netCDF dimension name “time”.</p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">name='ncdim%time'</span></code> will select domain axis constructs
+with netCDF dimension name “time”.</p>
 </dd>
 </dl>
 </li>
 </ul>
 </dd>
-<dt>cid: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Select the construct with the given construct identifier.</p>
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select the construct with the given construct key.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='domainancillary0'</span></code> will the domain ancillary
-construct with construct identifier “domainancillary0”. This
-is equivalent to <code class="docutils literal notranslate"><span class="pre">description='cid%domainancillary0'</span></code>.</p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">key='domainancillary0'</span></code> will the domain ancillary
+construct with construct identifier “domainancillary1”. This
+is equivalent to <code class="docutils literal notranslate"><span class="pre">name='key%domainancillary0'</span></code>.</p>
 </dd>
 </dl>
 </dd>
-<dt>construct_type: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Select constructs of the given type. Valid types are:</p>
+<dt>construct_type: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select constructs of the given type, or types. Valid types
+are:</p>
 <blockquote>
 <div><table border="1" class="docutils">
 <colgroup>
@@ -242,31 +250,51 @@ is equivalent to <code class="docutils literal notranslate"><span class="pre">de
 <p class="last">Note that a domain never contains cell method nor field
 ancillary constructs.</p>
 </dd>
-<dt>axes: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>axis: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Select constructs which have data that spans one or more of
-the given domain axes, in any order. Domain axes are specified
-by their construct identifiers.</p>
+the given domain axis constructs, in any order. Domain axis
+contructs are specified by their construct keys.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis2']</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axis='domainaxis2'</span></code></p>
 </dd>
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis0',</span> <span class="pre">'domainaxis1']</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axis=['domainaxis2']</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axis=['domainaxis0',</span> <span class="pre">'domainaxis1']</span></code></p>
 </dd>
 </dl>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then return copies of the constructs. By default the
+constructs are not copied.</p>
+</dd>
+<dt>default: optional</dt>
+<dd><p class="first last">Return the value of the <em>default</em> parameter if no unique
+construct has been selected. By default an exception is raised
+in this case.</p>
 </dd>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">TODO
-The identifier of the unique selected construct. If there are
-no such domain axis constructs, then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The key of the unique selected construct. If there is no such
+construct then an exception is raised, or the value of the
+<em>default</em> parameter is returned, if provided.</p>
 </td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<p>TODO</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_construct_key</span><span class="p">(</span><span class="s1">&#39;grid_latitude&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_construct_key</span><span class="p">(</span><span class="s1">&#39;long_name:Air Pressure&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_construct_key</span><span class="p">(</span><span class="s1">&#39;ncvar%lat)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_construct_key</span><span class="p">(</span><span class="s1">&#39;key</span><span class="si">%c</span><span class="s1">ellmeasure0&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_construct_key</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;domainaxis2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_construct_key</span><span class="p">(</span><span class="n">construct_type</span><span class="o">=</span><span class="s1">&#39;auxiliary_coordinate&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                          <span class="n">axis</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
