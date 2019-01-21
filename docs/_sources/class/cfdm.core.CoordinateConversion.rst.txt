@@ -10,8 +10,23 @@ cfdm.core.CoordinateConversion
    :no-members:
    :no-inherited-members:
 
-Inspection
-----------
+Parameter terms
+---------------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.CoordinateConversion.del_parameter
+   ~cfdm.core.CoordinateConversion.get_parameter
+   ~cfdm.core.CoordinateConversion.set_parameter
+   ~cfdm.core.CoordinateConversion.parameters
+   
+Domain ancillary terms
+----------------------
 
 .. rubric:: Methods
 
@@ -21,12 +36,9 @@ Inspection
    :template: method.rst
 
    ~cfdm.core.CoordinateConversion.del_domain_ancillary
-   ~cfdm.core.CoordinateConversion.del_parameter
    ~cfdm.core.CoordinateConversion.get_domain_ancillary
-   ~cfdm.core.CoordinateConversion.get_parameter
-   ~cfdm.core.CoordinateConversion.parameters
    ~cfdm.core.CoordinateConversion.set_domain_ancillary
-   ~cfdm.core.CoordinateConversion.set_parameter
+   ~cfdm.core.CoordinateConversion.domain_ancillaries
    
 Miscellaneous
 -------------

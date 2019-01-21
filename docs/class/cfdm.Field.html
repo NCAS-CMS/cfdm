@@ -313,13 +313,13 @@ initialization. By default arguments are deep copied.</p>
 <td>Set a metadata construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.get_construct_key.html#cfdm.Field.get_construct_key" title="cfdm.Field.get_construct_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct_key</span></code></a></td>
-<td>Return the identifier for a metadata construct.</td>
+<td>Return the key for a metadata construct.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.constructs_data_axes.html#cfdm.Field.constructs_data_axes" title="cfdm.Field.constructs_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs_data_axes</span></code></a></td>
 <td>Return the domain axes spanned by metadata construct data arrays.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.get_construct_data_axes.html#cfdm.Field.get_construct_data_axes" title="cfdm.Field.get_construct_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct_data_axes</span></code></a></td>
-<td>Return the domain axes spanned by a metadata construct data array.</td>
+<td>Return the construct keys of the domain axis constructs spanned by a metadata construct data array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.set_construct_data_axes.html#cfdm.Field.set_construct_data_axes" title="cfdm.Field.set_construct_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct_data_axes</span></code></a></td>
 <td>Set the domain axis constructs spanned by a metadata construct data array.</td>
@@ -372,9 +372,6 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a></td>
 <td>Return a new field construct based on a metadata construct.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.dataset_compliance.html#cfdm.Field.dataset_compliance" title="cfdm.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code></a></td>
-<td>A report of problems encountered whilst reading the field construct from a dataset.</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -404,6 +401,9 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.nc_unlimited_dimensions.html#cfdm.Field.nc_unlimited_dimensions" title="cfdm.Field.nc_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></a></td>
 <td>Return or replace the selection of domain axis constructs to be written as netCDF unlimited dimensions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.dataset_compliance.html#cfdm.Field.dataset_compliance" title="cfdm.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code></a></td>
+<td>A report of problems encountered whilst reading the field construct from a dataset.</td>
 </tr>
 </tbody>
 </table>

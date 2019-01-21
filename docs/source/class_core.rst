@@ -36,8 +36,8 @@ Version |release| for version |version| of the CF conventions.
    cfdm.core.DomainAxis
    cfdm.core.FieldAncillary
 
-**Construct component classes**
--------------------------------
+**Coordinate component classes**
+--------------------------------
 
 .. autosummary::
    :nosignatures:
@@ -45,10 +45,17 @@ Version |release| for version |version| of the CF conventions.
 
    cfdm.core.Bounds
    cfdm.core.CoordinateConversion
-   cfdm.core.Data
    cfdm.core.Datum
-   cfdm.core.Domain
 
+**Domain class**
+----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.core.Domain
+   
 **Data classes**
 ----------------
 
@@ -71,9 +78,9 @@ construct components.
    :toctree: class/
 
    cfdm.core.abstract.Container
-   cfdm.core.abstract.Coordinate
-   cfdm.core.abstract.Parameters
-   cfdm.core.abstract.ParametersDomainAncillaries
    cfdm.core.abstract.Properties
    cfdm.core.abstract.PropertiesData
    cfdm.core.abstract.PropertiesDataBounds
+   cfdm.core.abstract.Coordinate
+   cfdm.core.abstract.Parameters
+   cfdm.core.abstract.ParametersDomainAncillaries

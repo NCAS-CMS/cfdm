@@ -11,7 +11,7 @@ cfdm.core.abstract.PropertiesDataBounds
    :no-inherited-members:
 
    
-Inspection
+Properties
 ----------
 
 .. rubric:: Methods
@@ -21,24 +21,11 @@ Inspection
    :toctree: ../method/
    :template: method.rst
       
+   ~cfdm.core.abstract.PropertiesDataBounds.del_property
    ~cfdm.core.abstract.PropertiesDataBounds.get_property
    ~cfdm.core.abstract.PropertiesDataBounds.has_property
+   ~cfdm.core.abstract.PropertiesDataBounds.set_property
    ~cfdm.core.abstract.PropertiesDataBounds.properties
-   ~cfdm.core.abstract.PropertiesDataBounds.get_array
-   ~cfdm.core.abstract.PropertiesDataBounds.get_data
-   ~cfdm.core.abstract.PropertiesDataBounds.has_data
-   ~cfdm.core.abstract.PropertiesDataBounds.get_bounds
-   ~cfdm.core.abstract.PropertiesDataBounds.has_bounds
-   
-.. rubric:: Attributes
-   
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cfdm.core.abstract.PropertiesDataBounds.data
-   ~cfdm.core.abstract.PropertiesDataBounds.bounds
 
 Data
 ----
@@ -55,6 +42,26 @@ Data
    ~cfdm.core.abstract.PropertiesDataBounds.get_data
    ~cfdm.core.abstract.PropertiesDataBounds.has_data
    ~cfdm.core.abstract.PropertiesDataBounds.set_data
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.abstract.PropertiesDataBounds.data
+
+Bounds
+------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
    ~cfdm.core.abstract.PropertiesDataBounds.del_bounds
    ~cfdm.core.abstract.PropertiesDataBounds.get_bounds
    ~cfdm.core.abstract.PropertiesDataBounds.has_bounds
@@ -67,7 +74,6 @@ Data
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~cfdm.core.abstract.PropertiesDataBounds.data
    ~cfdm.core.abstract.PropertiesDataBounds.bounds
    
 Modification
@@ -80,9 +86,6 @@ Modification
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.abstract.PropertiesDataBounds.del_property
-   ~cfdm.core.abstract.PropertiesDataBounds.set_property
-   ~cfdm.core.abstract.PropertiesDataBounds.properties
    ~cfdm.core.abstract.PropertiesDataBounds.del_data
    ~cfdm.core.abstract.PropertiesDataBounds.set_data
    ~cfdm.core.abstract.PropertiesDataBounds.del_bounds

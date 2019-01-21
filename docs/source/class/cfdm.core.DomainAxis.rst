@@ -13,16 +13,6 @@ cfdm.core.DomainAxis
 Inspection
 ----------
 
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-   
-   ~cfdm.core.DomainAxis.get_size
-   ~cfdm.core.DomainAxis.has_size
-
 .. rubric:: Attributes
    
 .. autosummary::
@@ -32,18 +22,29 @@ Inspection
 
    ~cfdm.core.DomainAxis.construct_type
 
-Modification
-------------
+Size
+----
 
 .. rubric:: Methods
-	    
+
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-
+   
    ~cfdm.core.DomainAxis.del_size
+   ~cfdm.core.DomainAxis.get_size
+   ~cfdm.core.DomainAxis.has_size
    ~cfdm.core.DomainAxis.set_size
+
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.DomainAxis.construct_type
 
 Miscellaneous
 -------------

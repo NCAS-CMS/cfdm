@@ -13,21 +13,6 @@ cfdm.core.DomainAncillary
 Inspection
 ----------
 
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.DomainAncillary.get_array
-   ~cfdm.core.DomainAncillary.get_bounds
-   ~cfdm.core.DomainAncillary.get_data
-   ~cfdm.core.DomainAncillary.has_data
-   ~cfdm.core.DomainAncillary.get_property
-   ~cfdm.core.DomainAncillary.has_property
-   ~cfdm.core.DomainAncillary.properties
-
 .. rubric:: Attributes
    
 .. autosummary::
@@ -36,8 +21,6 @@ Inspection
    :template: attribute.rst
 
    ~cfdm.core.DomainAncillary.construct_type
-   ~cfdm.core.DomainAncillary.bounds
-   ~cfdm.core.DomainAncillary.data
 
 Properties
 ----------
@@ -52,8 +35,8 @@ Properties
    ~cfdm.core.DomainAncillary.del_property
    ~cfdm.core.DomainAncillary.get_property
    ~cfdm.core.DomainAncillary.has_property
-   ~cfdm.core.DomainAncillary.properties
    ~cfdm.core.DomainAncillary.set_property
+   ~cfdm.core.DomainAncillary.properties
 
 Data
 ----
@@ -65,8 +48,8 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.DomainAncillary.del_data
    ~cfdm.core.DomainAncillary.get_array
+   ~cfdm.core.DomainAncillary.del_data
    ~cfdm.core.DomainAncillary.get_data
    ~cfdm.core.DomainAncillary.has_data
    ~cfdm.core.DomainAncillary.set_data
@@ -103,24 +86,6 @@ Bounds
    :template: attribute.rst
 
    ~cfdm.core.DomainAncillary.bounds
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.DomainAncillary.del_bounds
-   ~cfdm.core.DomainAncillary.del_data
-   ~cfdm.core.DomainAncillary.del_property
-   ~cfdm.core.DomainAncillary.properties
-   ~cfdm.core.DomainAncillary.set_bounds
-   ~cfdm.core.DomainAncillary.set_data
-   ~cfdm.core.DomainAncillary.set_property
 
 Miscellaneous
 -------------

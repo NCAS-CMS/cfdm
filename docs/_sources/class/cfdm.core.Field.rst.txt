@@ -10,39 +10,21 @@ cfdm.core.Field
    :no-members:
    :no-inherited-members:
 
+.. _core-Field-Inspection:
+
 Inspection
 ----------
 
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.Field.constructs
-   ~cfdm.core.Field.construct_data_axes
-   ~cfdm.core.Field.data_constructs
-   ~cfdm.core.Field.get_array
-   ~cfdm.core.Field.get_construct
-   ~cfdm.core.Field.get_data
-   ~cfdm.core.Field.get_domain
-   ~cfdm.core.Field.get_property
-   ~cfdm.core.Field.has_data
-   ~cfdm.core.Field.has_construct
-   ~cfdm.core.Field.has_property
-   ~cfdm.core.Field.properties
-
 .. rubric:: Attributes
-
+   
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
    ~cfdm.core.Field.construct_type
-   ~cfdm.core.Field.data
-   ~cfdm.core.Field.domain
+
+.. _core-Field-Properties:
 
 Properties
 ----------
@@ -57,8 +39,10 @@ Properties
    ~cfdm.core.Field.del_property
    ~cfdm.core.Field.get_property
    ~cfdm.core.Field.has_property
-   ~cfdm.core.Field.properties
    ~cfdm.core.Field.set_property
+   ~cfdm.core.Field.properties
+
+.. _core-Field-Data:
 
 Data
 ----
@@ -70,14 +54,14 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.Field.del_data
-   ~cfdm.core.Field.del_data_axes
    ~cfdm.core.Field.get_array
+   ~cfdm.core.Field.del_data
    ~cfdm.core.Field.get_data
-   ~cfdm.core.Field.get_data_axes
    ~cfdm.core.Field.has_data
    ~cfdm.core.Field.set_data
-   ~cfdm.core.Field.set_data_axes   
+   ~cfdm.core.Field.del_data_axes
+   ~cfdm.core.Field.get_data_axes
+   ~cfdm.core.Field.set_data_axes
    
 .. rubric:: Attributes
    
@@ -88,7 +72,8 @@ Data
 
    ~cfdm.core.Field.data
 
-
+.. _core-Field-Metadata-constructs:   
+   
 Metadata constructs
 -------------------
 
@@ -100,15 +85,20 @@ Metadata constructs
    :template: method.rst
 
    ~cfdm.core.Field.constructs
-   ~cfdm.core.Field.construct_data_axes
    ~cfdm.core.Field.del_construct
    ~cfdm.core.Field.get_construct
    ~cfdm.core.Field.has_construct
    ~cfdm.core.Field.set_construct
+   ~cfdm.core.Field.get_construct_key
+   ~cfdm.core.Field.constructs_data_axes
+   ~cfdm.core.Field.get_construct_data_axes
    ~cfdm.core.Field.set_construct_data_axes
 
-Modification
-------------
+.. _core-Field-Domain:
+
+Domain
+------
+
 
 .. rubric:: Methods
 	    
@@ -117,17 +107,18 @@ Modification
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.Field.del_construct
-   ~cfdm.core.Field.del_data
-   ~cfdm.core.Field.del_data_axes
-   ~cfdm.core.Field.del_property
-   ~cfdm.core.Field.properties
-   ~cfdm.core.Field.set_construct
-   ~cfdm.core.Field.set_construct_data_axes
-   ~cfdm.core.Field.set_data
-   ~cfdm.core.Field.set_data_axes
-   ~cfdm.core.Field.set_property
- 
+   ~cfdm.core.Field.get_domain
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.Field.domain
+
+.. _core-Field-Miscellaneous:
 
 Miscellaneous
 -------------
@@ -140,6 +131,8 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.core.Field.copy
+
+.. _core-Field-Special:
 
 Special
 -------

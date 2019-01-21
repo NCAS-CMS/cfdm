@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.abstract.PropertiesDataBounds.get_property" href="../method/cfdm.core.abstract.PropertiesDataBounds.get_property.html" />
+    <link rel="next" title="cfdm.core.abstract.PropertiesDataBounds.del_property" href="../method/cfdm.core.abstract.PropertiesDataBounds.del_property.html" />
     <link rel="prev" title="cfdm.core.abstract.PropertiesData.__deepcopy__" href="../method/cfdm.core.abstract.PropertiesData.__deepcopy__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -52,7 +52,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.core.abstract.PropertiesData.__deepcopy__.html" title="previous chapter">cfdm.core.abstract.PropertiesData.__deepcopy__</a></li>
-      <li>Next: <a href="../method/cfdm.core.abstract.PropertiesDataBounds.get_property.html" title="next chapter">cfdm.core.abstract.PropertiesDataBounds.get_property</a></li>
+      <li>Next: <a href="../method/cfdm.core.abstract.PropertiesDataBounds.del_property.html" title="next chapter">cfdm.core.abstract.PropertiesDataBounds.del_property</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -156,8 +156,8 @@ initialization. By default arguments are deep copied.</p>
 </table>
 </dd></dl>
 
-<div class="section" id="inspection">
-<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -165,44 +165,20 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.get_property.html#cfdm.core.abstract.PropertiesDataBounds.get_property" title="cfdm.core.abstract.PropertiesDataBounds.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.del_property.html#cfdm.core.abstract.PropertiesDataBounds.del_property" title="cfdm.core.abstract.PropertiesDataBounds.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<td>Remove a property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.get_property.html#cfdm.core.abstract.PropertiesDataBounds.get_property" title="cfdm.core.abstract.PropertiesDataBounds.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
 <td>Return a property.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.has_property.html#cfdm.core.abstract.PropertiesDataBounds.has_property" title="cfdm.core.abstract.PropertiesDataBounds.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.has_property.html#cfdm.core.abstract.PropertiesDataBounds.has_property" title="cfdm.core.abstract.PropertiesDataBounds.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.set_property.html#cfdm.core.abstract.PropertiesDataBounds.set_property" title="cfdm.core.abstract.PropertiesDataBounds.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<td>Set a property.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.properties.html#cfdm.core.abstract.PropertiesDataBounds.properties" title="cfdm.core.abstract.PropertiesDataBounds.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.get_array.html#cfdm.core.abstract.PropertiesDataBounds.get_array" title="cfdm.core.abstract.PropertiesDataBounds.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
-<td>Return an independent numpy array the data.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.get_data.html#cfdm.core.abstract.PropertiesDataBounds.get_data" title="cfdm.core.abstract.PropertiesDataBounds.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
-<td>Return the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.has_data.html#cfdm.core.abstract.PropertiesDataBounds.has_data" title="cfdm.core.abstract.PropertiesDataBounds.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
-<td>Whether a data has been set.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.get_bounds.html#cfdm.core.abstract.PropertiesDataBounds.get_bounds" title="cfdm.core.abstract.PropertiesDataBounds.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
-<td>Return the bounds.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.has_bounds.html#cfdm.core.abstract.PropertiesDataBounds.has_bounds" title="cfdm.core.abstract.PropertiesDataBounds.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></td>
-<td>Whether or not there are bounds.</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.abstract.PropertiesDataBounds.data.html#cfdm.core.abstract.PropertiesDataBounds.data" title="cfdm.core.abstract.PropertiesDataBounds.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
-<td>Return the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.core.abstract.PropertiesDataBounds.bounds.html#cfdm.core.abstract.PropertiesDataBounds.bounds" title="cfdm.core.abstract.PropertiesDataBounds.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
-<td>Return the bounds.</td>
 </tr>
 </tbody>
 </table>
@@ -231,18 +207,6 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.set_data.html#cfdm.core.abstract.PropertiesDataBounds.set_data" title="cfdm.core.abstract.PropertiesDataBounds.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.del_bounds.html#cfdm.core.abstract.PropertiesDataBounds.del_bounds" title="cfdm.core.abstract.PropertiesDataBounds.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></td>
-<td>Remove the bounds.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.get_bounds.html#cfdm.core.abstract.PropertiesDataBounds.get_bounds" title="cfdm.core.abstract.PropertiesDataBounds.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
-<td>Return the bounds.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.has_bounds.html#cfdm.core.abstract.PropertiesDataBounds.has_bounds" title="cfdm.core.abstract.PropertiesDataBounds.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></td>
-<td>Whether or not there are bounds.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.set_bounds.html#cfdm.core.abstract.PropertiesDataBounds.set_bounds" title="cfdm.core.abstract.PropertiesDataBounds.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></td>
-<td>Set the bounds.</td>
-</tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
@@ -255,7 +219,40 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.abstract.PropertiesDataBounds.data.html#cfdm.core.abstract.PropertiesDataBounds.data" title="cfdm.core.abstract.PropertiesDataBounds.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.core.abstract.PropertiesDataBounds.bounds.html#cfdm.core.abstract.PropertiesDataBounds.bounds" title="cfdm.core.abstract.PropertiesDataBounds.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
+</tbody>
+</table>
+</div>
+<div class="section" id="bounds">
+<h2>Bounds<a class="headerlink" href="#bounds" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.del_bounds.html#cfdm.core.abstract.PropertiesDataBounds.del_bounds" title="cfdm.core.abstract.PropertiesDataBounds.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></td>
+<td>Remove the bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.get_bounds.html#cfdm.core.abstract.PropertiesDataBounds.get_bounds" title="cfdm.core.abstract.PropertiesDataBounds.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
+<td>Return the bounds.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.has_bounds.html#cfdm.core.abstract.PropertiesDataBounds.has_bounds" title="cfdm.core.abstract.PropertiesDataBounds.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></td>
+<td>Whether or not there are bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.set_bounds.html#cfdm.core.abstract.PropertiesDataBounds.set_bounds" title="cfdm.core.abstract.PropertiesDataBounds.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></td>
+<td>Set the bounds.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.abstract.PropertiesDataBounds.bounds.html#cfdm.core.abstract.PropertiesDataBounds.bounds" title="cfdm.core.abstract.PropertiesDataBounds.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
 <td>Return the bounds.</td>
 </tr>
 </tbody>
@@ -270,25 +267,16 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.del_property.html#cfdm.core.abstract.PropertiesDataBounds.del_property" title="cfdm.core.abstract.PropertiesDataBounds.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
-<td>Remove a property.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.set_property.html#cfdm.core.abstract.PropertiesDataBounds.set_property" title="cfdm.core.abstract.PropertiesDataBounds.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
-<td>Set a property.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.properties.html#cfdm.core.abstract.PropertiesDataBounds.properties" title="cfdm.core.abstract.PropertiesDataBounds.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.del_data.html#cfdm.core.abstract.PropertiesDataBounds.del_data" title="cfdm.core.abstract.PropertiesDataBounds.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.del_data.html#cfdm.core.abstract.PropertiesDataBounds.del_data" title="cfdm.core.abstract.PropertiesDataBounds.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
 <td>Remove the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.set_data.html#cfdm.core.abstract.PropertiesDataBounds.set_data" title="cfdm.core.abstract.PropertiesDataBounds.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.set_data.html#cfdm.core.abstract.PropertiesDataBounds.set_data" title="cfdm.core.abstract.PropertiesDataBounds.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.del_bounds.html#cfdm.core.abstract.PropertiesDataBounds.del_bounds" title="cfdm.core.abstract.PropertiesDataBounds.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.del_bounds.html#cfdm.core.abstract.PropertiesDataBounds.del_bounds" title="cfdm.core.abstract.PropertiesDataBounds.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></td>
 <td>Remove the bounds.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.set_bounds.html#cfdm.core.abstract.PropertiesDataBounds.set_bounds" title="cfdm.core.abstract.PropertiesDataBounds.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.PropertiesDataBounds.set_bounds.html#cfdm.core.abstract.PropertiesDataBounds.set_bounds" title="cfdm.core.abstract.PropertiesDataBounds.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></td>
 <td>Set the bounds.</td>
 </tr>
 </tbody>

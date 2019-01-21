@@ -21,9 +21,6 @@ Inspection
    :template: method.rst
    
    ~cfdm.core.Data.get_array
-   ~cfdm.core.Data.get_calendar
-   ~cfdm.core.Data.get_fill_value
-   ~cfdm.core.Data.get_units
 
 .. rubric:: Attributes
 
@@ -37,18 +34,34 @@ Inspection
    ~cfdm.core.Data.shape
    ~cfdm.core.Data.size
  
-Modification
-------------
+Units
+-----
+
 .. rubric:: Methods
 
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-
-   ~cfdm.core.Data.set_calendar
-   ~cfdm.core.Data.set_fill_value
+   
+   ~cfdm.core.Data.get_units
    ~cfdm.core.Data.set_units
+   ~cfdm.core.Data.set_calendar 
+   ~cfdm.core.Data.get_calendar
+
+Fill value
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~cfdm.core.Data.get_fill_value
+   ~cfdm.core.Data.set_fill_value
+
       
 Miscellaneous
 -------------

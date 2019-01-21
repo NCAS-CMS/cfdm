@@ -38,7 +38,7 @@ Domain ancillary terms
    ~cfdm.CoordinateConversion.del_domain_ancillary
    ~cfdm.CoordinateConversion.get_domain_ancillary
    ~cfdm.CoordinateConversion.set_domain_ancillary
-   ~cfdm.CoordinateConversion.domain_ancillaries()
+   ~cfdm.CoordinateConversion.domain_ancillaries
 
 Miscellaneous
 -------------

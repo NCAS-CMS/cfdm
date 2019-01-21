@@ -14,7 +14,7 @@ Miscellaneous
 -------------
 
 .. rubric:: Methods
-	    
+	   
 .. autosummary::
    :nosignatures:
    :toctree: ../method/

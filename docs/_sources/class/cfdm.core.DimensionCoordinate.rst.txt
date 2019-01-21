@@ -13,21 +13,6 @@ cfdm.core.DimensionCoordinate
 Inspection
 ----------
 
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.DimensionCoordinate.get_array
-   ~cfdm.core.DimensionCoordinate.get_bounds
-   ~cfdm.core.DimensionCoordinate.get_data
-   ~cfdm.core.DimensionCoordinate.has_data
-   ~cfdm.core.DimensionCoordinate.get_property
-   ~cfdm.core.DimensionCoordinate.has_property
-   ~cfdm.core.DimensionCoordinate.properties
-
 .. rubric:: Attributes
    
 .. autosummary::
@@ -36,8 +21,6 @@ Inspection
    :template: attribute.rst
 
    ~cfdm.core.DimensionCoordinate.construct_type
-   ~cfdm.core.DimensionCoordinate.bounds
-   ~cfdm.core.DimensionCoordinate.data
 
 Properties
 ----------
@@ -52,8 +35,8 @@ Properties
    ~cfdm.core.DimensionCoordinate.del_property
    ~cfdm.core.DimensionCoordinate.get_property
    ~cfdm.core.DimensionCoordinate.has_property
-   ~cfdm.core.DimensionCoordinate.properties
    ~cfdm.core.DimensionCoordinate.set_property
+   ~cfdm.core.DimensionCoordinate.properties
 
 Data
 ----
@@ -65,8 +48,8 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.DimensionCoordinate.del_data
    ~cfdm.core.DimensionCoordinate.get_array
+   ~cfdm.core.DimensionCoordinate.del_data
    ~cfdm.core.DimensionCoordinate.get_data
    ~cfdm.core.DimensionCoordinate.has_data
    ~cfdm.core.DimensionCoordinate.set_data
@@ -103,24 +86,6 @@ Bounds
    :template: attribute.rst
 
    ~cfdm.core.DimensionCoordinate.bounds
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.DimensionCoordinate.del_bounds
-   ~cfdm.core.DimensionCoordinate.del_data
-   ~cfdm.core.DimensionCoordinate.del_property
-   ~cfdm.core.DimensionCoordinate.properties
-   ~cfdm.core.DimensionCoordinate.set_bounds
-   ~cfdm.core.DimensionCoordinate.set_data
-   ~cfdm.core.DimensionCoordinate.set_property
 
 Miscellaneous
 -------------

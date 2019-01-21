@@ -11,7 +11,7 @@ cfdm.core.abstract.PropertiesData
    :no-inherited-members:
 
    
-Inspection
+Properties
 ----------
 
 .. rubric:: Methods
@@ -20,22 +20,12 @@ Inspection
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-      
+
+   ~cfdm.core.abstract.PropertiesData.del_property
    ~cfdm.core.abstract.PropertiesData.get_property
    ~cfdm.core.abstract.PropertiesData.has_property
+   ~cfdm.core.abstract.PropertiesData.set_property
    ~cfdm.core.abstract.PropertiesData.properties
-   ~cfdm.core.abstract.PropertiesData.get_array
-   ~cfdm.core.abstract.PropertiesData.get_data
-   ~cfdm.core.abstract.PropertiesData.has_data
-   
-.. rubric:: Attributes
-   
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cfdm.core.abstract.PropertiesDataBounds.data
 
 Data
 ----
@@ -62,22 +52,6 @@ Data
 
    ~cfdm.core.abstract.PropertiesDataBounds.data
 
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.abstract.PropertiesData.del_property
-   ~cfdm.core.abstract.PropertiesData.set_property
-   ~cfdm.core.abstract.PropertiesData.properties
-   ~cfdm.core.abstract.PropertiesData.del_data
-   ~cfdm.core.abstract.PropertiesData.set_data
-      
 Miscellaneous
 -------------
 

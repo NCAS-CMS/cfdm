@@ -10,7 +10,7 @@ cfdm.core.abstract.Properties
    :no-members:
    :no-inherited-members:
 
-Inspection
+Properties
 ----------
 
 .. rubric:: Methods
@@ -19,26 +19,12 @@ Inspection
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-      
-   ~cfdm.core.abstract.Properties.get_property
-   ~cfdm.core.abstract.Properties.has_property
-   ~cfdm.core.abstract.Properties.properties
-   
-   
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
 
    ~cfdm.core.abstract.Properties.del_property
-   ~cfdm.core.abstract.Properties.properties
+   ~cfdm.core.abstract.Properties.get_property
+   ~cfdm.core.abstract.Properties.has_property
    ~cfdm.core.abstract.Properties.set_property
-   
+   ~cfdm.core.abstract.Properties.properties
    
 Miscellaneous
 -------------

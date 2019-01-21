@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.core.Data.get_array" href="../method/cfdm.core.Data.get_array.html" />
-    <link rel="prev" title="cfdm.core.CoordinateConversion.__deepcopy__" href="../method/cfdm.core.CoordinateConversion.__deepcopy__.html" />
+    <link rel="prev" title="cfdm.core.Domain" href="cfdm.core.Domain.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -51,7 +51,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.core.CoordinateConversion.__deepcopy__.html" title="previous chapter">cfdm.core.CoordinateConversion.__deepcopy__</a></li>
+      <li>Previous: <a href="cfdm.core.Domain.html" title="previous chapter">cfdm.core.Domain</a></li>
       <li>Next: <a href="../method/cfdm.core.Data.get_array.html" title="next chapter">cfdm.core.Data.get_array</a></li>
   </ul></li>
   </ul></li>
@@ -171,15 +171,6 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Data.get_array.html#cfdm.core.Data.get_array" title="cfdm.core.Data.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an independent numpy array containing the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Data.get_calendar.html#cfdm.core.Data.get_calendar" title="cfdm.core.Data.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a></td>
-<td>Return the calendar.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Data.get_fill_value.html#cfdm.core.Data.get_fill_value" title="cfdm.core.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a></td>
-<td>Return the missing data value.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Data.get_units.html#cfdm.core.Data.get_units" title="cfdm.core.Data.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a></td>
-<td>Return the units.</td>
-</tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
@@ -204,8 +195,8 @@ initialization. By default arguments are deep copied.</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="modification">
-<h2>Modification<a class="headerlink" href="#modification" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="units">
+<h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -213,14 +204,35 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Data.get_units.html#cfdm.core.Data.get_units" title="cfdm.core.Data.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a></td>
+<td>Return the units.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Data.set_units.html#cfdm.core.Data.set_units" title="cfdm.core.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a></td>
+<td>Set the units.</td>
+</tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Data.set_calendar.html#cfdm.core.Data.set_calendar" title="cfdm.core.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a></td>
 <td>Set the calendar.</td>
 </tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Data.get_calendar.html#cfdm.core.Data.get_calendar" title="cfdm.core.Data.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a></td>
+<td>Return the calendar.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="fill-value">
+<h2>Fill value<a class="headerlink" href="#fill-value" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Data.get_fill_value.html#cfdm.core.Data.get_fill_value" title="cfdm.core.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a></td>
+<td>Return the missing data value.</td>
+</tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Data.set_fill_value.html#cfdm.core.Data.set_fill_value" title="cfdm.core.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a></td>
 <td>Set the missing data value.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Data.set_units.html#cfdm.core.Data.set_units" title="cfdm.core.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a></td>
-<td>Set the units.</td>
 </tr>
 </tbody>
 </table>

@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.FieldAncillary.get_array" href="../method/cfdm.core.FieldAncillary.get_array.html" />
+    <link rel="next" title="cfdm.core.FieldAncillary.construct_type" href="../attribute/cfdm.core.FieldAncillary.construct_type.html" />
     <link rel="prev" title="cfdm.core.DomainAxis.__deepcopy__" href="../method/cfdm.core.DomainAxis.__deepcopy__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -52,7 +52,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.core.DomainAxis.__deepcopy__.html" title="previous chapter">cfdm.core.DomainAxis.__deepcopy__</a></li>
-      <li>Next: <a href="../method/cfdm.core.FieldAncillary.get_array.html" title="next chapter">cfdm.core.FieldAncillary.get_array</a></li>
+      <li>Next: <a href="../attribute/cfdm.core.FieldAncillary.construct_type.html" title="next chapter">cfdm.core.FieldAncillary.construct_type</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -149,33 +149,6 @@ initialization. By default arguments are deep copied.</p>
 
 <div class="section" id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.get_array.html#cfdm.core.FieldAncillary.get_array" title="cfdm.core.FieldAncillary.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
-<td>Return an independent numpy array the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.get_data.html#cfdm.core.FieldAncillary.get_data" title="cfdm.core.FieldAncillary.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
-<td>Return the data.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.has_data.html#cfdm.core.FieldAncillary.has_data" title="cfdm.core.FieldAncillary.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
-<td>Whether a data has been set.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.get_property.html#cfdm.core.FieldAncillary.get_property" title="cfdm.core.FieldAncillary.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
-<td>Return a property.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.has_property.html#cfdm.core.FieldAncillary.has_property" title="cfdm.core.FieldAncillary.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
-<td>Whether a property has been set.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.properties.html#cfdm.core.FieldAncillary.properties" title="cfdm.core.FieldAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
-</tr>
-</tbody>
-</table>
 <p class="rubric">Attributes</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -185,9 +158,6 @@ initialization. By default arguments are deep copied.</p>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.FieldAncillary.construct_type.html#cfdm.core.FieldAncillary.construct_type" title="cfdm.core.FieldAncillary.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></td>
 <td>Return a description of the construct type.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.core.FieldAncillary.data.html#cfdm.core.FieldAncillary.data" title="cfdm.core.FieldAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
-<td>Return the data.</td>
 </tr>
 </tbody>
 </table>
@@ -210,11 +180,11 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.has_property.html#cfdm.core.FieldAncillary.has_property" title="cfdm.core.FieldAncillary.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.properties.html#cfdm.core.FieldAncillary.properties" title="cfdm.core.FieldAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.set_property.html#cfdm.core.FieldAncillary.set_property" title="cfdm.core.FieldAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.set_property.html#cfdm.core.FieldAncillary.set_property" title="cfdm.core.FieldAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.properties.html#cfdm.core.FieldAncillary.properties" title="cfdm.core.FieldAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<td>Return or replace all properties.</td>
 </tr>
 </tbody>
 </table>
@@ -228,11 +198,11 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.del_data.html#cfdm.core.FieldAncillary.del_data" title="cfdm.core.FieldAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
-<td>Remove the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.get_array.html#cfdm.core.FieldAncillary.get_array" title="cfdm.core.FieldAncillary.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.get_array.html#cfdm.core.FieldAncillary.get_array" title="cfdm.core.FieldAncillary.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an independent numpy array the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.del_data.html#cfdm.core.FieldAncillary.del_data" title="cfdm.core.FieldAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<td>Remove the data.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.get_data.html#cfdm.core.FieldAncillary.get_data" title="cfdm.core.FieldAncillary.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>Return the data.</td>
@@ -254,33 +224,6 @@ initialization. By default arguments are deep copied.</p>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.FieldAncillary.data.html#cfdm.core.FieldAncillary.data" title="cfdm.core.FieldAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>Return the data.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="modification">
-<h2>Modification<a class="headerlink" href="#modification" title="Permalink to this headline">¶</a></h2>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.del_data.html#cfdm.core.FieldAncillary.del_data" title="cfdm.core.FieldAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
-<td>Remove the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.del_property.html#cfdm.core.FieldAncillary.del_property" title="cfdm.core.FieldAncillary.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
-<td>Remove a property.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.properties.html#cfdm.core.FieldAncillary.properties" title="cfdm.core.FieldAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.set_data.html#cfdm.core.FieldAncillary.set_data" title="cfdm.core.FieldAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
-<td>Set the data.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.FieldAncillary.set_property.html#cfdm.core.FieldAncillary.set_property" title="cfdm.core.FieldAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
-<td>Set a property.</td>
 </tr>
 </tbody>
 </table>
