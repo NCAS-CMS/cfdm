@@ -10,13 +10,12 @@
     <title>Index &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -309,6 +308,8 @@
 </li>
         <li><a href="method/cfdm.RaggedIndexedContiguousArray.__repr__.html#cfdm.RaggedIndexedContiguousArray.__repr__">(cfdm.RaggedIndexedContiguousArray method)</a>
 </li>
+        <li><a href="method/cfdm.core.Bounds.__repr__.html#cfdm.core.Bounds.__repr__">(cfdm.core.Bounds method)</a>
+</li>
         <li><a href="method/cfdm.mixin.Container.__repr__.html#cfdm.mixin.Container.__repr__">(cfdm.mixin.Container method)</a>
 </li>
       </ul></li>
@@ -358,6 +359,8 @@
         <li><a href="method/cfdm.RaggedIndexedArray.__str__.html#cfdm.RaggedIndexedArray.__str__">(cfdm.RaggedIndexedArray method)</a>
 </li>
         <li><a href="method/cfdm.RaggedIndexedContiguousArray.__str__.html#cfdm.RaggedIndexedContiguousArray.__str__">(cfdm.RaggedIndexedContiguousArray method)</a>
+</li>
+        <li><a href="method/cfdm.core.Bounds.__str__.html#cfdm.core.Bounds.__str__">(cfdm.core.Bounds method)</a>
 </li>
         <li><a href="method/cfdm.mixin.PropertiesData.__str__.html#cfdm.mixin.PropertiesData.__str__">(cfdm.mixin.PropertiesData method)</a>
 </li>
@@ -1346,10 +1349,10 @@
         <li><a href="method/cfdm.core.Field.get_construct_data_axes.html#cfdm.core.Field.get_construct_data_axes">(cfdm.core.Field method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cfdm.Field.get_construct_key.html#cfdm.Field.get_construct_key">get_construct_key() (cfdm.Field method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cfdm.CoordinateReference.get_coordinate_conversion.html#cfdm.CoordinateReference.get_coordinate_conversion">get_coordinate_conversion() (cfdm.CoordinateReference method)</a>
 
       <ul>
@@ -1538,9 +1541,11 @@
         <li><a href="method/cfdm.DomainAxis.get_size.html#cfdm.DomainAxis.get_size">(cfdm.DomainAxis method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cfdm.NetCDFArray.get_subspace.html#cfdm.NetCDFArray.get_subspace">get_subspace() (cfdm.NetCDFArray class method)</a>
+      <li><a href="method/cfdm.GatheredArray.get_subspace.html#cfdm.GatheredArray.get_subspace">get_subspace() (cfdm.GatheredArray class method)</a>
 
       <ul>
+        <li><a href="method/cfdm.NetCDFArray.get_subspace.html#cfdm.NetCDFArray.get_subspace">(cfdm.NetCDFArray class method)</a>
+</li>
         <li><a href="method/cfdm.NumpyArray.get_subspace.html#cfdm.NumpyArray.get_subspace">(cfdm.NumpyArray class method)</a>
 </li>
         <li><a href="method/cfdm.RaggedContiguousArray.get_subspace.html#cfdm.RaggedContiguousArray.get_subspace">(cfdm.RaggedContiguousArray class method)</a>
@@ -1904,14 +1909,14 @@
         <li><a href="method/cfdm.mixin.NetCDFDataVariable.nc_global_attributes.html#cfdm.mixin.NetCDFDataVariable.nc_global_attributes">(cfdm.mixin.NetCDFDataVariable method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cfdm.DomainAxis.nc_has_dimension.html#cfdm.DomainAxis.nc_has_dimension">nc_has_dimension() (cfdm.DomainAxis method)</a>
 
       <ul>
         <li><a href="method/cfdm.mixin.NetCDFDimension.nc_has_dimension.html#cfdm.mixin.NetCDFDimension.nc_has_dimension">(cfdm.mixin.NetCDFDimension method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cfdm.Index.nc_has_instance_dimension.html#cfdm.Index.nc_has_instance_dimension">nc_has_instance_dimension() (cfdm.Index method)</a>
 
       <ul>
@@ -2032,9 +2037,13 @@
       </ul></li>
       <li><a href="class/cfdm.NetCDFArray.html#cfdm.NetCDFArray">NetCDFArray (class in cfdm)</a>
 </li>
-      <li><a href="method/cfdm.Domain.next.html#cfdm.Domain.next">next() (cfdm.Domain method)</a>
+      <li><a href="method/cfdm.Bounds.next.html#cfdm.Bounds.next">next() (cfdm.Bounds method)</a>
 
       <ul>
+        <li><a href="method/cfdm.CoordinateConversion.next.html#cfdm.CoordinateConversion.next">(cfdm.CoordinateConversion method)</a>
+</li>
+        <li><a href="method/cfdm.Domain.next.html#cfdm.Domain.next">(cfdm.Domain method)</a>
+</li>
         <li><a href="method/cfdm.NetCDFArray.next.html#cfdm.NetCDFArray.next">(cfdm.NetCDFArray method)</a>
 </li>
       </ul></li>
@@ -2526,8 +2535,8 @@
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
     </div>
 
