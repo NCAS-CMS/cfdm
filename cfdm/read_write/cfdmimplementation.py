@@ -1586,7 +1586,7 @@ _implementation = CFDMImplementation(
 )
 
 def implementation():
-    '''<TODO>
+    '''Return a container for the CF data model implementation.
 
 .. versionadded:: 1.7.0
 
@@ -1595,7 +1595,7 @@ def implementation():
 :Returns:
 
     `CFDMImplementation`
-         <TODO>
+        A container for the CF data model implementation.
 
 **Examples:**
 
