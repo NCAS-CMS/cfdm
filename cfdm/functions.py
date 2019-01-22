@@ -14,10 +14,13 @@ from urllib.parse    import urlparse as urlparse_urlparse
 from urllib.parse    import urljoin  as urlparse_urljoin
 
 import netCDF4
+import cftime
 import numpy
 import future
 
-from . import __version__, __cf_version__, __file__
+from . import (__version__,
+               __cf_version__,
+               __file__)
 
 from .constants import CONSTANTS
 
@@ -604,6 +607,7 @@ def environment(display=True):
 
 :Returns:
 
+    `None` or `str`
         If *display* is True then the description of the environment
         is printed and `None` is returned. Otherwise the description
         is returned as a string.
@@ -611,14 +615,15 @@ def environment(display=True):
 **Examples:**
 
 >>> cfdm.environment()
-Platform: Linux-4.15.0-38-generic-x86_64-with-debian-stretch-sid
-python: 2.7.15 /home/user/anaconda2/bin/python
-HDF5 library: 1.10.1
+Platform: Linux-4.15.0-43-generic-x86_64-with-debian-stretch-sid
+python: 3.6.5 /home/david/anaconda3/bin/python
+HDF5 library: 1.10.2
 netcdf library: 4.6.1
-netCDF4: 1.4.0 /home/user/anaconda2/lib/python2.7/site-packages/netCDF4/__init__.pyc
-numpy: 1.11.3 /home/user/anaconda2/lib/python2.7/site-packages/numpy/__init__.pyc
-future: 0.16.0 /home/user/anaconda2/lib/python2.7/site-packages/future/__init__.pyc
-cfdm: 1.7.0 /home/user/cfdm/cfdm/__init__.pyc
+netCDF4: 1.4.0 /home/user/anaconda3/lib/python3.6/site-packages/netCDF4/__init__.py
+cftime: 1.0.0b1 /home/user/anaconda3/lib/python3.6/site-packages/cftime/__init__.py
+numpy: 1.14.3 /home/user/anaconda3/lib/python3.6/site-packages/numpy/__init__.py
+future: 0.16.0 /home/user/anaconda3/lib/python3.6/site-packages/future/__init__.py
+cfdm: 1.7.0 /home/user/cfdm/cfdm/__init__.py
 
     '''
     out = []
@@ -629,6 +634,7 @@ cfdm: 1.7.0 /home/user/cfdm/cfdm/__init__.pyc
     out.append('netcdf library: ' + str(netCDF4.__netcdf4libversion__))
 
     out.append('netCDF4: ' + str(netCDF4.__version__) + ' ' + str(os.path.abspath(netCDF4.__file__)))
+    out.append('cftime: ' + str(cftime.__version__) + ' ' + str(os.path.abspath(cftime.__file__)))
     out.append('numpy: ' + str(numpy.__version__) + ' ' + str(os.path.abspath(numpy.__file__)))
     out.append('future: ' + str(future.__version__) + ' ' + str(os.path.abspath(future.__file__)))
 

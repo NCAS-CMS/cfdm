@@ -12,7 +12,7 @@ Version |release| for version |version| of the CF conventions.
  
 The code examples in this tutorial are available in an **IPython
 Jupyter notebook** (:download:`download <notebooks/tutorial.ipynb>`,
-70kB) [#files]_, [#notebook]_.
+80kB) [#files]_, [#notebook]_.
 
 .. _Import:
 

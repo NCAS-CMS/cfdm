@@ -245,7 +245,7 @@ ancillaries, field ancillaries).
         Relative paths are allowed, and standard tilde and shell
         parameter expansions are applied to the string.
 
-        *Example:*
+        *Parameter example:*
           The file ``file.nc`` in the user's home directory could be
           described by any of the following: ``'$HOME/file.nc'``,
           ``'${HOME}/file.nc'``, ``'~/file.nc'``,
@@ -266,12 +266,12 @@ ancillaries, field ancillaries).
           ``'cell_measure'``          Cell measure constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           To create fields from auxiliary coordinate constructs:
           ``extra='auxiliary_coordinate'`` or
           ``extra=['auxiliary_coordinate']``.
 
-        *Example:*
+        *Parameter example:*
           To create fields from domain ancillary and cell measure
           constructs: ``extra=['domain_ancillary', 'cell_measure']``.
 
@@ -2355,28 +2355,28 @@ variable should be pre-filled with missing values.
     field_ncvar: `str`
         The netCDF variable name of the field.
 
-          *Example:*
-            ``field_ncvar='tas'``
+        *Parameter example:*
+          ``field_ncvar='tas'``
 
     ncvar: `str`
         The netCDF variable name of the field component that has the problem.
 
-          *Example:*
-            ``field_ncvar='rotated_latitude_longitude'``
+        *Parameter example:*
+          ``field_ncvar='rotated_latitude_longitude'``
 
     message: (`str`, `str`), optional
 
     attribute: `str`, optional
         The name and value of the netCDF attribute that has a problem.
         
-          *Example:*
-            ``attribute={'tas:cell_measures': 'area: areacella'}``
+        *Parameter example:*
+          ``attribute={'tas:cell_measures': 'area: areacella'}``
 
     dimensions: sequence of `str`, optional
         The netCDF dimensions of the variable that has a problem.
 
-          *Example:*
-            ``dimensions=('lat', 'lon')``
+        *Parameter example:*
+          ``dimensions=('lat', 'lon')``
 
         
     variable: `str`, optional
@@ -2696,14 +2696,14 @@ variable's netCDF dimensions.
     measure: `str`
         The cell measure.
         
-          *Example:*
-             ``measure='area'``
+        *Parameter example:*
+           ``measure='area'``
     
     ncvar: `str`
         The netCDF name of the cell measure variable.
 
-          *Example:*
-             ``ncvar='areacello'``
+        *Parameter example:*
+           ``ncvar='areacello'``
 
 :Returns:
 
@@ -2740,14 +2740,14 @@ variable's netCDF dimensions.
     ncvar: `str`
         The name of the netCDF count variable.
 
-          *Example:*
-             ``ncvar='row_size'``
+        *Parameter example:*
+           ``ncvar='row_size'``
 
     ncdim: `str`
         The name of the count variable's netCDF dimension.
 
-          *Example:*
-             ``ncdim='profile'``
+        *Parameter example:*
+           ``ncdim='profile'``
 
 :Returns:
 
@@ -2784,14 +2784,14 @@ variable's netCDF dimensions.
     ncvar: `str`
         The name of the netCDF index variable.
 
-          *Example:*
-             ``ncvar='landpoints'``
+        *Parameter example:*
+           ``ncvar='landpoints'``
 
     ncdim: `str`
         The name of the index variable's netCDF dimension.
 
-          *Example:*
-             ``ncdim='profile'``
+        *Parameter example:*
+           ``ncdim='profile'``
 
 :Returns:
 
@@ -2831,8 +2831,8 @@ variable's netCDF dimensions.
     ncvar: `str`
         The name of the netCDF list variable.
 
-          *Example:*
-             ``ncvar='landpoints'``
+        *Parameter example:*
+           ``ncvar='landpoints'``
 
 :Returns:
 
@@ -2858,8 +2858,6 @@ variable's netCDF dimensions.
     def _create_cell_method(self, axes, method, properties):
         '''Create a cell method object.
     
-*Example:*
-
 :Parameters:
 
     axes: `tuple`
@@ -3269,8 +3267,8 @@ parameters.
     formula_terms: `dict`
         The formula_terms attribute value from the netCDF file.
 
-          *Example:*
-            ``formula_terms={'a':'a','b':'b','orog':'surface_altitude'}``
+        *Parameter example:*
+          ``formula_terms={'a':'a','b':'b','orog':'surface_altitude'}``
 
 :Returns:
 

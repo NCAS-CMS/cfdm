@@ -3,68 +3,71 @@ from past.builtins import basestring
 
 import os
 
-#from .. import __version__
-
-from .. import CF
-
-from .. import (AuxiliaryCoordinate,
-                CellMethod,
-                CellMeasure,
-                CoordinateReference,
-                DimensionCoordinate,
-                DomainAncillary,
-                DomainAxis,
-                Field,
-                FieldAncillary,
-                Bounds,
-                Count,
-                List,
-                Index,
-                CoordinateConversion,
-                Datum)
-
-from ..data import (Data,
-                    GatheredArray,
-                    NetCDFArray,
-                    RaggedContiguousArray,
-                    RaggedIndexedArray,
-                    RaggedIndexedContiguousArray)
-
-from . import CFDMImplementation
+from . import implementation
 
 from .netcdf import NetCDFRead
 
-implementation = CFDMImplementation(
-    cf_version = CF(),
-    
-    AuxiliaryCoordinate = AuxiliaryCoordinate,
-    CellMeasure         = CellMeasure,
-    CellMethod          = CellMethod,
-    CoordinateReference = CoordinateReference,
-    DimensionCoordinate = DimensionCoordinate,
-    DomainAncillary     = DomainAncillary,
-    DomainAxis          = DomainAxis,
-    Field               = Field,
-    FieldAncillary      = FieldAncillary,
-    
-    Bounds = Bounds,
-    List   = List,
-    Index=Index,
-    Count=Count,
-    
-    CoordinateConversion = CoordinateConversion,
-    Datum                = Datum,
-    
-    Data                         = Data,
-    GatheredArray                = GatheredArray,
-    NetCDFArray                  = NetCDFArray,
-    RaggedContiguousArray        = RaggedContiguousArray,
-    RaggedIndexedArray           = RaggedIndexedArray,
-    RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
-)
+
+#from .. import CF
+#
+#from .. import (AuxiliaryCoordinate,
+#                CellMethod,
+#                CellMeasure,
+#                CoordinateReference,
+#                DimensionCoordinate,
+#                DomainAncillary,
+#                DomainAxis,
+#                Field,
+#                FieldAncillary,
+#                Bounds,
+#                Count,
+#                List,
+#                Index,
+#                CoordinateConversion,
+#                Datum)
+#
+#from ..data import (Data,
+#                    GatheredArray,
+#                    NetCDFArray,
+#                    RaggedContiguousArray,
+#                    RaggedIndexedArray,
+#                    RaggedIndexedContiguousArray)
+#
+#from . import CFDMImplementation
+#
+#implementation = CFDMImplementation(
+#    cf_version = CF(),
+#    
+#    AuxiliaryCoordinate = AuxiliaryCoordinate,
+#    CellMeasure         = CellMeasure,
+#    CellMethod          = CellMethod,
+#    CoordinateReference = CoordinateReference,
+#    DimensionCoordinate = DimensionCoordinate,
+#    DomainAncillary     = DomainAncillary,
+#    DomainAxis          = DomainAxis,
+#    Field               = Field,
+#    FieldAncillary      = FieldAncillary,
+#    
+#    Bounds = Bounds,
+#    List   = List,
+#    Index=Index,
+#    Count=Count,
+#    
+#    CoordinateConversion = CoordinateConversion,
+#    Datum                = Datum,
+#    
+#    Data                         = Data,
+#    GatheredArray                = GatheredArray,
+#    NetCDFArray                  = NetCDFArray,
+#    RaggedContiguousArray        = RaggedContiguousArray,
+#    RaggedIndexedArray           = RaggedIndexedArray,
+#    RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
+#)
+
+_implementation = implementation()
 
 def read(filename, external=None, extra=None, verbose=False,
-         warnings=False, _implementation=implementation):
+         warnings=False, _implementation=_implementation):
     '''Read field constructs from a dataset.
 
 The dataset may be a netCDF file on disk or on an OPeNDAP server.
@@ -83,7 +86,7 @@ be read within a session, and makes the read operation fast.
 **NetCDF unlimited dimensions**
 
 Domain axis constructs that correspond to NetCDF unlimited dimensions
-may be viewed with the `cfdm.Field.nc_unlimited_dimensions` method of
+may be viewed with the `~cfdm.Field.nc_unlimited_dimensions` method of
 a field construct.
 
 **CF-compliance**
@@ -101,14 +104,15 @@ variable that does not exist, or refers to a variable that spans a
 netCDF dimension that does not apply to the data variable. Other types
 of non-compliance are not checked, such whether or not controlled
 vocabularies have been adhered to. The structural compliance of the
-dataset may be checked with the `~cfdm.Field.structural_compliance`
+dataset may be checked with the `~cfdm.Field.dataset_compliance`
 method of the field construct, as well as optionally displayed when
 the dataset is read by setting the *warnings* parameter.
 
 .. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.write`, `cfdm.Field.convert`,
-             `cfdm.Field.read_report`
+             `cfdm.Field.nc_unlimited_dimensions`,
+             `cfdm.Field.dataset_compliance`
 
 :Parameters:
 
@@ -118,7 +122,7 @@ the dataset is read by setting the *warnings* parameter.
         Relative paths are allowed, and standard tilde and shell
         parameter expansions are applied to the string.
 
-        *Example:*
+        *Parameter example:*
           The file ``file.nc`` in the user's home directory could be
           described by any of the following: ``'$HOME/file.nc'``,
           ``'${HOME}/file.nc'``, ``'~/file.nc'``,
@@ -139,19 +143,19 @@ the dataset is read by setting the *warnings* parameter.
         or data. In this case the construct's `!is_external` method
         will return `True`.
 
-        *Example:*
+        *Parameter example:*
           ``external='cell_measure.nc'``
 
-        *Example:*
+        *Parameter example:*
           ``external=['cell_measure.nc']``
 
-        *Example:*
+        *Parameter example:*
           ``external=('cell_measure_A.nc', 'cell_measure_O.nc')``
 
     extra: (sequence of) `str`, optional
-        Create extra, independent fields from the particular types of
-        metadata constructs. The *extra* parameter may be one, or a
-        sequence, of:
+        Create extra, independent fields from netCDF variables that
+        correspond to particular types metadata constructs. The
+        *extra* parameter may be one, or a sequence, of:
 
           ==========================  ================================
           *extra*                     Metadata constructs
@@ -163,12 +167,12 @@ the dataset is read by setting the *warnings* parameter.
           ``'cell_measure'``          Cell measure constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           To create fields from auxiliary coordinate constructs:
           ``extra='auxiliary_coordinate'`` or
           ``extra=['auxiliary_coordinate']``.
 
-        *Example:*
+        *Parameter example:*
           To create fields from domain ancillary and cell measure
           constructs: ``extra=['domain_ancillary', 'cell_measure']``.
 
@@ -192,8 +196,9 @@ the dataset is read by setting the *warnings* parameter.
         incomplete due to structural non-compliance of the dataset. By
         default such warnings are not displayed.
         
-    _implementation: optional
-        TODO
+    _implementation: (subclass of) `CFDMImplementation`, optional
+        Define the CF data model implementation that provides the
+        returned field constructs.
 
 :Returns:
     
@@ -204,15 +209,22 @@ the dataset is read by setting the *warnings* parameter.
 **Examples:**
 
 >>> x = cfdm.read('file.nc')
->>> type(x)
-list
+>>> print(type(x))
+<type 'list'>
+
+Read a file and create field constructs from CF-netCDF data variables
+as well as from the netCDF variables that correspond to particular
+types metadata constructs:
 
 >>> f = cfdm.read('file.nc', extra='domain_ancillary')
 >>> g = cfdm.read('file.nc', extra=['dimension_coordinate', 
-...                                        'auxiliary_coordinate'])
+...                                 'auxiliary_coordinate'])
 
->>> h = cfdm.read('parent.nc', external='external.nc')
->>> i = cfdm.read('parent.nc', external=['external_1.nc', 'external_2.nc'])
+Read a file that contains external variables:
+
+>>> h = cfdm.read('parent.nc')
+>>> i = cfdm.read('parent.nc', external='external.nc')
+>>> j = cfdm.read('parent.nc', external=['external1.nc', 'external2.nc'])
 
     '''
     # Parse the field parameter
@@ -248,7 +260,7 @@ def _read_a_file(filename, external=(), extra=(), verbose=False,
     
 :Returns:
 
-    out: `list`
+    `list`
         The fields in the file.
 
     '''

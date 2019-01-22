@@ -51,27 +51,27 @@ returned.
 
         * The value of the standard name property.
 
-          *Example:*
+          *Parameter example:*
             ``name='air_pressure'`` will select constructs that have a
             "standard_name" property with the value "air_pressure".
 
         * The value of any property prefixed by the property name and
           a colon (``:``).
 
-          *Example:*
+          *Parameter example:*
             ``name='long_name:Air Temperature'`` will select
             constructs that have a "long_name" property with the value
             "Air Temperature".
 
-          *Example:*
+          *Parameter example:*
             ``name='positive:up'`` will select constructs that have a
             "positive" property with the value "up".
 
-          *Example:*
+          *Parameter example:*
             ``name='foo:bar'`` will select constructs that have a
             "foo" property with the value "bar".
 
-          *Example:*
+          *Parameter example:*
             ``name='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
             value "air_pressure". Note this selection could also be
@@ -81,7 +81,7 @@ returned.
           ``measure%``. Constructs may also be selected by their
           meaure with the *measure* parameter.
 
-          *Example:*
+          *Parameter example:*
             ``name='measure%area'`` will select "area" cell measure
             constructs. Note this selection could also be made with
             ``measure='area'``.
@@ -92,7 +92,7 @@ returned.
           *construct identifier with the *key* parameter.
 
 
-          *Example:* 
+          *Parameter example:* 
             ``name='key%cellmethod1'`` will select cell method
             construct with construct identifier "cellmethod1".
 
@@ -100,7 +100,7 @@ returned.
           Constructs may also be selected by their netCDF variable
           name with the *ncvar* parameter.
 
-          *Example:*
+          *Parameter example:*
             ``name='ncvar%lat'`` will select constructs with netCDF
             variable name "lat".
 
@@ -108,7 +108,7 @@ returned.
           prefixed by ``ncdim%``. Constructs may also be selected by
           their netCDF dimension name with the *ncdim* parameter.
 
-          *Example:*
+          *Parameter example:*
             ``name='ncdim%time'`` will select domain axis constructs
             with netCDF dimension name "time".
 
@@ -130,13 +130,13 @@ returned.
           ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
-        *Example:*
+        *Parameter example:*
           ``construct_type='dimension_coordinate'``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=['auxiliary_coordinate']``
 
-        *Example:*
+        *Parameter example:*
           ``construct_type=('domain_ancillary', 'cell_method')``
 
         Note that a domain never contains cell method nor field
@@ -147,13 +147,13 @@ returned.
         measure. If multiple measures are specified then select the
         cell measure constructs which have any of the given measures.
 
-        *Example:*
+        *Parameter example:*
           ``meausure='area'``
 
-        *Example:*
+        *Parameter example:*
           ``measure=['area']``
 
-        *Example:*
+        *Parameter example:*
           ``measure=['area', 'volume']``
 
     axis: (sequence of) `str`, optional
@@ -162,13 +162,13 @@ returned.
         domain axes are specified then select constructs whose data
         spans at least one the domain axis constructs.
 
-        *Example:*
+        *Parameter example:*
           ``axis='domainaxis1'``
 
-        *Example:*
+        *Parameter example:*
           ``axis=['domainaxis2']``
 
-        *Example:*
+        *Parameter example:*
           ``axis=['domainaxis0', 'domainaxis1']``
 
     ncvar: (sequence of) `str`, optional
@@ -177,13 +177,13 @@ returned.
         select the constructs which have any of the given netCDF
         variable names.
 
-        *Example:*
+        *Parameter example:*
           ``ncvar='lon'``
 
-        *Example:*
+        *Parameter example:*
           ``ncvar=['lat']``
 
-        *Example:*
+        *Parameter example:*
           ``ncvar=['lon', 'lat']``
 
     ncdim: (sequence of) `str`, optional
@@ -192,13 +192,13 @@ returned.
         specified then select the domain axis constructs which have
         any of the given netCDF dimension names.
 
-        *Example:*
+        *Parameter example:*
           ``ncdim='lon'``
 
-        *Example:*
+        *Parameter example:*
           ``ncdim=['lat']``
 
-        *Example:*
+        *Parameter example:*
           ``ncdim=['lon', 'lat']``
 
 
@@ -207,13 +207,13 @@ returned.
         keys are specified then select all of the metadata constructs
         which have any of the given keys.
 
-        *Example:*
+        *Parameter example:*
           ``key='domainancillary0'``
 
-        *Example:*
+        *Parameter example:*
           ``key=['cellmethod2']``
 
-        *Example:*
+        *Parameter example:*
           ``key=('dimensioncoordinate1', 'fieldancillary0')``
 
     copy: `bool`, optional
@@ -502,8 +502,8 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     axis: `str`
         The identifier of the axis.
 
-          *Example:*
-            ``axis='domainaxis2'``
+        *Parameter example:*
+          ``axis='domainaxis2'``
 
 :Returns:
 

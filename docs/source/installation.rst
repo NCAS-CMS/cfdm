@@ -23,11 +23,11 @@ The cfdm package requires:
 
 * `numpy <http://www.numpy.org/>`_, version 1.11 or newer,
 
-* `cftime <https://unidata.github.io/cftime/>`_, version 1.0 or
-  newer,
-
 * `netCDF4 <http://unidata.github.io/netcdf4-python/>`_, version 1.4.0
   or newer, and
+
+* `cftime <https://unidata.github.io/cftime/>`_, version 1.0 or
+  newer,
 
 * `future <https://python-future.org/>`_, version 0.16.0 or newer.
 

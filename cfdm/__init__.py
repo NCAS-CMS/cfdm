@@ -23,9 +23,9 @@ The cfdm package can
 '''
 
 __author__       = 'David Hassell'
-__date__         = '2019-01-18'
+__date__         = '2019-01-22'
 __cf_version__   = '1.7'
-__version__      = '1.7.0b12'
+__version__      = '1.7.0b13'
 
 requires = ('numpy',
             'netCDF4',
@@ -44,17 +44,10 @@ if LooseVersion(platform.python_version()) < LooseVersion(min_vn):
         "Bad python version: cfdm requires python version {} or later. Got {}".format(
             min_vn,  platform.python_version()))
 
-# Check the version of netCDF4
 try:
     import netCDF4
 except ImportError as error1:
     raise ImportError(error0+str(error1))
-
-min_vn = '1.4.0'
-if LooseVersion(netCDF4.__version__) < LooseVersion(min_vn):
-    raise ValueError(
-        "Bad netCDF4 version: cfdm requires netCDF4 version {} or later. Got {}".format(
-            min_vn, netCDF4.__version__))
 
 try:
     import numpy
@@ -71,6 +64,13 @@ try:
 except ImportError as error1:
     raise ImportError(error0+str(error1))
 
+# Check the version of netCDF4
+min_vn = '1.4.0'
+if LooseVersion(netCDF4.__version__) < LooseVersion(min_vn):
+    raise ValueError(
+        "Bad netCDF4 version: cfdm requires netCDF4 version {} or later. Got {}".format(
+            min_vn, netCDF4.__version__))
+
 from .constants  import *
 from .constructs import Constructs
 
@@ -84,7 +84,10 @@ from .data import (Data,
                    RaggedIndexedArray,
                    RaggedIndexedContiguousArray)
 
-from .functions import CF, environment, ATOL, RTOL
+from .functions import (CF,
+                        environment,
+                        ATOL,
+                        RTOL)
 
 from .count import Count
 from .index import Index
@@ -106,7 +109,12 @@ from .domainaxis          import DomainAxis
 from .field               import Field
 from .fieldancillary      import FieldAncillary
 
-from .read_write import read, write
+from .read_write import (read,
+                         write,
+                         implementation,
+                         CFDMImplementation)
+
+
 
 
     

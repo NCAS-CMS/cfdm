@@ -23,6 +23,7 @@
    reference
    subclassing
    philosophy
+   versioning
    releases
 
 **Index and search**

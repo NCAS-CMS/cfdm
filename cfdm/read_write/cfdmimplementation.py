@@ -2,6 +2,31 @@ from builtins import super
 
 from .abstract import Implementation
 
+from .. import CF
+
+from .. import (AuxiliaryCoordinate,
+                CellMethod,
+                CellMeasure,
+                CoordinateReference,
+                DimensionCoordinate,
+                DomainAncillary,
+                DomainAxis,
+                Field,
+                FieldAncillary,
+                Bounds,
+                Count,
+                List,
+                Index,
+                CoordinateConversion,
+                Datum)
+
+from ..data import (Data,
+                    GatheredArray,
+                    NetCDFArray,
+                    RaggedContiguousArray,
+                    RaggedIndexedArray,
+                    RaggedIndexedContiguousArray)
+
 
 class CFDMImplementation(Implementation):
     '''
@@ -913,14 +938,23 @@ netCDF unlimited dimensions.
 
     def initialise_Data(self, array=None, units=None, calendar=None,
                         copy=True):
-        '''
+        '''<TODO>
+
 :Patameters:
 
-    data:
+    array:
 
     units:
 
     calendar:
+
+    copy: `bool`, optional
+
+:Returns;
+
+    `Data`
+        <TODO>
+
         '''
         cls = self.get_class('Data')
         return cls(array=array, units=units, calendar=calendar,
@@ -1521,3 +1555,54 @@ False
         
 #--- End: class
 
+
+_implementation = CFDMImplementation(
+    cf_version = CF(),
+    
+    AuxiliaryCoordinate = AuxiliaryCoordinate,
+    CellMeasure         = CellMeasure,
+    CellMethod          = CellMethod,
+    CoordinateReference = CoordinateReference,
+    DimensionCoordinate = DimensionCoordinate,
+    DomainAncillary     = DomainAncillary,
+    DomainAxis          = DomainAxis,
+    Field               = Field,
+    FieldAncillary      = FieldAncillary,
+    
+    Bounds = Bounds,
+    List   = List,
+    Index=Index,
+    Count=Count,
+    
+    CoordinateConversion = CoordinateConversion,
+    Datum                = Datum,
+    
+    Data                         = Data,
+    GatheredArray                = GatheredArray,
+    NetCDFArray                  = NetCDFArray,
+    RaggedContiguousArray        = RaggedContiguousArray,
+    RaggedIndexedArray           = RaggedIndexedArray,
+    RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
+)
+
+def implementation():
+    '''<TODO>
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `cfdm.read`, `cfdm.write`
+
+:Returns:
+
+    `CFDMImplementation`
+         <TODO>
+
+**Examples:**
+
+>>> i = cfdm.implementation()
+>>> i
+<cfdm.read_write.cfdmimplementation.CFDMImplementation at 0x7fc1b45d2f10>
+
+    '''
+    return _implementation.copy()
+#--- End: def

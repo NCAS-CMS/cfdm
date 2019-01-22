@@ -26,7 +26,7 @@ class NetCDFWrite(IOWrite):
 #                                     force_use_existing=False):
         '''
         
-:Parameter:
+:Parameters:
         
     parent:
            
@@ -2543,11 +2543,11 @@ and auxiliary coordinate roles for different data variables.
         with the exception of booleans (``numpy.dtype(bool)``, which
         are converted to 32 bit integers.
 
-          **Example:**
-            To convert 64 bit floats and integers to their 32 bit
-            counterparts: ``dtype={numpy.dtype(float):
-            numpy.dtype('float32'), numpy.dtype(int):
-            numpy.dtype('int32')}``.
+        *Parameter example:*
+          To convert 64 bit floats and integers to their 32 bit
+          counterparts: ``dtype={numpy.dtype(float):
+          numpy.dtype('float32'), numpy.dtype(int):
+          numpy.dtype('int32')}``.
 
 :Returns:
 
@@ -2569,6 +2569,7 @@ and auxiliary coordinate roles for different data variables.
  <CF Field: u_compnt_of_wind(19, 29, 24)>,
  <CF Field: v_compnt_of_wind(19, 29, 24)>,
  <CF Field: potential_temperature(19, 30, 24)>]
+
         '''    
         if verbose:
             print('Writing to', fmt)
@@ -2777,7 +2778,7 @@ and auxiliary coordinate roles for different data variables.
     #        # Reset HDF chunking
     #        f.HDF_chunks(org_chunks)
         #-- End: for
-
+        
         # ---------------------------------------------------------------
         # Write all of the buffered data to disk
         # ---------------------------------------------------------------

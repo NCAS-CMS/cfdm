@@ -1,26 +1,30 @@
 #from .. import __version__
-from .. import CF
+#from .. import CF
+#
+#from .. import (CoordinateReference,
+#                Field,
+#                Data)
+#
+#from . import CFDMImplementation
 
-from .. import (CoordinateReference,
-                Field,
-                Data)
-
-from . import CFDMImplementation
+from . import implementation
 
 from .netcdf import NetCDFWrite
 
 
-implementation = CFDMImplementation(cf_version=CF(),
-                                    CoordinateReference=CoordinateReference,
-                                    Field=Field,
-                                    Data=Data)
+#implementation = CFDMImplementation(cf_version=CF(),
+#                                    CoordinateReference=CoordinateReference,
+#                                    Field=Field,
+#                                    Data=Data)
+
+_implementation = implementation()
 
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           global_attributes=None, variable_attributes=None,
           external=None, Conventions=None, datatype=None,
           least_significant_digit=None, endian='native', compress=0,
           fletcher32=False, shuffle=True, HDF_chunksizes=None,
-          verbose=False, _implementation=implementation):
+          verbose=False, _implementation=_implementation):
     '''Write field constructs to a netCDF file.
 
 **File format**
@@ -81,7 +85,7 @@ method of a field construct.
         Relative paths are allowed, and standard tilde and shell
         parameter expansions are applied to the string.
 
-        *Example:*
+        *Parameter example:*
           The file ``file.nc`` in the user's home directory could be
           described by any of the following: ``'$HOME/file.nc'``,
           ``'${HOME}/file.nc'``, ``'~/file.nc'``,
@@ -164,10 +168,10 @@ method of a field construct.
          corresponding to each field construct that contains the
          property.
 
-         *Example:*
+         *Parameter example:*
             ``global_attributes='project'``
 
-         *Example:*
+         *Parameter example:*
             ``global_attributes=['project', 'experiment']``
 
     variable_attributes: (sequence of) `str`, optional
@@ -180,10 +184,11 @@ method of a field construct.
 
          Any property named by the *variable_attributes* parameter
          will always be created as a netCDF data variable attribute
-         *Example:*
+
+         *Parameter example:*
             ``variable_attributes='project'``
 
-         *Example:*
+         *Parameter example:*
             ``variable_attributes=['project', 'doi']``
 
     external: `str`, optional   
@@ -199,10 +204,10 @@ method of a field construct.
          construct then it is ignored. Note that a convention name is
          not allowed to contain any commas.
 
-         *Example:*
+         *Parameter example:*
             ``Conventions='UGRID-1.0'``
 
-         *Example:*
+         *Parameter example:*
             ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
 
     datatype: `dict`, optional
@@ -218,7 +223,7 @@ method of a field construct.
         a dictionary whose keys are input data types with values of
         output data types.
 
-        *Example:*
+        *Parameter example:*
           To convert 64-bit integers to 32-bit integers:
           ``datatype={numpy.dtype('int64'): numpy.dtype('int32')}``.
        
@@ -228,7 +233,7 @@ method of a field construct.
         is native endian. See the `netCDF4 package
         <http://unidata.github.io/netcdf4-python>`_ for more details.
 
-        *Example:*
+        *Parameter example:*
           ``endian='big'``
 
     compress: `int`, optional
@@ -240,7 +245,7 @@ method of a field construct.
         for a netCDF3 output file format. See the `netCDF4 package
         <http://unidata.github.io/netcdf4-python>`_ for more details.
 
-        *Example:*
+        *Parameter example:*
           ``compress=4``
     
     least_significant_digit: `int`, optional
@@ -253,7 +258,7 @@ method of a field construct.
         efficient, compression. See the `netCDF4 package
         <http://unidata.github.io/netcdf4-python>`_ for more details.
 
-        *Example:*
+        *Parameter example:*
           ``least_significant_digit=3``
 
     fletcher32: `bool`, optional
@@ -315,6 +320,10 @@ method of a field construct.
     verbose: `bool`, optional
         If True then print a summary of how constructs map to output
         netCDF dimensions, variables and attributes.
+
+    _implementation: (subclass of) `CFDMImplementation`, optional
+        Define the CF data model implementation that defines the field
+        constructs.
 
 :Returns:
 

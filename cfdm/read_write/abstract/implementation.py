@@ -27,7 +27,8 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         '''Copy 
         
         '''
-        return type(self)(self._class)
+        return type(self)(cf_version=self.get_cf_version(),
+                          **self._class)
     #--- End: def
 
     def get_class(self, name):
@@ -38,8 +39,8 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
     name: `str`
         The name of the class.
 
-          *Example:*
-            ``name='Field'``
+        *Parameter example:*
+          ``name='Field'``
 
 :Returns:
     
@@ -83,8 +84,9 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
     name: `str`
         The name of the class.
 
-          *Example:*
-            ``name='Field'``
+        *Parameter example:*
+          ``name='Field'``
+
     cls: 
         The class object.
 
