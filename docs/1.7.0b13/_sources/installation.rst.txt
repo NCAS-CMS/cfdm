@@ -94,8 +94,8 @@ To install from source:
 
    .. code:: bash
 	 
-      tar zxvf cfdm-1.7.0b12.tar.gz
-      cd cfdm-1.7.0b12
+      tar zxvf cfdm-1.7.0b13.tar.gz
+      cd cfdm-1.7.0b13
 
 3. Install the package:
   
