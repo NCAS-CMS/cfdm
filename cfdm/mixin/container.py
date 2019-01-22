@@ -40,7 +40,10 @@ x.__str__() <==> str(x)
     @classmethod
     def _equals(self, x, y, rtol=None, atol=None,
                 ignore_data_type=False, **kwargs):
-        '''TODO
+        '''Whether two objects are the same.
+
+Equality either uses one or other of the objects `!equals` methods, or
+casts them as numpy arrays and carried aout numericlly tolerant equality checks.
 
 .. versionadded:: 1.7.0
 
@@ -140,7 +143,17 @@ x.__str__() <==> str(x)
 
     def _equals_preprocess(self, other, verbose=False,
                            ignore_type=False):
-        '''TODO
+        '''Common preprocessing prior to testing of equality.
+
+* If the LHS operand is (object identity) the RHS operand then return
+  True.  ignore_type=True a sublcass of, the RHS operand
+
+* If ignore_type=False and the LHS operand is not of the same type, or
+  a sublcass of, the RHS operand then return False
+
+* If ignore_type=True and the LHS operand is not of the same type, or
+  a sublcass of, the RHS operand then instantiate a new instance of
+  the RHS class and return it.
 
         '''
         # Check for object identity
