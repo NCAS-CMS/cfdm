@@ -10,27 +10,6 @@
 
 Version |release| for version |version| of the CF conventions.
 
-.. _Dependencies:
-
-**Dependencies**
-----------------
-
-----
-
-The cfdm package requires:
-
-* `Python <https://www.python.org/>`_, version 2.7 or 3 or newer,
-
-* `numpy <http://www.numpy.org/>`_, version 1.11 or newer,
-
-* `netCDF4 <http://unidata.github.io/netcdf4-python/>`_, version 1.4.0
-  or newer, and
-
-* `cftime <https://unidata.github.io/cftime/>`_, version 1.0 or
-  newer,
-
-* `future <https://python-future.org/>`_, version 0.16.0 or newer.
-
 .. _pip:
   
 **pip**
@@ -143,6 +122,27 @@ Tests are run from within the ``cfdm/test`` directory:
    python run_tests.py
        
 .. _Code-repository:
+
+.. _Dependencies:
+
+**Dependencies**
+----------------
+
+----
+
+The cfdm package requires:
+
+* `Python <https://www.python.org/>`_, version 2.7 or 3 or newer,
+
+* `numpy <http://www.numpy.org/>`_, version 1.11 or newer,
+
+* `netCDF4 <http://unidata.github.io/netcdf4-python/>`_, version 1.4.0
+  or newer, and
+
+* `cftime <https://unidata.github.io/cftime/>`_, version 1.0 or
+  newer,
+
+* `future <https://python-future.org/>`_, version 0.16.0 or newer.
 
 **Code repository**
 -------------------

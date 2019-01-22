@@ -34,13 +34,13 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Installation</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#dependencies"><strong>Dependencies</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pip"><strong>pip</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#conda"><strong>conda</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#source"><strong>Source</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#command-line-utility"><strong>Command line utility</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tests"><strong>Tests</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#code-repository"><strong>Code repository</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies"><strong>Dependencies</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8"><strong>Code repository</strong></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
@@ -88,22 +88,8 @@
 <span id="id1"></span><h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p>Version 1.7.0b13 for version 1.7 of the CF conventions.</p>
-<div class="section" id="dependencies">
-<span id="id2"></span><h2><strong>Dependencies</strong><a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<hr class="docutils" />
-<p>The cfdm package requires:</p>
-<ul class="simple">
-<li><a class="reference external" href="https://www.python.org/">Python</a>, version 2.7 or 3 or newer,</li>
-<li><a class="reference external" href="http://www.numpy.org/">numpy</a>, version 1.11 or newer,</li>
-<li><a class="reference external" href="http://unidata.github.io/netcdf4-python/">netCDF4</a>, version 1.4.0
-or newer, and</li>
-<li><a class="reference external" href="https://unidata.github.io/cftime/">cftime</a>, version 1.0 or
-newer,</li>
-<li><a class="reference external" href="https://python-future.org/">future</a>, version 0.16.0 or newer.</li>
-</ul>
-</div>
 <div class="section" id="pip">
-<span id="id3"></span><h2><strong>pip</strong><a class="headerlink" href="#pip" title="Permalink to this headline">¶</a></h2>
+<span id="id2"></span><h2><strong>pip</strong><a class="headerlink" href="#pip" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>To install cfdm and all of its dependencies run, for example:</p>
 <div class="literal-block-wrapper docutils container" id="id9">
@@ -130,12 +116,12 @@ dependencies.</em></span><a class="headerlink" href="#id11" title="Permalink to 
 options.</p>
 </div>
 <div class="section" id="conda">
-<span id="id4"></span><h2><strong>conda</strong><a class="headerlink" href="#conda" title="Permalink to this headline">¶</a></h2>
+<span id="id3"></span><h2><strong>conda</strong><a class="headerlink" href="#conda" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><em>Coming soon</em></p>
 </div>
 <div class="section" id="source">
-<span id="id5"></span><h2><strong>Source</strong><a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2><strong>Source</strong><a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>To install from source:</p>
 <ol class="arabic">
@@ -172,22 +158,36 @@ location:</p>
 </div></blockquote>
 </div>
 <div class="section" id="command-line-utility">
-<span id="id6"></span><h2><strong>Command line utility</strong><a class="headerlink" href="#command-line-utility" title="Permalink to this headline">¶</a></h2>
+<span id="id5"></span><h2><strong>Command line utility</strong><a class="headerlink" href="#command-line-utility" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>During installation the <code class="docutils literal notranslate"><span class="pre">cfdump</span></code> command line tool is also
 installed, which generates text descriptions of the field constructs
 contained in a netCDF dataset.</p>
 </div>
 <div class="section" id="tests">
-<span id="id7"></span><h2><strong>Tests</strong><a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2><strong>Tests</strong><a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>Tests are run from within the <code class="docutils literal notranslate"><span class="pre">cfdm/test</span></code> directory:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">run_tests</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="code-repository">
-<span id="id8"></span><h2><strong>Code repository</strong><a class="headerlink" href="#code-repository" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="dependencies">
+<span id="code-repository"></span><span id="id7"></span><h2><strong>Dependencies</strong><a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>The cfdm package requires:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://www.python.org/">Python</a>, version 2.7 or 3 or newer,</li>
+<li><a class="reference external" href="http://www.numpy.org/">numpy</a>, version 1.11 or newer,</li>
+<li><a class="reference external" href="http://unidata.github.io/netcdf4-python/">netCDF4</a>, version 1.4.0
+or newer, and</li>
+<li><a class="reference external" href="https://unidata.github.io/cftime/">cftime</a>, version 1.0 or
+newer,</li>
+<li><a class="reference external" href="https://python-future.org/">future</a>, version 0.16.0 or newer.</li>
+</ul>
+</div>
+<div class="section" id="id8">
+<h2><strong>Code repository</strong><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The complete source code is available at <a class="reference external" href="https://github.com/NCAS-CMS/cfdm">https://github.com/NCAS-CMS/cfdm</a></p>
 </div>
