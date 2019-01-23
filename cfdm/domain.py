@@ -152,7 +152,7 @@ x.__str__() <==> str(x)
                 '\n                : '.join(x)))
                                       
         string.append('')
-        
+
         return '\n'.join(string)
     #--- End def
                           
@@ -191,16 +191,30 @@ field.
         else:
             return string
     #--- End: def
-
-    def del_construct(self, description=None, cid=None, axes=None,
+    
+    # parameter: name
+    # parameter: properties
+    # parameter: measure
+    # parameter: ncvar
+    # parameter: ncdim
+    # parameter: key
+    # parameter: axis
+    # parameter: construct_type
+    # parameter: default
+    def del_construct(self, name=None, properties=None, measure=None,
+                      ncvar=None, ncdim=None, key=None, axis=None,
                       construct_type=None, default=ValueError()):
         '''Remove a metadata construct.
 
-The construct is identified via optional parameters. The *unique*
-construct that satisfies *all* of the given criteria is removed.
+The *unique* construct that satisfies *all* of the given criteria is
+removed. All metadata constructs are selected if no parameters are
+specified. By default an exception is raised if no unique construct is
+selected.
 
-If a domain axis construct is to be removed then it can't be spanned
-by any data arrays.
+If a domain axis construct is selected for removal then it can't be
+spanned by any data arrays of the metadata constructs. However, a
+domain ancillary constructs may be removed even if it is referenced by
+coordinate reference coinstruct.
 
 .. versionadded:: 1.7.0
 
@@ -208,17 +222,23 @@ by any data arrays.
              `set_construct`
 
 :Parameters:
+:Parameters:
 
-    description: `str`, optional
-        Select constructs that have the given property, or other
-        attribute, value.
+    name: (sequence of) `str`, optional
+        Select constructs that have the given name. In general, a
+        contruct's name is the string returned by its `!name` method.
 
-        The description may be one of:
+        The name may be one of:
 
-        * The value of the standard name property on its own. 
+        * The value of the standard name property.
 
           *Parameter example:*
-            ``description='air_pressure'`` will select constructs that
+            ``name='air_pressure'`` will select constructs that
+            have a "standard_name" property with the value
+            "air_pressure", as will ``name=['air_pressure']``.
+
+          *Parameter example:*
+            ``name=['air_pressure'`` will select constructs that
             have a "standard_name" property with the value
             "air_pressure".
 
@@ -226,57 +246,64 @@ by any data arrays.
           a colon (``:``).
 
           *Parameter example:*
-            ``description='positive:up'`` will select constructs that
+            ``name='positive:up'`` will select constructs that
             have a "positive" property with the value "up".
 
           *Parameter example:*
-            ``description='foo:bar'`` will select constructs that have
+            ``name='foo:bar'`` will select constructs that have
             a "foo" property with the value "bar".
 
           *Parameter example:*
-            ``description='standard_name:air_pressure'`` will select
+            ``name='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
             value "air_pressure".
+
+          *Parameter example:*
+            ``name=['air_pressure', long_name:Air Temperature']`` will
+            select constructs that have a "standard_name" property
+            with the value "air_pressure" or a "long_name" property
+            with a value of "air Temperature".
 
         * The measure of cell measure constructs, prefixed by
           ``measure%``.
 
           *Parameter example:*
-            ``description='measure%area'`` will select "area" cell
+            ``name='measure%area'`` will select "area" cell
             measure constructs.
 
-        * A construct identifier, prefixed by ``cid%`` (see also the
-          *cid* parameter).
+        * A construct key, prefixed by ``key%`` (see also the *key*
+          parameter).
 
           *Parameter example:* 
-            ``description='cid%domainancillary1'`` will select domain
-            ancillary construct with construct identifier
-            "domainancillary1". This is equivalent to
-            ``cid='domainancillary1'``.
+            ``name='key%cellmethod1'`` will select cell method
+            construct with construct key "cellmethod1". This is
+            equivalent to ``key='cellmethod1'``.
 
-        * The netCDF variable name, prefixed by ``ncvar%``.
+        * The netCDF variable name, prefixed by ``ncvar%`` (see also
+          the *ncvar* parameter).
 
           *Parameter example:*
-            ``description='ncvar%lat'`` will select constructs with
-              netCDF variable name "lat".
+            ``name='ncvar%lat'`` will select constructs with netCDF
+            variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
-          prefixed by ``ncdim%``.
+          prefixed by ``ncdim%`` (see also the *ncdim* parameter).
 
           *Parameter example:*
-            ``description='ncdim%time'`` will select domain axis
-            constructs with netCDF dimension name "time".
+            ``name='ncdim%time'`` will select domain axis constructs
+            with netCDF dimension name "time".
 
-    cid: `str`, optional
-        Select the construct with the given construct identifier.
+    key: `str`, optional
+        Select the construct with the given construct key.
 
         *Parameter example:*
-          ``cid='domainancillary0'`` will the domain ancillary
+          ``key='domainancillary0'`` will the domain ancillary
           construct with construct identifier "domainancillary1". This
-          is equivalent to ``description='cid%domainancillary0'``.
+          is equivalent to ``name='key%domainancillary0'``.
 
-    construct_type: `str`, optional
-        Select constructs of the given type. Valid types are:
+    construct_type: (sequence of) `str`, optional
+        Select constructs of the given type, or types. Valid types
+        are:
 
           ==========================  ================================
           *construct_type*            Constructs
@@ -287,6 +314,8 @@ by any data arrays.
           ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
           ``'cell_measure'``          Cell measure constructs
           ``'coordinate_reference'``  Coordinate reference constructs
+          ``'cell_method'``           Cell method constructs
+          ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
         *Parameter example:*
@@ -296,49 +325,66 @@ by any data arrays.
           ``construct_type=['auxiliary_coordinate']``
 
         *Parameter example:*
-          ``construct_type=('domain_ancillary', 'cell_measure')``
+          ``construct_type=('domain_ancillary', 'cell_method')``
 
-    axes: sequence of `str`, optional
+        Note that a domain never contains cell method nor field
+        ancillary constructs.
+
+    axis: (sequence of) `str`, optional
         Select constructs which have data that spans one or more of
-        the given domain axes, in any order. Domain axes are specified
-        by their construct identifiers.
+        the given domain axis constructs, in any order. Domain axis
+        contructs are specified by their construct keys.
 
         *Parameter example:*
-          ``axes=['domainaxis2']``
+          ``axis='domainaxis2'``
 
         *Parameter example:*
-          ``axes=['domainaxis0', 'domainaxis1']``
+          ``axis=['domainaxis2']``
+
+        *Parameter example:*
+          ``axis=['domainaxis0', 'domainaxis1']``
+
+    copy: `bool`, optional
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
     default: optional
-        Return *default* if no metadata construct can be found. By
-        default an exception is raised in this case.
-
-        *Parameter example:*
-          ``default=None``
-
+        Return the value of the *default* parameter if no unique
+        construct has been selected. By default an exception is raised
+        in this case.
+        
 :Returns:
 
-        The removed metadata construct.
+        The removed metadata construct. If there is no such construct
+        then an exception is raised, or the value of the *default*
+        parameter is returned, if provided.
 
 **Examples:**
 
 >>> c = f.del_construct('grid_latitude')
 >>> c = f.del_construct('long_name:Air Pressure')
->>> c = f.del_construct('ncvar%lat)
->>> c = f.del_construct('cid%cellmeasure0')
->>> c = f.del_construct(cid='domainaxis2')
+>>> c = f.del_construct(ncvar='lat)
+>>> c = f.del_construct('key%cellmeasure0')
+>>> c = f.del_construct(key='domainaxis2')
 >>> c = f.del_construct(construct_type='auxiliary_coordinate',
-...                     axes=['domainaxis1'])
+...                     axis=['domainaxis1'])
 
         '''
-        cid = self.get_construct_id(description=description, cid=cid,
-                                    construct_type=construct_type,
-                                    axes=axes, default=None)
+        cid = self.get_construct_key(name=name, properties=properties,
+                                     measure=measure, ncvar=ncvar,
+                                     ncdim=ncdim, key=key,
+                                     construct_type=construct_type,
+                                     axis=axis, default=None)
         if cid is None:
-            return self._get_constructs()._default(
-                default, 'No unique construct meets criteria')
+            return self._default(default,
+                                 'No unique construct meets criteria')
             
-        return self._get_constructs().del_construct(cid=cid)
+        for key, axes in self.constructs_data_axes().items():
+            if cid in axes:
+                raise ValueError(
+"Can't remove domain axis {!r} that is spanned by the the data of metadata construct {!r}".format(cid, key))
+
+        return self._get_constructs().del_construct(key=cid)
     #--- End: def
 
     def domain_axis_name(self, cid):

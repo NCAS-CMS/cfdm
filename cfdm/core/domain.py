@@ -119,31 +119,6 @@ constructs.
         return type(self)(source=self, copy=True, _use_data=data)
     #--- End: def
 
-#    def del_construct(self, cid):
-#        '''
-#        '''
-#        if cid in self.domain_axes():
-#            for k, v in self.array_constructs().items():
-#                if cid in self.construct_data_axes().get(k, ()):
-#                    raise ValueError("asda ;wo3in dp08hi n")
-#        else:
-#            # Remove pointers to removed construct in coordinate
-#            # reference constructs
-#            for ref in self.coordinate_references().values():
-#                coordinate_conversion = ref.coordinate_conversion
-#                for term, value in coordinate_conversion.domain_ancillaries().items():
-#                    if cid == value:
-#                        coordinate_conversion.set_domain_ancillary(term, None)
-#                    
-#                for coord_key in ref.coordinates():
-#                    if cid == coord_key:
-#                        ref.del_coordinate(coord_key)
-#                        break
-#        #--- End: if
-#        
-#        return self._get_constructs().del_construct(cid)
-#    #--- End: def
-
     @classmethod
     def fromconstructs(cls, constructs, copy=False):
         '''Create a domain from existing metadata constructs.

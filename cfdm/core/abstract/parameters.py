@@ -153,7 +153,7 @@ ERROR
     #--- End: def
     
     def parameters(self, parameters=None, copy=True):
-        '''Return or replace the parameter-valued terms.
+        '''Return or replace all parameter-valued terms.
 
 .. versionadded:: 1.7.0
 
@@ -162,20 +162,25 @@ ERROR
 :Parameters:
 
     parameters: `dict`, optional
-        Replace all parameter-valued terms with those provided.
+        Delete all existing named parameters, and instead store those
+        from the dictionary supplied.
 
         *Parameter example:*
           ``parameters={'earth_radius': 6371007}``
 
+        *Parameter example:*
+          ``parameters={}``
+
     copy: `bool`, optional
-        TODO
+        If False then any parameters provided by the *parameters*
+        parameter are not copied before insertion. By default they are
+        deep copied.
 
 :Returns:
 
     `dict`
-        The parameter-valued terms and their values. If the
-        *parameters* keyword has been set then the parameter-valued
-        terms prior to replacement are returned.
+        The parameters or, if the *parameters* parameter was set, the
+        original parmaeters.
 
 **Examples:**
 

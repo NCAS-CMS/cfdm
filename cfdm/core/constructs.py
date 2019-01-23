@@ -828,7 +828,14 @@ False
     def del_construct(self, key):        
         '''Remove a construct.
 
+If a domain axis construct is selected for removal then it can't be
+spanned by any metdata construct data arrays, nor be referenced by any
+cell method constructs. However, a domain ancillary constructs may be
+removed even if it is referenced by coordinate reference coinstruct.
+
 .. versionadded:: 1.7.0
+
+.. seealso:: `get_construct`
 
 :Parameters:
 

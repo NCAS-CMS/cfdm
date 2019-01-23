@@ -1,4 +1,5 @@
 from builtins import super
+from past.builtins import basestring
 
 from . import abstract
 
@@ -194,32 +195,62 @@ frame and consists of the following:
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def coordinates(self, coordinates=None):
+    def coordinates(self, coordinates=None, copy=True):
         '''Return or replace all references to coordinate constructs.
 
 .. seealso:: `del_coordinate`, `set_coordinate`
 
 :Parameters:
 
-    coordinates: sequence of `str`
+    coordinates: (sequence of) `str`
+        Delete all existing coordinate construct keys, and instead
+        store those supplied.
+
+        *Parameter example:*
+          ``coordinates=['dimensioncoordinate0']``
+
+        *Parameter example:*
+          ``coordinates='dimensioncoordinate0'``
+
+        *Parameter example:*
+          ``coordinates=set(['dimensioncoordinate0',
+          'auxiliarycoordinate1'])``
+
+        *Parameter example:*
+          ``coordinates=[]``
+
+    copy: `bool`, optional
+        If False then any coordinates provided by the *coordinates*
+        parameter are not copied before insertion. By default they are
+        deep copied.
 
 :Returns:
 
     `set`
-        The identifiers of the coordinate objects.
+        The coordinate construct keys or, if the *coordinates*
+        parameter was set, the original references.
 
 **Examples:**
 
+>>> x = c.coordinates(['dimensioncoordinate0',
+...                    'dimensioncoordinate1',
+...                    'auxiliarycoordinate0',
+...                    'auxiliarycoordinate1'])
 >>> c.coordinates()
 {'dimensioncoordinate0',
  'dimensioncoordinate1',
  'auxiliarycoordinate0',
  'auxiliarycoordinate1'}
+>>> c.coordinates()
+set()
 
         '''
         out = self._get_component('coordinates').copy()
 
         if coordinates is not None:
+            if isinstance(coordinates, basestring):
+                coordinates = (coordinates,)
+                
             self._set_component('coordinates', set(coordinates), copy=False)
 
         return out

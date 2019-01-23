@@ -21,10 +21,6 @@ Inspection
    :template: method.rst
       
    ~cfdm.CompressedArray.get_array
-   ~cfdm.CompressedArray.get_compressed_array
-   ~cfdm.CompressedArray.get_compressed_axes
-   ~cfdm.CompressedArray.get_compressed_dimension
-   ~cfdm.CompressedArray.get_compression_type
    
 .. rubric:: Attributes
 
@@ -38,6 +34,21 @@ Inspection
    ~cfdm.CompressedArray.shape
    ~cfdm.CompressedArray.size
    
+Compression
+-----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+      
+   ~cfdm.CompressedArray.get_compressed_array
+   ~cfdm.CompressedArray.get_compressed_axes
+   ~cfdm.CompressedArray.get_compressed_dimension
+   ~cfdm.CompressedArray.get_compression_type
+
 Miscellaneous
 -------------
 

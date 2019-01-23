@@ -17,14 +17,15 @@ domain ancillary constructs.
     '''
 
     def __init__(self, parameters=None, domain_ancillaries=None,
-                 source=None, copy=True): #, _use_data=True):
+                 source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
 
     parameters: `dict`, optional
-       Set parameters. The dictionary keys are parameter names, with
-       corresponding values. Ignored if the *source* parameter is set.
+       Set parameters. The dictionary keys are term names, with
+       corresponding parameter values. Ignored if the *source*
+       parameter is set.
 
        *Parameter example:*
          ``parameters={'earth_radius': 6371007.}``
@@ -33,10 +34,19 @@ domain ancillary constructs.
        `parameters` and `set_parameter` methods.
 
     domain_ancillaries: `dict`, optional
-       TODO
+       Set references to domain ancillary constructs. The dictionary
+       keys are term names, with corresponding domain ancillary
+       construct keys. Ignored if the *source* parameter is set.
+
+       *Parameter example:*
+         ``domain_ancillaries={'orog': 'domainancillary2'}``
+
+       Domain ancillaries may also be set after initialisation with
+       the `domain_ancillaries` and `set_domain_ancillary` methods.
 
     source: optional
-        TODO Initialize the parameters from those of *source*.
+        Initialize the parameters and domain ancillary terms from
+        those of *source*.
 
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
@@ -57,7 +67,7 @@ domain ancillary constructs.
         
         if domain_ancillaries is None:
             domain_ancillaries = {}
-        elif copy: # or not _use_data:
+        elif copy:
             domain_ancillaries = domain_ancillaries.copy()
             for key, value in list(domain_ancillaries.items()):
                 domain_ancillaries[key] = deepcopy(value)
@@ -66,20 +76,7 @@ domain ancillary constructs.
         self.domain_ancillaries(domain_ancillaries, copy=False)
     #--- End: def
 
-#    def __str__(self):
-#        '''x.__str__() <==> str(x)
-#
-#        '''
-#        out = [super().__str__()]
-#            
-#        domain_ancillaries = self.domain_ancillaries()
-#        if domain_ancillaries:
-#            out.append('Domain Ancillaries: {0}'.format(', '.join(sorted(domain_ancillaries))))
-#            
-#        return '; '.join(out)
-#    #--- End: def
-
-    def copy(self): #, data=True):
+    def copy(self):
         '''Return a deep copy.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
@@ -104,7 +101,7 @@ domain ancillary constructs.
 .. versionadded:: 1.7.0
 
 .. seealso:: `domain_ancillaries`, `get_domain_ancillary`,
-             `has_domain_ancillary`, `set_domain_ancillary`
+             `set_domain_ancillary`
 
 :Parameters:
 
@@ -119,10 +116,20 @@ domain ancillary constructs.
 
 :Returns:
 
-        The removed domain. If the property has not been then the
-        *default* is returned, if provided.
+        The removed domain acnillary key. If unset then *default* is
+        returned, if provided.
 
 **Examples:**
+
+>>> c.domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1',
+ 'orog': 'domainancillary2'}
+>>> c.del_domain_ancillary('orog')
+'domainancillary2'
+>>> c..domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1'}
 
         '''
         return self._get_component('domain_ancillaries').pop(
@@ -130,32 +137,40 @@ domain ancillary constructs.
     #--- End: def
 
     def domain_ancillaries(self, domain_ancillaries=None, copy=True):
-        '''Return or replace the domain ancillary-valued terms.
+        '''Return or replace all domain ancillary-valued terms.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `parameters`
+.. seealso:: `del_domain_ancillary`, `get_domain_ancillary`,
+             `parameters`, `set_domain_ancillary`
 
 :Parameters:
 
-    ancillaries: `dict`, optional
-        Replace all named domain ancillaries with those provided.
+    domain_ancillaries: `dict`, optional
+        Delete all existing named domain ancillary, and instead store
+        those from the dictionary supplied.
 
         *Parameter example:*
-          ``domain_ancillaries={'x': x_ancillary}``
+          ``domain_ancillaries={'orog': 'domainancillary1'}``
+
+        *Parameter example:*
+          ``domain_ancillaries={}``
 
     copy: `bool`, optional
+        If False then any terms provided by the *domain_ancillaries*
+        parameter are not copied before insertion. By default they are
+        deep copied.
 
 :Returns:
 
     `dict`
-        The parameter-valued terms and their values. If the
-        *parameters* keyword has been set then the parameter-valued
-        terms prior to replacement are returned.
+        The domain ancillary terms or, if the *domain_ancillaries*
+        parameter was set, the original terms.
 
 **Examples:**
 
->>> d = c.ancillaries()
+<TODO>
+
         '''
         out = self._get_component('domain_ancillaries').copy()
 
@@ -172,7 +187,12 @@ domain ancillary constructs.
     #--- End: def
     
     def get_domain_ancillary(self, domain_ancillary, *default):
-        '''Get a parameter value.
+        '''Return a domain ancillary term.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
+             `set_domain_ancillary`
 
 :Parameters:
 
@@ -180,21 +200,15 @@ domain ancillary constructs.
         The name of the term.
 
     default: optional
+        <TODO>
 
 :Returns:
 
-        The value of the term <SOMETING BAOUT DEFAULT>
+        <TODO>
 
 **Examples:**
 
->>> c.get_parameter('grid_north_pole_latitude')
-70.0
-
->>> c.get_parameter('foo')
-ERROR
->>> c.get_parameter('foo', 'nonexistent term')
-'nonexistent term'
-
+<TODO>
 
         '''
         d = self._get_component('domain_ancillaries')
@@ -213,23 +227,18 @@ ERROR
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `domain_ancillaries`, `del_domain_ancillary`, `get_domain_ancillary`,
-             `set_domain_ancillary`
+.. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
+             `get_domain_ancillary`
+:Parameters:
 
+        <TODO>
 :Returns:
 
     `None`
 
 **Examples:**
 
->>> c.parameters()
-{'standard_parallel': 25.0;
- 'latitude_of_projection_origin': 25.0}
->>> c.set_parameter('longitude_of_central_meridian', 265.0)
->>> c.parameters()
-{'standard_parallel': 25.0;
- 'longitude_of_central_meridian': 265.0,
- 'latitude_of_projection_origin': 25.0}
+<TODO>
 
         '''
         if copy:
