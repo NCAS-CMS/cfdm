@@ -1,0 +1,7 @@
+cfdm.Index.name
+===============
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Index.name
