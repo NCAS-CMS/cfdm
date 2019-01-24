@@ -13,7 +13,7 @@ class Constructs(core.Constructs):
     '''    
     def constructs(self, name=None, properties=None, measure=None,
                    ncvar=None, ncdim=None, key=None, axis=None,
-                   construct_type=None, copy=False):
+                   construct=None, copy=False):
         '''Return metadata constructs
 
 By default all metadata constructs are returned, but a subset may be
@@ -112,13 +112,13 @@ returned.
             ``name='ncdim%time'`` will select domain axis constructs
             with netCDF dimension name "time".
 
-    construct_type: (sequence of) `str`, optional
+    construct: (sequence of) `str`, optional
         Select constructs of the given type. If a sequence of types
         has been given then the constructs of each type are
         selected. Valid types are:
 
           ==========================  ================================
-          *construct_type*            Selected constructs
+          *construct*                 Selected constructs
           ==========================  ================================
           ``'domain_ancillary'``      Domain ancillary constructs
           ``'dimension_coordinate'``  Dimension coordinate constructs
@@ -131,13 +131,13 @@ returned.
           ==========================  ================================
 
         *Parameter example:*
-          ``construct_type='dimension_coordinate'``
+          ``construct='dimension_coordinate'``
 
         *Parameter example:*
-          ``construct_type=['auxiliary_coordinate']``
+          ``construct=['auxiliary_coordinate']``
 
         *Parameter example:*
-          ``construct_type=('domain_ancillary', 'cell_method')``
+          ``construct=('domain_ancillary', 'cell_method')``
 
         Note that a domain never contains cell method nor field
         ancillary constructs.
@@ -227,7 +227,7 @@ returned.
         their construct identifiers.
         
         If cell method contructs, and no other construct types, have
-        been selected with the *construct_type* parameter then the
+        been selected with the *construct* parameter then the
         constructs are returned in an ordered dictionary
         (`collections.OrderedDict`). The order is determined by the
         order in which the cell method constructs were originally
@@ -265,13 +265,13 @@ returned.
 {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 >>> f.constructs('ncvar%b')
 {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
->>> f.constructs(construct_type='coordinate_reference')
+>>> f.constructs(construct='coordinate_reference')
 {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
  'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
->>> f.constructs(construct_type='cell_method')
+>>> f.constructs(construct='cell_method')
 OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
              ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
->>> f.constructs(construct_type=['cell_method', 'field_ancillary'])
+>>> f.constructs(construct=['cell_method', 'field_ancillary'])
 {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
  'cellmethod1': <CellMethod: domainaxis3: maximum>,
  'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
@@ -291,14 +291,14 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
  'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
  'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 >>> f.constructs('longitude',
-...              construct_type='auxiliary_coordinate', 
+...              construct='auxiliary_coordinate', 
 ...              axes=['domainaxis1'])
 {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
 >>> f.constructs('air_pressure')
 {}
 
         '''
-        out = super().constructs(construct_type=construct_type, copy=copy)
+        out = super().constructs(construct=construct, copy=copy)
 
         if key is not None:
             if isinstance(key, basestring):
@@ -517,14 +517,14 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
 
         '''
-        domain_axes = self.constructs(construct_type='domain_axis')
+        domain_axes = self.constructs(construct='domain_axis')
         
         if axis not in domain_axes:
             return default
 
         constructs_data_axes = self.constructs_data_axes()
 
-        dimension_coordinates = self.constructs(construct_type='dimension_coordinate')
+        dimension_coordinates = self.constructs(construct='dimension_coordinate')
 
         name = None        
         for key, dim in dimension_coordinates.items():
@@ -536,7 +536,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         if name is not None:
             return name
 
-        auxiliary_coordinates = self.constructs(construct_type='auxiliary_coordinate')
+        auxiliary_coordinates = self.constructs(construct='auxiliary_coordinate')
         
         found = False
         for key, aux in auxiliary_coordinates.items():
@@ -730,8 +730,8 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                                      key1_to_key0=None):
         '''
         '''
-        refs0 = self.constructs(construct_type='coordinate_reference')
-        refs1 = other.constructs(construct_type='coordinate_reference')
+        refs0 = self.constructs(construct='coordinate_reference')
+        refs1 = other.constructs(construct='coordinate_reference')
 
         if len(refs0) != len(refs1):
             if verbose:
@@ -802,8 +802,8 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         '''TODO
 
         '''
-        cell_methods0 = self.constructs(construct_type='cell_method')
-        cell_methods1 = other.constructs(construct_type='cell_method')
+        cell_methods0 = self.constructs(construct='cell_method')
+        cell_methods1 = other.constructs(construct='cell_method')
 
         if len(cell_methods0) != len(cell_methods1):
             if verbose:
@@ -891,9 +891,9 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         # Domain axes
         # ------------------------------------------------------------
         self_sizes  = [d.get_size()
-                       for d in self.constructs(construct_type='domain_axis').values()]
+                       for d in self.constructs(construct='domain_axis').values()]
         other_sizes = [d.get_size()
-                       for d in other.constructs(construct_type='domain_axis').values()]
+                       for d in other.constructs(construct='domain_axis').values()]
         
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes

@@ -509,11 +509,11 @@ False
     # parameter: ncdim
     # parameter: key
     # parameter: axis
-    # parameter: construct_type
+    # parameter: construct
     # parameter: default
     def del_construct(self, name=None, properties=None, measure=None,
                       ncvar=None, ncdim=None, key=None, axis=None,
-                      construct_type=None, default=ValueError()):
+                      construct=None, default=ValueError()):
         '''Remove a metadata construct.
 
 The *unique* construct that satisfies *all* of the given criteria is
@@ -603,20 +603,87 @@ coordinate reference coinstruct.
             ``name='ncdim%time'`` will select domain axis constructs
             with netCDF dimension name "time".
 
-    key: `str`, optional
-        Select the construct with the given construct key.
+    measure: (sequence of) `str`, optional
+        Select cell measure constructs which have the given
+        measure. If multiple measures are specified then select the
+        cell measure constructs which have any of the given measures.
+
+        *Parameter example:*
+          ``meausure='area'``
+
+        *Parameter example:*
+          ``measure=['area']``
+
+        *Parameter example:*
+          ``measure=['area', 'volume']``
+
+    axis: (sequence of) `str`, optional
+        Select constructs which have data that spans a domain axis
+        construct, defined by its construct identifier. If multiple of
+        domain axes are specified then select constructs whose data
+        spans at least one the domain axis constructs.
+
+        *Parameter example:*
+          ``axis='domainaxis1'``
+
+        *Parameter example:*
+          ``axis=['domainaxis2']``
+
+        *Parameter example:*
+          ``axis=['domainaxis0', 'domainaxis1']``
+
+    ncvar: (sequence of) `str`, optional
+        Select constructs which have the given netCDF variable
+        name. If multiple netCDF variable names are specified then
+        select the constructs which have any of the given netCDF
+        variable names.
+
+        *Parameter example:*
+          ``ncvar='lon'``
+
+        *Parameter example:*
+          ``ncvar=['lat']``
+
+        *Parameter example:*
+          ``ncvar=['lon', 'lat']``
+
+    ncdim: (sequence of) `str`, optional
+        Select domain axis constructs which have the given netCDF
+        dimension name. If multiple netCDF dimension names are
+        specified then select the domain axis constructs which have
+        any of the given netCDF dimension names.
+
+        *Parameter example:*
+          ``ncdim='lon'``
+
+        *Parameter example:*
+          ``ncdim=['lat']``
+
+        *Parameter example:*
+          ``ncdim=['lon', 'lat']``
+
+    key: (sequence of) `str`, optional
+        Select the construct with the given construct key. If multiple
+        keys are specified then select all of the metadata constructs
+        which have any of the given keys.
 
         *Parameter example:*
           ``key='domainancillary0'`` will the domain ancillary
           construct with construct identifier "domainancillary1". This
           is equivalent to ``name='key%domainancillary0'``.
 
-    construct_type: (sequence of) `str`, optional
+        *Parameter example:*
+          ``key=['cellmethod2']``
+
+        *Parameter example:*
+          ``key=('dimensioncoordinate1', 'fieldancillary0')``
+
+    construct: (sequence of) `str`, optional
         Select constructs of the given type, or types. Valid types
         are:
 
           ==========================  ================================
-          *construct_type*            Constructs
+          *construct*                 Constructs
           ==========================  ================================
           ``'domain_ancillary'``      Domain ancillary constructs
           ``'dimension_coordinate'``  Dimension coordinate constructs
@@ -629,30 +696,13 @@ coordinate reference coinstruct.
           ==========================  ================================
 
         *Parameter example:*
-          ``construct_type='dimension_coordinate'``
+          ``construct='dimension_coordinate'``
 
         *Parameter example:*
-          ``construct_type=['auxiliary_coordinate']``
+          ``construct=['auxiliary_coordinate']``
 
         *Parameter example:*
-          ``construct_type=('domain_ancillary', 'cell_method')``
-
-        Note that a domain never contains cell method nor field
-        ancillary constructs.
-
-    axis: (sequence of) `str`, optional
-        Select constructs which have data that spans one or more of
-        the given domain axis constructs, in any order. Domain axis
-        contructs are specified by their construct keys.
-
-        *Parameter example:*
-          ``axis='domainaxis2'``
-
-        *Parameter example:*
-          ``axis=['domainaxis2']``
-
-        *Parameter example:*
-          ``axis=['domainaxis0', 'domainaxis1']``
+          ``construct=('domain_ancillary', 'cell_method')``
 
     copy: `bool`, optional
         If True then return copies of the constructs. By default the
@@ -676,14 +726,14 @@ coordinate reference coinstruct.
 >>> c = f.del_construct(ncvar='lat)
 >>> c = f.del_construct('key%cellmeasure0')
 >>> c = f.del_construct(key='domainaxis2')
->>> c = f.del_construct(construct_type='auxiliary_coordinate',
+>>> c = f.del_construct(construct='auxiliary_coordinate',
 ...                     axis=['domainaxis1'])
 
         '''
         cid = self.get_construct_key(name=name, properties=properties,
                                      measure=measure, ncvar=ncvar,
                                      ncdim=ncdim, key=key,
-                                     construct_type=construct_type,
+                                     construct=construct,
                                      axis=axis, default=None)
         if cid is None:
             return self._default(default,
@@ -1044,9 +1094,17 @@ construct, into the data array.
         return f
     #--- End: def
 
+    # parameter: name
+    # parameter: properties
+    # parameter: measure
+    # parameter: ncvar
+    # parameter: ncdim
+    # parameter: key
+    # parameter: axis
+    # parameter: construct
     def convert(self, name=None, properties=None, measure=None,
                 ncvar=None, ncdim=None, key=None, axis=None,
-                construct_type=None, full_domain=True):
+                construct=None, full_domain=True):
         '''Return a new field construct based on a metadata construct.
 
 A unique metdata construct is identified with the *description* and
@@ -1070,16 +1128,21 @@ regardless of the setting of the *full_domain* parameter.
 
 :Parameters:
 
-    description: `str`, optional
-        Select the construct that has the given property, or other
-        attribute, value.
+    name: (sequence of) `str`, optional
+        Select constructs that have the given name. In general, a
+        contruct's name is the string returned by its `!name` method.
 
-        The description may be one of:
+        The name may be one of:
 
-        * The value of the standard name property on its own. 
+        * The value of the standard name property.
 
           *Parameter example:*
-            ``description='air_pressure'`` will select constructs that
+            ``name='air_pressure'`` will select constructs that
+            have a "standard_name" property with the value
+            "air_pressure", as will ``name=['air_pressure']``.
+
+          *Parameter example:*
+            ``name=['air_pressure'`` will select constructs that
             have a "standard_name" property with the value
             "air_pressure".
 
@@ -1087,53 +1150,153 @@ regardless of the setting of the *full_domain* parameter.
           a colon (``:``).
 
           *Parameter example:*
-            ``description='positive:up'`` will select constructs that
+            ``name='positive:up'`` will select constructs that
             have a "positive" property with the value "up".
 
           *Parameter example:*
-            ``description='foo:bar'`` will select constructs that have
+            ``name='foo:bar'`` will select constructs that have
             a "foo" property with the value "bar".
 
           *Parameter example:*
-            ``description='standard_name:air_pressure'`` will select
+            ``name='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
             value "air_pressure".
+
+          *Parameter example:*
+            ``name=['air_pressure', long_name:Air Temperature']`` will
+            select constructs that have a "standard_name" property
+            with the value "air_pressure" or a "long_name" property
+            with a value of "air Temperature".
 
         * The measure of cell measure constructs, prefixed by
           ``measure%``.
 
           *Parameter example:*
-            ``description='measure%area'`` will select "area" cell
+            ``name='measure%area'`` will select "area" cell
             measure constructs.
 
-        * A construct identifier, prefixed by ``cid%`` (see also the
-          *cid* parameter).
+        * A construct key, prefixed by ``key%`` (see also the *key*
+          parameter).
+
+          *Parameter example:* 
+            ``name='key%cellmethod1'`` will select cell method
+            construct with construct key "cellmethod1". This is
+            equivalent to ``key='cellmethod1'``.
+
+        * The netCDF variable name, prefixed by ``ncvar%`` (see also
+          the *ncvar* parameter).
 
           *Parameter example:*
-            ``description='cid%cellmethod1'`` will select cell method
-            construct with construct identifier "cellmethod1". This is
-            equivalent to ``cid='cellmethod1'``.
-
-        * The netCDF variable name, prefixed by ``ncvar%``.
-
-          *Parameter example:*
-            ``description='ncvar%lat'`` will select constructs with
-            netCDF variable name "lat".
+            ``name='ncvar%lat'`` will select constructs with netCDF
+            variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
-          prefixed by ``ncdim%``.
+          prefixed by ``ncdim%`` (see also the *ncdim* parameter).
 
           *Parameter example:*
-            ``description='ncdim%time'`` will select domain axis
-            constructs with netCDF dimension name "time".
+            ``name='ncdim%time'`` will select domain axis constructs
+            with netCDF dimension name "time".
 
-    cid: `str`, optional
-        Select the construct with the given construct identifier.
+    measure: (sequence of) `str`, optional
+        Select cell measure constructs which have the given
+        measure. If multiple measures are specified then select the
+        cell measure constructs which have any of the given measures.
 
         *Parameter example:*
-          ``cid='domainancillary0'`` will the domain ancillary
-          construct with construct identifier "domainancillary0". This
-          is equivalent to ``description='cid%domainancillary0'``.
+          ``meausure='area'``
+
+        *Parameter example:*
+          ``measure=['area']``
+
+        *Parameter example:*
+          ``measure=['area', 'volume']``
+
+    axis: (sequence of) `str`, optional
+        Select constructs which have data that spans a domain axis
+        construct, defined by its construct identifier. If multiple of
+        domain axes are specified then select constructs whose data
+        spans at least one the domain axis constructs.
+
+        *Parameter example:*
+          ``axis='domainaxis1'``
+
+        *Parameter example:*
+          ``axis=['domainaxis2']``
+
+        *Parameter example:*
+          ``axis=['domainaxis0', 'domainaxis1']``
+
+    ncvar: (sequence of) `str`, optional
+        Select constructs which have the given netCDF variable
+        name. If multiple netCDF variable names are specified then
+        select the constructs which have any of the given netCDF
+        variable names.
+
+        *Parameter example:*
+          ``ncvar='lon'``
+
+        *Parameter example:*
+          ``ncvar=['lat']``
+
+        *Parameter example:*
+          ``ncvar=['lon', 'lat']``
+
+    ncdim: (sequence of) `str`, optional
+        Select domain axis constructs which have the given netCDF
+        dimension name. If multiple netCDF dimension names are
+        specified then select the domain axis constructs which have
+        any of the given netCDF dimension names.
+
+        *Parameter example:*
+          ``ncdim='lon'``
+
+        *Parameter example:*
+          ``ncdim=['lat']``
+
+        *Parameter example:*
+          ``ncdim=['lon', 'lat']``
+
+    key: (sequence of) `str`, optional
+        Select the construct with the given construct key. If multiple
+        keys are specified then select all of the metadata constructs
+        which have any of the given keys.
+
+        *Parameter example:*
+          ``key='domainancillary0'`` will the domain ancillary
+          construct with construct identifier "domainancillary1". This
+          is equivalent to ``name='key%domainancillary0'``.
+
+        *Parameter example:*
+          ``key=['cellmethod2']``
+
+        *Parameter example:*
+          ``key=('dimensioncoordinate1', 'fieldancillary0')``
+
+    construct: (sequence of) `str`, optional
+        Select constructs of the given type, or types. Valid types
+        are:
+
+          ==========================  ================================
+          *construct*                 Constructs
+          ==========================  ================================
+          ``'domain_ancillary'``      Domain ancillary constructs
+          ``'dimension_coordinate'``  Dimension coordinate constructs
+          ``'domain_axis'``           Domain axis constructs
+          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+          ``'cell_measure'``          Cell measure constructs
+          ``'coordinate_reference'``  Coordinate reference constructs
+          ``'cell_method'``           Cell method constructs
+          ``'field_ancillary'``       Field ancillary constructs
+          ==========================  ================================
+
+        *Parameter example:*
+          ``construct='dimension_coordinate'``
+
+        *Parameter example:*
+          ``construct=['auxiliary_coordinate']``
+
+        *Parameter example:*
+          ``construct=('domain_ancillary', 'cell_method')``
 
     full_domain: `bool`, optional
         If False then do not create a domain, other than domain axis
@@ -1270,12 +1433,12 @@ that has fewer metadata constructs than one created with the
         c0 = self.constructs(name=name, properties=properties,
                              measure=measure, ncvar=ncvar,
                              ncdim=ncdim, key=key, axis=axis,
-                             construct_type=construct_type, copy=False)
+                             construct=construct, copy=False)
         if len(c0) != 1:
             self.get_construct(name=name, properties=properties,
                                measure=measure, ncvar=ncvar,
                                ncdim=ncdim, key=key, axis=axis,
-                               construct_type=construct_type, copy=False)
+                               construct=construct, copy=False)
             return
 
         cid, c = c0.popitem()
@@ -1307,10 +1470,10 @@ that has fewer metadata constructs than one created with the
         # Add a more complete domain
         # ------------------------------------------------------------
         if full_domain:
-            for construct_type in ('dimension_coordinate',
-                                   'auxiliary_coordinate',
-                                   'cell_measure'):
-                for ccid, con in self.constructs(construct_type=construct_type,
+            for construct in ('dimension_coordinate',
+                              'auxiliary_coordinate',
+                              'cell_measure'):
+                for ccid, con in self.constructs(construct=construct,
                                                  axis=data_axes,
                                                  copy=False).items():
                     axes = constructs_data_axes.get(ccid)
@@ -1364,7 +1527,7 @@ from a dataset.
 
     display: `bool`, optional
         If True print the compliance report. By default the report is
-        returned as a dictionary.  the report is printed.
+        returned as a dictionary.
 
 :Returns:
 
@@ -1569,7 +1732,7 @@ may be selected for removal.
 
         '''
         return self._get_constructs().constructs(
-            construct_type='field_ancillary', copy=copy)
+            construct='field_ancillary', copy=copy)
     #--- End: def
     
     def cell_methods(self, copy=False):
@@ -1603,7 +1766,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
              ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
         '''
-        return self._get_constructs().constructs(construct_type='cell_method',
+        return self._get_constructs().constructs(construct='cell_method',
                                                  copy=copy)
     #--- End: def
     

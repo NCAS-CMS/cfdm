@@ -392,7 +392,7 @@ None
 None
 
         '''
-        domain_axes = self.constructs(construct_type='domain_axis')
+        domain_axes = self.constructs(construct='domain_axis')
         for axis in axes:
             if axis not in domain_axes:
                 raise ValueError(

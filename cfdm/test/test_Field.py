@@ -155,88 +155,88 @@ class FieldTest(unittest.TestCase):
         # ------------------------------------------------------------
         # constructs_type parameter
         # ------------------------------------------------------------
-        constructs = f.constructs(construct_type=None)
+        constructs = f.constructs(construct=None)
         n = 20
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
 
-        constructs = f.constructs(construct_type='auxiliary_coordinate')
+        constructs = f.constructs(construct='auxiliary_coordinate')
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.AuxiliaryCoordinate)
 
-        constructs = f.constructs(construct_type='cell_measure')
+        constructs = f.constructs(construct='cell_measure')
         n = 1
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))               
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMeasure)
 
-        constructs = f.constructs(construct_type='cell_method')
+        constructs = f.constructs(construct='cell_method')
         n = 2
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMethod)
 
-        constructs = f.constructs(construct_type='dimension_coordinate')
+        constructs = f.constructs(construct='dimension_coordinate')
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DimensionCoordinate)
 
-        constructs = f.constructs(construct_type='coordinate_reference')
+        constructs = f.constructs(construct='coordinate_reference')
         n = 2
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CoordinateReference)
 
-        constructs = f.constructs(construct_type='domain_ancillary')
+        constructs = f.constructs(construct='domain_ancillary')
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
-        constructs = f.constructs(construct_type='field_ancillary')
+        constructs = f.constructs(construct='field_ancillary')
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.FieldAncillary)
 
-        constructs = f.constructs(construct_type='domain_axis')
+        constructs = f.constructs(construct='domain_axis')
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAxis)
 
-        constructs = f.constructs(construct_type=['domain_ancillary'])
+        constructs = f.constructs(construct=['domain_ancillary'])
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
-        constructs = f.constructs(construct_type=['domain_axis'])
+        constructs = f.constructs(construct=['domain_axis'])
         n =  3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAxis)
 
-        constructs = f.constructs(construct_type=['domain_ancillary', 'domain_axis'])
+        constructs = f.constructs(construct=['domain_ancillary', 'domain_axis'])
         n = 6
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
 
         f.set_construct(cfdm.DomainAxis(1))
-        self.assertTrue(len(f.constructs(construct_type='domain_axis')) == 4)
+        self.assertTrue(len(f.constructs(construct='domain_axis')) == 4)
 
         # ------------------------------------------------------------
         # description parameter

@@ -85,15 +85,15 @@ TODO
         return self._get_constructs().constructs_data_axes()
     #--- End: def
     
-    def construct_type(self, key):
-        '''TODO
-
-.. versionadded:: 1.7.0
-        '''                
-        return self._get_constructs().construct_type(key)
-    #--- End: def
+#    def construct_type(self, key):
+#        '''TODO
+#
+#.. versionadded:: 1.7.0
+#        '''                
+#        return self._get_constructs().construct_type(key)
+#    #--- End: def
     
-    def constructs(self, construct_type=None, copy=False):
+    def constructs(self, construct=None, copy=False):
         '''Return metadata constructs.
 
 .. versionadded:: 1.7.0
@@ -103,12 +103,12 @@ TODO
 
 :Parameters:
 
-    construct_type: (sequence of) `str`, optional
+    construct: (sequence of) `str`, optional
         Select constructs of the given type, or types. Valid types
         are:
 
           ==========================  ================================
-          *construct_type*            Constructs
+          *construct*                 Constructs
           ==========================  ================================
           ``'domain_ancillary'``      Domain ancillary constructs
           ``'dimension_coordinate'``  Dimension coordinate constructs
@@ -121,13 +121,13 @@ TODO
           ==========================  ================================
 
         *Parameter example:*
-          ``construct_type='dimension_coordinate'``
+          ``construct='dimension_coordinate'``
 
         *Parameter example:*
-          ``construct_type=['auxiliary_coordinate']``
+          ``construct=['auxiliary_coordinate']``
 
         *Parameter example:*
-          ``construct_type=('domain_ancillary', 'cell_method')``
+          ``construct=('domain_ancillary', 'cell_method')``
 
         Note that a domain never contains cell method nor field
         ancillary constructs.
@@ -142,7 +142,7 @@ TODO
         their construct identifiers.
         
         If cell method contructs, and no other construct types, have
-        been selected with the *construct_type* parameter then the
+        been selected with the *construct* parameter then the
         constructs are returned in an ordered dictionary
         (`collections.OrderedDict`). The order is determined by the
         order in which the cell method constructs were originally
@@ -174,19 +174,19 @@ TODO
  'domainaxis2': <DomainAxis: 9>,
  'domainaxis3': <DomainAxis: 1>,
  'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
->>> f.constructs(construct_type='coordinate_reference')
+>>> f.constructs(construct='coordinate_reference')
 {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
  'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
->>> f.constructs(construct_type='cell_method')
+>>> f.constructs(construct='cell_method')
 OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
              ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
->>> f.constructs(construct_type=['cell_method', 'field_ancillary'])
+>>> f.constructs(construct=['cell_method', 'field_ancillary'])
 {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
  'cellmethod1': <CellMethod: domainaxis3: maximum>,
  'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
         '''
-        return self._get_constructs().constructs(construct_type=construct_type,
+        return self._get_constructs().constructs(construct=construct,
                                                  copy=copy)
     #--- End: def
     

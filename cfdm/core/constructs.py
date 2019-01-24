@@ -276,7 +276,7 @@ class Constructs(object):
         return construct_type    
     #--- End: def
         
-    def constructs(self, construct_type=None, copy=False):
+    def constructs(self, construct=None, copy=False):
         '''Return metadata constructs
 
 Constructs are returned as values of a dictionary, keyed by their
@@ -293,7 +293,7 @@ construct identifiers.
         are:
 
           ==========================  ================================
-          *construct_type*            Constructs
+          *construct*                 Constructs
           ==========================  ================================
           ``'domain_ancillary'``      Domain ancillary constructs
           ``'dimension_coordinate'``  Dimension coordinate constructs
@@ -306,13 +306,13 @@ construct identifiers.
           ==========================  ================================
 
         *Parameter example:*
-          ``construct_type='dimension_coordinate'``
+          ``construct='dimension_coordinate'``
 
         *Parameter example:*
-          ``construct_type=['auxiliary_coordinate']``
+          ``construct=['auxiliary_coordinate']``
 
         *Parameter example:*
-          ``construct_type=['domain_ancillary', 'cell_method']``
+          ``construct=['domain_ancillary', 'cell_method']``
 
         Note that a domain never contains cell method nor field
         ancillary constructs.
@@ -331,18 +331,18 @@ construct identifiers.
 TODO
 
         '''
-        if construct_type is not None:
-            if isinstance(construct_type, basestring):
-                construct_type = (construct_type,)
+        if construct is not None:
+            if isinstance(construct, basestring):
+                construct = (construct,)
         #--- End: if
         
-        if construct_type is not None:
-            if construct_type == ('cell_method',):
-                out = self._constructs[construct_type[0]].copy()
+        if construct is not None:
+            if construct == ('cell_method',):
+                out = self._constructs[construct[0]].copy()
             else:                
                 out = {}
                 
-            for ct in construct_type:
+            for ct in construct:
                 ct = self._check_construct_type(ct)
                 out.update(self._constructs[ct])            
         else:
@@ -734,7 +734,7 @@ False
             if isinstance(axes, basestring):
                 axes = (axes,)
             
-            domain_axes = self.constructs(construct_type='domain_axis')
+            domain_axes = self.constructs(construct='domain_axis')
 
             axes_shape = []
             for axis in axes:
@@ -855,7 +855,7 @@ removed even if it is referenced by coordinate reference coinstruct.
 >>> x = f.del_construct('auxiliarycoordinate2')
 
         '''
-        if key in self.constructs(construct_type='domain_axis'):
+        if key in self.constructs(construct='domain_axis'):
             # Fail if the domain axis construct is spanned by a data
             # array
             for xid, axes in self.constructs_data_axes().items():
@@ -867,7 +867,7 @@ removed even if it is referenced by coordinate reference coinstruct.
             # Fail if the domain axis construct is referenced by a
             # cell method construct
             try:
-                cell_methods = self.constructs(construct_type='cell_method')
+                cell_methods = self.constructs(construct='cell_method')
             except ValueError:
                 # Cell methods are not possible for this Constructs
                 # instance
@@ -882,7 +882,7 @@ removed even if it is referenced by coordinate reference coinstruct.
         else:
             # Remove references to the removed construct in coordinate
             # reference constructs
-            for ref in self.constructs(construct_type='coordinate_reference').values():
+            for ref in self.constructs(construct='coordinate_reference').values():
                 coordinate_conversion = ref.coordinate_conversion
                 for term, value in coordinate_conversion.domain_ancillaries().items():
                     if key == value:
