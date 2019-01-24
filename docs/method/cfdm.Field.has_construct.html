@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b13</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b14</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cfdm.Field.has_construct<a class="headerlink" href="#cfdm-field-has-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.has_construct">
-<code class="descclassname">Field.</code><code class="descname">has_construct</code><span class="sig-paren">(</span><em>name=None</em>, <em>properties=None</em>, <em>measure=None</em>, <em>ncvar=None</em>, <em>ncdim=None</em>, <em>key=None</em>, <em>axis=None</em>, <em>construct_type=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b13/cfdm/mixin/constructaccess.py#L928"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.has_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">has_construct</code><span class="sig-paren">(</span><em>name=None</em>, <em>properties=None</em>, <em>measure=None</em>, <em>ncvar=None</em>, <em>ncdim=None</em>, <em>key=None</em>, <em>axis=None</em>, <em>construct=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b14/cfdm/mixin/constructaccess.py#L938"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.has_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a metadata construct has been set.</p>
 <p>True is returned if, and only if, there is a <em>unique</em> construct that
 satisfies <em>all</em> of the given criteria is returned. All metadata
@@ -190,17 +190,92 @@ with netCDF dimension name “time”.</p>
 </li>
 </ul>
 </dd>
-<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Select the construct with the given construct key.</p>
+<dt>measure: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select cell measure constructs which have the given
+measure. If multiple measures are specified then select the
+cell measure constructs which have any of the given measures.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">meausure='area'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">measure=['area']</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">measure=['area',</span> <span class="pre">'volume']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>axis: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select constructs which have data that spans a domain axis
+construct, defined by its construct identifier. If multiple of
+domain axes are specified then select constructs whose data
+spans at least one the domain axis constructs.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axis='domainaxis1'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axis=['domainaxis2']</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axis=['domainaxis0',</span> <span class="pre">'domainaxis1']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>ncvar: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select constructs which have the given netCDF variable
+name. If multiple netCDF variable names are specified then
+select the constructs which have any of the given netCDF
+variable names.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">ncvar='lon'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">ncvar=['lat']</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">ncvar=['lon',</span> <span class="pre">'lat']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>ncdim: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select domain axis constructs which have the given netCDF
+dimension name. If multiple netCDF dimension names are
+specified then select the domain axis constructs which have
+any of the given netCDF dimension names.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">ncdim='lon'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">ncdim=['lat']</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">ncdim=['lon',</span> <span class="pre">'lat']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>key: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select the construct with the given construct key. If multiple
+keys are specified then select all of the metadata constructs
+which have any of the given keys.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">key='domainancillary0'</span></code> will the domain ancillary
 construct with construct identifier “domainancillary1”. This
 is equivalent to <code class="docutils literal notranslate"><span class="pre">name='key%domainancillary0'</span></code>.</p>
 </dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">key=['cellmethod2']</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">key=('dimensioncoordinate1',</span> <span class="pre">'fieldancillary0')</span></code></p>
+</dd>
 </dl>
 </dd>
-<dt>construct_type: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>construct: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Select constructs of the given type, or types. Valid types
 are:</p>
 <blockquote>
@@ -210,7 +285,7 @@ are:</p>
 <col width="55%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head"><em>construct_type</em></th>
+<tr class="row-odd"><th class="head"><a href="#id1"><span class="problematic" id="id2">*</span></a>construct*ccccc</th>
 <th class="head">Constructs</th>
 </tr>
 </thead>
@@ -244,33 +319,17 @@ are:</p>
 </div></blockquote>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type='dimension_coordinate'</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct='dimension_coordinate'</span></code></p>
 </dd>
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type=['auxiliary_coordinate']</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct=['auxiliary_coordinate']</span></code></p>
 </dd>
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type=('domain_ancillary',</span> <span class="pre">'cell_method')</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct=('domain_ancillary',</span> <span class="pre">'cell_method')</span></code></p>
 </dd>
 </dl>
 <p class="last">Note that a domain never contains cell method nor field
 ancillary constructs.</p>
-</dd>
-<dt>axis: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Select constructs which have data that spans one or more of
-the given domain axis constructs, in any order. Domain axis
-contructs are specified by their construct keys.</p>
-<dl class="last docutils">
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axis='domainaxis2'</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axis=['domainaxis2']</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axis=['domainaxis0',</span> <span class="pre">'domainaxis1']</span></code></p>
-</dd>
-</dl>
 </dd>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then return copies of the constructs. By default the
@@ -293,7 +352,7 @@ constructs are not copied.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="s1">&#39;ncvar%lat)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="s1">&#39;key</span><span class="si">%c</span><span class="s1">ellmeasure0&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;domainaxis2&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="n">construct_type</span><span class="o">=</span><span class="s1">&#39;auxiliary_coordinate&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="n">construct</span><span class="o">=</span><span class="s1">&#39;auxiliary_coordinate&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                    <span class="n">axis</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">])</span>
 </pre></div>
 </div>

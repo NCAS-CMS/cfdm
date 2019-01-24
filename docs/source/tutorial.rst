@@ -872,7 +872,7 @@ metadata constructs by
 .. code-block:: python
    :caption: *Get constructs by their type*.
 	  
-   >>> t.constructs(construct_type='dimension_coordinate')
+   >>> t.constructs(construct='dimension_coordinate')
    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
@@ -911,7 +911,7 @@ metadata constructs by
 .. code-block:: python
    :caption: *Get constructs that meet a variety of criteria.*
 	     
-   >>> t.constructs(construct_type='auxiliary_coordinate',
+   >>> t.constructs(construct='auxiliary_coordinate',
    ...              axis='domainaxis1',
    ...              properties={'units': 'degrees_E'})
    {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
@@ -935,9 +935,10 @@ means.
 
 A less verbose, and often more convenient, method of selection is by
 metadata construct "name". A construct's name is typically the
-description that is displayed when the construct is inspected. For
-example, the :ref:`three auxiliary coordinate constructs
-<Medium-detail>` in the field construct ``t`` have names
+description that is displayed when the construct is inspected, and so
+it is often convienient to copy this name when selecting metadata
+constructs. For example, the :ref:`three auxiliary coordinate
+constructs <Medium-detail>` in the field construct ``t`` have names
 ``'latitude'``, ``'longitude'`` and ``'long_name:Grid latitude
 name'``. Selection by name does not require a keyword parameter,
 although the keyword ``name`` can be used:
@@ -977,7 +978,7 @@ method for retrieving that type of metadata construct:
    :caption: *There are bespoke methods for retrieving constructs by
              type.*
 		
-   >>> t.constructs(construct_type='cell_measure')
+   >>> t.constructs(construct='cell_measure')
    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
    >>> t.cell_measures()
    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
@@ -1329,12 +1330,11 @@ A coordinate reference construct contains
 .. code-block:: python
    :caption: *Select the vertical coordinate system construct and
              inspect its coordinate constructs. (Note that the
-             "construct_type" parameter is required since there is
-             also a dimension coordinate construct with the same
-             name.)*
+             "construct" parameter is required since there is also a
+             dimension coordinate construct with the same name.)*
      
    >>> crs = t.get_construct('atmosphere_hybrid_height_coordinate',
-   ...                       construct_type='coordinate_reference')
+   ...                       construct='coordinate_reference')
    >>> crs
    <CoordinateReference: atmosphere_hybrid_height_coordinate>
    >>> crs.dump()

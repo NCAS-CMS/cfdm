@@ -6,6 +6,14 @@ The central element defined by the CF data model is the field
 construct, which corresponds to a CF-netCDF data variable with all of
 its metadata.
 
+The cfdm package implements the CF data model for its internal data
+structures and so is able to process any CF-compliant dataset. It is
+not strict about CF-compliance, however, so that partially conformant
+datasets may be modified in memory, as well as ingested from existing
+datasets and written to new datasets. This is so that datasets which
+are partially conformant may nonetheless be modified in memory and
+written to new datasets.
+
 The cfdm package can
 
     * read field constructs from netCDF datasets,
@@ -20,12 +28,15 @@ The cfdm package can
       convention (i.e. ragged or gathered arrays), whilst presenting a
       view of the data in its uncompressed form.
 
+Note that cfdm enables the creation of CF field constructs, but it's
+up to the user to use them in a CF-compliant way.
+
 '''
 
 __author__       = 'David Hassell'
-__date__         = '2019-01-22'
+__date__         = '2019-01-24'
 __cf_version__   = '1.7'
-__version__      = '1.7.0b13'
+__version__      = '1.7.0b14'
 
 requires = ('numpy',
             'netCDF4',

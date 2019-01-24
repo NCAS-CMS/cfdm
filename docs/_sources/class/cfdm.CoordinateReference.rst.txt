@@ -30,7 +30,7 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~cfdm.CoordinateRefernce.construct_type
+   ~cfdm.CoordinateReference.construct_type
 
 Coordinates
 -----------

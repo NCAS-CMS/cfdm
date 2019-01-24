@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">Python cfdm package 1.7.0b13</a></b></h3>
+<h3><b><a href="index.html">Python cfdm package 1.7.0b14</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
@@ -104,7 +104,7 @@
   <div class="section" id="tutorial">
 <span id="id1"></span><h1><strong>Tutorial</strong><a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.7.0b13 for version 1.7 of the CF conventions.</p>
+<p>Version 1.7.0b14 for version 1.7 of the CF conventions.</p>
 <p>The code examples in this tutorial are available in an <strong>IPython
 Jupyter notebook</strong> (<a class="reference download internal" href="_downloads/tutorial.ipynb" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>,
 80kB) <a class="footnote-reference" href="#files" id="id2">[1]</a>, <a class="footnote-reference" href="#notebook" id="id3">[2]</a>.</p>
@@ -958,7 +958,7 @@ metadata constructs by</p>
 </ul>
 <div class="literal-block-wrapper docutils container" id="id75">
 <div class="code-block-caption"><span class="caption-text"><em>Get constructs by their type</em>.</span><a class="headerlink" href="#id75" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct_type</span><span class="o">=</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct</span><span class="o">=</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">)</span>
 <span class="go">{&#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) &gt;,</span>
 <span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: grid_latitude(10) degrees&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: grid_longitude(9) degrees&gt;,</span>
@@ -1001,7 +1001,7 @@ their data.</em></span><a class="headerlink" href="#id77" title="Permalink to th
 </div>
 <div class="literal-block-wrapper docutils container" id="id79">
 <div class="code-block-caption"><span class="caption-text"><em>Get constructs that meet a variety of criteria.</em></span><a class="headerlink" href="#id79" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct_type</span><span class="o">=</span><span class="s1">&#39;auxiliary_coordinate&#39;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct</span><span class="o">=</span><span class="s1">&#39;auxiliary_coordinate&#39;</span><span class="p">,</span>
 <span class="gp">... </span>             <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">,</span>
 <span class="gp">... </span>             <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees_E&#39;</span><span class="p">})</span>
 <span class="go">{&#39;auxiliarycoordinate1&#39;: &lt;AuxiliaryCoordinate: longitude(9, 10) degrees_E&gt;}</span>
@@ -1027,8 +1027,10 @@ means.</p>
 </div>
 <p>A less verbose, and often more convenient, method of selection is by
 metadata construct “name”. A construct’s name is typically the
-description that is displayed when the construct is inspected. For
-example, the <a class="reference internal" href="#medium-detail"><span class="std std-ref">three auxiliary coordinate constructs</span></a> in the field construct <code class="docutils literal notranslate"><span class="pre">t</span></code> have names
+description that is displayed when the construct is inspected, and so
+it is often convienient to copy this name when selecting metadata
+constructs. For example, the <a class="reference internal" href="#medium-detail"><span class="std std-ref">three auxiliary coordinate
+constructs</span></a> in the field construct <code class="docutils literal notranslate"><span class="pre">t</span></code> have names
 <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code>, <code class="docutils literal notranslate"><span class="pre">'longitude'</span></code> and <code class="docutils literal notranslate"><span class="pre">'long_name:Grid</span> <span class="pre">latitude</span>
 <span class="pre">name'</span></code>. Selection by name does not require a keyword parameter,
 although the keyword <code class="docutils literal notranslate"><span class="pre">name</span></code> can be used:</p>
@@ -1064,7 +1066,7 @@ method for retrieving that type of metadata construct:</p>
 <div class="literal-block-wrapper docutils container" id="id82">
 <div class="code-block-caption"><span class="caption-text"><em>There are bespoke methods for retrieving constructs by
 type.</em></span><a class="headerlink" href="#id82" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct_type</span><span class="o">=</span><span class="s1">&#39;cell_measure&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct</span><span class="o">=</span><span class="s1">&#39;cell_measure&#39;</span><span class="p">)</span>
 <span class="go">{&#39;cellmeasure0&#39;: &lt;CellMeasure: measure%area(9, 10) km2&gt;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">cell_measures</span><span class="p">()</span>
 <span class="go">{&#39;cellmeasure0&#39;: &lt;CellMeasure: measure%area(9, 10) km2&gt;}</span>
@@ -1395,11 +1397,10 @@ reference construct;</li>
 <div class="literal-block-wrapper docutils container" id="id98">
 <div class="code-block-caption"><span class="caption-text"><em>Select the vertical coordinate system construct and
 inspect its coordinate constructs. (Note that the
-“construct_type” parameter is required since there is
-also a dimension coordinate construct with the same
-name.)</em></span><a class="headerlink" href="#id98" title="Permalink to this code">¶</a></div>
+“construct” parameter is required since there is also a
+dimension coordinate construct with the same name.)</em></span><a class="headerlink" href="#id98" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">crs</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;atmosphere_hybrid_height_coordinate&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                      <span class="n">construct_type</span><span class="o">=</span><span class="s1">&#39;coordinate_reference&#39;</span><span class="p">)</span>
+<span class="gp">... </span>                      <span class="n">construct</span><span class="o">=</span><span class="s1">&#39;coordinate_reference&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">crs</span>
 <span class="go">&lt;CoordinateReference: atmosphere_hybrid_height_coordinate&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">crs</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>

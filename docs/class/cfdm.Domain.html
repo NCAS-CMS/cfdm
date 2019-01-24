@@ -17,6 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.Domain.dump" href="../method/cfdm.Domain.dump.html" />
     <link rel="prev" title="cfdm.Datum.__str__" href="../method/cfdm.Datum.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -29,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b13</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b14</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -52,6 +53,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.Datum.__str__.html" title="previous chapter">cfdm.Datum.__str__</a></li>
+      <li>Next: <a href="../method/cfdm.Domain.dump.html" title="next chapter">cfdm.Domain.dump</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -87,7 +89,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Domain">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Domain</code><span class="sig-paren">(</span><em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b13/cfdm/domain.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Domain</code><span class="sig-paren">(</span><em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b14/cfdm/domain.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domain.Domain</span></code></p>
 <p>A domain of the CF data model.</p>
 <p>The domain represents a set of discrete “locations” in what generally
@@ -124,107 +126,123 @@ initialization. By default arguments are deep copied.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
+<div class="section" id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.array_constructs</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.dump.html#cfdm.Domain.dump" title="cfdm.Domain.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
+<td>A full description of the domain.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.auxiliary_coordinates.html#cfdm.Domain.auxiliary_coordinates" title="cfdm.Domain.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a></td>
+</tbody>
+</table>
+</div>
+<div class="section" id="metadata-constructs">
+<h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.auxiliary_coordinates.html#cfdm.Domain.auxiliary_coordinates" title="cfdm.Domain.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a></td>
 <td>Return auxiliary coordinate constructs.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.cell_measures.html#cfdm.Domain.cell_measures" title="cfdm.Domain.cell_measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measures</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.cell_measures.html#cfdm.Domain.cell_measures" title="cfdm.Domain.cell_measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measures</span></code></a></td>
 <td>Return cell measure constructs.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.construct</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.construct_axes</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.construct_type.html#cfdm.Domain.construct_type" title="cfdm.Domain.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></td>
-<td>TODO</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.constructs.html#cfdm.Domain.constructs" title="cfdm.Domain.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a></td>
-<td>Return metadata constructs</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.coordinate_references.html#cfdm.Domain.coordinate_references" title="cfdm.Domain.coordinate_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_references</span></code></a></td>
-<td>Return coordinate reference constructs.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.coordinates.html#cfdm.Domain.coordinates" title="cfdm.Domain.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a></td>
 <td>Return dimension and auxiliary coordinate constructs.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.copy.html#cfdm.Domain.copy" title="cfdm.Domain.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
-<td>Return a deep copy.</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.coordinate_references.html#cfdm.Domain.coordinate_references" title="cfdm.Domain.coordinate_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_references</span></code></a></td>
+<td>Return coordinate reference constructs.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.dimension_coordinates.html#cfdm.Domain.dimension_coordinates" title="cfdm.Domain.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a></td>
+<td>Return dimension coordinate constructs.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.domain_ancillaries.html#cfdm.Domain.domain_ancillaries" title="cfdm.Domain.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></td>
+<td>Return domain ancillary constructs.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.domain_axes.html#cfdm.Domain.domain_axes" title="cfdm.Domain.domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code></a></td>
+<td>Return domain axis constructs.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.constructs.html#cfdm.Domain.constructs" title="cfdm.Domain.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a></td>
+<td>Return metadata constructs</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.del_construct.html#cfdm.Domain.del_construct" title="cfdm.Domain.del_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code></a></td>
 <td>Remove a metadata construct.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.dimension_coordinates.html#cfdm.Domain.dimension_coordinates" title="cfdm.Domain.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a></td>
-<td>Return dimension coordinate constructs.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.domain_ancillaries.html#cfdm.Domain.domain_ancillaries" title="cfdm.Domain.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></td>
-<td>Return domain ancillary constructs.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.domain_axes.html#cfdm.Domain.domain_axes" title="cfdm.Domain.domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code></a></td>
-<td>Return domain axis constructs.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.domain_axis_name.html#cfdm.Domain.domain_axis_name" title="cfdm.Domain.domain_axis_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis_name</span></code></a></td>
-<td>TODO</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.dump.html#cfdm.Domain.dump" title="cfdm.Domain.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
-<td>A full description of the domain.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.equals.html#cfdm.Domain.equals" title="cfdm.Domain.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>TODO</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.fromconstructs.html#cfdm.Domain.fromconstructs" title="cfdm.Domain.fromconstructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromconstructs</span></code></a></td>
-<td>Create a domain from existing metadata constructs.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.get_construct.html#cfdm.Domain.get_construct" title="cfdm.Domain.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.get_construct.html#cfdm.Domain.get_construct" title="cfdm.Domain.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a></td>
 <td>Return a metadata construct.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.next.html#cfdm.Domain.next" title="cfdm.Domain.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.has_construct.html#cfdm.Domain.has_construct" title="cfdm.Domain.has_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_construct</span></code></a></td>
+<td>Whether a metadata construct has been set.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.set_auxiliary_coordinate</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.set_cell_measure</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.set_construct.html#cfdm.Domain.set_construct" title="cfdm.Domain.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.set_construct.html#cfdm.Domain.set_construct" title="cfdm.Domain.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a></td>
 <td>Set a metadata construct.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.set_construct_axes</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.get_construct_key.html#cfdm.Domain.get_construct_key" title="cfdm.Domain.get_construct_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct_key</span></code></a></td>
+<td>Return the key for a metadata construct.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.set_coordinate_reference</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.constructs_data_axes.html#cfdm.Domain.constructs_data_axes" title="cfdm.Domain.constructs_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs_data_axes</span></code></a></td>
+<td>Return the domain axes spanned by metadata construct data arrays.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.set_dimension_coordinate</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.get_construct_data_axes.html#cfdm.Domain.get_construct_data_axes" title="cfdm.Domain.get_construct_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct_data_axes</span></code></a></td>
+<td>Return the construct keys of the domain axis constructs spanned by a metadata construct data array.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.set_domain_ancillary</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.set_domain_axis</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.set_construct_data_axes.html#cfdm.Domain.set_construct_data_axes" title="cfdm.Domain.set_construct_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct_data_axes</span></code></a></td>
+<td>Set the domain axis constructs spanned by a metadata construct data array.</td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Attributes</p>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.copy.html#cfdm.Domain.copy" title="cfdm.Domain.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.equals.html#cfdm.Domain.equals" title="cfdm.Domain.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
+<td>TODO</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.fromconstructs.html#cfdm.Domain.fromconstructs" title="cfdm.Domain.fromconstructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromconstructs</span></code></a></td>
+<td>Create a domain from existing metadata constructs.</td>
+</tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.__deepcopy__.html#cfdm.Domain.__deepcopy__" title="cfdm.Domain.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.__repr__.html#cfdm.Domain.__repr__" title="cfdm.Domain.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.__str__.html#cfdm.Domain.__str__" title="cfdm.Domain.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 

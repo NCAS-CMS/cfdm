@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b13</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b14</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cfdm.Field.constructs_data_axes<a class="headerlink" href="#cfdm-field-constructs-data-axes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.constructs_data_axes">
-<code class="descclassname">Field.</code><code class="descname">constructs_data_axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b13/cfdm/core/mixin/constructaccess.py#L68"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.constructs_data_axes" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">constructs_data_axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b14/cfdm/core/mixin/constructaccess.py#L68"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.constructs_data_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the domain axes spanned by metadata construct data arrays.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -103,13 +103,18 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
+<dd><p class="first last">The domain axis constructs spanned by the data of metadata
+constructs.</p>
+</dd>
+</dl>
+</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">constructs_data_axes</span><span class="p">()</span>
-<span class="go">TODO</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">constructs_data_axes</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd></dl>

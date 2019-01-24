@@ -75,11 +75,12 @@ TODO
 :Returns:
 
     `dict`
+        The domain axis constructs spanned by the data of metadata
+        constructs.
 
 **Examples:**
 
->>> f.constructs_data_axes()
-TODO
+>>> d = f.constructs_data_axes()
 
         '''
         return self._get_constructs().constructs_data_axes()

@@ -6,9 +6,67 @@ cfdm.Domain
 
 ----
 
-.. autoclass:: Domain
+.. autoclass:: cfdm.Domain
    :no-members:
    :no-inherited-members:
+
+.. rubric:: Methods
+
+Inspection
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Domain.dump
+
+Metadata constructs
+-------------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Domain.auxiliary_coordinates
+   ~cfdm.Domain.cell_measures
+   ~cfdm.Domain.coordinates
+   ~cfdm.Domain.coordinate_references
+   ~cfdm.Domain.dimension_coordinates
+   ~cfdm.Domain.domain_ancillaries
+   ~cfdm.Domain.domain_axes
+   ~cfdm.Domain.constructs
+   ~cfdm.Domain.del_construct
+   ~cfdm.Domain.get_construct
+   ~cfdm.Domain.has_construct
+   ~cfdm.Domain.set_construct
+   ~cfdm.Domain.get_construct_key
+   ~cfdm.Domain.constructs_data_axes
+   ~cfdm.Domain.get_construct_data_axes
+   ~cfdm.Domain.set_construct_data_axes
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Domain.copy
+   ~cfdm.Domain.equals
+   ~cfdm.Domain.fromconstructs
+
+Special
+-------
 
 .. rubric:: Methods
 
@@ -16,43 +74,8 @@ cfdm.Domain
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
-   ~Domain.array_constructs
-   ~Domain.auxiliary_coordinates
-   ~Domain.cell_measures
-   ~Domain.construct
-   ~Domain.construct_axes
-   ~Domain.construct_type
-   ~Domain.constructs
-   ~Domain.coordinate_references
-   ~Domain.coordinates
-   ~Domain.copy
-   ~Domain.del_construct
-   ~Domain.dimension_coordinates
-   ~Domain.domain_ancillaries
-   ~Domain.domain_axes
-   ~Domain.domain_axis_name
-   ~Domain.dump
-   ~Domain.equals
-   ~Domain.fromconstructs
-   ~Domain.get_construct
-   ~Domain.next
-   ~Domain.set_auxiliary_coordinate
-   ~Domain.set_cell_measure
-   ~Domain.set_construct
-   ~Domain.set_construct_axes
-   ~Domain.set_coordinate_reference
-   ~Domain.set_dimension_coordinate
-   ~Domain.set_domain_ancillary
-   ~Domain.set_domain_axis
 
-.. rubric:: Attributes
+   ~cfdm.Domain.__deepcopy__
+   ~cfdm.Domain.__repr__
+   ~cfdm.Domain.__str__
 
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   
-   
-   

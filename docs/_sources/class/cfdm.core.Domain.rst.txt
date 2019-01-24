@@ -1,46 +1,58 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.Domain
-================
+===========
 
-.. currentmodule:: cfdm.core
+----
 
-.. autoclass:: Domain
+.. autoclass:: cfdm.core.Domain
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Metadata constructs
+-------------------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   .. autosummary::
-   
-      ~Domain.__init__
-      ~Domain.array_constructs
-      ~Domain.auxiliary_coordinates
-      ~Domain.cell_measures
-      ~Domain.construct_axes
-      ~Domain.construct_type
-      ~Domain.constructs
-      ~Domain.coordinate_references
-      ~Domain.coordinates
-      ~Domain.copy
-      ~Domain.del_construct
-      ~Domain.dimension_coordinates
-      ~Domain.domain_ancillaries
-      ~Domain.domain_axes
-      ~Domain.domain_axis_name
-      ~Domain.fromconstructs
-      ~Domain.get_construct
-      ~Domain.next
-      ~Domain.set_auxiliary_coordinate
-      ~Domain.set_cell_measure
-      ~Domain.set_construct
-      ~Domain.set_construct_axes
-      ~Domain.set_coordinate_reference
-      ~Domain.set_dimension_coordinate
-      ~Domain.set_domain_ancillary
-      ~Domain.set_domain_axis
-   
-   
+   ~cfdm.core.Domain.constructs
+   ~cfdm.core.Domain.del_construct
+   ~cfdm.core.Domain.get_construct
+   ~cfdm.core.Domain.has_construct
+   ~cfdm.core.Domain.set_construct
+   ~cfdm.core.Domain.constructs_data_axes
+   ~cfdm.core.Domain.get_construct_data_axes
+   ~cfdm.core.Domain.set_construct_data_axes
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Domain.copy
+   ~cfdm.core.Domain.fromconstructs
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Domain.__deepcopy__
 
    
    

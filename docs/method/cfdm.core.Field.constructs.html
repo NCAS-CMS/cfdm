@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b13</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b14</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cfdm.core.Field.constructs<a class="headerlink" href="#cfdm-core-field-constructs" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.Field.constructs">
-<code class="descclassname">Field.</code><code class="descname">constructs</code><span class="sig-paren">(</span><em>construct_type=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b13/cfdm/core/mixin/constructaccess.py#L96"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field.constructs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">constructs</code><span class="sig-paren">(</span><em>construct=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b14/cfdm/core/mixin/constructaccess.py#L97"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field.constructs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return metadata constructs.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -105,7 +105,7 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>construct_type: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>construct: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Select constructs of the given type, or types. Valid types
 are:</p>
 <blockquote>
@@ -115,7 +115,7 @@ are:</p>
 <col width="55%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head"><em>construct_type</em></th>
+<tr class="row-odd"><th class="head"><em>construct</em></th>
 <th class="head">Constructs</th>
 </tr>
 </thead>
@@ -149,13 +149,13 @@ are:</p>
 </div></blockquote>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type='dimension_coordinate'</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct='dimension_coordinate'</span></code></p>
 </dd>
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type=['auxiliary_coordinate']</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct=['auxiliary_coordinate']</span></code></p>
 </dd>
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type=('domain_ancillary',</span> <span class="pre">'cell_method')</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct=('domain_ancillary',</span> <span class="pre">'cell_method')</span></code></p>
 </dd>
 </dl>
 <p class="last">Note that a domain never contains cell method nor field
@@ -172,7 +172,7 @@ ancillary constructs.</p>
 <dd><p class="first">Constructs are returned as values of a dictionary, keyed by
 their construct identifiers.</p>
 <p class="last">If cell method contructs, and no other construct types, have
-been selected with the <em>construct_type</em> parameter then the
+been selected with the <em>construct</em> parameter then the
 constructs are returned in an ordered dictionary
 (<a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></a>). The order is determined by the
 order in which the cell method constructs were originally
@@ -209,13 +209,13 @@ added.</p>
 <span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: 9&gt;,</span>
 <span class="go"> &#39;domainaxis3&#39;: &lt;DomainAxis: 1&gt;,</span>
 <span class="go"> &#39;fieldancillary0&#39;: &lt;FieldAncillary: air_temperature standard_error(10, 9) K&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct_type</span><span class="o">=</span><span class="s1">&#39;coordinate_reference&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct</span><span class="o">=</span><span class="s1">&#39;coordinate_reference&#39;</span><span class="p">)</span>
 <span class="go">{&#39;coordinatereference0&#39;: &lt;CoordinateReference: atmosphere_hybrid_height_coordinate&gt;,</span>
 <span class="go"> &#39;coordinatereference1&#39;: &lt;CoordinateReference: rotated_latitude_longitude&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct_type</span><span class="o">=</span><span class="s1">&#39;cell_method&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct</span><span class="o">=</span><span class="s1">&#39;cell_method&#39;</span><span class="p">)</span>
 <span class="go">OrderedDict([(&#39;cellmethod0&#39;, &lt;CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)&gt;),</span>
 <span class="go">             (&#39;cellmethod1&#39;, &lt;CellMethod: domainaxis3: maximum&gt;)])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct_type</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cell_method&#39;</span><span class="p">,</span> <span class="s1">&#39;field_ancillary&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cell_method&#39;</span><span class="p">,</span> <span class="s1">&#39;field_ancillary&#39;</span><span class="p">])</span>
 <span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)&gt;,</span>
 <span class="go"> &#39;cellmethod1&#39;: &lt;CellMethod: domainaxis3: maximum&gt;,</span>
 <span class="go"> &#39;fieldancillary0&#39;: &lt;FieldAncillary: air_temperature standard_error(10, 9) K&gt;}</span>

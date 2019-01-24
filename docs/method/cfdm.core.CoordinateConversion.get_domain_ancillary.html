@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b13</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b14</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -90,8 +90,16 @@
 <h1>cfdm.core.CoordinateConversion.get_domain_ancillary<a class="headerlink" href="#cfdm-core-coordinateconversion-get-domain-ancillary" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.CoordinateConversion.get_domain_ancillary">
-<code class="descclassname">CoordinateConversion.</code><code class="descname">get_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b13/cfdm/core/abstract/parametersdomainancillaries.py#L174"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.get_domain_ancillary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a parameter value.</p>
+<code class="descclassname">CoordinateConversion.</code><code class="descname">get_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b14/cfdm/core/abstract/parametersdomainancillaries.py#L189"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.get_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a domain ancillary term.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cfdm.core.CoordinateConversion.del_domain_ancillary.html#cfdm.core.CoordinateConversion.del_domain_ancillary" title="cfdm.core.CoordinateConversion.del_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_domain_ancillary</span></code></a>, <a class="reference internal" href="cfdm.core.CoordinateConversion.domain_ancillaries.html#cfdm.core.CoordinateConversion.domain_ancillaries" title="cfdm.core.CoordinateConversion.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a>,
+<a class="reference internal" href="cfdm.core.CoordinateConversion.set_domain_ancillary.html#cfdm.core.CoordinateConversion.set_domain_ancillary" title="cfdm.core.CoordinateConversion.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -100,26 +108,19 @@
 <dt>term: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
 <dd><p class="first last">The name of the term.</p>
 </dd>
+<dt>default: optional</dt>
+<dd><p class="first last">&lt;TODO&gt;</p>
+</dd>
 </dl>
-<p>default: optional</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The value of the term &lt;SOMETING BAOUT DEFAULT&gt;</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">&lt;TODO&gt;</p>
 </td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;grid_north_pole_latitude&#39;</span><span class="p">)</span>
-<span class="go">70.0</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
-<span class="go">ERROR</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;nonexistent term&#39;</span><span class="p">)</span>
-<span class="go">&#39;nonexistent term&#39;</span>
-</pre></div>
-</div>
+<p>&lt;TODO&gt;</p>
 </dd></dl>
 
 </div>

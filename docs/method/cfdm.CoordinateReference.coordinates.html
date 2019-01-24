@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b13</a></b></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b14</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cfdm.CoordinateReference.coordinates<a class="headerlink" href="#cfdm-coordinatereference-coordinates" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CoordinateReference.coordinates">
-<code class="descclassname">CoordinateReference.</code><code class="descname">coordinates</code><span class="sig-paren">(</span><em>coordinates=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b13/cfdm/core/coordinatereference.py#L197"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference.coordinates" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CoordinateReference.</code><code class="descname">coordinates</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b14/cfdm/core/coordinatereference.py#L198"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference.coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace all references to coordinate constructs.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -100,12 +100,38 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">coordinates: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>coordinates: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
+<dd><p class="first">Delete all existing coordinate construct keys, and instead
+store those supplied.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates=['dimensioncoordinate0']</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates='dimensioncoordinate0'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates=set(['dimensioncoordinate0',</span>
+<span class="pre">'auxiliarycoordinate1'])</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates=[]</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If False then any coordinates provided by the <em>coordinates</em>
+parameter are not copied before insertion. By default they are
+deep copied.</p>
+</dd>
+</dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a></dt>
-<dd><p class="first last">The identifiers of the coordinate objects.</p>
+<dd><p class="first last">The coordinate construct keys or, if the <em>coordinates</em>
+parameter was set, the original references.</p>
 </dd>
 </dl>
 </td>
@@ -113,11 +139,17 @@
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">coordinates</span><span class="p">([</span><span class="s1">&#39;dimensioncoordinate0&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="s1">&#39;dimensioncoordinate1&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="s1">&#39;auxiliarycoordinate0&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="s1">&#39;auxiliarycoordinate1&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>
 <span class="go">{&#39;dimensioncoordinate0&#39;,</span>
 <span class="go"> &#39;dimensioncoordinate1&#39;,</span>
 <span class="go"> &#39;auxiliarycoordinate0&#39;,</span>
 <span class="go"> &#39;auxiliarycoordinate1&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>
+<span class="go">set()</span>
 </pre></div>
 </div>
 </dd></dl>
