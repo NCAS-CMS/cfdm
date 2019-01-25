@@ -83,7 +83,9 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(min_vn):
             min_vn, netCDF4.__version__))
 
 from .constants  import *
-from .constructs import Constructs
+
+from .constructs import (Constructs,
+                         ConstructsDict)
 
 from .data import (Data,
                    Array,

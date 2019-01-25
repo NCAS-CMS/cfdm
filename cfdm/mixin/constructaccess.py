@@ -1430,6 +1430,10 @@ returned.
                                                  axis=axis, copy=copy)
     #--- End: def
 
+    @property
+    def constructs2(self):
+        return self._get_constructs().constructs2
+  
     def domain_axes(self, copy=False):
         '''Return domain axis constructs.
 
@@ -1450,7 +1454,6 @@ returned.
         their construct identifiers.
 
 **Examples:**
-
 
 >>> f.domain_axes()
 {}

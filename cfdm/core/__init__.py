@@ -2,10 +2,10 @@
 
 '''
 
-__Conventions__  = '1.8'
 __author__       = 'David Hassell'
-__date__         = '2018-06-26'
-__version__      = '1.6beta'
+__date__         = '2019-01-25'
+__cf_version__   = '1.7'
+__version__      = '1.7.0b15'
 
 from distutils.version import LooseVersion
 import platform
@@ -16,19 +16,18 @@ if LooseVersion(platform.python_version()) < LooseVersion('2.7.0'):
         "cfdm requires python version >= 2.7. Got python version {}".format(
         platform.python_version()))
 
-from .bounds               import Bounds
-from .constructs           import Constructs
-from .coordinateconversion import CoordinateConversion
+from .constructs           import (Constructs,
+                                   ConstructsDict)
 
-#from .data.data            import Data
-#from .data.numpyarray      import NumpyArray
 from .data                import (Data,
                                   Array,
                                   NumpyArray)
 
-from .datum               import Datum
-from .domain              import Domain
-from .interiorring        import InteriorRing
+from .bounds               import Bounds
+from .coordinateconversion import CoordinateConversion
+from .datum                import Datum
+from .domain               import Domain
+from .interiorring         import InteriorRing
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure         import CellMeasure
