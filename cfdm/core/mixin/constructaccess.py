@@ -94,7 +94,7 @@ TODO
 #        return self._get_constructs().construct_type(key)
 #    #--- End: def
     
-    def constructs(self, construct=None, copy=False):
+    def constructs_old(self, construct=None, copy=False):
         '''Return metadata constructs.
 
 .. versionadded:: 1.7.0

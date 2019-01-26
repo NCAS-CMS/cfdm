@@ -166,7 +166,14 @@ and institution).
         '''
         return 'field'
     #--- End: def        
-        
+
+    @property
+    def constructs(self):
+        '''<TODO>
+        '''
+        return self._get_constructs()
+    #--- End: def
+
     @property
     def domain(self):
         '''Return the domain.
@@ -392,7 +399,8 @@ None
 None
 
         '''
-        domain_axes = self.constructs(construct='domain_axis')
+#        domain_axes = self.constructs(construct='domain_axis')
+        domain_axes = self.constructs.select(construct='domain_axis')
         for axis in axes:
             if axis not in domain_axes:
                 raise ValueError(

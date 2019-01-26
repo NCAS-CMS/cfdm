@@ -1162,7 +1162,7 @@ constructs are selected if no parameters are specified.
     # parameter: axis
     # parameter: construct
     # parameter: copy
-    def constructs(self, name=None, properties=None, measure=None,
+    def constructs_old(self, name=None, properties=None, measure=None,
                    ncvar=None, ncdim=None, key=None, axis=None,
                    construct=None, copy=False):
         '''Return metadata constructs

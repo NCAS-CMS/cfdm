@@ -4,96 +4,96 @@ from past.builtins import basestring
 from collections import OrderedDict
 
 
-class ConstructsDict(dict):
-    '''
-    '''
-    def copy(self):
-        '''
-        '''
-        return type(self)(self)
-    # --- End: def
-    
-    def select(self, construct=None, copy=False):
-        '''<TODO> Return metadata constructs
-
-By default all metadata constructs are, but a subset may be selected
-via the optional parameters. If multiple parameters are specified,
-then the constructs that satisfy *all* of the criteria are returned.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `contructs`, `del_construct`, `get_construct`,
-             `set_construct`
-
-:Parameters:
-
-    construct: (sequence of) `str`, optional
-        Select constructs of the given type, or types. Valid types
-        are:
-
-          ==========================  ================================
-          *construct*                 Constructs
-          ==========================  ================================
-          ``'domain_ancillary'``      Domain ancillary constructs
-          ``'dimension_coordinate'``  Dimension coordinate constructs
-          ``'domain_axis'``           Domain axis constructs
-          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-          ``'cell_measure'``          Cell measure constructs
-          ``'coordinate_reference'``  Coordinate reference constructs
-          ``'cell_method'``           Cell method constructs
-          ``'field_ancillary'``       Field ancillary constructs
-          ==========================  ================================
-
-        *Parameter example:*
-          ``construct='dimension_coordinate'``
-
-        *Parameter example:*
-          ``construct=['auxiliary_coordinate']``
-
-        *Parameter example:*
-          ``construct=['domain_ancillary', 'cell_method']``
-
-        Note that a domain never contains cell method nor field
-        ancillary constructs.
-
-    copy: `bool`, optional
-        If True then return copies of the constructs. By default the
-        constructs are not copied.
-
-:Returns:
-
-    <TODO>
-
-**Examples:**
-
-<TODO>
-
-        '''
-        if construct is not None and isinstance(construct, basestring):
-            construct = (construct,)
-        
-        if not construct:
-            out = self.copy()
-        else:            
-            out = type(self)()            
-            for key, value in self.items():
-                if value.construct_type in construct:
-                    out[key] = value
-        #--- End: if
-        
-        if copy:
-            for key, value in list(out.items()):
-                out[key] = value.copy()
-        #--- End: if
-
-        return out
-    #--- End: def
-    
-#--- End: class
+#class ConstructsDict(dict):
+#    '''
+#    '''
+#    def copy(self):
+#        '''
+#        '''
+#        return type(self)(self)
+#    # --- End: def
+#    
+#    def select(self, construct=None, copy=False):
+#        '''<TODO> Return metadata constructs
+#
+#By default all metadata constructs are, but a subset may be selected
+#via the optional parameters. If multiple parameters are specified,
+#then the constructs that satisfy *all* of the criteria are returned.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `contructs`, `del_construct`, `get_construct`,
+#             `set_construct`
+#
+#:Parameters:
+#
+#    construct: (sequence of) `str`, optional
+#        Select constructs of the given type, or types. Valid types
+#        are:
+#
+#          ==========================  ================================
+#          *construct*                 Constructs
+#          ==========================  ================================
+#          ``'domain_ancillary'``      Domain ancillary constructs
+#          ``'dimension_coordinate'``  Dimension coordinate constructs
+#          ``'domain_axis'``           Domain axis constructs
+#          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+#          ``'cell_measure'``          Cell measure constructs
+#          ``'coordinate_reference'``  Coordinate reference constructs
+#          ``'cell_method'``           Cell method constructs
+#          ``'field_ancillary'``       Field ancillary constructs
+#          ==========================  ================================
+#
+#        *Parameter example:*
+#          ``construct='dimension_coordinate'``
+#
+#        *Parameter example:*
+#          ``construct=['auxiliary_coordinate']``
+#
+#        *Parameter example:*
+#          ``construct=['domain_ancillary', 'cell_method']``
+#
+#        Note that a domain never contains cell method nor field
+#        ancillary constructs.
+#
+#    copy: `bool`, optional
+#        If True then return copies of the constructs. By default the
+#        constructs are not copied.
+#
+#:Returns:
+#
+#    <TODO>
+#
+#**Examples:**
+#
+#<TODO>
+#
+#        '''
+#        if construct is not None and isinstance(construct, basestring):
+#            construct = (construct,)
+#        
+#        if not construct:
+#            out = self.copy()
+#        else:            
+#            out = type(self)()            
+#            for key, value in self.items():
+#                if value.construct_type in construct:
+#                    out[key] = value
+#        #--- End: if
+#        
+#        if copy:
+#            for key, value in list(out.items()):
+#                out[key] = value.copy()
+#        #--- End: if
+#
+#        return out
+#    #--- End: def
+#    
+##--- End: class
 
 
 class Constructs(object):
-    '''<TODO>
+    '''core.Constructs <TODO>
 
 .. versionadded:: 1.7.0
 
@@ -113,7 +113,7 @@ class Constructs(object):
                  _use_data=True,
                  _view=False,
                  _ignore=()):
-        '''TODO
+        '''<TODO>
         '''
         self._ignore = tuple(set(_ignore))
     
@@ -242,11 +242,12 @@ class Constructs(object):
             self._constructs[x] = OrderedDict()
     #--- End: def
 
-    def __call__(self):
-        '''TODO
-        '''
-        return self.constructs()
-    #--- End: def
+#    def __call__(self):
+#        '''TODO
+#        '''
+#        print ('in core.constructs.__call__')
+#        return self.constructs()
+#    #--- End: def
     
     def __deepcopy__(self, memo):
         '''Called by the :py:obj:`copy.deepcopy` standard library function.
@@ -257,6 +258,15 @@ class Constructs(object):
         return self.copy()
     #--- End: def
 
+    def __contains__(self, key):
+        return key in self.constructs()
+        
+    def __getitem__(self, key):
+        return self.constructs()[key]
+        
+    def __iter__(self):
+        return iter(self.constructs().keys())
+        
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
 
@@ -293,6 +303,33 @@ class Constructs(object):
         self._construct_axes[key] = tuple(axes)
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Dictionary-like methods    
+    # ----------------------------------------------------------------
+    def has_key(self, key):
+        '''
+        '''
+        return self.constructs().has_key(key)
+    # --- End: def
+    
+    def items(self):
+        '''
+        '''
+        return self.constructs().items()
+    # --- End: def
+    
+    def keys(self):
+        '''
+        '''
+        return self.constructs().keys()
+    # --- End: def
+    
+    def values(self):
+        '''
+        '''
+        return self.constructs().values()
+    # --- End: def
+    
     def construct_types(self):
         '''TODO
         '''
@@ -1042,6 +1079,89 @@ removed even if it is referenced by coordinate reference coinstruct.
         self._constructs[construct_type][key] = construct
     #--- End: def
     
+    
+    def select(self, construct=None, copy=False):
+        '''<TODO> Return metadata constructs
+
+By default all metadata constructs are, but a subset may be selected
+via the optional parameters. If multiple parameters are specified,
+then the constructs that satisfy *all* of the criteria are returned.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `contructs`, `del_construct`, `get_construct`,
+             `set_construct`
+
+:Parameters:
+
+    construct: (sequence of) `str`, optional
+        Select constructs of the given type, or types. Valid types
+        are:
+
+          ==========================  ================================
+          *construct*                 Constructs
+          ==========================  ================================
+          ``'domain_ancillary'``      Domain ancillary constructs
+          ``'dimension_coordinate'``  Dimension coordinate constructs
+          ``'domain_axis'``           Domain axis constructs
+          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+          ``'cell_measure'``          Cell measure constructs
+          ``'coordinate_reference'``  Coordinate reference constructs
+          ``'cell_method'``           Cell method constructs
+          ``'field_ancillary'``       Field ancillary constructs
+          ==========================  ================================
+
+        *Parameter example:*
+          ``construct='dimension_coordinate'``
+
+        *Parameter example:*
+          ``construct=['auxiliary_coordinate']``
+
+        *Parameter example:*
+          ``construct=['domain_ancillary', 'cell_method']``
+
+        Note that a domain never contains cell method nor field
+        ancillary constructs.
+
+    copy: `bool`, optional
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
+
+:Returns:
+
+    <TODO>
+
+**Examples:**
+
+<TODO>
+
+        '''        
+        if construct is not None and isinstance(construct, basestring):
+            construct = (construct,)
+        
+        if construct:
+            tmp = []
+            for ct in construct:
+                tmp.append(self._check_construct_type(ct))
+
+            construct = tmp
+        else:
+            construct = tuple(self._constructs.keys())
+
+        out = {}
+        for ct in construct:
+            if ct not in self._ignore:
+                out.update(self._constructs[ct])            
+        #--- End: for
+        
+        if copy:
+            for key, construct in tuple(out.items()):
+                out[key] = construct.copy()
+        #--- End: if
+
+        return out
+    #--- End: def
+
     def view(self, ignore=()):
         '''TODO
         '''
