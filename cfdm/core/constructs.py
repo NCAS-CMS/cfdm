@@ -155,7 +155,7 @@ class Constructs(object):
                     for cid, construct in source._constructs[construct_type].items():
                         new_v[cid] = construct.copy(data=_use_data)
                 else:
-                    new_v = source._constructs[construct_type].copy()
+                    newg_v = source._constructs[construct_type].copy()
                     
                 d[construct_type] = new_v
             #--- End: for
@@ -322,8 +322,27 @@ class Constructs(object):
         '''
         '''
         return self.constructs().keys()
-    # --- End: def
+    # --- End: defppp
     
+    def _pop(self, key, *default):
+        '''
+        '''
+        # Remove the construct axes, if any
+        self._construct_axes.pop(key, None)
+
+        # Find the construct type
+        try:
+            construct_type = self._construct_type.pop(key)
+        except KeyError as error:
+            if default:
+                return default[0]
+            
+            raise KeyError(error)
+            
+        # Remove and return the construct
+        return self._constructs[construct_type].pop(key, *default)
+    #--- End: def
+
     def values(self):
         '''
         '''
@@ -448,7 +467,8 @@ construct identifiers.
 
 :Returns:
 
-    `dict`
+    `Constructs`
+        <TODO>
 
 **Examples:**
 
@@ -456,34 +476,38 @@ construct identifiers.
 <TODO>
 
         '''
-        if construct is not None:
-            if isinstance(construct, basestring):
-                construct = (construct,)
-        #--- End: if
+        return self.select(copy=copy)
+#        out = self.view(ignore=self._ignore)
+                              
         
-        if construct is not None:
-            if construct == ('cell_method',):
-                out = self._constructs[construct[0]].copy()
-            else:                
-                out = {}
-                
-            for ct in construct:
-                ct = self._check_construct_type(ct)
-                out.update(self._constructs[ct])            
-        else:
-            out = {}
-            ignore = self._ignore
-            for key, value in self._constructs.items():
-                if key not in ignore:
-                    out.update(value)
-        #--- End: if
-
-        if copy:
-            for key, construct in list(out.items()):
-                out[key] = construct.copy()
-        #--- End: if
-
-        return out
+#        if construct is not None:
+#            if isinstance(construct, basestring):
+#                construct = (construct,)
+#        #--- End: if
+#        
+#        if construct is not None:
+#            if construct == ('cell_method',):
+#                out = self._constructs[construct[0]].copy()
+#            else:                
+#                out = {}
+#                
+#            for ct in construct:
+#                ct = self._check_construct_type(ct)
+#                out.update(self._constructs[ct])            
+#        else:
+#            out = {}
+#            ignore = self._ignore
+#            for key, value in self._constructs.items():
+#                if key not in ignore:
+#                    out.update(value)
+#        #--- End: if
+#
+#        if copy:
+#            for key, construct in list(out.items()):
+#                out[key] = construct.copy()
+#        #--- End: if
+#
+#        return out
     #--- End: def
 
     @property
@@ -982,7 +1006,7 @@ False
         return key
     #--- End: def
 
-    def del_construct(self, key):        
+    def del_construct(self, key, force=False):        
         '''Remove a construct.
 
 If a domain axis construct is selected for removal then it can't be
@@ -1012,53 +1036,57 @@ removed even if it is referenced by coordinate reference coinstruct.
 >>> x = f.del_construct('auxiliarycoordinate2')
 
         '''
-        if key in self.constructs(construct='domain_axis'):
-            # Fail if the domain axis construct is spanned by a data
-            # array
-            for xid, axes in self.constructs_data_axes().items():
-                if key in axes:
-                    raise ValueError(
-"Can't remove domain axis construct {!r} that spans the data array of {!r}".format(
-    key, self.get_construct(key=xid)))
-
-            # Fail if the domain axis construct is referenced by a
-            # cell method construct
-            try:
-                cell_methods = self.constructs(construct='cell_method')
-            except ValueError:
-                # Cell methods are not possible for this Constructs
-                # instance
-                pass
-            else:
-                for xid, cm in cell_methods.items():
-                    axes = cm.get_axes(())
+        if not force:
+            if key in self.constructs(construct='domain_axis'):
+                # Fail if the domain axis construct is spanned by a data
+                # array
+                for xid, axes in self.constructs_data_axes().items():
                     if key in axes:
                         raise ValueError(
+"Can't remove domain axis construct {!r} that spans the data array of {!r}".format(
+    key, self.get_construct(key=xid)))
+    
+                # Fail if the domain axis construct is referenced by a
+                # cell method construct
+                try:
+                    cell_methods = self.constructs(construct='cell_method')
+                except ValueError:
+                    # Cell methods are not possible for this Constructs
+                    # instance
+                    pass
+                else:
+                    for xid, cm in cell_methods.items():
+                        axes = cm.get_axes(())
+                        if key in axes:
+                            raise ValueError(
 "Can't remove domain axis construct {!r} that is referenced by {!r}".format(
     key, cm))
-        else:
-            # Remove references to the removed construct in coordinate
-            # reference constructs
-            for ref in self.constructs(construct='coordinate_reference').values():
-                coordinate_conversion = ref.coordinate_conversion
-                for term, value in coordinate_conversion.domain_ancillaries().items():
-                    if key == value:
-                        coordinate_conversion.set_domain_ancillary(term, None)
-                #--- End: for
-                
-                ref.del_coordinate(key, None)
+            else:
+                # Remove references to the removed construct in coordinate
+                # reference constructs
+                for ref in self.constructs(construct='coordinate_reference').values():
+                    coordinate_conversion = ref.coordinate_conversion
+                    for term, value in coordinate_conversion.domain_ancillaries().items():
+                        if key == value:
+                            coordinate_conversion.set_domain_ancillary(term, None)
+                    #--- End: for
+                    
+                    ref.del_coordinate(key, None)
+            #--- End: if
         #--- End: if
 
-        # Remove the construct axes, if any
-        self._construct_axes.pop(key, None)
+        return self._pop(key, None)
 
-        # Find the construct type
-        construct_type = self._construct_type.pop(key, None)
-        if construct_type is None:
-            return
-
-        # Remove and return the construct
-        return self._constructs[construct_type].pop(key, None)
+#        # Remove the construct axes, if any
+#        self._construct_axes.pop(key, None)
+#
+#        # Find the construct type
+#        construct_type = self._construct_type.pop(key, None)
+#        if construct_type is None:
+#            return
+#
+#        # Remove and return the construct
+#        return self._constructs[construct_type].pop(key, None)
     #--- End: def
 
     def replace(self, key, construct, axes=None, copy=True):
@@ -1129,41 +1157,76 @@ then the constructs that satisfy *all* of the criteria are returned.
 
 :Returns:
 
-    <TODO>
+     `Constructs`
+         <TODO>
 
 **Examples:**
 
 <TODO>
 
-        '''        
+        '''
+        
         if construct is not None and isinstance(construct, basestring):
             construct = (construct,)
-        
+
         if construct:
-            tmp = []
-            for ct in construct:
-                tmp.append(self._check_construct_type(ct))
-
-            construct = tmp
+            # Ignore the all but the requested consrtuct types
+            ignore = set(self._key_base)
+            ignore.difference_update(self._ignore)
+            if construct:
+                ignore.difference_update(construct)
         else:
-            construct = tuple(self._constructs.keys())
-
-        out = {}
-        for ct in construct:
-            if ct not in self._ignore:
-                out.update(self._constructs[ct])            
-        #--- End: for
+            # Keep all construct types
+            ignore = self._ignore
+            
+        return type(self)(source=self, _ignore=ignore, copy=copy)
         
-        if copy:
-            for key, construct in tuple(out.items()):
-                out[key] = construct.copy()
-        #--- End: if
+#        if construct:
+#            tmp = []
+#            for ct in construct:
+#                tmp.append(self._check_construct_type(ct))
+#
+#            for key, construct in tuple(out.items()):
+#                if out._construct_type[key] not in tmp:
+#                    out._pop(key)
+#        #--- End: if
+#        
+#        if copy:
+#            out = out.copy()
+#            
+##        else:
+#            construct = tuple(self._constructs.keys())
 
-        return out
+            
+#        out = {}
+#        for ct in construct:
+#            if ct not in self._ignore:
+#                out.update(self._constructs[ct])            
+#        #--- End: for
+#
+#        if copy:
+#            for key, construct in tuple(out.items()):
+#                out[key] = construct.copy()
+#        #--- End: if
+#
+#        return out
     #--- End: def
 
     def view(self, ignore=()):
-        '''TODO
+        '''<TODO>
+
+:Parameters:
+
+    ignore: `bool`, optional
+
+:Returns:
+
+    `Constructs`
+        <TODO>
+
+**Examples:**
+
+<TODO>
         '''
         return type(self)(source=self, _view=True, _ignore=ignore)
     #--- End: def
