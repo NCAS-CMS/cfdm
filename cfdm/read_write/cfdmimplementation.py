@@ -201,7 +201,7 @@ AttributeError: Field doesn't have property 'standard_name'
     def get_auxiliary_coordinates(self, field):
         '''
         '''
-        return field.auxiliary_coordinates()
+        return field.auxiliary_coordinates
     #--- End: def
 
     def get_bounds(self, parent, *default):
@@ -219,7 +219,7 @@ AttributeError: Field doesn't have property 'standard_name'
     def get_cell_methods(self, field):
         '''
         '''
-        return field.cell_methods()
+        return field.cell_methods
     #--- End: def
        
     def get_cell_method_axes(self, cell_method, *default):
@@ -283,7 +283,7 @@ AttributeError: Field doesn't have property 'standard_name'
     def get_construct_data_axes(self, field, key):
         '''
         '''
-        return field.constructs_data_axes()[key]
+        return field.constructs.data_axes()[key]
     #--- End: def
     
     def get_constructs(self, field, axes=None):
@@ -294,8 +294,12 @@ If no axes are specified then all constructs are returned.
 If axes are specified then constructs whose data arrays span those
 axes, and possibly other axes, are returned.
 
+:Returns:
+
+    `dict`
+
         '''
-        return field.constructs(axis=axes)
+        return dict(field.constructs.select(axis=axes))
     #--- End: def
     
     def get_coordinate_reference_coordinates(self, coordinate_reference):
@@ -454,7 +458,7 @@ axes, and possibly other axes, are returned.
     def get_dimension_coordinates(self, field):
         '''
         '''
-        return field.dimension_coordinates()
+        return field.dimension_coordinates
     #--- End: def
 
     def get_domain_ancillaries(self, field):
@@ -641,7 +645,7 @@ netCDF unlimited dimensions.
  'fieldancillary1': <FieldAncillary: ....>}
 
         '''
-        return field.field_ancillaries()
+        return field.field_ancillaries
     #--- End: def
                   
     def get_field_data_axes(self, field):

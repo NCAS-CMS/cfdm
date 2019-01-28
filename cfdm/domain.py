@@ -105,11 +105,11 @@ x.__str__() <==> str(x)
 
         axis_names = self._unique_domain_axis_names()
 
-        constructs_data_axes = self.constructs_data_axes()
+        constructs_data_axes = self.constructs.data_axes()
         
         x = []
         for axis_cid in sorted(self.domain_axes()):
-            for cid, dim in list(self.dimension_coordinates().items()):
+            for cid, dim in list(self.dimension_coordinates.items()):
 #                if self.constructs_data_axes()[cid] == (axis_cid,):
                 if constructs_data_axes[cid] == (axis_cid,):
                     name = dim.name(default='cid%{0}'.format(cid), ncvar=True)
@@ -126,7 +126,7 @@ x.__str__() <==> str(x)
 
         # Auxiliary coordinates
         x = [_print_item(self, cid, v, constructs_data_axes[cid], False) 
-             for cid, v in sorted(self.auxiliary_coordinates().items())]
+             for cid, v in sorted(self.auxiliary_coordinates.items())]
         if x:
             string.append('Auxiliary coords: {}'.format(
                 '\n                : '.join(x)))
@@ -379,7 +379,7 @@ coordinate reference coinstruct.
             return self._default(default,
                                  'No unique construct meets criteria')
             
-        for key, axes in self.constructs_data_axes().items():
+        for key, axes in self.constructs.data_axes().items():
             if cid in axes:
                 raise ValueError(
 "Can't remove domain axis {!r} that is spanned by the the data of metadata construct {!r}".format(cid, key))
@@ -427,7 +427,7 @@ last values.
 
         construct_name = self._unique_construct_names()
 
-        constructs_data_axes = self.constructs_data_axes()
+        constructs_data_axes = self.constructs.data_axes()
         
         string = []
 
@@ -437,7 +437,7 @@ last values.
             string.append(axes)
           
         # Dimension coordinates
-        for cid, value in sorted(self.dimension_coordinates().items()):
+        for cid, value in sorted(self.dimension_coordinates.items()):
             string.append('')
             string.append(
                 value.dump(display=False, _level=_level,
@@ -447,7 +447,7 @@ last values.
                            _axis_names=axis_to_name))
             
         # Auxiliary coordinates
-        for cid, value in sorted(self.auxiliary_coordinates().items()):
+        for cid, value in sorted(self.auxiliary_coordinates.items()):
             string.append('')
             string.append(
                 value.dump(display=False, _level=_level,
@@ -473,8 +473,8 @@ last values.
                            _title='Coordinate reference: {0}'.format(
                                construct_name[cid]),
                            _construct_names=construct_name,
-                           _auxiliary_coordinates=tuple(self.auxiliary_coordinates()),
-                           _dimension_coordinates=tuple(self.dimension_coordinates())))
+                           _auxiliary_coordinates=tuple(self.auxiliary_coordinates),
+                           _dimension_coordinates=tuple(self.dimension_coordinates)))
             
         # Cell measures
         for cid, value in sorted(self.cell_measures().items()):

@@ -264,7 +264,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        constructs = self.f.cell_methods()
+        constructs = self.f.cell_methods
         n = 2
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
@@ -380,7 +380,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        constructs = self.f.field_ancillaries()
+        constructs = self.f.field_ancillaries
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))

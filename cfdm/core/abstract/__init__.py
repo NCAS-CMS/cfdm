@@ -7,7 +7,6 @@ from .coordinate                  import Coordinate
 from .parameters                  import Parameters
 from .parametersdomainancillaries import ParametersDomainAncillaries
 
-from .aaa import AAA
 
 
     

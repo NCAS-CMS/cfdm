@@ -90,6 +90,13 @@ constructs.
         return self._get_component('constructs', *default)
     #--- End: def
     
+    @property
+    def constructs(self):
+        '''<TODO>
+        '''
+        return self._get_constructs()
+    #--- End: def
+
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------

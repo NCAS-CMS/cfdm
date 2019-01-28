@@ -65,26 +65,26 @@ TODO
         return self._get_constructs().data_constructs(copy=copy)
     #-- End: def
     
-    def constructs_data_axes(self):
-        '''Return the domain axes spanned by metadata construct data arrays.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs`, `get_construct`
-
-:Returns:
-
-    `dict`
-        The domain axis constructs spanned by the data of metadata
-        constructs.
-
-**Examples:**
-
->>> d = f.constructs_data_axes()
-
-        '''
-        return self._get_constructs().constructs_data_axes()
-    #--- End: def
+#    def constructs_data_axes(self):
+#        '''Return the domain axes spanned by metadata construct data arrays.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `constructs`, `get_construct`
+#
+#:Returns:
+#
+#    `dict`
+#        The domain axis constructs spanned by the data of metadata
+#        constructs.
+#
+#**Examples:**
+#
+#>>> d = f.constructs_data_axes()
+#
+#        '''
+#        return self._get_constructs().constructs_data_axes()
+#    #--- End: def
     
 #    def construct_type(self, key):
 #        '''TODO
@@ -93,103 +93,103 @@ TODO
 #        '''                
 #        return self._get_constructs().construct_type(key)
 #    #--- End: def
-    
-    def constructs_old(self, construct=None, copy=False):
-        '''Return metadata constructs.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs_data_axes`, `del_construct`, `get_construct`,
-             `get_construct_key`, `has_construct`, `set_construct`
-
-:Parameters:
-
-    construct: (sequence of) `str`, optional
-        Select constructs of the given type, or types. Valid types
-        are:
-
-          ==========================  ================================
-          *construct*                 Constructs
-          ==========================  ================================
-          ``'domain_ancillary'``      Domain ancillary constructs
-          ``'dimension_coordinate'``  Dimension coordinate constructs
-          ``'domain_axis'``           Domain axis constructs
-          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-          ``'cell_measure'``          Cell measure constructs
-          ``'coordinate_reference'``  Coordinate reference constructs
-          ``'cell_method'``           Cell method constructs
-          ``'field_ancillary'``       Field ancillary constructs
-          ==========================  ================================
-
-        *Parameter example:*
-          ``construct='dimension_coordinate'``
-
-        *Parameter example:*
-          ``construct=['auxiliary_coordinate']``
-
-        *Parameter example:*
-          ``construct=('domain_ancillary', 'cell_method')``
-
-        Note that a domain never contains cell method nor field
-        ancillary constructs.
-
-    copy: `bool`, optional
-        If `True` then deep copies of the constructs are returned.
-
-:Returns:
-
-    `dict`
-        Constructs are returned as values of a dictionary, keyed by
-        their construct identifiers.
-        
-        If cell method contructs, and no other construct types, have
-        been selected with the *construct* parameter then the
-        constructs are returned in an ordered dictionary
-        (`collections.OrderedDict`). The order is determined by the
-        order in which the cell method constructs were originally
-        added.
-
-**Examples:**
-
->>> f.constructs()
-{}
-
->>> f.constructs()
-{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
- 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
- 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
- 'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>,
- 'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
- 'cellmethod1': <CellMethod: domainaxis3: maximum>,
- 'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
- 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
- 'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
- 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
- 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
- 'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >,
- 'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
- 'domainancillary1': <DomainAncillary: ncvar%b(1) >,
- 'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
- 'domainaxis0': <DomainAxis: 1>,
- 'domainaxis1': <DomainAxis: 10>,
- 'domainaxis2': <DomainAxis: 9>,
- 'domainaxis3': <DomainAxis: 1>,
- 'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
->>> f.constructs(construct='coordinate_reference')
-{'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
- 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
->>> f.constructs(construct='cell_method')
-OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
->>> f.constructs(construct=['cell_method', 'field_ancillary'])
-{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
- 'cellmethod1': <CellMethod: domainaxis3: maximum>,
- 'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-
-        '''
-        return self._get_constructs().constructs(construct=construct,
-                                                 copy=copy)
-    #--- End: def
+#    
+#    def constructs_old(self, construct=None, copy=False):
+#        '''Return metadata constructs.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `constructs_data_axes`, `del_construct`, `get_construct`,
+#             `get_construct_key`, `has_construct`, `set_construct`
+#
+#:Parameters:
+#
+#    construct: (sequence of) `str`, optional
+#        Select constructs of the given type, or types. Valid types
+#        are:
+#
+#          ==========================  ================================
+#          *construct*                 Constructs
+#          ==========================  ================================
+#          ``'domain_ancillary'``      Domain ancillary constructs
+#          ``'dimension_coordinate'``  Dimension coordinate constructs
+#          ``'domain_axis'``           Domain axis constructs
+#          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+#          ``'cell_measure'``          Cell measure constructs
+#          ``'coordinate_reference'``  Coordinate reference constructs
+#          ``'cell_method'``           Cell method constructs
+#          ``'field_ancillary'``       Field ancillary constructs
+#          ==========================  ================================
+#
+#        *Parameter example:*
+#          ``construct='dimension_coordinate'``
+#
+#        *Parameter example:*
+#          ``construct=['auxiliary_coordinate']``
+#
+#        *Parameter example:*
+#          ``construct=('domain_ancillary', 'cell_method')``
+#
+#        Note that a domain never contains cell method nor field
+#        ancillary constructs.
+#
+#    copy: `bool`, optional
+#        If `True` then deep copies of the constructs are returned.
+#
+#:Returns:
+#
+#    `dict`
+#        Constructs are returned as values of a dictionary, keyed by
+#        their construct identifiers.
+#        
+#        If cell method contructs, and no other construct types, have
+#        been selected with the *construct* parameter then the
+#        constructs are returned in an ordered dictionary
+#        (`collections.OrderedDict`). The order is determined by the
+#        order in which the cell method constructs were originally
+#        added.
+#
+#**Examples:**
+#
+#>>> f.constructs()
+#{}
+#
+#>>> f.constructs()
+#{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+# 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+# 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
+# 'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>,
+# 'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+# 'cellmethod1': <CellMethod: domainaxis3: maximum>,
+# 'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
+# 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
+# 'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+# 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+# 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+# 'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+# 'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+# 'domainancillary1': <DomainAncillary: ncvar%b(1) >,
+# 'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
+# 'domainaxis0': <DomainAxis: 1>,
+# 'domainaxis1': <DomainAxis: 10>,
+# 'domainaxis2': <DomainAxis: 9>,
+# 'domainaxis3': <DomainAxis: 1>,
+# 'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+#>>> f.constructs(construct='coordinate_reference')
+#{'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
+# 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
+#>>> f.constructs(construct='cell_method')
+#OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+#             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+#>>> f.constructs(construct=['cell_method', 'field_ancillary'])
+#{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+# 'cellmethod1': <CellMethod: domainaxis3: maximum>,
+# 'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+#
+#        '''
+#        return self._get_constructs().constructs(construct=construct,
+#                                                 copy=copy)
+#    #--- End: def
     
     def del_construct(self, key):
         '''Remove a metadata construct.
@@ -217,7 +217,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 <DimensionCoordinate: grid_latitude(111) degrees>
 
         '''
-        return self._get_constructs().del_construct(key)
+        return self.constructs._del_construct(key)
     #--- End: def
 
     def get_construct(self, key):
@@ -255,7 +255,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 <DimensionCoordinate: grid_latitude(10) degrees>
 
         '''
-        return self._get_constructs().get_construct(key)
+        return self.constructs.get_construct(key)
     #--- End: def
 
     def get_construct_data_axes(self, key, *default):
@@ -298,7 +298,7 @@ None
 'no axes'
 
         '''
-        axes = self.constructs_data_axes().get(key)
+        axes = self.constructs.data_axes().get(key)
         if axes is None:
             if default:
                 return default[0]
@@ -308,46 +308,46 @@ None
         return axes
     #--- End: def
     
-    def has_construct(self, key):
-        '''Whether a construct exists.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs`, `del_construct`, `get_construct`,
-             `set_construct`
-
-:Parameters:
-
-    key: `str`
-        The identifier of the metadata construct.
-
-        *Parameter example:*
-          ``key='cellmeasure1'``
-
-:Returns:
-
-    `bool`
-        True if the metadata construct exists, otherwise False.
-
-**Examples:**
-
->>> f.constructs()
-{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>,
- 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>,
- 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:greek_letters(10) >,
- 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
- 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
- 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
- 'domainaxis1': <DomainAxis: 10>,
- 'domainaxis2': <DomainAxis: 9>}
->>> f.has_construct('dimensioncoordinate1')
-True
->>> f.has_construct('domainaxis99')
-False
-
-        '''
-        return self._get_constructs().has_construct(key)
-    #--- End: def
+#    def has_construct(self, key):
+#        '''Whether a construct exists.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `constructs`, `del_construct`, `get_construct`,
+#             `set_construct`
+#
+#:Parameters:
+#
+#    key: `str`
+#        The identifier of the metadata construct.
+#
+#        *Parameter example:*
+#          ``key='cellmeasure1'``
+#
+#:Returns:
+#
+#    `bool`
+#        True if the metadata construct exists, otherwise False.
+#
+#**Examples:**
+#
+#>>> f.constructs()
+#{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>,
+# 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>,
+# 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:greek_letters(10) >,
+# 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
+# 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+# 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+# 'domainaxis1': <DomainAxis: 10>,
+# 'domainaxis2': <DomainAxis: 9>}
+#>>> f.has_construct('dimensioncoordinate1')
+#True
+#>>> f.has_construct('domainaxis99')
+#False
+#
+#        '''
+#        return self._get_constructs().has_construct(key)
+#    #--- End: def
 
     def domain_axis_name(self, axis):
         '''TODO WHY DO WE NED THIS HERE?
@@ -355,7 +355,7 @@ False
 .. versionadded:: 1.7.0
 
         '''
-        return self._get_constructs().domain_axis_name(axis)
+        return self.constructs.domain_axis_name(axis)
     #--- End: def
     
     def set_construct(self, construct, key=None, axes=None,
@@ -414,8 +414,8 @@ False
 >>> key = f.set_construct(c, key='cellmeasure0')
 
         '''
-        return self._get_constructs().set_construct(construct, key=key,
-                                                    axes=axes, copy=copy)
+        return self.constructs._set_construct(construct, key=key,
+                                              axes=axes, copy=copy)
     #--- End: def
 
     def set_construct_data_axes(self, key, axes):
@@ -460,7 +460,7 @@ array.
 >>> f.set_construct_data_axes(key, axes='domainaxis1')
 
         '''
-        return self._get_constructs().set_construct_data_axes(key, axes)
+        return self.constructs._set_construct_data_axes(key, axes)
     #--- End: def
 
 #--- End: class

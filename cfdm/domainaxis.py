@@ -57,7 +57,7 @@ x.__str__() <==> str(x)
 .. versionadded:: 1.7.0
 
         '''
-        return str(self.get_size(''))
+        return 'size({0})'.format(self.get_size(''))
     #--- End: def
 
     def equals(self, other, verbose=False, ignore_type=False):

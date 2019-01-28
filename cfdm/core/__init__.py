@@ -16,8 +16,7 @@ if LooseVersion(platform.python_version()) < LooseVersion('2.7.0'):
         "cfdm requires python version >= 2.7. Got python version {}".format(
         platform.python_version()))
 
-from .constructs           import (Constructs,
-                                   ConstructsDict)
+from .constructs           import Constructs
 
 from .data                import (Data,
                                   Array,
