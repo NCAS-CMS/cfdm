@@ -5,7 +5,7 @@ from collections import OrderedDict
 
 
 class Constructs(object):
-    '''core.Constructs <TODO>
+    '''<TODO>
 
 .. versionadded:: 1.7.0
 
@@ -26,6 +26,9 @@ class Constructs(object):
                  _view=False,
                  _ignore=()):
         '''<TODO>
+
+:Parameters:
+
         '''
         self._ignore = tuple(set(_ignore))
     
@@ -79,11 +82,9 @@ class Constructs(object):
                     continue
                 
                 if copy:
-#                    new_v = {}
-#                    for cid, construct in source._constructs[construct_type].items():
-#                        new_v[cid] = construct.copy()
-                    new_v = {cid: construct.copy()
-                             for cid, construct in source._constructs[construct_type].items()}
+                    new_v = {
+                        cid: construct.copy()
+                        for cid, construct in source._constructs[construct_type].items()}
                 else:
                     new_v = source._constructs[construct_type].copy()
 
@@ -1202,7 +1203,7 @@ removed even if it is referenced by coordinate reference coinstruct.
         return OrderedDict(self._constructs[tuple(self._ordered_constructs)[0]])
     #--- End: def
     
-    def select(self, construct=None, copy=False):
+    def select(self, construct=None): #, copy=False):
         '''<TODO> Return metadata constructs
 
 By default all metadata constructs are, but a subset may be selected
@@ -1270,37 +1271,7 @@ then the constructs that satisfy *all* of the criteria are returned.
             # Keep all construct types
             ignore = self._ignore
 
-        return type(self)(source=self, _ignore=ignore, _view=False, copy=copy)
-        
-#        if construct:
-#            tmp = []
-#            for ct in construct:
-#                tmp.append(self._check_construct_type(ct))
-#
-#            for key, construct in tuple(out.items()):
-#                if out._construct_type[key] not in tmp:
-#                    out._pop(key)
-#        #--- End: if
-#        
-#        if copy:
-#            out = out.copy()
-#            
-##        else:
-#            construct = tuple(self._constructs.keys())
-
-            
-#        out = {}
-#        for ct in construct:
-#            if ct not in self._ignore:
-#                out.update(self._constructs[ct])            
-#        #--- End: for
-#
-#        if copy:
-#            for key, construct in tuple(out.items()):
-#                out[key] = construct.copy()
-#        #--- End: if
-#
-#        return out
+        return type(self)(source=self, _ignore=ignore, _view=False, copy=False)
     #--- End: def
 
     def view(self, ignore=()):

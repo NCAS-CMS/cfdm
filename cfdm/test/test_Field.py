@@ -268,7 +268,9 @@ class FieldTest(unittest.TestCase):
         n = 2
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
-        self.assertIsInstance(constructs, collections.OrderedDict)
+
+        ordered = self.f.cell_methods.ordered()        
+        self.assertIsInstance(ordered, collections.OrderedDict)
     #--- End: def
 
     def test_Field_coordinate_references(self):

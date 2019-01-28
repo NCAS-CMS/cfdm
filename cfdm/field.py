@@ -137,7 +137,7 @@ x.__str__() <==> str(x)
         cell_methods = self.cell_methods
         if cell_methods:
             x = []
-            for cm in list(cell_methods.values()):
+            for cm in cell_methods.values():
                 cm = cm.copy()
                 cm.set_axes(tuple([axis_names.get(axis, axis)
                                    for axis in cm.get_axes(())]))                
@@ -833,7 +833,7 @@ data arrays.
         # Cell methods
         cell_methods = self.cell_methods
         if cell_methods:
-            for cm in list(cell_methods.values()):
+            for cm in cell_methods.values():
                 cm = cm.copy()
                 cm.set_axes(tuple([axis_to_name.get(axis, axis)
                                    for axis in cm.get_axes(())]))
@@ -1431,12 +1431,12 @@ that has fewer metadata constructs than one created with the
         c0 = self.constructs.select(name=name, properties=properties,
                                     measure=measure, ncvar=ncvar,
                                     ncdim=ncdim, key=key, axis=axis,
-                                    construct=construct, copy=False)
+                                    construct=construct)#, copy=False)
         if len(c0) != 1:
             self.get_construct(name=name, properties=properties,
                                measure=measure, ncvar=ncvar,
                                ncdim=ncdim, key=key, axis=axis,
-                               construct=construct, copy=False)
+                               construct=construct)#, copy=False)
             return
 
         cid, c = dict(c0).popitem()
@@ -1472,8 +1472,8 @@ that has fewer metadata constructs than one created with the
                               'auxiliary_coordinate',
                               'cell_measure'):
                 for ccid, con in self.constructs.select(construct=construct,
-                                                        axis=data_axes,
-                                                        copy=False).items():
+                                                        axis=data_axes).items():
+#                                                        copy=False).items():
                     axes = constructs_data_axes.get(ccid)
                     if axes is None:
                         continue
@@ -1608,7 +1608,6 @@ may be selected for removal.
         '''
         f = self.copy()
 
-
         if axes is None:
             axes = [i for i, n in enumerate(f.data.shape) if n == 1]
         else:
@@ -1702,7 +1701,7 @@ may be selected for removal.
     #--- End: def
 
     @property
-    def field_ancillaries(self, copy=False):
+    def field_ancillaries(self): #, copy=False):
         '''Return field ancillary constructs.
 
 .. versionadded:: 1.7.0
@@ -1732,11 +1731,11 @@ may be selected for removal.
         '''
 #        return self._get_constructs().constructs(
         return self.constructs.select(
-            construct='field_ancillary', copy=copy)
+            construct='field_ancillary') #, copy=copy)
     #--- End: def
 
     @property
-    def cell_methods(self, copy=False):
+    def cell_methods(self): #, copy=False):
         '''Return cell method constructs.
 
 .. versionadded:: 1.7.0
@@ -1768,8 +1767,8 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
         '''
 #        return self._get_constructs().constructs(construct='cell_method',
-        return self.constructs.select(construct='cell_method',
-                                      copy=copy)
+        return self.constructs.select(construct='cell_method')
+#                                      copy=copy)
     #--- End: def
     
 #    def cell_methods(self, copy=False):

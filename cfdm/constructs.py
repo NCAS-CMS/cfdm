@@ -744,7 +744,7 @@ class Constructs(core.Constructs):
 
     def select(self, name=None, properties=None, measure=None,
                ncvar=None, ncdim=None, key=None, axis=None,
-               construct=None, copy=False):
+               construct=None): #, copy=False):
         '''Return metadata constructs
 
 By default all metadata constructs are returned, but a subset may be
@@ -1028,7 +1028,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 {}
 
         '''
-        out = super().select(construct=construct, copy=copy) # move copy to end?
+        out = super().select(construct=construct) #, copy=copy) # move copy to end?
 
         if key is not None:
             if isinstance(key, basestring):
@@ -1048,11 +1048,6 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                 axis = (axis,)
 
             axis = set(axis)
-
-# Need to attach the data axes as an underscore attribute
-
-# Ooo Errr. Should a Constructs instance store thing in one big dict, given that we have a different method of retrieval, now? ......
-
 
             constructs_data_axes = self.data_axes()
             for cid in tuple(out):

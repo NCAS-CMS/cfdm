@@ -46,7 +46,7 @@ object.
         key_to_name = {}
         name_to_keys = {}
 
-        for key, value in self.domain_axes().items():
+        for key, value in self.domain_axes.items():
             name_size = (self.domain_axis_name(key), value.get_size(''))
             name_to_keys.setdefault(name_size, []).append(key)
             key_to_name[key] = name_size
@@ -63,7 +63,8 @@ object.
         
         return key_to_name
     #--- End: def
-    
+
+    @property
     def coordinate_references(self, copy=False):
         '''Return coordinate reference constructs.
 
@@ -96,9 +97,10 @@ object.
         '''
 #        return self._get_constructs().constructs(
         return self._get_constructs().select(
-            construct='coordinate_reference', copy=copy)
+            construct='coordinate_reference') #, copy=copy)
     #--- End: def
 
+    @property
     def coordinates(self, copy=False):
         '''Return dimension and auxiliary coordinate constructs.
 
@@ -134,12 +136,16 @@ object.
  'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         '''
-        out = self.dimension_coordinates(copy=copy)
+#        out = self.dimension_coordinates(copy=copy)
 #        out.update(self.auxiliary_coordinates(copy=copy))
-        out._update(self.auxiliary_coordinates(copy=copy))        
+#        out._update(self.auxiliary_coordinates(copy=copy))        
+
+        out = self.dimension_coordinates
+        out._update(self.auxiliary_coordinates)        
         return out
     #--- End: def
 
+    @property
     def domain_ancillaries(self, copy=False):
         '''Return domain ancillary constructs.
 
@@ -161,10 +167,10 @@ object.
 
 **Examples:**
 
->>> f.domain_ancillaries()
+>>> f.domain_ancillaries
 {}
 
->>> f.domain_ancillaries()
+>>> f.domain_ancillaries
 {'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
  'domainancillary1': <DomainAncillary: ncvar%b(1) >,
  'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
@@ -172,9 +178,10 @@ object.
         '''
 #        return self._get_constructs().constructs(
         return self._get_constructs().select(
-            construct='domain_ancillary', copy=copy)
+            construct='domain_ancillary') #, copy=copy)
     #--- End: def
-    
+
+    @property
     def cell_measures(self, copy=False):
         '''Return cell measure constructs.
 
@@ -205,7 +212,7 @@ object.
         '''
 #        return self._get_constructs().constructs(
         return self._get_constructs().select(
-            construct='cell_measure', copy=copy)
+            construct='cell_measure') #, copy=copy)
     #--- End: def
 
     # parameter: name
@@ -436,8 +443,8 @@ selected.
         out = self.constructs.select(name=name, properties=properties,
                                      measure=measure, axis=axis,
                                      key=key, construct=construct,
-                                     ncvar=ncvar, ncdim=ncdim,
-                                     copy=copy)
+                                     ncvar=ncvar, ncdim=ncdim)
+#                                     copy=copy)
 
         if not out:
             return self._default(default, "No construct meets criteria")
@@ -925,7 +932,7 @@ unique construct is selected.
         c = self.constructs.select(name=name, properties=properties,
                                    measure=measure, axis=axis, key=key,
                                    construct=construct, ncvar=ncvar,
-                                   ncdim=ncdim, copy=False)
+                                   ncdim=ncdim) #, copy=False)
         if len(c) != 1:
             return self._default(default, "No unique construct meets criteria")
         
@@ -1439,6 +1446,7 @@ constructs are selected if no parameters are specified.
 #                                                 axis=axis, copy=copy)
 #    #--- End: def
 
+    @property
     def domain_axes(self, copy=False):
         '''Return domain axis constructs.
 
@@ -1460,10 +1468,10 @@ constructs are selected if no parameters are specified.
 
 **Examples:**
 
->>> f.domain_axes()
+>>> f.domain_axes
 {}
 
->>> f.domain_axes()
+>>> f.domain_axes
 {'domainaxis0': <DomainAxis: 1>,
  'domainaxis1': <DomainAxis: 10>,
  'domainaxis2': <DomainAxis: 9>,
@@ -1472,7 +1480,7 @@ constructs are selected if no parameters are specified.
         '''
 #        return self._get_constructs().constructs(
         return self._get_constructs().select(
-            construct='domain_axis', copy=copy)
+            construct='domain_axis') #, copy=copy)
     #--- End: def
 
     @property
@@ -1508,7 +1516,7 @@ constructs are selected if no parameters are specified.
         '''
 #        return self._get_constructs().constructs(
         return self._get_constructs().select(
-            construct='auxiliary_coordinate', copy=copy)
+            construct='auxiliary_coordinate') #, copy=copy)
     #--- End: def
 
     @property
@@ -1545,7 +1553,7 @@ constructs are selected if no parameters are specified.
         '''
 #        return self._get_constructs().constructs(
         return self._get_constructs().select(
-            construct='dimension_coordinate', copy=copy)
+            construct='dimension_coordinate') #, copy=copy)
     #--- End: def
     
     def domain_axis_name(self, axis):

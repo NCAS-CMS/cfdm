@@ -11,7 +11,8 @@ PAPER         =
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 #ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
-ALLSPHINXOPTS   = -j 3 source
+#ALLSPHINXOPTS   = -j 3 source
+ALLSPHINXOPTS   = source
 BUILDDIR        = $(filter-out $@, $(MAKECMDGOALS))
 
 VERSION    = $(shell grep "^__version__" ../cfdm/__init__.py | cut -d "=" -f 2 | sed "s/[' ]//g")
