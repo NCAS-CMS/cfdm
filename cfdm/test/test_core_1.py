@@ -12,7 +12,7 @@ verbose = False
 
 class create_fieldTest(unittest.TestCase):
 
-    def test_create_field(self):
+    def test_core_create_field(self):
 
         # Dimension coordinates
         dim1 = cfdm.core.DimensionCoordinate(data=cfdm.core.Data(cfdm.core.NumpyArray(numpy.arange(10.))))
@@ -25,7 +25,8 @@ class create_fieldTest(unittest.TestCase):
         dim0.set_property('standard_name', 'grid_longitude')
         dim0.set_property('units', 'degrees')
 
-        array = dim0.get_array()
+#        array = dim0.get_array()
+        array = dim0.data.array
 
         array = numpy.array([array-0.5, array+0.5]).transpose((1,0))
         array[-2, 1] = 30
@@ -135,19 +136,21 @@ class create_fieldTest(unittest.TestCase):
         
         ref1 = f.set_construct(ref1)
 
-        f_data = f.get_data()
-#        print (repr(f_data), type(f_data))
-#        print (repr(f_data.get_array()))
+#        f_data = f.get_data()
+        f_data = f.data
+
         # Field ancillary variables
         data = f_data
         anc = cfdm.core.FieldAncillary(data=data)
         f.set_construct(anc, axes=[axisY, axisX])
         
-        data = f_data.get_array()[0]
+#        data = f_data.get_array()[0]
+        data = f_data.array[0]
         anc = cfdm.core.FieldAncillary(data=cfdm.core.Data(cfdm.core.NumpyArray(data)))
         f.set_construct(anc, axes=[axisX])
 
-        data = f_data.get_array()[..., 0]
+#        data = f_data.get_array()[..., 0]
+        data = f_data.array[..., 0]
         anc = cfdm.core.FieldAncillary(data=cfdm.core.Data(cfdm.core.NumpyArray(data)))
         f.set_construct(anc, axes=[axisY])
 

@@ -457,18 +457,18 @@ selected.
         return construct
     #--- End: def
     
-    def _default(self, default, message=None):
-        '''<TODO>
-        '''
-        if isinstance(default, Exception):
-            if message is not None and not default.args:
-                default.args = (message,)
-
-            raise default
-        
-        return default
-    #--- End: def
-    
+#    def _default(self, default, message=None):
+#        '''<TODO>
+#        '''
+#        if isinstance(default, Exception):
+#            if message is not None and not default.args:
+#                default.args = (message,)
+#
+#            raise default
+#        
+#        return default
+#    #--- End: def
+#    
     # parameter: name
     # parameter: properties
     # parameter: measure
@@ -1163,8 +1163,7 @@ constructs are selected if no parameters are specified.
         out = self.constructs.select(name=name, properties=properties,
                                      measure=measure, axis=axis,
                                      key=key, construct=construct,
-                                     ncvar=ncvar, ncdim=ncdim,
-                                     copy=False)
+                                     ncvar=ncvar, ncdim=ncdim)
 
         return len(out)
     #--- End: def

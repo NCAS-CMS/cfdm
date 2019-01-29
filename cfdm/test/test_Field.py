@@ -36,28 +36,36 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
         f = f.squeeze()
         
-        d = f.get_array()
+#        d = f.get_array()
+        d = f.data.array
         
         g = f[...]
-        self.assertTrue((g.get_array() == d).all())
+#        self.assertTrue((g.get_array() == d).all())
+        self.assertTrue((g.data.array == d).all())
         
         g = f[:, :]
-        self.assertTrue((g.get_array() == d).all())
+#        self.assertTrue((g.get_array() == d).all())
+        self.assertTrue((g.data.array == d).all())
         
         g = f[slice(None), :]
-        self.assertTrue((g.get_array()== d).all())
+#        self.assertTrue((g.get_array()== d).all())
+        self.assertTrue((g.data.array== d).all())
         
         g = f[slice(None), slice(None)]
-        self.assertTrue((g.get_array()== d).all())
+#        self.assertTrue((g.get_array()== d).all())
+        self.assertTrue((g.data.array== d).all())
         
         g = f[slice(None), ...]
-        self.assertTrue((g.get_array()== d).all())
+#        self.assertTrue((g.get_array()== d).all())
+        self.assertTrue((g.data.array== d).all())
         
         g = f[..., slice(None)]
-        self.assertTrue((g.get_array()== d).all())
+#        self.assertTrue((g.get_array()== d).all())
+        self.assertTrue((g.data.array== d).all())
         
         g = f[:, slice(0, f.data.shape[1], 1)]
-        self.assertTrue((g.get_array() == d).all())
+#        self.assertTrue((g.get_array() == d).all())
+        self.assertTrue((g.data.array== d).all())
         
         for indices, shape, multiple_list_indices in (
                 [(slice(0, None, 1), slice(0, None)) , (10, 9), False],
@@ -93,9 +101,11 @@ class FieldTest(unittest.TestCase):
                                 indices,
                                 g.data.shape,
                                 e.data.shape))
-            self.assertTrue((g.get_array() == e).all(),
+#            self.assertTrue((g.get_array() == e).all(),
+            self.assertTrue((g.data.array == e).all(),
                             'Bad values for {}: {} != {}'.format(indices,
-                                                                 g.get_array(),
+#                                                                 g.get_array(),
+                                                                 g.data.array,
                                                                  e))
     #--- End: def
 
@@ -355,7 +365,8 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(f.equals(g))
 
         h = f.copy()
-        h.get_data()[...] = h.get_array()[...] + 1
+#        h.get_data()[...] = h.get_array()[...] + 1
+        h.data[...] = h.data.array[...] + 1
         self.assertFalse(f.equals(h))
     #--- End: def
 

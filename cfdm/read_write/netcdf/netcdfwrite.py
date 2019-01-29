@@ -1389,14 +1389,14 @@ created. The ``seen`` dictionary is updated for *cfvar*.
             # --------------------------------------------------------
 
             strlen = data.dtype.itemsize
-            array = data.get_array()
+            array = data.array
             if numpy.ma.is_masked(array):
                 array = array.compressed()
             strlen = len(max(array, key=len))
 #            print ('strlen=',strlen)
 #                
-#            print(data.get_array())
-#            strlen = len(max(data.get_array(), key=len))
+#            print(data.array)
+#            strlen = len(max(data.array, key=len))
 #            if strlen > 1:
 #            print ('A', repr(data))
             data = self._convert_to_char(data)

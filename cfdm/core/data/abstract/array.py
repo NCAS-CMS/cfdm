@@ -230,8 +230,9 @@ original or the new copy.
         return new
     #--- End: def
 
+    @property
     @abc.abstractmethod
-    def get_array(self):
+    def array(self):
         '''Return an independent numpy array containing the data.
 
 .. versionadded:: 1.7.0

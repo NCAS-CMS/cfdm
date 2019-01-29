@@ -195,7 +195,7 @@ AttributeError: Field doesn't have property 'standard_name'
     data: `Data`
 
         '''
-        return data.get_array()
+        return data.array
     #--- End: def
 
     def get_auxiliary_coordinates(self, field):

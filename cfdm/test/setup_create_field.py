@@ -28,7 +28,8 @@ class create_fieldTest(unittest.TestCase):
         dim0.set_property('standard_name', 'grid_longitude')
         dim0.set_property('units', 'degrees')
 
-        array = dim0.get_array()
+#        array = dim0.get_array()
+        array = dim0.data.array
 
         array = numpy.array([array-0.5, array+0.5]).transpose((1,0))
         array[-2, 1] = 30
@@ -204,7 +205,8 @@ class create_fieldTest(unittest.TestCase):
             print(g)
             g[0].dump()
 
-        array = g[0].get_construct(name='long_name:greek_letters').get_array()
+#        array = g[0].get_construct(name='long_name:greek_letters').get_array()
+        array = g[0].get_construct(name='long_name:greek_letters').data.array
         self.assertTrue(array[1] == b'beta', 'greek_letters = {!r}'.format(array))
 
         self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))

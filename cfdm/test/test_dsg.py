@@ -444,7 +444,8 @@ class DSGTest(unittest.TestCase):
         q = [g for g in f
              if g.get_property('standard_name') == 'specific_humidity'][0]
 
-        self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
+#        self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
+        self.assertTrue(cfdm.functions._numpy_allclose(q.data.array, self.a))
 
 #        print ('\nf\n')
 #        for x in f:
@@ -514,7 +515,8 @@ class DSGTest(unittest.TestCase):
         q = [g for g in f
              if g.get_property('standard_name') == 'specific_humidity'][0]
 
-        self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
+#        self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
+        self.assertTrue(cfdm.functions._numpy_allclose(q.data.array, self.a))
         
 #        print ('\nf\n')
 #        for x in f:
@@ -545,7 +547,8 @@ class DSGTest(unittest.TestCase):
         q = [g for g in f
              if g.get_property('standard_name') == 'specific_humidity'][0]
 
-        q = q.get_array()
+#        q = q.get_array()
+        q = q.data.array
         
         message= repr(q-self.b) +'\n'+repr(q[2,0])+'\n'+repr(self.b[2, 0])
         self.assertTrue(cfdm.functions._numpy_allclose(q, self.b),
@@ -595,7 +598,8 @@ class DSGTest(unittest.TestCase):
                         'units': 'km',
                         'positive': 'up'})
         
-        self.assertTrue((z.get_array() == numpy.ma.masked_array(
+#        self.assertTrue((z.get_array() == numpy.ma.masked_array(
+        self.assertTrue((z.data.array == numpy.ma.masked_array(
             data=[[1.0, 3.0, 99],
                   [4.0, 3.0, 6.0]],
             mask=[[False, False,  True],
@@ -608,7 +612,8 @@ class DSGTest(unittest.TestCase):
         self.assertTrue((z.data.get_compressed_array() == numpy.array(
             [1., 3., 4., 3., 6.], dtype='float32')).all())
         
-        self.assertTrue((z.data.get_count_variable().get_array() == numpy.array(
+#        self.assertTrue((z.data.get_count_variable().get_array() == numpy.array(
+        self.assertTrue((z.data.get_count_variable().data.array == numpy.array(
             [2, 3])).all())
     #--- End: def
 

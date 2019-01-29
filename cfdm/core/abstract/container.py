@@ -38,7 +38,41 @@ x.__deepcopy__() <==> copy.deepcopy(x)
         return self.copy()
     #--- End: def
 
-    def _del_component(self, component, *default):
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
+    def _default(self, default, message=None):
+        '''<TODO>
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+
+    default: 
+        <TODO>
+        
+    message: `str`, optional 
+        <TODO>
+        
+:Returns:
+
+    <TODO>
+
+**Examples:**
+
+<TODO>
+
+        '''
+        if isinstance(default, Exception):
+            if message is not None and not default.args:
+                default.args = (message,)
+
+            raise default
+        
+        return default
+    #--- End: def
+    
+    def _del_component(self, component, default=ValueError()):
         '''Remove a component.
 
 .. versionadded:: 1.7.0
@@ -72,13 +106,24 @@ False
 
         '''
         try:
-            return self._components.pop(component, *default)
+            return self._components.pop(component)
         except KeyError:
-            raise ValueError("{!r} has no {!r} component".format(
-                self.__class__.__name__, component))
+             return self._default(default,
+                                  "{!r} has no {!r} component".format(
+                                      self.__class__.__name__, component))
+         
+#        except KeyError:
+#            raise ValueError("{!r} has no {!r} component".format(
+#                self.__class__.__name__, component))
+#        
+#        try:
+#            return self._components.pop(component, *default)
+#        except KeyError:
+#            raise ValueError("{!r} has no {!r} component".format(
+#                self.__class__.__name__, component))
     #--- End: def
 
-    def _get_component(self, component, *default):
+    def _get_component(self, component, default=ValueError()):
         '''Return a component
 
 .. versionadded:: 1.7.0
@@ -111,16 +156,19 @@ True
 False
 
         '''
-        value = self._components.get(component)
-        
-        if value is None:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} object has no {!r} component".format(
-                self.__class__.__name__, component))
-            
-        return value
+        try:            
+            return self._components[component]
+        except KeyError:
+            return self._default(default,
+                                 message="{!r} object has no {!r} component".format(
+                              self.__class__.__name__, component))
+#            if default:
+#                return default[0]
+#
+#            raise AttributeError("{!r} object has no {!r} component".format(
+#                self.__class__.__name__, component))
+#            
+#        return value
     #--- End: def
 
     def _has_component(self, component):
@@ -195,6 +243,9 @@ False
         self._components[component] = value
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     @abc.abstractmethod
     def copy(self):
         '''Return a deep copy.

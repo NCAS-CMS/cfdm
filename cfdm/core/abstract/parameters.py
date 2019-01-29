@@ -86,7 +86,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         return type(self)(source=self, copy=True)
     #--- End: def
     
-    def del_parameter(self, parameter, *default):
+    def del_parameter(self, parameter, default=ValueError()):
         '''Delete a parameter.
 
 .. versionadded:: 1.7.0
@@ -100,7 +100,8 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         The name of the parameter to be deleted.
 
     default: optional
-        Return *default* if the parameter has not been set.
+        Return *default* if the parameter has not been set. By default
+        an exception is raised in this case.
 
 :Returns:
 
@@ -110,20 +111,29 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
 **Examples:**
 
         '''
-        return self._get_component('parameters').pop(parameter, None)
+        try:
+            return self._get_component('parameters').pop(parameter)
+        except KeyError:
+            return self._default(default,
+                                 "{!r} has no {!r} parameter".format(
+                                     self.__class__.__name__, parameter))
+        
+#        return self._get_component('parameters').pop(parameter, None)
     #--- End: def
 
-    def get_parameter(self, term, *default):
+    def get_parameter(self, parameter, default=ValueError()):
         '''Get a parameter value.
 
 .. versionadded:: 1.7.0
 
 :Parameters:
 
-    term: `str`
-        The name of the term.
+    parameter: `str`
+        The name of the parameter.
 
     default: optional
+        Return *default* if the parameter has not been set. By default
+        an exception is raised in this case.
 
 :Returns:
 
@@ -141,15 +151,22 @@ ERROR
 
 
         '''
-        d = self._get_component('parameters')
-        if term in d:
-            return d[term]
-        
-        if default:
-            return default[0]
-
-        raise AttributeError("{} doesn't have parameter term {!r}".format(
-                self.__class__.__name__, term))
+        try:
+            return self._get_component('parameters')[parameter]
+        except KeyError:
+            return self._default(default,
+                                 "{!r} has no {!r} parameter".format(
+                                     self.__class__.__name__, parameter))
+#        
+#        d = self._get_component('parameters')
+#        if term in d:
+#            return d[term]
+#        
+#        if default:
+#            return default[0]
+#
+#        raise AttributeError("{} doesn't have parameter term {!r}".format(
+#                self.__class__.__name__, term))
     #--- End: def
     
     def parameters(self, parameters=None, copy=True):
@@ -197,9 +214,9 @@ ERROR
 
         if parameters is not None:
             if copy:
-                properties = deepcopy(parameters)
+                parameters = deepcopy(parameters)
             else:
-                properties = parameters.copy()
+                parameters = parameters.copy()
                 
             self._set_component('parameters', parameters, copy=False)
 

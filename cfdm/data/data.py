@@ -123,7 +123,7 @@ class Data(mixin.Container, core.Data):
 [ 1.  2.  3.]
 
        '''
-        array = self.get_array()
+        array = self.array
         if not dtype:
             return array
         else:
@@ -212,7 +212,7 @@ rules, the only differences being:
             raise TypeError(
 "only length-1 arrays can be converted to Python scalars. Got {}".format(self))
 
-        return int(self.get_array())
+        return int(self.array)
     #--- End: def
 
     def __setitem__(self, indices, value):
@@ -265,7 +265,7 @@ any other value.
         '''
         indices = self._parse_indices(indices)
                 
-        array = self.get_array()
+        array = self.array
 
         if value is masked or numpy.ma.isMA(value):
             # The data is not masked but the assignment is masking
@@ -314,7 +314,7 @@ x.__str__() <==> str(x)
                 # Convert reference time to date-time
                 try:
                     first = type(self)(
-                        numpy.ma.array(first), units, calendar).get_dtarray()
+                        numpy.ma.array(first), units, calendar).dtarray
                 except (ValueError, OverflowError):
                     first = '??'
 
@@ -327,7 +327,7 @@ x.__str__() <==> str(x)
                 # Convert reference times to date-times
                 try:
                     first, last = type(self)(
-                        numpy.ma.array([first, last]), units, calendar).get_dtarray()
+                        numpy.ma.array([first, last]), units, calendar).dtarray
                 except (ValueError, OverflowError):
                     first, last = ('??', '??')
 
@@ -341,7 +341,7 @@ x.__str__() <==> str(x)
                     # Convert reference time to date-time
                     try:
                         middle = type(self)(
-                            numpy.ma.array(middle), units, calendar).get_dtarray()
+                            numpy.ma.array(middle), units, calendar).dtarray
                     except (ValueError, OverflowError):
                         middle = '??'
                         
@@ -395,7 +395,7 @@ one element.
 masked
 
         '''
-        array = self[index].get_array()
+        array = self[index].array
 
         if not numpy.ma.isMA(array):
             return array.item()
@@ -540,6 +540,72 @@ masked
                     array[i] = value[j]
     #--- End: def
 
+    @property
+    def dtarray(self):
+        '''Return an independent numpy array containing the date-time objects
+corresponding to time since a refernce date.
+
+Only applicable for reference time units.
+
+If the calendar has not been set then the CF default calendar of
+"standard" (i.e. the mixed Gregorian/Julian calendar as defined by
+Udunits) will be used.
+
+Conversions are carried out with the `netCDF4.num2date` function.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `get_array`
+
+**Examples:**
+
+>>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
+>>> a = d.dtarray
+>>> print(a)
+[cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0, 1, 1)
+ cftime.DatetimeGregorian(2019, 2, 1, 0, 0, 0, 0, 4, 32)
+ cftime.DatetimeGregorian(2019, 3, 1, 0, 0, 0, 0, 4, 60)]
+>>> print(a[1])
+2019-02-01 00:00:00
+
+>>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01',
+...               calendar='360_day')
+>>> a = d.dtarray
+>>> print(a)
+[cftime.Datetime360Day(2019, 1, 2, 0, 0, 0, 0, 3, 2)
+ cftime.Datetime360Day(2019, 2, 3, 0, 0, 0, 0, 6, 33)
+ cftime.Datetime360Day(2019, 3, 1, 0, 0, 0, 0, 6, 61)]
+>>> print(a[1])
+2019-02-03 00:00:00
+
+        '''
+        array = self.array
+
+        mask = None
+        if numpy.ma.isMA(array):
+            # num2date has issues if the mask is nomask
+            mask = array.mask
+            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
+                mask = None
+                array = array.view(numpy.ndarray)
+        #--- End: if
+        
+        array = netCDF4.num2date(array, units=self.get_units(None),
+                                 calendar=self.get_calendar('standard'),
+                                 only_use_cftime_datetimes=True)
+
+        if mask is None:
+            # There is no missing data
+            array = numpy.array(array, dtype=object)
+        else:
+            # There is missing data
+            array = numpy.ma.masked_where(mask, array)
+            if not numpy.ndim(array):
+                array = numpy.ma.masked_all((), dtype=object)
+
+        return array
+    #--- End: def
+
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -618,7 +684,7 @@ data array shape.
             raise ValueError(
                 "Can't expand dimension sof data: Invalid position: {!r}".format(position))
 
-        array = self.get_array()
+        array = self.array
         array = numpy.expand_dims(array, position)
 
         d = self.copy(array=False)
@@ -656,70 +722,70 @@ data array shape.
 #                                      list_array=list_data))
 #    #--- End: def
 
-    def get_dtarray(self):
-        '''Return an independent numpy array containing the date-time objects
-corresponding to time since a refernce date.
-
-Only applicable for reference time units.
-
-If the calendar has not been set then the CF default calendar of
-"standard" (i.e. the mixed Gregorian/Julian calendar as defined by
-Udunits) will be used.
-
-Conversions are carried out with the `netCDF4.num2date` function.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `get_array`
-
-**Examples:**
-
->>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
->>> a = d.get_dtarray()
->>> print(a)
-[cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0, 1, 1)
- cftime.DatetimeGregorian(2019, 2, 1, 0, 0, 0, 0, 4, 32)
- cftime.DatetimeGregorian(2019, 3, 1, 0, 0, 0, 0, 4, 60)]
->>> print(a[1])
-2019-02-01 00:00:00
-
->>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01',
-...               calendar='360_day')
->>> a = d.get_dtarray()
->>> print(a)
-[cftime.Datetime360Day(2019, 1, 2, 0, 0, 0, 0, 3, 2)
- cftime.Datetime360Day(2019, 2, 3, 0, 0, 0, 0, 6, 33)
- cftime.Datetime360Day(2019, 3, 1, 0, 0, 0, 0, 6, 61)]
->>> print(a[1])
-2019-02-03 00:00:00
-
-        '''
-        array = self.get_array()
-
-        mask = None
-        if numpy.ma.isMA(array):
-            # num2date has issues if the mask is nomask
-            mask = array.mask
-            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
-                mask = None
-                array = array.view(numpy.ndarray)
-        #--- End: if
-        
-        array = netCDF4.num2date(array, units=self.get_units(None),
-                                 calendar=self.get_calendar('standard'),
-                                 only_use_cftime_datetimes=True)
-
-        if mask is None:
-            # There is no missing data
-            array = numpy.array(array, dtype=object)
-        else:
-            # There is missing data
-            array = numpy.ma.masked_where(mask, array)
-            if not numpy.ndim(array):
-                array = numpy.ma.masked_all((), dtype=object)
-
-        return array
-    #--- End: def
+#    def get_dtarray(self):
+#        '''Return an independent numpy array containing the date-time objects
+#corresponding to time since a refernce date.
+#
+#Only applicable for reference time units.
+#
+#If the calendar has not been set then the CF default calendar of
+#"standard" (i.e. the mixed Gregorian/Julian calendar as defined by
+#Udunits) will be used.
+#
+#Conversions are carried out with the `netCDF4.num2date` function.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `get_array`
+#
+#**Examples:**
+#
+#>>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
+#>>> a = d.get_dtarray()
+#>>> print(a)
+#[cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0, 1, 1)
+# cftime.DatetimeGregorian(2019, 2, 1, 0, 0, 0, 0, 4, 32)
+# cftime.DatetimeGregorian(2019, 3, 1, 0, 0, 0, 0, 4, 60)]
+#>>> print(a[1])
+#2019-02-01 00:00:00
+#
+#>>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01',
+#...               calendar='360_day')
+#>>> a = d.get_dtarray()
+#>>> print(a)
+#[cftime.Datetime360Day(2019, 1, 2, 0, 0, 0, 0, 3, 2)
+# cftime.Datetime360Day(2019, 2, 3, 0, 0, 0, 0, 6, 33)
+# cftime.Datetime360Day(2019, 3, 1, 0, 0, 0, 0, 6, 61)]
+#>>> print(a[1])
+#2019-02-03 00:00:00
+#
+#        '''
+#        array = self.get_array()
+#
+#        mask = None
+#        if numpy.ma.isMA(array):
+#            # num2date has issues if the mask is nomask
+#            mask = array.mask
+#            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
+#                mask = None
+#                array = array.view(numpy.ndarray)
+#        #--- End: if
+#        
+#        array = netCDF4.num2date(array, units=self.get_units(None),
+#                                 calendar=self.get_calendar('standard'),
+#                                 only_use_cftime_datetimes=True)
+#
+#        if mask is None:
+#            # There is no missing data
+#            array = numpy.array(array, dtype=object)
+#        else:
+#            # There is missing data
+#            array = numpy.ma.masked_where(mask, array)
+#            if not numpy.ndim(array):
+#                array = numpy.ma.masked_all((), dtype=object)
+#
+#        return array
+#    #--- End: def
 
     def get_count_variable(self, *default):
         '''Return the count variable for a compressed array.
@@ -1008,7 +1074,7 @@ Missing data array elements are omitted from the calculation.
                 raise ValueError("Can't find maximum of data: {}".format(error))
         #--- End: if
         
-        array = self.get_array()
+        array = self.array
         array = numpy.amax(array, axis=axes, keepdims=True)
 
         d = self.copy(array=False)
@@ -1051,7 +1117,7 @@ Missing data array elements are omitted from the calculation.
                 raise ValueError("Can't find minimum of data: {}".format(error))
         #--- End: if
 
-        array = self.get_array()
+        array = self.array
         array = numpy.amin(array, axis=axes, keepdims=True)
 
         d = self.copy(array=False)
@@ -1225,7 +1291,7 @@ selected with the keyword arguments.
         if not axes:
             return d
 
-        array = self.get_array()
+        array = self.array
         array = numpy.squeeze(array, axes)
 
         d._set_Array(array, copy=False)
@@ -1260,7 +1326,7 @@ Missing data array elements are omitted from the calculation.
                 raise ValueError("Can't sum data: {}".format(error))
         #--- End: if
         
-        array = self.get_array()
+        array = self.array
         array = numpy.sum(array, axis=axes, keepdims=True)
             
         d = self.copy()
@@ -1337,7 +1403,7 @@ Missing data array elements are omitted from the calculation.
                     "Can't transpose data: Axes don't match array: {}".format(axes))
         #--- End: if
 
-        array = self.get_array()
+        array = self.array
         array = numpy.transpose(array, axes=axes)
 
         d._set_Array(array, copy=False)
@@ -1610,7 +1676,7 @@ False
         # ------------------------------------------------------------
         # Check for equal (uncompressed) array values
         # ------------------------------------------------------------
-        if not self._equals(self.get_array(), other.get_array(),
+        if not self._equals(self.array, other.array,
                             rtol=rtol, atol=atol):
             if verbose:
                 print("{0}: Different array values".format(
@@ -1758,7 +1824,7 @@ missing values.
 <Data(3): [1, 2, 4] metre>
 
         '''
-        array = self.get_array()
+        array = self.array
         array = numpy.unique(array)
 
         if numpy.ma.is_masked(array):

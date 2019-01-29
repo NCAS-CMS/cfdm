@@ -463,7 +463,7 @@ Metadata constructs of a particular type can be retrieved with the
 following attributes of the field construct:
 
 ==============================  =====================  
-Method                          Metadata constructs    
+Attribute                       Metadata constructs    
 ==============================  =====================  
 `~Field.domain_axes`            Domain axes            
 `~Field.dimension_coordinates`  Dimension coordinates  
@@ -477,10 +477,12 @@ Method                          Metadata constructs
 `~Field.cell_methods`           Cell methods                               
 ==============================  =====================  
 
-Each of these methods returns a `Constructs` class instance that is
-like read-only dictionary. It contains values that are the metadata
-constructs of chosen type, keyed by a unique identifier called a
-"construct key":
+Each of these attributes returns a `Constructs` class instance that
+maps metadata constructs to a unique identifier called a "construct
+key". The `Constructs` class has similarities to a "read-only" Python
+dictionary in that it has `~Constructs.get`, `~Constructs.items`,
+`~Constructs.keys` and `~Constructs.values` methods that correspond to
+the corresponding `dict` methods.
 
 .. Each of these methods returns a dictionary whose values are the
    metadata constructs of one type, keyed by a unique identifier
@@ -498,7 +500,7 @@ constructs of chosen type, keyed by a unique identifier called a
    >>> t.coordinate_references['coordinatereference1']
    <CoordinateReference: rotated_latitude_longitude>
    >>> for key, value in t.coordinate_references.items():
-   ...     print key, value
+   ...     print(key, value)
    ...
    coordinatereference1 rotated_latitude_longitude
    coordinatereference0 atmosphere_hybrid_height_coordinate
@@ -507,12 +509,12 @@ constructs of chosen type, keyed by a unique identifier called a
    :caption: *Retrieve the field construct's dimension coordinate and
              domain axis contructs.*
       
-   >>> t.dimension_coordinates
+   >>> print(t.dimension_coordinates)
    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-   >>> t.domain_axes
+   >>> print(t.domain_axes)
    {'domainaxis0': <DomainAxis: size(1)>,
     'domainaxis1': <DomainAxis: size(10)>,
     'domainaxis2': <DomainAxis: size(9)>,
@@ -581,25 +583,24 @@ for more details.
 
 ----
 
-The field construct's data array is stored in a `Data` class instance
-that is accessed with the `~Field.get_data` method of the field
-construct.
+The field construct's data is stored in a `Data` class instance that
+is accessed with the `~Field.data` attribute of the field construct.
 
 .. code-block:: python
    :caption: *Retrieve the data and inspect it, showing the shape and
              some illustrative values.*
 		
-   >>> d = t.get_data()
-   >>> d
+   >>> t.data
    <Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
 
-The data array may be retrieved as an independent (possibly masked)
-`numpy` array with the `~Field.get_array` method:
+The data instance conetains an array of values, as well as attributes
+to describe them and methods for describing :ref:`compression
+<Compression>`.
 
 .. code-block:: python
-   :caption: *Retrieve the data as a numpy array.*
+   :caption: *Retrieve the numpy array of the data.*
       
-   >>> print(t.get_array())
+   >>> print(t.data.array)
    [[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
      [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
      [269.7 279.1 273.4 274.2 279.6 270.2 280.0 272.5 263.7]
@@ -611,10 +612,6 @@ The data array may be retrieved as an independent (possibly masked)
      [270.9 278.7 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
      [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]
    
-The field construct also has a `~Field.data` attribute that is an
-alias for the `~Field.get_data` method, which makes it easier to
-access attributes and methods of the `Data` instance.
-
 .. code-block:: python
    :caption: *Inspect the data type, number of dimensions, dimension
              sizes and number of elements of the data array.*
@@ -627,6 +624,16 @@ access attributes and methods of the `Data` instance.
    (1, 10, 9)
    >>> t.data.size
    90
+
+The field construct also has a `~Field.get_data` method as an
+alternative means of retrieving the data instance (as well as a
+`~Field.del_data` method for remmoving the data).
+
+.. code-block:: python
+   :caption: *Use the "get_data" method to retrieve the data.*"
+
+   >>> t.get_data()
+    <Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
 
 All of the methods and attributes related to the data are listed
 :ref:`here <Field-Data>`.
@@ -648,7 +655,7 @@ the field construct. For example, the data of the field construct
    :caption: *Show which data axis constructs are spanned by the field
              construct's data.*
 	    
-   >>> t.domain_axes()
+   >>> print(t.domain_axes)
    {'domainaxis0': <DomainAxis: size(1)>,
     'domainaxis1': <DomainAxis: size(10)>,
     'domainaxis2': <DomainAxis: size(9)>,
@@ -728,7 +735,7 @@ A single value may be assigned to any number of elements.
    >>> t.data[:, 0, 0] = -1
    >>> t.data[:, :, 1] = -2
    >>> t.data[..., 6:3:-1, 3:6] = -3
-   >>> print(t.get_array())
+   >>> print(t.data.array)
    [[[ -1.0  -2.0 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
      [272.7  -2.0 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
      [269.7  -2.0 273.4 274.2 279.6 270.2 280.0 272.5 263.7]
@@ -751,7 +758,7 @@ the shape defined by the indices, using the `numpy broadcasting rules
 	     
    >>> t.data[..., 6:3:-1, 3:6] = numpy.arange(9).reshape(3, 3)
    >>> t.data[0, [2, 9], [4, 8]] =  cfdm.Data([[-4, -5]])
-   >>> print(t.get_array())
+   >>> print(t.data.array)
    [[[ -1.0  -2.0 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
      [272.7  -2.0 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
      [269.7  -2.0 273.4 274.2  -4.0 270.2 280.0 272.5  -5.0]
@@ -773,7 +780,7 @@ any other value.
 	     
    >>> t.data[0, :, -2] = numpy.ma.masked
    >>> t.data[0, 5, -2] = -6
-   >>> print(t.get_array())
+   >>> print(t.data.array)
    [[[ -1.0  -2.0 279.8 269.5 260.9 265.0 263.5    -- 269.2]
      [272.7  -2.0 279.5 278.9 263.8 263.3 274.2    -- 279.5]
      [269.7  -2.0 273.4 274.2  -4.0 270.2 280.0    --  -5.0]
@@ -814,7 +821,7 @@ Method                     Description
    >>> t2 = t.squeeze()
    >>> t2
    <Field: air_temperature(grid_latitude(10), grid_longitude(9)) K>   
-   >>> t2.dimension_coordinates()
+   >>> print(t2.dimension_coordinates)
    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
@@ -879,7 +886,7 @@ class.
 
 ----
 
-A `~Constructs.select` method of a `Constructs` instance may be used
+The `~Constructs.select` method of a `Constructs` instance may be used
 to select constructs that meet any combination of the following
 criteria:
 
@@ -916,7 +923,7 @@ criteria:
    >>> print(t.constructs.select(properties={'standard_name': 'air_temperature standard_error'}))
    {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
    >>> print(t.constructs.select(properties=[{'standard_name': 'air_temperature standard_error'},
-   ...                                 {'units': 'm'}]))
+   ...                                       {'units': 'm'}]))
    {'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
     'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
@@ -944,11 +951,11 @@ criteria:
    :caption: *Get constructs that meet a variety of criteria using a
              single call to "select".*
 	     
-   >>> t.constructs.select(construct='auxiliary_coordinate',
-   ...                     axis='domainaxis1',
-   ...                     properties={'units': 'degrees_E'})
+   >>> print(t.constructs.select(construct='auxiliary_coordinate',
+   ...                           axis='domainaxis1',
+   ...                           properties={'units': 'degrees_E'}))
    {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
-
+  
 The `~Constructs.select` method also returns a `Constructs` instance
 on which further selection can be made. For example, result the
 previous example could be achieved with multiple selections:
@@ -971,15 +978,13 @@ means:
    :caption: *Get constructs by construct key using the "select"
              method.*
 
-   >>> t.constructs.select(key='domainancillary2')
+   >>> print(t.constructs.select(key='domainancillary2'))
    {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
-   >>> t.constructs.select(key='cellmethod1')
+   >>> print(t.constructs.select(key='cellmethod1')(
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
-   >>> t.constructs.select(key=['auxiliarycoordinate2', 'cellmeasure0'])
+   >>> print(t.constructs.select(key=['auxiliarycoordinate2', 'cellmeasure0']))
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
     'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
-   >>> t.constructs.select(key='auxiliarycoordinate999')
-   {}
 
 A less verbose, and often more convenient, method of selection is by
 metadata construct "name". A construct's name is typically the
@@ -994,13 +999,13 @@ although the keyword ``name`` can be used:
 .. code-block:: python
    :caption: *Get constructs by their name.*
 	
-   >>> t.constructs.select('latitude')
+   >>> print(t.constructs.select('latitude'))
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-   >>> t.constructs.select('long_name:Grid latitude name')
+   >>> print(t.constructs.select('long_name:Grid latitude name'))
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
-   >>> t.constructs.select(name='longitude')
+   >>> print(t.constructs.select(name='longitude'))
    {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
-   >>> t.constructs.select('measure%area')
+   >>> print(t.constructs.select('measure%area'))
    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
 
 More generally, a construct name may be constructed by any of
@@ -1044,12 +1049,13 @@ returned:
    >>> print(t.constructs.select('radiation_wavelength'))
    {}
 
-Finally, construct selection is also possible by providing the same
-selection parameters directly to a `Constructs` instance:
+As a convienince feature, construct selection is also possible by
+providing the same selection parameters directly to a `Constructs`
+instance:
 
 .. code-block:: python
    :caption: *Construct selection is possible with via the "select"
-             method, or directly on the "Constructs" insance.*
+             method, or directly on the "Constructs" instance.*
 
    >>> print(t.constructs.select('latitude'))
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
@@ -1112,8 +1118,7 @@ via the `~Field.get_construct` method, or by the standard
 dictionary-like methods of a `Constructs` instance:
 
 .. code-block:: python
-   :caption: *Get constructs by construct key using dictionary
-             functionaility.*
+   :caption: *Get constructs by construct key.*
 
    >>> t.get_construct(key='domainancillary2')
    <DomainAncillary: surface_altitude(10, 9) m>
@@ -1134,8 +1139,6 @@ dictionary-like methods of a `Constructs` instance:
    <CellMethod: domainaxis3: maximum>
    >>> t.constructs.get('auxiliarycoordinate999', 'NO CONSTRUCT')
    'NO CONSTRUCT'
-   >>> t.constructs.has_key('auxiliarycoordinate999')
-   False
 
 The key of a metadata construct may be found with the
 `~Field.get_constructs_key` method of the field construct:
@@ -1184,23 +1187,23 @@ construct <Data>` as the field construct for accessing their data:
    >>> lon = q.get_construct('longitude')   
    >>> lon
    <DimensionCoordinate: longitude(8) degrees_east>
-   >>> lon.get_data()
+   >>> lon.data
    <Data(8): [22.5, ..., 337.5] degrees_east>
    >>> lon.data[2]
    <Data(1): [112.5] degrees_east>
    >>> lon.data[2] = 133.33
-   >>> print(lon.get_array())
+   >>> print(lon.data.array)
    [22.5 67.5 133.33 157.5 202.5 247.5 292.5 337.5]
 
 The domain axis constructs spanned by a metadata construct's data are
-found with the `~Field.constructs_data_axes` method of the field
-construct:
+found with the `~Constructs.data_axes` method of the field construct's
+`Constructs` instance:
 
 .. code-block:: python
    :caption: *Find the construct keys of the domain axis constructs
              spanned by the data of each metadata construct.*
 
-   >>> t.constructs_data_axes()
+   >>> t.constructs.data_axes()
    {'auxiliarycoordinate0': ('domainaxis1', 'domainaxis2'),
     'auxiliarycoordinate1': ('domainaxis2', 'domainaxis1'),
     'auxiliarycoordinate2': ('domainaxis1',),
@@ -1302,7 +1305,7 @@ the `~cfdm.DomainAxis.get_size()` method of the domain axis construct.
 .. code-block:: python
    :caption: *Get the size of a domain axis construct.*
 
-   >>> q.domain_axes()
+   >>> print(q.domain_axes)
    {'domainaxis0': <DomainAxis: size(5)>,
     'domainaxis1': <DomainAxis: size(8)>,
     'domainaxis2': <DomainAxis: size(1)>}
@@ -1354,7 +1357,7 @@ construct <Data>` for accessing its data.
    <Bounds: grid_longitude(9, 2) >
    >>> bounds.get_data()
    <Data(9, 2): [[-4.92, ..., -0.96]]>
-   >>> print(bounds.get_array())
+   >>> print(bounds.data.array)
    [[-4.92 -4.48]
     [-4.48 -4.04]
     [-4.04 -3.6 ]
@@ -1397,10 +1400,10 @@ main data array.
              construct.*
       
    >>> a = t.get_construct(key='domainancillary0')
-   >>> print(a.get_array)
+   >>> print(a.data.array)
    [10.]
    >>> bounds = a.get_bounds()
-   >>> print(bounds.get_array())
+   >>> print(bounds.data.array)
    [[ 5. 15.]]
 
 .. _Coordinate-systems:
@@ -2784,12 +2787,11 @@ both:
   `~Data.get_compression_type` method of the `Data` instance.
 ..
 
-* Accessing the data by a call to the `!get_array` method of a field
-  or metadata construct returns a numpy array that is
-  uncompressed. The underlying array will, however, remain in its
-  compressed form. The underlying compressed array may be retrieved as
-  a numpy array with the `~Data.get_compressed_array` method of the
-  `Data` instance.
+* Accessing the data via the `~Data.array` attribute of a `Data`
+  instance returns a numpy array that is uncompressed. The underlying
+  array will, however, remain in its compressed form. The underlying
+  compressed array may be retrieved as a numpy array with the
+  `~Data.get_compressed_array` method of the `Data` instance.
 
 ..
 
@@ -2907,7 +2909,7 @@ file:
                    : longitude(ncdim%station(4)) = [-23.0, ..., 178.0] degrees_east
                    : height(ncdim%station(4)) = [0.5, ..., 345.0] m
                    : cf_role:timeseries_id(ncdim%station(4)) = [station1, ..., station4]
-   >>> print(h.get_array())
+   >>> print(h.data.array)
    [[0.12 0.05 0.18   --   --   --   --   --   --]
     [0.05 0.11 0.2  0.15 0.08 0.04 0.06   --   --]
     [0.15 0.19 0.15 0.17 0.07   --   --   --   --]
@@ -2925,7 +2927,7 @@ file:
    >>> count_variable = h.data.get_count_variable()
    >>> count_variable
    <Count: long_name:number of observations for this station(4) >
-   >>> print(count_variable.get_array())
+   >>> print(count_variable.data.array)
    [3 7 5 9]
 
 The timeseries for the second station is easily selected by indexing
@@ -2937,7 +2939,7 @@ the "station" axis of the field construct:
    >>> station2 = h[1]
    >>> station2
    <Field: specific_humidity(ncdim%station(1), ncdim%timeseries(9))>
-   >>> print(station2.get_array())
+   >>> print(station2.data.array)
    [[0.05 0.11 0.2 0.15 0.08 0.04 0.06 -- --]]
 
 The underlying array of original data remains in compressed form until
@@ -2950,7 +2952,7 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    'ragged contiguous'
    >>> h.data[1, 2] = -9
-   >>> print(h.get_array())
+   >>> print(h.data.array)
    [[0.12 0.05 0.18   --   --   --   --   --   --]
     [0.05 0.11 -9.0 0.15 0.08 0.04 0.06   --   --]
     [0.15 0.19 0.15 0.17 0.07   --   --   --   --]
@@ -3008,7 +3010,7 @@ The new field construct can now be inspected and written to a netCDF file:
    
    >>> T
    <Field: air_temperature(key%domainaxis1(2), key%domainaxis0(4)) K>
-   >>> print(T.get_array())
+   >>> print(T.data.array)
    [[280.0 282.5    --    --]
     [281.0 279.0 278.0 279.5]]
    >>> T.data.get_compression_type()
@@ -3018,7 +3020,7 @@ The new field construct can now be inspected and written to a netCDF file:
    >>> count_variable = T.data.get_count_variable()
    >>> count_variable
    <Count: long_name:number of obs for this timeseries(2) >
-   >>> print(count_variable.get_array())
+   >>> print(count_variable.data.array)
    [2 4]
    >>> cfdm.write(T, 'T_contiguous.nc')
 
@@ -3118,7 +3120,7 @@ file:
    Dimension coords: time(2) = [2000-02-01 00:00:00, 2000-03-01 00:00:00]
                    : latitude(4) = [-90.0, ..., -75.0] degrees_north
                    : longitude(5) = [0.0, ..., 40.0] degrees_east
-   >>> print(p.get_array())
+   >>> print(p.data.array)
    [[[--       0.000122 0.0008   --       --      ]
      [0.000177 --       0.000175 0.00058  --      ]
      [--       --       --       --       --      ]
@@ -3141,7 +3143,7 @@ file:
    >>> list_variable = p.data.get_list_variable()
    >>> list_variable
    <List: ncvar%landpoint(7) >
-   >>> print(list_variable.get_array())
+   >>> print(list_variable.data.array)
    [1 2 5 7 8 16 18]
 
 Subspaces based on the uncompressed axes of the field construct are
@@ -3223,7 +3225,7 @@ The new field construct can now be inspected and written a netCDF file:
    
    >>> P
    <Field: precipitation_flux(key%domainaxis0(2), key%domainaxis1(3), key%domainaxis2(2)) kg m-2 s-1>
-   >>> print(P.get_array())
+   >>> print(P.data.rray)
    [[[ -- 2.0]
      [ --  --]
      [1.0 3.0]]
@@ -3239,7 +3241,7 @@ The new field construct can now be inspected and written a netCDF file:
    >>> list_variable = P.data.get_list_variable()
    >>> list_variable 
    <List: (3) >
-   >>> print(list_variable.get_array())
+   >>> print(list_variable.data.array)
    [1 4 5]
    >>> cfdm.write(P, 'P_gathered.nc')
 

@@ -277,7 +277,8 @@ dtype('float64')
         return list(range(compressed_dimension, self.ndim - (compressed_ndim - compressed_dimension - 1)))
     #--- End: def
 
-    def get_array(self):
+    @property
+    def array(self):
         '''Return an independent numpy array containing the uncompressed data.
 
 :Returns:
@@ -287,7 +288,7 @@ dtype('float64')
 
 **Examples:**
 
->>> n = a.get_array()
+>>> n = a.array
 >>> isinstance(n, numpy.ndarray)
 True
 
@@ -310,7 +311,7 @@ True
 True
 
         '''
-        return self._get_compressed_Array().get_array()
+        return self._get_compressed_Array().array
     #--- End: def
 
 #--- End: class

@@ -76,7 +76,7 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 
 ``f.data`` is equivalent to ``f.get_data()`` 
 
-Note that a `Data` instance is returned. Use the `get_array` method to
+Note that a `Data` instance is returned. Use its `array` attribute to
 return the data as a `numpy` array.
 
 The units, calendar and fill value properties are, if set, inserted
@@ -84,7 +84,7 @@ into the data.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_data`, `get_array`, `get_data`, `has_data`,
+.. seealso:: `Data.array`, `del_data`, `get_data`, `has_data`,
              `set_data`
 
 :Returns:
@@ -143,7 +143,7 @@ False
         return type(self)(source=self, copy=True, _use_data=data)
     #--- End: def
 
-    def del_data(self, *default):
+    def del_data(self, default=ValueError()):
         '''Remove the data.
 
 .. versionadded:: 1.7.0
@@ -153,8 +153,9 @@ False
 :Parameters:
 
     default: optional
-        Return *default* if the data have not been set.
-
+        Return *default* if data have not been set. By default an
+        exception is raised in this case.
+        
 :Returns: 
 
         The removed data. If unset then *default* is returned, if
@@ -178,50 +179,56 @@ None
 None
 
         '''
-        return self._del_component('data', *default)
-    #--- End: def
-
-    def get_array(self):
-        '''Return an independent numpy array the data.
-
-Use the `get_data` method to return the data as a `Data` instance.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `data`, `get_data`
-
-:Returns:
-
-    `numpy.ndarray`
-        A numpy array copy of the data.
-
-**Examples:**
-
->>> d = Data([1, 2, 3.0])
->>> array = d.get_array()
->>> isinstance(array, numpy.ndarray)
-True
->>> array
-array([ 1.  2.  3.])
->>> d[0] = -99 
->>> array[0] 
-1.0
->>> array[0] = 88
->>> d[0]
--99.0
-
-        '''
-        data = self.get_data(None)
+        data = self._del_component('data', None)
         if data is None:
-            raise ValueError("{!r} has no data".format(self.__class__.__name__))
-        
-        return data.get_array()
+            return self._default(default,
+                                 message="{!r} has no data".format(
+                                     self.__class__.__name__))
+
+        return data
     #--- End: def
 
-    def get_data(self, *default):
-        '''Return the data.
+#    def get_array(self):
+#        '''Return an independent numpy array the data.
+#
+#Use the `get_data` method to return the data as a `Data` instance.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `data`, `get_data`
+#
+#:Returns:
+#
+#    `numpy.ndarray`
+#        A numpy array copy of the data.
+#
+#**Examples:**
+#
+#>>> d = Data([1, 2, 3.0])
+#>>> array = d.get_array()
+#>>> isinstance(array, numpy.ndarray)
+#True
+#>>> array
+#array([ 1.  2.  3.])
+#>>> d[0] = -99 
+#>>> array[0] 
+#1.0
+#>>> array[0] = 88
+#>>> d[0]
+#-99.0
+#
+#        '''
+#        data = self.get_data(None)
+#        if data is None:
+#            raise ValueError("{!r} has no data".format(self.__class__.__name__))
+#        
+#        return data.array
+#    #--- End: def
 
-Note that a `Data` instance is returned. Use the `get_array` method to
+    def get_data(self, default=ValueError()):
+        '''Return the data.o
+
+Note that a `Data` instance is returned. Use its `array` attribute to
 return the data as an independent `numpy` array.
 
 The units, calendar and fill value properties are, if set, inserted
@@ -229,12 +236,14 @@ into the data.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `del_data`, `get_array`, `has_data`, `set_data`
+.. seealso:: `Data.array`, `data`, `del_data`, `get_array`,
+             `has_data`, `set_data`
 
 :Parameters:
 
     default: optional
-        Return *default* if a data have not been set.
+        Return *default* if data have not been set. By default an
+        exception is raised in this case.
 
 :Returns:
 
@@ -261,10 +270,13 @@ None
         data = self._get_component('data', None)
 
         if data is None:
-            if default:
-                return default[0]
-
-            raise ValueError("{!r} has no data".format(self.__class__.__name__))
+            return self._default(default,
+                                 message="{!r} has no data".format(
+                                     self.__class__.__name__))
+#            if default:
+#                return default[0]
+#
+#            raise ValueError("{!r} has no data".format(self.__class__.__name__))
         
         units = self.get_property('units', None)
         if units is not None:

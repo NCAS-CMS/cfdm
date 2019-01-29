@@ -49,7 +49,8 @@ class DataTest(unittest.TestCase):
                 message = "cfdm.Data[{}, {}]={}={} failed".format(j, i, dvalue, avalue)
                 d[j, i] = dvalue
                 a[j, i] = avalue
-                x = d.get_array()
+#                x = d.get_array()
+                x = d.array
                 self.assertTrue((x == a).all() in (True, numpy.ma.masked), message)
                 m = numpy.ma.getmaskarray(x)
                 self.assertTrue((m == numpy.ma.getmaskarray(a)).all(), 
@@ -69,7 +70,8 @@ class DataTest(unittest.TestCase):
             message = 'cfdm.Data[%s, %s]=%s failed' % (j, i, dvalue)
             d[j, i] = dvalue
             a[j, i] = dvalue
-            x = d.get_array()
+#            x = d.get_array()
+            x = d.array
             self.assertTrue((x == a).all() in (True, numpy.ma.masked), message)
             m = numpy.ma.getmaskarray(x)
             self.assertTrue((m == numpy.ma.getmaskarray(a)).all(), message)
@@ -78,7 +80,8 @@ class DataTest(unittest.TestCase):
         # Scalar numeric array
         d = cfdm.Data(9, units='km')
         d[...] = cfdm.masked
-        a = d.get_array()
+#        a = d.get_array()
+        a = d.array
         self.assertTrue(a.shape == ())
         self.assertTrue(a[()] is numpy.ma.masked)
     #--- End: def
@@ -89,32 +92,36 @@ class DataTest(unittest.TestCase):
 
         # Scalar numeric array
         d = cfdm.Data(9, units='km')
-        a = d.get_array()
+#        a = d.get_array()
+        a = d.array
         self.assertTrue(a.shape == ())
         self.assertTrue(a == numpy.array(9))
         d[...] = cfdm.masked
-        a = d.get_array()
+#        a = d.get_array()
+        a = d.array
         self.assertTrue(a.shape == ())
         self.assertTrue(a[()] is numpy.ma.masked)
 
         # Non-scalar numeric array
         b = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
         d = cfdm.Data(b, 'km')
-        a = d.get_array()
+#        a = d.get_array()
+        a = d.array
         a[0,0,0,0] = -999
-        a2 = d.get_array()
+#        a2 = d.get_array()
+        a2 = d.array
         self.assertTrue(a2[0,0,0,0] == 0)
         self.assertTrue(a2.shape == b.shape)
         self.assertTrue((a2 == b).all())
         self.assertFalse((a2 == a).all())
     #--- End: def
 
-    def test_Data_get_dtarray(self):
+    def test_Data_dtarray(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         d = cfdm.Data(11292.5, units='days since 1970-1-1')
-        dt = d.get_dtarray()[()]
+        dt = d.dtarray[()]
         self.assertTrue(dt == datetime.datetime(2000, 12, 1, 12, 0))
     #--- End: def
 
@@ -132,7 +139,8 @@ class DataTest(unittest.TestCase):
                 message = 'cfdm.Data.transpose({}) failed: d.shape={}, a.shape={}'.format(
                     axes, d.shape, a.shape)
                 self.assertTrue(d.shape == a.shape, message)
-                self.assertTrue((d.get_array() == a).all(), message)
+#                self.assertTrue((d.get_array() == a).all(), message)
+                self.assertTrue((d.array == a).all(), message)
             #--- End: for
         #--- End: for
     #--- End: def
@@ -144,12 +152,15 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units='metre')
         u = d.unique()
         self.assertTrue(u.shape == (4,))
-        self.assertTrue((u.get_array() == cfdm.Data([1, 2, 3, 4], 'metre').get_array()).all())
+#        self.assertTrue((u.get_array() == cfdm.Data([1, 2, 3, 4], 'metre').get_array()).all())
+        self.assertTrue((u.array == cfdm.Data([1, 2, 3, 4], 'metre').array).all())
+        
 
         d[1, -1] = cfdm.masked
         u = d.unique()
         self.assertTrue(u.shape == (3,))        
-        self.assertTrue((u.get_array() == cfdm.Data([1, 2, 4], 'metre').get_array()).all())
+#        self.assertTrue((u.get_array() == cfdm.Data([1, 2, 4], 'metre').get_array()).all())
+        self.assertTrue((u.array == cfdm.Data([1, 2, 4], 'metre').array).all())
     #--- End: def
 
 #--- End: class

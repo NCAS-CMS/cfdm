@@ -770,8 +770,8 @@ returned.
         parameter set to True. For example, the following construct,
         ``c``, has three default names:
 
-           >>> c.name(all_names=True)
-           ['longitude', 'long_name:Longitude', 'ncvar%lon']
+          >>> c.name(all_names=True)
+          ['longitude', 'long_name:Longitude', 'ncvar%lon']
 
         Note that the names used to identify metadata constructs in
         the ouput of a `print` or `!dump` call may always be used to
@@ -1129,7 +1129,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                 if not ok:
                     # This construct does not match any of the sets of
                     # properties
-                    del out[cid]
+#                    del out[cid]
                     out._pop(cid)
             #--- End: for
             

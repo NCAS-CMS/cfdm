@@ -306,7 +306,8 @@ class DSGTest(unittest.TestCase):
         tas.set_data(cfdm.Data(array), axes=[T, Y, X])			      
         
    
-        self.assertTrue((tas.get_array() == numpy.ma.masked_array(
+#        self.assertTrue((tas.get_array() == numpy.ma.masked_array(
+        self.assertTrue((tas.data.array == numpy.ma.masked_array(
             data=[[[1, 280.0],
                    [1, 1],
                    [282.5, 281.0]],
@@ -330,7 +331,8 @@ class DSGTest(unittest.TestCase):
             [[280. , 282.5, 281. ],
              [279. , 278. , 277.5]], dtype='float32')).all())
         
-        self.assertTrue((tas.data.get_list_variable().get_array() == numpy.array(
+#        self.assertTrue((tas.data.get_list_variable().get_array() == numpy.array(
+        self.assertTrue((tas.data.get_list_variable().data.array == numpy.array(
             [1, 4, 5])).all())
     #--- End: def
 

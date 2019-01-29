@@ -658,12 +658,6 @@ removed even if it is referenced by coordinate reference coinstruct.
             if default:
                 return default[0]
     #--- End: def
-
-    def has_key(self, key):
-        '''
-        '''
-        return self._construct_type.has_key(key)
-    #--- End: def
     
     def items(self):
         '''
@@ -1016,54 +1010,54 @@ removed even if it is referenced by coordinate reference coinstruct.
         return out
     #--- End: def
 
-    def get_construct(self, key):
-        '''Return a metadata construct.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `del_construct`, `select`, `set_construct`
-
-:Parameters:
-
-    key: `str`
-        The identifier of the metadata construct.
-
-        *Parameter example:*
-          ``key='domainaxis1'``
-
-:Returns:
-
-        The metadata construct.
-
-**Examples:**
-
->>> f.constructs()
-{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>,
- 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>,
- 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:greek_letters(10) >,
- 'cellmethod0': <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>,
- 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
- 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
- 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
- 'domainaxis1': <DomainAxis: 10>,
- 'domainaxis2': <DomainAxis: 9>}
->>> f.get_construct('dimensioncoordinate1')
-<DimensionCoordinate: grid_latitude(10) degrees>
-
-        '''
-        construct_type = self.construct_type(key)
-        if construct_type is None:
-            raise ValueError('No metadata construct found')
-            
-        d = self._constructs.get(construct_type)
-        if d is None:
-            d = {}
-            
-        try:            
-            return d[key]
-        except KeyError:
-            raise ValueError('No metadata construct found')
-    #--- End: def
+#    def get_construct(self, key):
+#        '''Return a metadata construct.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `del_construct`, `select`, `set_construct`
+#
+#:Parameters:
+#
+#    key: `str`
+#        The identifier of the metadata construct.
+#
+#        *Parameter example:*
+#          ``key='domainaxis1'``
+#
+#:Returns:
+#
+#        The metadata construct.
+#
+#**Examples:**
+#
+#>>> f.constructs()
+#{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>,
+# 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>,
+# 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:greek_letters(10) >,
+# 'cellmethod0': <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>,
+# 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
+# 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+# 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+# 'domainaxis1': <DomainAxis: 10>,
+# 'domainaxis2': <DomainAxis: 9>}
+#>>> f.get_construct('dimensioncoordinate1')
+#<DimensionCoordinate: grid_latitude(10) degrees>
+#
+#        '''
+#        construct_type = self.construct_type(key)
+#        if construct_type is None:
+#            raise ValueError('No metadata construct found')
+#            
+#        d = self._constructs.get(construct_type)
+#        if d is None:
+#            d = {}
+#            
+#        try:            
+#            return d[key]
+#        except KeyError:
+#            raise ValueError('No metadata construct found')
+#    #--- End: def
     
 #    def has_construct(self, key):
 #        '''Whether a construct exists.

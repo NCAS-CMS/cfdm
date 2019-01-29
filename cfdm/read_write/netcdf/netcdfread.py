@@ -1017,7 +1017,7 @@ variable should be pre-filled with missing values.
             element_dimension=element_dimension,
             instance_dimension=instance_dimension)
         
-#        (instance, inverse, count) = numpy.unique(index.get_array(),
+#        (instance, inverse, count) = numpy.unique(index.data.array,
 #                                                  return_inverse=True,
 #                                                  return_counts=True)
 #
@@ -1301,7 +1301,7 @@ variable should be pre-filled with missing values.
                 #--- End: for
                 
 
-                print('index=', index.get_array())
+                print('index=', index.data.array)
                 print('part_node_count=',part_node_count)
                 
                 element_dimension_1 = self._set_ragged_contiguous_parameters(
@@ -1416,10 +1416,10 @@ variable should be pre-filled with missing values.
         '''
         g = self.read_vars
 
-#        (instance, inverse, count) = numpy.unique(index.get_array(),
+#        (instance, inverse, count) = numpy.unique(index.data.array,
 #                                                  return_inverse=True,
 #                                                  return_counts=True)
-        (_, count) = numpy.unique(index.get_array(), return_counts=True)
+        (_, count) = numpy.unique(index.data.array, return_counts=True)
 
         # Get the zero-based indices of the sample dimension that
         # apply to each instance. For example, if the sample dimension

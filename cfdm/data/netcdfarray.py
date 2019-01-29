@@ -364,7 +364,8 @@ None
         self._netcdf = None
     #--- End: def
 
-    def get_array(self):
+    @property
+    def array(self):
         '''Return an independent numpy array containing the data.
 
 :Returns:

@@ -138,8 +138,9 @@ dtype('float64')
         '''
         return self._get_component('array').size
     #--- End: def
-    
-    def get_array(self):
+
+    @property
+    def array(self):
         '''Return an independent numpy array containing the data.
 
 .. versionadded:: 1.7.0

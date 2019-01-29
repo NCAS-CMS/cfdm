@@ -28,7 +28,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
            ``properties={'standard_name': 'altitude'}``
         
         Properties may also be set after initialisation with the
-        `properties` and `set_property` methods.
+        `set_properties` and `set_property` methods.
 
     source: optional
         Initialize the properties from those of *source*.
@@ -75,7 +75,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         return type(self)(source=self, copy=True)
     #--- End: def
 
-    def del_property(self, prop, *default):
+    def del_property(self, prop, default=AttributeError()):
         '''Remove a property.
 
 .. versionadded:: 1.7.0
@@ -92,7 +92,8 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
            ``prop='long_name'``
 
     default: optional
-        Return *default* if the property has not been set.
+        Return *default* if the property has not been set. By default
+        an exception is raised in this case.
 
 :Returns:
 
@@ -119,14 +120,21 @@ None
         try:
             return self._get_component('properties').pop(prop)
         except KeyError:
-            if default:
-                return default[0]
+            return self._default(default,
+                                 "{!r} has no {!r} property".format(
+                                 self.__class__.__name__, prop))
+        
+#        try:
+#            return self._get_component('properties').pop(prop)
+#        except KeyError:
+#            if default:
+#                return default[0]
+#
+#            raise AttributeError("{!r} has no {!r} property".format(
+#                self.__class__.__name__, prop))
+#    #--- End: def
 
-            raise AttributeError("{!r} has no {!r} property".format(
-                self.__class__.__name__, prop))
-    #--- End: def
-
-    def get_property(self, prop, *default):
+    def get_property(self, prop, default=AttributeError()):
         '''Return a property.
 
 .. versionadded:: 1.7.0
@@ -143,7 +151,8 @@ None
            ``prop='standard_name'``
 
     default: optional
-        Return *default* if the property has not been set.
+        Return *default* if the property has not been set. By default
+        an exception is raised in this case.
 
 :Returns:
 
@@ -170,11 +179,14 @@ None
         try:
             return self._get_component('properties')[prop]
         except KeyError:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no {!r} property".format(
-                self.__class__.__name__, prop))
+            return self._default(default,
+                                 "{!r} has no {!r} property".format(
+                                     self.__class__.__name__, prop))
+#            if default:
+#                return default[0]
+#
+#            raise AttributeError("{!r} has no {!r} property".format(
+#                self.__class__.__name__, prop))
     #--- End: def
 
     def has_property(self, prop):
@@ -274,6 +286,72 @@ None
             self._set_component('properties', properties, copy=False)
 
         return out
+    #--- End: def
+
+    def set_properties(self, properties=None, clear=True, copy=True):
+        '''Replace all properties.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_property`, `get_property`, `has_property`,
+             `properties`, `set_property`
+
+:Parameters:
+
+    properties: `dict`, optional   
+        Delete all existing properties, and instead store the
+        properties from the dictionary supplied.
+
+        *Parameter example:*
+          ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
+        
+        *Parameter example:*
+          ``properties={}``        
+
+    copy: `bool`, optional
+        If False then any property values provided by the *properties*
+        parameter are not copied before insertion. By default they are
+        deep copied.
+
+:Returns:
+
+    `dict`
+        The original properties, before replacement.
+
+**Examples:**
+
+>>> f.properties()
+{'standard_name': 'altitude',
+ 'foo': 'bar'}
+>>> original = f.replace_properties({'standard_name': 'altitude', 
+...                                  'foo': 'bar'})
+>>> f.properties()
+{'standard_name': 'altitude',
+ 'foo': 'bar'}
+>>> f.replace_properties({})
+{'standard_name': 'altitude',
+ 'foo': 'bar'}
+>>> f.properties()
+{}
+
+        '''
+        original = self._get_component('properties')
+
+        if properties is None:
+            properties = {}
+        else:
+            if copy:
+                properties = deepcopy(properties)                
+            elif not clear:
+                properties = properties.copy()
+        #-- End: if
+        
+        if clear:
+            self._set_component('properties', properties, copy=False)
+        else:
+            original.update(properties)
+
+        return original.copy()
     #--- End: def
 
     def set_property(self, prop, value, copy=True):

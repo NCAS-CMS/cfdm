@@ -394,7 +394,8 @@ None
 #        return value
     #--- End: def
 
-    def get_array(self):
+    @property
+    def array(self):
         '''Return an independent numpy array containing the data.
 
 If a fill value has been set (see `set_fill_value`) then it will be
@@ -419,7 +420,7 @@ True
 <Data: [1.0, 2.0, 3.0] km>
 
         '''
-        array = self._get_Array().get_array()
+        array = self._get_Array().array
 
         # Set the numpy array fill value
         if numpy.ma.isMA(array):
@@ -427,6 +428,40 @@ True
 
         return array
     #--- End: def
+
+#    def get_array(self):
+#        '''Return an independent numpy array containing the data.
+#
+#If a fill value has been set (see `set_fill_value`) then it will be
+#used, otherwise the default numpy fill value appropriate to the data
+#type will be used.
+#
+#:Returns:
+#
+#    `numpy.ndarray`
+#        An independent numpy array of the data.
+#
+#**Examples:**
+#
+#>>> d = Data([1, 2, 3.0], 'km')
+#>>> n = d.get_array()
+#>>> isinstance(n, numpy.ndarray)
+#True
+#>>> print(n)
+#[ 1.,   2.,   3.]
+#>>> n[0] = 88
+#>>> print(repr(d))
+#<Data: [1.0, 2.0, 3.0] km>
+#
+#        '''
+#        array = self._get_Array().get_array()
+#
+#        # Set the numpy array fill value
+#        if numpy.ma.isMA(array):
+#            array.set_fill_value(self.get_fill_value(None))
+#
+#        return array
+#    #--- End: def
 
     def get_calendar(self, *default):
         '''Return the calendar.

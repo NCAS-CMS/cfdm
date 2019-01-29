@@ -86,7 +86,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         # dimension, element dimension).
         # --------------------------------------------------------
 
-        count_array = self.get_count_variable().get_array()
+        count_array = self.get_count_variable().data.array
         
         start = 0 
         for i, n in enumerate(count_array):

@@ -121,8 +121,8 @@ properties.
 
 ``f.bounds`` is equivalent to ``f.get_bounds()`` 
 
-Note that a `Bounds` instance is returned. Use the `get_array` method
-of the `Bounds` instance to return the bounds as a `numpy` array.
+Note that a `Bounds` instance is returned. Use its `array` attribute
+to return the bounds as an indpendent `numpy` array.
 
 .. versionadded:: 1.7.0
 
@@ -148,6 +148,7 @@ True
 <Data(5, 2): [[0, ..., 9]]>
 >>> b.data.shape
 (5, 2)
+
         '''
         return self.get_bounds()
     #--- End: def
@@ -199,7 +200,7 @@ True
 #        return super().copy(data=data)
 #    #--- End: def
 
-    def del_bounds(self, *default):
+    def del_bounds(self, default=ValueError()):
         '''Remove the bounds.
 
 .. versionadded:: 1.7.0
@@ -209,7 +210,8 @@ True
 :Parameters:
 
     default: optional
-        Return *default* if the bounds has not been set.
+        Return *default* if bounds have not been set. By default an
+        exception is raised in this case.
 
 :Returns:
 
@@ -262,7 +264,7 @@ None
         return self._del_component('geometry', *default)
     #--- End: def
 
-    def get_bounds(self, *default):
+    def get_bounds(self, default=ValueError()):
         '''Return the bounds.
 
 .. versionadd:: 1.7.0
@@ -273,7 +275,8 @@ None
 :Parameters:
 
     default: optional
-        Return *default* if and only if the bounds have not been set.
+        Return *default* if bounds have not been set. By default an
+        exception is raised in this case.
 
 :Returns:
 
@@ -300,7 +303,7 @@ None
 None
 
         '''
-        return self._get_component('bounds', *default)
+        return self._get_component('bounds', default)
     #--- End: def
 
     def get_geometry(self, *default):

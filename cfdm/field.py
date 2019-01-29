@@ -822,7 +822,7 @@ data arrays.
                 isreftime = 'since' in units
     
             if isreftime:
-                data = data.asdata(data.get_dtarray())
+                data = data.asdata(data.dtarray)
                 
             string.append('')
             string.append('{0}Data({1}) = {2}'.format(indent0,
