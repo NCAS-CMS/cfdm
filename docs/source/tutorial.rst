@@ -1490,13 +1490,7 @@ A coordinate reference construct contains
 A cell method construct describes how the data represent the variation
 of the physical quantity within the cells of the domain and is stored
 in a `~cfdm.CellMethod` instance. A field constructs allows multiple
-cell method constructs to be recorded. The application of cell methods
-is not commutative (e.g. a mean of variances is generally not the same
-as a variance of means), so the `~cfdm.Field.cell_methods` method of
-the field construct returns an ordered dictionary of constructs. The
-order is the same as that in which cell method constructs were added
-to the field construct during :ref:`field construct creation
-<Field-construct-creation>`.
+cell method constructs to be recorded.
 
 .. code-block:: python
    :caption: *Inspect the cell methods. The description follows the CF
@@ -1504,7 +1498,22 @@ to the field construct during :ref:`field construct creation
              the use of construct keys instead of netCDF variable
              names for cell method axes identification.*
 	     
-   >>> t.cell_methods()
+   >>> print(t.cell_methods)
+   {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+    'cellmethod1': <CellMethod: domainaxis3: maximum>}
+
+The application of cell methods is not commutative (e.g. a mean of
+variances is generally not the same as a variance of means), so a
+`Constructs` instance has as the `~Constructs.ordered` method to
+retrieve the cell method contructs in the same order that they were
+were added to the field construct during :ref:`field construct
+creation <Field-construct-creation>`.
+
+.. code-block:: python
+   :caption: *Retrieve the cell method constructs in the same order
+             that they were applied.*
+	     
+   >>> t.cell_methods.ordered()
    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
@@ -2160,10 +2169,10 @@ independent of the original field.
      
    >>> u = t.copy()
    >>> u.data[0, 0, 0] = -1e30
-   >>> print(u.data[0, 0, 0])
-   [[[-1e+30]]] K
-   >>> print(t.data[0, 0, 0])
-   [[[0.0]]] K
+   >>> u.data[0, 0, 0]
+   <Data(1, 1, 1): [[[-1e+30]]] K>
+   >>> t.data[0, 0, 0]
+   <Data(1, 1, 1): [[[-1.0]]] K>
    >>> u.del_construct('grid_latitude')
    <DimensionCoordinate: grid_latitude(10) degrees>
    >>> u.constructs('grid_latitude')
@@ -2316,7 +2325,7 @@ metadata construct identification with the `~Field.constructs` and
    :caption: *Retrieve metadata constructs based on their netCDF
              names.*
 	  
-   >>> t.constructs(ncvar='b')
+   >>> print(t.constructs(ncvar='b'))
    {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
    >>> t.get_construct('ncvar%x')
    <DimensionCoordinate: grid_longitude(9) degrees>
@@ -2725,7 +2734,7 @@ variable had been present in the parent dataset:
    'areacella'
    >>> area.properties()
    {'standard_name': 'cell_area', 'units': 'm2'}
-   >>> area.get_data()
+   >>> area.data
    <Data(9, 10): [[100000.5, ..., 100089.5]] m2>
    
 If this field construct were to be written to disk using `cfdm.write`

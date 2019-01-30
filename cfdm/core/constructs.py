@@ -371,7 +371,7 @@ removed even if it is referenced by coordinate reference coinstruct.
         '''
         if not force:
 
-            data_axes = self.constructs_data_axes()
+            data_axes = self.data_axes()
 #            if key in self.constructs(construct='domain_axis'):
             if key in self.select(construct='domain_axis'):
                 # Fail if the domain axis construct is spanned by a data

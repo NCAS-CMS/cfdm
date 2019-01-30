@@ -749,7 +749,7 @@ coordinate reference coinstruct.
                 raise ValueError(
 "Can't remove domain axis {!r} that is spanned by the the data of metadata construct {!r}".format(cid, key))
 
-        return self._get_constructs().del_construct(key=cid)
+        return self._get_constructs()._del_construct(key=cid)
     #--- End: def
 
     def dump(self, display=True, _level=0, _title=None):
