@@ -754,8 +754,7 @@ returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_construct`, `get_construct`,
-             `get_construct_id`, `has_construct`, `set_construct`
+.. seealso:: `get_construct`, `get_construct_key`, `set_construct`
 
 :Parameters:
 
@@ -764,20 +763,24 @@ returned.
         names has been given then the constructs that have any of the
         names are selected.
        
-        In general, a construct is selected if any of the given names
-        is the same as one of the possible constuct names, as returned
-        by the construct's `!name` method with the ``all_names``
-        parameter set to True. For example, the following construct,
+        A construct typically has a number of default names, and is
+        selected if any of them match any of the given names. The
+        construct's default names are returned by the construct's
+        `!all_names` method. For example, the following construct,
         ``c``, has three default names:
 
-          >>> c.name(all_names=True)
-          ['longitude', 'long_name:Longitude', 'ncvar%lon']
+           >>> c.all_names()
+           ['longitude', 'long_name:Longitude', 'ncvar%lon']
+
+        However, it is also possible for a construct to be selected by
+        a name based on any construct property, or the construct's key
+        (see below).
 
         Note that the names used to identify metadata constructs in
         the ouput of a `print` or `!dump` call may always be used to
-        select constructs.
+        select constructs by name.
 
-        A name may be one of:
+        A given name may be one of:
 
         * The value of the standard name property.
 

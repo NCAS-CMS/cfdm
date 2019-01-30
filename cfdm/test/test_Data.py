@@ -23,7 +23,7 @@ class DataTest(unittest.TestCase):
 #    test_only = ['test_Data__asdatetime__asreftime__isdatetime']
 #    test_only = ['test_Data___setitem__']
 #    test_only = ['test_Data_ceil', 'test_Data_floor', 'test_Data_trunc', 'test_Data_rint']
-#    test_only = ['test_Data_array', 'test_Data_dtarray']
+#    test_only = ['test_Data_array', 'test_Data_datetime_array']
 #    test_only = ['test_dumpd_loadd']
 #    test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
 
@@ -116,12 +116,12 @@ class DataTest(unittest.TestCase):
         self.assertFalse((a2 == a).all())
     #--- End: def
 
-    def test_Data_dtarray(self):
+    def test_Data_datetime_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         d = cfdm.Data(11292.5, units='days since 1970-1-1')
-        dt = d.dtarray[()]
+        dt = d.datetime_array[()]
         self.assertTrue(dt == datetime.datetime(2000, 12, 1, 12, 0))
     #--- End: def
 

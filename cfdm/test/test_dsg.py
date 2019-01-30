@@ -486,9 +486,9 @@ class DSGTest(unittest.TestCase):
         # Create the field construct with the domain axes and the ragged
         # array
         tas = cfdm.Field()
-        tas.properties({'standard_name': 'air_temperature',
-                        'units': 'K',
-    		        'featureType': 'timeSeries'})
+        tas.replace_properties({'standard_name': 'air_temperature',
+                                'units': 'K',
+        		        'featureType': 'timeSeries'})
         
         # Create the domain axis constructs for the uncompressed array
         X = tas.set_construct(cfdm.DomainAxis(4))
@@ -609,7 +609,7 @@ class DSGTest(unittest.TestCase):
         
         self.assertTrue(z.data.get_compression_type() == 'ragged contiguous')
         
-        self.assertTrue((z.data.get_compressed_array() == numpy.array(
+        self.assertTrue((z.data.compressed_array == numpy.array(
             [1., 3., 4., 3., 6.], dtype='float32')).all())
         
 #        self.assertTrue((z.data.get_count_variable().get_array() == numpy.array(

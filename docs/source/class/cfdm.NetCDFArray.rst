@@ -21,7 +21,6 @@ Inspection
    :template: method.rst
    
 
-   ~cfdm.NetCDFArray.get_array
    ~cfdm.NetCDFArray.get_compressed_array
    ~cfdm.NetCDFArray.get_compressed_axes
    ~cfdm.NetCDFArray.get_compression_type
@@ -39,6 +38,7 @@ Inspection
    ~cfdm.NetCDFArray.ndim
    ~cfdm.NetCDFArray.shape
    ~cfdm.NetCDFArray.size
+   ~cfdm.NetCDFArray.array
    ~cfdm.NetCDFArray.ncvar
    ~cfdm.NetCDFArray.varid
 

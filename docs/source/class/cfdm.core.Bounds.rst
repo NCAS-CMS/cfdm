@@ -25,6 +25,7 @@ Properties
    ~cfdm.core.Bounds.has_property
    ~cfdm.core.Bounds.set_property
    ~cfdm.core.Bounds.properties
+   ~cfdm.core.Bounds.replace_properties
 
 Data
 ----
@@ -36,7 +37,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.Bounds.get_array
    ~cfdm.core.Bounds.del_data
    ~cfdm.core.Bounds.get_data
    ~cfdm.core.Bounds.has_data

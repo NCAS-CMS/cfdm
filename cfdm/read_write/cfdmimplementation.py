@@ -252,7 +252,7 @@ AttributeError: Field doesn't have property 'standard_name'
 
     out: `numpy.ndarray`
         '''
-        return data.get_compressed_array()
+        return data.compressed_array
     #--- End: def
 
     def get_compressed_axes(self, field, key=None, construct=None):
@@ -1465,7 +1465,7 @@ variable.
 
     `None`
         '''
-        construct.properties(properties, copy=copy)
+        construct.replace_properties(properties, copy=copy)
     #--- End: def
  
 #    def set_size(self, domain_axis, size):

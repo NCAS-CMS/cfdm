@@ -52,6 +52,7 @@ Properties
    ~cfdm.CellMeasure.has_property
    ~cfdm.CellMeasure.set_property
    ~cfdm.CellMeasure.properties
+   ~cfdm.CellMeasure.replace_properties
 
 Data
 ----
@@ -64,7 +65,6 @@ Data
    :template: method.rst
 
    ~cfdm.CellMeasure.del_data
-   ~cfdm.CellMeasure.get_array
    ~cfdm.CellMeasure.get_data
    ~cfdm.CellMeasure.has_data
    ~cfdm.CellMeasure.set_data

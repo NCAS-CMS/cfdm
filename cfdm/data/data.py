@@ -314,7 +314,7 @@ x.__str__() <==> str(x)
                 # Convert reference time to date-time
                 try:
                     first = type(self)(
-                        numpy.ma.array(first), units, calendar).dtarray
+                        numpy.ma.array(first), units, calendar).datetime_array
                 except (ValueError, OverflowError):
                     first = '??'
 
@@ -327,7 +327,7 @@ x.__str__() <==> str(x)
                 # Convert reference times to date-times
                 try:
                     first, last = type(self)(
-                        numpy.ma.array([first, last]), units, calendar).dtarray
+                        numpy.ma.array([first, last]), units, calendar).datetime_array
                 except (ValueError, OverflowError):
                     first, last = ('??', '??')
 
@@ -341,7 +341,7 @@ x.__str__() <==> str(x)
                     # Convert reference time to date-time
                     try:
                         middle = type(self)(
-                            numpy.ma.array(middle), units, calendar).dtarray
+                            numpy.ma.array(middle), units, calendar).datetime_array
                     except (ValueError, OverflowError):
                         middle = '??'
                         
@@ -541,7 +541,7 @@ masked
     #--- End: def
 
     @property
-    def dtarray(self):
+    def datetime_array(self):
         '''Return an independent numpy array containing the date-time objects
 corresponding to time since a refernce date.
 
@@ -560,7 +560,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
 **Examples:**
 
 >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
->>> a = d.dtarray
+>>> a = d.datetime_array
 >>> print(a)
 [cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0, 1, 1)
  cftime.DatetimeGregorian(2019, 2, 1, 0, 0, 0, 0, 4, 32)
@@ -570,7 +570,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
 
 >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01',
 ...               calendar='360_day')
->>> a = d.dtarray
+>>> a = d.datetime_array
 >>> print(a)
 [cftime.Datetime360Day(2019, 1, 2, 0, 0, 0, 0, 3, 2)
  cftime.Datetime360Day(2019, 2, 3, 0, 0, 0, 0, 6, 33)
@@ -916,7 +916,7 @@ array.
 
 . versionadded:: 1.7.0
 
-.. seealso:: `get_compressed_array`, `get_compressed_axes`,
+.. seealso:: `compressed_array`, `get_compressed_axes`,
              `get_compression_type`
 
 :Parameters:
@@ -1411,7 +1411,8 @@ Missing data array elements are omitted from the calculation.
         return d
     #--- End: def
 
-    def get_compressed_array(self):
+    @property
+    def compressed_array(self):
         '''Return an independent numpy array containing the compressed data.
 
 .. versionadded:: 1.7.0
@@ -1426,7 +1427,7 @@ Missing data array elements are omitted from the calculation.
 
 **Examples:**
 
->>> a = d.get_compressed_array()
+>>> a = d.compressed_array
 
         '''
         ca = self._get_Array(None)
@@ -1442,7 +1443,7 @@ Missing data array elements are omitted from the calculation.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get_compressed_array`, `get_compressed_dimension`,
+.. seealso:: `compressed_array`, `get_compressed_dimension`,
              `get_compression_type`
 
 :Returns:
@@ -1456,7 +1457,7 @@ Missing data array elements are omitted from the calculation.
 
 >>> d.shape
 (2, 3, 4, 5, 6)
->>> d.get_compressed_array().shape
+>>> d.compressed_array.shape
 (2, 14, 6)
 >>> d.get_compressed_axes()
 [1, 2, 3]
@@ -1480,7 +1481,7 @@ Missing data array elements are omitted from the calculation.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get_compressed_array`, `compression_axes`,
+.. seealso:: `compressed_array`, `compression_axes`,
              `get_compressed_dimension`
 
 :Returns:
@@ -1664,8 +1665,8 @@ False
             # Check for equal compressed array values
             # --------------------------------------------------------
             if compression_type:
-                if not self._equals(self.get_compressed_array(),
-                                    other.get_compressed_array(),
+                if not self._equals(self.compressed_array,
+                                    other.compressed_array,
                                     rtol=rtol, atol=atol):
                     if verbose:
                         print("{0}: Different compressed array values".format(

@@ -37,6 +37,7 @@ Properties
    ~cfdm.core.FieldAncillary.has_property
    ~cfdm.core.FieldAncillary.set_property
    ~cfdm.core.FieldAncillary.properties
+   ~cfdm.core.FieldAncillary.replace_properties
 
 Data
 ----
@@ -48,7 +49,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.FieldAncillary.get_array
    ~cfdm.core.FieldAncillary.del_data
    ~cfdm.core.FieldAncillary.get_data
    ~cfdm.core.FieldAncillary.has_data

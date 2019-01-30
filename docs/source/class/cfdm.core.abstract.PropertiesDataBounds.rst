@@ -26,6 +26,7 @@ Properties
    ~cfdm.core.abstract.PropertiesDataBounds.has_property
    ~cfdm.core.abstract.PropertiesDataBounds.set_property
    ~cfdm.core.abstract.PropertiesDataBounds.properties
+   ~cfdm.core.abstract.PropertiesDataBounds.replace_properties
 
 Data
 ----
@@ -37,7 +38,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.abstract.PropertiesDataBounds.get_array
    ~cfdm.core.abstract.PropertiesDataBounds.del_data
    ~cfdm.core.abstract.PropertiesDataBounds.get_data
    ~cfdm.core.abstract.PropertiesDataBounds.has_data

@@ -38,6 +38,7 @@ Properties
    ~cfdm.Index.has_property
    ~cfdm.Index.set_property
    ~cfdm.Index.properties
+   ~cfdm.Index.replace_properties
 
 Data
 ----
@@ -49,7 +50,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Index.get_array
    ~cfdm.Index.del_data
    ~cfdm.Index.get_data
    ~cfdm.Index.has_data

@@ -41,6 +41,7 @@ Properties
    ~cfdm.core.CellMeasure.has_property
    ~cfdm.core.CellMeasure.set_property
    ~cfdm.core.CellMeasure.properties
+   ~cfdm.core.CellMeasure.replace_properties
 
 Data
 ----
@@ -52,7 +53,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.CellMeasure.get_array
    ~cfdm.core.CellMeasure.del_data
    ~cfdm.core.CellMeasure.get_data
    ~cfdm.core.CellMeasure.has_data

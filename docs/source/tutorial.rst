@@ -397,33 +397,33 @@ and `~Field.set_property` methods:
    'air_temperature'
    >>> t.del_property('standard_name')
    'air_temperature'
-   >>> t.get_property('standard_name', 'not set')
+   >>> t.get_property('standard_name', default='not set') ipython
    'not set'
-   >>> t.set_property('standard_name', 'air_temperature')
-   >>> t.get_property('standard_name', 'not set')
+   >>> t.set_property('standard_name', default='air_temperature') ipython
+   >>> t.get_property('standard_name', default='not set') ipython
    'air_temperature'
 
 The properties may be completely replaced with another collection by
-providing a new set of properties to the `~Field.properties` method:
+providing a new set of properties to the `~Field.replace_properties`
+method of the field construct:
 
 .. code-block:: python
    :caption: *Delete all the existing properties, saving the original
              ones, and replace them with two new properties; finally
              reinstate the original ones.*
 	     
-   >>> original = t.properties({'foo': 'bar', 'units': 'K'})
-   >>> original
+   >>> original = t.properties() ipython
+   >>> original ipython
    {'Conventions': 'CF-1.7',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
-   >>> t.properties()
+   >>> t.replace_properties({'foo': 'bar', 'units': 'K'}) ipython
+   >>> t.properties() ipython
    {'foo': 'bar',
     'units': 'K'}
-   >>> t.properties(original)
-   {'foo': 'bar',
-     'units': 'K'}
-   >>> t.properties()
+   >>> t.replace_properties(original) ipython
+   >>> t.properties() ipython
    {'Conventions': 'CF-1.7',
     'project': 'research',
     'standard_name': 'air_temperature',
@@ -1726,8 +1726,8 @@ method of the field construct.
    # Create a "longitude" dimension coordinate construct, without
    # coordinate bounds
    dimX = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(8.)))
-   dimX.properties({'standard_name': 'longitude',
-                    'units': 'degrees_east'})
+   dimX.replace_properties({'standard_name': 'longitude',
+                            'units': 'degrees_east'})
 
    # Create a "longitude" dimension coordinate construct
    dimY = cfdm.DimensionCoordinate(properties={'standard_name': 'latitude',
@@ -2800,7 +2800,7 @@ both:
   instance returns a numpy array that is uncompressed. The underlying
   array will, however, remain in its compressed form. The underlying
   compressed array may be retrieved as a numpy array with the
-  `~Data.get_compressed_array` method of the `Data` instance.
+  `~Data.compressed_array` attribute of the `Data` instance.
 
 ..
 
@@ -2930,7 +2930,7 @@ file:
 	     
    >>> h.data.get_compression_type()
    'ragged contiguous'
-   >>> print(h.data.get_compressed_array())
+   >>> print(h.data.compressed_array)
    [0.12 0.05 0.18 0.05 0.11 0.2 0.15 0.08 0.04 0.06 0.15 0.19 0.15 0.17 0.07
     0.11 0.03 0.14 0.16 0.02 0.09 0.1 0.04 0.11]
    >>> count_variable = h.data.get_count_variable()
@@ -3001,9 +3001,9 @@ field construct with an underlying contiguous ragged array:
    # Create the field construct with the domain axes and the ragged
    # array
    T = cfdm.Field()
-   T.properties({'standard_name': 'air_temperature',
-                 'units': 'K',
-      	         'featureType': 'timeSeries'})
+   T.replace_properties({'standard_name': 'air_temperature',
+                         'units': 'K',
+          	         'featureType': 'timeSeries'})
    
    # Create the domain axis constructs for the uncompressed array
    X = T.set_construct(cfdm.DomainAxis(4))
@@ -3024,7 +3024,7 @@ The new field construct can now be inspected and written to a netCDF file:
     [281.0 279.0 278.0 279.5]]
    >>> T.data.get_compression_type()
    'ragged contiguous'
-   >>> print(T.data.get_compressed_array())
+   >>> print(T.data.compressed_array)
    [280.  282.5 281.  279.  278.  279.5]
    >>> count_variable = T.data.get_count_variable()
    >>> count_variable
@@ -3146,7 +3146,7 @@ file:
 	     
    >>> p.data.get_compression_type()
    'gathered'
-   >>> print(p.data.get_compressed_array())
+   >>> print(p.data.compressed_array)
    [[0.000122 0.0008   0.000177 0.000175 0.00058 0.000206 0.0007  ]
     [0.000202 0.000174 0.00084  0.000201 0.0057  0.000223 0.000102]]
    >>> list_variable = p.data.get_list_variable()
@@ -3244,7 +3244,7 @@ The new field construct can now be inspected and written a netCDF file:
      [0.0 5.0]]]
    >>> P.data.get_compression_type()
    'gathered'
-   >>> print(P.data.get_compressed_array())
+   >>> print(P.data.compressed_array)
    [[2. 1. 3.]
     [4. 0. 5.]]
    >>> list_variable = P.data.get_list_variable()

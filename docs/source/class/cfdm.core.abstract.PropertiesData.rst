@@ -26,6 +26,7 @@ Properties
    ~cfdm.core.abstract.PropertiesData.has_property
    ~cfdm.core.abstract.PropertiesData.set_property
    ~cfdm.core.abstract.PropertiesData.properties
+   ~cfdm.core.abstract.PropertiesData.replcae_properties
 
 Data
 ----
@@ -37,7 +38,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.abstract.PropertiesData.get_array
    ~cfdm.core.abstract.PropertiesData.del_data
    ~cfdm.core.abstract.PropertiesData.get_data
    ~cfdm.core.abstract.PropertiesData.has_data

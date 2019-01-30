@@ -41,6 +41,7 @@ Properties
    ~cfdm.core.Field.has_property
    ~cfdm.core.Field.set_property
    ~cfdm.core.Field.properties
+   ~cfdm.core.Field.replace_properties
 
 .. _core-Field-Data:
 
@@ -54,7 +55,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.Field.get_array
    ~cfdm.core.Field.del_data
    ~cfdm.core.Field.get_data
    ~cfdm.core.Field.has_data

@@ -26,7 +26,8 @@ Inspection
    ~cfdm.RaggedIndexedArray.get_compressed_dimension
    ~cfdm.RaggedIndexedArray.get_compression_type
    ~cfdm.RaggedIndexedArray.get_index_variable
-   
+   ~cfdm.RaggedIndexedArray.array
+
 .. rubric:: Attributes
 
 .. autosummary::

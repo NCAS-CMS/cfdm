@@ -13,15 +13,6 @@ cfdm.core.NumpyArray
 Inspection
 ----------
 
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-   
-   ~cfdm.core.NumpyArray.get_array
-   
 .. rubric:: Attributes
 
 .. autosummary::
@@ -33,7 +24,8 @@ Inspection
    ~cfdm.core.NumpyArray.ndim
    ~cfdm.core.NumpyArray.shape
    ~cfdm.core.NumpyArray.size
-   
+   ~cfdm.core.NumpyArray.array
+      
 Miscellaneous
 -------------
 

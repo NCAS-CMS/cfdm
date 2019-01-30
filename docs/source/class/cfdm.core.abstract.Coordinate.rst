@@ -36,7 +36,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.abstract.Coordinate.get_array
    ~cfdm.core.abstract.Coordinate.del_data
    ~cfdm.core.abstract.Coordinate.get_data
    ~cfdm.core.abstract.Coordinate.has_data

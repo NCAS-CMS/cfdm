@@ -47,6 +47,7 @@ Properties
    ~cfdm.DimensionCoordinate.has_property
    ~cfdm.DimensionCoordinate.set_property
    ~cfdm.DimensionCoordinate.properties
+   ~cfdm.DimensionCoordinate.replace_properties
 
 Data
 ----
@@ -58,7 +59,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.DimensionCoordinate.get_array
    ~cfdm.DimensionCoordinate.del_data
    ~cfdm.DimensionCoordinate.get_data
    ~cfdm.DimensionCoordinate.has_data

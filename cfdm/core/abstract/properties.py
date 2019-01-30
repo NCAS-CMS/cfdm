@@ -28,7 +28,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
            ``properties={'standard_name': 'altitude'}``
         
         Properties may also be set after initialisation with the
-        `set_properties` and `set_property` methods.
+        `replace_properties` and `set_property` methods.
 
     source: optional
         Initialize the properties from those of *source*.
@@ -50,7 +50,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         #--- End: if
         
         if properties:
-            self.properties(properties, copy=copy)
+            self.replace_properties(properties, copy=copy)
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -81,7 +81,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
 .. versionadded:: 1.7.0
 
 .. seealso:: `get_property`, `has_property`, `properties`,
-             `set_property`
+             `set_property`, `replace_properties`
 
 :Parameters:
 
@@ -140,7 +140,7 @@ None
 .. versionadded:: 1.7.0
 
 .. seealso:: `del_property`, `has_property`, `properties`,
-             `set_property`
+             `set_property`, `replace_properties`
 
 :Parameters:
 
@@ -195,7 +195,7 @@ None
 .. versionadded:: 1.7.0
 
 .. seealso:: `del_property`, `get_property`, `properties`,
-             `set_property`
+             `set_property`, `replace_properties`
 
 :Parameters:
 
@@ -230,65 +230,33 @@ None
         return prop in self._get_component('properties')
     #--- End: def
 
-    def properties(self, properties=None, copy=True):
+    def properties(self):
         '''Return or replace all properties.
 
 .. versionadded:: 1.7.0
 
 .. seealso:: `del_property`, `get_property`, `has_property`,
-             `set_property`
-
-:Parameters:
-
-    properties: `dict`, optional   
-        Delete all existing properties, and instead store the
-        properties from the dictionary supplied.
-
-
-        *Parameter example:*
-          ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
-        
-        *Parameter example:*
-          ``properties={}``        
-
-    copy: `bool`, optional
-        If False then any property values provided by the *properties*
-        parameter are not copied before insertion. By default they are
-        deep copied.
+             `set_property`, `replace_properties`
 
 :Returns:
 
     `dict`
-        The properties or, if the *properties* parameter was set, the
-        original properties.
+        The properties.
 
 **Examples:**
 
->>> p = f.properties({'standard_name': 'altitude', 'foo': 'bar'})
 >>> f.properties()
 {'standard_name': 'altitude',
  'foo': 'bar'}
->>> f.properties({})
-{'standard_name': 'altitude',
- 'foo': 'bar'}
+
 >>> f.properties()
 {}
 
         '''
-        out = self._get_component('properties').copy()
-
-        if properties is not None:
-            if copy:
-                properties = deepcopy(properties)                
-            else:
-                properties = properties.copy()
-
-            self._set_component('properties', properties, copy=False)
-
-        return out
+        return self._get_component('properties').copy()
     #--- End: def
 
-    def set_properties(self, properties=None, clear=True, copy=True):
+    def replace_properties(self, properties=None, copy=True):
         '''Replace all properties.
 
 .. versionadded:: 1.7.0
@@ -298,7 +266,7 @@ None
 
 :Parameters:
 
-    properties: `dict`, optional   
+    properties: `dict` 
         Delete all existing properties, and instead store the
         properties from the dictionary supplied.
 
@@ -306,7 +274,8 @@ None
           ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
         
         *Parameter example:*
-          ``properties={}``        
+          Remove all properties by providing an empty dictionary for
+          the replacement: ``properties={}``.
 
     copy: `bool`, optional
         If False then any property values provided by the *properties*
@@ -315,41 +284,30 @@ None
 
 :Returns:
 
-    `dict`
-        The original properties, before replacement.
+    `None`
 
 **Examples:**
 
->>> f.properties()
-{'standard_name': 'altitude',
- 'foo': 'bar'}
->>> original = f.replace_properties({'standard_name': 'altitude', 
-...                                  'foo': 'bar'})
+>>> f.replace_properties({'standard_name': 'altitude',  'foo': 'bar'})
 >>> f.properties()
 {'standard_name': 'altitude',
  'foo': 'bar'}
 >>> f.replace_properties({})
-{'standard_name': 'altitude',
- 'foo': 'bar'}
 >>> f.properties()
 {}
 
         '''
+        if properties is None:
+            raise ValueError("Must provide a dictionary of replacement properties")
+        
         original = self._get_component('properties')
 
-        if properties is None:
-            properties = {}
+        if copy:
+            properties = deepcopy(properties)                
         else:
-            if copy:
-                properties = deepcopy(properties)                
-            elif not clear:
-                properties = properties.copy()
-        #-- End: if
+            properties = properties.copy()
         
-        if clear:
-            self._set_component('properties', properties, copy=False)
-        else:
-            original.update(properties)
+        self._set_component('properties', properties, copy=False)
 
         return original.copy()
     #--- End: def
@@ -360,7 +318,7 @@ None
 .. versionadded:: 1.7.0
 
 .. seealso:: `del_property`, `get_property`, `has_property`,
-             `properties`
+             `properties`, `replace_properties`
 
 :Parameters:
 

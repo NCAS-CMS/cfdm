@@ -145,6 +145,28 @@ rules, the only differences being:
         self._set_component('compressed_Array', array, copy=False)
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
+    @property
+    def array(self):
+        '''Return an independent numpy array containing the uncompressed data.
+
+:Returns:
+
+    `numpy.ndarray`
+        The uncompressed array.
+
+**Examples:**
+
+>>> n = a.array
+>>> isinstance(n, numpy.ndarray)
+True
+
+        '''
+        return self[...]
+    #--- End: def
+
     @property
     def dtype(self):
         '''Data-type of the data elements.
@@ -253,6 +275,27 @@ dtype('float64')
         return self._get_component('size')
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
+    def get_compressed_array(self):
+        '''Return an independent numpy array containing the compressed data.
+
+:Returns:
+
+    `numpy.ndarray`
+        The compressed array.
+
+**Examples:**
+
+>>> n = a.get_compressed_array()
+>>> isinstance(n, numpy.ndarray)
+True
+
+        '''
+        return self._get_compressed_Array().array
+    #--- End: def
+
     def get_compressed_axes(self):
         '''Return axes that are compressed in the underlying array.
 
@@ -275,43 +318,6 @@ dtype('float64')
         compressed_ndim = self._get_compressed_Array().ndim
         
         return list(range(compressed_dimension, self.ndim - (compressed_ndim - compressed_dimension - 1)))
-    #--- End: def
-
-    @property
-    def array(self):
-        '''Return an independent numpy array containing the uncompressed data.
-
-:Returns:
-
-    `numpy.ndarray`
-        The uncompressed array.
-
-**Examples:**
-
->>> n = a.array
->>> isinstance(n, numpy.ndarray)
-True
-
-        '''
-        return self[...]
-    #--- End: def
-
-    def get_compressed_array(self):
-        '''Return an independent numpy array containing the compressed data.
-
-:Returns:
-
-    `numpy.ndarray`
-        The compressed array.
-
-**Examples:**
-
->>> n = a.get_compressed_array()
->>> isinstance(n, numpy.ndarray)
-True
-
-        '''
-        return self._get_compressed_Array().array
     #--- End: def
 
 #--- End: class

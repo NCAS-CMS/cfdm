@@ -38,6 +38,7 @@ Properties
    ~cfdm.List.has_property
    ~cfdm.List.set_property
    ~cfdm.List.properties
+   ~cfdm.List.replace_properties
 
 Data
 ----
@@ -49,7 +50,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.List.get_array
    ~cfdm.List.del_data
    ~cfdm.List.get_data
    ~cfdm.List.has_data

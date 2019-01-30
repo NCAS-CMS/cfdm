@@ -25,7 +25,8 @@ Properties
    ~cfdm.core.abstract.Properties.has_property
    ~cfdm.core.abstract.Properties.set_property
    ~cfdm.core.abstract.Properties.properties
-   
+   ~cfdm.core.abstract.Properties.replace_properties
+  
 Miscellaneous
 -------------
 

@@ -327,7 +327,7 @@ class DSGTest(unittest.TestCase):
         
         self.assertTrue(tas.data.get_compression_type() == 'gathered')
         
-        self.assertTrue((tas.data.get_compressed_array() == numpy.array(
+        self.assertTrue((tas.data.compressed_array == numpy.array(
             [[280. , 282.5, 281. ],
              [279. , 278. , 277.5]], dtype='float32')).all())
         

@@ -45,7 +45,8 @@ Properties
    ~cfdm.core.CellMethod.get_property
    ~cfdm.core.CellMethod.has_property
    ~cfdm.core.CellMethod.properties
-   
+   ~cfdm.core.CellMethod.replace_properties
+ 
 Miscellaneous
 -------------
 

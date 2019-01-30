@@ -37,6 +37,7 @@ Properties
    ~cfdm.core.AuxiliaryCoordinate.has_property
    ~cfdm.core.AuxiliaryCoordinate.set_property
    ~cfdm.core.AuxiliaryCoordinate.properties
+   ~cfdm.core.AuxiliaryCoordinate.replace_properties
 
 Data
 ----
@@ -48,7 +49,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.AuxiliaryCoordinate.get_array
    ~cfdm.core.AuxiliaryCoordinate.del_data
    ~cfdm.core.AuxiliaryCoordinate.get_data
    ~cfdm.core.AuxiliaryCoordinate.has_data
