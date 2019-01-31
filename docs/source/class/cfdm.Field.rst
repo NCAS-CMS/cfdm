@@ -106,15 +106,23 @@ Metadata constructs
    ~cfdm.Field.domain_ancillaries
    ~cfdm.Field.domain_axes
    ~cfdm.Field.field_ancillaries
-   ~cfdm.Field.constructs
    ~cfdm.Field.del_construct
    ~cfdm.Field.get_construct
    ~cfdm.Field.has_construct
    ~cfdm.Field.set_construct
    ~cfdm.Field.get_construct_key
-   ~cfdm.Field.constructs_data_axes
-   ~cfdm.Field.get_construct_data_axes
-   ~cfdm.Field.set_construct_data_axes
+   ~cfdm.Field.del_data_axes
+   ~cfdm.Field.get_data_axes
+   ~cfdm.Field.set_data_axes
+
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.Field.constructs
 
 .. _Field-Domain:
 

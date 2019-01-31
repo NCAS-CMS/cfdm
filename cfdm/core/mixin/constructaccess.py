@@ -418,49 +418,49 @@ None
                                               axes=axes, copy=copy)
     #--- End: def
 
-    def set_construct_data_axes(self, key, axes):
-        '''Set the domain axis constructs spanned by a metadata construct data
-array.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs`, `del_construct`, `get_construct`,
-             `set_construct`
-
-:Parameters:
-
-    key: `str`
-        The construct identifier of the metadata construct.
-
-        *Parameter example:*
-          ``key='dimensioncoordinate2'``
-
-     axes: (sequence of) `str`
-        The construct identifiers of the domain axis constructs
-        spanned by the data array.
-
-        The axes may also be set with the `set_construct` method.
-
-        *Parameter example:*
-          ``axes='domainaxis1'``
-
-        *Parameter example:*
-          ``axes=['domainaxis1']``
-
-        *Parameter example:*
-          ``axes=['domainaxis1', 'domainaxis0']``
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> key = f.set_construct(c)
->>> f.set_construct_data_axes(key, axes='domainaxis1')
-
-        '''
-        return self.constructs._set_construct_data_axes(key, axes)
-    #--- End: def
+#    def set_construct_data_axes(self, key, axes):
+#        '''Set the domain axis constructs spanned by a metadata construct data
+#array.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `constructs`, `del_construct`, `get_construct`,
+#             `set_construct`
+#
+#:Parameters:
+#
+#    key: `str`
+#        The construct identifier of the metadata construct.
+#
+#        *Parameter example:*
+#          ``key='dimensioncoordinate2'``
+#
+#     axes: (sequence of) `str`
+#        The construct identifiers of the domain axis constructs
+#        spanned by the data array.
+#
+#        The axes may also be set with the `set_construct` method.
+#
+#        *Parameter example:*
+#          ``axes='domainaxis1'``
+#
+#        *Parameter example:*
+#          ``axes=['domainaxis1']``
+#
+#        *Parameter example:*
+#          ``axes=['domainaxis1', 'domainaxis0']``
+#
+#:Returns:
+#
+#    `None`
+#
+#**Examples:**
+#
+#>>> key = f.set_construct(c)
+#>>> f.set_construct_data_axes(key, axes='domainaxis1')
+#
+#        '''
+#        return self.constructs._set_construct_data_axes(key, axes)
+#    #--- End: def
 
 #--- End: class

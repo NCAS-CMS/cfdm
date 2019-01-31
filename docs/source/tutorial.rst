@@ -1195,9 +1195,23 @@ construct <Data>` as the field construct for accessing their data:
    >>> print(lon.data.array)
    [22.5 67.5 133.33 157.5 202.5 247.5 292.5 337.5]
 
-The domain axis constructs spanned by a metadata construct's data are
-found with the `~Constructs.data_axes` method of the field construct's
-`Constructs` instance:
+The domain axis constructs spanned by a particular metadata
+construct's data are found with the `~Constructs.get_data_axes` method
+of the field construct:
+
+.. code-block:: python
+   :caption: *Find the construct keys of the domain axis constructs
+             spanned by the data of each metadata construct.*
+
+   >>> key = t.get_construct_key('latitude')
+   >>> key
+   TODO
+   >>> t.get_data_axes(key=key)
+   TODO
+    
+The domain axis constructs spanned by all the data of all metadata
+construct may be found with the `~Constructs.data_axes` method of the
+field construct's `Constructs` instance:
 
 .. code-block:: python
    :caption: *Find the construct keys of the domain axis constructs
@@ -1669,8 +1683,8 @@ constructs must, however, be set in the relative order in which their
 methods were applied to the data.
 
 The domain axis constructs spanned by a metadata construct's data may
-be changed after insertion with the `~Field.set_construct_data_axes`
-method of the field construct.
+be changed after insertion with the `~Field.set_data_axes` method of
+the field construct.
 
 .. code-block:: python
    :caption: *Create a field construct with properties; data; and

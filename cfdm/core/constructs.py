@@ -223,7 +223,11 @@ class Constructs(object):
     # Private dictionary-like methods    
     # ----------------------------------------------------------------
     def _pop(self, key, *default):
-        '''
+        '''D.pop(k[,d]) -> v, remove specified key and return the corresponding value.
+
+If key is not found, d is returned if given, otherwise KeyError is
+raised
+
         '''
         # Remove the construct axes, if any
         self._construct_axes.pop(key, None)
@@ -241,31 +245,32 @@ class Constructs(object):
         return self._constructs[construct_type].pop(key, *default)
     #--- End: def
 
-    def _popitem(self):
-        '''
-        '''
-        key, value = self._constructs_dictionary()
-
-        # Remove the construct axes, if any
-        self._construct_axes.pop(key, None)
-
-        # Find the construct type
-        try:
-            construct_type = self._construct_type.pop(key, None)
-        except KeyError as error:
-            if default:
-                return default[0]
-            
-            raise KeyError(error)
-            
-        # Remove and return the construct
-        del self._constructs[construct_type]
-
-        return key, value
-    #--- End: def
+#    def _popitem(self):
+#        '''
+#        '''
+#        key, value = self._constructs_dictionary()
+#
+#        # Remove the construct axes, if any
+#        self._construct_axes.pop(key, None)
+#
+#        # Find the construct type
+#        try:
+#            construct_type = self._construct_type.pop(key, None)
+#        except KeyError as error:
+#            if default:
+#                return default[0]
+#            
+#            raise KeyError(error)
+#            
+#        # Remove and return the construct
+#        del self._constructs[construct_type]
+#
+#        return key, value
+#    #--- End: def
 
     def _update(self, other):
-        '''
+        '''D.update(E) -> None. Update D from E.
+
         '''
         self._ignore = tuple(set(self._ignore).union(other._ignore))
 
@@ -372,7 +377,6 @@ removed even if it is referenced by coordinate reference coinstruct.
         if not force:
 
             data_axes = self.data_axes()
-#            if key in self.constructs(construct='domain_axis'):
             if key in self.select(construct='domain_axis'):
                 # Fail if the domain axis construct is spanned by a data
                 # array
@@ -385,7 +389,6 @@ removed even if it is referenced by coordinate reference coinstruct.
                 # Fail if the domain axis construct is referenced by a
                 # cell method construct
                 try:
-#                    cell_methods = self.constructs(construct='cell_method')
                     cell_methods = self.select(construct='cell_method')
                 except ValueError:
                     # Cell methods are not possible for this Constructs
@@ -401,7 +404,6 @@ removed even if it is referenced by coordinate reference coinstruct.
             else:
                 # Remove references to the removed construct in coordinate
                 # reference constructs
-#                for ref in self.constructs(construct='coordinate_reference').values():
                 for ref in self.select(construct='coordinate_reference').values():
                     coordinate_conversion = ref.coordinate_conversion
                     for term, value in coordinate_conversion.domain_ancillaries().items():
@@ -414,17 +416,6 @@ removed even if it is referenced by coordinate reference coinstruct.
         #--- End: if
 
         return self._pop(key, None)
-
-#        # Remove the construct axes, if any
-#        self._construct_axes.pop(key, None)
-#
-#        # Find the construct type
-#        construct_type = self._construct_type.pop(key, None)
-#        if construct_type is None:
-#            return
-#
-#        # Remove and return the construct
-#        return self._constructs[construct_type].pop(key, None)
     #--- End: def
 
     def _set_construct(self, construct, key=None, axes=None,
@@ -505,7 +496,7 @@ removed even if it is referenced by coordinate reference coinstruct.
             key = self.new_identifier(construct_type)
     
 #        if construct_type in self._array_constructs:
-#            #---------------------------------------------------------
+#            #------------------------defaulrt=---------------------------------
 #            # The construct could have a data array
 #            #---------------------------------------------------------
 #            if axes is None:
@@ -868,7 +859,7 @@ removed even if it is referenced by coordinate reference coinstruct.
     #--- End: def
     
     def data_axes(self):
-        '''Return the domain axes spanned by metadata construct data arrays.
+        '''Return the domain axes spanned by all construct data arrays.
 
 .. versionadded:: 1.7.0
 
@@ -1197,7 +1188,7 @@ removed even if it is referenced by coordinate reference coinstruct.
         return OrderedDict(self._constructs[tuple(self._ordered_constructs)[0]])
     #--- End: def
     
-    def select(self, construct=None): #, copy=False):
+    def select(self, construct=None):
         '''<TODO> Return metadata constructs
 
 By default all metadata constructs are, but a subset may be selected

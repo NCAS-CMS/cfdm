@@ -91,7 +91,8 @@ and institution).
             # Initialise constructs and the data from the source
             # parameter
             try:
-                constructs = source._get_constructs(None)
+#                constructs = source._get_constructs(None)
+                constructs = source.constructs
             except AttributeError:
                 constructs = None
                 
@@ -257,9 +258,8 @@ None
         return self._Domain.fromconstructs(self._get_constructs())
     #--- End: def
 
-    def get_data_axes(self, *default):
-        '''Return the identifiers of the domain axes spanned by the data
-array.
+    def get_data_axes(self, key=None, default=ValueError):
+        '''Return the keys of the domain axes spanned by a data array.
 
 .. versionadded:: 1.7.0
 
@@ -267,8 +267,11 @@ array.
 
 :Parameters:
 
+    key: `str`, optional
+        <TODO>
+
     default: optional
-        Return *default* if data axes have not been set.
+        <TODO> Return *default* if data axes have not been set.
 
 :Returns:
 
@@ -285,11 +288,17 @@ array.
 ('domainaxis0', 'domainaxis1')
 >>> print(f.del_dataxes(None))
 None
->>> print(f.get_data_axes(None))
+>>> print(f.get_data_axes(default=None))
 None
 
-        '''    
-        return self._get_component('data_axes', *default)
+        '''
+        if key is not None:
+            try:
+                return self.constructs.data_axes()[key]
+            except KeyError:
+                return self._default(default, message='2736492783 e28037')
+                
+        return self._get_component('data_axes', default)
     #--- End: def
     
     def del_construct(self, key):
@@ -318,7 +327,7 @@ None
 >>> f.del_construct('auxiliarycoordinate0')
 
         '''
-        if key in self.get_data_axes(()):
+        if key in self.get_data_axes(default=()):
             raise ValueError(
                 "Can't remove domain axis {!r} that is spanned by the field's data".format(key))
 
@@ -367,7 +376,7 @@ TODO
         super().set_data(data, copy=copy)
     #--- End: def
 
-    def set_data_axes(self, axes):
+    def set_data_axes(self, axes, key=None):
         '''Set the domain axes spanned by the data array.
 
 .. versionadded:: 1.7.0
@@ -399,14 +408,17 @@ None
 None
 
         '''
-#        domain_axes = self.constructs(construct='domain_axis')
-        domain_axes = self.constructs.select(construct='domain_axis')
-        for axis in axes:
-            if axis not in domain_axes:
-                raise ValueError(
+        if key is None:
+            #        domain_axes = self.constructs(construct='domain_axis')
+            domain_axes = self.constructs.select(construct='domain_axis')
+            for axis in axes:
+                if axis not in domain_axes:
+                    raise ValueError(
 "Can't set data axes: Domain axis {!r} doesn't exist".format(axis))
-            
-        self._set_component('data_axes', tuple(axes), copy=False)
+            # <TODO> check shape
+            self._set_component('data_axes', tuple(axes), copy=False)
+        else:
+            self.constructs._set_construct_data_axes(key=key, axes=axes)
     #--- End: def
     
 #    def cell_methods(self, copy=False):

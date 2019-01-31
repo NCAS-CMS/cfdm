@@ -124,8 +124,8 @@ x.__str__() <==> str(x)
         axis_name = self.domain_axis_name
 
         # Axes
-        data_axes = self.get_data_axes(())
-        non_spanning_axes = set(self.domain_axes()).difference(data_axes)
+        data_axes = self.get_data_axes(default=())
+        non_spanning_axes = set(self.domain_axes).difference(data_axes)
 
         axis_names = self._unique_domain_axis_names()
         
@@ -153,7 +153,8 @@ x.__str__() <==> str(x)
             
             if dimension_coord:
                 # Dimension coordinate
-                axis = self.get_construct_data_axes(key)[0]
+#                axis = self.get_construct_data_axes(key)[0]
+                axis = self.construct.data_axes()[key][0]
                 name = variable.name(ncvar=True, default=key)
                 if variable.has_data():
                     name += '({0})'.format(variable.get_data().size)
@@ -198,7 +199,8 @@ x.__str__() <==> str(x)
         #--- End: def
                           
         # Field ancillary variables
-        x = [_print_item(self, key, anc, self.get_construct_data_axes(key=key), False)
+#        x = [_print_item(self, key, anc, self.get_construct_data_axes(key=key), False)
+        x = [_print_item(self, key, anc, self.constructs.data_axes()[key], False)
              for key, anc in sorted(self.field_ancillaries.items())]
         if x:
             string.append('Field ancils    : {}'.format(
@@ -272,11 +274,13 @@ rules, the only differences being:
         # ------------------------------------------------------------
         # Subspace other constructs that contain arrays
         # ------------------------------------------------------------
-        self_constructs = self._get_constructs()
+#        self_constructs = self._get_constructs()
+        self_constructs = self.constructs
         new_constructs_data_axes = new.constructs.data_axes()
         
         for key, construct in new.data_constructs().items():
-            data = self.get_construct(key=key).get_data(None)
+#            data = self.get_construct(key=key).get_data(None)
+            data = self.constructs.get(key=key).get_data(default=None)
             if data is None:
                 # This construct has no data
                 continue
@@ -300,8 +304,9 @@ rules, the only differences being:
         #--- End: for
 
         # Replace domain axes
-        domain_axes = new.domain_axes()
-        new_constructs = new._get_constructs()
+        domain_axes = new.domain_axes
+#        new_constructs = new._get_constructs()
+        new_constructs = new.constructs
         for key, size in zip(data_axes, new.get_data().shape):
             domain_axis = domain_axes[key].copy()
             domain_axis.set_size(size)
@@ -345,7 +350,7 @@ rules, the only differences being:
 #        key_to_name = {}
 #        name_to_keys = {}
 #
-#        for key, value in self.domain_axes().items():
+#        for key, value in self.domain_axes.items():
 #            name_size = (self.domain_axis_name(key), value.get_size(''))
 #            name_to_keys.setdefault(name_size, []).append(key)
 #            key_to_name[key] = name_size
@@ -369,7 +374,7 @@ rules, the only differences being:
         if axis_names_sizes is None:
             axis_names_sizes = self._unique_domain_axis_names()
             
-        x = [axis_names_sizes[axis] for axis in self.get_data_axes(())]
+        x = [axis_names_sizes[axis] for axis in self.get_data_axes(default=())]
         axis_names = ', '.join(x)
         if axis_names:
             axis_names = '({0})'.format(axis_names)
@@ -411,9 +416,9 @@ field.
         indent1 = '    ' * _level
         indent2 = '    ' * (_level+1)
 
-        data_axes = self.get_data_axes(())
+        data_axes = self.get_data_axes(default=())
 
-        axes = self.domain_axes()
+        axes = self.domain_axes
 
         w = sorted(["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
                     for axis in axes
@@ -739,7 +744,7 @@ coordinate reference coinstruct.
             return self._default(default,
                                  'No unique construct meets criteria')
             
-        if cid in self.get_data_axes(()):
+        if cid in self.get_data_axes(default=()):
             raise ValueError(
 "Can't remove domain axis {!r} that is spanned by the data of the field construct".format(
     cid))
@@ -749,7 +754,8 @@ coordinate reference coinstruct.
                 raise ValueError(
 "Can't remove domain axis {!r} that is spanned by the the data of metadata construct {!r}".format(cid, key))
 
-        return self._get_constructs()._del_construct(key=cid)
+#        return self._get_constructs()._del_construct(key=cid)
+        return self.constructs._del_construct(key=cid)
     #--- End: def
 
     def dump(self, display=True, _level=0, _title=None):
@@ -813,7 +819,7 @@ data arrays.
         # Data
         data = self.get_data(None)
         if data is not None:
-            x = [axis_to_name[axis] for axis in self.get_data_axes(())]
+            x = [axis_to_name[axis] for axis in self.get_data_axes(default=())]
 
             units = self.get_property('units', None)
             if units is None:
@@ -1003,9 +1009,10 @@ False
         # ------------------------------------------------------------
         # Check the constructs
         # ------------------------------------------------------------              
-        if not self._equals(self._get_constructs(),
-                            other._get_constructs(), rtol=rtol,
-                            atol=atol, verbose=verbose,
+#        if not self._equals(self._get_constructs(),
+#                            other._get_constructs(), rtol=rtol,
+        if not self._equals(self.constructs, other.constructs,
+                            rtol=rtol, atol=atol, verbose=verbose,
                             ignore_data_type=ignore_data_type,
                             ignore_fill_value=ignore_fill_value,
                             ignore_compression=ignore_compression,
@@ -1068,7 +1075,7 @@ construct, into the data array.
         '''
         f = self.copy()
         
-        domain_axis = self.domain_axes().get(axis)
+        domain_axis = self.domain_axes.get(key=axis, default=None) #().get(axis)
         if domain_axis is None:
             raise ValueError("Can't insert non-existent domain axis: {}".format(axis))
         
@@ -1076,7 +1083,7 @@ construct, into the data array.
             raise ValueError(
 "Can't insert an axis of size {}: {!r}".format(domain_axis.get_size(), axis))
 
-        data_axes = list(self.get_data_axes(()))        
+        data_axes = list(self.get_data_axes(default=()))        
         if axis in data_axes:
             raise ValueError(
                 "Can't insert a duplicate data array axis: {!r}".format(axis))
@@ -1433,10 +1440,11 @@ that has fewer metadata constructs than one created with the
                                     ncdim=ncdim, key=key, axis=axis,
                                     construct=construct)#, copy=False)
         if len(c0) != 1:
-            self.get_construct(name=name, properties=properties,
-                               measure=measure, ncvar=ncvar,
-                               ncdim=ncdim, key=key, axis=axis,
-                               construct=construct)#, copy=False)
+#            self.get_construct(name=name, properties=properties,
+            self.constructs.get(name=name, properties=properties,
+                                measure=measure, ncvar=ncvar,
+                                ncdim=ncdim, key=key, axis=axis,
+                                construct=construct)
             return
 
         cid, c = dict(c0).popitem()
@@ -1454,7 +1462,7 @@ that has fewer metadata constructs than one created with the
         data_axes = constructs_data_axes.get(cid)
         if data_axes is not None:
             for domain_axis in data_axes:
-                f.set_construct(self.domain_axes()[domain_axis],
+                f.set_construct(self.domain_axes[domain_axis],
                                 key=domain_axis, copy=True)
         #--- End: if
 
@@ -1616,9 +1624,9 @@ may be selected for removal.
             except ValueError as error:
                 raise ValueError("Can't squeeze data: {}".format(error))
 
-        data_axes = self.get_data_axes(())
-        
-#        domain_axes = self.domain_axes()
+        data_axes = self.get_data_axes(default=())
+
+#        domain_axes = self.domain_axes
 #            
 #        if axes is None:
 #            axes = [axis for axis in data_axes if domain_axes[axis].get_size(None) == 1]
@@ -1688,7 +1696,7 @@ may be selected for removal.
         except ValueError as error:
             raise ValueError("Can't transpose data: {}".format(error))
 
-        data_axes = self.get_data_axes(())
+        data_axes = self.get_data_axes(default=())
 
         new_data_axes = [data_axes[i] for i in axes]
         
