@@ -179,7 +179,7 @@ class Constructs(object):
     def __getitem__(self, key):
         '''
         '''
-        construct_type = self.construct_type(key)
+        construct_type = self.construct_type(key) # ignore??
         if construct_type is None:
             raise KeyError(key)
         
@@ -193,7 +193,7 @@ class Constructs(object):
     def __iter__(self):
         '''
         '''
-        return iter(self._constructs_dictionary().keys())
+        return iter(self._dictionary().keys())
     #--- End: def'
             
     def __len__(self):
@@ -202,7 +202,7 @@ class Constructs(object):
 .. versionadded:: 1.7.0
 
         '''
-        return len(self._constructs_dictionary())
+        return len(self._dictionary())
     #--- End: def
     
     def __repr__(self):
@@ -248,7 +248,7 @@ raised
 #    def _popitem(self):
 #        '''
 #        '''
-#        key, value = self._constructs_dictionary()
+#        key, value = self._dictionary()
 #
 #        # Remove the construct axes, if any
 #        self._construct_axes.pop(key, None)
@@ -326,7 +326,7 @@ raised
 #        self._construct_axes[key] = tuple(axes)
 #    #--- End: def
 
-    def _constructs_dictionary(self, copy=False):
+    def _dictionary(self, copy=False):
         '''
         '''
         out = {}
@@ -653,7 +653,7 @@ removed even if it is referenced by coordinate reference coinstruct.
     def items(self):
         '''
         '''
-        return self._constructs_dictionary().items()
+        return self._dictionary().items()
     #--- End: def
     
     def keys(self):
@@ -665,7 +665,7 @@ removed even if it is referenced by coordinate reference coinstruct.
     def values(self):
         '''
         '''
-        return self._constructs_dictionary().values()
+        return self._dictionary().values()
     #--- End: def
     
     def construct_types(self):

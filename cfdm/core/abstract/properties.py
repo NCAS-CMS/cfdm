@@ -40,19 +40,26 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         '''
         super().__init__()
 
-        self._set_component('properties', {}, copy=False)
+ #       self._set_component('properties', {}, copy=False)
         
         if source is not None:
-            try:
-                properties = source.properties()
-            except AttributeError:
-                properties = None
-        #--- End: if
+            properties = source.properties()
+        elif properties is None:
+            properties = {}
         
-        if properties:
-            self.replace_properties(properties, copy=copy)
+        self._set_component('properties', properties, copy=False)
+#        
+#        if properties:
+#            self.replace_properties(properties, copy=copy)
     #--- End: def
 
+#    @property
+#    def properties(self):
+#        '''
+#        '''
+#        return self._get_component('properties')
+#    #--- End: def
+    
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -298,9 +305,9 @@ None
 
         '''
         if properties is None:
-            raise ValueError("Must provide a dictionary of replacement properties")
+            raise ValueError("Must provide  replacement properties")
         
-        original = self._get_component('properties')
+#        original = self._get_component('properties')
 
         if copy:
             properties = deepcopy(properties)                
@@ -309,7 +316,7 @@ None
         
         self._set_component('properties', properties, copy=False)
 
-        return original.copy()
+#        return original.copy()
     #--- End: def
 
     def set_property(self, prop, value, copy=True):

@@ -172,7 +172,8 @@ and institution).
     def constructs(self):
         '''<TODO>
         '''
-        return self._get_constructs()
+        return self._get_component('constructs')
+#        return self._get_constructs()
     #--- End: def
 
     @property

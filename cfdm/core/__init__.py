@@ -17,6 +17,7 @@ if LooseVersion(platform.python_version()) < LooseVersion('2.7.0'):
         platform.python_version()))
 
 from .constructs           import Constructs
+from .properties           import xProperties
 
 from .data                import (Data,
                                   Array,
