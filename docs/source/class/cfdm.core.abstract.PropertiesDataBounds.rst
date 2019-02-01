@@ -26,7 +26,8 @@ Properties
    ~cfdm.core.abstract.PropertiesDataBounds.has_property
    ~cfdm.core.abstract.PropertiesDataBounds.set_property
    ~cfdm.core.abstract.PropertiesDataBounds.properties
-   ~cfdm.core.abstract.PropertiesDataBounds.replace_properties
+   ~cfdm.core.abstract.PropertiesDataBounds.clear_properties
+   ~cfdm.core.abstract.PropertiesDataBounds.set_properties
 
 Data
 ----

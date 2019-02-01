@@ -104,7 +104,7 @@ components, and provides selected values of all data arrays.
         if _title is None:
             ncvar = self.nc_get_variable(None)
             if ncvar is not None:
-                ncvar = ' (ncvar%{0})'.format(ncvar)
+                ncvar = ' (ncvar:{0})'.format(ncvar)
             else:
                 ncvar = ''
 

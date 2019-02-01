@@ -172,7 +172,7 @@ arrays:
             medium detail.*
    
    >>> print(q)
-   Field: specific_humidity (ncvar%q)
+   Field: specific_humidity (ncvar:q)
    ----------------------------------
    Data            : specific_humidity(latitude(5), longitude(8)) 1
    Cell methods    : area: mean
@@ -181,7 +181,7 @@ arrays:
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
       
    >>> print(t)
-   Field: air_temperature (ncvar%ta)
+   Field: air_temperature (ncvar:ta)
    ---------------------------------
    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
@@ -193,13 +193,16 @@ arrays:
    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
                    : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
-   Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+   Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
    Coord references: atmosphere_hybrid_height_coordinate
                    : rotated_latitude_longitude
-   Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
-                   : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+   Domain ancils   : ncvar:a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                   : ncvar:b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
 
+Note that :ref:`time values <Time>` are converted to date-times via
+the `cftime package <https://unidata.github.io/cftime/>`_.
+		   
 .. _Full-detail:
 
 **Full detail**
@@ -215,7 +218,7 @@ components, and shows the first and last values of all data arrays:
 
    >>> q.dump()
    ----------------------------------
-   Field: specific_humidity (ncvar%q)
+   Field: specific_humidity (ncvar:q)
    ----------------------------------
    Conventions = 'CF-1.7'
    project = 'research'
@@ -249,7 +252,7 @@ components, and shows the first and last values of all data arrays:
   
    >>> t.dump()
    ---------------------------------
-   Field: air_temperature (ncvar%ta)
+   Field: air_temperature (ncvar:ta)
    ---------------------------------
    Conventions = 'CF-1.7'
    project = 'research'
@@ -308,12 +311,12 @@ components, and shows the first and last values of all data arrays:
        long_name = 'Grid latitude name'
        Data(grid_latitude(10)) = [--, ..., kappa]
    
-   Domain ancillary: ncvar%a
+   Domain ancillary: ncvar:a
        units = 'm'
        Data(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
        Bounds:Data(atmosphere_hybrid_height_coordinate(1), 2) = [[5.0, 15.0]]
    
-   Domain ancillary: ncvar%b
+   Domain ancillary: ncvar:b
        Data(atmosphere_hybrid_height_coordinate(1)) = [20.0]
        Bounds:Data(atmosphere_hybrid_height_coordinate(1), 2) = [[14.0, 26.0]]
    
@@ -325,8 +328,8 @@ components, and shows the first and last values of all data arrays:
    Coordinate reference: atmosphere_hybrid_height_coordinate
        Coordinate conversion:computed_standard_name = altitude
        Coordinate conversion:standard_name = atmosphere_hybrid_height_coordinate
-       Coordinate conversion:a = Domain Ancillary: ncvar%a
-       Coordinate conversion:b = Domain Ancillary: ncvar%b
+       Coordinate conversion:a = Domain Ancillary: ncvar:a
+       Coordinate conversion:b = Domain Ancillary: ncvar:b
        Coordinate conversion:orog = Domain Ancillary: surface_altitude
        Datum:earth_radius = 6371007
        Dimension Coordinate: atmosphere_hybrid_height_coordinate
@@ -341,7 +344,7 @@ components, and shows the first and last values of all data arrays:
        Auxiliary Coordinate: longitude
        Auxiliary Coordinate: latitude
    
-   Cell measure: measure%area
+   Cell measure: measure:area
        units = 'km2'
        Data(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
 
@@ -403,27 +406,38 @@ and `~Field.set_property` methods:
    >>> t.get_property('standard_name', default='not set') ipython
    'air_temperature'
 
-The properties may be completely replaced with another collection by
-providing a new set of properties to the `~Field.replace_properties`
-method of the field construct:
+A collection of properties may be set at the same time with the
+`~Field.set_properties` method of the field construct, and all
+properties may be completely removed with the
+`~Field.clear_properties` method.
 
 .. code-block:: python
-   :caption: *Delete all the existing properties, saving the original
-             ones, and replace them with two new properties; finally
-             reinstate the original ones.*
+   :caption: *Update the properties with a collection, delete all of
+             the properties, and reinstate the original properties.*
 	     
-   >>> original = t.properties() ipython
-   >>> original ipython
+   >>> original = t.properties()
+   >>> original
    {'Conventions': 'CF-1.7',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
-   >>> t.replace_properties({'foo': 'bar', 'units': 'K'}) ipython
-   >>> t.properties() ipython
-   {'foo': 'bar',
+   >>> t.set_properties({'foo': 'bar', 'units': 'K'})
+   >>> t.properties()
+   {'Conventions': 'CF-1.7',
+    'foo': 'bar',
+    'project': 'research',
+    'standard_name': 'air_temperature',
     'units': 'K'}
-   >>> t.replace_properties(original) ipython
-   >>> t.properties() ipython
+   >>> t.clear_properties()
+    {'Conventions': 'CF-1.7',
+    'foo': 'bar',
+    'project': 'research',
+    'standard_name': 'air_temperature',
+    'units': 'K'}
+   >>> t.properties()
+   {}
+   >>> t.set_properties(original)
+   >>> t.properties()
    {'Conventions': 'CF-1.7',
     'project': 'research',
     'standard_name': 'air_temperature',
@@ -478,9 +492,9 @@ Attribute                       Metadata constructs
 ==============================  =====================  
 
 Each of these attributes returns a `Constructs` class instance that
-maps metadata constructs to a unique identifier called a "construct
-key". The `Constructs` class has similarities to a "read-only" Python
-dictionary in that it has `~Constructs.get`, `~Constructs.items`,
+maps metadata constructs to a unique identifiers called a "construct
+keys". The `Constructs` class is like a "read-only" Python dictionary
+in that it has `~Constructs.get`, `~Constructs.items`,
 `~Constructs.keys` and `~Constructs.values` methods that correspond to
 the corresponding `dict` methods.
 
@@ -497,8 +511,8 @@ the corresponding `dict` methods.
    >>> print(t.coordinate_references)
    {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
     'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
-   >>> t.coordinate_references['coordinatereference1']
-   <CoordinateReference: rotated_latitude_longitude>
+   >>> t.coordinate_references.keys()
+   ['coordinatereference0', 'coordinatereference1']
    >>> for key, value in t.coordinate_references.items():
    ...     print(key, value)
    ...
@@ -544,11 +558,11 @@ Metadata constructs of all types may be returned by the
     'domainaxis2': <DomainAxis: size(1)>}
    >>> t.constructs
    <Constructs: auxiliary_coordinate(3), cell_measure(1), cell_method(2), coordinate_reference(2), dimension_coordinate(4), domain_ancillary(3), domain_axis(4), field_ancillary(1)>
-   >>> print(t.constructs())
+   >>> print(t.constructs)
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
     'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
-    'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>,
+    'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
     'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
     'cellmethod1': <CellMethod: domainaxis3: maximum>,
     'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
@@ -557,8 +571,8 @@ Metadata constructs of all types may be returned by the
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-    'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
-    'domainancillary1': <DomainAncillary: ncvar%b(1) >,
+    'domainancillary0': <DomainAncillary: ncvar:a(1) m>,
+    'domainancillary1': <DomainAncillary: ncvar:b(1) >,
     'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
     'domainaxis0': <DomainAxis: size(1)>,
     'domainaxis1': <DomainAxis: size(10)>,
@@ -860,7 +874,7 @@ class.
             of the original, and with a reversed latitude axis.*
 
    >>> print(q)
-   Field: specific_humidity (ncvar%q)
+   Field: specific_humidity (ncvar:q)
    ----------------------------------
    Data            : specific_humidity(latitude(5), longitude(8)) 1
    Cell methods    : area: mean
@@ -870,7 +884,7 @@ class.
 
    >>> new = q[::-1, 0]
    >>> print(new)
-   Field: specific_humidity (ncvar%q)
+   Field: specific_humidity (ncvar:q)
    ----------------------------------
    Data            : specific_humidity(latitude(5), longitude(1)) 1
    Cell methods    : area: mean
@@ -924,7 +938,7 @@ criteria:
    {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
    >>> print(t.constructs.select(properties=[{'standard_name': 'air_temperature standard_error'},
    ...                                       {'units': 'm'}]))
-   {'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+   {'domainancillary0': <DomainAncillary: ncvar:a(1) m>,
     'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
@@ -936,7 +950,7 @@ criteria:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
     'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
-    'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>,
+    'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
@@ -945,7 +959,7 @@ criteria:
    :caption: *Get cell measure constructs by their "measure".*
 	     
    >>> print(t.constructs.select(measure='area'))
-   {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+   {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
 .. code-block:: python
    :caption: *Get constructs that meet a variety of criteria using a
@@ -957,8 +971,8 @@ criteria:
    {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
   
 The `~Constructs.select` method also returns a `Constructs` instance
-on which further selection can be made. For example, result the
-previous example could be achieved with multiple selections:
+on which further selections can be made. For example, the result of
+the previous example could be achieved with multiple selections:
 
 .. code-block:: python
    :caption: *Get constructs that meet a variety of criteria using
@@ -984,7 +998,7 @@ means:
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
    >>> print(t.constructs.select(key=['auxiliarycoordinate2', 'cellmeasure0']))
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
-    'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+    'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
 A less verbose, and often more convenient, method of selection is by
 metadata construct "name". A construct's name is typically the
@@ -1001,28 +1015,29 @@ although the keyword ``name`` can be used:
 	
    >>> print(t.constructs.select('latitude'))
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-   >>> print(t.constructs.select('long_name:Grid latitude name'))
-   {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
+   >>> print(t.constructs.select('long_name=Grid latitude name'))
+   {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >}
    >>> print(t.constructs.select(name='longitude'))
    {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
-   >>> print(t.constructs.select('measure%area'))
-   {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+   >>> print(t.constructs.select('measure:area'))
+   {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
 More generally, a construct name may be constructed by any of
 
 * The value of the "standard_name" property, e.g. ``'air_temperature'``,
-* The value of any property, preceded by the property name and a
-  colon, e.g. ``'long_name:Air Temperature'``,
-* The cell measure, preceded by "measure%", e.g. ``'measure%volume'``
-* The netCDF variable name, preceded by "ncvar%",
-  e.g. ``'ncvar%tas'`` (see the :ref:`netCDF interface
+* The value of any property, preceded by the property name and an
+  equals sign, e.g. ``'long_name=Air Temperature'``,
+* The cell measure, preceded by "measure:", e.g. ``'measure:volume'``
+* The netCDF variable name, preceded by "ncvar:",
+  e.g. ``'ncvar:tas'`` (see the :ref:`netCDF interface
   <NetCDF-interface>`), and
-* The netCDF dimension name, preceded by "ncdim%" e.g. ``'ncdim%z'``
+* The netCDF dimension name, preceded by "ncdim:" e.g. ``'ncdim:z'``
   (see the :ref:`netCDF interface <NetCDF-interface>`).
 
 Each construct has a `!name` method that, by default, returns the
-least ambiguous name, as defined in the each method's documentation.
-  
+least ambiguous name, which varies according to the type of metadata
+construct.
+
 Note that providing a ``construct`` parameter with no other selection
 parameters is equivalent to using the particular field construct
 method for retrieving that type of metadata construct:
@@ -1033,22 +1048,22 @@ method for retrieving that type of metadata construct:
              constructs.*
 		
    >>> print(t.constructs.select(construct='cell_measure'))
-   {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+   {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
    >>> print(t.cell_measures)
-   {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+   {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
 If no constructs match the given criteria, then an empty dictionary is
 returned:
    
 .. code-block:: python
    :caption: *If no constructs meet the criteria then an empty
-             dictionary is returned.*
+             "Contructs" object is returned.*
 
    >>> t.constructs.select('radiation_wavelength')
    <Constructs: >
-   >>> print(t.constructs.select('radiation_wavelength'))
-   {}
-
+   >>> len(t.constructs.select('radiation_wavelength'))
+   0
+   
 As a convienince feature, construct selection is also possible by
 providing the same selection parameters directly to a `Constructs`
 instance:
@@ -1080,7 +1095,7 @@ criteria.
    :caption: *Check the existence of, and retrieve, the "latitude"
              metadata construct.*
 
-   >>> t.has_construct('latitude')
+   >>> len(t.constructs.select('latitude'))
    1
    >>> t.get_construct('latitude')
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
@@ -1092,11 +1107,11 @@ criteria.
 
    >>> c = t.get_construct('units:km2')
    >>> c
-   <CellMeasure: measure%area(9, 10) km2>
+   <CellMeasure: measure:area(9, 10) km2>
    >>> c.name()
-   'measure%area'
-   >>> t.get_construct('measure%area')
-   <CellMeasure: measure%area(9, 10) km2>
+   'measure:area'
+   >>> t.get_construct('measure:area')
+   <CellMeasure: measure:area(9, 10) km2>
    
 .. code-block:: python
    :caption: *By default an exception is raised if there is not a
@@ -1108,8 +1123,10 @@ criteria.
    >>> t.constructs('units:degrees')
    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
-   >>> t.has_construct('units:degrees')
+   >>> len(t.constructs.select('units:degrees'))
    2
+   >>> t.get_construct('units:degrees')
+   ValueError: More than one construct meets criteria
    >>> print(t.get_construct('units:degrees', default=None))
    None
 
@@ -1124,10 +1141,10 @@ dictionary-like methods of a `Constructs` instance:
    <DomainAncillary: surface_altitude(10, 9) m>
    >>> t.get_construct(key='cellmethod1')
    <CellMethod: domainaxis3: maximum>
+   >>> len(t.constructs.select(key='auxiliarycoordinate999'))
+   0
    >>> t.get_construct(key='auxiliarycoordinate999', default='NO CONSTRUCT')
    'NO CONSTRUCT'
-   >>> t.has_construct(key='auxiliarycoordinate999')
-   0
 
 .. code-block:: python
    :caption: *Get constructs by construct key using dictionary
@@ -1242,6 +1259,31 @@ that applies to a domain axis construct that is not spanned by the
 field construct's data) corresponds to a CF-netCDF scalar coordinate
 variable.
 
+.. _Time:
+
+**Time**
+^^^^^^^^
+
+Constructs representing time (identified by the presence of "reference
+time" units) have data array values that represent elapsed time sinece
+a reference date. These values may converted into the date-time
+objects of the `cftime package <https://unidata.github.io/cftime/>`_
+with the `~Data.datetime_array` method of the `Data` instance.
+
+.. code-block:: python
+   :caption: *Inspect the the values of a "time" construct as elapsed
+             times and as date-times.*
+
+   >>> time = q.get_construct('time')
+   >>> time
+   <DimensionCoordinate: time(1) days since 2018-12-01 >
+   >>> time.get_property('units'), time.get_property('calendar', default='standard')
+   ('days since 2018-12-01', 'standard')
+   >>> print(time.data.array)
+   [ 31.]
+   >>> print(time.data.datetime_array)
+   [cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0, 1, 1)]
+
 .. _Domain:
 
 **Domain**
@@ -1269,11 +1311,11 @@ constructs included in the field construct. It is represented by the
    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
                    : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
-   Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+   Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
    Coord references: atmosphere_hybrid_height_coordinate
                    : rotated_latitude_longitude
-   Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
-                   : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+   Domain ancils   : ncvar:a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                   : ncvar:b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
    >>> description = domain.dump(display=False)
 
@@ -1740,8 +1782,8 @@ the field construct.
    # Create a "longitude" dimension coordinate construct, without
    # coordinate bounds
    dimX = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(8.)))
-   dimX.replace_properties({'standard_name': 'longitude',
-                            'units': 'degrees_east'})
+   dimX.set_properties({'standard_name': 'longitude',
+                        'units': 'degrees_east'})
 
    # Create a "longitude" dimension coordinate construct
    dimY = cfdm.DimensionCoordinate(properties={'standard_name': 'latitude',
@@ -2011,7 +2053,7 @@ The new field construct may now be inspected:
    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] degrees_north
                    : longitude(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] degrees_east
                    : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., j]
-   Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2
+   Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2
    Coord references: atmosphere_hybrid_height_coordinate
                    : rotated_latitude_longitude
    Domain ancils   : domainancillary0(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
@@ -2089,7 +2131,7 @@ domain.
    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] degrees_north
                    : longitude(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] degrees_east
                    : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., j]
-   Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2
+   Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2
    Coord references: rotated_latitude_longitude
 
 The `~Field.convert` method has an option to only include domain axis
@@ -2105,7 +2147,7 @@ constructs.
    >>> print(orog1)
    Field: surface_altitude
    -----------------------
-   Data            : surface_altitude(key%domainaxis2(10), key%domainaxis3(9)) m
+   Data            : surface_altitude(key:domainaxis2(10), key:domainaxis3(9)) m
    
 .. _Creation-by-reading:
 
@@ -2144,13 +2186,13 @@ construct that has fewer metadata constructs than one created with the
 
    >>> fields = cfdm.read('tas.nc', extra='domain_ancillary')
    >>> fields
-   [<Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m>,
+   [<Field: ncvar:a(atmosphere_hybrid_height_coordinate(1)) m>,
     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
-    <Field: ncvar%b(atmosphere_hybrid_height_coordinate(1)) 1>,
+    <Field: ncvar:b(atmosphere_hybrid_height_coordinate(1)) 1>,
     <Field: surface_altitude(grid_latitude(10), grid_longitude(9)) m>]
    >>> orog_from_file = fields[3]
    >>> print(orog_from_file)
-   Field: surface_altitude (ncvar%surface_altitude)
+   Field: surface_altitude (ncvar:surface_altitude)
    ------------------------------------------------
    Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
    Dimension coords: grid_latitude(10) = [0.0, ..., 9.0] degrees
@@ -2340,8 +2382,8 @@ metadata construct identification with the `~Field.constructs` and
              names.*
 	  
    >>> print(t.constructs(ncvar='b'))
-   {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
-   >>> t.get_construct('ncvar%x')
+   {'domainancillary1': <DomainAncillary: ncvar:b(1) >}
+   >>> t.get_construct('ncvar:x')
    <DimensionCoordinate: grid_longitude(9) degrees>
    >>> t.get_construct(ncdim='x')
    <DomainAxis: size(9)>
@@ -2458,7 +2500,7 @@ field constructs, to a new netCDF file on disk:
    :caption: *Write a field construct to a netCDF dataset on disk.*
 
    >>> print(q)
-   Field: specific_humidity (ncvar%humidity)
+   Field: specific_humidity (ncvar:humidity)
    -----------------------------------------
    Data            : specific_humidity(latitude(5), longitude(8)) 1
    Cell methods    : area: mean
@@ -2569,7 +2611,7 @@ of the field construct.
              data.*
 		   
    >>> print(q)
-   Field: specific_humidity (ncvar%humidity)
+   Field: specific_humidity (ncvar:humidity)
    -----------------------------------------
    Data            : specific_humidity(latitude(5), longitude(8)) 1
    Cell methods    : area: mean
@@ -2697,16 +2739,16 @@ is still created, but one without any metadata or data:
 
    >>> u = cfdm.read('parent.nc')[0]
    >>> print(u)
-   Field: eastward_wind (ncvar%eastward_wind)
+   Field: eastward_wind (ncvar:eastward_wind)
    ------------------------------------------
    Data            : eastward_wind(latitude(10), longitude(9)) m s-1
    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
                    : longitude(9) = [0.0, ..., 8.0] degrees
-   Cell measures   : measure%area (external variable: ncvar%areacella)
+   Cell measures   : measure:area (external variable: ncvar:areacella)
 
-   >>> area = u.get_construct('measure%area')
+   >>> area = u.get_construct('measure:area')
    >>> area
-   <CellMeasure: measure%area >
+   <CellMeasure: measure:area >
    >>> area.nc_external()
    True
    >>> area.nc_get_variable()
@@ -2733,7 +2775,7 @@ variable had been present in the parent dataset:
    
    >>> g = cfdm.read('parent.nc', external='external.nc')[0]
    >>> print(g)
-   Field: eastward_wind (ncvar%eastward_wind)
+   Field: eastward_wind (ncvar:eastward_wind)
    ------------------------------------------
    Data            : eastward_wind(latitude(10), longitude(9)) m s-1
    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
@@ -2923,15 +2965,15 @@ file:
    
    >>> h = cfdm.read('contiguous.nc')[0]
    >>> print(h)
-   Field: specific_humidity (ncvar%humidity)
+   Field: specific_humidity (ncvar:humidity)
    -----------------------------------------
-   Data            : specific_humidity(ncdim%station(4), ncdim%timeseries(9))
+   Data            : specific_humidity(ncdim:station(4), ncdim:timeseries(9))
    Dimension coords: 
-   Auxiliary coords: time(ncdim%station(4), ncdim%timeseries(9)) = [[1969-12-29 00:00:00, ..., 1970-01-07 00:00:00]]
-                   : latitude(ncdim%station(4)) = [-9.0, ..., 78.0] degrees_north
-                   : longitude(ncdim%station(4)) = [-23.0, ..., 178.0] degrees_east
-                   : height(ncdim%station(4)) = [0.5, ..., 345.0] m
-                   : cf_role:timeseries_id(ncdim%station(4)) = [station1, ..., station4]
+   Auxiliary coords: time(ncdim:station(4), ncdim:timeseries(9)) = [[1969-12-29 00:00:00, ..., 1970-01-07 00:00:00]]
+                   : latitude(ncdim:station(4)) = [-9.0, ..., 78.0] degrees_north
+                   : longitude(ncdim:station(4)) = [-23.0, ..., 178.0] degrees_east
+                   : height(ncdim:station(4)) = [0.5, ..., 345.0] m
+                   : cf_role:timeseries_id(ncdim:station(4)) = [station1, ..., station4]
    >>> print(h.data.array)
    [[0.12 0.05 0.18   --   --   --   --   --   --]
     [0.05 0.11 0.2  0.15 0.08 0.04 0.06   --   --]
@@ -2961,7 +3003,7 @@ the "station" axis of the field construct:
 	  
    >>> station2 = h[1]
    >>> station2
-   <Field: specific_humidity(ncdim%station(1), ncdim%timeseries(9))>
+   <Field: specific_humidity(ncdim:station(1), ncdim:timeseries(9))>
    >>> print(station2.data.array)
    [[0.05 0.11 0.2 0.15 0.08 0.04 0.06 -- --]]
 
@@ -3015,9 +3057,9 @@ field construct with an underlying contiguous ragged array:
    # Create the field construct with the domain axes and the ragged
    # array
    T = cfdm.Field()
-   T.replace_properties({'standard_name': 'air_temperature',
-                         'units': 'K',
-          	         'featureType': 'timeSeries'})
+   T.set_properties({'standard_name': 'air_temperature',
+                     'units': 'K',
+                     'featureType': 'timeSeries'})
    
    # Create the domain axis constructs for the uncompressed array
    X = T.set_construct(cfdm.DomainAxis(4))
@@ -3032,7 +3074,7 @@ The new field construct can now be inspected and written to a netCDF file:
    :caption: *Inspect the new field construct and write it to disk.*
    
    >>> T
-   <Field: air_temperature(key%domainaxis1(2), key%domainaxis0(4)) K>
+   <Field: air_temperature(key:domainaxis1(2), key:domainaxis0(4)) K>
    >>> print(T.data.array)
    [[280.0 282.5    --    --]
     [281.0 279.0 278.0 279.5]]
@@ -3137,7 +3179,7 @@ file:
 
    >>> p = cfdm.read('gathered.nc')[0]
    >>> print(p)
-   Field: precipitation_flux (ncvar%pr)
+   Field: precipitation_flux (ncvar:pr)
    ------------------------------------
    Data            : precipitation_flux(time(2), latitude(4), longitude(5)) kg m2 s-1
    Dimension coords: time(2) = [2000-02-01 00:00:00, 2000-03-01 00:00:00]
@@ -3165,7 +3207,7 @@ file:
     [0.000202 0.000174 0.00084  0.000201 0.0057  0.000223 0.000102]]
    >>> list_variable = p.data.get_list_variable()
    >>> list_variable
-   <List: ncvar%landpoint(7) >
+   <List: ncvar:landpoint(7) >
    >>> print(list_variable.data.array)
    [1 2 5 7 8 16 18]
 
@@ -3247,7 +3289,7 @@ The new field construct can now be inspected and written a netCDF file:
    :caption: *Inspect the new field construct and write it to disk.*
    
    >>> P
-   <Field: precipitation_flux(key%domainaxis0(2), key%domainaxis1(3), key%domainaxis2(2)) kg m-2 s-1>
+   <Field: precipitation_flux(key:domainaxis0(2), key:domainaxis1(3), key:domainaxis2(2)) kg m-2 s-1>
    >>> print(P.data.rray)
    [[[ -- 2.0]
      [ --  --]

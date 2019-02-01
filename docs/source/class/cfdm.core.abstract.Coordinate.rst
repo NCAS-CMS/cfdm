@@ -25,6 +25,8 @@ Properties
    ~cfdm.core.abstract.Coordinate.has_property
    ~cfdm.core.abstract.Coordinate.set_property
    ~cfdm.core.abstract.Coordinate.properties
+   ~cfdm.core.abstract.Coordinate.clear_properties
+   ~cfdm.core.abstract.Coordinate.set_properties
 
 Data
 ----

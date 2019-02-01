@@ -486,9 +486,9 @@ class DSGTest(unittest.TestCase):
         # Create the field construct with the domain axes and the ragged
         # array
         tas = cfdm.Field()
-        tas.replace_properties({'standard_name': 'air_temperature',
-                                'units': 'K',
-        		        'featureType': 'timeSeries'})
+        tas.set_properties({'standard_name': 'air_temperature',
+                            'units': 'K',
+                            'featureType': 'timeSeries'})
         
         # Create the domain axis constructs for the uncompressed array
         X = tas.set_construct(cfdm.DomainAxis(4))

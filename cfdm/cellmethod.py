@@ -533,7 +533,7 @@ False
 
 By default the name is the first found of the following:
 
-  1. The method, preceeded by 'method%'
+  1. The method, preceeded by 'method:'
   2. The value of the *default* parameter.
 
 .. versionadded:: 1.7.0
@@ -569,7 +569,7 @@ By default the name is the first found of the following:
 
         n = self.get_method(None)
         if n is not None:
-            out.append('method%{0}'.format(n))
+            out.append('method:{0}'.format(n))
             
         if all_names:
             if default is not None:

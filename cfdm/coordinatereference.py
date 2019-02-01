@@ -214,7 +214,7 @@ components.
         if _construct_names:
             for term, key in sorted(coordinate_conversion.domain_ancillaries().items()):
                 if key in _construct_names:
-                    construct_name = 'Domain Ancillary: '+_construct_names.get(key, 'key%{}'.format(key))
+                    construct_name = 'Domain Ancillary: '+_construct_names.get(key, 'key:{}'.format(key))
                 else:
                     construct_name = ''
                     
@@ -233,7 +233,7 @@ components.
         # Coordinates 
         if _construct_names:
             for key in sorted(self.coordinates(), reverse=True):
-                coord = '{}'.format(_construct_names.get(key, 'key%{}'.format(key)))
+                coord = '{}'.format(_construct_names.get(key, 'key:{}'.format(key)))
                 if key in _dimension_coordinates:
                     coord = 'Dimension Coordinate: '+coord
                 elif key in _auxiliary_coordinates:
@@ -397,7 +397,7 @@ By default the name is the first found of the following:
   3. The `long_name` CF property, preceeded by the string
      ``'long_name:'``.
   
-  4. The `!ncvar` attribute, preceeded by the string ``'ncvar%'``.
+  4. The `!ncvar` attribute, preceeded by the string ``'ncvar:'``.
   
   5. The value of the *default* parameter.
 
@@ -439,7 +439,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
         if ncvar and (all_names or not out):
             n = self.nc_get_variable(None)
             if n is not None:
-                out.append('ncvar%{0}'.format(n))
+                out.append('ncvar:{0}'.format(n))
         #--- End: if
 
         if all_names:

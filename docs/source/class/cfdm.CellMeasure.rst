@@ -52,7 +52,8 @@ Properties
    ~cfdm.CellMeasure.has_property
    ~cfdm.CellMeasure.set_property
    ~cfdm.CellMeasure.properties
-   ~cfdm.CellMeasure.replace_properties
+   ~cfdm.CellMeasure.clear_properties
+   ~cfdm.CellMeasure.set_properties
 
 Data
 ----

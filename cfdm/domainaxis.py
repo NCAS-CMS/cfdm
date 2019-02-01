@@ -138,7 +138,7 @@ False
 
 By default the name is the first found of the following:
 
-1. The netCDF dimension name, preceeded by 'ncdim%'.
+1. The netCDF dimension name, preceeded by 'ncdim:'.
 2. The value of the default parameter.
 
 .. versionadded:: 1.7.0
@@ -166,11 +166,11 @@ By default the name is the first found of the following:
 **Examples:**
 
 >>> d.name()
-'ncdim%time'
+'ncdim:time'
 >>> d.name(all_names=True)
-['ncdim%time']
+['ncdim:time']
 >>> d.name('default_value', all_names=True)
-['ncdim%time', 'default_value']
+['ncdim:time', 'default_value']
 >>> d.nc_del_dimension()
 'time'
 >>> d.name('default value')
@@ -185,7 +185,7 @@ By default the name is the first found of the following:
             if ncdim:
                 n = self.nc_get_dimension(None)
                 if n is not None:
-                    out.append('ncdim%{0}'.format(n))
+                    out.append('ncdim:{0}'.format(n))
             #--- End: if
             
             if default is not None:
@@ -196,7 +196,7 @@ By default the name is the first found of the following:
         if ncdim:
             n = self.nc_get_dimension(None)
             if n is not None:
-                return 'ncdim%{0}'.format(n)
+                return 'ncdim:{0}'.format(n)
         #--- End: if
         
         return default

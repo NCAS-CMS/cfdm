@@ -37,7 +37,8 @@ Properties
    ~cfdm.core.DimensionCoordinate.has_property
    ~cfdm.core.DimensionCoordinate.set_property
    ~cfdm.core.DimensionCoordinate.properties
-   ~cfdm.core.DimensionCoordinate.replace_properties
+   ~cfdm.core.DimensionCoordinate.clear_properties
+   ~cfdm.core.DimensionCoordinate.set_properties
 
 Data
 ----

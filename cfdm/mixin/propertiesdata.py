@@ -419,9 +419,9 @@ Inserts a new size 1 axis into the data array.
 By default the name is the first found of the following:
 
 1. The "standard_name" property.
-2. The "cf_role" property, preceeded by ``'cf_role:'``.
-3. The "long_name" property, preceeded by ``'long_name:'``.
-4. The netCDF variable name, preceeded by ``'ncvar%'``.
+2. The "cf_role" property, preceeded by ``'cf_role='``.
+3. The "long_name" property, preceeded by ``'long_name='``.
+4. The netCDF variable name, preceeded by ``'ncvar:'``.
 5. The value of the *default* parameter.
 
 .. versionadded:: 1.7.0
@@ -492,7 +492,7 @@ By default the name is the first found of the following:
             for prop in custom:
                 n = self.get_property(prop, None)
                 if n is not None:
-                    out.append('{0}:{1}'.format(prop, n))
+                    out.append('{0}={1}'.format(prop, n))
                     if not all_names:
                         break
         #--- End: if
@@ -500,7 +500,7 @@ By default the name is the first found of the following:
         if ncvar and (all_names or not out):
             n = self.nc_get_variable(None)
             if n is not None:
-                out.append('ncvar%{0}'.format(n))
+                out.append('ncvar:{0}'.format(n))
         #--- End: if
 
         if all_names:

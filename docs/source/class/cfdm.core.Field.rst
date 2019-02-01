@@ -41,7 +41,8 @@ Properties
    ~cfdm.core.Field.has_property
    ~cfdm.core.Field.set_property
    ~cfdm.core.Field.properties
-   ~cfdm.core.Field.replace_properties
+   ~cfdm.core.Field.clear_properties
+   ~cfdm.core.Field.set_properties
 
 .. _core-Field-Data:
 

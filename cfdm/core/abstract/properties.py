@@ -63,6 +63,32 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    def clear_properties(self):
+        '''Return or replace all properties.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_property` `properties`, `set_properties`
+
+:Returns:
+
+    `dict`
+        The properties that have been removed.
+
+**Examples:**
+
+>>> f.clear properties()
+{'standard_name': 'altitude',
+ 'foo': 'bar'}
+>>> f.properties()
+{}
+
+        '''
+        out = self._get_component('properties')
+        self._set_component('properties', {})
+        return out
+    #--- End: def
+
     def copy(self):
         '''Return a deep copy.
 
@@ -88,7 +114,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
 .. versionadded:: 1.7.0
 
 .. seealso:: `get_property`, `has_property`, `properties`,
-             `set_property`, `replace_properties`
+             `set_property`, `clear_properties`
 
 :Parameters:
 
@@ -147,7 +173,7 @@ None
 .. versionadded:: 1.7.0
 
 .. seealso:: `del_property`, `has_property`, `properties`,
-             `set_property`, `replace_properties`
+             `set_property`
 
 :Parameters:
 
@@ -202,7 +228,7 @@ None
 .. versionadded:: 1.7.0
 
 .. seealso:: `del_property`, `get_property`, `properties`,
-             `set_property`, `replace_properties`
+             `set_property`
 
 :Parameters:
 
@@ -242,8 +268,8 @@ None
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_property`, `get_property`, `has_property`,
-             `set_property`, `replace_properties`
+.. seealso:: `clear_property`, `get_property`, `has_property`
+             `set_properties`
 
 :Returns:
 
@@ -263,26 +289,20 @@ None
         return self._get_component('properties').copy()
     #--- End: def
 
-    def replace_properties(self, properties=None, copy=True):
+    def set_properties(self, properties, copy=True):
         '''Replace all properties.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_property`, `get_property`, `has_property`,
-             `properties`, `set_property`
+.. seealso:: `clear_properties`, `properties`, `set_property`
 
 :Parameters:
 
     properties: `dict` 
-        Delete all existing properties, and instead store the
-        properties from the dictionary supplied.
+        Store the properties from the dictionary supplied.
 
         *Parameter example:*
           ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
-        
-        *Parameter example:*
-          Remove all properties by providing an empty dictionary for
-          the replacement: ``properties={}``.
 
     copy: `bool`, optional
         If False then any property values provided by the *properties*
@@ -295,28 +315,15 @@ None
 
 **Examples:**
 
->>> f.replace_properties({'standard_name': 'altitude',  'foo': 'bar'})
->>> f.properties()
-{'standard_name': 'altitude',
- 'foo': 'bar'}
->>> f.replace_properties({})
->>> f.properties()
-{}
+<TODO>
 
         '''
-        if properties is None:
-            raise ValueError("Must provide  replacement properties")
-        
-#        original = self._get_component('properties')
-
         if copy:
             properties = deepcopy(properties)                
         else:
             properties = properties.copy()
         
-        self._set_component('properties', properties, copy=False)
-
-#        return original.copy()
+        self._get_component('properties').update(properties)
     #--- End: def
 
     def set_property(self, prop, value, copy=True):
@@ -325,7 +332,7 @@ None
 .. versionadded:: 1.7.0
 
 .. seealso:: `del_property`, `get_property`, `has_property`,
-             `properties`, `replace_properties`
+             `properties`, `set_properties`
 
 :Parameters:
 

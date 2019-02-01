@@ -201,9 +201,9 @@ None
 By default the name is the first found of the following:
 
 1. The "standard_name" property.
-2. The "cf_role" property, preceeded by ``'cf_role:'``.
-3. The "long_name" property, preceeded by ``'long_name:'``.
-4. The netCDF variable name, preceeded by ``'ncvar%'``.
+2. The "cf_role" property, preceeded by ``'cf_role='``.
+3. The "long_name" property, preceeded by ``'long_name='``.
+4. The netCDF variable name, preceeded by ``'ncvar:'``.
 5. The value of the *default* parameter.
 
 .. versionadded:: 1.7.0
@@ -263,11 +263,17 @@ By default the name is the first found of the following:
         '''
         inherited_properties = self.inherited_properties()
         if inherited_properties:
-            properties = inherited_properties.copy()
-            properties.update(self.properties())
-
             bounds = self.copy()
-            bounds.properties(properties)
+            properties = bounds.properties()
+            bounds.set_properties(inherited_properties)
+            bounds.set_properties(properties)
+                        
+#            properties = inherited_properties.copy()
+#            properties.update(self.properties())
+#
+#            bounds = self.copy()
+#            bounds.clear_properties()
+#            bounds.set_properties(properties)
             self = bounds
             
         return super().name(default=default, ncvar=ncvar,

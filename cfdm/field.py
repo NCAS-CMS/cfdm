@@ -110,7 +110,7 @@ x.__str__() <==> str(x)
         # Append the netCDF variable name
         ncvar = self.nc_get_variable(None)
         if ncvar is not None:
-            title += " (ncvar%{0})".format(ncvar)
+            title += " (ncvar:{0})".format(ncvar)
         
         string = [title]
         string.append(''.ljust(len(string[0]), '-'))
@@ -162,7 +162,7 @@ x.__str__() <==> str(x)
                     if variable.nc_get_external():
                         ncvar = variable.nc_get_variable(None)
                         if ncvar is not None:
-                            x.append(' (external variable: ncvar%{})'.format(ncvar))
+                            x.append(' (external variable: ncvar:{})'.format(ncvar))
                         else:
                             x.append(' (external variable)')
                             
@@ -187,7 +187,7 @@ x.__str__() <==> str(x)
                     if variable.nc_get_external():
                         ncvar = variable.nc_get_variable(None)
                         if ncvar is not None:
-                            x.append(' (external variable: ncvar%{})'.format(ncvar))
+                            x.append(' (external variable: ncvar:{})'.format(ncvar))
                         else:
                             x.append(' (external variable)')
             #--- End: if
@@ -790,9 +790,9 @@ data arrays.
             _title = self.name(default=None)
             if ncvar is not None:
                 if _title is None:
-                    _title = "ncvar%{0}".format(ncvar)
+                    _title = "ncvar:{0}".format(ncvar)
                 else:
-                    _title += " (ncvar%{0})".format(ncvar)
+                    _title += " (ncvar:{0})".format(ncvar)
             #--- End: if
             if _title is None:
                 _title = ''
@@ -1075,7 +1075,7 @@ construct, into the data array.
         '''
         f = self.copy()
         
-        domain_axis = self.domain_axes.get(key=axis, default=None) #().get(axis)
+        domain_axis = self.domain_axes.get(axis, None)
         if domain_axis is None:
             raise ValueError("Can't insert non-existent domain axis: {}".format(axis))
         

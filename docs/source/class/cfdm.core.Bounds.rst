@@ -25,7 +25,8 @@ Properties
    ~cfdm.core.Bounds.has_property
    ~cfdm.core.Bounds.set_property
    ~cfdm.core.Bounds.properties
-   ~cfdm.core.Bounds.replace_properties
+   ~cfdm.core.Bounds.clear_properties
+   ~cfdm.core.Bounds.set_properties
 
 Data
 ----

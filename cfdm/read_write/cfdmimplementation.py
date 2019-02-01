@@ -1465,7 +1465,7 @@ variable.
 
     `None`
         '''
-        construct.replace_properties(properties, copy=copy)
+        construct.set_properties(properties, copy=copy)
     #--- End: def
  
 #    def set_size(self, domain_axis, size):

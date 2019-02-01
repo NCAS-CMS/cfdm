@@ -38,7 +38,8 @@ Properties
    ~cfdm.Bounds.has_property
    ~cfdm.Bounds.set_property
    ~cfdm.Bounds.properties
-   ~cfdm.Bounds.replace_properties
+   ~cfdm.Bounds.clear_properties
+   ~cfdm.Bounds.set_properties
    ~cfdm.Bounds.inherited_properties
 
 Data

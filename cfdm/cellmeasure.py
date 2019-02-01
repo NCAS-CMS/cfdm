@@ -259,10 +259,10 @@ False
 By default the name is the first found of the following:
 
 1. The "standard_name" property.
-2. The measure property, preceeded by 'measure%'.
-3. The "cf_role" property, preceeded by 'cf_role:'.
-4. The "long_name" property, preceeded by 'long_name:'.
-5. The netCDF variable name, preceeded by 'ncvar%'.
+2. The measure property, preceeded by 'measure:'.
+3. The "cf_role" property, preceeded by 'cf_role='.
+4. The "long_name" property, preceeded by 'long_name='.
+5. The netCDF variable name, preceeded by 'ncvar:'.
 6. The value of the default parameter.
 
 .. versionadded:: 1.7.0
@@ -320,7 +320,7 @@ By default the name is the first found of the following:
             if all_names or not out:
                 n = self.get_measure(None)
                 if n is not None:
-                    out.append('measure%{}'.format(n))
+                    out.append('measure:{}'.format(n))
 
             custom = ('cf_role', 'long_name')
             
@@ -328,7 +328,7 @@ By default the name is the first found of the following:
             for prop in custom:
                 n = self.get_property(prop, None)
                 if n is not None:
-                    out.append('{0}:{1}'.format(prop, n))
+                    out.append('{0}={1}'.format(prop, n))
                     if not all_names:
                         break
         #--- End: if
@@ -336,7 +336,7 @@ By default the name is the first found of the following:
         if ncvar and (all_names or not out):
             n = self.nc_get_variable(None)
             if n is not None:
-                out.append('ncvar%{0}'.format(n))
+                out.append('ncvar:{0}'.format(n))
         #--- End: if
 
         if all_names:

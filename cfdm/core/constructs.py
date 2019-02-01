@@ -645,9 +645,11 @@ removed even if it is referenced by coordinate reference coinstruct.
         '''
         try:
             return self[key]
-        except KeyError:
+        except KeyError as error:
             if default:
                 return default[0]
+
+            raise error
     #--- End: def
     
     def items(self):
@@ -879,8 +881,6 @@ removed even if it is referenced by coordinate reference coinstruct.
 <TODO>
 
         '''
-#        if cid is None:
-        # Return all of the constructs' axes
         if not self._ignore:
             return self._construct_axes.copy()
         else:
@@ -895,24 +895,7 @@ removed even if it is referenced by coordinate reference coinstruct.
             #--- End: for
 
             return out
-#        #--- End: if
-        
-#        # Return a particular construct's axes
-#        if self._ignore and self.construct_type(cid) is None:
-#            cid = None#
-#
-#        return self._construct_axes.get(cid)
     #--- End: def
-
-
-#    def _check_construct_type_of_key(self, key):
-#        '''
-#        '''
-#        construct_type = self.construct_type(key)
-#        if construct_type is not None:
-#            self._check_construct_type(construct_type, key=key)
-#
-#        return construct_type
 
     def copy(self, data=True):
         '''Return a deep copy.

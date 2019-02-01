@@ -20,7 +20,6 @@ Selection
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Constructs.data_axes
    ~cfdm.Constructs.select
 
 Dictionary-like methods
@@ -37,6 +36,18 @@ Dictionary-like methods
    ~cfdm.Constructs.keys
    ~cfdm.Constructs.items
    ~cfdm.Constructs.values
+
+Data axes
+---------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Constructs.data_axes
 
 Miscellaneous
 -------------
@@ -66,6 +77,7 @@ Special
    ~cfdm.Constructs.__call__
    ~cfdm.Constructs.__contains__
    ~cfdm.Constructs.__deepcopy__
+   ~cfdm.Constructs.__getitem__
    ~cfdm.Constructs.__iter__
    ~cfdm.Constructs.__len__
    ~cfdm.Constructs.__repr__

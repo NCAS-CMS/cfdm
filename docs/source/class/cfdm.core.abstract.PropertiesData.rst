@@ -26,7 +26,8 @@ Properties
    ~cfdm.core.abstract.PropertiesData.has_property
    ~cfdm.core.abstract.PropertiesData.set_property
    ~cfdm.core.abstract.PropertiesData.properties
-   ~cfdm.core.abstract.PropertiesData.replcae_properties
+   ~cfdm.core.abstract.PropertiesData.clear_properties
+   ~cfdm.core.abstract.PropertiesData.set_properties
 
 Data
 ----

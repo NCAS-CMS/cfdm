@@ -38,7 +38,8 @@ Properties
    ~cfdm.Count.has_property
    ~cfdm.Count.set_property
    ~cfdm.Count.properties
-   ~cfdm.Count.replace_properties
+   ~cfdm.Count.clear_properties
+   ~cfdm.Count.set_properties
 
 Data
 ----

@@ -47,7 +47,8 @@ Properties
    ~cfdm.AuxiliaryCoordinate.has_property
    ~cfdm.AuxiliaryCoordinate.set_property
    ~cfdm.AuxiliaryCoordinate.properties
-   ~cfdm.AuxiliaryCoordinate.replace_properties
+   ~cfdm.AuxiliaryCoordinate.clear_properties
+   ~cfdm.AuxiliaryCoordinate.set_properties
 
 Data
 ----

@@ -420,8 +420,9 @@ selected.
 
     default: optional
         Return the value of the *default* parameter if no unique
-        construct has been selected. By default an exception is raised
-        in this case.
+        construct has been selected. If set to an `Exception` instance
+        then it will be raised if no unique construct has been
+        selected. By default an exception is raised in this case.
         
 :Returns:
         The unique selected construct. If there is no such construct
@@ -439,13 +440,10 @@ selected.
 ...                     axis=['domainaxis1'])
 
         '''
-#        out = self.constructs(name=name, properties=properties,
         out = self.constructs.select(name=name, properties=properties,
                                      measure=measure, axis=axis,
                                      key=key, construct=construct,
                                      ncvar=ncvar, ncdim=ncdim)
-#                                     copy=copy)
-
         if not out:
             return self._default(default, "No construct meets criteria")
 

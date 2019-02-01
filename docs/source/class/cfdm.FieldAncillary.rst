@@ -47,7 +47,8 @@ Properties
    ~cfdm.FieldAncillary.has_property
    ~cfdm.FieldAncillary.set_property
    ~cfdm.FieldAncillary.properties
-   ~cfdm.FieldAncillary.replcae_properties
+   ~cfdm.FieldAncillary.clear_properties
+   ~cfdm.FieldAncillary.set_properties
 
 Data
 ----

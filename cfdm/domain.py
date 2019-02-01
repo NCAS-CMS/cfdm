@@ -62,7 +62,7 @@ x.__str__() <==> str(x)
                     if variable.nc_external():
                         ncvar = variable.nc_get_variable(None)
                         if ncvar is not None:
-                            x.append(' (external variable: ncvar%{})'.format(ncvar))
+                            x.append(' (external variable: ncvar:{})'.format(ncvar))
                         else:
                             x.append(' (external variable)')
                             
@@ -88,7 +88,7 @@ x.__str__() <==> str(x)
                     if variable.nc_external():
                         ncvar = variable.nc_get_variable(None)
                         if ncvar is not None:
-                            x.append(' (external variable: ncvar%{})'.format(ncvar))
+                            x.append(' (external variable: ncvar:{})'.format(ncvar))
                         else:
                             x.append(' (external variable)')
             #--- End: if
@@ -112,7 +112,7 @@ x.__str__() <==> str(x)
             for cid, dim in list(self.dimension_coordinates.items()):
 #                if self.constructs_data_axes()[cid] == (axis_cid,):
                 if constructs_data_axes[cid] == (axis_cid,):
-                    name = dim.name(default='cid%{0}'.format(cid), ncvar=True)
+                    name = dim.name(default='key:{0}'.format(cid), ncvar=True)
                     y = '{0}({1})'.format(name, dim.get_data().size)
                     if y != axis_names[axis_cid]:
                         y = '{0}({1})'.format(name, axis_names[axis_cid])

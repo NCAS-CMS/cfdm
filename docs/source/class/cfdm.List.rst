@@ -38,7 +38,8 @@ Properties
    ~cfdm.List.has_property
    ~cfdm.List.set_property
    ~cfdm.List.properties
-   ~cfdm.List.replace_properties
+   ~cfdm.List.clear_properties
+   ~cfdm.List.set_properties
 
 Data
 ----

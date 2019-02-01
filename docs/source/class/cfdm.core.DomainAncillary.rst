@@ -37,7 +37,8 @@ Properties
    ~cfdm.core.DomainAncillary.has_property
    ~cfdm.core.DomainAncillary.set_property
    ~cfdm.core.DomainAncillary.properties
-   ~cfdm.core.DomainAncillary.replace_properties
+   ~cfdm.core.DomainAncillary.clear_properties
+   ~cfdm.core.DomainAncillary.set_properties
 
 Data
 ----
