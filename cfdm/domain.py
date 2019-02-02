@@ -384,14 +384,13 @@ coordinate reference coinstruct.
                 raise ValueError(
 "Can't remove domain axis {!r} that is spanned by the the data of metadata construct {!r}".format(cid, key))
 
-        return self._get_constructs().del_construct(key=cid)
+        return self.constructs.del_construct(key=cid)
     #--- End: def
 
-    def domain_axis_name(self, cid):
+    def domain_axis_name(self, key):
         '''TODO
         '''
-        constructs = self._get_constructs()
-        return constructs.domain_axis_name(cid)
+        return self.constructs.domain_axis_name(key)
     #--- End: def
 
     def dump(self, display=True, _level=0, _title=None):
@@ -517,7 +516,7 @@ last values.
         # ------------------------------------------------------------
         # Check the constructs
         # ------------------------------------------------------------              
-        if not self._equals(self._get_constructs(), other._get_constructs(),
+        if not self._equals(self.constructs, other.constructs,
                             rtol=rtol, atol=atol,
                             verbose=verbose,
                             ignore_data_type=ignore_data_type,

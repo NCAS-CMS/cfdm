@@ -12,28 +12,28 @@ class ConstructAccess(object):
 
     '''   
 #    @abc.abstractmethod
-    def _get_constructs(self, *default):
-        '''Return the `Constructs` object
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    default: optional
-        If set then return *default* if there is no `Constructs` object.
-
-:Returns:
-
-        The `Constructs` object. If unset then return *default* if provided.
-
-**Examples:**
-
->>> c = f._get_constructs()
->>> c = f._get_constructs(None)
-
-        '''
-        raise NotImplementedError("Must implement this method in subclasses")
-    #--- End: def
+#    def _get_constructsk(self, *default):
+#        '''Return the `Constructs` object
+#
+#.. versionadded:: 1.7.0
+#
+#:Parameters:
+#
+#    default: optional
+#        If set then return *default* if there is no `Constructs` object.
+#
+#:Returns:
+#
+#        The `Constructs` object. If unset then return *default* if provided.
+#
+#**Examples:**
+#
+#>>> c = f._get_constructs()
+#>>> c = f._get_constructs(None)
+#
+#        '''
+#        raise NotImplementedError("Must implement this method in subclasses")
+#    #--- End: def
     
     def data_constructs(self, copy=False):
         '''Return metadata constructs that support data arrays.
@@ -62,7 +62,7 @@ TODO
 TODO
 
         '''
-        return self._get_constructs().data_constructs(copy=copy)
+        return self.constructs.data_constructs(copy=copy)
     #-- End: def
     
 #    def constructs_data_axes(self):

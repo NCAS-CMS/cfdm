@@ -91,7 +91,6 @@ and institution).
             # Initialise constructs and the data from the source
             # parameter
             try:
-#                constructs = source._get_constructs(None)
                 constructs = source.constructs
             except AttributeError:
                 constructs = None
@@ -127,28 +126,28 @@ and institution).
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _get_constructs(self, *default):
-        '''Return the `Constructs` instance contained by the field construct.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    default: optional
-        Return *default* if the `Constructs` instance has not been
-        set.
-
-:Returns:
-
-    `Constucts`
-
-**Examples:**
-
->>> c = f._get_contructs()
-
-        '''
-        return self._get_component('constructs', *default)
-    #--- End: def
+#    def _get_constructs(self, *default):
+#        '''Return the `Constructs` instance contained by the field construct.
+#
+#.. versionadded:: 1.7.0
+#
+#:Parameters:
+#
+#    default: optional
+#        Return *default* if the `Constructs` instance has not been
+#        set.
+#
+#:Returns:
+#
+#    `Constucts`
+#
+#**Examples:**
+#
+#>>> c = f._get_contructs()
+#
+#        '''
+#        return self._get_component('constructs', *default)
+#    #--- End: def
 
     # ----------------------------------------------------------------
     # Attributes
@@ -173,7 +172,6 @@ and institution).
         '''<TODO>
         '''
         return self._get_component('constructs')
-#        return self._get_constructs()
     #--- End: def
 
     @property
@@ -256,7 +254,7 @@ None
 >>> d = f.get_domain()
 
         '''
-        return self._Domain.fromconstructs(self._get_constructs())
+        return self._Domain.fromconstructs(self.constructs)
     #--- End: def
 
     def get_data_axes(self, key=None, default=ValueError):

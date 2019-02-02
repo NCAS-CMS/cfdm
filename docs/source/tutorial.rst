@@ -509,6 +509,7 @@ the corresponding `dict` methods.
    >>> t.coordinate_references
    <Constructs: coordinate_reference(2)>
    >>> print(t.coordinate_references)
+   Constructs:
    {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
     'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
    >>> t.coordinate_references.keys()
@@ -524,11 +525,13 @@ the corresponding `dict` methods.
              domain axis contructs.*
       
    >>> print(t.dimension_coordinates)
+   Constructs:
    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
    >>> print(t.domain_axes)
+   Constructs:
    {'domainaxis0': <DomainAxis: size(1)>,
     'domainaxis1': <DomainAxis: size(10)>,
     'domainaxis2': <DomainAxis: size(9)>,
@@ -549,6 +552,7 @@ Metadata constructs of all types may be returned by the
    >>> q.constructs
    <Constructs: cell_method(1), dimension_coordinate(3), domain_axis(3)>
    >>> print(q.constructs)
+   Constructs:
    {'cellmethod0': <CellMethod: area: mean>,
     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
@@ -559,6 +563,7 @@ Metadata constructs of all types may be returned by the
    >>> t.constructs
    <Constructs: auxiliary_coordinate(3), cell_measure(1), cell_method(2), coordinate_reference(2), dimension_coordinate(4), domain_ancillary(3), domain_axis(4), field_ancillary(1)>
    >>> print(t.constructs)
+   Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
     'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
@@ -670,6 +675,7 @@ the field construct. For example, the data of the field construct
              construct's data.*
 	    
    >>> print(t.domain_axes)
+   Constructs:
    {'domainaxis0': <DomainAxis: size(1)>,
     'domainaxis1': <DomainAxis: size(10)>,
     'domainaxis2': <DomainAxis: size(9)>,
@@ -836,6 +842,7 @@ Method                     Description
    >>> t2
    <Field: air_temperature(grid_latitude(10), grid_longitude(9)) K>   
    >>> print(t2.dimension_coordinates)
+   Constructs:
    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
@@ -926,6 +933,7 @@ criteria:
    :caption: *Get constructs by their type*.
 	  
    >>> print(t.constructs.select(construct='dimension_coordinate'))
+   Constructs:
    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
@@ -935,9 +943,11 @@ criteria:
    :caption: *Get constructs by their properties*.
 
    >>> print(t.constructs.select(properties={'standard_name': 'air_temperature standard_error'}))
+   Constructs:
    {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
    >>> print(t.constructs.select(properties=[{'standard_name': 'air_temperature standard_error'},
    ...                                       {'units': 'm'}]))
+   Constructs:
    {'domainancillary0': <DomainAncillary: ncvar:a(1) m>,
     'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
@@ -947,6 +957,7 @@ criteria:
              their data.*
 
    >>> print(t.constructs.select(axis='domainaxis1'))
+   Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
     'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
@@ -959,6 +970,7 @@ criteria:
    :caption: *Get cell measure constructs by their "measure".*
 	     
    >>> print(t.constructs.select(measure='area'))
+   Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
 .. code-block:: python
@@ -968,6 +980,7 @@ criteria:
    >>> print(t.constructs.select(construct='auxiliary_coordinate',
    ...                           axis='domainaxis1',
    ...                           properties={'units': 'degrees_E'}))
+   Constructs:
    {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
   
 The `~Constructs.select` method also returns a `Constructs` instance
@@ -982,6 +995,7 @@ the previous example could be achieved with multiple selections:
    >>> c = c.select(construct='auxiliary_coordinate')
    >>> c = c.select(axis='domainaxis1', properties={'units': 'degrees_E'})
    >>> print(c)
+   Constructs:
    {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
 
 Selection by construct key is useful for systematic metadata construct
@@ -993,10 +1007,13 @@ means:
              method.*
 
    >>> print(t.constructs.select(key='domainancillary2'))
+   Constructs:
    {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
-   >>> print(t.constructs.select(key='cellmethod1')(
+   >>> print(t.constructs.select(key='cellmethod1'))
+   Constructs:
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
    >>> print(t.constructs.select(key=['auxiliarycoordinate2', 'cellmeasure0']))
+   Constructs:
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
     'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
@@ -1014,12 +1031,16 @@ although the keyword ``name`` can be used:
    :caption: *Get constructs by their name.*
 	
    >>> print(t.constructs.select('latitude'))
+   Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
    >>> print(t.constructs.select('long_name=Grid latitude name'))
+   Constructs:
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >}
    >>> print(t.constructs.select(name='longitude'))
+   Constructs:
    {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
    >>> print(t.constructs.select('measure:area'))
+   Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
 More generally, a construct name may be constructed by any of
@@ -1048,8 +1069,10 @@ method for retrieving that type of metadata construct:
              constructs.*
 		
    >>> print(t.constructs.select(construct='cell_measure'))
+   Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
    >>> print(t.cell_measures)
+   Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
 If no constructs match the given criteria, then an empty dictionary is
@@ -1073,8 +1096,10 @@ instance:
              method, or directly on the "Constructs" instance.*
 
    >>> print(t.constructs.select('latitude'))
+   Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
    >>> print(t.constructs('latitude'))
+   Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
    
 .. _Accessing-an-individual-metadata-construct:
@@ -1362,6 +1387,7 @@ the `~cfdm.DomainAxis.get_size()` method of the domain axis construct.
    :caption: *Get the size of a domain axis construct.*
 
    >>> print(q.domain_axes)
+   Constructs:
    {'domainaxis0': <DomainAxis: size(5)>,
     'domainaxis1': <DomainAxis: size(8)>,
     'domainaxis2': <DomainAxis: size(1)>}
@@ -1555,6 +1581,7 @@ cell method constructs to be recorded.
              names for cell method axes identification.*
 	     
    >>> print(t.cell_methods)
+   Constructs:
    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
     'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
@@ -2382,6 +2409,7 @@ metadata construct identification with the `~Field.constructs` and
              names.*
 	  
    >>> print(t.constructs(ncvar='b'))
+   Constructs:
    {'domainancillary1': <DomainAncillary: ncvar:b(1) >}
    >>> t.get_construct('ncvar:x')
    <DimensionCoordinate: grid_longitude(9) degrees>

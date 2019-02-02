@@ -59,7 +59,7 @@ constructs.
         
         if source is not None:
             try:                
-                constructs = source._get_constructs()
+                constructs = source.constructs
             except AttributeError:
                 constructs = self._Constructs(**self._construct_key_base)
                 copy = False
@@ -81,20 +81,20 @@ constructs.
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _get_constructs(self, *default):
-        '''TODO
-
-.. versionadded:: 1.7.0
-        
-        '''
-        return self._get_component('constructs', *default)
-    #--- End: def
+#    def _get_constructs(self, *default):
+#        '''TODO
+#
+#.. versionadded:: 1.7.0
+#        
+#        '''
+#        return self._get_component('constructs', *default)
+#    #--- End: def
     
     @property
     def constructs(self):
         '''<TODO>
         '''
-        return self._get_constructs()
+        return self._get_component('constructs')
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -149,7 +149,7 @@ constructs.
 
 **Examples:**
 
->>> d = Domain.fromconstructs(f._get_constructs())
+>>> d = Domain.fromconstructs(f.constructs)
 
         '''
         domain = cls()

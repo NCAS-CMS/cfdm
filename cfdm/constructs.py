@@ -25,19 +25,44 @@ class Constructs(core.Constructs):
     #--- End: def
        
     def __repr__(self):
+        '''Called by the `repr` built-in function.
+
+x.__repr__() <==> repr(x)
+
         '''
-        '''
-        construct_tpes = ['{0}({1})'.format(c, len(v))
-                          for c, v in sorted(self._constructs.items())
-                          if len(v) and c not in self._ignore]    
+        construct_types = ['{0}({1})'.format(c, len(v))
+                           for c, v in sorted(self._constructs.items())
+                           if len(v) and c not in self._ignore]    
         
-        return '<{0}: {1}>'.format(self.__class__.__name__, ', '.join(construct_tpes))
+        return '<{0}: {1}>'.format(self.__class__.__name__, ', '.join(construct_types))
     #--- End: def
 
     def __str__(self):
+        '''Called by the `str` built-in function.
+
+x.__str__() <==> str(x)
+
         '''
-        '''
-        return repr(self._dictionary())
+        out = ['Constructs:']
+
+        construct_types = [c for c, v in sorted(self._constructs.items())
+                           if len(v) and c not in self._ignore]    
+
+        first = '{'
+        for construct_type in construct_types:
+            for key, value in sorted(self._constructs[construct_type].items()):
+                if first:
+                    out[0] = out[0] + '\n{{{!r}: {!r},'.format(key, value)
+                    first = False
+                else:
+                    out.append('{!r}: {!r},'.format(key, value))
+                
+        if first:
+            out.append('{}')
+        else:
+            out[-1] = out[-1][:-1] + '}'
+
+        return '\n '.join(out)
     #--- End: def
 
 #    def constructs(self, name=None, properties=None, measure=None,
