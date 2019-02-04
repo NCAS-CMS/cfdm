@@ -421,7 +421,7 @@ By default the name is the first found of the following:
 1. The "standard_name" property.
 2. The "cf_role" property, preceeded by ``'cf_role='``.
 3. The "long_name" property, preceeded by ``'long_name='``.
-4. The netCDF variable name, preceeded by ``'ncvar:'``.
+4. The netCDF variable name, preceeded by ``'ncvar%'``.
 5. The value of the *default* parameter.
 
 .. versionadded:: 1.7.0
@@ -466,17 +466,17 @@ By default the name is the first found of the following:
 >>> f.name()
 'air_temperature'
 >>> f.name(all_names=True)
-['air_temperature', 'long_name:Air Temperature', 'ncvar:tas']
+['air_temperature', 'long_name=Air Temperature', 'ncvar%tas']
 >>> x = f.del_property('standard_name')
 >>> f.name()
-'long_name:Air Temperature'
+'long_name=Air Temperature'
 >>> x = f.del_property('long_name')
 >>> f.name()
-'ncvar:tas'
+'ncvar%tas'
 >>> f.name(custom=['foo'])
-'foo:bar'
+'foo=bar'
 >>> f.name(default='no name', custom=['foo'])
-['foo:bar', 'no name']
+['foo=bar', 'no name']
 
         '''
         out = []
@@ -500,7 +500,7 @@ By default the name is the first found of the following:
         if ncvar and (all_names or not out):
             n = self.nc_get_variable(None)
             if n is not None:
-                out.append('ncvar:{0}'.format(n))
+                out.append('ncvar%{0}'.format(n))
         #--- End: if
 
         if all_names:

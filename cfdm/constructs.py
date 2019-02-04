@@ -58,7 +58,7 @@ x.__str__() <==> str(x)
                     out.append('{!r}: {!r},'.format(key, value))
                 
         if first:
-            out.append('{}')
+            out[0] = out[0] + '\n{}'
         else:
             out[-1] = out[-1][:-1] + '}'
 

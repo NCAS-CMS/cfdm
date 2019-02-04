@@ -560,9 +560,9 @@ By default the name is the first found of the following:
 >>> c
 <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>
 >>> c.name()
-'method%mean'
+'method:mean'
 >>> c.name(all_names=True, default='no name')
-['method%mean', 'no name']
+['method:mean', 'no name']
 
         '''
         out = []

@@ -262,7 +262,7 @@ By default the name is the first found of the following:
 2. The measure property, preceeded by 'measure:'.
 3. The "cf_role" property, preceeded by 'cf_role='.
 4. The "long_name" property, preceeded by 'long_name='.
-5. The netCDF variable name, preceeded by 'ncvar:'.
+5. The netCDF variable name, preceeded by 'ncvar%'.
 6. The value of the default parameter.
 
 .. versionadded:: 1.7.0
@@ -307,7 +307,7 @@ By default the name is the first found of the following:
 >>> c.name()
 'cell_area'
 >>> c.name(all_names=True)
-['cell_area', 'measure%area', 'long_name:Area', 'ncvar:areacella']
+['cell_area', 'measure:area', 'long_name=Area', 'ncvar%areacella']
 
         '''
         out = []
@@ -336,7 +336,7 @@ By default the name is the first found of the following:
         if ncvar and (all_names or not out):
             n = self.nc_get_variable(None)
             if n is not None:
-                out.append('ncvar:{0}'.format(n))
+                out.append('ncvar%{0}'.format(n))
         #--- End: if
 
         if all_names:
