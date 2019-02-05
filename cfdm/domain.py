@@ -37,7 +37,7 @@ constructs.
 x.__repr__() <==> repr(x)
 
         '''
-        shape = sorted([domain_axis.get_size() for domain_axis in list(self.domain_axes().values())])
+        shape = sorted([domain_axis.get_size() for domain_axis in list(self.domain_axes.values())])
         shape = str(shape)
         shape = shape[1:-1]
         
@@ -108,7 +108,7 @@ x.__str__() <==> str(x)
         constructs_data_axes = self.constructs.data_axes()
         
         x = []
-        for axis_cid in sorted(self.domain_axes()):
+        for axis_cid in sorted(self.domain_axes):
             for cid, dim in list(self.dimension_coordinates.items()):
 #                if self.constructs_data_axes()[cid] == (axis_cid,):
                 if constructs_data_axes[cid] == (axis_cid,):
@@ -133,20 +133,20 @@ x.__str__() <==> str(x)
         
         # Cell measures
         x = [_print_item(self, cid, v, constructs_data_axes[cid], False)
-             for cid, v in sorted(self.cell_measures().items())]
+             for cid, v in sorted(self.cell_measures.items())]
         if x:
             string.append('Cell measures   : {}'.format(
                 '\n                : '.join(x)))
             
         # Coordinate references
-        x = sorted([str(ref) for ref in list(self.coordinate_references().values())])
+        x = sorted([str(ref) for ref in list(self.coordinate_references.values())])
         if x:
             string.append('Coord references: {}'.format(
                 '\n                : '.join(x)))
             
         # Domain ancillary variables
         x = [_print_item(self, cid, anc, constructs_data_axes[cid], False)
-             for cid, anc in sorted(self.domain_ancillaries().items())]
+             for cid, anc in sorted(self.domain_ancillaries.items())]
         if x:
             string.append('Domain ancils   : {}'.format(
                 '\n                : '.join(x)))
@@ -179,7 +179,7 @@ field.
         indent1 = '    ' * _level
         indent2 = '    ' * (_level+1)
 
-        axes = self.domain_axes()
+        axes = self.domain_axes
 
         w = sorted(["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
                     for axis in axes])
@@ -456,7 +456,7 @@ last values.
                            _axis_names=axis_to_name))
 
         # Domain ancillaries
-        for cid, value in sorted(self.domain_ancillaries().items()):
+        for cid, value in sorted(self.domain_ancillaries.items()):
             string.append('') 
             string.append(value.dump(display=False, _level=_level,
                                      _title='Domain ancillary: {0}'.format(
@@ -465,7 +465,7 @@ last values.
                                      _axis_names=axis_to_name))
             
         # Coordinate references
-        for cid, value in sorted(self.coordinate_references().items()):
+        for cid, value in sorted(self.coordinate_references.items()):
             string.append('')
             string.append(
                 value.dump(display=False, _level=_level,
@@ -476,7 +476,7 @@ last values.
                            _dimension_coordinates=tuple(self.dimension_coordinates)))
             
         # Cell measures
-        for cid, value in sorted(self.cell_measures().items()):
+        for cid, value in sorted(self.cell_measures.items()):
             string.append('')
             string.append(
                 value.dump(display=False, field=self,

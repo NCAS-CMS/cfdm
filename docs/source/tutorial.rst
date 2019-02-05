@@ -1045,14 +1045,26 @@ means:
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
     'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
-A convenient, method of selection is by metadata construct "name". A
-construct's name is typically the description that is displayed when
-the construct is inspected, and so it is often convienient to copy
-this name when selecting metadata constructs. For example, the
-:ref:`three auxiliary coordinate constructs <Medium-detail>` in the
-field construct ``t`` have names ``'latitude'``, ``'longitude'`` and
-``'long_name=Grid latitude name'``. Selection by name does not require
-a keyword parameter, although the keyword ``name`` can be used:
+A convenient method of selection is by metadata construct "name". A
+construct's name is any one of the following
+
+* The value of the "standard_name" property, e.g. ``'air_temperature'``,
+* The value of any property, preceded by the property name and an
+  equals, e.g. ``'long_name=Air Temperature'``,
+* The cell measure, preceded by "measure:", e.g. ``'measure:volume'``
+* The cell method, preceded by "method:", e.g. ``'method:maximum'``
+* The netCDF variable name, preceded by "ncvar%",
+  e.g. ``'ncvar%tas'`` (see the :ref:`netCDF interface
+  <NetCDF-interface>`), and
+* The netCDF dimension name, preceded by "ncdim%" e.g. ``'ncdim%z'``
+  (see the :ref:`netCDF interface <NetCDF-interface>`).
+
+Valid construct names are used to describe constructs when they are
+inspected, and so it is often convienient to copy these names when
+selecting metadata constructs. For example, the :ref:`three auxiliary
+coordinate constructs <Medium-detail>` in the field construct ``t``
+have names ``'latitude'``, ``'longitude'`` and ``'long_name=Grid
+latitude name'``.
 
 .. code-block:: python
    :caption: *Get constructs by their name.*
@@ -1088,27 +1100,27 @@ a keyword parameter, although the keyword ``name`` can be used:
    >>> print(t.constructs.name('ncvar%b))
    TODO
 
-More generally, a construct name may be constructed by any of
+.. More generally, a construct name may be constructed by any of
 
-* The value of the "standard_name" property, e.g. ``'air_temperature'``,
-* The value of any property, preceded by the property name and an
-  equals, e.g. ``'long_name=Air Temperature'``,
-* The cell measure, preceded by "measure:", e.g. ``'measure:volume'``
-* The cell method, preceded by "method:", e.g. ``'method:maximum'``
-* The netCDF variable name, preceded by "ncvar%",
-  e.g. ``'ncvar%tas'`` (see the :ref:`netCDF interface
-  <NetCDF-interface>`), and
-* The netCDF dimension name, preceded by "ncdim%" e.g. ``'ncdim%z'``
-  (see the :ref:`netCDF interface <NetCDF-interface>`).
+   * The value of the "standard_name" property, e.g. ``'air_temperature'``,
+   * The value of any property, preceded by the property name and an
+     equals, e.g. ``'long_name=Air Temperature'``,
+   * The cell measure, preceded by "measure:", e.g. ``'measure:volume'``
+   * The cell method, preceded by "method:", e.g. ``'method:maximum'``
+   * The netCDF variable name, preceded by "ncvar%",
+     e.g. ``'ncvar%tas'`` (see the :ref:`netCDF interface
+     <NetCDF-interface>`), and
+   * The netCDF dimension name, preceded by "ncdim%" e.g. ``'ncdim%z'``
+     (see the :ref:`netCDF interface <NetCDF-interface>`).
 
 Each construct has a `!name` method that, by default, returns the
 least ambiguous name (which varies according to the construct type);
-and an `!all_names` method that returns a selection of names that
+and an `!all_names` method that returns a list of names, any of which
 would select the construct.
 
-Note that selection by construct type is equivalent to using the
-particular method of the field construct for retrieving that type of
-metadata construct:
+Selection by construct type is equivalent to using the particular
+method of the field construct for retrieving that type of metadata
+construct:
 
 .. code-block:: python
    :caption: *The bespoke methods for retrieving constructs by type
@@ -1230,13 +1242,13 @@ dictionary-like methods of a `Constructs` instance:
    'NO CONSTRUCT'
 
 The key of a metadata construct may be found with the
-`~Field.get_constructs_key` method of the field construct:
+`~Constructs.get_key` method of the `Constructs` instance:
 
 .. code-block:: python
    :caption: *Get the construct key of the construct with name
              "latitude".*
 
-   >>> t.get_construct_key('latitude')
+   >>> t.constructs.name('latitude').get_key()
    'auxiliarycoordinate0'
    
 .. _Metadata-construct-properties:
@@ -1292,7 +1304,7 @@ of the field construct:
    :caption: *Find the construct keys of the domain axis constructs
              spanned by the data of each metadata construct.*
 
-   >>> key = t.get_construct_key('latitude')
+   >>> key = t.constructs.name('latitude').get_key()
    >>> key
    TODO
    >>> t.get_data_axes(key=key)
@@ -2195,7 +2207,8 @@ domain.
    :caption: *Create an independent field construct from the "surface
              altitude" metadata construct.*
 
-   >>> orog = tas.convert('surface_altitude')	  
+   >>> key = tas.constructs.name('surface_altitude').get_key()
+   >>> orog = tas.convert(key)
    >>> print(orog)
    Field: surface_altitude
    -----------------------
@@ -2217,7 +2230,7 @@ constructs.
              altitude" metadata construct, but without a complete
              domain.*
 
-   >>> orog1 = tas.convert('surface_altitude', full_domain=False) 
+   >>> orog1 = tas.convert(key, full_domain=False) 
    >>> print(orog1)
    Field: surface_altitude
    -----------------------

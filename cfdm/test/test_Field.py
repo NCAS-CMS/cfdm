@@ -165,88 +165,95 @@ class FieldTest(unittest.TestCase):
         # ------------------------------------------------------------
         # constructs_type parameter
         # ------------------------------------------------------------
-        constructs = f.constructs(construct=None)
+        constructs = f.constructs.type(['auxiliary_coordinate',
+                                        'cell_measure',
+                                        'cell_method',
+                                        'coordinate_reference',
+                                        'dimension_coordinate',
+                                        'domain_ancillary',
+                                        'domain_axis',
+                                        'field_ancillary'])
         n = 20
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
 
-        constructs = f.constructs(construct='auxiliary_coordinate')
+        constructs = f.constructs.type('auxiliary_coordinate')
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.AuxiliaryCoordinate)
 
-        constructs = f.constructs(construct='cell_measure')
+        constructs = f.constructs.type('cell_measure')
         n = 1
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))               
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMeasure)
 
-        constructs = f.constructs(construct='cell_method')
+        constructs = f.constructs.type('cell_method')
         n = 2
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMethod)
 
-        constructs = f.constructs(construct='dimension_coordinate')
+        constructs = f.constructs.type('dimension_coordinate')
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DimensionCoordinate)
 
-        constructs = f.constructs(construct='coordinate_reference')
+        constructs = f.constructs.type('coordinate_reference')
         n = 2
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CoordinateReference)
 
-        constructs = f.constructs(construct='domain_ancillary')
+        constructs = f.constructs.type('domain_ancillary')
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
-        constructs = f.constructs(construct='field_ancillary')
+        constructs = f.constructs.type('field_ancillary')
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.FieldAncillary)
 
-        constructs = f.constructs(construct='domain_axis')
+        constructs = f.constructs.type('domain_axis')
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAxis)
 
-        constructs = f.constructs(construct=['domain_ancillary'])
+        constructs = f.constructs.type(['domain_ancillary'])
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
-        constructs = f.constructs(construct=['domain_axis'])
+        constructs = f.constructs.type(['domain_axis'])
         n =  3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAxis)
 
-        constructs = f.constructs(construct=['domain_ancillary', 'domain_axis'])
+        constructs = f.constructs.type(['domain_ancillary', 'domain_axis'])
         n = 6
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
 
         f.set_construct(cfdm.DomainAxis(1))
-        self.assertTrue(len(f.constructs(construct='domain_axis')) == 4)
+        self.assertTrue(len(f.constructs.type('domain_axis')) == 4)
 
         # ------------------------------------------------------------
         # description parameter
@@ -262,7 +269,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        constructs = self.f.cell_measures()
+        constructs = self.f.cell_measures
         n = 1
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))               
@@ -287,7 +294,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        constructs = self.f.coordinate_references()
+        constructs = self.f.coordinate_references
         n = 2
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
@@ -316,7 +323,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        constructs = self.f.dimension_coordinates()
+        constructs = self.f.dimension_coordinates
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
@@ -328,7 +335,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        constructs = self.f.domain_ancillaries()
+        constructs = self.f.domain_ancillaries
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
@@ -340,7 +347,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        constructs = self.f.domain_axes()
+        constructs = self.f.domain_axes
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))

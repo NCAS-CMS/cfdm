@@ -205,7 +205,8 @@ class create_fieldTest(unittest.TestCase):
             print(g)
             g[0].dump()
 
-        array = g[0].get_construct(name='long_name=greek_letters').data.array
+#        array = g[0].get_construct(name='long_name=greek_letters').data.array
+        array = g[0].constructs.name('long_name=greek_letters').get().data.array
         self.assertTrue(array[1] == b'beta', 'greek_letters = {!r}'.format(array))
 
         self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))
@@ -214,12 +215,12 @@ class create_fieldTest(unittest.TestCase):
         
 #        g.dump()
 #        print g
-        self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
+        self.assertTrue(sorted(f.constructs) == sorted(g.constructs),
                         '\n\nf (created in memory)\n{}\n\n{}\n\ng (read from disk)\n{}\n\n{}'.format(
-                            sorted(f.constructs()),
-                            sorted(f.constructs().items()),
-                            sorted(g.constructs()),
-                            sorted(g.constructs().items())))
+                            sorted(f.constructs),
+                            sorted(f.constructs.items()),
+                            sorted(g.constructs),
+                            sorted(g.constructs.items())))
 
         self.assertTrue(f.equals(f, verbose=True),
                         "Field f not equal to itself after having been written to disk")

@@ -187,7 +187,7 @@ class create_fieldTest_2(unittest.TestCase):
         if verbose:                
             print(repr(f))
             print(f)
-            print(f.constructs())
+            print(f.constructs)
             print(f.construct_data_axes())
         
         self.assertTrue(f.equals(f.copy(), verbose=True),
@@ -221,12 +221,12 @@ class create_fieldTest_2(unittest.TestCase):
                 print('g')
                 print(g)
                 
-            self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
+            self.assertTrue(sorted(f.constructs) == sorted(g.constructs),
                             '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(
-                            sorted(f.constructs()),
-                            sorted(f.constructs().items()),
-                            sorted(g.constructs()),
-                            sorted(g.constructs().items())))
+                            sorted(f.constructs),
+                            sorted(f.constructs.items()),
+                            sorted(g.constructs),
+                            sorted(g.constructs.items())))
 
 
             self.assertTrue(g.equals(g.copy(), verbose=True),

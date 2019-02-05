@@ -2,7 +2,7 @@ from builtins import (object, str)
 from past.builtins import basestring
 
 from collections import OrderedDict
-
+from copy import copy
 
 class Constructs(object):
     '''<TODO>
@@ -155,12 +155,6 @@ class Constructs(object):
             self._constructs[x] = OrderedDict()
     #--- End: def
 
-    def __call__(self, *args, **kwargs):
-        '''TODO
-        '''
-        return self.select(*args, **kwargs)
-    #--- End: def
-    
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` standard library function.
 
@@ -217,6 +211,41 @@ class Constructs(object):
 
         '''
         return 'TODO'
+    #--- End: def
+    
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
+    def _default(self, default, message=None):
+        '''<TODO>
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+
+    default: 
+        <TODO>
+        
+    message: `str`, optional 
+        <TODO>
+        
+:Returns:
+
+    <TODO>
+
+**Examples:**
+
+<TODO>
+
+        '''
+        if isinstance(default, Exception):
+            if message is not None and not default.args:
+                default = copy(default)
+                default.args = (message,)
+
+            raise default
+        
+        return default
     #--- End: def
     
     # ----------------------------------------------------------------
@@ -298,6 +327,21 @@ raised
     # ----------------------------------------------------------------
     def _check_construct_type(self, construct_type):
         '''<TODO>
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+
+    construct_type: `str`
+
+:Returns:
+
+    TODO
+
+**Examples:**
+
+TODO
+
         '''
         if construct_type is None:
             return None
@@ -344,7 +388,7 @@ raised
         return out
     #--- End: def'
 
-    def _del_construct(self, key, force=False):        
+    def _del_construct(self, key):        
         '''Remove a construct.
 
 If a domain axis construct is selected for removal then it can't be
@@ -358,8 +402,8 @@ removed even if it is referenced by coordinate reference coinstruct.
 
 :Parameters:
 
-   key: `str`, optional
-        The identifier of the construct.
+   key: `str`
+        The key of the construct to be removed.
 
         *Parameter example:*
           ``key='auxiliarycoordinate0'``
@@ -374,45 +418,42 @@ removed even if it is referenced by coordinate reference coinstruct.
 >>> x = f.del_construct('auxiliarycoordinate2')
 
         '''
-        if not force:
-
-            data_axes = self.data_axes()
-            if key in self.select(construct='domain_axis'):
-                # Fail if the domain axis construct is spanned by a data
-                # array
-                for xid, axes in data_axes.items():
-                    if key in axes:
-                        raise ValueError(
+        data_axes = self.data_axes()
+        if key in self.type('domain_axis'):
+            # Fail if the domain axis construct is spanned by a data
+            # array
+            for xid, axes in data_axes.items():
+                if key in axes:
+                    raise ValueError(
 "Can't remove domain axis construct {!r} that spans the data array of {!r}".format(
     key, self.get_construct(key=xid)))
     
-                # Fail if the domain axis construct is referenced by a
-                # cell method construct
-                try:
-                    cell_methods = self.select(construct='cell_method')
-                except ValueError:
-                    # Cell methods are not possible for this Constructs
-                    # instance
-                    pass
-                else:
-                    for xid, cm in cell_methods.items():
-                        axes = cm.get_axes(())
-                        if key in axes:
-                            raise ValueError(
+            # Fail if the domain axis construct is referenced by a
+            # cell method construct
+            try:
+                cell_methods = self.type('cell_method')
+            except ValueError:
+                # Cell methods are not possible for this Constructs
+                # instance
+                pass
+            else:
+                for xid, cm in cell_methods.items():
+                    axes = cm.get_axes(())
+                    if key in axes:
+                        raise ValueError(
 "Can't remove domain axis construct {!r} that is referenced by {!r}".format(
     key, cm))
-            else:
-                # Remove references to the removed construct in coordinate
-                # reference constructs
-                for ref in self.select(construct='coordinate_reference').values():
-                    coordinate_conversion = ref.coordinate_conversion
-                    for term, value in coordinate_conversion.domain_ancillaries().items():
-                        if key == value:
-                            coordinate_conversion.set_domain_ancillary(term, None)
-                    #--- End: for
+        else:
+            # Remove references to the removed construct in coordinate
+            # reference constructs
+            for ref in self.type('coordinate_reference').values():
+                coordinate_conversion = ref.coordinate_conversion
+                for term, value in coordinate_conversion.domain_ancillaries().items():
+                    if key == value:
+                        coordinate_conversion.set_domain_ancillary(term, None)
+                #--- End: for
                     
-                    ref.del_coordinate(key, None)
-            #--- End: if
+                ref.del_coordinate(key, None)
         #--- End: if
 
         return self._pop(key, None)
@@ -488,8 +529,8 @@ removed even if it is referenced by coordinate reference coinstruct.
 #          *Parameter example:*
 #             ``extra_axes=1``
 
-        construct_type = construct.construct_type
-        construct_type = self._check_construct_type(construct_type)
+#        construct_type = construct.construct_type
+        construct_type = self._check_construct_type(construct.construct_type)
                                                 
         if key is None:
             # Create a new construct identifier
@@ -615,7 +656,7 @@ removed even if it is referenced by coordinate reference coinstruct.
         if isinstance(axes, basestring):
             axes = (axes,)
             
-        domain_axes = self.select(construct='domain_axis')
+        domain_axes = self.type('domain_axis')
         
         axes_shape = []
         for axis in axes:
@@ -640,18 +681,6 @@ removed even if it is referenced by coordinate reference coinstruct.
     # ----------------------------------------------------------------
     # Dictionary-like methods    
     # ----------------------------------------------------------------
-    def get(self, key, *default):
-        '''
-        '''
-        try:
-            return self[key]
-        except KeyError as error:
-            if default:
-                return default[0]
-
-            raise error
-    #--- End: def
-    
     def items(self):
         '''
         '''
@@ -723,6 +752,35 @@ removed even if it is referenced by coordinate reference coinstruct.
         return out
     #--- End: def
 
+    def get(self, default=ValueError()):
+        '''
+        '''
+        if not self:
+            return self._default(default, "Can't get zero constructs")
+
+        if len(self) > 1:
+            return self._default(default,
+                                 "Can't get {} constructs".format(len(self)))
+        
+        _, construct = self._dictionary().popitem()
+            
+        return construct
+    #--- End: def
+
+    def get_key(self, default=ValueError()):
+        '''
+        '''
+        if not self:
+            return self._default(default, "Can't get key for zero constructs")
+
+        if len(self) > 1:
+            return self._default(default,
+                                 "Can't get key for {} constructs".format(len(self)))
+        
+        key, _ = self._dictionary().popitem()
+            
+        return key
+    #--- End: def
         
 #    def constructs(self, construct=None, copy=False):
 #        '''Return metadata constructs
@@ -1171,16 +1229,85 @@ removed even if it is referenced by coordinate reference coinstruct.
         return OrderedDict(self._constructs[tuple(self._ordered_constructs)[0]])
     #--- End: def
     
-    def select(self, construct=None):
-        '''<TODO> Return metadata constructs
+#    def select(self, construct=None):
+#        '''Select metadata constructs.
+#
+#By default all metadata constructs are selected, but a subset may be
+#chosen via the optional parameters. If multiple parameters are
+#specified, then the constructs that satisfy *all* of the criteria are
+#returned.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `get`, `items`, `keys`, `values`
+#
+#:Parameters:
+#
+#    construct: (sequence of) `str`, optional
+#        Select constructs of the given type, or types. Valid types
+#        are:
+#
+#          ==========================  ================================
+#          *construct*                 Constructs
+#          ==========================  ================================
+#          ``'domain_ancillary'``      Domain ancillary constructs
+#          ``'dimension_coordinate'``  Dimension coordinate constructs
+#          ``'domain_axis'``           Domain axis constructs
+#          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+#          ``'cell_measure'``          Cell measure constructs
+#          ``'coordinate_reference'``  Coordinate reference constructs
+#          ``'cell_method'``           Cell method constructs
+#          ``'field_ancillary'``       Field ancillary constructs
+#          ==========================  ================================
+#
+#        *Parameter example:*
+#          ``construct='dimension_coordinate'``
+#
+#        *Parameter example:*
+#          ``construct=['auxiliary_coordinate']``
+#
+#        *Parameter example:*
+#          ``construct=['domain_ancillary', 'cell_method']``
+#
+#        Note that a domain can never contain cell method nor field
+#        ancillary constructs.
+#
+#:Returns:
+#
+#     `Constructs`
+#         <TODO>
+#
+#**Examples:**
+#
+#<TODO>
+#
+#        '''
+#        
+#        if construct is not None and isinstance(construct, basestring):
+#            construct = (construct,)
+#
+#        if construct:
+#            # Ignore the all but the requested construct types
+#            ignore = set(self._key_base)
+#            ignore.difference_update(set(construct))
+#        else:
+#            # Keep all construct types
+#            ignore = self._ignore
+#
+#        return type(self)(source=self, _ignore=ignore, _view=False, copy=False)
+#    #--- End: def
 
-By default all metadata constructs are, but a subset may be selected
-via the optional parameters. If multiple parameters are specified,
-then the constructs that satisfy *all* of the criteria are returned.
+    def type(self, construct):
+        '''Select metadata constructs.
+
+By default all metadata constructs are selected, but a subset may be
+chosen via the optional parameters. If multiple parameters are
+specified, then the constructs that satisfy *all* of the criteria are
+returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get_construct`
+.. seealso:: `get`, `items`, `keys`, `values`
 
 :Parameters:
 
@@ -1210,12 +1337,8 @@ then the constructs that satisfy *all* of the criteria are returned.
         *Parameter example:*
           ``construct=['domain_ancillary', 'cell_method']``
 
-        Note that a domain never contains cell method nor field
+        Note that a domain can never contain cell method nor field
         ancillary constructs.
-
-    copy: `bool`, optional
-        If True then return copies of the constructs. By default the
-        constructs are not copied.
 
 :Returns:
 
@@ -1239,7 +1362,18 @@ then the constructs that satisfy *all* of the criteria are returned.
             # Keep all construct types
             ignore = self._ignore
 
-        return type(self)(source=self, _ignore=ignore, _view=False, copy=False)
+        return self.shallow_copy(_ignore=ignore)
+#        return type(self)(source=self, _ignore=ignore, _view=False, copy=False)
+    #--- End: def
+
+    def shallow_copy(self, _ignore=None):
+        '''
+        '''
+        if _ignore is None:
+            _ignore = self._ignore
+            
+        return type(self)(source=self, copy=False, _ignore=_ignore,
+                          _view=False)
     #--- End: def
 
     def view(self, ignore=()):

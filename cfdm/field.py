@@ -280,7 +280,8 @@ rules, the only differences being:
         
         for key, construct in new.data_constructs().items():
 #            data = self.get_construct(key=key).get_data(None)
-            data = self.constructs.get(key=key).get_data(default=None)
+##            data = self.constructs.get(key=key).get_data(default=None)
+            data = self.constructs[key].get_data(default=None)
             if data is None:
                 # This construct has no data
                 continue
@@ -1075,7 +1076,9 @@ construct, into the data array.
         '''
         f = self.copy()
         
-        domain_axis = self.domain_axes.get(axis, None)
+        
+##        domain_axis = self.domain_axes.get(axis, None)
+        domain_axis = self.domain_axes.key(axis).get(default=None)
         if domain_axis is None:
             raise ValueError("Can't insert non-existent domain axis: {}".format(axis))
         
@@ -1107,9 +1110,10 @@ construct, into the data array.
     # parameter: key
     # parameter: axis
     # parameter: construct
-    def convert(self, name=None, properties=None, measure=None,
-                ncvar=None, ncdim=None, key=None, axis=None,
-                construct=None, full_domain=True):
+#    def convert(self, name=None, properties=None, measure=None,
+#                ncvar=None, ncdim=None, key=None, axis=None,
+#                construct=None, full_domain=True):
+    def convert(self, key, full_domain=True):
         '''Return a new field construct based on a metadata construct.
 
 A unique metdata construct is identified with the *description* and
@@ -1435,19 +1439,21 @@ that has fewer metadata constructs than one created with the
                    : grid_longitude(9) = [0.0, ..., 8.0] degrees
 
         '''
-        c0 = self.constructs.select(name=name, properties=properties,
-                                    measure=measure, ncvar=ncvar,
-                                    ncdim=ncdim, key=key, axis=axis,
-                                    construct=construct)#, copy=False)
-        if len(c0) != 1:
-#            self.get_construct(name=name, properties=properties,
-            self.constructs.get(name=name, properties=properties,
-                                measure=measure, ncvar=ncvar,
-                                ncdim=ncdim, key=key, axis=axis,
-                                construct=construct)
-            return
+        c = self.constructs.key(key).get()
 
-        cid, c = dict(c0).popitem()
+        
+#        c0 = self.constructs.select(name=name, properties=properties,
+#                                    measure=measure, ncvar=ncvar,
+#                                    ncdim=ncdim, key=key, axis=axis,
+#                                    construct=construct)#, copy=False)
+#        if len(c0) != 1:
+#            self.get_construct(name=name, properties=properties,
+#                               measure=measure, ncvar=ncvar,
+#                               ncdim=ncdim, key=key, axis=axis,
+#                               construct=construct)
+#            return
+#
+#        cid, c = dict(c0).popitem()
         
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the
@@ -1459,7 +1465,7 @@ that has fewer metadata constructs than one created with the
         # Add domain axes
         # ------------------------------------------------------------
         constructs_data_axes = self.constructs.data_axes()
-        data_axes = constructs_data_axes.get(cid)
+        data_axes = constructs_data_axes.get(key)
         if data_axes is not None:
             for domain_axis in data_axes:
                 f.set_construct(self.domain_axes[domain_axis],
@@ -1479,9 +1485,9 @@ that has fewer metadata constructs than one created with the
             for construct in ('dimension_coordinate',
                               'auxiliary_coordinate',
                               'cell_measure'):
-                for ccid, con in self.constructs.select(construct=construct,
-                                                        axis=data_axes).items():
-#                                                        copy=False).items():
+#                for ccid, con in self.constructs.select(construct=construct,
+#                                                        axis=data_axes).items():
+                for ccid, con in self.constructs.type(construct).axis(data_axes).items():
                     axes = constructs_data_axes.get(ccid)
                     if axes is None:
                         continue
@@ -1738,8 +1744,7 @@ may be selected for removal.
 
         '''
 #        return self._get_constructs().constructs(
-        return self.constructs.select(
-            construct='field_ancillary') #, copy=copy)
+        return self.constructs.type('field_ancillary')
     #--- End: def
 
     @property
@@ -1775,8 +1780,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
         '''
 #        return self._get_constructs().constructs(construct='cell_method',
-        return self.constructs.select(construct='cell_method')
-#                                      copy=copy)
+        return self.constructs.type('cell_method')
     #--- End: def
     
 #    def cell_methods(self, copy=False):

@@ -436,6 +436,127 @@ By default the name is the first found of the following:
     ncvar: `bool`, optional
         If False then do not consider the netCDF variable name.
 
+    custom: sequence of `str`, optional
+        Replace the ordered list of properties from which to seatch
+        for a name. The default list is ``['standard_name', 'cf_role',
+        'long_name']``.
+
+        *Parameter example:*
+          ``custom=['project']``
+
+        *Parameter example:*
+          ``custom=['project', 'long_name']``
+
+:Returns:
+
+        The name. If the *all_names* parameter is True then a list of
+        all possible names.
+
+**Examples:**
+
+>>> f.properties()
+{'foo': 'bar',
+ 'long_name': 'Air Temperature',
+ 'standard_name': 'air_temperature'}
+>>> f.nc_get_variable()
+'tas'
+>>> f.name()
+'air_temperature'
+>>> f.name(all_names=True)
+['air_temperature', 'long_name=Air Temperature', 'ncvar%tas']
+>>> x = f.del_property('standard_name')
+>>> f.name()
+'long_name=Air Temperature'
+>>> x = f.del_property('long_name')
+>>> f.name()
+'ncvar%tas'
+>>> f.name(custom=['foo'])
+'foo=bar'
+>>> f.name(default='no name', custom=['foo'])
+['foo=bar', 'no name']
+
+        '''
+        out = []
+
+        if not custom:
+            n = self.get_property('standard_name', None)
+            if n is not None:
+                return n
+
+            custom = ('cf_role', 'long_name')
+            
+        for prop in custom:
+            n = self.get_property(prop, None)
+            if n is not None:
+                return '{0}={1}'.format(prop, n)
+        #--- End: for
+        
+        if ncvar:
+            n = self.nc_get_variable(None)
+            if n is not None:
+                return 'ncvar%{0}'.format(n)
+        #--- End: if
+        
+        return default
+#       out = []
+#
+#        if custom is None:
+#            n = self.get_property('standard_name', None)
+#            if n is not None:
+#                out.append(n)
+#
+#            custom = ('cf_role', 'long_name')
+#            
+#        if not out:
+#            for prop in custom:
+#                n = self.get_property(prop, None)
+#                if n is not None:
+#                    out.append('{0}={1}'.format(prop, n))
+#                    if not all_names:
+#                        break
+#        #--- End: if
+#        
+#        if ncvar and not out:
+#            n = self.nc_get_variable(None)
+#            if n is not None:
+#                out.append('ncvar%{0}'.format(n))
+#        #--- End: if
+#
+#        if all_names:
+#            if default is not None:
+#                out.append(default)
+#                
+#            return out
+#        
+#        if out:
+#            return out[-1]
+#
+#        return default
+    #--- End: def
+
+    def names(self, extra=None):
+        '''Return a name.
+
+By default the name is the first found of the following:
+
+1. The "standard_name" property.
+2. The "cf_role" property, preceeded by ``'cf_role='``.
+3. The "long_name" property, preceeded by ``'long_name='``.
+4. The netCDF variable name, preceeded by ``'ncvar%'``.
+5. The value of the *default* parameter.
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+
+    default: optional
+        If no other name can be found then return the value of the
+        *default* parameter. By default `None` is returned in this
+        case.
+
+    ncvar: `bool`, optional
+        If False then do not consider the netCDF variable name.
+
     all_names: `bool`, optional
         If True then return a list of all possible names.
 
@@ -479,40 +600,21 @@ By default the name is the first found of the following:
 ['foo=bar', 'no name']
 
         '''
-        out = []
+        out = ['{0}={1}'.format(prop, value)
+               for prop, value in self.properties().items()]
 
-        if custom is None:
-            n = self.get_property('standard_name', None)
-            if n is not None:
-                out.append(n)
-
-            custom = ('cf_role', 'long_name')
+        n = self.get_property('standard_name', None)
+        if n is not None:
+            out.insert(0, n)
             
-        if all_names or not out:
-            for prop in custom:
-                n = self.get_property(prop, None)
-                if n is not None:
-                    out.append('{0}={1}'.format(prop, n))
-                    if not all_names:
-                        break
-        #--- End: if
-        
-        if ncvar and (all_names or not out):
-            n = self.nc_get_variable(None)
-            if n is not None:
-                out.append('ncvar%{0}'.format(n))
-        #--- End: if
+        n = self.nc_get_variable(None)
+        if n is not None:
+            out.append('ncvar%{0}'.format(n))
 
-        if all_names:
-            if default is not None:
-                out.append(default)
-                
-            return out
-        
-        if out:
-            return out[-1]
-
-        return default
+        if extra:
+            out.extend(extra)
+            
+        return out
     #--- End: def
 
     def squeeze(self, axes=None):

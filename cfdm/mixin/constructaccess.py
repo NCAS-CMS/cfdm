@@ -97,7 +97,7 @@ Constructs:
  'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
 
         '''
-        return self.constructs.select(construct='coordinate_reference')
+        return self.constructs.type('coordinate_reference')
     #--- End: def
 
     @property
@@ -176,11 +176,11 @@ Constructs:
  'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
 
         '''
-        return self.constructs.select(construct='domain_ancillary')
+        return self.constructs.type('domain_ancillary')
     #--- End: def
 
     @property
-    def cell_measures(self, copy=False):
+    def cell_measures(self):
         '''Return cell measure constructs.
 
 .. versionadded:: 1.7.0
@@ -210,7 +210,7 @@ Constructs:
 {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
 
         '''
-        return self.constructs.select(construct='cell_measure')
+        return self.constructs.type('cell_measure')
     #--- End: def
 
     # parameter: name
@@ -222,10 +222,7 @@ Constructs:
     # parameter: axis
     # parameter: construct
     # parameter: default
-    def get_construct(self, name=None, properties=None, measure=None,
-                      ncvar=None, ncdim=None, key=None, axis=None,
-                      construct=None, copy=False,
-                      default=ValueError()):
+    def get_construct(self, key, default=ValueError()):
         '''Return a metadata construct.
 
 The *unique* construct that satisfies *all* of the given criteria is
@@ -438,20 +435,22 @@ selected.
 ...                     axis=['domainaxis1'])
 
         '''
-        out = self.constructs.select(name=name, properties=properties,
-                                     measure=measure, axis=axis,
-                                     key=key, construct=construct,
-                                     ncvar=ncvar, ncdim=ncdim)
-        if not out:
-            return self._default(default, "No construct meets criteria")
+        return self.constructs.key(key).get(default=default)
 
-        if len(out) > 1:
-            return self._default(default, "More than one construct meets criteria")
-        
-        _, construct = dict(out).popitem()
-            
-        return construct
-    #--- End: def
+#      out = self.constructs.select(name=name, properties=properties,
+#                                    measure=measure, axis=axis,
+#                                    key=key, construct=construct,
+#                                    ncvar=ncvar, ncdim=ncdim)
+#       if not out:
+#           return self._default(default, "No construct meets criteria")
+#
+#       if len(out) > 1:
+#           return self._default(default, "More than one construct meets criteria")
+#       
+#       _, construct = dict(out).popitem()
+#           
+#       return construct
+   #--- End: def
 
     # parameter: name
     # parameter: properties
@@ -959,7 +958,7 @@ Constructs:
  'domainaxis3': <DomainAxis: size(1)>}
 
         '''
-        return self.constructs.select(construct='domain_axis')
+        return self.constructs.type('domain_axis')
     #--- End: def
 
     @property
@@ -995,7 +994,7 @@ Constructs:
  'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
         '''
-        return self.constructs.select(construct='auxiliary_coordinate')
+        return self.constructs.type('auxiliary_coordinate')
     #--- End: def
 
     @property
@@ -1032,7 +1031,7 @@ Constructs:
  'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         '''
-        return self.constructs.select(construct='dimension_coordinate')
+        return self.constructs.type('dimension_coordinate')
     #--- End: def
     
     def domain_axis_name(self, axis):

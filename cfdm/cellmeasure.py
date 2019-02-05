@@ -351,4 +351,52 @@ By default the name is the first found of the following:
         return default
     #--- End: def
 
+    def names(self, extra=None):
+        '''Return a name.
+
+By default the name is the first found of the following:
+
+1. The "standard_name" property.
+2. The "cf_role" property, preceeded by ``'cf_role='``.
+3. The "long_name" property, preceeded by ``'long_name='``.
+4. The netCDF variable name, preceeded by ``'ncvar%'``.
+5. The value of the *default* parameter.
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+
+TODO
+
+:Returns:
+
+        The name. If the *all_names* parameter is True then a list of
+        all possible names.
+
+**Examples:**
+
+TODO
+
+        '''
+        out = ['{0}={1}'.format(prop, value)
+               for prop, value in self.properties().items()]
+
+        n = self.get_measure(None)
+        if n is not None:
+            out.insert(0, 'measure:{}'.format(n))
+            
+        n = self.get_property('standard_name', None)
+        if n is not None:
+            out.insert(0, n)
+            
+        n = self.nc_get_variable(None)
+        if n is not None:
+            out.append('ncvar%{0}'.format(n))
+
+        if extra:
+            out.extend(extra)
+            
+        return out
+    #--- End: def
+
 #--- End: class

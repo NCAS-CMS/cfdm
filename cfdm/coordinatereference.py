@@ -453,6 +453,29 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
     
     #--- End: def
 
+    def names(self,extra=None):
+        '''
+        '''
+
+        out = []
+
+        custom = ('standard_name', 'grid_mapping_name')
+
+        for prop in custom:
+            n = self.coordinate_conversion.get_parameter(prop, None)
+            if n is not None:
+                out.append('{0}:{1}'.format(prop, n))
+        #--- End: for
+        
+        n = self.nc_get_variable(None)
+        if n is not None:
+            out.append('ncvar%{0}'.format(n))
+
+        if extra:
+            out.extend(extra)
+            
+        return out
+    #--- End: def
 #    def _parse_match(self, match):
 #        '''Called by `match`
 #

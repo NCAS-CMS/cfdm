@@ -202,7 +202,7 @@ class create_fieldTest(unittest.TestCase):
         if verbose:
             print(repr(f))
             print(f)
-            print(f.constructs())
+            print(f.constructs)
             print(f.construct_data_axes())
         
             f.dump()
@@ -226,12 +226,12 @@ class create_fieldTest(unittest.TestCase):
         
 
 #        print g
-        self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
+        self.assertTrue(sorted(f.constructs) == sorted(g.constructs),
                         '\n\nf (created in memory)\n{}\n\n{}\n\ng (read from disk)\n{}\n\n{}'.format(
-                            sorted(f.constructs()),
-                            sorted(f.constructs().items()),
-                            sorted(g.constructs()),
-                            sorted(g.constructs().items())))
+                            sorted(f.constructs),
+                            sorted(f.constructs.items()),
+                            sorted(g.constructs),
+                            sorted(g.constructs.items())))
 
         self.assertTrue(f.equals(f.copy(), verbose=True),
                         "Field f not equal to a copy of itself")

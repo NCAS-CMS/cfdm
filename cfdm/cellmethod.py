@@ -583,6 +583,47 @@ By default the name is the first found of the following:
         return default
     #--- End: def
 
+    def names(self, extra=None):
+        '''Return a name for the cell method construct.
+
+By default the name is the first found of the following:
+
+  1. The method, preceeded by 'method:'
+  2. The value of the *default* parameter.
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+
+TODO
+
+:Returns:
+
+        The name. If the *all_names* parameter is True then a list of
+        all possible names.
+
+**Examples:**
+
+>>> c
+<CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>
+>>> c.name()
+'method:mean'
+>>> c.name(all_names=True, default='no name')
+['method:mean', 'no name']
+
+        '''
+        out = []
+
+        n = self.get_method(None)
+        if n is not None:
+            out.append('method:{0}'.format(n))
+            
+        if extra:
+            out.extend(extra)
+            
+        return out
+    #--- End: def
+
     def sorted(self, indices=None):
         '''Return a new cell method construct with sorted axes.
         

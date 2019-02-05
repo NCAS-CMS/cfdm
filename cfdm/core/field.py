@@ -409,7 +409,7 @@ None
         '''
         if key is None:
             #        domain_axes = self.constructs(construct='domain_axis')
-            domain_axes = self.constructs.select(construct='domain_axis')
+            domain_axes = self.constructs.type('domain_axis')
             for axis in axes:
                 if axis not in domain_axes:
                     raise ValueError(

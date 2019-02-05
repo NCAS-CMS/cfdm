@@ -202,4 +202,62 @@ By default the name is the first found of the following:
         return default
     #--- End: def
 
+    def names(self, extra=None):
+        '''Return a name for the domain axis construct.
+
+By default the name is the first found of the following:
+
+1. The netCDF dimension name, preceeded by 'ncdim%'.
+2. The value of the default parameter.
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+
+    default: optional
+        If no name can be found then return the value of the *default*
+        parameter. By default the default is `None`.
+
+    ncdim: `bool`, optional
+        If False then do not consider the netCDF dimension name.
+
+    all_names: `bool`, optional
+        If True then return a list of all possible names.
+
+    custom: optional
+        *Ignored.*
+
+:Returns:
+
+        The name. If the *all_names* parameter is True then a list of
+        all possible names.
+
+**Examples:**
+
+>>> d.name()
+'ncdim%time'
+>>> d.name(all_names=True)
+['ncdim%time']
+>>> d.name('default_value', all_names=True)
+['ncdim%time', 'default_value']
+>>> d.nc_del_dimension()
+'time'
+>>> d.name('default value')
+'default value'
+>>> d.name('default value', all_names=True)
+['default value']
+
+        '''
+        out = []
+
+        n = self.nc_get_dimension(None)
+        if n is not None:
+            out.append('ncdim%{0}'.format(n))
+            
+        if extra:
+            out.extend(extra)
+            
+        return out
+    #--- End: def
+
 #--- End: class

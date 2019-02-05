@@ -213,7 +213,7 @@ AttributeError: Field doesn't have property 'standard_name'
     def get_cell_measures(self, field):
        '''
        '''
-       return field.cell_measures()
+       return field.cell_measures
     #--- End: def
 
     def get_cell_methods(self, field):
@@ -299,7 +299,8 @@ axes, and possibly other axes, are returned.
     `dict`
 
         '''
-        return dict(field.constructs.select(axis=axes))
+#        return dict(field.constructs.select(axis=axes))
+        return dict(field.constructs.axis(axes))
     #--- End: def
     
     def get_coordinate_reference_coordinates(self, coordinate_reference):
@@ -331,7 +332,7 @@ axes, and possibly other axes, are returned.
     def get_coordinate_references(self, field):
         '''
         '''
-        return field.coordinate_references()
+        return field.coordinate_references
     #--- End: def
 
     def get_coordinates(self, field):
@@ -339,7 +340,7 @@ axes, and possibly other axes, are returned.
 :Parameters:
 
        '''
-       return field.coordinates()
+       return field.coordinates
     #--- End: def
     
     def get_data_calendar(self, data, *default):
@@ -466,19 +467,19 @@ axes, and possibly other axes, are returned.
 :Parameters:
 
        '''
-       return field.domain_ancillaries()
+       return field.domain_ancillaries
     #--- End: def
 
     def get_domain_axes(self, field):
         '''
         '''
-        return field.domain_axes()
+        return field.domain_axes
     #--- End: def
  
     def get_domain_axis_size(self, field, axis):
         '''
         '''
-        return field.domain_axes()[axis].get_size()
+        return field.domain_axes[axis].get_size()
     #--- End: def
 
     def get_sample_dimension_position(self, construct):
