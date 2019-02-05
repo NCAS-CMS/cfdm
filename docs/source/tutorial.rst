@@ -493,10 +493,12 @@ Attribute                       Metadata constructs
 
 Each of these attributes returns a `Constructs` class instance that
 maps metadata constructs to a unique identifiers called a "construct
-keys". The `Constructs` class is like a "read-only" Python dictionary
-in that it has `~Constructs.get`, `~Constructs.items`,
-`~Constructs.keys` and `~Constructs.values` methods that correspond to
-the corresponding `dict` methods.
+keys". A `~Constructs` instance has methods for selecting constructs
+that meet particular criteria (see the :ref:`further section on
+metadata constructs <Metadata-constructs-2>` for more details) whilst
+also being like a "read-only" Python dictionary, in that it has
+`~Constructs.items`, `~Constructs.keys` and `~Constructs.values`
+methods that behave exactly like their corresponding `dict` methods.
 
 .. Each of these methods returns a dictionary whose values are the
    metadata constructs of one type, keyed by a unique identifier
@@ -512,13 +514,13 @@ the corresponding `dict` methods.
    Constructs:
    {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
     'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
-   >>> t.coordinate_references.keys()
+   >>> list(t.coordinate_references.keys())
    ['coordinatereference0', 'coordinatereference1']
    >>> for key, value in t.coordinate_references.items():
-   ...     print(key, value)
+   ...     print(key, repr(value))
    ...
-   coordinatereference1 rotated_latitude_longitude
-   coordinatereference0 atmosphere_hybrid_height_coordinate
+   coordinatereference1 <CoordinateReference: rotated_latitude_longitude>
+   coordinatereference0 <CoordinateReference: atmosphere_hybrid_height_coordinate>
 
 .. code-block:: python
    :caption: *Retrieve the field construct's dimension coordinate and
@@ -585,10 +587,10 @@ Metadata constructs of all types may be returned by the
     'domainaxis3': <DomainAxis: size(1)>,
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
-The `~Constructs.select` method of a `Constructs` instance may be used
-to select constructs that meet particular criteria. See the
-:ref:`further section on metadata constructs <Metadata-constructs-2>`
-for more details.
+.. The `~Constructs.select` method of a `Constructs` instance may be
+   used to select constructs that meet particular criteria. See the
+   :ref:`further section on metadata constructs
+   <Metadata-constructs-2>` for more details.
 
 .. The `~Field.constructs` method has optional parameters to filter
    the output by specifying criteria on the contents of metadata
@@ -902,56 +904,77 @@ class.
 
 ----
 
-The `~Constructs.select` method of a `Constructs` instance may be used
-to select constructs that meet any combination of the following
-criteria:
+A `Constructs` instance has methods for selecting constructs that meet
+particular criteria:
 
-.. Further to the functionality described in the :ref:`first section
-   on metadata constructs <Metadata-constructs-1>`, the
-   `~Field.constructs` method of the field construct has optional
-   parameters to filter the metadata constructs by
+==========================================================================  ========================  
+Selection criteria                                                          Method
+==========================================================================  ========================  
+Metadata construct name                                                     `~Constructs.name`
+Metadata construct type                                                     `~Constructs.type`
+Property values                                                             `~Constructs.properties` 
+Whether the data array spans particular domain axis constructs		    `~Constructs.axis`
+Measure value (for cell measure constructs)				    `~Constructs.measure`
+Method value (for cell method constructs)				    `~Constructs.method`
+Construct key								    `~Constructs.key`
+Netcdf variable name (see the :ref:`netCDF interface <NetCDF-interface>`)   `~Constructs.ncvar`
+Netcdf dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)  `~Constructs.ncdim`
+==========================================================================  ========================  
 
-* metadata construct type,
+Each of these methods also returns a `Constructs` instance.
 
-* property value,
+.. The `~Constructs.select` method of a `Constructs` instance may be used
+   to select constructs that meet any combination of the following
+   criteria:
+   
+   .. Further to the functionality described in the :ref:`first section
+      on metadata constructs <Metadata-constructs-1>`, the
+      `~Field.constructs` method of the field construct has optional
+      parameters to filter the metadata constructs by
+   
+   * metadata construct type,
+   
+   * property value,
+   
+   * whether the data array spans particular domain axis constructs,
+   
+   * measure value (for cell measure constructs),
+   
+   * construct key, and
+   
+   * netCDF variable or dimension name (see the :ref:`netCDF interface
+     <NetCDF-interface>`).
 
-* whether the data array spans particular domain axis constructs,
-
-* measure value (for cell measure constructs),
-
-* construct key, and
-
-* netCDF variable or dimension name (see the :ref:`netCDF interface
-  <NetCDF-interface>`).
 
 .. code-block:: python
    :caption: *Get constructs by their type*.
 	  
-   >>> print(t.constructs.select(construct='dimension_coordinate'))
+   >>> print(t.constructs.type('dimension_coordinate'))
    Constructs:
    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+   >>> print(t.constructs.type([cell_method', 'field_ancillary']))
+   Constructs:
+   TODO
 
 .. code-block:: python
    :caption: *Get constructs by their properties*.
 
-   >>> print(t.constructs.select(properties={'standard_name': 'air_temperature standard_error'}))
+   >>> print(t.constructs.properties(standard_name='air_temperature standard_error'))
    Constructs:
    {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-   >>> print(t.constructs.select(properties=[{'standard_name': 'air_temperature standard_error'},
-   ...                                       {'units': 'm'}]))
+   >>> print(t.constructs.properties(standard_name='air_temperature standard_error',
+   ...                               unit='K')
    Constructs:
-   {'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
-    'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
-    'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+   {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
 .. code-block:: python
    :caption: *Get constructs by the domain axis constructs spanned by
              their data.*
 
-   >>> print(t.constructs.select(axis='domainaxis1'))
+   >>> print(t.constructs.axis('domainaxis1'))
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
@@ -964,34 +987,44 @@ criteria:
 .. code-block:: python
    :caption: *Get cell measure constructs by their "measure".*
 	     
-   >>> print(t.constructs.select(measure='area'))
+   >>> print(t.constructs.measure('area'))
    Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
 .. code-block:: python
-   :caption: *Get constructs that meet a variety of criteria using a
-             single call to "select".*
+   :caption: *Get cell method constructs by their "method".*
 	     
-   >>> print(t.constructs.select(construct='auxiliary_coordinate',
-   ...                           axis='domainaxis1',
-   ...                           properties={'units': 'degrees_E'}))
-   Constructs:
-   {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
-  
-The `~Constructs.select` method also returns a `Constructs` instance
-on which further selections can be made. For example, the result of
-the previous example could be achieved with multiple selections:
+   >>> print(t.constructs.method('maximum'))
+   Constructs: TODO
 
+As each of these methods returns a `Constructs` instance, it is easy
+to perform further selections on their results:
+   
 .. code-block:: python
-   :caption: *Get constructs that meet a variety of criteria using
-             multiple "select" calls.*
+   :caption: *TODO*
 	     
-   >>> c = t.constructs
-   >>> c = c.select(construct='auxiliary_coordinate')
-   >>> c = c.select(axis='domainaxis1', properties={'units': 'degrees_E'})
-   >>> print(c)
-   Constructs:
-   {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
+   >>> print(t.constructs.type('auxiliary_coordinate').axis('domainaxis1')
+   TODO
+   >>> c = t.constructs.type('dimension_coordinate')
+   >>> d = c.properties(units='degrees')
+   >>> print(d)
+   TODO
+
+.. The `~Constructs.select` method also returns a `Constructs`
+   instance on which further selections can be made. For example, the
+   result of the previous example could be achieved with multiple
+   selections:
+
+   .. code-block:: python
+      :caption: *Get constructs that meet a variety of criteria using
+                multiple "select" calls.*
+   	     
+      >>> c = t.constructs
+      >>> c = c.select(construct='auxiliary_coordinate')
+      >>> c = c.select(axis='domainaxis1', properties={'units': 'degrees_E'})
+      >>> print(c)
+      Constructs:
+      {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
 
 Selection by construct key is useful for systematic metadata construct
 access, or for when a metadata construct is not identifiable by other
@@ -1001,32 +1034,31 @@ means:
    :caption: *Get constructs by construct key using the "select"
              method.*
 
-   >>> print(t.constructs.select(key='domainancillary2'))
+   >>> print(t.constructs.key('domainancillary2'))
    Constructs:
    {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
-   >>> print(t.constructs.select(key='cellmethod1'))
+   >>> print(t.constructs.key('cellmethod1'))
    Constructs:
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
-   >>> print(t.constructs.select(key=['auxiliarycoordinate2', 'cellmeasure0']))
+   >>> print(t.constructs.key(['auxiliarycoordinate2', 'cellmeasure0']))
    Constructs:
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
     'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
-A less verbose, and often more convenient, method of selection is by
-metadata construct "name". A construct's name is typically the
-description that is displayed when the construct is inspected, and so
-it is often convienient to copy this name when selecting metadata
-constructs. For example, the :ref:`three auxiliary coordinate
-constructs <Medium-detail>` in the field construct ``t`` have names
-``'latitude'``, ``'longitude'`` and ``'long_name=Grid latitude
-name'``. Selection by name does not require a keyword parameter,
-although the keyword ``name`` can be used:
+A convenient, method of selection is by metadata construct "name". A
+construct's name is typically the description that is displayed when
+the construct is inspected, and so it is often convienient to copy
+this name when selecting metadata constructs. For example, the
+:ref:`three auxiliary coordinate constructs <Medium-detail>` in the
+field construct ``t`` have names ``'latitude'``, ``'longitude'`` and
+``'long_name=Grid latitude name'``. Selection by name does not require
+a keyword parameter, although the keyword ``name`` can be used:
 
 .. code-block:: python
    :caption: *Get constructs by their name.*
 	
    >>> print(t)
-      Field: air_temperature (ncvar%ta)
+   Field: air_temperature (ncvar%ta)
    ---------------------------------
    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
@@ -1044,24 +1076,23 @@ although the keyword ``name`` can be used:
    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-   >>> print(t.constructs.select('latitude'))
+   >>> print(t.constructs.name('latitude'))
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-   >>> print(t.constructs.select('long_name=Grid latitude name'))
+   >>> print(t.constructs.name('long_name=Grid latitude name'))
    Constructs:
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >}
-   >>> print(t.constructs.select(name='longitude'))
-   Constructs:
-   {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
-   >>> print(t.constructs.select('measure:area'))
+   >>> print(t.constructs.name('measure:area'))
    Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
+   >>> print(t.constructs.name('ncvar%b))
+   TODO
 
 More generally, a construct name may be constructed by any of
 
 * The value of the "standard_name" property, e.g. ``'air_temperature'``,
 * The value of any property, preceded by the property name and an
-  equals sign, e.g. ``'long_name=Air Temperature'``,
+  equals, e.g. ``'long_name=Air Temperature'``,
 * The cell measure, preceded by "measure:", e.g. ``'measure:volume'``
 * The cell method, preceded by "method:", e.g. ``'method:maximum'``
 * The netCDF variable name, preceded by "ncvar%",
@@ -1071,48 +1102,49 @@ More generally, a construct name may be constructed by any of
   (see the :ref:`netCDF interface <NetCDF-interface>`).
 
 Each construct has a `!name` method that, by default, returns the
-least ambiguous name, which varies according to the type of metadata
-construct.
+least ambiguous name (which varies according to the construct type);
+and an `!all_names` method that returns a selection of names that
+would select the construct.
 
-Note that providing a ``construct`` parameter with no other selection
-parameters is equivalent to using the particular field construct
-method for retrieving that type of metadata construct:
+Note that selection by construct type is equivalent to using the
+particular method of the field construct for retrieving that type of
+metadata construct:
 
 .. code-block:: python
    :caption: *The bespoke methods for retrieving constructs by type
              are equivalent to a selection on all of the metadata
              constructs.*
 		
-   >>> print(t.constructs.select(construct='cell_measure'))
+   >>> print(t.constructs.type('cell_measure'))
    Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
    >>> print(t.cell_measures)
    Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
-If no constructs match the given criteria, then an empty dictionary is
-returned:
+If no constructs match the given criteria, then an "empty"
+`Constructs` instance is returned:
    
 .. code-block:: python
    :caption: *If no constructs meet the criteria then an empty
              "Contructs" object is returned.*
 
-   >>> t.constructs.select('radiation_wavelength')
+   >>> c = t.constructs.name('radiation_wavelength')
+   >>> c
    <Constructs: >
-   >>> len(t.constructs.select('radiation_wavelength'))
+   >>> print(c)
+   Constructs:
+   {}
+   >>> len(c)
    0
    
-As a convienince feature, construct selection is also possible by
-providing the same selection parameters directly to a `Constructs`
-instance:
+As a convienince feature, selection by construct name is also possible
+by providing the name to a call of a `Constructs` instance itself:
 
 .. code-block:: python
    :caption: *Construct selection is possible with via the "select"
              method, or directly on the "Constructs" instance.*
 
-   >>> print(t.constructs.select('latitude'))
-   Constructs:
-   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
    >>> print(t.constructs('latitude'))
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
@@ -1135,9 +1167,9 @@ criteria.
    :caption: *Check the existence of, and retrieve, the "latitude"
              metadata construct.*
 
-   >>> len(t.constructs.select('latitude'))
+   >>> len(t.constructs.name('latitude'))
    1
-   >>> t.get_construct('latitude')
+   >>> t.constructs.name('latitude').get()
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
 .. code-block:: python
@@ -1145,29 +1177,29 @@ criteria.
              name and then check that it can be also be retrieved via
              its name.*
 
-   >>> c = t.get_construct('units:km2')
+   >>> c = t.constructs.properties(units='km2').get()
    >>> c
    <CellMeasure: measure:area(9, 10) km2>
    >>> c.name()
    'measure:area'
-   >>> t.get_construct('measure:area')
-   <CellMeasure: measure:area(9, 10) km2>
+   >>> c.all_names()
+   TODO
    
 .. code-block:: python
    :caption: *By default an exception is raised if there is not a
              unique construct that meets the criteria. Alternatively,
              the value of the "default" parameter is returned.*
 	     
-   >>> t.get_construct(measure='volume')
+   >>> t.constructs.measure('volume').get()
    ValueError: No construct meets criteria
-   >>> t.constructs('units:degrees')
+   >>> t.constructs.name('units=degrees')
    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
-   >>> len(t.constructs.select('units:degrees'))
+   >>> len(t.constructs.name('units:degrees'))
    2
-   >>> t.get_construct('units:degrees')
+   >>> t.constructs.name('units:degrees').get()
    ValueError: More than one construct meets criteria
-   >>> print(t.get_construct('units:degrees', default=None))
+   >>> print(t.constructs.name('units:degrees').get(default=None))
    None
 
 A metadata construct may also be retreived by its construct key, eith
