@@ -20,7 +20,17 @@ Selection
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Constructs.select
+   ~cfdm.Constructs.name
+   ~cfdm.Constructs.property
+   ~cfdm.Constructs.measure
+   ~cfdm.Constructs.method
+   ~cfdm.Constructs.axis
+   ~cfdm.Constructs.type
+   ~cfdm.Constructs.key
+   ~cfdm.Constructs.ncdim
+   ~cfdm.Constructs.ncvar
+   ~cfdm.Constructs.get
+   ~cfdm.Constructs.get_key
 
 Dictionary-like methods
 -----------------------
@@ -32,10 +42,10 @@ Dictionary-like methods
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Constructs.get
    ~cfdm.Constructs.keys
    ~cfdm.Constructs.items
    ~cfdm.Constructs.values
+   ~cfdm.Constructs.__getitem__
 
 Data axes
 ---------

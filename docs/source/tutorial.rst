@@ -955,7 +955,7 @@ Each of these methods also returns a `Constructs` instance.
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-   >>> print(t.constructs.type([cell_method', 'field_ancillary']))
+   >>> print(t.constructs.type(['cell_method', 'field_ancillary']))
    Constructs:
    TODO
 
@@ -1250,6 +1250,16 @@ The key of a metadata construct may be found with the
 
    >>> t.constructs.name('latitude').get_key()
    'auxiliarycoordinate0'
+   
+A metadata construct may also be retrieved by indexing the `Constructs`
+instance with the construct's key.
+
+.. code-block:: python
+   :caption: *Get the construct by indexing the "Constructs"
+             instance.*
+
+   >>> t.constructs['auxiliarycoordinate0']
+   TODO
    
 .. _Metadata-construct-properties:
 

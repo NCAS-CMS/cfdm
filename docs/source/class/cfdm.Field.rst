@@ -24,6 +24,7 @@ Inspection
 
    ~cfdm.Field.dump
    ~cfdm.Field.name
+   ~cfdm.Field.names
 
 .. rubric:: Attributes
    
@@ -98,20 +99,10 @@ Metadata constructs
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Field.auxiliary_coordinates
-   ~cfdm.Field.cell_measures
-   ~cfdm.Field.cell_methods
-   ~cfdm.Field.coordinates
-   ~cfdm.Field.coordinate_references
-   ~cfdm.Field.dimension_coordinates
-   ~cfdm.Field.domain_ancillaries
-   ~cfdm.Field.domain_axes
-   ~cfdm.Field.field_ancillaries
    ~cfdm.Field.del_construct
    ~cfdm.Field.get_construct
    ~cfdm.Field.has_construct
    ~cfdm.Field.set_construct
-   ~cfdm.Field.get_construct_key
    ~cfdm.Field.del_data_axes
    ~cfdm.Field.get_data_axes
    ~cfdm.Field.set_data_axes
@@ -124,6 +115,15 @@ Metadata constructs
    :template: attribute.rst
 
    ~cfdm.Field.constructs
+   ~cfdm.Field.auxiliary_coordinates
+   ~cfdm.Field.cell_measures
+   ~cfdm.Field.cell_methods
+   ~cfdm.Field.coordinates
+   ~cfdm.Field.coordinate_references
+   ~cfdm.Field.dimension_coordinates
+   ~cfdm.Field.domain_ancillaries
+   ~cfdm.Field.domain_axes
+   ~cfdm.Field.field_ancillaries
 
 .. _Field-Domain:
 
