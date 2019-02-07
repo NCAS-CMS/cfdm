@@ -912,7 +912,7 @@ Selection criteria                                                          Meth
 ==========================================================================  ========================  
 Metadata construct name                                                     `~Constructs.name`
 Metadata construct type                                                     `~Constructs.type`
-Property values                                                             `~Constructs.properties` 
+Property values                                                             `~Constructs.property` 
 Whether the data array spans particular domain axis constructs		    `~Constructs.axis`
 Measure value (for cell measure constructs)				    `~Constructs.measure`
 Method value (for cell method constructs)				    `~Constructs.method`
@@ -955,18 +955,20 @@ Each of these methods also returns a `Constructs` instance.
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-   >>> print(t.constructs.type(['cell_method', 'field_ancillary']))
+   >>> print(t.constructs.type('cell_method', 'field_ancillary'))
    Constructs:
-   TODO
+   {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+    'cellmethod1': <CellMethod: domainaxis3: maximum>,
+    'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
 .. code-block:: python
    :caption: *Get constructs by their properties*.
 
-   >>> print(t.constructs.properties(standard_name='air_temperature standard_error'))
+   >>> print(t.constructs.property(standard_name='air_temperature standard_error'))
    Constructs:
    {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-   >>> print(t.constructs.properties(standard_name='air_temperature standard_error',
-   ...                               unit='K')
+   >>> print(t.constructs.property(standard_name='air_temperature standard_error',
+   ...                             unit='K')
    Constructs:
    {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
@@ -995,20 +997,25 @@ Each of these methods also returns a `Constructs` instance.
    :caption: *Get cell method constructs by their "method".*
 	     
    >>> print(t.constructs.method('maximum'))
-   Constructs: TODO
+   Constructs:
+   {'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
 As each of these methods returns a `Constructs` instance, it is easy
 to perform further selections on their results:
    
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Make selections of previous selections.*
 	     
-   >>> print(t.constructs.type('auxiliary_coordinate').axis('domainaxis1')
-   TODO
+   >>> print(t.constructs.type('auxiliary_coordinate').axis('domainaxis2'))
+   Constructs:
+   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+    'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
    >>> c = t.constructs.type('dimension_coordinate')
-   >>> d = c.properties(units='degrees')
+   >>> d = c.property(units='degrees')
    >>> print(d)
-   TODO
+   Constructs:
+   {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
 
 .. The `~Constructs.select` method also returns a `Constructs`
    instance on which further selections can be made. For example, the
@@ -1040,7 +1047,7 @@ means:
    >>> print(t.constructs.key('cellmethod1'))
    Constructs:
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
-   >>> print(t.constructs.key(['auxiliarycoordinate2', 'cellmeasure0']))
+   >>> print(t.constructs.key('auxiliarycoordinate2', 'cellmeasure0'))
    Constructs:
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
     'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
@@ -1097,8 +1104,9 @@ latitude name'``.
    >>> print(t.constructs.name('measure:area'))
    Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
-   >>> print(t.constructs.name('ncvar%b))
-   TODO
+   >>> print(t.constructs.name('ncvar%b'))
+   Constructs:
+   {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
 
 .. More generally, a construct name may be constructed by any of
 
@@ -1115,7 +1123,7 @@ latitude name'``.
 
 Each construct has a `!name` method that, by default, returns the
 least ambiguous name (which varies according to the construct type);
-and an `!all_names` method that returns a list of names, any of which
+and an `!names` method that returns a list of names, any of which
 would select the construct.
 
 Selection by construct type is equivalent to using the particular
@@ -1189,13 +1197,13 @@ criteria.
              name and then check that it can be also be retrieved via
              its name.*
 
-   >>> c = t.constructs.properties(units='km2').get()
+   >>> c = t.constructs.property(units='km2').get()
    >>> c
    <CellMeasure: measure:area(9, 10) km2>
    >>> c.name()
    'measure:area'
-   >>> c.all_names()
-   TODO
+   >>> c.names()
+   ['measure:area', 'units=km2', 'ncvar%cell_measure']
    
 .. code-block:: python
    :caption: *By default an exception is raised if there is not a
@@ -1225,7 +1233,7 @@ dictionary-like methods of a `Constructs` instance:
    <DomainAncillary: surface_altitude(10, 9) m>
    >>> t.get_construct(key='cellmethod1')
    <CellMethod: domainaxis3: maximum>
-   >>> len(t.constructs.select(key='auxiliarycoordinate999'))
+   >>> len(t.constructs.key('auxiliarycoordinate999'))
    0
    >>> t.get_construct(key='auxiliarycoordinate999', default='NO CONSTRUCT')
    'NO CONSTRUCT'
@@ -1259,7 +1267,7 @@ instance with the construct's key.
              instance.*
 
    >>> t.constructs['auxiliarycoordinate0']
-   TODO
+   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
    
 .. _Metadata-construct-properties:
 
@@ -1273,7 +1281,7 @@ Metadata constructs share the :ref:`same API as the field construct
    :caption: *Retrieve the "longitude" metadata construct, set a new
              property, and then inspect all of the properties.*
 
-   >>> lon = q.get_construct('longitude')   
+   >>> lon = q.constructs.name('longitude').get()
    >>> lon
    <DimensionCoordinate: longitude(8) degrees_east>
    >>> lon.set_property('long_name', 'Longitude')
@@ -1295,7 +1303,7 @@ construct <Data>` as the field construct for accessing their data:
              data, change the third element of the array, and get the
              data as a numpy array.*
 	     
-   >>> lon = q.get_construct('longitude')   
+   >>> lon = q.constructs.name('longitude').get()
    >>> lon
    <DimensionCoordinate: longitude(8) degrees_east>
    >>> lon.data
@@ -1316,9 +1324,9 @@ of the field construct:
 
    >>> key = t.constructs.name('latitude').get_key()
    >>> key
-   TODO
+   'auxiliarycoordinate0'
    >>> t.get_data_axes(key=key)
-   TODO
+   ('domainaxis1', 'domainaxis2')
     
 The domain axis constructs spanned by all the data of all metadata
 construct may be found with the `~Constructs.data_axes` method of the
@@ -1368,7 +1376,7 @@ with the `~Data.datetime_array` method of the `Data` instance.
    :caption: *Inspect the the values of a "time" construct as elapsed
              times and as date-times.*
 
-   >>> time = q.get_construct('time')
+   >>> time = q.constructs('time')
    >>> time
    <DimensionCoordinate: time(1) days since 2018-12-01 >
    >>> time.get_property('units'), time.get_property('calendar', default='standard')
@@ -1426,15 +1434,15 @@ attributes and methods of the domain instance.
              data construct of the parent field, and vice versa.*
 
    >>> domain = t.domain
-   >>> domain.get_construct('latitude').set_property('test', 'set by domain')
-   >>> t.get_construct('latitude').get_property('test')
+   >>> domain.constructs('latitude').get().set_property('test', 'set by domain')
+   >>> t.constructs('latitude').get().get_property('test')
    'set by domain'
-   >>> t.get_construct('latitude').set_property('test', 'set by field')
-   >>> domain.get_construct('latitude').get_property('test')
+   >>> t.constructs('latitude').get().set_property('test', 'set by field')
+   >>> domain.constructs('latitude').get().get_property('test')
    'set by field'
-   >>> domain.get_construct('latitude').del_property('test')
+   >>> domain.constructs('latitude').get().del_property('test')
    'set by field'
-   >>> t.get_construct('latitude').has_property('test')
+   >>> t.construct('latitude').get().has_property('test')
    False
 
 All of the methods and attributes related to the domain are listed

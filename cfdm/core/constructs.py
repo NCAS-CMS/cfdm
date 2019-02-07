@@ -1297,7 +1297,7 @@ removed even if it is referenced by coordinate reference coinstruct.
 #        return type(self)(source=self, _ignore=ignore, _view=False, copy=False)
 #    #--- End: def
 
-    def type(self, construct):
+    def type(self,*types):
         '''Select metadata constructs.
 
 By default all metadata constructs are selected, but a subset may be
@@ -1351,13 +1351,13 @@ returned.
 
         '''
         
-        if construct is not None and isinstance(construct, basestring):
-            construct = (construct,)
+#        if construct is not None and isinstance(construct, basestring):
+#            construct = (construct,)
 
-        if construct:
+        if types:
             # Ignore the all but the requested construct types
             ignore = set(self._key_base)
-            ignore.difference_update(set(construct))
+            ignore.difference_update(set(types))
         else:
             # Keep all construct types
             ignore = self._ignore

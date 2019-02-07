@@ -288,34 +288,23 @@ x.__str__() <==> str(x)
         return True
     #--- End: def
 
-    def axis(self, axis):
+    def axis(self, *axes):
         '''Select metadata constructs
-
-By default all metadata constructs are selected, but a subset may be
-chosen via the optional parameters. If multiple parameters are
-specified, then the constructs that satisfy *all* of the criteria are
-returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get`, `keys`, 'items`, `values`
+.. seealso:: `key`, `measure`, `method`, `name`, `ncdim`, `ncvar`,
+             `property`, `type`
 
 :Parameters:
 
-    axis: (sequence of) `str`, optional
-        Select constructs which have data that spans a domain axis
-        construct, defined by its construct identifier. If multiple of
-        domain axes are specified then select constructs whose data
-        spans at least one the domain axis constructs.
+    axes:
+        Select constructs that have data which spans at least one of
+        the given domain axes constructs. Domain axes constructs are
+        specified with their construct keys.
 
-        *Parameter example:*
-          ``axis='domainaxis1'``
-
-        *Parameter example:*
-          ``axis=['domainaxis2']``
-
-        *Parameter example:*
-          ``axis=['domainaxis0', 'domainaxis1']``
+        If an axis of `None` is provided then all constructs that have
+        data are selected.
 
 :Returns:
 
@@ -324,20 +313,27 @@ returned.
 
 **Examples:**
 
-TODO
+>>> d = c.axis('domainaxis1')
+
+>>> d = c.axis('domainaxis0', 'domainaxis1')
+
+Setting no keyword arguments selects no constructs:
+
+>>> c.key()
+<Constructs: >
 
         '''
         out = self.shallow_copy()
 
-        if isinstance(axis, basestring):
-            axis = (axis,)
-
-        axis = set(axis)
+        axes = set(axes)
 
         constructs_data_axes = self.data_axes()
-        for cid in tuple(out):
+        for cid, construct in tuple(out.items()):
             x = constructs_data_axes.get(cid)
-            if x is None or not axis.intersection(x):
+            if None in axes and x is not None:
+                continue
+            
+            if x is None or not axes.intersection(x):
                 # This construct does not span these axes
                 out._pop(cid)
         #--- End: for
@@ -368,22 +364,25 @@ TODO
 
 **Examples:**
 
-        *Parameter example:*
 >>> d = c.key('domainancillary0')
 
 >>> d = c.key('cellmethod2')
 
 >>> d = c.key('dimensioncoordinate1', 'fieldancillary0')
 
+Setting no keyword arguments selects no constructs:
+
+>>> c.key()
+<Constructs: >
 
         '''
         out = self.shallow_copy()
 
-        if isinstance(key, basestring):
-            key = (key,)
-
+        if None in keys:
+            return out
+        
         for cid in tuple(out):
-            if cid not in key:
+            if cid not in keys:
                 out._pop(cid)
         #--- End: for
 
@@ -446,7 +445,7 @@ Setting no keyword arguments selects no constructs:
                 continue
 
             ok = False
-            for value0 in measure:
+            for value0 in measures:
                 if value0 is None:
                     if construct.has_measure():
                         ok = True
