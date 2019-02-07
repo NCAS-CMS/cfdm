@@ -345,33 +345,21 @@ TODO
         return out
     #--- End: def
 
-    def key(self, key):
-        '''Select metadata constructs
-
-By default all metadata constructs are selected, but a subset may be
-chosen via the optional parameters. If multiple parameters are
-specified, then the constructs that satisfy *all* of the criteria are
-returned.
+    def key(self, *keys):
+        '''Select metadata constructs by key.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get`, `keys`, 'items`, `values`
+.. seealso:: `axis`, `measure`, `method`, `name`, `ncdim`, `ncvar`,
+             `property`, `type`
 
 :Parameters:
 
-    key: (sequence of) `str`, optional
-        Select the construct with the given construct key. If multiple
-        keys are specified then select all of the metadata constructs
-        which have any of the given keys.
+    keys:
+        Select constructs that have any of the given construct keys.
 
-        *Parameter example:*
-          ``key='domainancillary0'``
-
-        *Parameter example:*
-          ``key=['cellmethod2']``
-
-        *Parameter example:*
-          ``key=('dimensioncoordinate1', 'fieldancillary0')``
+        If a key of `None` is provided then all constructs are
+        selected.
 
 :Returns:
 
@@ -380,7 +368,13 @@ returned.
 
 **Examples:**
 
-TODO
+        *Parameter example:*
+>>> d = c.key('domainancillary0')
+
+>>> d = c.key('cellmethod2')
+
+>>> d = c.key('dimensioncoordinate1', 'fieldancillary0')
+
 
         '''
         out = self.shallow_copy()
@@ -396,28 +390,23 @@ TODO
         return out
     #--- End: def
 
-    def measure(self, measure):
+    def measure(self, *measures):
         '''Select cell measure constructs by measure.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: TODO
+.. seealso:: `axis`, `key`, `method`, `name`, `ncdim`, `ncvar`,
+             `property`, `type`
 
 :Parameters:
 
-    measure: (sequence of) `str`
-        Select cell measure constructs which have the given
-        measure. If multiple measures are specified then select the
-        cell measure constructs which have any of the given measures.
+    measures:
+        Select cell measure constructs that have any of the given
+        measure values.
 
-        *Parameter example:*
-          ``measure='area'``
-
-        *Parameter example:*
-          ``measure=['area']``
-
-        *Parameter example:*
-          ``measure=['area', 'volume']``
+        If a measure of `None` is provided then all cell measure
+        constructs that have a measure property, with any value, are
+        selected.
 
 :Returns:
 
@@ -427,12 +416,25 @@ TODO
         
 **Examples:**
 
-TODO
+Select cell measure constructs that have a measure of 'area':
+
+>>> d = c.measure('area')
+
+Select cell measure constructs that have a measure of 'area' or
+'volume':
+
+>>> d = c.measure('area', 'volume')
+
+Select cell measure constructs that have a measure of any value:
+
+>>> d = c.measure(None)
+
+Setting no keyword arguments selects no constructs:
+
+>>> c.measure()
+<Constructs: >
 
         '''
-        if isinstance(measure , basestring):
-            measure = (measure,)
-
         out = self.shallow_copy()
         
         for cid, construct in tuple(out.items()):
@@ -444,12 +446,17 @@ TODO
                 continue
 
             ok = False
-            for x0 in measure:
-                x1 = get_measure(None)
-                if x1 is not None and construct._equals(x1, x0):
-                    # This construct matches this measure
-                    ok = True
-                    break
+            for value0 in measure:
+                if value0 is None:
+                    if construct.has_measure():
+                        ok = True
+                        break
+                else:
+                    value1 = construct.get_measure(None)
+                    if value1 is not None and construct._equals(value1, value0):
+                        # This construct matches this measure
+                        ok = True
+                        break
             #--- End: for
             
             if not ok:
@@ -460,21 +467,22 @@ TODO
         return out
     #--- End: def
 
-    def method(self,method):
-        '''Select metadata constructs
-
-By default all metadata constructs are selected, but a subset may be
-chosen via the optional parameters. If multiple parameters are
-specified, then the constructs that satisfy *all* of the criteria are
-returned.
+    def method(self, *methods):
+        '''Select cell method constructs by method.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get`, `keys`, 'items`, `values`
+.. seealso:: `axis`, `key`, `measure`, `name`, `ncdim`, `ncvar`,
+             `property`, `type`
 
 :Parameters:
 
-TODO
+    methods:
+        Select cell method constructs that have any of the given
+        methods.
+
+        If a method of `None` is provided then all cell method
+        constructs that have a method, with any value, are selected.
 
 :Returns:
 
@@ -483,13 +491,26 @@ TODO
 
 **Examples:**
 
-TODO
+Select cell method constructs that have a method of 'mean':
+
+>>> d = c.method('mean')
+
+Select cell method constructs that have a method of 'mean' or
+'maximmum':
+
+>>> d = c.method('mean', 'maximum')
+
+Select cell method constructs that have a method of any value:
+
+>>> d = c.method(None)
+
+Setting no keyword arguments selects no constructs:
+
+>>> c.method()
+<Constructs: >
 
         '''
         out = self.shallow_copy()
-
-        if isinstance(method, basestring):
-            method = (method,)
 
         for cid, construct in tuple(out.items()):
             try:
@@ -500,12 +521,17 @@ TODO
                 continue
 
             ok = False
-            for x0 in method:
-                x1 = get_method(None)
-                if x1 is not None and construct._equals(x1, x0):
-                    # This construct matches this method
-                    ok = True
-                    break
+            for value0 in methods:
+                if value0 is None:
+                    if construct.has_method():
+                        ok = True
+                        break
+                else:
+                    value1 = get_method(None)
+                    if value1 is not None and construct._equals(value0, value1):
+                        # This construct matches this method
+                        ok = True
+                        break
             #--- End: for
             
             if not ok:
@@ -854,20 +880,22 @@ TODO
     #--- End: def
     
     def property(self, **properties):
-        '''Select metadata constructs
-
-By default all metadata constructs are selected, but a subset may be
-chosen via the optional parameters. If multiple parameters are
-specified, then the constructs that satisfy *all* of the criteria are
-returned.
+        '''Select metadata constructs by property.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get`, `keys`, 'items`, `values`
+.. seealso:: `axis`, `key`, `measure`, `method`, `name`, `ncdim`,
+             `ncvar`, `type`
 
 :Parameters:
 
-TODO
+    properties: 
+        Select constructs that have the all of the given property
+        values. Property names are given by keyword arguments. No
+        constructs are selected no keyword arguments are provided.
+
+        If a property value of `None` is provided then all constructs
+        that have that property, with any value, are selected.
 
 :Returns:
 
@@ -876,13 +904,27 @@ TODO
 
 **Examples:**
 
-TODO
+Select constructs that have a "long_name" property of 'Air
+Temperature'
+
+>>> d = c.property(long_name='Air Temperature')
+
+Select constructs that have a "long_name" property of 'Air
+Temperature' and a "foo" property of 'bar':
+
+>>> d = c.property(long_name='Air Temperature', foo='bar')
+
+Select constructs that have a "units" property of any value:
+
+>>> d = c.measure(units=None)
+
+Setting no keyword arguments selects no constructs:
+
+>>> c.property()
+<Constructs: >
 
         '''
         out = self.shallow_copy()
-
-        if isinstance(properties, dict):
-            properties = (properties,)
 
         for cid, construct in tuple(out.items()):
             try:
@@ -893,21 +935,17 @@ TODO
                 continue
             
             ok = False
-            for props in properties:
-                ok = False
-                for p, value0 in props.items():
-                    value1 = get_property(p, None)
-                    if value1 is None or not construct._equals(value1, value0):
-                        # This construct does not match this property
-                        ok = False                            
-                        break
-                    else:
+            for name, value0 in properties.items():
+                if value0 is None:
+                    if construct.has_property(name):
                         ok = True
-                #--- End: for
-
-                if ok:
-                    # This construct matches this set of properties
-                    break
+                        break
+                else:
+                    value1 = get_property(name, None)
+                    if value1 is not None and construct._equals(value1, value0):
+                        # This construct matches this property
+                        ok = True
+                        break
             #--- End: for
             
             if not ok:
