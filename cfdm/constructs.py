@@ -60,6 +60,18 @@ x.__str__() <==> str(x)
         return '\n '.join(out)
     #--- End: def
 
+    def copy(self, data=True):
+        '''
+        '''
+        out = super().copy(data=data)
+
+        prefiltered = getattr(self, '_prefiltered', None)
+        if prefiltered is not None:
+            out._prefiltered = prefiltered.copy(data=data)
+            
+        return out
+    #--- End: def
+
     def domain_axis_name(self, key):
         '''Return the canonical name for an axis.
 
@@ -288,7 +300,7 @@ x.__str__() <==> str(x)
         return True
     #--- End: def
 
-    def axis(self, *axes):
+    def axis(self, *and_or, **axes):
         '''Select metadata constructs
 
 .. versionadded:: 1.7.0
@@ -322,21 +334,57 @@ Setting no keyword arguments selects no constructs:
 >>> c.key()
 <Constructs: >
 
-        '''
+        '''       
         out = self.shallow_copy()
+        out._prefiltered = self.shallow_copy()
 
-        axes = set(tuple(axes))
-
-        constructs_data_axes = self.data_axes()
-        for cid, construct in tuple(out.items()):
-            x = constructs_data_axes.get(cid)
-            if None in axes and x is not None:
-                continue
+        if and_or:
+            _or = (and_or[0] == 'or')
+        else:
+            _or = False
             
-            if x is None or not axes.intersection(x):
-                # This construct does not span these axes
+        constructs_data_axes = self.data_axes()
+        
+        for cid in tuple(out):
+            x = constructs_data_axes.get(cid)
+            if x is None:
+                # This construct does not have data
+                out._pop(cid)
+                continue
+
+            ok = True
+            for axis_key, value in axes.items():
+                if value:
+                    ok = axis_key in x
+                else:
+                    ok = axis_key not in x
+
+                if _or:
+                    if ok:
+                        break
+                elif not ok:
+                    break
+            #--- End: for
+
+            if not ok:
+                # This construct does not match any of the sets of
+                # properties
                 out._pop(cid)
         #--- End: for
+
+   #    
+   #    axes = set(axes)
+   #
+   #    constructs_data_axes = self.data_axes()
+   #    for cid, construct in tuple(out.items()):
+   #        x = constructs_data_axes.get(cid)
+   #        if None in axes and x is not None:
+   #            continue
+   #        
+   #        if x is None or not axes.intersection(x):
+   #            # This construct does not span these axes
+   #            out._pop(cid)
+   #    #--- End: for
         
         return out
     #--- End: def
@@ -377,7 +425,8 @@ Setting no keyword arguments selects no constructs:
 
         '''
         out = self.shallow_copy()
-
+        out._prefiltered = self.shallow_copy()
+        
         if None in keys:
             return out
         
@@ -435,6 +484,7 @@ Setting no keyword arguments selects no constructs:
 
         '''
         out = self.shallow_copy()
+        out._prefiltered = self.shallow_copy()
         
         for cid, construct in tuple(out.items()):
             try:
@@ -452,14 +502,9 @@ Setting no keyword arguments selects no constructs:
                         break
                 else:
                     value1 = construct.get_measure(None)
-                    ok = self._nnn(value0, construct, value1)
+                    ok = self._matching_values(value0, construct, value1)
                     if ok:
                         break
-
-#                    if value1 is not None and construct._equals(value1, value0):
-#                        # This construct matches this measure
-#                        ok = True
-#                        break
             #--- End: for
             
             if not ok:
@@ -467,6 +512,18 @@ Setting no keyword arguments selects no constructs:
                 out._pop(cid)
         #--- End: for
         
+        return out
+    #--- End: def
+
+    def shallow_copy(self, _ignore=None):
+        '''
+        '''
+        out = super().shallow_copy(_ignore=_ignore)
+
+        prefiltered = getattr(self, '_prefiltered', None)
+        if prefiltered is not None:
+            out._prefiltered = prefiltered
+            
         return out
     #--- End: def
 
@@ -514,7 +571,8 @@ Setting no keyword arguments selects no constructs:
 
         '''
         out = self.shallow_copy()
-
+        out._prefiltered = self.shallow_copy()
+        
         for cid, construct in tuple(out.items()):
             try:
                 get_method = construct.get_method
@@ -531,7 +589,7 @@ Setting no keyword arguments selects no constructs:
                         break
                 else:
                     value1 = get_method(None)
-                    ok = self._nnn(value0, construct, value1)
+                    ok = self._matching_values(value0, construct, value1)
                     if ok:
                         break
 
@@ -704,7 +762,8 @@ TODO
 
         '''
         out = self.shallow_copy()
-        
+        out._prefiltered = self.shallow_copy()
+                
         if isinstance(name, basestring):
             name = (name,)
 
@@ -784,7 +843,8 @@ returned.
 TODO
         '''
         out = self.shallow_copy()
-
+        out._prefiltered = self.shallow_copy()
+        
         for cid, construct in tuple(out.items()):
             try:
                 get_nc_dimension = construct.nc_get_dimension
@@ -802,7 +862,7 @@ TODO
                         break
                 else:
                     value1 = get_nc_dimension(None)
-                    ok = self._nnn(value0, construct, value1)
+                    ok = self._matching_values(value0, construct, value1)
                     if ok:
                         break
             #--- End: for
@@ -855,7 +915,8 @@ TODO
 
         '''
         out = self.shallow_copy()
-
+        out._prefiltered = self.shallow_copy()
+        
         for cid, construct in tuple(out.items()):            
             try:
                 get_nc_variable = construct.nc_get_variable
@@ -872,7 +933,7 @@ TODO
                         break
                 else:
                     value1 = get_nc_variable(None)
-                    ok = self._nnn(value0, construct, value1)
+                    ok = self._matching_values(value0, construct, value1)
                     if ok:
                         break
             #--- End: for
@@ -886,7 +947,7 @@ TODO
         return out
     #--- End: def
 
-    def _nnn(self, value0, construct, value1):
+    def _matching_values(self, value0, construct, value1):
         if value1 is not None:                        
             try:
                 result = value0.search(value1)
@@ -945,6 +1006,12 @@ Setting no keyword arguments selects no constructs:
 
         '''
         out = self.shallow_copy()
+        out._prefiltered = self.shallow_copy()
+
+        if and_or:
+            _or = (and_or[0] == 'or')
+        else:
+            _or = False
 
         for cid, construct in tuple(out.items()):
             try:
@@ -953,30 +1020,17 @@ Setting no keyword arguments selects no constructs:
                 # This construct doesn't have a "get_property" method
                 out._pop(cid)
                 continue
-            
-            ok = False
+
+            ok = True
             for name, value0 in properties.items():
-                if value0 is None:
-                    if construct.has_property(name):
-                        ok = True
-                        break
-                else:
-                    value1 = get_property(name, None)
-                    ok = self._nnn(value0, construct, value1)
+                value1 = get_property(name, None)
+                ok = self._matching_values(value0, construct, value1)
+
+                if _or:
                     if ok:
                         break
-                    
-#                    value1 = get_property(name, None)
-#                    if value1 is not None:                        
-#                        try:
-#                            result = value0.search(value1)
-#                        except (AttributeError, TypeError):
-#                            result = construct._equals(value1, value0)
-#                            
-#                        if result:
-#                            # This construct matches this property
-#                            ok = True
-#                            break
+                elif not ok:
+                    break
             #--- End: for
             
             if not ok:
@@ -984,10 +1038,40 @@ Setting no keyword arguments selects no constructs:
                 # properties
                 out._pop(cid)
         #--- End: for
-               
+
         return out
     #--- End: def
 
+    def inverse(self):
+        '''TODO
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `axis`, `key`, `measure`, `method`, `name`, `ncdim`,
+             `ncvar`, `property`, `type`
+
+:Returns:
+
+    `Constructs`
+        TODO
+
+**Examples:**
+
+TODO
+
+        '''
+        prefiltered = getattr(self, '_prefiltered', self)
+
+        out = prefiltered.shallow_copy()
+
+        out._prefiltered = prefiltered
+
+        for key in self:
+            out._pop(key)
+        
+        return out
+    #--- End: def
+        
     def _equals_coordinate_reference(self, other, rtol=None,
                                      atol=None, verbose=False,
                                      ignore_type=False,
