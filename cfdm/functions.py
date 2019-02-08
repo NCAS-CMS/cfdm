@@ -3,15 +3,11 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import zip
 from builtins import str
+
 import os
 import sys
 
-from collections import Iterable
-
-from itertools   import zip_longest, product
-from platform    import system, platform, python_version
-from urllib.parse    import urlparse as urlparse_urlparse
-from urllib.parse    import urljoin  as urlparse_urljoin
+from platform import platform, python_version
 
 import netCDF4
 import cftime

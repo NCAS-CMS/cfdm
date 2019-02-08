@@ -452,10 +452,14 @@ Setting no keyword arguments selects no constructs:
                         break
                 else:
                     value1 = construct.get_measure(None)
-                    if value1 is not None and construct._equals(value1, value0):
-                        # This construct matches this measure
-                        ok = True
+                    ok = self._nnn(value0, construct, value1)
+                    if ok:
                         break
+
+#                    if value1 is not None and construct._equals(value1, value0):
+#                        # This construct matches this measure
+#                        ok = True
+#                        break
             #--- End: for
             
             if not ok:
@@ -527,10 +531,14 @@ Setting no keyword arguments selects no constructs:
                         break
                 else:
                     value1 = get_method(None)
-                    if value1 is not None and construct._equals(value0, value1):
-                        # This construct matches this method
-                        ok = True
+                    ok = self._nnn(value0, construct, value1)
+                    if ok:
                         break
+
+#                    if value1 is not None and construct._equals(value0, value1):
+#                        # This construct matches this method
+#                        ok = True
+#                        break
             #--- End: for
             
             if not ok:
@@ -737,7 +745,7 @@ TODO
         return out
     #--- End: def
 
-    def ncdim(self, ncdim):
+    def ncdim(self, *ncdim):
         '''Select metadata constructs
 
 By default all metadata constructs are selected, but a subset may be
@@ -777,26 +785,26 @@ TODO
         '''
         out = self.shallow_copy()
 
-        if isinstance(ncdim , basestring):
-            ncdim = (ncdim,)
-            
         for cid, construct in tuple(out.items()):
             try:
-                nc_get_dimension = construct.nc_get_dimension
+                get_nc_dimension = construct.nc_get_dimension
             except AttributeError:
                 # This construct doesn't have a "nc_get_dimension"
                 # method
                 out._pop(cid)
                 continue
-
+            
             ok = False
-            for x0 in ncdim:
-                x1 = nc_get_dimension(None)
-                if x1 is not None and construct._equals(x1, x0):
-                    # This construct matches this netCDF dimension
-                    # name
-                    ok = True
-                    break
+            for value0 in ncdim:
+                if value0 is None:
+                    if construct.nc_has_dimension():
+                        ok = True
+                        break
+                else:
+                    value1 = get_nc_dimension(None)
+                    ok = self._nnn(value0, construct, value1)
+                    if ok:
+                        break
             #--- End: for
             
             if not ok:
@@ -808,7 +816,7 @@ TODO
         return out
     #--- End: def
 
-    def ncvar(self, ncvar):
+    def ncvar(self, *ncvar):
         '''Select metadata constructs
 
 By default all metadata constructs are selected, but a subset may be
@@ -848,27 +856,27 @@ TODO
         '''
         out = self.shallow_copy()
 
-        if isinstance(ncvar , basestring):
-            ncvar = (ncvar,)
-
-        for cid, construct in tuple(out.items()):
+        for cid, construct in tuple(out.items()):            
             try:
-                nc_get_variable = construct.nc_get_variable
+                get_nc_variable = construct.nc_get_variable
             except AttributeError:
-                # This construct doesn't have a "nc_get_variable"
-                # method
+                # This construct doesn't have a "nc_get_variable" method
                 out._pop(cid)
                 continue
-
-            ok = False
-            for x0 in ncvar:
-                x1 = nc_get_variable(None)
-                if x1 is not None and construct._equals(x1, x0):
-                    # This construct matches this netCDF variable name
-                    ok = True
-                    break
-            #--- End: for
             
+            ok = False
+            for value0 in ncvar:
+                if value0 is None:
+                    if construct.nc_has_variable():
+                        ok = True
+                        break
+                else:
+                    value1 = get_nc_variable(None)
+                    ok = self._nnn(value0, construct, value1)
+                    if ok:
+                        break
+            #--- End: for
+
             if not ok:
                 # This construct does not match any of the netCDF
                 # variable names
@@ -877,8 +885,21 @@ TODO
         
         return out
     #--- End: def
+
+    def _nnn(self, value0, construct, value1):
+        if value1 is not None:                        
+            try:
+                result = value0.search(value1)
+            except (AttributeError, TypeError):
+                result = construct._equals(value1, value0)
+                
+            if result:
+                # This construct matches this property
+                return True
+
+        return False
     
-    def property(self, **properties):
+    def property(self, *and_or, **properties):
         '''Select metadata constructs by property.
 
 .. versionadded:: 1.7.0
@@ -941,10 +962,21 @@ Setting no keyword arguments selects no constructs:
                         break
                 else:
                     value1 = get_property(name, None)
-                    if value1 is not None and construct._equals(value1, value0):
-                        # This construct matches this property
-                        ok = True
+                    ok = self._nnn(value0, construct, value1)
+                    if ok:
                         break
+                    
+#                    value1 = get_property(name, None)
+#                    if value1 is not None:                        
+#                        try:
+#                            result = value0.search(value1)
+#                        except (AttributeError, TypeError):
+#                            result = construct._equals(value1, value0)
+#                            
+#                        if result:
+#                            # This construct matches this property
+#                            ok = True
+#                            break
             #--- End: for
             
             if not ok:
