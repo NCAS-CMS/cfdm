@@ -21,7 +21,6 @@ Inspection
    :template: method.rst
    
 
-   ~cfdm.NumpyArray.get_array
    ~cfdm.NumpyArray.get_compressed_array
    ~cfdm.NumpyArray.get_compressed_axes
    ~cfdm.NumpyArray.get_compression_type
@@ -39,7 +38,8 @@ Inspection
    ~cfdm.NumpyArray.ndim
    ~cfdm.NumpyArray.shape
    ~cfdm.NumpyArray.size
-   
+   ~cfdm.NumpyArray.array
+
 Miscellaneous
 -------------
 

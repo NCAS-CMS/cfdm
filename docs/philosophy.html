@@ -1,20 +1,31 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Philosophy &#8212; Documentation</title>
+    
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.7.0b15',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Versioning" href="versioning.html" />
@@ -25,17 +36,18 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body role="document">
   <div class="document">
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">Python cfdm package 1.7.0b14</a></b></h3>
+<h3><b><a href="index.html">Python cfdm package 1.7.0b15</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference.html"><strong>Reference manual</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Philosophy</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#cf-conventions"><strong>CF conventions</strong></a></li>
@@ -64,14 +76,12 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -83,7 +93,7 @@
   <div class="section" id="philosophy">
 <span id="id1"></span><h1><strong>Philosophy</strong><a class="headerlink" href="#philosophy" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.7.0b14 for version 1.7 of the CF conventions.</p>
+<p>Version 1.7.0b15 for version 1.7 of the CF conventions.</p>
 <p>The basic requirement of the reference implementation is to represent
 the logical <a class="reference internal" href="introduction.html#cf-data-model"><span class="std std-ref">CF data model</span></a> in memory with a
 package of Python classes, with no further features. However, to be
@@ -101,7 +111,7 @@ field modification methods.</p>
 <span id="id2"></span><h2><strong>CF conventions</strong><a class="headerlink" href="#cf-conventions" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The CF data model does not enforce the CF conventions. CF-compliance
-is the responsibility of the user. For example, a “units” property
+is the responsibility of the user. For example, a &#8220;units&#8221; property
 whose value is not a valid <a class="reference external" href="https://www.unidata.ucar.edu/software/udunits">UDUNITS</a> string is not
 CF-compliant, but is allowed by the CF data model. This is also true,
 in general, for the cfdm package. The few exceptions to this occur
@@ -118,7 +128,7 @@ data model construct.</p>
 required to read and write datasets, and to create and inspect field
 constructs in memory.</p>
 <p>The cfdm package is not, and is not meant to be, a general analysis
-package. Therefore it can’t, for example, regrid field constructs to
+package. Therefore it can&#8217;t, for example, regrid field constructs to
 new domains, perform statistical collapses, combine field constructs
 arithmetically, etc. It has, however, been designed to be
 <a class="reference internal" href="subclassing.html#subclassing"><span class="std std-ref">subclassable</span></a> to facilitate the creation of other
@@ -137,7 +147,7 @@ verbose end of the spectrum: in general it does not use abbreviations
 for method and parameter names, and each method performs a sole
 function.</p>
 <p>Here is an example of a simple field created with the <a class="reference internal" href="class_core.html#class-core"><span class="std std-ref">cfdm.core</span></a> package:</p>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;altitude&#39;</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">axis</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
@@ -151,7 +161,7 @@ function.</p>
 </div>
 <p>The same field may be created with the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a>
 package:</p>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;altitude&#39;</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">axis</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">115.</span><span class="p">]),</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis</span><span class="p">])</span>
@@ -176,7 +186,7 @@ package:</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |

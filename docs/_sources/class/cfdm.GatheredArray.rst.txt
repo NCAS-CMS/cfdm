@@ -20,7 +20,6 @@ Inspection
    :toctree: ../method/
    :template: method.rst
       
-   ~cfdm.GatheredArray.get_array
    ~cfdm.GatheredArray.get_compressed_array
    ~cfdm.GatheredArray.get_compressed_axes
    ~cfdm.GatheredArray.get_compressed_dimension
@@ -38,6 +37,7 @@ Inspection
    ~cfdm.GatheredArray.ndim
    ~cfdm.GatheredArray.shape
    ~cfdm.GatheredArray.size
+   ~cfdm.GatheredArray.array
 
 Miscellaneous
 -------------

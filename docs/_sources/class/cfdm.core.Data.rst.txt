@@ -13,15 +13,6 @@ cfdm.core.Data
 Inspection
 -----------
 
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-   
-   ~cfdm.core.Data.get_array
-
 .. rubric:: Attributes
 
 .. autosummary::
@@ -33,6 +24,7 @@ Inspection
    ~cfdm.core.Data.ndim
    ~cfdm.core.Data.shape
    ~cfdm.core.Data.size
+   ~cfdm.core.Data.array
  
 Units
 -----

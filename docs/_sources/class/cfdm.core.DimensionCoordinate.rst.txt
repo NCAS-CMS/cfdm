@@ -37,6 +37,8 @@ Properties
    ~cfdm.core.DimensionCoordinate.has_property
    ~cfdm.core.DimensionCoordinate.set_property
    ~cfdm.core.DimensionCoordinate.properties
+   ~cfdm.core.DimensionCoordinate.clear_properties
+   ~cfdm.core.DimensionCoordinate.set_properties
 
 Data
 ----
@@ -48,7 +50,6 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.DimensionCoordinate.get_array
    ~cfdm.core.DimensionCoordinate.del_data
    ~cfdm.core.DimensionCoordinate.get_data
    ~cfdm.core.DimensionCoordinate.has_data

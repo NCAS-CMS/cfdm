@@ -20,8 +20,6 @@ Inspection
    :toctree: ../method/
    :template: method.rst
    
-   ~cfdm.Data.get_array
-   ~cfdm.Data.get_dtarray
    ~cfdm.Data.first_element
    ~cfdm.Data.second_element
    ~cfdm.Data.last_element
@@ -37,6 +35,8 @@ Inspection
    ~cfdm.Data.ndim
    ~cfdm.Data.shape
    ~cfdm.Data.size
+   ~cfdm.Data.array
+   ~cfdm.Data.datetime_array
  
 Units
 -----

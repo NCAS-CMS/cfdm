@@ -13,15 +13,6 @@ cfdm.CompressedArray
 Inspection
 ----------
 
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-      
-   ~cfdm.CompressedArray.get_array
-   
 .. rubric:: Attributes
 
 .. autosummary::
@@ -33,7 +24,8 @@ Inspection
    ~cfdm.CompressedArray.ndim
    ~cfdm.CompressedArray.shape
    ~cfdm.CompressedArray.size
-   
+   ~cfdm.CompressedArray.array
+  
 Compression
 -----------
 

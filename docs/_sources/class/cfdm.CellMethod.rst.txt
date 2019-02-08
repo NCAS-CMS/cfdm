@@ -55,6 +55,8 @@ Properties
    ~cfdm.CellMethod.has_property
    ~cfdm.CellMethod.set_property
    ~cfdm.CellMethod.properties
+   ~cfdm.CellMethod.clear_properties
+   ~cfdm.CellMethod.set_properties
 
 Miscellaneous
 -------------
