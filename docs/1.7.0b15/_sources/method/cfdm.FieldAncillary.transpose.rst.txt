@@ -1,0 +1,7 @@
+cfdm.FieldAncillary.transpose
+=============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.FieldAncillary.transpose

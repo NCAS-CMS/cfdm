@@ -1,0 +1,7 @@
+cfdm.Bounds.squeeze
+===================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Bounds.squeeze
