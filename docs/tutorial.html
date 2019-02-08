@@ -577,28 +577,28 @@ following attributes of the field construct:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.domain_axes.html#cfdm.Field.domain_axes" title="cfdm.Field.domain_axes"><code class="xref py py-obj docutils literal"><span class="pre">domain_axes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="attribute/cfdm.Field.domain_axes.html#cfdm.Field.domain_axes" title="cfdm.Field.domain_axes"><code class="xref py py-obj docutils literal"><span class="pre">domain_axes</span></code></a></td>
 <td>Domain axes</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.dimension_coordinates.html#cfdm.Field.dimension_coordinates" title="cfdm.Field.dimension_coordinates"><code class="xref py py-obj docutils literal"><span class="pre">dimension_coordinates</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="attribute/cfdm.Field.dimension_coordinates.html#cfdm.Field.dimension_coordinates" title="cfdm.Field.dimension_coordinates"><code class="xref py py-obj docutils literal"><span class="pre">dimension_coordinates</span></code></a></td>
 <td>Dimension coordinates</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.auxiliary_coordinates.html#cfdm.Field.auxiliary_coordinates" title="cfdm.Field.auxiliary_coordinates"><code class="xref py py-obj docutils literal"><span class="pre">auxiliary_coordinates</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="attribute/cfdm.Field.auxiliary_coordinates.html#cfdm.Field.auxiliary_coordinates" title="cfdm.Field.auxiliary_coordinates"><code class="xref py py-obj docutils literal"><span class="pre">auxiliary_coordinates</span></code></a></td>
 <td>Auxiliary coordinates</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.coordinate_references.html#cfdm.Field.coordinate_references" title="cfdm.Field.coordinate_references"><code class="xref py py-obj docutils literal"><span class="pre">coordinate_references</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="attribute/cfdm.Field.coordinate_references.html#cfdm.Field.coordinate_references" title="cfdm.Field.coordinate_references"><code class="xref py py-obj docutils literal"><span class="pre">coordinate_references</span></code></a></td>
 <td>Coordinate references</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.domain_ancillaries.html#cfdm.Field.domain_ancillaries" title="cfdm.Field.domain_ancillaries"><code class="xref py py-obj docutils literal"><span class="pre">domain_ancillaries</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="attribute/cfdm.Field.domain_ancillaries.html#cfdm.Field.domain_ancillaries" title="cfdm.Field.domain_ancillaries"><code class="xref py py-obj docutils literal"><span class="pre">domain_ancillaries</span></code></a></td>
 <td>Domain ancillaries</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.cell_measures.html#cfdm.Field.cell_measures" title="cfdm.Field.cell_measures"><code class="xref py py-obj docutils literal"><span class="pre">cell_measures</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="attribute/cfdm.Field.cell_measures.html#cfdm.Field.cell_measures" title="cfdm.Field.cell_measures"><code class="xref py py-obj docutils literal"><span class="pre">cell_measures</span></code></a></td>
 <td>Cell measures</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.field_ancillaries.html#cfdm.Field.field_ancillaries" title="cfdm.Field.field_ancillaries"><code class="xref py py-obj docutils literal"><span class="pre">field_ancillaries</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="attribute/cfdm.Field.field_ancillaries.html#cfdm.Field.field_ancillaries" title="cfdm.Field.field_ancillaries"><code class="xref py py-obj docutils literal"><span class="pre">field_ancillaries</span></code></a></td>
 <td>Field ancillaries</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.cell_methods.html#cfdm.Field.cell_methods" title="cfdm.Field.cell_methods"><code class="xref py py-obj docutils literal"><span class="pre">cell_methods</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="attribute/cfdm.Field.cell_methods.html#cfdm.Field.cell_methods" title="cfdm.Field.cell_methods"><code class="xref py py-obj docutils literal"><span class="pre">cell_methods</span></code></a></td>
 <td>Cell methods</td>
 </tr>
 </tbody>
@@ -653,7 +653,7 @@ internally and are unique within the field construct. However,
 construct keys may be different for equivalent metadata constructs
 from different field constructs, and for different Python sessions.</p>
 <p>Metadata constructs of all types may be returned by the
-<a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal"><span class="pre">constructs</span></code></a> attribute of the field construct:</p>
+<a class="reference internal" href="attribute/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal"><span class="pre">constructs</span></code></a> attribute of the field construct:</p>
 <div class="literal-block-wrapper docutils container" id="id66">
 <div class="code-block-caption"><span class="caption-text"><em>Retrieve all of the field construct&#8217;s metadata
 constructs.</em></span><a class="headerlink" href="#id66" title="Permalink to this code">¶</a></div>
@@ -1239,7 +1239,7 @@ method, or directly on the &#8220;Constructs&#8221; instance.</em></span><a clas
 <p>An individual metadata construct may be returned, without its
 construct key, via the <a class="reference internal" href="method/cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal"><span class="pre">get_construct</span></code></a> method of the field
 construct, which supports the same filtering options as the
-<a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal"><span class="pre">constructs</span></code></a> method. A metadata construct may be removed with
+<a class="reference internal" href="attribute/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal"><span class="pre">constructs</span></code></a> method. A metadata construct may be removed with
 the <a class="reference internal" href="method/cfdm.Field.del_construct.html#cfdm.Field.del_construct" title="cfdm.Field.del_construct"><code class="xref py py-obj docutils literal"><span class="pre">del_construct</span></code></a> method and the existence of a metadata
 constructs may be checked with the <code class="xref py py-obj docutils literal"><span class="pre">has_construct</span></code> method,
 which returns a count of how many metadata constructs match the
@@ -1486,16 +1486,17 @@ attributes and methods of the domain instance.</p>
 <div class="code-block-caption"><span class="caption-text"><em>Change a property of a metadata construct of the domain
 and show that this change appears in the same metadata
 data construct of the parent field, and vice versa.</em></span><a class="headerlink" href="#id102" title="Permalink to this code">¶</a></div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">domain</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="s1">&#39;set by domain&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
-<span class="go">&#39;set by domain&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="s1">&#39;set by field&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">domain_latitude</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field_latitude</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain_latitude</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="s1">&#39;set by domain&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">field_latitude</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">))</span>
+<span class="go">set by domain</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field_latitude</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="s1">&#39;set by field&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">domain_latitude</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">))</span>
+<span class="go">set by field</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain_latitude</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
 <span class="go">&#39;set by field&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
-<span class="go">&#39;set by field&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field_latitude</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
@@ -1529,7 +1530,7 @@ the <a class="reference internal" href="method/cfdm.DomainAxis.get_size.html#cfd
 <hr class="docutils" />
 <p>There are two types of coordinate construct, dimension and
 auxiliary coordinate constructs, which can be retrieved together with
-the <a class="reference internal" href="method/cfdm.Field.coordinates.html#cfdm.Field.coordinates" title="cfdm.Field.coordinates"><code class="xref py py-obj docutils literal"><span class="pre">coordinates</span></code></a> method of the field construct.</p>
+the <a class="reference internal" href="attribute/cfdm.Field.coordinates.html#cfdm.Field.coordinates" title="cfdm.Field.coordinates"><code class="xref py py-obj docutils literal"><span class="pre">coordinates</span></code></a> method of the field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id104">
 <div class="code-block-caption"><span class="caption-text"><em>Retrieve both types of coordinate constructs.</em></span><a class="headerlink" href="#id104" title="Permalink to this code">¶</a></div>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>
@@ -1555,7 +1556,7 @@ construct</span></a> for accessing its data.</p>
 <div class="literal-block-wrapper docutils container" id="id105">
 <div class="code-block-caption"><span class="caption-text"><em>Get the Bounds instance of a coordinate construct and
 inspect its data.</em></span><a class="headerlink" href="#id105" title="Permalink to this code">¶</a></div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;grid_longitude&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;grid_longitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bounds</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bounds</span>
 <span class="go">&lt;Bounds: grid_longitude(9, 2) &gt;</span>
@@ -1630,8 +1631,7 @@ reference construct;</li>
 inspect its coordinate constructs. (Note that the
 &#8220;construct&#8221; parameter is required since there is also a
 dimension coordinate construct with the same name.)</em></span><a class="headerlink" href="#id108" title="Permalink to this code">¶</a></div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">crs</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;atmosphere_hybrid_height_coordinate&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                      <span class="n">construct</span><span class="o">=</span><span class="s1">&#39;coordinate_reference&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">crs</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;standard_name:atmosphere_hybrid_height_coordinate&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">crs</span>
 <span class="go">&lt;CoordinateReference: atmosphere_hybrid_height_coordinate&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">crs</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
@@ -1729,7 +1729,7 @@ methods of methods of the cell method construct.</p>
 <div class="literal-block-wrapper docutils container" id="id113">
 <div class="code-block-caption"><span class="caption-text"><em>Get the domain axes constructs to which the cell method
 construct applies, and the method and other properties.</em></span><a class="headerlink" href="#id113" title="Permalink to this code">¶</a></div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;cellmethod0&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;method:mean&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span>
 <span class="go">&lt;CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)&gt;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()</span>
@@ -2243,7 +2243,7 @@ domain.</p>
 <div class="literal-block-wrapper docutils container" id="id124">
 <div class="code-block-caption"><span class="caption-text"><em>Create an independent field construct from the &#8220;surface
 altitude&#8221; metadata construct.</em></span><a class="headerlink" href="#id124" title="Permalink to this code">¶</a></div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">constructs</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_key</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_key</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">orog</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">orog</span><span class="p">)</span>
 <span class="go">Field: surface_altitude</span>
@@ -2365,7 +2365,7 @@ altered.</em></span><a class="headerlink" href="#id128" title="Permalink to this
 <p>Metadata constructs may be copied individually in the same manner:</p>
 <div class="literal-block-wrapper docutils container" id="id130">
 <div class="code-block-caption"><span class="caption-text"><em>Copy a metadata construct.</em></span><a class="headerlink" href="#id130" title="Permalink to this code">¶</a></div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">orog</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">orog</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2455,7 +2455,7 @@ settings.</li>
 <div class="literal-block-wrapper docutils container" id="id133">
 <div class="code-block-caption"><span class="caption-text"><em>Metadata constructs also have an equals method, that
 behaves in a similar manner.</em></span><a class="headerlink" href="#id133" title="Permalink to this code">¶</a></div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">orog</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">orog</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">orog</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">orog</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 <span class="go">True</span>
 </pre></div>
@@ -2476,18 +2476,18 @@ variable names, and some attribute values) that do not have a place in
 the CF data model are, nevertheless, stored within the appropriate
 cfdm constructs. This allows them to be used when writing field
 constructs to a new netCDF dataset, and also makes them accessible for
-metadata construct identification with the <a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal"><span class="pre">constructs</span></code></a> and
+metadata construct identification with the <a class="reference internal" href="attribute/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal"><span class="pre">constructs</span></code></a> and
 <a class="reference internal" href="method/cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal"><span class="pre">get_construct</span></code></a> methods of the field construct:</p>
 <div class="literal-block-wrapper docutils container" id="id134">
 <div class="code-block-caption"><span class="caption-text"><em>Retrieve metadata constructs based on their netCDF
 names.</em></span><a class="headerlink" href="#id134" title="Permalink to this code">¶</a></div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">ncvar</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="o">.</span><span class="n">ncvar</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">))</span>
 <span class="go">Constructs:</span>
 <span class="go">{&#39;domainancillary1&#39;: &lt;DomainAncillary: ncvar%b(1) &gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;ncvar</span><span class="si">%x</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s1">&#39;ncvar</span><span class="si">%x</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 <span class="go">&lt;DimensionCoordinate: grid_longitude(9) degrees&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="n">ncdim</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
-<span class="go">&lt;DomainAxis: size(9)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;ncdim</span><span class="si">%x</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="go">&lt;Constructs: domain_axis(1)&gt;</span>
 </pre></div>
 </div>
 </div>
@@ -2541,7 +2541,7 @@ metadata constructs.</em></span><a class="headerlink" href="#id135" title="Perma
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;humidity&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
 <span class="go">&#39;humidity&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
 <span class="go">&#39;lat&#39;</span>
 </pre></div>
 </div>
@@ -2771,9 +2771,11 @@ data.</em></span><a class="headerlink" href="#id139" title="Permalink to this co
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
 <span class="go">&lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">get_construct_data_axes</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_key</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">axes</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get_data_axes</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">axes</span>
 <span class="go">(&#39;domainaxis2&#39;,)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q2</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;domainaxis2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q2</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q2</span>
 <span class="go">&lt;Field: specific_humidity(time(1), latitude(5), longitude(8)) 1&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="s1">&#39;q2_file.nc&#39;</span><span class="p">)</span>
@@ -2894,7 +2896,7 @@ of any external datasets.</em></span><a class="headerlink" href="#id143" title="
 <span class="go">                : longitude(9) = [0.0, ..., 8.0] degrees</span>
 <span class="go">Cell measures   : measure:area (external variable: ncvar%areacella)</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">area</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;measure:area&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">area</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;measure:area&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">area</span>
 <span class="go">&lt;CellMeasure: measure:area &gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">area</span><span class="o">.</span><span class="n">nc_external</span><span class="p">()</span>
@@ -2928,7 +2930,7 @@ dataset containing the external variables.</em></span><a class="headerlink" href
 <span class="go">Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees</span>
 <span class="go">                : longitude(9) = [0.0, ..., 8.0] degrees</span>
 <span class="go">Cell measures   : cell_area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">area</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;cell_area&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">area</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;measure:area&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">area</span>
 <span class="go">&lt;CellMeasure: cell_area(9, 10) m2&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">area</span><span class="o">.</span><span class="n">nc_external</span><span class="p">()</span>

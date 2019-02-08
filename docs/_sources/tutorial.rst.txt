@@ -1435,16 +1435,17 @@ attributes and methods of the domain instance.
              and show that this change appears in the same metadata
              data construct of the parent field, and vice versa.*
 
-   >>> domain = t.domain
-   >>> domain.constructs('latitude').get().set_property('test', 'set by domain')
-   >>> t.constructs('latitude').get().get_property('test')
-   'set by domain'
-   >>> t.constructs('latitude').get().set_property('test', 'set by field')
-   >>> domain.constructs('latitude').get().get_property('test')
+   >>> domain_latitude = t.domain.constructs('latitude').get()
+   >>> field_latitude = t.constructs('latitude').get()
+   >>> domain_latitude.set_property('test', 'set by domain')
+   >>> print(field_latitude.get_property('test'))
+   set by domain
+   >>> field_latitude.set_property('test', 'set by field')
+   >>> print(domain_latitude.get_property('test'))
+   set by field
+   >>> domain_latitude.del_property('test')
    'set by field'
-   >>> domain.constructs('latitude').get().del_property('test')
-   'set by field'
-   >>> t.construct('latitude').get().has_property('test')
+   >>> field_latitude.has_property('test')
    False
 
 All of the methods and attributes related to the domain are listed
@@ -1512,7 +1513,7 @@ construct <Data>` for accessing its data.
    :caption: *Get the Bounds instance of a coordinate construct and
              inspect its data.*
       
-   >>> lon = t.get_construct('grid_longitude')
+   >>> lon = t.constructs('grid_longitude').get()
    >>> bounds = lon.get_bounds()
    >>> bounds
    <Bounds: grid_longitude(9, 2) >
@@ -1592,8 +1593,7 @@ A coordinate reference construct contains
              "construct" parameter is required since there is also a
              dimension coordinate construct with the same name.)*
      
-   >>> crs = t.get_construct('atmosphere_hybrid_height_coordinate',
-   ...                       construct='coordinate_reference')
+   >>> crs = t.constructs('standard_name:atmosphere_hybrid_height_coordinate').get()
    >>> crs
    <CoordinateReference: atmosphere_hybrid_height_coordinate>
    >>> crs.dump()
@@ -1689,7 +1689,7 @@ methods of methods of the cell method construct.
    :caption: *Get the domain axes constructs to which the cell method
              construct applies, and the method and other properties.*
      
-   >>> cm = t.get_construct(key='cellmethod0')
+   >>> cm = t.constructs('method:mean').get()
    >>> cm
    <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>)
    >>> cm.get_axes()
@@ -2227,7 +2227,7 @@ domain.
    :caption: *Create an independent field construct from the "surface
              altitude" metadata construct.*
 
-   >>> key = tas.constructs.name('surface_altitude').get_key()
+   >>> key = tas.constructs('surface_altitude').get_key()
    >>> orog = tas.convert(key)
    >>> print(orog)
    Field: surface_altitude
@@ -2356,7 +2356,7 @@ Metadata constructs may be copied individually in the same manner:
 .. code-block:: python
    :caption: *Copy a metadata construct.*
 
-   >>> orog = t.get_construct('surface_altitude').copy()
+   >>> orog = t.constructs('surface_altitude').get().copy()
 
 Arrays within `Data` instances are copied with a `copy-on-write
 <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This means
@@ -2457,7 +2457,7 @@ Metadata constructs may also be tested for equality:
    :caption: *Metadata constructs also have an equals method, that
              behaves in a similar manner.*
 	  
-   >>> orog = t.get_construct('surface_altitude')
+   >>> orog = t.constructs('surface_altitude').get()
    >>> orog.equals(orog.copy())
    True
 
@@ -2488,13 +2488,13 @@ metadata construct identification with the `~Field.constructs` and
    :caption: *Retrieve metadata constructs based on their netCDF
              names.*
 	  
-   >>> print(t.constructs(ncvar='b'))
+   >>> print(t.constructs.ncvar('b'))
    Constructs:
    {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
-   >>> t.get_construct('ncvar%x')
+   >>> t.constructs.name('ncvar%x').get()
    <DimensionCoordinate: grid_longitude(9) degrees>
-   >>> t.get_construct(ncdim='x')
-   <DomainAxis: size(9)>
+   >>> t.constructs('ncdim%x')
+   <Constructs: domain_axis(1)>
      
 Each construct has methods to access the netCDF elements which it
 requires. For example, the field construct has the following methods:
@@ -2531,7 +2531,7 @@ Method                            Description
    >>> q.nc_set_variable('humidity')
    >>> q.nc_get_variable()
    'humidity'
-   >>> q.get_construct('latitude').nc_get_variable()
+   >>> q.constructs('latitude').get().nc_get_variable()
    'lat'
 
 The complete collection of netCDF interface methods is:
@@ -2727,9 +2727,11 @@ of the field construct.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : time(1) = [2019-01-01 00:00:00]
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> q.get_construct_data_axes('time')
+   >>> key = q.constructs('time').get_key()
+   >>> axes = q.get_data_axes(key)
+   >>> axes
    ('domainaxis2',)
-   >>> q2 = q.insert_dimension(axis='domainaxis2')
+   >>> q2 = q.insert_dimension(axis=axes[0])
    >>> q2
    <Field: specific_humidity(time(1), latitude(5), longitude(8)) 1>
    >>> cfdm.write(q2, 'q2_file.nc')
@@ -2854,7 +2856,7 @@ is still created, but one without any metadata or data:
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : measure:area (external variable: ncvar%areacella)
 
-   >>> area = u.get_construct('measure:area')
+   >>> area = u.constructs('measure:area').get()
    >>> area
    <CellMeasure: measure:area >
    >>> area.nc_external()
@@ -2889,7 +2891,7 @@ variable had been present in the parent dataset:
    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : cell_area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2
-   >>> area = g.get_construct('cell_area')
+   >>> area = u.constructs('measure:area').get()
    >>> area
    <CellMeasure: cell_area(9, 10) m2>
    >>> area.nc_external()

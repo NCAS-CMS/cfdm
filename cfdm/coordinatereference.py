@@ -431,7 +431,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
         for prop in custom:
             n = self.coordinate_conversion.get_parameter(prop, None)
             if n is not None:
-                out.append(str(n))
+                out.append('{0}:{1}'.format(prop, n))
                 if not all_names:
                     break
         #--- End: if

@@ -388,7 +388,7 @@ TODO
         return out
     #--- End: def'
 
-    def _del_construct(self, key):        
+    def _del_construct(self, key, default=ValueError()):
         '''Remove a construct.
 
 If a domain axis construct is selected for removal then it can't be
@@ -456,7 +456,12 @@ removed even if it is referenced by coordinate reference coinstruct.
                 ref.del_coordinate(key, None)
         #--- End: if
 
-        return self._pop(key, None)
+        out = self._pop(key, None)
+
+        if out is None:
+            return self._default(default, "Can't get remove non-existent construct")
+
+        return out    
     #--- End: def
 
     def _set_construct(self, construct, key=None, axes=None,
