@@ -165,14 +165,14 @@ class FieldTest(unittest.TestCase):
         # ------------------------------------------------------------
         # constructs_type parameter
         # ------------------------------------------------------------
-        constructs = f.constructs.type(['auxiliary_coordinate',
-                                        'cell_measure',
-                                        'cell_method',
-                                        'coordinate_reference',
-                                        'dimension_coordinate',
-                                        'domain_ancillary',
-                                        'domain_axis',
-                                        'field_ancillary'])
+        constructs = f.constructs.type('auxiliary_coordinate',
+                                       'cell_measure',
+                                       'cell_method',
+                                       'coordinate_reference',
+                                       'dimension_coordinate',
+                                       'domain_ancillary',
+                                       'domain_axis',
+                                       'field_ancillary')
         n = 20
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
@@ -233,21 +233,21 @@ class FieldTest(unittest.TestCase):
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAxis)
 
-        constructs = f.constructs.type(['domain_ancillary'])
+        constructs = f.constructs.type(*['domain_ancillary'])
         n = 3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
-        constructs = f.constructs.type(['domain_axis'])
+        constructs = f.constructs.type(*['domain_axis'])
         n =  3
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAxis)
 
-        constructs = f.constructs.type(['domain_ancillary', 'domain_axis'])
+        constructs = f.constructs.type('domain_ancillary', 'domain_axis')
         n = 6
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))

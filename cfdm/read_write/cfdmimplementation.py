@@ -294,13 +294,16 @@ If no axes are specified then all constructs are returned.
 If axes are specified then constructs whose data arrays span those
 axes, and possibly other axes, are returned.
 
+:Parameters:
+
+    axes: sequence of `str`
+
 :Returns:
 
     `dict`
 
         '''
-#        return dict(field.constructs.select(axis=axes))
-        return dict(field.constructs.axis(axes))
+        return dict(field.constructs.axis(*axes))
     #--- End: def
     
     def get_coordinate_reference_coordinates(self, coordinate_reference):

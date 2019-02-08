@@ -325,7 +325,7 @@ Setting no keyword arguments selects no constructs:
         '''
         out = self.shallow_copy()
 
-        axes = set(axes)
+        axes = set(tuple(axes))
 
         constructs_data_axes = self.data_axes()
         for cid, construct in tuple(out.items()):
