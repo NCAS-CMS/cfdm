@@ -20,15 +20,15 @@ Selection
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Constructs.name
-   ~cfdm.Constructs.property
-   ~cfdm.Constructs.measure
-   ~cfdm.Constructs.method
-   ~cfdm.Constructs.axis
-   ~cfdm.Constructs.type
-   ~cfdm.Constructs.key
-   ~cfdm.Constructs.ncdim
-   ~cfdm.Constructs.ncvar
+   ~cfdm.Constructs.filter_by_name
+   ~cfdm.Constructs.filter_by_property
+   ~cfdm.Constructs.filter_by_measure
+   ~cfdm.Constructs.filter_by_method
+   ~cfdm.Constructs.filter_by_axis
+   ~cfdm.Constructs.filter_by_type
+   ~cfdm.Constructs.filter_by_key
+   ~cfdm.Constructs.filter_by_ncdim
+   ~cfdm.Constructs.filter_by_ncvar
    ~cfdm.Constructs.get
    ~cfdm.Constructs.get_key
 

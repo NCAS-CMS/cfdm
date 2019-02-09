@@ -101,8 +101,6 @@ x.__str__() <==> str(x)
 
         constructs_data_axes = self.data_axes()
 
-#        dimension_coordinates = self.type('dimension_coordinate')
-
         name = None        
         for dkey, dim in self.type('dimension_coordinate').items():
             if constructs_data_axes[dkey] == (key,):
@@ -113,8 +111,6 @@ x.__str__() <==> str(x)
         if name is not None:
             return name
 
-#        auxiliary_coordinates = self.type('auxiliary_coordinate')
-        
         found = False
         for akey, aux in self.type('auxiliary_coordinate').items():
             if constructs_data_axes[akey] == (key,):
@@ -305,8 +301,8 @@ x.__str__() <==> str(x)
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `key`, `measure`, `method`, `name`, `ncdim`, `ncvar`,
-             `property`, `type`
+.. seealso:: `key`, `filter_by_measure`, `filter_by_method`, `name`,
+             `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
 
 :Parameters:
 
@@ -394,8 +390,8 @@ Setting no keyword arguments selects no constructs:
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `measure`, `method`, `name`, `ncdim`, `ncvar`,
-             `property`, `type`
+.. seealso:: `axis`, `filter_by_measure`, `filter_by_method`, `name`,
+             `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
 
 :Parameters:
 
@@ -438,13 +434,13 @@ Setting no keyword arguments selects no constructs:
         return out
     #--- End: def
 
-    def measure(self, *measures):
+    def filter_by_measure(self, *measures):
         '''Select cell measure constructs by measure.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `method`, `name`, `ncdim`, `ncvar`,
-             `property`, `type`
+.. seealso:: `axis`, `key`, `filter_by_method`, `name`,
+             `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
 
 :Parameters:
 
@@ -452,9 +448,13 @@ Setting no keyword arguments selects no constructs:
         Select cell measure constructs that have any of the given
         measure values.
 
-        If a measure of `None` is provided then all cell measure
-        constructs that have a measure property, with any value, are
-        selected.
+        A measure is specified by a string (e.g. ``'area'``); or a
+        compiled regular expression (e.g. ``re.compile('^a')``), for
+        which all constructs whose measures match (via `re.search`)
+        are selected.
+
+        If no measures are provided then all cell measure constructs
+        that have a measure property, with any value, are selected.
 
 :Returns:
 
@@ -494,17 +494,18 @@ Setting no keyword arguments selects no constructs:
                 out._pop(cid)
                 continue
 
+            if not measures:
+                if not construct.has_measure():
+                    out._pop(cid)
+                    
+                continue
+
             ok = False
             for value0 in measures:
-                if value0 is None:
-                    if construct.has_measure():
-                        ok = True
-                        break
-                else:
-                    value1 = construct.get_measure(None)
-                    ok = self._matching_values(value0, construct, value1)
-                    if ok:
-                        break
+                value1 = construct.get_measure(None)
+                ok = self._matching_values(value0, construct, value1)
+                if ok:
+                    break
             #--- End: for
             
             if not ok:
@@ -522,18 +523,18 @@ Setting no keyword arguments selects no constructs:
 
         prefiltered = getattr(self, '_prefiltered', None)
         if prefiltered is not None:
-            out._prefiltered = prefiltered
+            out._prefiltered = prefiltered.shallow_copy()
             
         return out
     #--- End: def
 
-    def method(self, *methods):
+    def filter_by_method(self, *methods):
         '''Select cell method constructs by method.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `measure`, `name`, `ncdim`, `ncvar`,
-             `property`, `type`
+.. seealso:: `axis`, `key`, `filter_by_measure`, `name`,
+             `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
 
 :Parameters:
 
@@ -541,8 +542,13 @@ Setting no keyword arguments selects no constructs:
         Select cell method constructs that have any of the given
         methods.
 
-        If a method of `None` is provided then all cell method
-        constructs that have a method, with any value, are selected.
+        A method is specified by a string (e.g. ``'mean'``); or a
+        compiled regular expression (e.g. ``re.compile('^m')``), for
+        which all constructs whose methods match (via `re.search`) are
+        selected.
+
+        If no methods are provided then all cell method constructs
+        that have a method, with any value, are selected.
 
 :Returns:
 
@@ -551,23 +557,38 @@ Setting no keyword arguments selects no constructs:
 
 **Examples:**
 
+>>> print(c.constructs.filter_by_type('cell_method'))
+Constructs:
+{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+ 'cellmethod1': <CellMethod: domainaxis3: maximum>}
+
 Select cell method constructs that have a method of 'mean':
 
->>> d = c.method('mean')
+>>> print(c.filter_by_method('mean'))
+Constructs:
+{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>}
 
 Select cell method constructs that have a method of 'mean' or
 'maximmum':
 
->>> d = c.method('mean', 'maximum')
+>>> print(c.filter_by_method('mean', 'maximum'))
+Constructs:
+{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+ 'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
 Select cell method constructs that have a method of any value:
 
->>> d = c.method(None)
+>>> print(c.filter_by_method())
+Constructs:
+{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+ 'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
-Setting no keyword arguments selects no constructs:
+Select cell method constructs that have a method that contiain the letter 'x':
 
->>> c.method()
-<Constructs: >
+>>> import re
+>>> print(c.filter_by_method(re.compile('x')))
+Constructs:
+{'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
         '''
         out = self.shallow_copy()
@@ -581,22 +602,18 @@ Setting no keyword arguments selects no constructs:
                 out._pop(cid)
                 continue
 
+            if not methods:
+                if not construct.has_method():
+                    out._pop(cid)
+                    
+                continue
+            
             ok = False
             for value0 in methods:
-                if value0 is None:
-                    if construct.has_method():
-                        ok = True
-                        break
-                else:
-                    value1 = get_method(None)
-                    ok = self._matching_values(value0, construct, value1)
-                    if ok:
-                        break
-
-#                    if value1 is not None and construct._equals(value0, value1):
-#                        # This construct matches this method
-#                        ok = True
-#                        break
+                value1 = get_method(None)
+                ok = self._matching_values(value0, construct, value1)
+                if ok:
+                    break
             #--- End: for
             
             if not ok:
@@ -607,7 +624,7 @@ Setting no keyword arguments selects no constructs:
         return out
     #--- End: def
 
-    def name(self, name):
+    def name(self, *names):
         '''Select metadata constructs by name/
 
 By default all metadata constructs are selected, but a subset may be
@@ -764,38 +781,19 @@ TODO
         out = self.shallow_copy()
         out._prefiltered = self.shallow_copy()
                 
-        if isinstance(name, basestring):
-            name = (name,)
-
         for cid, construct in tuple(out.items()):
             ok = False
-            names = set(construct.names(extra=('key%'+cid,)))
-            for n in name:
-                if n in names:
-                    # This construct matches this name
-                    ok = True
+            for value0 in names:
+                for value1 in construct.names(extra=('key%'+cid,)):
+                    ok = self._matching_values(value0, construct, value1)
+                    if ok:
+                        break
+                #--- End: for
+
+                if ok:
                     break
-#
-#                else:
-#                    (prefix, _, value) = n.partition('%')
-#                    if prefix == 'key' and value == cid:
-#                        # This construct matches this name
-#                        ok = True
-#                        break
-#                elif n in names:
-#                    # This construct matches this name
-#                    ok = True
-#                    break
-#
-#                    (prefix, _, value) = n.partition('=')
-#                    custom = (prefix,) if value else None
-#                    if n in construct.name(custom=custom,
-#                                           all_names=True):
-#                        # This construct matches this name
-#                        ok = True
-#                        break
             #--- End: for
-            
+
             if not ok:
                 # This construct does not match any of the names
                 out._pop(cid)
@@ -804,34 +802,28 @@ TODO
         return out
     #--- End: def
 
-    def ncdim(self, *ncdim):
+    def filter_by_ncdim(self, *ncdims):
         '''Select metadata constructs
 
-By default all metadata constructs are selected, but a subset may be
-chosen via the optional parameters. If multiple parameters are
-specified, then the constructs that satisfy *all* of the criteria are
-returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get`, `keys`, 'items`, `values`
+.. seealso:: TODO
 
 :Parameters:
 
-    ncdim: (sequence of) `str`, optional
-        Select domain axis constructs which have the given netCDF
-        dimension name. If multiple netCDF dimension names are
-        specified then select the domain axis constructs which have
-        any of the given netCDF dimension names.
+    ncdims:
+        Select domain axis constructs that have any of the given
+        netCDF dimension names.
 
-        *Parameter example:*
-          ``ncdim='lon'``
+        A netCDF dimension name is specified by a string
+        (e.g. ``'time'``); or a compiled regular expression
+        (e.g. ``re.compile('^lat')``), for which all constructs whose
+        netCDF dimension names match (via `re.search`) are selected.
 
-        *Parameter example:*
-          ``ncdim=['lat']``
-
-        *Parameter example:*
-          ``ncdim=['lon', 'lat']``
+        If no netCDF dimension names are provided then all domain axis
+        constructs that have a netCDF dimension name, with any value,
+        are selected.
 
 :Returns:
 
@@ -841,6 +833,7 @@ returned.
 **Examples:**
 
 TODO
+
         '''
         out = self.shallow_copy()
         out._prefiltered = self.shallow_copy()
@@ -855,16 +848,11 @@ TODO
                 continue
             
             ok = False
-            for value0 in ncdim:
-                if value0 is None:
-                    if construct.nc_has_dimension():
-                        ok = True
-                        break
-                else:
-                    value1 = get_nc_dimension(None)
-                    ok = self._matching_values(value0, construct, value1)
-                    if ok:
-                        break
+            for value0 in ncdims:
+                value1 = get_nc_dimension(None)
+                ok = self._matching_values(value0, construct, value1)
+                if ok:
+                    break
             #--- End: for
             
             if not ok:
@@ -876,7 +864,7 @@ TODO
         return out
     #--- End: def
 
-    def ncvar(self, *ncvar):
+    def filter_by_ncvar(self, *ncvars):
         '''Select metadata constructs
 
 By default all metadata constructs are selected, but a subset may be
@@ -890,7 +878,7 @@ returned.
 
 :Parameters:
 
-    ncvar: (sequence of) `str`, optional
+    ncvars: (sequence of) `str`, optional
         Select constructs which have the given netCDF variable
         name. If multiple netCDF variable names are specified then
         select the constructs which have any of the given netCDF
@@ -919,23 +907,25 @@ TODO
         
         for cid, construct in tuple(out.items()):            
             try:
-                get_nc_variable = construct.nc_get_variable
+                nc_get_variable = construct.nc_get_variable
             except AttributeError:
-                # This construct doesn't have a "nc_get_variable" method
+                # This construct doesn't have a "nc_get_variable"
+                # method
                 out._pop(cid)
                 continue
-            
+
+            if not ncvars:
+                if not construct.nc_has_variable():
+                    out._pop(cid)
+                    
+                continue
+
             ok = False
-            for value0 in ncvar:
-                if value0 is None:
-                    if construct.nc_has_variable():
-                        ok = True
-                        break
-                else:
-                    value1 = get_nc_variable(None)
-                    ok = self._matching_values(value0, construct, value1)
-                    if ok:
-                        break
+            for value0 in ncvars:
+                value1 = nc_get_variable(None)
+                ok = self._matching_values(value0, construct, value1)
+                if ok:
+                    break
             #--- End: for
 
             if not ok:
@@ -965,8 +955,8 @@ TODO
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `measure`, `method`, `name`, `ncdim`,
-             `ncvar`, `type`
+.. seealso:: `axis`, `key`, `filter_by_measure`, `filter_by_method`, `name`,
+             `filter_by_ncdim`, `filter_by_ncvar`, `type`
 
 :Parameters:
 
@@ -1047,8 +1037,9 @@ Setting no keyword arguments selects no constructs:
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `measure`, `method`, `name`, `ncdim`,
-             `ncvar`, `property`, `type`
+.. seealso:: `axis`, `key`, `filter_by_measure`, `filter_by_method`,
+             `name`, `filter_by_ncdim`, `filter_by_ncvar`, `property`,
+             `type`
 
 :Returns:
 
