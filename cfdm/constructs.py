@@ -12,10 +12,10 @@ class Constructs(core.Constructs):
 
     ''' 
        
-    def __call__(self, name):
+    def __call__(self, **names):
         '''TODO
         '''
-        return self.name(name)
+        return self.filter_by_name(**names)
     #--- End: def
     
     def __repr__(self):
@@ -301,8 +301,9 @@ x.__str__() <==> str(x)
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `key`, `filter_by_measure`, `filter_by_method`, `name`,
-             `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
+.. seealso:: `key`, `filter_by_measure`, `filter_by_method`,
+             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `property`, `type`
 
 :Parameters:
 
@@ -390,8 +391,9 @@ Setting no keyword arguments selects no constructs:
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `filter_by_measure`, `filter_by_method`, `name`,
-             `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
+.. seealso:: `axis`, `filter_by_measure`, `filter_by_method`,
+             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `property`, `type`
 
 :Parameters:
 
@@ -439,7 +441,7 @@ Setting no keyword arguments selects no constructs:
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `filter_by_method`, `name`,
+.. seealso:: `axis`, `key`, `filter_by_method`, `filter_by_name`,
              `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
 
 :Parameters:
@@ -516,24 +518,12 @@ Setting no keyword arguments selects no constructs:
         return out
     #--- End: def
 
-    def shallow_copy(self, _ignore=None):
-        '''
-        '''
-        out = super().shallow_copy(_ignore=_ignore)
-
-        prefiltered = getattr(self, '_prefiltered', None)
-        if prefiltered is not None:
-            out._prefiltered = prefiltered.shallow_copy()
-            
-        return out
-    #--- End: def
-
     def filter_by_method(self, *methods):
         '''Select cell method constructs by method.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `filter_by_measure`, `name`,
+.. seealso:: `axis`, `key`, `filter_by_measure`, `filter_by_name`,
              `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
 
 :Parameters:
@@ -624,149 +614,41 @@ Constructs:
         return out
     #--- End: def
 
-    def name(self, *names):
-        '''Select metadata constructs by name/
-
-By default all metadata constructs are selected, but a subset may be
-chosen via the optional parameters. If multiple parameters are
-specified, then the constructs that satisfy *all* of the criteria are
-returned.
-
-Construct names are generally based on property values, or on the
-netCDF names that the construct may have. A construct has a set of
-default names that only consider certain properties that have
-particular menings in CF. These default names may be found with the
-construct's `!all_names` method, for example:
-
-   >>> c.properties()
-   {'standard_name': 'longitude',
-    'long_name': Longitude',
-    'units': 'degrees_east',
-    'foo': 'bar'}
-   >>> c.nc_get_variable()
-   'lon'
-   >>> c.all_names()
-   ['longitude', 'long_name=Longitude', 'ncvar%lon']
-
-
-names inherited from netCDF
-fielsd is typically the description that is displayed when the
-construct is inspected, and so it is often convienient to copy this
-name when selecting metadata constructs. For example, the three
-auxiliary coordinate constructs in the field construct t have names
-'latitude', 'longitude' and 'long_name=Grid latitude name'. Selection
-by name does not require a keyword parameter, although the keyword
-name can be used:
-
-A construct has a number of default names, and is selected if any of
-them match any of the given names. The construct's default names are
-returned by the construct's `!all_names` method. In the following
-example, the construct ``c`` has three default names:
-
-   >>> c.properties()
-   {'standard_name': 'longitude',
-    'long_name': Longitude',
-    'units': 'degrees_east',
-    'foo': 'bar'}
-   >>> c.nc_get_variable()
-   'lon'
-   >>> c.all_names()
-   ['longitude', 'long_name=Longitude', 'ncvar%lon']
+    def filter_by_name(self, **names):
+        '''Select metadata constructs by name.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: TODO
+.. seealso:: `axis`, `key`, `filter_by_measure`, `filter_by_method`,
+             `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
 
 :Parameters:
 
-    name: (sequence of) `str`
-        Select constructs that have the given name. If a sequence of
-        names has been given then the constructs that have any of the
-        names are selected.
-       
-        A construct has a number of default names, and is selected if
-        any of them match any of the given names. The construct's
-        default names are returned by the construct's `!all_names`
-        method. In the followinf example, the construct ``c`` has
-        three default names:
+    names:
 
-           >>> c.all_names()
-           ['longitude', 'long_name=Longitude', 'ncvar%lon']
+        Select constructs that have any of the given names.
 
-        It is also possible for a construct to be selected by a name
-        based on any construct property, or the construct's key.s
+        A name is specified by a string (e.g. ``'latitude'``,
+        ``'long_name=time'``, etc.); or a compiled regular expression
+        (e.g. ``re.compile('^atmosphere')``), for which all constructs
+        whose names match (via `re.search`) are selected.
 
-        Note that the names used to identify metadata constructs in
-        the ouput of a `print` or `!dump` call are one of the default
-        names and so may always be used when selecting constructs by
-        name.
+        If no names are provided then all constructs are selected.
 
-        A name may be one of:
+        Each construct has a number of names, and is selected if any
+        of them match any of those provided. A construct's names are
+        those returned by its `!names` method. In the following
+        example, the construct ``c`` has four names:
 
-        * The value of the standard name property.
+           >>> c.names()
+           ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
 
-          *Parameter example:*
-            ``name='air_pressure'`` will select constructs that have a
-            "standard_name" property with the value
-            "air_pressure". This selection could also be made with
-            ``name='standard_name=air_pressure'``.
+        In addition, each construct also has a name based its
+        construct key (e.g. ``'key%dimensioncoordinate2'``)
 
-        * The value of any property prefixed by the property name and
-          an equals (``=``).
-
-          *Parameter example:*
-            ``name='long_name=Air Temperature'`` will select
-            constructs that have a "long_name" property with the value
-            "Air Temperature".
-
-          *Parameter example:*
-            ``name='positive=up'`` will select constructs that have a
-            "positive" property with the value "up".
-
-          *Parameter example:*
-            ``name='foo=bar'`` will select constructs that have a
-            "foo" property with the value "bar".
-
-          *Parameter example:*
-
-            ``name='standard_name=air_pressure'`` will select
-            constructs that have a "standard_name" property with the
-            value "air_pressure". This selection could also be made
-            with ``name='air_pressure'``.
-
-        * The measure of cell measure constructs, prefixed by
-          ``measure:``.
-
-          *Parameter example:*
-            ``name='measure:area'`` will select "area" cell measure
-            constructs.
-
-        * The method of cell method constructs, prefixed by
-          ``method:``.
-
-          *Parameter example:*
-            ``name='method:maximum'`` will select cell method
-            constructs with methods of "maximum".
-
-        * The netCDF variable name, prefixed by ``ncvar%``.
-          
-          *Parameter example:*
-            ``name='ncvar%lat'`` will select constructs with netCDF
-            variable name "lat".
-
-        * The netCDF dimension name of domain axis constructs,
-          prefixed by ``ncdim%``.
-
-          *Parameter example:*
-            ``name='ncdim%time'`` will select domain axis constructs
-            with netCDF dimension name "time".
-
-        * A construct identifier, prefixed by ``key%``.
-
-          *Parameter example:* 
-            ``name='key%dimensioncoordinate1'`` will select dimension
-            coordanate constructs with construct identifier
-            "dimensioncoordinate1".
+        Note that the identifiers of metadata constructs in the ouput
+        of a `print` or `!dump` call are always one of its names, and
+        so may always be used as a *names* argument.
 
 :Returns:
 
@@ -780,10 +662,14 @@ TODO
         '''
         out = self.shallow_copy()
         out._prefiltered = self.shallow_copy()
-                
+
+        # Return all constructs if no names have been provided
+        if not names:
+            return out
+        
         for cid, construct in tuple(out.items()):
             ok = False
-            for value0 in names:
+            for value0 in names:          
                 for value1 in construct.names(extra=('key%'+cid,)):
                     ok = self._matching_values(value0, construct, value1)
                     if ok:
@@ -840,16 +726,22 @@ TODO
         
         for cid, construct in tuple(out.items()):
             try:
-                get_nc_dimension = construct.nc_get_dimension
+                nc_get_dimension = construct.nc_get_dimension
             except AttributeError:
                 # This construct doesn't have a "nc_get_dimension"
                 # method
                 out._pop(cid)
                 continue
             
+            if not ncdims:
+                if not construct.nc_has_dimension():
+                    out._pop(cid)
+                    
+                continue
+            
             ok = False
             for value0 in ncdims:
-                value1 = get_nc_dimension(None)
+                value1 = nc_get_dimension(None)
                 ok = self._matching_values(value0, construct, value1)
                 if ok:
                     break
@@ -874,7 +766,7 @@ returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get`, `keys`, 'items`, `values`
+.. seealso:: TODO
 
 :Parameters:
 
@@ -955,8 +847,9 @@ TODO
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `filter_by_measure`, `filter_by_method`, `name`,
-             `filter_by_ncdim`, `filter_by_ncvar`, `type`
+.. seealso:: `axis`, `key`, `filter_by_measure`, `filter_by_method`,
+             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `type`
 
 :Parameters:
 
@@ -1038,8 +931,8 @@ Setting no keyword arguments selects no constructs:
 .. versionadded:: 1.7.0
 
 .. seealso:: `axis`, `key`, `filter_by_measure`, `filter_by_method`,
-             `name`, `filter_by_ncdim`, `filter_by_ncvar`, `property`,
-             `type`
+             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `property`, `type`
 
 :Returns:
 
@@ -1062,7 +955,19 @@ TODO
         
         return out
     #--- End: def
-        
+    
+    def shallow_copy(self, _ignore=None):
+        '''
+        '''
+        out = super().shallow_copy(_ignore=_ignore)
+
+        prefiltered = getattr(self, '_prefiltered', None)
+        if prefiltered is not None:
+            out._prefiltered = prefiltered.shallow_copy()
+            
+        return out
+    #--- End: def
+
     def _equals_coordinate_reference(self, other, rtol=None,
                                      atol=None, verbose=False,
                                      ignore_type=False,
