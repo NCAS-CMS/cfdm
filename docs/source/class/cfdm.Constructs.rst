@@ -29,9 +29,10 @@ Selection
    ~cfdm.Constructs.filter_by_key
    ~cfdm.Constructs.filter_by_ncdim
    ~cfdm.Constructs.filter_by_ncvar
+   ~cfdm.Constructs.filters_applied
+   ~cfdm.Constructs.inverse_filter
    ~cfdm.Constructs.get
    ~cfdm.Constructs.get_key
-   ~cfdm.Constructs.inverse_filter
 
 Dictionary-like methods
 -----------------------
@@ -71,6 +72,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Constructs.copy
+   ~cfdm.Constructs.shallow_copy
    ~cfdm.Constructs.equals
    ~cfdm.Constructs.ordered
    ~cfdm.Constructs.view
@@ -87,6 +89,7 @@ Special
 
    ~cfdm.Constructs.__call__
    ~cfdm.Constructs.__contains__
+   ~cfdm.Constructs.__copy__
    ~cfdm.Constructs.__deepcopy__
    ~cfdm.Constructs.__getitem__
    ~cfdm.Constructs.__iter__

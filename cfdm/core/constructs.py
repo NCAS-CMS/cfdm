@@ -5,7 +5,7 @@ from collections import OrderedDict
 from copy import copy
 
 class Constructs(object):
-    '''<TODO>
+    '''A container for metadata constucts.
 
 .. versionadded:: 1.7.0
 
@@ -25,9 +25,66 @@ class Constructs(object):
                  _use_data=True,
                  _view=False,
                  _ignore=()):
-        '''<TODO>
+        '''**Initialization**
 
 :Parameters:
+
+    auxiliary_coordinate: `str`, optional
+        The base name for keys of auxiliary coordinate constructs.
+
+        *Parameter example:*
+          ``auxiliary_coordinate='auxiliarycoordinate'``
+
+    dimension_coordinate: `str`, optional
+        The base name for keys of dimension coordinate constructs.
+
+        *Parameter example:*
+          ``dimension_coordinate='dimensioncoordinate'``
+
+    domain_ancillary: `str`, optional
+        The base name for keys of domain ancillary constructs.
+
+        *Parameter example:*
+          ``domain_ancillary='domainancillary'``
+
+    field_ancillary: `str`, optional
+        The base name for keys of field ancillary constructs.
+
+        *Parameter example:*
+          ``field_ancillary='fieldancillary'``
+
+    cell_measure: `str`, optional
+        The base name for keys of cell measure constructs.
+
+        *Parameter example:*
+          ``cell_measure='cellmeasure'``
+
+    coordinate_reference: `str`, optional
+        The base name for keys of coordinate reference constructs.
+
+        *Parameter example:*
+          ``coordinate_reference='coordinatereference'``
+
+    domain_axis: `str`, optional
+        The base name for keys of domain axis constructs.
+
+        *Parameter example:*
+          ``domain_axis='domainaxis'``
+
+    cell_method: `str`, optional
+        The base name for keys of cell method constructs.
+
+        *Parameter example:*
+          ``cell_method='cellmethod'``
+
+    source: optional
+        Initialize the construct keys and contained metadata
+        constructs from those of *source*.
+
+    copy: `bool`, optional
+        If False then do not deep copy metadata constructs from those
+        of *source* prior to initialization. By default such metadata
+        constructs deep copied.
 
         '''
         self._ignore = tuple(set(_ignore))
@@ -107,7 +164,7 @@ class Constructs(object):
         self._construct_axes = {}
 
         # The construct type for each key. For example:
-        # {'domainaxis1':'domain_axis', 'aux3':'auxiliary_coordinate'}
+        # {'domainaxis1':'domain_axis', 'auxiliarycoordinate3':'auxiliary_coordinate'}
         self._construct_type = {}
         
         self._constructs     = {}
@@ -155,6 +212,21 @@ class Constructs(object):
             self._constructs[x] = OrderedDict()
     #--- End: def
 
+    def __contains__(self, key):
+        '''
+        '''
+        return key in self._construct_type        
+    #--- End: def
+    
+    def __copy__(self):
+        '''Called by the `copy.copy` standard library function.
+
+.. versionadded:: 1.7.0
+
+        '''
+        return self.shallow_copy()
+    #--- End: def
+   
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` standard library function.
 
@@ -164,12 +236,6 @@ class Constructs(object):
         return self.copy()
     #--- End: def
    
-    def __contains__(self, key):
-        '''
-        '''
-        return key in self._construct_type        
-    #--- End: def
-    
     def __getitem__(self, key):
         '''
         '''
@@ -183,9 +249,11 @@ class Constructs(object):
             
         return d[key]
     #--- End: def
-  
+
     def __iter__(self):
         '''
+x.__iter__() <==> iter(x)
+
         '''
         return iter(self._dictionary().keys())
     #--- End: def'
@@ -199,19 +267,19 @@ class Constructs(object):
         return len(self._dictionary())
     #--- End: def
     
-    def __repr__(self):
-        '''x.__repr__() <==> repr(x)
-
-        '''
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-    #--- End: def
-
-    def __str__(self):
-        '''x.__str__() <==> str(x)
-
-        '''
-        return 'TODO'
-    #--- End: def
+#    def __repr__(self):
+#        '''x.__repr__() <==> repr(x)
+#
+#        '''
+#        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
+#    #--- End: def
+#
+#    def __str__(self):
+#        '''x.__str__() <==> str(x)
+#
+#        '''
+#        return 'TODO'
+#    #--- End: def
     
     # ----------------------------------------------------------------
     # Private methods

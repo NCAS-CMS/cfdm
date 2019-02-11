@@ -2,11 +2,13 @@ from __future__ import print_function
 from builtins import (super, zip)
 from past.builtins import basestring
 
+from copy import deepcopy
+
 from . import core
 
 
 class Constructs(core.Constructs):
-    '''<TODO>
+    '''A container for metadata constucts.
 
 .. versionadded:: 1.7.0
 
@@ -68,6 +70,7 @@ x.__str__() <==> str(x)
         prefiltered = getattr(self, '_prefiltered', None)
         if prefiltered is not None:
             out._prefiltered = prefiltered.copy(data=data)
+            out._filters_applied = self._filters_applied
             
         return out
     #--- End: def
@@ -297,24 +300,42 @@ x.__str__() <==> str(x)
     #--- End: def
 
     def filter_by_axis(self, *and_or, **axes):
-        '''Select metadata constructs
+        '''Select metadata constructs by axes spanned by their data.
 
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_key`, `filter_by_measure`, `filter_by_method`,
              `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `filter_by_property`, `filter_by_type`, `inverse_filter`,
-             `inverse_filter`
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`
 
 :Parameters:
 
-    filter_by_axes:
+    and_or: optional
+        Define the behaviour when multiple axes are provided.
+
+        By default (or if the *and_or* parameter is ``'and'``) a
+        construct is selected if it matches all of the given axis
+        requirements, but if the *and_or* parameter is ``'or'`` then a
+        construct will be selected when at least one of the axis
+        requirements is met.
+
+    axes: optional
+
+        Select constructs whose data array does, or does not, span
+        particular domain axis constructs.
+
+        TODO A property value is specified by any value (e.g. 'latitude',
+        4, ['foo', 'bar']); or a compiled regular expression
+        (e.g. re.compile('^ocean')), for which all constructs whose
+        methods match (via re.search) are selected.
+
         TODO Select constructs that have data which spans at least one of
         the given domain axes constructs. Domain axes constructs are
         specified with their construct keys.
 
-        If an axis of `None` is provided then all constructs that have
-        data are selected.
+        If no axes are provided then all constructs that have data,
+        spanning any domain axes constructs, are selected.
 
 :Returns:
 
@@ -323,29 +344,24 @@ x.__str__() <==> str(x)
 
 **Examples:**
 
->>> d = c.axis('domainaxis1')
-
->>> d = c.axis('domainaxis0', 'domainaxis1')
-
-Setting no keyword arguments selects no constructs:
-
->>> c.key()
-<Constructs: >
+TODO
 
         '''       
         out = self.shallow_copy()
+
         out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_axis': (and_or, axes)},)
 
         _or = False
         if and_or:
             if len(and_or) > 1:
-                raise ValueError("asdas")
+                raise ValueError("Can provide at most one positional argument")
             
             x = and_or[0]
             if x == 'or':
                 _or = True
             elif x != 'and':
-                raise ValueError("asdas 2")
+                raise ValueError("Positional argument, if provided, must 'or' or 'and'")
         #--- End: if
             
         constructs_data_axes = self.data_axes()
@@ -399,13 +415,14 @@ Setting no keyword arguments selects no constructs:
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_measure`, `filter_by_method`,
-             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `filter_by_property`, `filter_by_type`, `inverse_filter`
+.. seealso:: `filter_by_axis`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
+             `filter_by_ncvar`, `filter_by_property`,
+             `filter_by_type`, `filters_applied`, `inverse_filter`
 
 :Parameters:
 
-    keys:
+    keys: optional
         TODO
 
 :Returns:
@@ -428,7 +445,9 @@ Setting no keyword arguments selects no constructs:
 
         '''
         out = self.shallow_copy()
+
         out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_key': keys},)
         
         if None in keys:
             return out
@@ -448,11 +467,12 @@ Setting no keyword arguments selects no constructs:
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_method`,
              `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `filter_by_property`, `filter_by_type`, `inverse_filter`
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`
 
 :Parameters:
 
-    measures:
+    measures: optional
         Select cell measure constructs that have any of the given
         measure values.
 
@@ -508,7 +528,9 @@ Constructs:
 
         '''
         out = self.shallow_copy()
+
         out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_measure': measures},)
         
         for cid, construct in tuple(out.items()):
             try:
@@ -547,11 +569,12 @@ Constructs:
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
              `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `filter_by_property`, `filter_by_type`, `inverse_filter`
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`
 
 :Parameters:
 
-    methods:
+    methods: optional
         Select cell method constructs that have any of the given
         methods.
 
@@ -605,7 +628,9 @@ Constructs:
 
         '''
         out = self.shallow_copy()
+        
         out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_method': methods},)
         
         for cid, construct in tuple(out.items()):
             try:
@@ -644,11 +669,12 @@ Constructs:
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
              `filter_by_method`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `filter_by_property`, `filter_by_type`, `inverse_filter`
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`
 
 :Parameters:
 
-    names:
+    names: optional
 
         Select constructs that have any of the given names.
 
@@ -685,8 +711,10 @@ TODO
 
         '''
         out = self.shallow_copy()
+        
         out._prefiltered = self.shallow_copy()
-
+        out._filters_applied = self.filters_applied() + ({'filter_by_name': names},)
+        
         # Return all constructs if no names have been provided
         if not names:
             return out
@@ -719,11 +747,12 @@ TODO
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
              `filter_by_method`, `filter_by_name`, `filter_by_ncvar`,
-             `filter_by_property`, `filter_by_type`, `inverse_filter`
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`
 
 :Parameters:
 
-    ncdims:
+    ncdims: optional
         Select domain axis constructs that have any of the given
         netCDF dimension names.
 
@@ -747,7 +776,9 @@ TODO
 
         '''
         out = self.shallow_copy()
+        
         out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_ncdim': ncdims},)
         
         for cid, construct in tuple(out.items()):
             try:
@@ -788,11 +819,12 @@ TODO
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
              `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
-             `filter_by_property`, `filter_by_type`, `inverse_filter`
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`
 
 :Parameters:
 
-    ncvars:
+    ncvars: optional
         Select constructs that have any of the given netCDF variable
         names.
 
@@ -851,7 +883,9 @@ Constructs:
 
         '''
         out = self.shallow_copy()
+        
         out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_ncvar': ncvars},)
         
         for cid, construct in tuple(out.items()):            
             try:
@@ -903,22 +937,23 @@ Constructs:
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`, `filter_by_method`,
-             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `filter_by_type`, `inverse_filter`
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
+             `filter_by_ncvar`, `filter_by_type`, `filters_applied`,
+             `inverse_filter`
 
 :Parameters:
         
-    and_or:
+    and_or: optional
         Define the behaviour when multiple properties are provided.
 
-        By default (or if the *and_or* parameters is ``'and'``) a
+        By default (or if the *and_or* parameter is ``'and'``) a
         construct is selected if it matches all of the given
         properties, but if the *and_or* parameter is ``'or'`` then a
         construct will be selected when at least one of its properties
         matches.
 
-    properties: 
+    properties:  optional
         Select constructs that have properties with the given
         values.
 
@@ -947,21 +982,22 @@ Constructs:
 
 TODO
 
-
         '''
         out = self.shallow_copy()
-        out._prefiltered = self.shallow_copy()
 
+        out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_property': (and_or, properties)},)
+        
         _or = False
         if and_or:
             if len(and_or) > 1:
-                raise ValueError("asdas444444444")
+                raise ValueError("Can provide at most one positional argument")
             
             x = and_or[0]
             if x == 'or':
                 _or = True
             elif x != 'and':
-                raise ValueError("asdas66666666666666666666 2")
+                raise ValueError("Positional argument, if provided, must 'or' or 'and'")
         #--- End: if
 
         for cid, construct in tuple(out.items()):
@@ -1006,9 +1042,30 @@ TODO
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
              `filter_by_method`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `filter_by_name`, `filter_by_property`, `inverse_filter`
+             `filter_by_name`, `filter_by_property`,
+             `filters_applied`, `inverse_filter`
 
 :Parameters:
+
+    types: optional 
+        Select constructs that have are of any of the given types.
+
+        A type is specified by one of the following strings:
+
+          ==========================  ================================
+          *type*                      Construct selected
+          ==========================  ================================
+          ``'domain_ancillary'``      Domain ancillary constructs
+          ``'dimension_coordinate'``  Dimension coordinate constructs
+          ``'domain_axis'``           Domain axis constructs
+          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+          ``'cell_measure'``          Cell measure constructs
+          ``'coordinate_reference'``  Coordinate reference constructs
+          ``'cell_method'``           Cell method constructs
+          ``'field_ancillary'``       Field ancillary constructs
+          ==========================  ================================
+
+        If no types are provided then all constructs are selected.
 
 :Returns:
 
@@ -1020,27 +1077,144 @@ TODO
 
         '''
         out = super().filter_by_type(*types)
+
         out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_type': types},)
+        
         return out        
     #--- End: def
     
-    def inverse_filter(self):
-        '''Return the inverse of the previous filtering.
+    def filters_applied(self):
+        '''A history of filters that have been applied.
+
+The history is returned in a `tuple` by the `filters_applied`
+method. The last element of the tuple describes the last filter
+applied.
 
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
              `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
-             `filter_by_ncvar`, `filter_by_property`, `filter_by_type`
+             `filter_by_ncvar`, `filter_by_property`,
+             `filter_by_type`, `inverse_filter`
+
+:Returns:
+
+    `tuple`
+        The history of filters that have been applied, ordered from
+        first to last. If no filters have been applied then the tuple
+        is empty.
+
+
+**Examples:**
+
+>>> c.filters_applied()
+()
+>>> c = c.filter_by_type('dimension_coordinate', 'auxiliary_coordinate')
+>>> c.filters_applied()
+({'filter_by_type': ('dimension_coordinate', 'auxiliary_coordinate')},)
+>>> c = c.filter_by_property(units='degrees')
+>>> c.filters_applied()
+({'filter_by_type': ('dimension_coordinate', 'auxiliary_coordinate')},
+ {'filter_by_property': ((), {'units': 'degrees'})})
+>>> c = c.filter_by_property('or', standard_name='grid_latitude', axis='Y')
+>>> c.filters_applied()
+({'filter_by_type': ('dimension_coordinate', 'auxiliary_coordinate')},
+ {'filter_by_property': ((), {'units': 'degrees'})},
+ {'filter_by_property': (('or',), {'axis': 'Y', 'standard_name': 'grid_latitude'})})
+>>> print(c)
+Constructs:
+{'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
+
+        '''
+        filters = getattr(self, '_filters_applied', None)
+        if filters is None:
+            return ()
+
+        return deepcopy(filters)
+    #--- End: def
+
+    def inverse_filter(self):
+        '''Return the inverse of the previous filter.
+
+The inverse comprises all of the constructs that were *not* selected
+by the last filter applied.
+
+A history of the filters that have been applied is returned in a
+`tuple` by the `filters_applied` method. The last element of the tuple
+describes the last filter applied.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
+             `filter_by_ncvar`, `filter_by_property`,
+             `filter_by_type`, `filters_applied`
 
 :Returns:
 
     `Constructs`
-        TODO
+        The constructs, and their construct keys, that were not
+        selected by the last filter applied. If no filtering has been
+        previously applied, then an empty `Constructs` instance is
+        returned.
 
 **Examples:**
 
-TODO
+>>> print(c)
+Constructs:
+{'cellmethod0': <CellMethod: area: mean>,
+ 'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+ 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+ 'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+ 'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
+>>> print(c.inverse_filter())
+Constructs:
+{}
+>>> c = c.filter_by_type('dimension_coordinate', 'cell_method')
+>>> print c
+Constructs:
+{'cellmethod0': <CellMethod: area: mean>,
+ 'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+ 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+ 'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+>>> print(c.inverse_filter())
+Constructs:
+{'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
+>>> c.filter_by_method('mean')
+>>> print c
+Constructs:
+{'cellmethod0': <CellMethod: area: mean>}
+>>> print(c.inverse_filter())
+Constructs:
+{'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+ 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+ 'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+
+>>> print(c)
+Constructs:
+{'cellmethod0': <CellMethod: area: mean>,
+ 'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+ 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+ 'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+ 'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
+>>> c = c.filter_by_type('domain_axis')
+>>> print(c)
+Constructs:
+{'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
+>>> print(c.inverse_filter().inverse_filter())
+Constructs:
+{'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
 
         '''
         prefiltered = getattr(self, '_prefiltered', self)
@@ -1063,7 +1237,8 @@ TODO
         prefiltered = getattr(self, '_prefiltered', None)
         if prefiltered is not None:
             out._prefiltered = prefiltered.shallow_copy()
-            
+            out._filters_applied = self._filters_applied
+           
         return out
     #--- End: def
 

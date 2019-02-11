@@ -925,21 +925,8 @@ regardless of the setting of the *full_domain* parameter.
 
 :Parameters:
 
-    key: (sequence of) `str`, optional
-        Select the construct with the given construct key. If multiple
-        keys are specified then select all of the metadata constructs
-        which have any of the given keys.
-
-        *Parameter example:*
-          ``key='domainancillary0'`` will the domain ancillary
-          construct with construct identifier "domainancillary1". This
-          is equivalent to ``name='key%domainancillary0'``.
-
-        *Parameter example:*
-          ``key=['cellmethod2']``
-
-        *Parameter example:*
-          ``key=('dimensioncoordinate1', 'fieldancillary0')``
+    key: `str` 
+        Select the metadata construct with the given construct key.
 
     full_domain: `bool`, optional
         If False then do not create a domain, other than domain axis
@@ -953,10 +940,7 @@ regardless of the setting of the *full_domain* parameter.
 
 **Examples:**
 
->>> f = cfdm.read('file.nc')
->>> f
-[<Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
->>> f = f[0]
+>>> f = cfdm.read('file.nc')[0]
 >>> print(f)
 Field: air_temperature (ncvar%ta)
 ---------------------------------
@@ -1006,87 +990,8 @@ Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
 Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
                 : grid_longitude(9) = [-4.7, ..., -1.18] degrees
 		   
-.. _Creating-field-constructs-from-metadata-constructs:
-
-Creating field constructs from metadata constructs
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Independent field constructs may be created from metadata in two ways:
-either from a netCDF variable using the `cfdm.read` function, or from
-a metadata construct using the `~Field.convert` method of the field
-construct.
-
-The `~Field.convert` method of the field construct identifies a unique
-metadata construct and returns a new field construct based on its
-properties and data. The new field construct has domain axis
-constructs corresponding to the data, and (by default) any other
-metadata constructs that further define its domain.
-
-.. code-block:: python
-
-   >>> orog = tas.convert('surface_altitude')	  
-   >>> print(orog)
-   Field: surface_altitude
-   -----------------------
-   Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
-   Dimension coords: grid_latitude(10) = [0.0, ..., 9.0] degrees
-                   : grid_longitude(9) = [0.0, ..., 8.0] degrees
-   Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] degrees_north
-                   : longitude(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] degrees_east
-                   : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., j]
-   Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2
-   Coord references: rotated_latitude_longitude
-
-The `~Field.convert` method has an option to only include domain axis
-constructs in the new field construct, with no other metadata
-constructs.
-
-   >>> orog1 = tas.convert('surface_altitude', full_domain=False) 
-   >>> print(orog1)
-   Field: surface_altitude
-   -----------------------
-   Data            : surface_altitude(key%domainaxis2(10), key%domainaxis3(9)) m
-   
-The `cfdm.read` function allows field constructs to be derived
-directly from the netCDF variables that correspond to metadata
-constructs. In this case, the new field constructs will have a domain
-limited to that which can be inferred from the corresponding netCDF
-variable, but without the connections that are defined by the parent
-netCDF data variable. This will often result in a new field construct
-that has fewer metadata constructs than one created with the
-`~Field.convert` method.
-
-.. code-block:: python
-
-   >>> cfdm.write(tas, 'tas.nc')
-   >>> fields = cfdm.read('tas.nc', convert='domain_ancillary')
-   >>> fields
-   [<Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m>,
-    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
-    <Field: ncvar%b(atmosphere_hybrid_height_coordinate(1)) 1>,
-    <Field: surface_altitude(grid_latitude(10), grid_longitude(9)) m>]
-   >>> print(fields[3])
-   Field: surface_altitude (ncvar%surface_altitude)
-   ------------------------------------------------
-   Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
-   Dimension coords: grid_latitude(10) = [0.0, ..., 9.0] degrees
-                   : grid_longitude(9) = [0.0, ..., 8.0] degrees
-
         '''
         c = self.constructs.filter_by_key(key).get()
-
-#        c0 = self.constructs.select(name=name, properties=properties,
-#                                    measure=measure, ncvar=ncvar,
-#                                    ncdim=ncdim, key=key, axis=axis,
-#                                    construct=construct)#, copy=False)
-#        if len(c0) != 1:
-#            self.get_construct(name=name, properties=properties,
-#                               measure=measure, ncvar=ncvar,
-#                               ncdim=ncdim, key=key, axis=axis,
-#                               construct=construct)
-#            return
-#
-#        cid, c = dict(c0).popitem()
         
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the
@@ -1110,24 +1015,36 @@ that has fewer metadata constructs than one created with the
         # ------------------------------------------------------------
         if data_axes is not None:
             f.set_data_axes(axes=data_axes)
-
+            
         # ------------------------------------------------------------
         # Add a more complete domain
         # ------------------------------------------------------------
         if full_domain:
-            for construct in ('dimension_coordinate',
-                              'auxiliary_coordinate',
-                              'cell_measure'):
-                for ccid, con in self.constructs.filter_by_type(construct).axis(data_axes).items():
-                    axes = constructs_data_axes.get(ccid)
-                    if axes is None:
-                        continue
-    
-                    if set(axes).issubset(data_axes):
-                        f.set_construct(con, key=ccid, axes=axes,
-                                        copy=True)
-                #--- End: for
+            for ccid, construct in self.constructs.filter_by_type(
+                    'dimension_coordinate',
+                    'auxiliary_coordinate',
+                    'cell_measure').items():
+                axes = constructs_data_axes.get(ccid)
+                if axes is None:
+                    continue
+                
+                if set(axes).issubset(data_axes):
+                    f.set_construct(construct, key=ccid, axes=axes, copy=True)
             #--- End: for
+            
+#           for construct_type in ('dimension_coordinate',
+#                                  'auxiliary_coordinate',
+#                                  'cell_measure'):
+#               for ccid, construct in self.constructs.filter_by_type(construct_type).items():
+#                   axes = constructs_data_axes.get(ccid)
+#                   if axes is None:
+#                       continue
+#   
+#                   if set(axes).issubset(data_axes):
+#                       f.set_construct(construct, key=ccid, axes=axes,
+#                                       copy=True)
+#               #--- End: for
+#           #--- End: for
        
             # Add coordinate references which span a subset of the item's
             # axes
