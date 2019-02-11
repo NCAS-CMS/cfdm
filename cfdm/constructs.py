@@ -15,7 +15,36 @@ class Constructs(core.Constructs):
     ''' 
        
     def __call__(self, *names):
-        '''TODO
+        '''Select metadata constructs by name.
+
+Calling a `Constructs` instance is an alias for `filter_by_name`, so
+see that method method for details.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `filter_by_name`
+
+:Parameters:
+
+    names: optional
+        See `filter_by_name` for details.
+
+:Returns:
+
+    `Constructs`
+        The selected constructs and their construct keys.
+
+**Examples:**
+
+>>> c('latitude')
+Constructs:
+{'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+>>> c.filter_by_name('latitude')
+Constructs:
+{'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+
+ See `filter_by_name` for more examples.
+
         '''
         return self.filter_by_name(*names)
     #--- End: def
@@ -325,14 +354,11 @@ x.__str__() <==> str(x)
         Select constructs whose data array does, or does not, span
         particular domain axis constructs.
 
-        TODO A property value is specified by any value (e.g. 'latitude',
-        4, ['foo', 'bar']); or a compiled regular expression
-        (e.g. re.compile('^ocean')), for which all constructs whose
-        methods match (via re.search) are selected.
-
-        TODO Select constructs that have data which spans at least one of
-        the given domain axes constructs. Domain axes constructs are
-        specified with their construct keys.
+        A domain axis construct is identified by a keyword parameter
+        of the domain axis construct key (e.g. ``domainaxis1``). The
+        value is a boolean indicating if a construct should be
+        selected when its data does span the axis (`True`), or when
+        its data does not span the axis (`False`).
 
         If no axes are provided then all constructs that have data,
         spanning any domain axes constructs, are selected.
@@ -423,7 +449,11 @@ TODO
 :Parameters:
 
     keys: optional
-        TODO
+        Select constructs that have any of the given construct keys.
+
+        A key is specified by a string (e.g. ``'fieldancillary0'``).
+
+        If no keys are provided then all constructs are selected.
 
 :Returns:
 
@@ -432,16 +462,14 @@ TODO
 
 **Examples:**
 
->>> d = c.key('domainancillary0')
+Select the construct with key 'domainancillary0':
 
->>> d = c.key('cellmethod2')
+>>> d = c.filter_by_key('domainancillary0')
 
->>> d = c.key('dimensioncoordinate1', 'fieldancillary0')
+Select the constructs with keys 'dimensioncoordinate1' or
+'fieldancillary0':
 
-Setting no keyword arguments selects no constructs:
-
->>> c.key()
-<Constructs: >
+>>> d = c.filter_by_key('dimensioncoordinate1', 'fieldancillary0')
 
         '''
         out = self.shallow_copy()
@@ -449,7 +477,7 @@ Setting no keyword arguments selects no constructs:
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() + ({'filter_by_key': keys},)
         
-        if None in keys:
+        if not keys:
             return out
         
         for cid in tuple(out):
@@ -962,7 +990,8 @@ Constructs:
         least one of its properties matches (see the *and_or*
         positional parameter).
 
-        A property value is specified by any value
+        A property value is given by a keyword parameter of the
+        property name. The value may be a scalar or vector
         (e.g. ``'latitude'``, ``4``, ``['foo', 'bar']``); or a
         compiled regular expression (e.g. ``re.compile('^ocean')``),
         for which all constructs whose methods match (via `re.search`)

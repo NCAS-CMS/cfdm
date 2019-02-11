@@ -906,11 +906,11 @@ class.
 
 ----
 
-A `Constructs` instance has methods for selecting constructs that meet
-particular criteria:
+A `Constructs` instance has filtering methods for selecting constructs
+that meet particular criteria:
 
 ==========================================================================  ================================
-Selection criteria                                                          Method
+Filter criteria                                                             Method
 ==========================================================================  ================================
 Metadata construct name                                                     `~Constructs.filter_by_name`
 Metadata construct type                                                     `~Constructs.filter_by_type`
@@ -924,29 +924,6 @@ Netcdf dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)  `~Co
 ==========================================================================  ================================
 
 Each of these methods also returns a `Constructs` instance.
-
-.. The `~Constructs.select` method of a `Constructs` instance may be used
-   to select constructs that meet any combination of the following
-   criteria:
-   
-   .. Further to the functionality described in the :ref:`first section
-      on metadata constructs <Metadata-constructs-1>`, the
-      `~Field.constructs` method of the field construct has optional
-      parameters to filter the metadata constructs by
-   
-   * metadata construct type,
-   
-   * property value,
-   
-   * whether the data array spans particular domain axis constructs,
-   
-   * measure value (for cell measure constructs),
-   
-   * construct key, and
-   
-   * netCDF variable or dimension name (see the :ref:`netCDF interface
-     <NetCDF-interface>`).
-
 
 .. code-block:: python
    :caption: *Get constructs by their type*.
@@ -981,8 +958,8 @@ Each of these methods also returns a `Constructs` instance.
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
    
 .. code-block:: python
-   :caption: *Get constructs by the domain axis constructs spanned by
-             their data.*
+   :caption: *Get constructs whose data arrays span the 'domainaxis1'
+             domain axis construct.*
 
    >>> print(t.constructs.filter_by_axis(domainaxis1=True))
    Constructs:
@@ -993,6 +970,18 @@ Each of these methods also returns a `Constructs` instance.
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+
+.. code-block:: python
+   :caption: *Get constructs whose data arrays do not span the
+             'domainaxis1' domain axis construct.*
+
+   >>> print(t.constructs.filter_by_axis(domainaxis1=False))
+   Constructs:
+   {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+    'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+    'domainancillary1': <DomainAncillary: ncvar%b(1) >}
 
 .. code-block:: python
    :caption: *Get cell measure constructs by their "measure".*
@@ -1025,29 +1014,12 @@ to perform further selections on their results:
    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
 
-.. The `~Constructs.select` method also returns a `Constructs`
-   instance on which further selections can be made. For example, the
-   result of the previous example could be achieved with multiple
-   selections:
-
-   .. code-block:: python
-      :caption: *Get constructs that meet a variety of criteria using
-                multiple "select" calls.*
-   	     
-      >>> c = t.constructs
-      >>> c = c.select(construct='auxiliary_coordinate')
-      >>> c = c.select(axis='domainaxis1', properties={'units': 'degrees_E'})
-      >>> print(c)
-      Constructs:
-      {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
-
 Selection by construct key is useful for systematic metadata construct
 access, or for when a metadata construct is not identifiable by other
 means:
 
 .. code-block:: python
-   :caption: *Get constructs by construct key using the "select"
-             method.*
+   :caption: *Get constructs by construct key.*
 
    >>> print(t.constructs.filter_by_key('domainancillary2'))
    Constructs:
@@ -1116,32 +1088,20 @@ latitude name'``.
    Constructs:
    {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
 
-.. More generally, a construct name may be constructed by any of
-
-   * The value of the "standard_name" property, e.g. ``'air_temperature'``,
-   * The value of any property, preceded by the property name and an
-     equals, e.g. ``'long_name=Air Temperature'``,
-   * The cell measure, preceded by "measure:", e.g. ``'measure:volume'``
-   * The cell method, preceded by "method:", e.g. ``'method:maximum'``
-   * The netCDF variable name, preceded by "ncvar%",
-     e.g. ``'ncvar%tas'`` (see the :ref:`netCDF interface
-     <NetCDF-interface>`), and
-   * The netCDF dimension name, preceded by "ncdim%" e.g. ``'ncdim%z'``
-     (see the :ref:`netCDF interface <NetCDF-interface>`).
-
 Each construct has a `!name` method that, by default, returns the
 least ambiguous name (which varies according to the construct type);
 and an `!names` method that returns a list of names, any of which
 would select the construct.
 
-As a convienince feature, selection by construct name is also possible
+As a further convienince, selection by construct name is also possible
 by providing names to a call of a `Constructs` instance itself, and
 this technique of selecting constucts by name will be used in the rest
 of this tutorial:
 
 .. code-block:: python
-   :caption: *Construct selection is possible with via the "select"
-             method, or directly on the "Constructs" instance.*
+   :caption: *Construct selection by name is possible with via the
+             "filter_by_name" method, or directly from the
+             "Constructs" instance.*
 
    >>> print(t.constructs.filter_by_name('latitude'))
    Constructs:
@@ -1149,22 +1109,6 @@ of this tutorial:
    >>> print(t.constructs('latitude'))
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-
-Selection by construct type is equivalent to using the particular
-method of the field construct for retrieving that type of metadata
-construct:
-
-.. code-block:: python
-   :caption: *The bespoke methods for retrieving constructs by type
-             are equivalent to a selection on all of the metadata
-             constructs.*
-		
-   >>> print(t.constructs.filter_by_type('cell_measure'))
-   Constructs:
-   {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
-   >>> print(t.cell_measures)
-   Constructs:
-   {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
 If no constructs match the given criteria, then an "empty"
 `Constructs` instance is returned:
@@ -1181,7 +1125,35 @@ If no constructs match the given criteria, then an "empty"
    {}
    >>> len(c)
    0
-   
+
+The constructs that were *not* selected by a filter may be returned by
+the `~Consrtucts.inverse_filter` method applied to the result of the
+filter:
+
+.. code-block:: python
+   :caption: *Get the constructs that were not selected by a filter.*
+
+   >>> c = t.constructs.filter_by_type('auxiliary_coordinate')
+   >>> c
+   <Constructs: auxiliary_coordinate(3)>
+   >>> c.inverse_filter()
+   <Constructs: cell_measure(1), cell_method(2), coordinate_reference(2), dimension_coordinate(4), domain_ancillary(3), domain_axis(4), field_ancillary(1)>
+  
+Note that selection by construct type is equivalent to using the
+particular method of the field construct for retrieving that type of
+metadata construct:
+
+.. code-block:: python
+   :caption: *The bespoke methods for retrieving constructs by type
+             are equivalent to a selection on all of the metadata
+             constructs.*
+		
+   >>> print(t.constructs.filter_by_type('cell_measure'))
+   Constructs:
+   {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
+   >>> print(t.cell_measures)
+   Constructs:
+   {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 .. _Accessing-an-individual-metadata-construct:
 
 **Accessing an individual metadata construct**
