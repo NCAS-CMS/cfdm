@@ -419,7 +419,7 @@ removed even if it is referenced by coordinate reference coinstruct.
 
         '''
         data_axes = self.data_axes()
-        if key in self.type('domain_axis'):
+        if key in self.filter_by_type('domain_axis'):
             # Fail if the domain axis construct is spanned by a data
             # array
             for xid, axes in data_axes.items():
@@ -431,7 +431,7 @@ removed even if it is referenced by coordinate reference coinstruct.
             # Fail if the domain axis construct is referenced by a
             # cell method construct
             try:
-                cell_methods = self.type('cell_method')
+                cell_methods = self.filter_by_type('cell_method')
             except ValueError:
                 # Cell methods are not possible for this Constructs
                 # instance
@@ -446,7 +446,7 @@ removed even if it is referenced by coordinate reference coinstruct.
         else:
             # Remove references to the removed construct in coordinate
             # reference constructs
-            for ref in self.type('coordinate_reference').values():
+            for ref in self.filter_by_type('coordinate_reference').values():
                 coordinate_conversion = ref.coordinate_conversion
                 for term, value in coordinate_conversion.domain_ancillaries().items():
                     if key == value:
@@ -661,7 +661,7 @@ removed even if it is referenced by coordinate reference coinstruct.
         if isinstance(axes, basestring):
             axes = (axes,)
             
-        domain_axes = self.type('domain_axis')
+        domain_axes = self.filter_by_type('domain_axis')
         
         axes_shape = []
         for axis in axes:
@@ -1302,21 +1302,17 @@ removed even if it is referenced by coordinate reference coinstruct.
 #        return type(self)(source=self, _ignore=ignore, _view=False, copy=False)
 #    #--- End: def
 
-    def type(self,*types):
-        '''Select metadata constructs.
-
-By default all metadata constructs are selected, but a subset may be
-chosen via the optional parameters. If multiple parameters are
-specified, then the constructs that satisfy *all* of the criteria are
-returned.
+    def filter_by_type(self,*types):
+        '''Select metadata constructs by their type.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get`, `items`, `keys`, `values`
+.. seealso:: TODO
 
 :Parameters:
 
-    construct: (sequence of) `str`, optional
+    types:
+        TODO
         Select constructs of the given type, or types. Valid types
         are:
 
@@ -1355,10 +1351,6 @@ returned.
 <TODO>
 
         '''
-        
-#        if construct is not None and isinstance(construct, basestring):
-#            construct = (construct,)
-
         if types:
             # Ignore the all but the requested construct types
             ignore = set(self._key_base)
@@ -1368,7 +1360,6 @@ returned.
             ignore = self._ignore
 
         return self.shallow_copy(_ignore=ignore)
-#        return type(self)(source=self, _ignore=ignore, _view=False, copy=False)
     #--- End: def
 
     def shallow_copy(self, _ignore=None):

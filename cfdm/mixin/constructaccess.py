@@ -97,7 +97,7 @@ Constructs:
  'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
 
         '''
-        return self.constructs.type('coordinate_reference')
+        return self.constructs.filter_by_type('coordinate_reference')
     #--- End: def
 
     @property
@@ -176,7 +176,7 @@ Constructs:
  'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
 
         '''
-        return self.constructs.type('domain_ancillary')
+        return self.constructs.filter_by_type('domain_ancillary')
     #--- End: def
 
     @property
@@ -210,7 +210,7 @@ Constructs:
 {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
 
         '''
-        return self.constructs.type('cell_measure')
+        return self.constructs.filter_by_type('cell_measure')
     #--- End: def
 
     # parameter: name
@@ -958,7 +958,7 @@ Constructs:
  'domainaxis3': <DomainAxis: size(1)>}
 
         '''
-        return self.constructs.type('domain_axis')
+        return self.constructs.filter_by_type('domain_axis')
     #--- End: def
 
     @property
@@ -994,7 +994,7 @@ Constructs:
  'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
         '''
-        return self.constructs.type('auxiliary_coordinate')
+        return self.constructs.filter_by_type('auxiliary_coordinate')
     #--- End: def
 
     @property
@@ -1031,7 +1031,7 @@ Constructs:
  'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         '''
-        return self.constructs.type('dimension_coordinate')
+        return self.constructs.filter_by_type('dimension_coordinate')
     #--- End: def
     
     def domain_axis_name(self, axis):

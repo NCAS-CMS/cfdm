@@ -286,7 +286,7 @@ AttributeError: Field doesn't have property 'standard_name'
         return field.constructs.data_axes()[key]
     #--- End: def
     
-    def get_constructs(self, field, axes=None):
+    def get_constructs(self, field, axes={}):
         '''Return constructs that span particular axes.
 
 If no axes are specified then all constructs are returned.
@@ -303,7 +303,7 @@ axes, and possibly other axes, are returned.
     `dict`
 
         '''
-        return dict(field.constructs.axis(*axes))
+        return dict(field.constructs.filter_by_axis(**axes))
     #--- End: def
     
     def get_coordinate_reference_coordinates(self, coordinate_reference):

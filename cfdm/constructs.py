@@ -12,10 +12,10 @@ class Constructs(core.Constructs):
 
     ''' 
        
-    def __call__(self, **names):
+    def __call__(self, *names):
         '''TODO
         '''
-        return self.filter_by_name(**names)
+        return self.filter_by_name(*names)
     #--- End: def
     
     def __repr__(self):
@@ -94,7 +94,7 @@ x.__str__() <==> str(x)
 'longitude'
 
         '''
-        domain_axes = self.type('domain_axis')
+        domain_axes = self.filter_by_type('domain_axis')
         
         if key not in domain_axes:
             return default
@@ -102,7 +102,7 @@ x.__str__() <==> str(x)
         constructs_data_axes = self.data_axes()
 
         name = None        
-        for dkey, dim in self.type('dimension_coordinate').items():
+        for dkey, dim in self.filter_by_type('dimension_coordinate').items():
             if constructs_data_axes[dkey] == (key,):
                 # Get the name from a dimension coordinate
                 name = dim.name(ncvar=False, default=None)
@@ -112,7 +112,7 @@ x.__str__() <==> str(x)
             return name
 
         found = False
-        for akey, aux in self.type('auxiliary_coordinate').items():
+        for akey, aux in self.filter_by_type('auxiliary_coordinate').items():
             if constructs_data_axes[akey] == (key,):
                 if found:
                     name = None
@@ -296,19 +296,20 @@ x.__str__() <==> str(x)
         return True
     #--- End: def
 
-    def axis(self, *and_or, **axes):
+    def filter_by_axis(self, *and_or, **axes):
         '''Select metadata constructs
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `key`, `filter_by_measure`, `filter_by_method`,
+.. seealso:: `filter_by_key`, `filter_by_measure`, `filter_by_method`,
              `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `property`, `type`
+             `filter_by_property`, `filter_by_type`, `inverse_filter`,
+             `inverse_filter`
 
 :Parameters:
 
-    axes:
-        Select constructs that have data which spans at least one of
+    filter_by_axes:
+        TODO Select constructs that have data which spans at least one of
         the given domain axes constructs. Domain axes constructs are
         specified with their construct keys.
 
@@ -335,10 +336,17 @@ Setting no keyword arguments selects no constructs:
         out = self.shallow_copy()
         out._prefiltered = self.shallow_copy()
 
+        _or = False
         if and_or:
-            _or = (and_or[0] == 'or')
-        else:
-            _or = False
+            if len(and_or) > 1:
+                raise ValueError("asdas")
+            
+            x = and_or[0]
+            if x == 'or':
+                _or = True
+            elif x != 'and':
+                raise ValueError("asdas 2")
+        #--- End: if
             
         constructs_data_axes = self.data_axes()
         
@@ -386,22 +394,19 @@ Setting no keyword arguments selects no constructs:
         return out
     #--- End: def
 
-    def key(self, *keys):
+    def filter_by_key(self, *keys):
         '''Select metadata constructs by key.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `filter_by_measure`, `filter_by_method`,
+.. seealso:: `filter_by_axis`, `filter_by_measure`, `filter_by_method`,
              `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `property`, `type`
+             `filter_by_property`, `filter_by_type`, `inverse_filter`
 
 :Parameters:
 
     keys:
-        Select constructs that have any of the given construct keys.
-
-        If a key of `None` is provided then all constructs are
-        selected.
+        TODO
 
 :Returns:
 
@@ -441,8 +446,9 @@ Setting no keyword arguments selects no constructs:
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `filter_by_method`, `filter_by_name`,
-             `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_method`,
+             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`, `inverse_filter`
 
 :Parameters:
 
@@ -466,23 +472,39 @@ Setting no keyword arguments selects no constructs:
         
 **Examples:**
 
+>>> print(t.constructs.filter_by_type('measure'))
+Constructs:
+{'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
+ 'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
+
 Select cell measure constructs that have a measure of 'area':
 
->>> d = c.measure('area')
+>>> print(c.filter_by_measure('area'))
+Constructs:
+{'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
 Select cell measure constructs that have a measure of 'area' or
 'volume':
 
->>> d = c.measure('area', 'volume')
+>>> print(c.filter_by_measure('area', 'volume'))
+Constructs:
+{'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
+ 'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
+
+Select cell measure constructs that have a measure of start with the
+letter "a" or "v":
+
+>>> print(c.filter_by_measure(re.compile('^a|v')))
+Constructs:
+{'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
+ 'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
 
 Select cell measure constructs that have a measure of any value:
 
->>> d = c.measure(None)
-
-Setting no keyword arguments selects no constructs:
-
->>> c.measure()
-<Constructs: >
+>>> print(c.filer_by_measure())
+Constructs:
+{'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
+ 'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
 
         '''
         out = self.shallow_copy()
@@ -523,8 +545,9 @@ Setting no keyword arguments selects no constructs:
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `filter_by_measure`, `filter_by_name`,
-             `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`, `inverse_filter`
 
 :Parameters:
 
@@ -559,12 +582,19 @@ Constructs:
 {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>}
 
 Select cell method constructs that have a method of 'mean' or
-'maximmum':
+'maximum':
 
 >>> print(c.filter_by_method('mean', 'maximum'))
 Constructs:
 {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
  'cellmethod1': <CellMethod: domainaxis3: maximum>}
+
+Select cell method constructs that have a method that contain the letter 'x':
+
+>>> import re
+>>> print(c.filter_by_method(re.compile('x')))
+Constructs:
+{'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
 Select cell method constructs that have a method of any value:
 
@@ -572,13 +602,6 @@ Select cell method constructs that have a method of any value:
 Constructs:
 {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
  'cellmethod1': <CellMethod: domainaxis3: maximum>}
-
-Select cell method constructs that have a method that contiain the letter 'x':
-
->>> import re
->>> print(c.filter_by_method(re.compile('x')))
-Constructs:
-{'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
         '''
         out = self.shallow_copy()
@@ -614,13 +637,14 @@ Constructs:
         return out
     #--- End: def
 
-    def filter_by_name(self, **names):
+    def filter_by_name(self, *names):
         '''Select metadata constructs by name.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `filter_by_measure`, `filter_by_method`,
-             `filter_by_ncdim`, `filter_by_ncvar`, `property`, `type`
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`, `inverse_filter`
 
 :Parameters:
 
@@ -689,12 +713,13 @@ TODO
     #--- End: def
 
     def filter_by_ncdim(self, *ncdims):
-        '''Select metadata constructs
-
+        '''Select domain axis constructs by netCDF dimension name.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: TODO
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_name`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`, `inverse_filter`
 
 :Parameters:
 
@@ -757,33 +782,28 @@ TODO
     #--- End: def
 
     def filter_by_ncvar(self, *ncvars):
-        '''Select metadata constructs
-
-By default all metadata constructs are selected, but a subset may be
-chosen via the optional parameters. If multiple parameters are
-specified, then the constructs that satisfy *all* of the criteria are
-returned.
+        '''Select domain axis constructs by netCDF variable name.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: TODO
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
+             `filter_by_property`, `filter_by_type`, `inverse_filter`
 
 :Parameters:
 
-    ncvars: (sequence of) `str`, optional
-        Select constructs which have the given netCDF variable
-        name. If multiple netCDF variable names are specified then
-        select the constructs which have any of the given netCDF
-        variable names.
+    ncvars:
+        Select constructs that have any of the given netCDF variable
+        names.
 
-        *Parameter example:*
-          ``ncvar='lon'``
+        A netCDF variable name is specified by a string
+        (e.g. ``'time'``); or a compiled regular expression
+        (e.g. ``re.compile('^lat')``), for which all constructs whose
+        netCDF variable names match (via `re.search`) are selected.
 
-        *Parameter example:*
-          ``ncvar=['lat']``
-
-        *Parameter example:*
-          ``ncvar=['lon', 'lat']``
+        If no netCDF variable names are provided then all domain axis
+        constructs that have a netCDF variable name, with any value,
+        are selected.
 
 :Returns:
 
@@ -791,7 +811,43 @@ returned.
         The selected constructs and their construct keys.
 
 **Examples:**
-TODO
+
+Select constructs that have a netCDF variable name of  of 'x':
+
+>>> print(c.filter_by_ncvar('x'))
+Constructs:
+{'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
+
+Select cell method constructs that have a a netCDF variable name of
+'x' or 'y':
+
+>>> print(c.filter_by_ncvar('x', 'y'))
+Constructs:
+{'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+ 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
+
+Select constructs that have a netCDF variable name that starts with
+the letter 't':
+
+>>> import re
+>>> print(c.filter_by_ncvar(re.compile('^t')))
+Constructs:
+{'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+
+Select constructs that have a netCDF variable name of any value:
+
+>>> print(c.filter_by_ncvar())
+print t.constructs.filter_by_ncvar()
+Constructs:
+{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+ 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+ 'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+ 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+ 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+ 'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+ 'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+ 'domainancillary1': <DomainAncillary: ncvar%b(1) >,
+ 'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
 
         '''
         out = self.shallow_copy()
@@ -842,24 +898,43 @@ TODO
 
         return False
     
-    def property(self, *and_or, **properties):
+    def filter_by_property(self, *and_or, **properties):
         '''Select metadata constructs by property.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `filter_by_measure`, `filter_by_method`,
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`, `filter_by_method`,
              `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `type`
+             `filter_by_type`, `inverse_filter`
 
 :Parameters:
+        
+    and_or:
+        Define the behaviour when multiple properties are provided.
+
+        By default (or if the *and_or* parameters is ``'and'``) a
+        construct is selected if it matches all of the given
+        properties, but if the *and_or* parameter is ``'or'`` then a
+        construct will be selected when at least one of its properties
+        matches.
 
     properties: 
-        Select constructs that have the all of the given property
-        values. Property names are given by keyword arguments. No
-        constructs are selected no keyword arguments are provided.
+        Select constructs that have properties with the given
+        values.
 
-        If a property value of `None` is provided then all constructs
-        that have that property, with any value, are selected.
+        By default a construct is selected if it matches all of the
+        given properties, but it may alternatively be selected when at
+        least one of its properties matches (see the *and_or*
+        positional parameter).
+
+        A property value is specified by any value
+        (e.g. ``'latitude'``, ``4``, ``['foo', 'bar']``); or a
+        compiled regular expression (e.g. ``re.compile('^ocean')``),
+        for which all constructs whose methods match (via `re.search`)
+        are selected.
+
+        If no properties are provided then all constructs that have
+        properties, with any values, are selected.
 
 :Returns:
 
@@ -868,33 +943,26 @@ TODO
 
 **Examples:**
 
-Select constructs that have a "long_name" property of 'Air
-Temperature'
 
->>> d = c.property(long_name='Air Temperature')
 
-Select constructs that have a "long_name" property of 'Air
-Temperature' and a "foo" property of 'bar':
+TODO
 
->>> d = c.property(long_name='Air Temperature', foo='bar')
-
-Select constructs that have a "units" property of any value:
-
->>> d = c.measure(units=None)
-
-Setting no keyword arguments selects no constructs:
-
->>> c.property()
-<Constructs: >
 
         '''
         out = self.shallow_copy()
         out._prefiltered = self.shallow_copy()
 
+        _or = False
         if and_or:
-            _or = (and_or[0] == 'or')
-        else:
-            _or = False
+            if len(and_or) > 1:
+                raise ValueError("asdas444444444")
+            
+            x = and_or[0]
+            if x == 'or':
+                _or = True
+            elif x != 'and':
+                raise ValueError("asdas66666666666666666666 2")
+        #--- End: if
 
         for cid, construct in tuple(out.items()):
             try:
@@ -902,6 +970,12 @@ Setting no keyword arguments selects no constructs:
             except AttributeError:
                 # This construct doesn't have a "get_property" method
                 out._pop(cid)
+                continue
+
+            if not properties:
+                if not construct.properties():
+                    out._pop(cid)
+                    
                 continue
 
             ok = True
@@ -925,14 +999,39 @@ Setting no keyword arguments selects no constructs:
         return out
     #--- End: def
 
-    def inverse(self):
-        '''TODO
+    def filter_by_type(self, *types):
+        '''Select cell measure constructs by measure.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `axis`, `key`, `filter_by_measure`, `filter_by_method`,
-             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `property`, `type`
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_name`, `filter_by_property`, `inverse_filter`
+
+:Parameters:
+
+:Returns:
+
+    `Constructs`
+        The selected constructs and their construct keys.
+
+**Examples:**
+TODO
+
+        '''
+        out = super().filter_by_type(*types)
+        out._prefiltered = self.shallow_copy()
+        return out        
+    #--- End: def
+    
+    def inverse_filter(self):
+        '''Return the inverse of the previous filtering.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
+             `filter_by_ncvar`, `filter_by_property`, `filter_by_type`
 
 :Returns:
 
@@ -975,8 +1074,8 @@ TODO
                                      key1_to_key0=None):
         '''
         '''
-        refs0 = dict(self.type('coordinate_reference'))
-        refs1 = dict(other.type('coordinate_reference'))
+        refs0 = dict(self.filter_by_type('coordinate_reference'))
+        refs1 = dict(other.filter_by_type('coordinate_reference'))
 
         if len(refs0) != len(refs1):
             if verbose:
@@ -1034,8 +1133,8 @@ TODO
         '''TODO
 
         '''
-        cell_methods0 = self.type('cell_method')
-        cell_methods1 = other.type('cell_method')
+        cell_methods0 = self.filter_by_type('cell_method')
+        cell_methods1 = other.filter_by_type('cell_method')
 
         if len(cell_methods0) != len(cell_methods1):
             if verbose:
@@ -1123,9 +1222,9 @@ TODO
         # Domain axes
         # ------------------------------------------------------------  
         self_sizes  = [d.get_size()
-                       for d in self.type('domain_axis').values()]
+                       for d in self.filter_by_type('domain_axis').values()]
         other_sizes = [d.get_size()
-                       for d in other.type('domain_axis').values()]
+                       for d in other.filter_by_type('domain_axis').values()]
       
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes

@@ -877,9 +877,7 @@ construct, into the data array.
         '''
         f = self.copy()
         
-        
-##        domain_axis = self.domain_axes.get(axis, None)
-        domain_axis = self.domain_axes.key(axis).get(default=None)
+        domain_axis = self.domain_axes.filter_by_key(axis).get(default=None)
         if domain_axis is None:
             raise ValueError("Can't insert non-existent domain axis: {}".format(axis))
         
@@ -1075,9 +1073,8 @@ that has fewer metadata constructs than one created with the
                    : grid_longitude(9) = [0.0, ..., 8.0] degrees
 
         '''
-        c = self.constructs.key(key).get()
+        c = self.constructs.filter_by_key(key).get()
 
-        
 #        c0 = self.constructs.select(name=name, properties=properties,
 #                                    measure=measure, ncvar=ncvar,
 #                                    ncdim=ncdim, key=key, axis=axis,
@@ -1121,9 +1118,7 @@ that has fewer metadata constructs than one created with the
             for construct in ('dimension_coordinate',
                               'auxiliary_coordinate',
                               'cell_measure'):
-#                for ccid, con in self.constructs.select(construct=construct,
-#                                                        axis=data_axes).items():
-                for ccid, con in self.constructs.type(construct).axis(data_axes).items():
+                for ccid, con in self.constructs.filter_by_type(construct).axis(data_axes).items():
                     axes = constructs_data_axes.get(ccid)
                     if axes is None:
                         continue
@@ -1379,8 +1374,7 @@ may be selected for removal.
 {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
         '''
-#        return self._get_constructs().constructs(
-        return self.constructs.type('field_ancillary')
+        return self.constructs.filter_by_type('field_ancillary')
     #--- End: def
 
     @property
@@ -1415,8 +1409,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
              ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
         '''
-#        return self._get_constructs().constructs(construct='cell_method',
-        return self.constructs.type('cell_method')
+        return self.constructs.filter_by_type('cell_method')
     #--- End: def
     
 #    def cell_methods(self, copy=False):

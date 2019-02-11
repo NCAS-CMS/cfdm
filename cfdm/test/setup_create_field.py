@@ -206,7 +206,7 @@ class create_fieldTest(unittest.TestCase):
             g[0].dump()
 
 #        array = g[0].get_construct(name='long_name=greek_letters').data.array
-        array = g[0].constructs.name('long_name=greek_letters').get().data.array
+        array = g[0].constructs.filter_by_name('long_name=greek_letters').get().data.array
         self.assertTrue(array[1] == b'beta', 'greek_letters = {!r}'.format(array))
 
         self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))
