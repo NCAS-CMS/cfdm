@@ -31,6 +31,7 @@ Selection
    ~cfdm.Constructs.filter_by_ncvar
    ~cfdm.Constructs.get
    ~cfdm.Constructs.get_key
+   ~cfdm.Constructs.inverse_filter
 
 Dictionary-like methods
 -----------------------
