@@ -41,7 +41,7 @@ class NetCDFDimension(NetCDF):
 .. versionadded:: 1.7.0
 
     '''
-    def nc_del_dimension(self, *default):
+    def nc_del_dimension(self, default=ValueError()):
         '''Remove the netCDF dimension name.
 
 .. versionadded:: 1.7.0
@@ -52,14 +52,14 @@ class NetCDFDimension(NetCDF):
 :Parameters:
 
     default: optional
-        Return *default* if the netCDF dimension name has not been
-        set.
+        Return the value of the *default* parameter if the netCDF
+        dimension name has not been set. If set to an `Exception`
+        instance then it will be raised instead.
 
 :Returns:
 
     `str`
-        The removed netCDF dimension name. If unset then *default* is
-        returned, if provided.
+        The removed netCDF dimension name.
 
 **Examples:**
 
@@ -79,14 +79,14 @@ None
 
         '''
         try:
-            return self._get_component('netcdf').pop('dimension', *default)
+            return self._get_component('netcdf').pop('dimension')
         except KeyError:
-            raise AttributeError(
-                "{!r} object has no netCDF dimension name".format(
-                    self.__class__.__name__))
+            return self._default(default,
+                   "{!r} has no netCDF dimension name".format(
+                       self.__class__.__name__))
     #--- End: def
 
-    def nc_get_dimension(self, *default):
+    def nc_get_dimension(self, default=ValueError()):
         '''Return the netCDF dimension name.
 
 .. versionadded:: 1.7.0
@@ -97,14 +97,14 @@ None
 :Parameters:
 
     default: optional
-        Return *default* if the netCDF dimension name has not been
-        set.
+        Return the value of the *default* parameter if the netCDF
+        dimension name has not been set. If set to an `Exception`
+        instance then it will be raised instead.
 
 :Returns:
 
     `str`
-        The netCDF dimension name. If unset then *default* is
-        returned, if provided.
+        The netCDF dimension name.
 
 **Examples:**
 
@@ -122,15 +122,13 @@ None
 >>> print(f.nc_del_dimension(None))
 None
 
-        '''
+        '''   
         try:
             return self._get_component('netcdf')['dimension']
         except KeyError:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no netCDF dimension name".format(
-                self.__class__.__name__))
+            return self._default(default,
+                   "{!r} has no netCDF dimension name".format(
+                       self.__class__.__name__))
     #--- End: def
 
     def nc_has_dimension(self):
@@ -213,7 +211,7 @@ class NetCDFVariable(NetCDF):
 .. versionadded:: 1.7.0
 
     '''
-    def nc_del_variable(self, *default):
+    def nc_del_variable(self, default=ValueError()):
         '''Remove the netCDF variable name.
 
 .. versionadded:: 1.7.0
@@ -223,13 +221,14 @@ class NetCDFVariable(NetCDF):
 :Parameters:
 
     default: optional
-        Return *default* if the netCDF variable name has not been set.
+        Return the value of the *default* parameter if the netCDF
+        variable name has not been set. If set to an `Exception`
+        instance then it will be raised instead.
 
 :Returns:
 
     `str`
-        The removed netCDF variable name. If unset then *default* is
-        returned, if provided.
+        The removed netCDF variable name.
 
 **Examples:**
 
@@ -249,14 +248,14 @@ None
 
         '''        
         try:
-            return self._get_component('netcdf').pop('variable', *default)
+            return self._get_component('netcdf').pop('variable')
         except KeyError:
-            raise AttributeError(
-                "{!r} object has no netCDF variable name".format(
-                    self.__class__.__name__))
+            return self._default(default,
+                   "{!r} has no netCDF variable name".format(
+                       self.__class__.__name__))
     #--- End: def
         
-    def nc_get_variable(self, *default):
+    def nc_get_variable(self, default=ValueError()):
         '''Return the netCDF variable name.
 
 .. versionadded:: 1.7.0
@@ -266,7 +265,9 @@ None
 :Parameters:
 
     default: optional
-        Return *default* if the netCDF variable name has not been set.
+        Return the value of the *default* parameter if the netCDF
+        variable name has not been set. If set to an `Exception`
+        instance then it will be raised instead.
 
 :Returns:
 
@@ -294,11 +295,9 @@ None
         try:
             return self._get_component('netcdf')['variable']
         except KeyError:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no netCDF variable name".format(
-                self.__class__.__name__))
+            return self._default(default,
+                   "{!r} has no netCDF variable name".format(
+                       self.__class__.__name__))
     #--- End: def
 
     def nc_has_variable(self):
@@ -379,7 +378,7 @@ class NetCDFSampleDimension(NetCDF):
 .. versionadded:: 1.7.0
 
     '''
-    def nc_del_sample_dimension(self, *default):
+    def nc_del_sample_dimension(self, default=ValueError()):
         '''Remove the netCDF sample dimension name.
 
 .. versionadded:: 1.7.0
@@ -389,15 +388,15 @@ class NetCDFSampleDimension(NetCDF):
 
 :Parameters:
 
-    default: optional        
-        Return *default* if the netCDF sample dimension name has not
-        been set.
+    default: optional
+        Return the value of the *default* parameter if the netCDF
+        sample dimension name has not been set. If set to an
+        `Exception` instance then it will be raised instead.
 
 :Returns:
 
     `str`
-        The removed netCDF sample dimension name. If unset then
-        *default* is returned, if provided.
+        The removed netCDF sample dimension name.
 
 **Examples:**
 
@@ -415,15 +414,16 @@ None
 >>> print(f.nc_del_sample_dimension(None))
 None
 
-        '''        
+        '''
         try:
-            return self._get_component('netcdf').pop('sample_dimension', *default)
+            return self._get_component('netcdf').pop('sample_dimension')
         except KeyError:
-            raise AttributeError("{!r} has no netCDF sample dimension name".format(
-                self.__class__.__name__))
+            return self._default(default,
+                   "{!r} has no netCDF sample dimension name".format(
+                       self.__class__.__name__))
     #--- End: def
 
-    def nc_get_sample_dimension(self, *default):
+    def nc_get_sample_dimension(self, default=ValueError()):
         '''Return the netCDF sample dimension name.
 
 .. versionadded:: 1.7.0
@@ -433,15 +433,15 @@ None
 
 :Parameters:
 
-    default: optional        
-        Return *default* if the netCDF sample dimension name has not
-        been set.
+    default: optional
+        Return the value of the *default* parameter if the netCDF
+        sample dimension name has not been set. If set to an
+        `Exception` instance then it will be raised instead.
 
 :Returns:
 
     `str`
-        The netCDF sample dimension name. If unset then *default* is
-        returned, if provided.
+        The netCDF sample dimension name.
 
 **Examples:**
 
@@ -463,11 +463,9 @@ None
         try:
             return self._get_component('netcdf')['sample_dimension']
         except KeyError:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no netCDF sample dimension name".format(
-                self.__class__.__name__))
+            return self._default(default,
+                   "{!r} has no netCDF sample dimension name".format(
+                       self.__class__.__name__))
     #--- End: def
 
     def nc_has_sample_dimension(self):
@@ -559,15 +557,15 @@ class NetCDFInstanceDimension(NetCDF):
 
 :Parameters:
 
-    default: optional        
-        Return *default* if the netCDF instance dimension name has not
-        been set.
+    default: optional
+        Return the value of the *default* parameter if the netCDF
+        instance dimension name has not been set. If set to an
+        `Exception` instance then it will be raised instead.
 
 :Returns:
 
     `str`
-        The netCDF instance dimension name. If unset then *default* is
-        returned, if provided.
+        The netCDF instance dimension name.
 
 **Examples:**
 
@@ -585,15 +583,16 @@ None
 >>> print(f.nc_del_instance_dimension(None))
 None
  
-        '''        
+        '''
         try:
-            return self._get_component('netcdf').pop('instance_dimension', *default)
+            return self._get_component('netcdf').pop('instance_dimension')
         except KeyError:
-            raise AttributeError("{!r} has no netCDF instance dimension name".format(
-                self.__class__.__name__))
+            return self._default(default,
+                   "{!r} has no netCDF instance dimension name".format(
+                       self.__class__.__name__))
     #--- End: def
 
-    def nc_get_instance_dimension(self, *default):
+    def nc_get_instance_dimension(self, default=ValueError()):
         '''Return the netCDF instance dimension name.
 
 .. versionadded:: 1.7.0
@@ -603,15 +602,15 @@ None
 
 :Parameters:
 
-    default: optional        
-        Return *default* if the netCDF instance dimension name has not
-        been set.
+    default: optional
+        Return the value of the *default* parameter if the netCDF
+        instance dimension name has not been set. If set to an
+        `Exception` instance then it will be raised instead.
 
 :Returns:
 
     `str`
-        The netCDF instance dimension name. If unset then *default* is
-        returned, if provided.
+        The netCDF instance dimension name.
 
 **Examples:**
 
@@ -628,15 +627,14 @@ False
 None
 >>> print(f.nc_del_instance_dimension(None))
 None
+
         '''
         try:
             return self._get_component('netcdf')['instance_dimension']
         except KeyError:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no netCDF instance dimension name".format(
-                self.__class__.__name__))
+            return self._default(default,
+                   "{!r} has no netCDF instance dimension name".format(
+                       self.__class__.__name__))
     #--- End: def
 
     def nc_has_instance_dimension(self):

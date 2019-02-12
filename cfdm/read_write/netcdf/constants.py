@@ -144,9 +144,9 @@ description_of_file_contents_attributes = ('comment',
                                            'title',)
 
 # --------------------------------------------------------------------
-# Valid cell method properties
+# Valid cell method qualifiers
 # --------------------------------------------------------------------
-cell_method_properties = set(('within',
+cell_method_qualifiers = set(('within',
                               'where',
                               'over',
                               'interval',

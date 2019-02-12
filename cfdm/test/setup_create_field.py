@@ -167,12 +167,12 @@ class create_fieldTest(unittest.TestCase):
 
         cm0 =  cfdm.CellMethod(axes=axisX,
                                method='mean',
-                               properties={'interval': [cfdm.Data(1, 'day')],
+                               qualifiers={'interval': [cfdm.Data(1, 'day')],
                                            'comment' : 'ok'})
     
         cm1 =  cfdm.CellMethod(axes=[axisY],
                                method='maximum',
-                               properties={'where' : 'sea'})
+                               qualifiers={'where' : 'sea'})
 
         f.set_construct(cm0)
         f.set_construct(cm1)
@@ -205,8 +205,7 @@ class create_fieldTest(unittest.TestCase):
             print(g)
             g[0].dump()
 
-#        array = g[0].get_construct(name='long_name=greek_letters').data.array
-        array = g[0].constructs.filter_by_name('long_name=greek_letters').get().data.array
+        array = g[0].constructs.filter_by_name('long_name=greek_letters').construct().data.array
         self.assertTrue(array[1] == b'beta', 'greek_letters = {!r}'.format(array))
 
         self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))

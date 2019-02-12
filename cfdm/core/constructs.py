@@ -213,7 +213,12 @@ class Constructs(object):
     #--- End: def
 
     def __contains__(self, key):
-        '''
+        '''Called to implement membership test operators for construct keys.
+
+x.__contains__(y) <==> y in x
+
+.. versionadded:: 1.7.0
+
         '''
         return key in self._construct_type        
     #--- End: def
@@ -237,7 +242,12 @@ class Constructs(object):
     #--- End: def
    
     def __getitem__(self, key):
-        '''
+        '''Return a construct with the given key.
+
+x.__getitem__(y) <==> x[y]
+
+.. versionadded:: 1.7.0
+
         '''
         construct_type = self.construct_type(key) # ignore??
         if construct_type is None:
@@ -251,15 +261,20 @@ class Constructs(object):
     #--- End: def
 
     def __iter__(self):
-        '''
+        '''Called when an iterator is required.
+
 x.__iter__() <==> iter(x)
+
+.. versionadded:: 1.7.0
 
         '''
         return iter(self._dictionary().keys())
     #--- End: def'
             
     def __len__(self):
-        '''<TODO>
+        '''Return the number of constructs.
+
+x.__len__() <==> len(x)
 
 .. versionadded:: 1.7.0
 
@@ -285,7 +300,7 @@ x.__iter__() <==> iter(x)
     # Private methods
     # ----------------------------------------------------------------
     def _default(self, default, message=None):
-        '''<TODO>
+        '''TODO
 
 .. versionadded:: 1.7.0
 
@@ -315,6 +330,12 @@ x.__iter__() <==> iter(x)
         
         return default
     #--- End: def
+
+    def _del_data_axes(self, key, *default):
+        '''Remove a construct's axes, if any
+        '''
+        return self._construct_axes.pop(key, *default)
+    #--- End: def
     
     # ----------------------------------------------------------------
     # Private dictionary-like methods    
@@ -327,8 +348,9 @@ raised
 
         '''
         # Remove the construct axes, if any
-        self._construct_axes.pop(key, None)
-
+#        self._construct_axes.pop(key, None)
+        self._del_data_axes(key, None)
+        
         # Find the construct type
         try:
             construct_type = self._construct_type.pop(key)
@@ -754,20 +776,38 @@ removed even if it is referenced by coordinate reference coinstruct.
     # ----------------------------------------------------------------
     # Dictionary-like methods    
     # ----------------------------------------------------------------
-    def items(self):
+    def get(self, key, *default):
+        '''Return the construct for key if key exists, else default.
+
+.. versionadded:: 1.7.0
+
         '''
+        return self._dictionary().get(key, *default)
+    #--- End: def
+
+    def items(self):
+        '''Return the items ((construct key, construct) pairs).
+
+.. versionadded:: 1.7.0
+
         '''
         return self._dictionary().items()
     #--- End: def
     
     def keys(self):
-        '''
+        '''Returns all of the construct keys, in arbitrary order.
+
+.. versionadded:: 1.7.0
+
         '''
         return self._construct_type.keys()
     #--- End: def
     
     def values(self):
-        '''
+        '''Returns all of the metadata constructs, in arbitrary order.
+
+.. versionadded:: 1.7.0
+
         '''
         return self._dictionary().values()
     #--- End: def
@@ -825,30 +865,71 @@ removed even if it is referenced by coordinate reference coinstruct.
         return out
     #--- End: def
 
-    def get(self, default=ValueError()):
-        '''
+    def construct(self, default=ValueError()):
+        '''TODO
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `construct_key`, `get`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if there is not
+        exactly one construct. If set to an `Exception` instance then
+        it will be raised instead.
+
+:Returns:
+
+        TODO
+
+**Examples:**
+
+TODO
         '''
         if not self:
-            return self._default(default, "Can't get zero constructs")
+            return self._default(default, "Can't return zero constructs")
 
         if len(self) > 1:
             return self._default(default,
-                                 "Can't get {} constructs".format(len(self)))
+                                 "Can't return {} constructs".format(len(self)))
         
         _, construct = self._dictionary().popitem()
             
         return construct
     #--- End: def
+    
+    def construct_key(self, default=ValueError()):
+        '''TODO
 
-    def get_key(self, default=ValueError()):
-        '''
+.. versionadded:: 1.7.0
+
+.. seealso:: `construct`, `get`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if there is not
+        exactly one construct. If set to an `Exception` instance then
+        it will be raised instead.
+
+:Returns:
+
+    `str`
+        TODO
+
+**Examples:**
+
+TODO
+    
+
         '''
         if not self:
             return self._default(default, "Can't get key for zero constructs")
 
         if len(self) > 1:
             return self._default(default,
-                                 "Can't get key for {} constructs".format(len(self)))
+                 "Can't get key more than one ({}) construct".format(len(self)))
         
         key, _ = self._dictionary().popitem()
             
@@ -912,7 +993,7 @@ removed even if it is referenced by coordinate reference coinstruct.
 #
 #        '''
 #        return self.select(copy=copy)
-#        out = self.view(ignore=self._ignore)
+#        out = self._view(ignore=self._ignore)
 #                              
 #        
 #        if construct is not None:
@@ -1031,16 +1112,24 @@ removed even if it is referenced by coordinate reference coinstruct.
     def copy(self, data=True):
         '''Return a deep copy.
 
-``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
+``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+
+    data: `bool`, optional
+        If False then do not copy data contained in the metadata
+        constructs. By default such data are copied.
 
 :Returns:
 
-    `Constructs`
-        The copy.
+        The deep copy.
 
 **Examples:**
 
->>> d = c.copy()
+>>> g = f.copy()
+>>> g = f.copy(data=False)
 
         '''
         return type(self)(source=self, copy=True, _view=False,
@@ -1431,7 +1520,20 @@ removed even if it is referenced by coordinate reference coinstruct.
     #--- End: def
 
     def shallow_copy(self, _ignore=None):
-        '''
+        '''Return a shallow copy.
+
+``f.shallow_copy()`` is equivalent to ``copy.copy(f)``.
+
+.. versionadded:: 1.7.0
+
+:Returns:
+
+        The shallow copy.
+
+**Examples:**
+
+>>> g = f.shallow_copy()
+
         '''
         if _ignore is None:
             _ignore = self._ignore
@@ -1440,12 +1542,13 @@ removed even if it is referenced by coordinate reference coinstruct.
                           _view=False)
     #--- End: def
 
-    def view(self, ignore=()):
-        '''<TODO>
+    def _view(self, ignore=()):
+        '''Return a new view the container with the same metadata constructs.
 
 :Parameters:
 
     ignore: `bool`, optional
+        TODO
 
 :Returns:
 
@@ -1455,6 +1558,7 @@ removed even if it is referenced by coordinate reference coinstruct.
 **Examples:**
 
 <TODO>
+
         '''
         return type(self)(source=self, _view=True, _ignore=ignore)
     #--- End: def

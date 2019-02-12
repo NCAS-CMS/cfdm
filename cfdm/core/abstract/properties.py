@@ -39,8 +39,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
 
         '''
         super().__init__()
-
- #       self._set_component('properties', {}, copy=False)
         
         if source is not None:
             properties = source.properties()
@@ -48,23 +46,13 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
             properties = {}
         
         self._set_component('properties', properties, copy=False)
-#        
-#        if properties:
-#            self.replace_properties(properties, copy=copy)
     #--- End: def
 
-#    @property
-#    def properties(self):
-#        '''
-#        '''
-#        return self._get_component('properties')
-#    #--- End: def
-    
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def clear_properties(self):
-        '''Return or replace all properties.
+        '''TODO Return or replace all properties.
 
 .. versionadded:: 1.7.0
 
@@ -108,7 +96,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         return type(self)(source=self, copy=True)
     #--- End: def
 
-    def del_property(self, prop, default=AttributeError()):
+    def del_property(self, prop, default=ValueError()):
         '''Remove a property.
 
 .. versionadded:: 1.7.0
@@ -125,13 +113,13 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
            ``prop='long_name'``
 
     default: optional
-        Return *default* if the property has not been set. By default
-        an exception is raised in this case.
+        Return the value of the *default* parameter if the property
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
 
 :Returns:
 
-        The removed property. If unset then *default* is returned, if
-        provided.
+        The removed property.
 
 **Examples:**
 
@@ -156,18 +144,9 @@ None
             return self._default(default,
                                  "{!r} has no {!r} property".format(
                                  self.__class__.__name__, prop))
-        
-#        try:
-#            return self._get_component('properties').pop(prop)
-#        except KeyError:
-#            if default:
-#                return default[0]
-#
-#            raise AttributeError("{!r} has no {!r} property".format(
-#                self.__class__.__name__, prop))
-#    #--- End: def
+    #--- End: def
 
-    def get_property(self, prop, default=AttributeError()):
+    def get_property(self, prop, default=ValueError()):
         '''Return a property.
 
 .. versionadded:: 1.7.0
@@ -184,13 +163,13 @@ None
            ``prop='standard_name'``
 
     default: optional
-        Return *default* if the property has not been set. By default
-        an exception is raised in this case.
+        Return the value of the *default* parameter if the property
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
 
 :Returns:
 
-        The value of the property. If unset then *default* is
-        returned, if provided.
+        The value of the property.
 
 **Examples:**
 
@@ -215,11 +194,6 @@ None
             return self._default(default,
                                  "{!r} has no {!r} property".format(
                                      self.__class__.__name__, prop))
-#            if default:
-#                return default[0]
-#
-#            raise AttributeError("{!r} has no {!r} property".format(
-#                self.__class__.__name__, prop))
     #--- End: def
 
     def has_property(self, prop):
@@ -264,7 +238,7 @@ None
     #--- End: def
 
     def properties(self):
-        '''Return or replace all properties.
+        '''Return all properties.
 
 .. versionadded:: 1.7.0
 
@@ -290,7 +264,7 @@ None
     #--- End: def
 
     def set_properties(self, properties, copy=True):
-        '''Replace all properties.
+        '''TODO Replace all properties.
 
 .. versionadded:: 1.7.0
 

@@ -174,12 +174,12 @@ class create_fieldTest_2(unittest.TestCase):
 
         cm0 =  cfdm.CellMethod(axes=[axisX],
                                method='mean',
-                               properties={'interval': [cfdm.Data(1, 'day')],
+                               qualifiers={'interval': [cfdm.Data(1, 'day')],
                                            'comment' : 'ok'})
     
         cm1 =  cfdm.CellMethod(axes=[axisY],
                                method='maximum',                               
-                               properties={'where' : 'sea'})
+                               qualifiers={'where' : 'sea'})
 
         f.set_construct(cm0)
         f.set_construct(cm1)

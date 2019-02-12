@@ -2187,7 +2187,8 @@ extra trailing dimension.
 
             cell_methods_strings = []
             for cm in list(cell_methods.values()):
-                if not constants.cell_method_properties.issuperset(cm.properties()):
+                if not constants.cell_method_qualifiers.issuperset(
+                        self.implementation.get_cell_method_qualifiers(cm)):
                     raise ValueError(
 "Can't write {!r}: Unknown cell method property: {!r}".format(
     org_f, cm.properties()))

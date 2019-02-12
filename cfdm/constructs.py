@@ -92,7 +92,27 @@ x.__str__() <==> str(x)
     #--- End: def
 
     def copy(self, data=True):
-        '''
+        '''Return a deep copy.
+
+``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+
+    data: `bool`, optional
+        If False then do not copy data contained in the metadata
+        constructs. By default such data are copied.
+
+:Returns:
+
+        The deep copy.
+
+**Examples:**
+
+>>> g = f.copy()
+>>> g = f.copy(data=False)
+
         '''
         out = super().copy(data=data)
 
@@ -357,8 +377,8 @@ x.__str__() <==> str(x)
         A domain axis construct is identified by a keyword parameter
         of the domain axis construct key (e.g. ``domainaxis1``). The
         value is a boolean indicating if a construct should be
-        selected when its data does span the axis (`True`), or when
-        its data does not span the axis (`False`).
+        selected when its data does span the axis (`True`), or
+        selected when its data does not span the axis (`False`).
 
         If no axes are provided then all constructs that have data,
         spanning any domain axes constructs, are selected.
@@ -370,7 +390,25 @@ x.__str__() <==> str(x)
 
 **Examples:**
 
-TODO
+Select constructs whose data spans the "domainaxis1" domain axis
+construct:
+
+>>> d = c.filter_by_axis(domainaxis1=True)
+
+Select constructs whose data does not span the "domainaxis2" domain
+axis construct:
+
+>>> d = c.filter_by_axis(domainaxis2=False)
+
+Select constructs whose data spans the "domainaxis1", but not the
+"domainaxis2" domain axis constructs:
+
+>>> d = c.filter_by_axis(domainaxis1=True, domainaxis2=False)
+
+Select constructs whose data spans the "domainaxis1" or the
+"domainaxis2" domain axis constructs:
+
+>>> d = c.filter_by_axis('or', domainaxis1=True, domainaxis2=True)
 
         '''       
         out = self.shallow_copy()
@@ -735,7 +773,22 @@ Constructs:
 
 **Examples:**
 
-TODO
+Select constructs that have a "standard_name" property of 'latitude':
+
+>>> d = c.filter_by_name('latitude')
+
+Select constructs that have a "long_name" property of 'Height':
+
+>>> d = c.filter_by_name('long_name=Height')
+
+Select constructs that have a "standard_name" property of 'latitude'
+or a "foo" property of 'bar':
+
+>>> d = c.filter_by_name('latitude', 'foo=bar')
+
+Select constructs that have a netCDF variable name of 'time':
+
+>>> d = c.filter_by_name('ncvar%time')
 
         '''
         out = self.shallow_copy()
@@ -800,7 +853,14 @@ TODO
 
 **Examples:**
 
-TODO
+Select the domain axis constructs with netCDF dimension name 'time':
+
+>>> d = c.filter_by_ncdim('time')
+
+Select the domain axis constructs with netCDF dimension name 'time' or
+'lat':
+
+>>> d = c.filter_by_ncdim('time', 'lat')
 
         '''
         out = self.shallow_copy()
@@ -872,42 +932,13 @@ TODO
 
 **Examples:**
 
-Select constructs that have a netCDF variable name of  of 'x':
+Select the constructs with netCDF variable name 'time':
 
->>> print(c.filter_by_ncvar('x'))
-Constructs:
-{'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
+>>> d = c.filter_by_ncvar('time')
 
-Select cell method constructs that have a a netCDF variable name of
-'x' or 'y':
+Select the constructs with netCDF variable name 'time' or 'lat':
 
->>> print(c.filter_by_ncvar('x', 'y'))
-Constructs:
-{'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
- 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
-
-Select constructs that have a netCDF variable name that starts with
-the letter 't':
-
->>> import re
->>> print(c.filter_by_ncvar(re.compile('^t')))
-Constructs:
-{'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-
-Select constructs that have a netCDF variable name of any value:
-
->>> print(c.filter_by_ncvar())
-print t.constructs.filter_by_ncvar()
-Constructs:
-{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
- 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
- 'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
- 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
- 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
- 'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >,
- 'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
- 'domainancillary1': <DomainAncillary: ncvar%b(1) >,
- 'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
+>>> d = c.filter_by_ncvar('time', 'lat')
 
         '''
         out = self.shallow_copy()
@@ -1007,9 +1038,25 @@ Constructs:
 
 **Examples:**
 
+Select constructs that have a "standard_name" of 'latitude':
 
+>>> d = c.filter_by_property(standard_name='latitude')
 
-TODO
+Select constructs that have a "long_name" of 'height' *and* "units" of
+'m':
+
+>>> d = c.filter_by_property(long_name='height', units='m')
+
+Select constructs that have a "long_name" of 'height' *or* a "foo" of
+'bar':
+
+>>> d = c.filter_by_property('or', long_name='height', foo='bar')
+
+Select constructs that have a "standard_name" which contains start
+with the string 'air':
+
+>>> import re
+>>> d = c.filter_by_property(standard_name=re.compile('^air'))
 
         '''
         out = self.shallow_copy()
@@ -1065,7 +1112,7 @@ TODO
     #--- End: def
 
     def filter_by_type(self, *types):
-        '''Select cell measure constructs by measure.
+        '''Select metadata constructs by type.
 
 .. versionadded:: 1.7.0
 
@@ -1102,7 +1149,14 @@ TODO
         The selected constructs and their construct keys.
 
 **Examples:**
-TODO
+
+Select dimension coordinate constructs:
+
+>>> d = c.filter_by_type('dimension_coordinate')
+
+Select dimension coordinate and field ancillary constructs:
+
+>>> d = c.filter_by_type('dimension_coordinate', 'field_ancillary')
 
         '''
         out = super().filter_by_type(*types)
@@ -1118,7 +1172,11 @@ TODO
 
 The history is returned in a `tuple` by the `filters_applied`
 method. The last element of the tuple describes the last filter
-applied.
+applied. Each element is a single-entry dictionary whose key is the
+name of the filter method that was used, with a value that gives the
+arguments that were passed to the call of that method.
+
+If no filters have been applied then the tuple is empty.
 
 .. versionadded:: 1.7.0
 
@@ -1137,6 +1195,14 @@ applied.
 
 **Examples:**
 
+>>> print(c)
+{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+ 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+ 'coordinatereference1': <CoordinateReference: grid_mapping_name:rotated_latitude_longitude>,
+ 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+ 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+ 'domainaxis1': <DomainAxis: size(10)>,
+ 'domainaxis2': <DomainAxis: size(9)>}
 >>> c.filters_applied()
 ()
 >>> c = c.filter_by_type('dimension_coordinate', 'auxiliary_coordinate')
@@ -1185,8 +1251,7 @@ describes the last filter applied.
     `Constructs`
         The constructs, and their construct keys, that were not
         selected by the last filter applied. If no filtering has been
-        previously applied, then an empty `Constructs` instance is
-        returned.
+        applied then an empty `Constructs` instance is returned.
 
 **Examples:**
 
@@ -1224,6 +1289,8 @@ Constructs:
  'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
  'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
 
+The inverse filter of the inverse filter is null operation:
+
 >>> print(c)
 Constructs:
 {'cellmethod0': <CellMethod: area: mean>,
@@ -1259,7 +1326,20 @@ Constructs:
     #--- End: def
     
     def shallow_copy(self, _ignore=None):
-        '''
+        '''Return a shallow copy.
+
+``f.shallow_copy()`` is equivalent to ``copy.copy(f)``.
+
+.. versionadded:: 1.7.0
+
+:Returns:
+
+        The shallow copy.
+
+**Examples:**
+
+>>> g = f.shallow_copy()
+
         '''
         out = super().shallow_copy(_ignore=_ignore)
 

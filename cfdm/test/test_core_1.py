@@ -25,7 +25,6 @@ class create_fieldTest(unittest.TestCase):
         dim0.set_property('standard_name', 'grid_longitude')
         dim0.set_property('units', 'degrees')
 
-#        array = dim0.get_array()
         array = dim0.data.array
 
         array = numpy.array([array-0.5, array+0.5]).transpose((1,0))
@@ -136,7 +135,6 @@ class create_fieldTest(unittest.TestCase):
         
         ref1 = f.set_construct(ref1)
 
-#        f_data = f.get_data()
         f_data = f.data
 
         # Field ancillary variables
@@ -144,12 +142,10 @@ class create_fieldTest(unittest.TestCase):
         anc = cfdm.core.FieldAncillary(data=data)
         f.set_construct(anc, axes=[axisY, axisX])
         
-#        data = f_data.get_array()[0]
         data = f_data.array[0]
         anc = cfdm.core.FieldAncillary(data=cfdm.core.Data(cfdm.core.NumpyArray(data)))
         f.set_construct(anc, axes=[axisX])
 
-#        data = f_data.get_array()[..., 0]
         data = f_data.array[..., 0]
         anc = cfdm.core.FieldAncillary(data=cfdm.core.Data(cfdm.core.NumpyArray(data)))
         f.set_construct(anc, axes=[axisY])
@@ -158,27 +154,20 @@ class create_fieldTest(unittest.TestCase):
         f.set_property('flag_meanings', 'a bb ccc')
         f.set_property('flag_masks', [2, 1, 0])
 
-        cm0 =  cfdm.core.CellMethod(
+        cm0 = cfdm.core.CellMethod(
             axes=[axisX],
             method='mean',
-            properties={
+            qualifiers={
                 'interval': [cfdm.core.Data(cfdm.core.NumpyArray(numpy.array(1)), 'day')],
                 'comment' : 'ok'})
         
-        cm1 =  cfdm.core.CellMethod(
+        cm1 = cfdm.core.CellMethod(
             axes=[axisY],
             method='maximum',            
-            properties={'where' : 'sea'})
+            qualifiers={'where' : 'sea'})
         
         f.set_construct(cm0)
         f.set_construct(cm1)
-
-#        print(f.get_data())
-#        print(f.properties())
-#        print(repr(f))
-#        print(f)
-#        print(f.constructs())
-#        print(f.construct_data_axes())
     #--- End: def
 
 #--- End: class

@@ -100,8 +100,9 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         The name of the parameter to be deleted.
 
     default: optional
-        Return *default* if the parameter has not been set. By default
-        an exception is raised in this case.
+        Return the value of the *default* parameter if the parameter
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
 
 :Returns:
 
@@ -117,8 +118,6 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
             return self._default(default,
                                  "{!r} has no {!r} parameter".format(
                                      self.__class__.__name__, parameter))
-        
-#        return self._get_component('parameters').pop(parameter, None)
     #--- End: def
 
     def get_parameter(self, parameter, default=ValueError()):
@@ -132,12 +131,13 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         The name of the parameter.
 
     default: optional
-        Return *default* if the parameter has not been set. By default
-        an exception is raised in this case.
+        Return the value of the *default* parameter if the parameter
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
 
 :Returns:
 
-        The value of the term <SOMETING BAOUT DEFAULT> TODO
+        The value of the parameter.
 
 **Examples:**
 
@@ -157,16 +157,6 @@ ERROR
             return self._default(default,
                                  "{!r} has no {!r} parameter".format(
                                      self.__class__.__name__, parameter))
-#        
-#        d = self._get_component('parameters')
-#        if term in d:
-#            return d[term]
-#        
-#        if default:
-#            return default[0]
-#
-#        raise AttributeError("{} doesn't have parameter term {!r}".format(
-#                self.__class__.__name__, term))
     #--- End: def
     
     def parameters(self, parameters=None, copy=True):

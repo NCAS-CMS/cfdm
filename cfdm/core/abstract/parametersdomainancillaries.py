@@ -95,7 +95,8 @@ domain ancillary constructs.
         return type(self)(source=self, copy=True) #, _use_data=data)
     #--- End: def
 
-    def del_domain_ancillary(self, domain_ancillary, *default):
+    def del_domain_ancillary(self, domain_ancillary,
+                             default=ValueError()):
         '''Delete a domain ancillary.
 
 .. versionadded:: 1.7.0
@@ -112,12 +113,13 @@ domain ancillary constructs.
            ``domain_ancillary='orog'``
 
     default: optional
-        Return *default* if the domain ancillary has not been set.
+        Return the value of the *default* parameter if the domain
+        ancillary term has not been set. If set to an `Exception`
+        instance then it will be raised instead.
 
 :Returns:
 
-        The removed domain acnillary key. If unset then *default* is
-        returned, if provided.
+        The removed domain ancillary key.
 
 **Examples:**
 
@@ -132,8 +134,16 @@ domain ancillary constructs.
  'b': 'domainancillary1'}
 
         '''
-        return self._get_component('domain_ancillaries').pop(
-            domain_ancillary, None)
+        try:
+            return self._get_component('domain_ancillaries').pop(
+                domain_ancillary)
+        except KeyError:
+            return self._default(default,
+                         "{!r} has no {!r} domain ancillary".format(
+                             self.__class__.__name__, parameter))
+
+#        return self._get_component('domain_ancillaries').pop(
+#            domain_ancillary, None)
     #--- End: def
 
     def domain_ancillaries(self, domain_ancillaries=None, copy=True):
@@ -186,7 +196,8 @@ domain ancillary constructs.
         return out
     #--- End: def
     
-    def get_domain_ancillary(self, domain_ancillary, *default):
+    def get_domain_ancillary(self, domain_ancillary,
+                             default=ValueError()):
         '''Return a domain ancillary term.
 
 .. versionadded:: 1.7.0
@@ -196,30 +207,31 @@ domain ancillary constructs.
 
 :Parameters:
 
-    term: `str`
+    domain_ancillary: `str`
         The name of the term.
 
+
     default: optional
-        <TODO>
+        Return the value of the *default* parameter if the domain
+        ancillary term has not been set. If set to an `Exception`
+        instance then it will be raised instead.
 
 :Returns:
 
-        <TODO>
+        The domain ancillary construct key.
 
 **Examples:**
 
 <TODO>
 
         '''
-        d = self._get_component('domain_ancillaries')
-        if term in d:
-            return d[term]
         
-        if default:
-            return default[0]
-
-        raise AttributeError("{} doesn't have domain ancillary-valued term {!r}".format(
-                self.__class__.__name__, term))
+        try:
+            return self._get_component('domain_ancillaries')[domain_ancillary]
+        except KeyError:
+            return self._default(default,
+                          "{!r} has no {!r} domain ancillary".format(
+                              self.__class__.__name__, parameter))
     #--- End: def
     
     def set_domain_ancillary(self, term, value, copy=True):

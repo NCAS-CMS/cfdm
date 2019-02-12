@@ -87,7 +87,7 @@ to the order of the elements.
         return type(self)(source=self, copy=True)
     #--- End: def
 
-    def del_size(self, *default):
+    def del_size(self, default=ValueError()):
         '''Remove the size.
 
 .. versionadded:: 1.7.0
@@ -97,12 +97,13 @@ to the order of the elements.
 :Parameters:
 
     default: optional
-        Return *default* if the size has not been set.
+        Return the value of the *default* parameter if the size has
+        not been set. If set to an `Exception` instance then it will
+        be raised instead.
 
 :Returns:
 
-        The removed size. If unset then *default* is returned, if
-        provided.
+        The removed size.
 
 **Examples:**
 
@@ -121,7 +122,11 @@ None
 None
 
         '''
-        return self._del_component('size', *default)
+        try:
+            return self._del_component('size')
+        except ValueError:
+            return self._default(default,
+              "{!r} has no size".format(self.__class__.__name__))
     #--- End: def
 
     def has_size(self):
@@ -156,7 +161,7 @@ None
         return self._has_component('size')
     #--- End: def
 
-    def get_size(self, *default):
+    def get_size(self, default=ValueError()):
         '''Return the size.
 
 .. versionadded:: 1.7.0
@@ -166,11 +171,13 @@ None
 :Parameters:
 
     default: optional
-        Return *default* if the size has not been set.
+        Return the value of the *default* parameter if the size has
+        not been set. If set to an `Exception` instance then it will
+        be raised instead.
 
 :Returns:
 
-        The size. If unset then *default* is returned, if provided.
+        The size.
 
 **Examples:**
 
@@ -189,7 +196,11 @@ None
 None
 
         '''
-        return self._get_component('size', *default)
+        try:
+            return self._get_component('size')
+        except ValueError:
+            return self._default(default,
+              "{!r} has no size".format(self.__class__.__name__))
     #--- End: def
 
     def set_size(self, size, copy=True):

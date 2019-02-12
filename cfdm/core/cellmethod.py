@@ -6,7 +6,8 @@ from copy import deepcopy
 from . import abstract
 
 
-class CellMethod(abstract.Properties):
+#class CellMethod(abstract.Properties):
+class CellMethod(abstract.Container):
     '''A cell method construct of the CF data model.
 
 One or more cell method constructs describe how the cell values of the
@@ -18,14 +19,14 @@ A single cell method construct consists of a set of axes, a "method"
 property which describes how a value of the field construct's data
 array describes the variation of the quantity within a cell over those
 axes (e.g. a value might represent the cell area average), and
-properties serving to indicate more precisely how the method was
-applied (e.g. recording the spacing of the original data, or the fact
-that the method was applied only over El Nino years).
+descriptive qualifiers serving to indicate more precisely how the
+method was applied (e.g. recording the spacing of the original data,
+or the fact that the method was applied only over El Nino years).
 
 .. versionadded:: 1.7.0
 
     '''
-    def __init__(self, axes=None, method=None, properties=None,
+    def __init__(self, axes=None, method=None, qualifiers=None,
                  source=None, copy=True):
         '''**Initialisation**
 
@@ -65,22 +66,22 @@ that the method was applied only over El Nino years).
          The method may also be set after initialisation with the
          `set_method` method.
 
-    properties: `dict`, optional
-        Set descriptive properties. The dictionary keys are property
+    qualifiers: `dict`, optional
+        Set descriptive qualifiers. The dictionary keys are qualifer
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
         *Parameter example:*
-          ``properties={'comment': 'sampled instantaneously'}``
+          ``qualifiers={'comment': 'sampled instantaneously'}``
        
         *Parameter example:*
-          ``properties={'where': 'sea', ''over': 'ice'}``
+          ``qualifiers={'where': 'sea', ''over': 'ice'}``
         
-        Properties may also be set after initialisation with the
-        `properties` and `set_property` methods.
+        Qualifiers may also be set after initialisation with the
+        `qualifiers` and `set_qualifier` methods.
 
     source: optional
-        Initialize the axes, method and properties from those of
+        Initialize the axes, method and qualifiers from those of
         *source*.
 
     copy: `bool`, optional
@@ -88,8 +89,28 @@ that the method was applied only over El Nino years).
         initialization By default parameters are deep copied.
 
         '''
-        super().__init__(properties=properties, source=source,
-                         copy=copy)
+#        super().__init__(properties=properties, source=source,
+#                         copy=copy)
+#
+#        if source:
+#            try:
+#                axes = source.get_axes(None)
+#            except AttributeErrror:
+#                axes = None              
+#
+#            try:
+#                method = source.get_method(None)
+#            except AttributeErrror:
+#                method = None              
+#        #--- End: if
+#
+#        if axes is not None:                
+#            axes = self.set_axes(axes)
+#
+#        if method is not None:                
+#            method = self.set_method(method)
+
+        super().__init__()
 
         if source:
             try:
@@ -101,6 +122,11 @@ that the method was applied only over El Nino years).
                 method = source.get_method(None)
             except AttributeErrror:
                 method = None              
+
+            try:
+                qualifiers = source.qualifiers()
+            except AttributeError:
+                qualifiers = None
         #--- End: if
 
         if axes is not None:                
@@ -108,6 +134,11 @@ that the method was applied only over El Nino years).
 
         if method is not None:                
             method = self.set_method(method)
+
+        if qualifiers is None:
+            qualifiers = {}
+
+        self._set_component('qualifiers', qualifiers, copy=copy)
     #--- End: def
 
     @property
@@ -123,6 +154,25 @@ that the method was applied only over El Nino years).
 
         '''
         return 'cell_method'
+    #--- End: def
+
+    def copy(self):
+        '''Return a deep copy.
+
+``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+
+.. versionadded:: 1.7.0
+
+:Returns:
+
+        The deep copy.
+
+**Examples:**
+
+>>> g = f.copy()
+
+        '''
+        return type(self)(source=self, copy=True)
     #--- End: def
 
     def del_axes(self, *default):
@@ -236,6 +286,36 @@ False
         return self._get_component('axes', *default)
     #--- End: def
 
+    def get_qualifier(self, qualifier, default=ValueError()):
+        '''TODO
+
+.. versionadded:: 1.7.0
+
+.. seealso:: TODO
+
+:Parameters:
+
+    qualifier:
+        TODO
+        
+    default: optional
+        TODO
+
+:Returns:
+
+        TODO
+
+**Examples:**
+
+TODO
+        '''
+        try:
+            return self._get_component('qualifiers')[qualifier]
+        except KeyError:
+            return self._default(default, "{!r} has no {!r} qualifier".format(
+                self.__class__.__name__, qualifier))
+    #--- End: def
+
     def get_method(self, *default):
         '''Return the method of the cell method.
 
@@ -246,7 +326,7 @@ False
 :Parameters:
 
     default: optional
-        Return *default* if the "method" propoerty has not been set.
+        Return *default* if the "method" property has not been set.
 
 :Returns:
 
@@ -333,6 +413,55 @@ False
 
 '''
         return self._has_component('method')
+    #--- End: def
+
+    def has_qualifier(self, qualifier):
+        '''Whether a qualifier has been set.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: TODO
+
+:Parameters:
+
+    prop: `str`
+        The name of the qualifier.
+
+:Returns:
+
+     `bool`
+        True if the qualifier has been set, otherwise False.
+
+**Examples:**
+
+TODO
+
+        '''
+        return qualifier in self._get_component('qualifiers')
+    #--- End: def
+
+    def qualifiers(self):
+        '''TODO
+
+.. versionadded:: 1.7.0
+
+.. seealso:: TODO
+
+:Returns:
+
+    `dict`
+        The qualifiers.
+
+**Examples:**
+
+>>> f.qualifiers()
+TODO
+
+>>> f.qualifiers()
+{}
+
+        '''
+        return self._get_component('qualifiers').copy()
     #--- End: def
 
     def set_axes(self, value, copy=True):
@@ -440,6 +569,34 @@ False
 
         '''
         return self._set_component('method', value, copy=copy)
+    #--- End: def
+
+    def set_qualifier(self, value, copy=True):
+        '''Set a qualifier of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`
+
+:Parameters:
+
+    value: 
+        TODO
+
+:Returns:
+
+     `None`
+
+**Examples:**
+TODO
+
+        '''
+        if copy:
+            value = deepcopy(value)
+        
+        self._get_component('qualifiers')[qualifier] = value
+    #--- End: def
+    
     #--- End: def
 
 #--- End: class

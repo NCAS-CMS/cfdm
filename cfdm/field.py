@@ -274,13 +274,10 @@ rules, the only differences being:
         # ------------------------------------------------------------
         # Subspace other constructs that contain arrays
         # ------------------------------------------------------------
-#        self_constructs = self._get_constructs()
         self_constructs = self.constructs
         new_constructs_data_axes = new.constructs.data_axes()
         
         for key, construct in new.data_constructs().items():
-#            data = self.get_construct(key=key).get_data(None)
-##            data = self.constructs.get(key=key).get_data(default=None)
             data = self.constructs[key].get_data(default=None)
             if data is None:
                 # This construct has no data
@@ -877,7 +874,8 @@ construct, into the data array.
         '''
         f = self.copy()
         
-        domain_axis = self.domain_axes.filter_by_key(axis).get(default=None)
+#        domain_axis = self.domain_axes.filter_by_key(axis).construct(default=None)
+        domain_axis = self.domain_axes.get(axis, None)
         if domain_axis is None:
             raise ValueError("Can't insert non-existent domain axis: {}".format(axis))
         
@@ -991,7 +989,7 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
                 : grid_longitude(9) = [-4.7, ..., -1.18] degrees
 		   
         '''
-        c = self.constructs.filter_by_key(key).get()
+        c = self.constructs.filter_by_key(key).construct()
         
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the

@@ -10,7 +10,7 @@ cfdm.Constructs
    :no-members:
    :no-inherited-members:
 
-Selection
+Filtering
 ---------
 
 .. rubric:: Methods
@@ -31,11 +31,9 @@ Selection
    ~cfdm.Constructs.filter_by_ncvar
    ~cfdm.Constructs.filters_applied
    ~cfdm.Constructs.inverse_filter
-   ~cfdm.Constructs.get
-   ~cfdm.Constructs.get_key
 
-Dictionary-like methods
------------------------
+Constructs and keys
+-------------------
 
 .. rubric:: Methods
 	    
@@ -44,10 +42,8 @@ Dictionary-like methods
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Constructs.keys
-   ~cfdm.Constructs.items
-   ~cfdm.Constructs.values
-   ~cfdm.Constructs.__getitem__
+   ~cfdm.Constructs.construct
+   ~cfdm.Constructs.construct_key
 
 Data axes
 ---------
@@ -75,7 +71,22 @@ Miscellaneous
    ~cfdm.Constructs.shallow_copy
    ~cfdm.Constructs.equals
    ~cfdm.Constructs.ordered
-   ~cfdm.Constructs.view
+
+Dictionary-access methods
+-------------------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Constructs.get
+   ~cfdm.Constructs.keys
+   ~cfdm.Constructs.items
+   ~cfdm.Constructs.values
+   ~cfdm.Constructs.__getitem__
 
 Special
 -------

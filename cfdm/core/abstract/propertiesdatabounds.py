@@ -210,13 +210,13 @@ True
 :Parameters:
 
     default: optional
-        Return *default* if bounds have not been set. By default an
-        exception is raised in this case.
+        Return the value of the *default* parameter if bounds have not
+        been set. If set to an `Exception` instance then it will be
+        raised instead.
 
 :Returns:
 
-        The removed bounds. If the bounds has not been set then the
-        *default* is returned, if provided.
+        The removed bounds.
 
 **Examples:**
 
@@ -238,10 +238,14 @@ None
 None
 
         '''
-        return self._del_component('bounds', *default)
+        try:
+            return self._del_component('bounds')
+        except ValueError:
+            return self._default(default,
+                           "{!r} has no bounds".format(self.__class__.__name__))
     #--- End: def
 
-    def del_geometry(self, *default):
+    def del_geometry(self, default=ValueError()):
         '''Delete the geometry type. TODO
 
 .. versionadd:: 1.8
@@ -251,17 +255,22 @@ None
 :Parameters:
 
     default: optional
-        Return *default* if the geometry type has not been set.
+        Return the value of the *default* parameter if the geometry
+        type has not been set. If set to an `Exception` instance then
+        it will be raised instead.
 
 :Returns:
 
-        The removed geometry type. If the geometry type has not been
-        set then the *default* is returned, if provided.
+        The removed geometry type.
 
 **Examples:**
 
         '''
-        return self._del_component('geometry', *default)
+        try:
+            return self._del_component('geometry')
+        except ValueError:
+            return self._default(default,
+                           "{!r} has no geometry type".format(self.__class__.__name__))
     #--- End: def
 
     def get_bounds(self, default=ValueError()):
@@ -275,13 +284,13 @@ None
 :Parameters:
 
     default: optional
-        Return *default* if bounds have not been set. By default an
-        exception is raised in this case.
+        Return the value of the *default* parameter if bounds have not
+        been set. If set to an `Exception` instance then it will be
+        raised instead.
 
 :Returns:
 
-        The bounds. If the bounds have not been set, then return the
-        value of *default* parameter if provided.
+        The bounds.
 
 **Examples:**
 
@@ -303,10 +312,14 @@ None
 None
 
         '''
-        return self._get_component('bounds', default)
+        try:
+            return self._get_component('bounds')
+        except ValueError:
+            return self._default(default,
+                           "{!r} has no bounds".format(self.__class__.__name__))
     #--- End: def
 
-    def get_geometry(self, *default):
+    def get_geometry(self, default=ValueError()):
         '''Return the geometry type.
 
 .. versionadded:: 1.8
@@ -316,7 +329,9 @@ None
 :Parameters:
 
     default: optional
-        Return *default* if and only if the bounds have not been set.
+        Return the value of the *default* parameter if the geometry
+        type has not been set. If set to an `Exception` instance then
+        it will be raised instead.
 
 :Returns:
 
@@ -325,11 +340,16 @@ None
 **Examples:**
 
 TODO
+
         '''
-        return self._get_component('geometry', *default)
+        try:
+            return self._get_component('geometry')
+        except ValueError:
+            return self._default(default,
+                    "{!r} has no geometry type".format(self.__class__.__name__))
     #--- End: def
 
-    def get_interior_ring(self, *default):
+    def get_interior_ring(self, default=ValueError()):
         '''Return the interior_ring.
 
 .. versionadded:: 1.8
@@ -340,7 +360,9 @@ TODO
 :Parameters:
 
     default: optional
-        Return *default* if and only if the HHHh have not been set.
+        Return the value of the *default* parameter if interior ring
+        data have not been set. If set to an `Exception` instance then
+        it will be raised instead.
 
 :Returns:
 
@@ -349,8 +371,13 @@ TODO
 **Examples:**
 
 >>> i = c.get_interior_ring()
+
         '''
-        return self._get_component('interior_ring', *default)
+        try:
+            return self._get_component('interior_ring')
+        except ValueError:
+            return self._default(default,
+                    "{!r} has no interior ring".format(self.__class__.__name__))
     #--- End: def
 
     def has_bounds(self):

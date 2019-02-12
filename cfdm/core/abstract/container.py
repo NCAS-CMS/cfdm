@@ -112,16 +112,6 @@ False
              return self._default(default,
                                   "{!r} has no {!r} component".format(
                                       self.__class__.__name__, component))
-         
-#        except KeyError:
-#            raise ValueError("{!r} has no {!r} component".format(
-#                self.__class__.__name__, component))
-#        
-#        try:
-#            return self._components.pop(component, *default)
-#        except KeyError:
-#            raise ValueError("{!r} has no {!r} component".format(
-#                self.__class__.__name__, component))
     #--- End: def
 
     def _get_component(self, component, default=ValueError()):
@@ -161,15 +151,8 @@ False
             return self._components[component]
         except KeyError:
             return self._default(default,
-                                 message="{!r} object has no {!r} component".format(
-                              self.__class__.__name__, component))
-#            if default:
-#                return default[0]
-#
-#            raise AttributeError("{!r} object has no {!r} component".format(
-#                self.__class__.__name__, component))
-#            
-#        return value
+                                 "{!r} object has no {!r} component".format(
+                                     self.__class__.__name__, component))
     #--- End: def
 
     def _has_component(self, component):

@@ -107,7 +107,7 @@ cell measure variables correspond to cell measure constructs.
         return 'cell_measure'
     #--- End: def
         
-    def del_measure(self, *default):
+    def del_measure(self, default=ValueError()):
         '''Remove the measure.
 
 .. versionadded:: 1.7.0
@@ -117,12 +117,13 @@ cell measure variables correspond to cell measure constructs.
 :Parameters:
 
     default: optional
-        Return *default* if the measure has not been set.
+        Return the value of the *default* parameter if the measure has
+        not been set. If set to an `Exception` instance then it will
+        be raised instead.
 
 :Returns:
 
-        The removed measure. If unset then *default* is returned, if
-        provided.
+        The removed measure.
 
 **Examples:**
 
@@ -141,7 +142,11 @@ None
 None
 
         '''
-        return self._del_component('measure', *default)
+        try:
+            return self._del_component('measure')
+        except ValueError:
+            return self._default(default,
+              "{!r} has no measure".format(self.__class__.__name__))
     #--- End: def
 
     def has_measure(self):
@@ -175,7 +180,7 @@ None
         return self._has_component('measure')
     #--- End: def
 
-    def get_measure(self, *default):
+    def get_measure(self, default=ValueError()):
         '''Return the measure.
 
 .. versionadded:: 1.7.0
@@ -185,12 +190,13 @@ None
 :Parameters:
 
     default: optional
-        Return *default* if the measure has not been set.
+        Return the value of the *default* parameter if the measure has
+        not been set. If set to an `Exception` instance then it will
+        be raised instead.
 
 :Returns:
 
-        The value of the measure. If unset then *default* is returned,
-        if provided.
+        The value of the measure.
 
 **Examples:**
 
@@ -209,7 +215,11 @@ None
 None
 
         '''
-        return self._get_component('measure', *default)
+        try:
+            return self._get_component('measure')
+        except ValueError:
+            return self._default(default,
+              "{!r} has no measure".format(self.__class__.__name__))
     #--- End: def
 
     def set_measure(self, measure, copy=True):

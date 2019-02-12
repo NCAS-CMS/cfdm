@@ -241,6 +241,15 @@ AttributeError: Field doesn't have property 'standard_name'
         return str(cell_method)
     #--- End: for
 
+    def get_cell_method_qualifiers(self, cell_method):
+        '''
+:Returns:
+
+    out: `str`
+'''
+        return cell_method.qualifiers()
+    #--- End: for
+
     def get_compressed_array(self, data):
         '''
 
@@ -912,11 +921,11 @@ netCDF unlimited dimensions.
     #--- End: def
 
     def initialise_CellMethod(self, axes=None, method=None,
-                              properties=None):
+                              qualifiers=None):
         '''
         '''
         cls = self.get_class('CellMethod')
-        return cls(axes=axes, method=method, properties=properties)
+        return cls(axes=axes, method=method, qualifiers=qualifiers)
     #--- End: def
 
     def initialise_CoordinateConversion(self, 

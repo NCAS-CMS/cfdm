@@ -65,8 +65,8 @@ constructs.
                 copy = False
                 _use_data = True            
             else:
-                constructs = constructs.view(ignore=('cell_method',
-                                                     'field_ancillary'))
+                constructs = constructs._view(ignore=('cell_method',
+                                                      'field_ancillary'))
         else:
             constructs = self._Constructs(**self._construct_key_base)
             copy = False
@@ -154,8 +154,8 @@ constructs.
         '''
         domain = cls()
         domain._set_component('constructs',
-                              constructs.view(ignore=('cell_method',
-                                                      'field_ancillary')),
+                              constructs._view(ignore=('cell_method',
+                                                       'field_ancillary')),
                               copy=copy)
         return domain
     #--- End: def

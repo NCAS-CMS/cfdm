@@ -50,13 +50,11 @@ Properties
    ~cfdm.CellMethod.get_method
    ~cfdm.CellMethod.has_method
    ~cfdm.CellMethod.set_method
-   ~cfdm.CellMethod.del_property
-   ~cfdm.CellMethod.get_property
-   ~cfdm.CellMethod.has_property
-   ~cfdm.CellMethod.set_property
-   ~cfdm.CellMethod.properties
-   ~cfdm.CellMethod.clear_properties
-   ~cfdm.CellMethod.set_properties
+   ~cfdm.CellMethod.del_qualifier
+   ~cfdm.CellMethod.get_qualifier
+   ~cfdm.CellMethod.has_qualifier
+   ~cfdm.CellMethod.set_qualifier
+   ~cfdm.CellMethod.qualifiers
 
 Miscellaneous
 -------------

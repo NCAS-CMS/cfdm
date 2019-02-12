@@ -275,7 +275,7 @@ set()
         return type(self)(source=self, copy=True)
     #--- End: def
 
-    def del_coordinate(self, cid, *default):
+    def del_coordinate(self, key, default=ValueError()):
         '''Remove a reference to a coordinate construct.
 
 .. versionadded:: 1.7.0
@@ -284,23 +284,23 @@ set()
 
 :Parameters:
 
-    cid: `str`
-        The construct identifier of the coordinate construct.
+    key: `str`
+        The construct key of the coordinate construct.
 
           *Parameter example:*
-             ``cid='dimensioncoordinate1'``
+             ``key='dimensioncoordinate1'``
 
           *Parameter example:*
-             ``cid='auxiliarycoordinate0'``
+             ``key='auxiliarycoordinate0'``
 
     default: optional
-        Return *default* if the coordinate construct has not been
-        referenced.
+        Return the value of the *default* parameter if the coordinate
+        construct has not been set. If set to an `Exception` instance
+        then it will be raised instead.
 
 :Returns:
 
-      The removed coordinate construct identifier property. If unset
-      then *default* is returned, if provided.
+      The removed coordinate construct key.
 
 **Examples:**
 
@@ -316,15 +316,13 @@ set()
 
         '''
         coordinates = self._get_component('coordinates')
-        if cid in coordinates:
-            coordinates.remove(cid)
-            return cid
+        if key in coordinates:
+            coordinates.remove(key)
+            return key
 
-        if default:
-            return default[0]
-        
-        raise AttributeError("{!r} has no {!r} coordinate".format(
-            self.__class__.__name__, cid))
+        return self._default(default,
+              "{!r} has no {!r} coordinate".format(
+                  self.__class__.__name__, key))
     #--- End: def
     
     def del_coordinate_conversion(self):
@@ -431,7 +429,7 @@ set()
         return out
     #--- End: def
     
-    def set_coordinate(self, cid):
+    def set_coordinate(self, key):
         '''Set a reference to a coordinate construct.
 
 .. versionadded:: 1.7.0
@@ -440,14 +438,14 @@ set()
 
 :Parameters:
 
-    cid: `str`
-        The construct identifier of the coordinate construct.
+    key: `str`
+        The construct key of the coordinate construct.
 
           *Parameter example:*
-             ``cid='dimensioncoordinate1'``
+             ``key='dimensioncoordinate1'``
 
           *Parameter example:*
-             ``cid='auxiliarycoordinate0'``
+             ``key='auxiliarycoordinate0'``
 
 :Returns:
 
@@ -466,7 +464,7 @@ set()
 
         '''
         c = self._get_component('coordinates')
-        c.add(cid)
+        c.add(key)
     #--- End: def
 
     def set_coordinate_conversion(self, coordinate_conversion, copy=True):

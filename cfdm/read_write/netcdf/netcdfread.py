@@ -2855,7 +2855,7 @@ variable's netCDF dimensions.
         return variable
     #--- End: def
 
-    def _create_cell_method(self, axes, method, properties):
+    def _create_cell_method(self, axes, method, qualifiers):
         '''Create a cell method object.
     
 :Parameters:
@@ -2873,7 +2873,7 @@ variable's netCDF dimensions.
         '''
         return self.implementation.initialise_CellMethod(axes=axes,
                                                          method=method,
-                                                         properties=properties)
+                                                         qualifiers=qualifiers)
     #--- End: def
 
     def _create_netcdfarray(self, ncvar, unpacked_dtype=False):

@@ -203,7 +203,7 @@ True
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def del_data_axes(self, *default):
+    def del_data_axes(self, key=None, default=ValueError()):
         '''Remove the keys of the domain axes spanned by the data array.
 
 .. versionadded:: 1.7.0
@@ -212,14 +212,19 @@ True
 
 :Parameters:
 
+    key: `str`, optional
+        TODO
+
     default: optional
-        Return *default* if data axes have not been set.
+        Return the value of the *default* parameter if the data axes
+        have not been set. If set to an `Exception` instance then it
+        will be raised instead.
 
 :Returns:
 
-    `tuple`
-        The removed keys of the domain axes spanned by the data
-        array. If unset then *default* is returned, if provided.
+    `tuple` 
+        The removed keys of the domain axis constructs spanned by the
+        data.
 
 **Examples:**
 
@@ -233,8 +238,22 @@ None
 >>> print(f.get_data_axes(None))
 None
 
-        '''
-        return self._del_component('data_axes', *default)
+        '''   
+        if key is not None:
+            try:
+                data_axes = self.constructs.data_axes()[key]
+            except KeyError:
+                return self._default(default, message='asd aosg8qwg dlb')
+            else:
+                self.constructs._del_data_axes(key)
+                
+            return data_axes
+
+        try:
+            return self._del_component('data_axes')
+        except ValueError:
+            return self._default(default,
+              "{!r} has no data axes".format(self.__class__.__name__))
     #--- End: def
 
     def get_domain(self):
@@ -270,13 +289,14 @@ None
         <TODO>
 
     default: optional
-        <TODO> Return *default* if data axes have not been set.
+        Return the value of the *default* parameter if the data axes
+        have not been set. If set to an `Exception` instance then it
+        will be raised instead.
 
 :Returns:
 
     `tuple` 
-        The identifiers of the domain axes spanned by the data
-        array. If unset then *default* is returned, if provided.
+        The keys of the domain axis constructs spanned by the data.
 
 **Examples:**
 
@@ -296,8 +316,13 @@ None
                 return self.constructs.data_axes()[key]
             except KeyError:
                 return self._default(default, message='2736492783 e28037')
-                
-        return self._get_component('data_axes', default)
+        #--- End: if
+        
+        try:
+            return self._get_component('data_axes')
+        except ValueError:
+            return self._default(default,
+              "{!r} has no data axes".format(self.__class__.__name__))
     #--- End: def
     
     def del_construct(self, key):

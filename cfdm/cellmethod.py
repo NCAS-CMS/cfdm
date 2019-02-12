@@ -7,7 +7,7 @@ from . import mixin
 from . import core
 
 
-class CellMethod(mixin.Properties,
+class CellMethod(mixin.Container,
                  core.CellMethod):
     '''A cell method construct of the CF data model.
 
@@ -20,12 +20,12 @@ A single cell method construct consists of a set of axes, a "method"
 property which describes how a value of the field construct's data
 array describes the variation of the quantity within a cell over those
 axes (e.g. a value might represent the cell area average), and
-properties serving to indicate more precisely how the method was
-applied (e.g. recording the spacing of the original data, or the fact
-that the method was applied only over El Nino years).
+descriptive qualifiers serving to indicate more precisely how the
+method was applied (e.g. recording the spacing of the original data,
+or the fact that the method was applied only over El Nino years).
 
 .. versionadded:: 1.7.0
-    
+
     '''
     def __str__(self):
         '''Called by the `str` built-in function.
@@ -46,13 +46,13 @@ names will need to be modified to be netCDF dimension names.
         string.append(self.get_method(''))
 
         for portion in ('within', 'where', 'over'):
-            p = self.get_property(portion, None)
-            if p is not None:
-                string.extend((portion, p))
+            q = self.get_qualifier(portion, None)
+            if q is not None:
+                string.extend((portion, q))
         #--- End: for
 
-        interval = self.get_property('interval', ())
-        comment  = self.get_property('comment', None)
+        interval = self.get_qualifier('interval', ())
+        comment  = self.get_qualifier('comment', None)
 
         if interval:
             x = ['(']
@@ -76,8 +76,8 @@ names will need to be modified to be netCDF dimension names.
     def dump(self, display=True, _title=None, _level=0):
         '''A full description of the cell method construct.
 
-Returns a description of all properties and the axes to which it
-applies.
+Returns a description the method, all qualifiers and the axes to
+which it applies.
 
 .. versionadded:: 1.7.0
 
@@ -110,7 +110,7 @@ applies.
 #
 #        n_axes = len(c.get_axes(()))
 #        if n_axes > 1:
-#            interval = c.get_property('interval', ())            
+#            interval = c.get_qualifier('interval', ())            
 #            if len(interval) == 1:
 #                c.set_property('interval', interval*n_axes)
 #
@@ -290,13 +290,13 @@ applies.
 #    #--- End: def
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
-               ignore_properties=(), ignore_type=False):
+               ignore_qualifiers=(), ignore_type=False):
         '''Whether two cell method constructs are the same.
 
 Equality is strict by default. This means that:
 
-* the descriptive properties must be the same (see the
-  *ignore_properties* parameter).
+* the descriptive qualifiers must be the same (see the
+  *ignore_qualifiers* parameter).
 
 The axes of the cell method constructs are *not* considered, because
 they may ony be correctly interpreted by the field constructs that
@@ -335,8 +335,8 @@ constitute part of the CF data model and so are not checked.
         If True then print information about differences that lead to
         inequality.
 
-    ignore_properties: sequence of `str`, optional
-        The names of properties to omit from the comparison.
+    ignore_qualifiers: sequence of `str`, optional
+        The names of qualifiers to omit from the comparison.
 
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is
@@ -360,7 +360,16 @@ True
 False
 
         '''
-        # Check that the methods are the same
+        pp = super()._equals_preprocess(other, verbose=verbose,
+                                        ignore_type=ignore_type)
+        if pp in (True, False):
+            return pp
+        
+        other = pp
+
+        # ------------------------------------------------------------
+        # Check the methods
+        # ------------------------------------------------------------
         if self.get_method(None) != other.get_method(None):
             if verbose:
                 print(
@@ -368,33 +377,42 @@ False
     cm0.__class__.__name__, self.get_method(None), other.get_method(None)))
             return False
 
-        ignore_properties = tuple(ignore_properties) + ('interval',)
+        # ------------------------------------------------------------
+        # Check the qualifiers
+        # ------------------------------------------------------------
+        self_qualifiers  = self.qualifiers()
+        other_qualifiers = other.qualifiers()
 
-        if not super().equals(
-                other,
-                rtol=rtol, atol=atol,
-                verbose=verbose,
-                ignore_properties=ignore_properties,
-                ignore_type=ignore_type,
-                ignore_data_type=True,
-                ignore_fill_value=True):
+        if ignore_qualifiers:
+            for prop in tuple(ignore_qualifiers) + ('interval',):
+                self_qualifiers.pop(prop, None)
+                other_qualifiers.pop(prop, None)
+        #--- End: if
+                
+        if set(self_qualifiers) != set(other_qualifiers):
+            if verbose:
+                for q in set(self_qualifiers).symmetric_difference(other_qualifiers):
+                    print("{0}: Non-common qualifier: {1!r}".format( 
+                        self.__class__.__name__, q))
             return False
 
-#        axes0 = self.get_axes(())
-#        axes1 = other.get_axes(())
-#        if len(axes0) != len(axes1):
-#            if verbose:
-#                print(
-#                    "{0}: Different axes: {1!r} != {2!r}".format(
-#                        self.__class__.__name__, axes0, axes1))
-#            return False
-#        #--- End: if
-        
-        if 'interval' in ignore_properties:
+        for qualifier, x in self_qualifiers.items():
+            y = other_qualifiers[qualifier]
+
+            if not self._equals(x, y, rtol=rtol, atol=atol,
+                                ignore_data_type=True,
+                                verbose=verbose):
+                if verbose:
+                    print("{0}: Different {1}: {2!r}, {3!r}".format(
+                        self.__class__.__name__, prop, x, y))
+                return False
+        #--- End: for
+
+        if 'interval' in ignore_qualifiers:
             return True
 
-        intervals0 = self.get_property('interval', ())
-        intervals1 = other.get_property('interval', ())
+        intervals0 = self.get_qualifier('interval', ())
+        intervals1 = other.get_qualifier('interval', ())
         if intervals0:
             if not intervals1:
                 if verbose:
@@ -405,9 +423,6 @@ False
             #--- End: if
             
             if len(intervals0) != len(intervals1):
-#                intervals0 = self.expand_intervals().get_property('interval', ())
-#                intervals1 = other.expand_intervals().get_property('interval', ())        
-#                if len(intervals0) != len(intervals1):
                 if verbose:
                     print(
                         "{0}: Different numbers of intervals: {1!r} != {2!r}".format(
@@ -433,6 +448,10 @@ False
                     self.__class__.__name__, intervals0, intervals1))
             return False
         #--- End: if
+
+        # ------------------------------------------------------------
+        # Do NOT check the axes
+        # ------------------------------------------------------------
 
         return True
     #--- End: def
@@ -528,7 +547,7 @@ False
 #        return True
 #    #--- End: def
 
-    def name(self, default=None, custom=None, all_names=False):
+    def name(self, default=None):
         '''Return a name for the cell method construct.
 
 By default the name is the first found of the following:
@@ -543,26 +562,14 @@ By default the name is the first found of the following:
     default: optional
         If no other name can be found then return the value of the
         default parameter. By default `None` is returned in this case.
-
-    all_names: `bool`, optional
-        If True then return a list of all possible names.
-
-    custom: optional
-        This is a dummy parameter and is ignored.
-    
+   
 :Returns:
 
-        The name. If the *all_names* parameter is True then a list of
-        all possible names.
+        TODO
 
 **Examples:**
 
->>> c
-<CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>
->>> c.name()
-'method:mean'
->>> c.name(all_names=True, default='no name')
-['method:mean', 'no name']
+TODO
 
         '''
         out = []
@@ -571,12 +578,6 @@ By default the name is the first found of the following:
         if n is not None:
             out.append('method:{0}'.format(n))
             
-        if all_names:
-            if default is not None:
-                out.append(default)
-                
-            return out
-        
         if out:
             return out[-1]
 
@@ -584,12 +585,7 @@ By default the name is the first found of the following:
     #--- End: def
 
     def names(self, extra=None):
-        '''Return a name for the cell method construct.
-
-By default the name is the first found of the following:
-
-  1. The method, preceeded by 'method:'
-  2. The value of the *default* parameter.
+        '''TODO
 
 .. versionadded:: 1.7.0
 
@@ -599,18 +595,11 @@ TODO
 
 :Returns:
 
-        The name. If the *all_names* parameter is True then a list of
-        all possible names.
+        TODO
 
 **Examples:**
 
->>> c
-<CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>
->>> c.name()
-'method:mean'
->>> c.name(all_names=True, default='no name')
-['method:mean', 'no name']
-
+TODO
         '''
         out = []
 
@@ -620,7 +609,24 @@ TODO
             
         if extra:
             out.extend(extra)
-            
+                        
+#        i = self.get_qualifier('interval', None)
+#        if i is not None:
+#            x = []
+#            for d in i:
+#                x.append(str(d))
+#
+#            out.append('interval:{0}'.format(', '.join(x)))    
+#
+#        qualifiers = self.qualifiers()
+#        qualifiers.pop('interval', None)
+#
+#
+#        x = ['{0}:{1}'.format(q, value)
+#             for q, value in sorted(qualifiers.items())]
+#
+#        out += x
+        
         return out
     #--- End: def
 
@@ -647,7 +653,7 @@ name, and any intervals are sorted accordingly.
 
 >>> cm = cfdm.CellMethod(axes=['domainaxis1', 'domainaxis0'],
 ...                      method='mean',
-...                      properties={'interval': [1, 2]})
+...                      qualifiers={'interval': [1, 2]})
 >>> cm
 <CellMethod: domainaxis1: domainaxis0: mean (interval: 1 interval: 2)>
 >>> cm.sorted()
@@ -655,7 +661,7 @@ name, and any intervals are sorted accordingly.
 
 >>> cm = cfdm.CellMethod(axes=['domainaxis0', 'area'],
 ...                      method='mean',
-...                      properties={'interval': [1, 2]})
+...                      qualifiers={'interval': [1, 2]})
 >>> cm
 <CellMethod: domainaxis0: area: mean (interval: 1 interval: 2)>
 >>> cm.sorted()
@@ -679,7 +685,7 @@ name, and any intervals are sorted accordingly.
 
         new.set_axes(tuple(axes2))
 
-        intervals = new.get_property('interval', ())
+        intervals = new.get_qualifier('interval', ())
         if len(intervals) <= 1:
             return new
 
@@ -687,7 +693,7 @@ name, and any intervals are sorted accordingly.
         for i in indices:
             intervals2.append(intervals[i])
 
-        new.set_property('interval', tuple(intervals2))
+        new.set_qualifier('interval', tuple(intervals2))
 
         return new
     #--- End: def

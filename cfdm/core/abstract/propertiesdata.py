@@ -46,13 +46,7 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         '''
         super().__init__(properties=properties, source=source,
                          copy=copy)
-#        DataContainer.__init__(self, data=data, source=source,
-#                               copy=copy, _use_data=_use_data)
-#        print ('A', self.properties())
-#        Properties.__init__(self, properties=properties,
-#                            source=source, copy=copy)
-#        print ('B', self.properties())
-#        print ('')
+
         if source is not None:
             if not _use_data:
                 data = None
@@ -153,13 +147,13 @@ False
 :Parameters:
 
     default: optional
-        Return *default* if data have not been set. By default an
-        exception is raised in this case.
-        
+        Return the value of the *default* parameter if data have not
+        been set. If set to an `Exception` instance then it will be
+        raised instead.
+
 :Returns: 
 
-        The removed data. If unset then *default* is returned, if
-        provided.
+        The removed data.
 
 **Examples:**
 
@@ -179,51 +173,20 @@ None
 None
 
         '''
-        data = self._del_component('data', None)
-        if data is None:
+        try:
+            return self._del_component('data')
+        except ValueError:
             return self._default(default,
-                                 message="{!r} has no data".format(
-                                     self.__class__.__name__))
+                      "{!r} has no data".format(self.__class__.__name__))
 
-        return data
-    #--- End: def
-
-#    def get_array(self):
-#        '''Return an independent numpy array the data.
-#
-#Use the `get_data` method to return the data as a `Data` instance.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `data`, `get_data`
-#
-#:Returns:
-#
-#    `numpy.ndarray`
-#        A numpy array copy of the data.
-#
-#**Examples:**
-#
-#>>> d = Data([1, 2, 3.0])
-#>>> array = d.get_array()
-#>>> isinstance(array, numpy.ndarray)
-#True
-#>>> array
-#array([ 1.  2.  3.])
-#>>> d[0] = -99 
-#>>> array[0] 
-#1.0
-#>>> array[0] = 88
-#>>> d[0]
-#-99.0
-#
-#        '''
-#        data = self.get_data(None)
+#        data = self._del_component('data', None)
 #        if data is None:
-#            raise ValueError("{!r} has no data".format(self.__class__.__name__))
-#        
-#        return data.array
-#    #--- End: def
+#            return self._default(default,
+#                                 message="{!r} has no data".format(
+#                                     self.__class__.__name__))
+#
+#        return data
+    #--- End: def
 
     def get_data(self, default=ValueError()):
         '''Return the data.o
@@ -241,13 +204,15 @@ into the data.
 
 :Parameters:
 
+
     default: optional
-        Return *default* if data have not been set. By default an
-        exception is raised in this case.
+        Return the value of the *default* parameter if data have not
+        been set. If set to an `Exception` instance then it will be
+        raised instead.
 
 :Returns:
 
-        The data. If unset then *default* is returned, if provided.
+        The data.
 
 **Examples:**
 
@@ -273,11 +238,7 @@ None
             return self._default(default,
                                  message="{!r} has no data".format(
                                      self.__class__.__name__))
-#            if default:
-#                return default[0]
-#
-#            raise ValueError("{!r} has no data".format(self.__class__.__name__))
-        
+
         units = self.get_property('units', None)
         if units is not None:
             data.set_units(units)
