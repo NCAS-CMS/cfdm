@@ -115,7 +115,7 @@ components, and provides selected values of all data arrays.
             else:
                 default = key
                 
-            _title = 'Dimension coordinate: ' + self.name(default=default)
+            _title = 'Dimension coordinate: ' + self.identity(default=default)
                 
         return super().dump(display=display,
                             _omit_properties=_omit_properties,

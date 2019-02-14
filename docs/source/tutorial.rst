@@ -902,7 +902,7 @@ that meet various criteria:
 ==========================================================================  ================================
 Filter criteria                                                             Method
 ==========================================================================  ================================
-Metadata construct name                                                     `~Constructs.filter_by_name`
+Metadata construct identity                                                 `~Constructs.filter_by_identity`
 Metadata construct type                                                     `~Constructs.filter_by_type`
 Property values                                                             `~Constructs.filter_by_property` 
 Whether the data array spans particular domain axis constructs		    `~Constructs.filter_by_axis`
@@ -1003,15 +1003,15 @@ to perform further selections on their results:
    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
 
-A convenient method of selection is by metadata construct "name".
-Construct names" are used to describe constructs when they are
-inspected, and so it is often convienient to copy these names when
-selecting metadata constructs. For example, the :ref:`three auxiliary
-coordinate constructs <Medium-detail>` in the field construct ``t``
-have names ``'latitude'``, ``'longitude'`` and ``'long_name=Grid
-latitude name'``.
+A convenient method of selection is by metadata construct "identity".
+Construct identities are used to describe constructs when they are
+inspected, and so it is often convienient to copy these identities
+when selecting metadata constructs. For example, the :ref:`three
+auxiliary coordinate constructs <Medium-detail>` in the field
+construct ``t`` have identities ``'latitude'``, ``'longitude'`` and
+``'long_name=Grid latitude name'``.
 
-A construct's name may be any one of the following
+A construct's identity may be any one of the following
 
 * The value of the "standard_name" property, e.g. ``'air_temperature'``,
 * The value of any property, preceded by the property name and an
@@ -1054,35 +1054,35 @@ A construct's name may be any one of the following
    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-   >>> print(t.constructs.filter_by_name('latitude'))
+   >>> print(t.constructs.filter_by_identity('latitude'))
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-   >>> print(t.constructsfilter_by_name('long_name=Grid latitude name'))
+   >>> print(t.constructsfilter_by_identity('long_name=Grid latitude name'))
    Constructs:
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >}
-   >>> print(t.constructs.filter_by_name('measure:area'))
+   >>> print(t.constructs.filter_by_identity('measure:area'))
    Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
-   >>> print(t.constructs.filter_by_name('ncvar%b'))
+   >>> print(t.constructs.filter_by_identity('ncvar%b'))
    Constructs:
    {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
 
-Each construct has a `!name` method that, by default, returns the
+Each construct has an `!identity` method that, by default, returns the
 least ambiguous name (defined in the documentation of a construct's
-`!name` method); and a `!names` method that returns a list of all of
-the names that would select the construct.
+`!identity` method); and an `!identities` method that returns a list
+of all of the identities that would select the construct.
 
-As a further convienince, selection by construct name is also possible
-by providing names to a call of a `Constructs` instance itself, and
-this technique for selecting constucts by name will be used in the
-rest of this tutorial:
+As a further convienince, selection by construct identity is also
+possible by providing identities to a call of a `Constructs` instance
+itself, and this technique for selecting constucts by identity will be
+used in the rest of this tutorial:
 
 .. code-block:: python
-   :caption: *Construct selection by name is possible with via the
-             "filter_by_name" method, or directly from the
+   :caption: *Construct selection by identity is possible with via the
+             "filter_by_identity" method, or directly from the
              "Constructs" instance.*
 
-   >>> print(t.constructs.filter_by_name('latitude'))
+   >>> print(t.constructs.filter_by_identity('latitude'))
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
    >>> print(t.constructs('latitude'))
@@ -1159,7 +1159,7 @@ metadata construct:
 An individual metadata construct may be returned, without its
 construct key, by any of three techniques:
 
-* with the `~Construct.construct` method of a `Constructs` instance
+* with the `~Construct.value` method of a `Constructs` instance
   that contains one construct,
 
 * with the `~Construct.get` method of a `Constructs` instance, or
@@ -1168,7 +1168,7 @@ construct key, by any of three techniques:
 
 The latter two of these require the construct key, which may be found
 by inspection (i.e. printing a `Constructs` instance) or by the
-`~Construct.construct_key` method of a `Constructs` instance.
+`~Construct.key` method of a `Constructs` instance.
 
 .. An individual metadata construct may be returned, without its
    construct key, via the `~Field.get_construct` method of the field
@@ -1189,9 +1189,9 @@ by inspection (i.e. printing a `Constructs` instance) or by the
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
    >>> len(c)
    1
-   >>> c.construct()
+   >>> c.value()
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
-   >>> key = c.construct_key()
+   >>> key = c.key()
    >>> key
    'auxiliarycoordinate0'
    >>> c.get(key)
@@ -1212,18 +1212,18 @@ exception may be raised.
    >>> c = t.constructs.filter_by_measure('volume')
    >>> len(c)
    0
-   >>> c.construct()
+   >>> c.value()
    ValueError: Can't return zero constructs
-   >>> c..construct(default='No construct')
+   >>> c.value(default='No construct')
    'No construct'
-   >>> c.construct(default=KeyError('My message'))
+   >>> c.value(default=KeyError('My message'))
    KeyError: 'My message'
    >>> d = t.constructs('units=degrees')
    >>> len(d)
    2
-   >>> d.construct()
+   >>> d.value()
    ValueError: Can't return 2 constructs 
-   >>> print(d.construct(default=None))
+   >>> print(d.value(default=None))
    None
 
 The `~Constructs.get` method of a `Constructs` instance accepts an
@@ -1291,7 +1291,7 @@ Metadata constructs share the :ref:`same API as the field construct
    :caption: *Retrieve the "longitude" metadata construct, set a new
              property, and then inspect all of the properties.*
 
-   >>> lon = q.constructs('longitude').construct()
+   >>> lon = q.constructs('longitude').value()
    >>> lon
    <DimensionCoordinate: longitude(8) degrees_east>
    >>> lon.set_property('long_name', 'Longitude')
@@ -1302,15 +1302,15 @@ Metadata constructs share the :ref:`same API as the field construct
 
 .. code-block:: python
    :caption: *Get the metadata construct with units of "km2", find its
-             canonical name, and all of its valid names, that may be
-             used for selection by the "filter_by_name" method*
+             canonical name, and all of its valid identities, that may
+             be used for selection by the "filter_by_identity" method*
 
-   >>> area = t.constructs.filter_by_property(units='km2').construct()
+   >>> area = t.constructs.filter_by_property(units='km2').value()
    >>> area
    <CellMeasure: measure:area(9, 10) km2>
-   >>> area.name()
+   >>> area.identity()
    'measure:area'
-   >>> area.names()
+   >>> area.identities()
    ['measure:area', 'units=km2', 'ncvar%cell_measure']
 
 .. _Metadata-construct-data:
@@ -1326,7 +1326,7 @@ construct <Data>` as the field construct for accessing their data:
              data, change the third element of the array, and get the
              data as a numpy array.*
 	     
-   >>> lon = q.constructs('longitude').construct()
+   >>> lon = q.constructs('longitude').value()
    >>> lon
    <DimensionCoordinate: longitude(8) degrees_east>
    >>> lon.data
@@ -1345,7 +1345,7 @@ of the field construct:
    :caption: *Find the construct keys of the domain axis constructs
              spanned by the data of each metadata construct.*
 
-   >>> key = t.constructs('latitude').construct_key()
+   >>> key = t.constructs('latitude').key()
    >>> key
    'auxiliarycoordinate0'
    >>> t.get_data_axes(key=key)
@@ -1456,8 +1456,8 @@ attributes and methods of the domain instance.
              and show that this change appears in the same metadata
              data construct of the parent field, and vice versa.*
 
-   >>> domain_latitude = t.domain.constructs('latitude').construct()
-   >>> field_latitude = t.constructs('latitude').construct()
+   >>> domain_latitude = t.domain.constructs('latitude').value()
+   >>> field_latitude = t.constructs('latitude').value()
    >>> domain_latitude.set_property('test', 'set by domain')
    >>> print(field_latitude.get_property('test'))
    set by domain
@@ -1534,7 +1534,7 @@ construct <Data>` for accessing its data.
    :caption: *Get the Bounds instance of a coordinate construct and
              inspect its data.*
       
-   >>> lon = t.constructs('grid_longitude').construct()
+   >>> lon = t.constructs('grid_longitude').value()
    >>> bounds = lon.get_bounds()
    >>> bounds
    <Bounds: grid_longitude(9, 2) >
@@ -1614,7 +1614,7 @@ A coordinate reference construct contains
              "construct" parameter is required since there is also a
              dimension coordinate construct with the same name.)*
      
-   >>> crs = t.constructs('standard_name:atmosphere_hybrid_height_coordinate').construct()
+   >>> crs = t.constructs('standard_name:atmosphere_hybrid_height_coordinate').value()
    >>> crs
    <CoordinateReference: atmosphere_hybrid_height_coordinate>
    >>> crs.dump()
@@ -1710,7 +1710,7 @@ methods of the cell method construct.
    :caption: *Get the domain axes constructs to which the cell method
              construct applies, and the method and other properties.*
      
-   >>> cm = t.constructs('method:mean').construct()
+   >>> cm = t.constructs('method:mean').value()
    >>> cm
    <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>)
    >>> cm.get_axes()
@@ -1981,8 +1981,8 @@ function.
 If this field were to be written to a netCDF dataset then, in the
 absence of pre-defined names, default netCDF variable and dimension
 names would be automatically generated (based on standard names where
-they exist). The setting of bespoke names is, however, easily done
-with the :ref:`netCDF interface <NetCDF-interface>`.
+they exist). The setting of bespoke netCDF names is, however, easily
+done with the :ref:`netCDF interface <NetCDF-interface>`.
 
 .. code-block:: python
    :caption: *Set netCDF variable and dimension names for the field
@@ -2248,7 +2248,7 @@ domain.
    :caption: *Create an independent field construct from the "surface
              altitude" metadata construct.*
 
-   >>> key = tas.constructs('surface_altitude').construct_key()
+   >>> key = tas.constructs('surface_altitude').key()
    >>> orog = tas.convert(key)
    >>> print(orog)
    Field: surface_altitude
@@ -2377,7 +2377,7 @@ Metadata constructs may be copied individually in the same manner:
 .. code-block:: python
    :caption: *Copy a metadata construct.*
 
-   >>> orog = t.constructs('surface_altitude').construct().copy()
+   >>> orog = t.constructs('surface_altitude').value().copy()
 
 Arrays within `Data` instances are copied with a `copy-on-write
 <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This means
@@ -2478,7 +2478,7 @@ Metadata constructs may also be tested for equality:
    :caption: *Metadata constructs also have an equals method, that
              behaves in a similar manner.*
 	  
-   >>> orog = t.constructs('surface_altitude').construct()
+   >>> orog = t.constructs('surface_altitude').value()
    >>> orog.equals(orog.copy())
    True
 
@@ -2512,7 +2512,7 @@ metadata construct identification with the `~Field.constructs` and
    >>> print(t.constructs.filter_by_ncvar('b'))
    Constructs:
    {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
-   >>> t.constructs('ncvar%x').construct()
+   >>> t.constructs('ncvar%x').value()
    <DimensionCoordinate: grid_longitude(9) degrees>
    >>> t.constructs('ncdim%x')
    <Constructs: domain_axis(1)>
@@ -2552,7 +2552,7 @@ Method                            Description
    >>> q.nc_set_variable('humidity')
    >>> q.nc_get_variable()
    'humidity'
-   >>> q.constructs('latitude').construct().nc_get_variable()
+   >>> q.constructs('latitude').value().nc_get_variable()
    'lat'
 
 The complete collection of netCDF interface methods is:
@@ -2748,7 +2748,7 @@ of the field construct.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : time(1) = [2019-01-01 00:00:00]
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> key = q.constructs('time').construct_key()
+   >>> key = q.constructs('time').key()
    >>> axes = q.get_data_axes(key)
    >>> axes
    ('domainaxis2',)
@@ -2877,7 +2877,7 @@ is still created, but one without any metadata or data:
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : measure:area (external variable: ncvar%areacella)
 
-   >>> area = u.constructs('measure:area').construct()
+   >>> area = u.constructs('measure:area').value()
    >>> area
    <CellMeasure: measure:area >
    >>> area.nc_external()
@@ -2912,7 +2912,7 @@ variable had been present in the parent dataset:
    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : cell_area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2
-   >>> area = u.constructs('measure:area').construct()
+   >>> area = u.constructs('measure:area').value()
    >>> area
    <CellMeasure: cell_area(9, 10) m2>
    >>> area.nc_external()

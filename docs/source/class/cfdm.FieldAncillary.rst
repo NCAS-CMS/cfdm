@@ -21,7 +21,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.FieldAncillary.dump
-   ~cfdm.FieldAncillary.name
+   ~cfdm.FieldAncillary.identity  
+   ~cfdm.FieldAncillary.identities
    
 .. rubric:: Attributes
    

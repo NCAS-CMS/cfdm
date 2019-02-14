@@ -167,7 +167,7 @@ x.__str__() <==> str(x)
 .. versionadded:: 1.7.0
 
         '''    
-        return self.name(default=self.nc_get_variable(''))
+        return self.identity(default=self.nc_get_variable(''))
     #--- End: def
 
     def dump(self, display=True, _omit_properties=None, field=None,
@@ -200,7 +200,7 @@ components.
 
         if _title is None:
             string = ['{0}Coordinate Reference: {1}'.format(
-                indent0, self.name(default=''))]
+                indent0, self.identity(default=''))]
         else:
             string = [indent0 + _title]
 
@@ -384,7 +384,7 @@ False
         return True
     #--- End: def
 
-    def name(self, default=None, ncvar=True, custom=None,
+    def identity(self, default=None, ncvar=True, custom=None,
              all_names=False):
         '''Return a name.
 
@@ -401,9 +401,6 @@ By default the name is the first found of the following:
   
   5. The value of the *default* parameter.
 
-Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
-
-.. seealso:: `identity`
 
 **Examples:**
 
@@ -453,7 +450,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
     
     #--- End: def
 
-    def names(self,extra=None):
+    def identities(self,extra=None):
         '''
         '''
 

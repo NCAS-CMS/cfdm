@@ -21,7 +21,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.CellMethod.dump
-   ~cfdm.CellMethod.name
+   ~cfdm.CellMethod.identity  
+   ~cfdm.CellMethod.identities
 
 .. rubric:: Attributes
    

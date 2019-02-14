@@ -39,7 +39,7 @@ indexes the geometries for each cell.
         '''TODO
         '''
         if _create_title and _title is None: 
-            _title = 'Interior Ring: ' + self.name(default='')
+            _title = 'Interior Ring: ' + self.identity(default='')
 
         return super().dump(display=display, field=field, key=key,
                             _omit_properties=_omit_properties,

@@ -108,7 +108,7 @@ components, and provides selected values of all data arrays.
             else:
                 ncvar = ''
 
-            _title = 'Domain Ancillary: ' + self.name(default=key) + ncvar
+            _title = 'Domain Ancillary: ' + self.identity(default=key) + ncvar
             
 
         return super().dump(display=display,

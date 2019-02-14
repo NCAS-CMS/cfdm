@@ -126,7 +126,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(f) == 1)
         f = f[0]
 
-        cell_measure = f.constructs.filter_by_name('measure:area').construct()
+        cell_measure = f.constructs.filter_by_identity('measure:area').value()
 
         self.assertTrue(cell_measure.nc_external())
         self.assertTrue(cell_measure.nc_get_variable() == 'areacella')
@@ -139,7 +139,7 @@ class ExternalVariableTest(unittest.TestCase):
 
         c = cfdm.read(self.combined_file, verbose=False)
 
-        cell_measure = f[0].constructs.filter_by_name('measure:area').construct()
+        cell_measure = f[0].constructs.filter_by_identity('measure:area').value()
 
 #        print ('\nParent + External:\n')
 #        for x in f:
@@ -212,7 +212,7 @@ class ExternalVariableTest(unittest.TestCase):
         for i in range(len(g)):
             self.assertTrue(combined[i].equals(g[i], verbose=True))
 
-        cell_measure = g[0].constructs('measure:area').construct()
+        cell_measure = g[0].constructs('measure:area').value()
 
         self.assertFalse(cell_measure.nc_external())
         cell_measure.nc_external(True)
@@ -220,7 +220,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(cell_measure.properties())
         self.assertTrue(cell_measure.has_data())
 
-        self.assertTrue(g[0].constructs.filter_by_name('measure:area').construct().nc_external())
+        self.assertTrue(g[0].constructs.filter_by_identity('measure:area').value().nc_external())
 
         cfdm.write(g, self.tempfilename_parent,
                    external=self.tempfilename_external,

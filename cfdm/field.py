@@ -105,7 +105,7 @@ x.__repr__() <==> repr(x)
 x.__str__() <==> str(x)
 
         '''
-        title = "Field: {0}".format(self.name(''))
+        title = "Field: {0}".format(self.identity(''))
 
         # Append the netCDF variable name
         ncvar = self.nc_get_variable(None)
@@ -154,7 +154,7 @@ x.__str__() <==> str(x)
             if dimension_coord:
                 # Dimension coordinate
                 axis = self.construct.data_axes()[key][0]
-                name = variable.name(ncvar=True, default=key)
+                name = variable.identity(ncvar=True, default=key)
                 if variable.has_data():
                     name += '({0})'.format(variable.get_data().size)
                 elif hasattr(variable, 'nc_get_external'):
@@ -175,7 +175,7 @@ x.__str__() <==> str(x)
                 # Cell measure
                 # Field ancillary
                 # Domain ancillary
-                x = [variable.name(ncvar=True, default=key)]
+                x = [variable.identity(ncvar=True, default=key)]
 
                 if variable.has_data():
                     shape = [axis_names[axis] for axis in axes]
@@ -322,7 +322,7 @@ rules, the only differences being:
 #        name_to_keys = {}
 #
 #        for key, construct in getattr(self, constructs)().items():
-#            name = construct.name(default='cfdm%'+key)
+#            name = construct.identity(default='cfdm%'+key)
 #            name_to_keys.setdefault(name, []).append(key)
 #            key_to_name[key] = name
 #
@@ -385,7 +385,7 @@ rules, the only differences being:
         if calendar is not None:
             units += ' {0}'.format(calendar)
             
-        return "{0}{1}{2}".format(self.name(''), axis_names, units)
+        return "{0}{1}{2}".format(self.identity(''), axis_names, units)
     #--- End: def
 
     def _dump_axes(self, axis_names, display=True, _level=0):
@@ -575,7 +575,7 @@ data arrays.
 
         if _title is None:
             ncvar = self.nc_get_variable(None)
-            _title = self.name(default=None)
+            _title = self.identity(default=None)
             if ncvar is not None:
                 if _title is None:
                     _title = "ncvar:{0}".format(ncvar)
@@ -861,7 +861,7 @@ construct, into the data array.
         '''
         f = self.copy()
         
-#        domain_axis = self.domain_axes.filter_by_key(axis).construct(default=None)
+#        domain_axis = self.domain_axes.filter_by_key(axis).value(default=None)
         domain_axis = self.domain_axes.get(axis, None)
         if domain_axis is None:
             raise ValueError("Can't insert non-existent domain axis: {}".format(axis))
@@ -976,7 +976,7 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
                 : grid_longitude(9) = [-4.7, ..., -1.18] degrees
 		   
         '''
-        c = self.constructs.filter_by_key(key).construct()
+        c = self.constructs.filter_by_key(key).value()
         
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the

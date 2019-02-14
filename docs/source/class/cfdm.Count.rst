@@ -21,7 +21,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.Count.dump
-   ~cfdm.Count.name
+   ~cfdm.Count.identity  
+   ~cfdm.Count.identities
   
 Properties
 ----------

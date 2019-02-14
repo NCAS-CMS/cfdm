@@ -64,7 +64,7 @@ x.__str__() <==> str(x)
 .. versionadded:: 1.7.0
 
         '''
-        name = self.name('')
+        name = self.identity('')
 
         data = self.get_data(None)
         if data is not None:
@@ -83,7 +83,7 @@ x.__str__() <==> str(x)
         if isreftime:
             units += ' '+self.get_property('calendar', '')
             
-        return '{0}{1} {2}'.format(self.name(''), dims, units)
+        return '{0}{1} {2}'.format(self.identity(''), dims, units)
     #--- End: def
 
     def dump(self, display=True, field=None, key=None,
@@ -132,7 +132,7 @@ Return a string containing a full description of the instance.
                     
                 string.append('{0}{1}: {2}'.format(indent0,
                                                    self.__class__.__name__,
-                                                   self.name(default=default)))
+                                                   self.identity(default=default)))
             else:
                 string.append(indent0 + _title)
         #--- End: if
@@ -412,8 +412,8 @@ Inserts a new size 1 axis into the data array.
 #        return old_chunks
 #    #--- End: def
 
-    def name(self, default=None, ncvar=True, custom=None,
-             all_names=False):
+    def identity(self, default=None, ncvar=True, custom=None,
+                 all_names=False):
         '''Return a name.
 
 By default the name is the first found of the following:

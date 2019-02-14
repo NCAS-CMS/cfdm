@@ -20,7 +20,7 @@ Filtering
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Constructs.filter_by_name
+   ~cfdm.Constructs.filter_by_identity
    ~cfdm.Constructs.filter_by_property
    ~cfdm.Constructs.filter_by_measure
    ~cfdm.Constructs.filter_by_method
@@ -42,8 +42,8 @@ Constructs and keys
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Constructs.construct
-   ~cfdm.Constructs.construct_key
+   ~cfdm.Constructs.key
+   ~cfdm.Constructs.value
 
 Data axes
 ---------
@@ -83,8 +83,8 @@ Dictionary-access methods
    :template: method.rst
 
    ~cfdm.Constructs.get
-   ~cfdm.Constructs.keys
    ~cfdm.Constructs.items
+   ~cfdm.Constructs.keys
    ~cfdm.Constructs.values
    ~cfdm.Constructs.__getitem__
 

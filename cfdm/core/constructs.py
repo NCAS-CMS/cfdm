@@ -460,12 +460,15 @@ TODO
     #--- End: def'
 
     def _del_construct(self, key, default=ValueError()):
-        '''Remove a construct.
+        '''Remove a metadata construct.
 
 If a domain axis construct is selected for removal then it can't be
 spanned by any metdata construct data arrays, nor be referenced by any
-cell method constructs. However, a domain ancillary constructs may be
-removed even if it is referenced by coordinate reference coinstruct.
+cell method constructs.
+
+However, a domain ancillary construct may be removed even if it is
+referenced by coordinate reference construct. In this case the
+reference is replace with `None`.
 
 .. versionadded:: 1.7.0
 
@@ -479,14 +482,19 @@ removed even if it is referenced by coordinate reference coinstruct.
         *Parameter example:*
           ``key='auxiliarycoordinate0'``
   
+    default: optional
+        Return the value of the *default* parameter if the construct
+        can not be removed, or does not exist. If set to an
+        `Exception` instance then it will be raised instead.
+
+
 :Returns:
 
-        The removed construct, or `None` if the given key did not
-        exist.
+        The removed construct.
 
 **Examples:**
 
->>> x = f.del_construct('auxiliarycoordinate2')
+>>> x = f._del_construct('auxiliarycoordinate2')
 
         '''
         data_axes = self.data_axes()
@@ -762,6 +770,8 @@ removed even if it is referenced by coordinate reference coinstruct.
 
 .. versionadded:: 1.7.0
 
+..seealso:: `get`, `items`, `keys`, `values`
+
         '''
         return self._dictionary().get(key, *default)
     #--- End: def
@@ -770,6 +780,8 @@ removed even if it is referenced by coordinate reference coinstruct.
         '''Return the items ((construct key, construct) pairs).
 
 .. versionadded:: 1.7.0
+
+..seealso:: `get`, `keys`, `values`
 
         '''
         return self._dictionary().items()
@@ -780,6 +792,8 @@ removed even if it is referenced by coordinate reference coinstruct.
 
 .. versionadded:: 1.7.0
 
+..seealso:: `get`, `items`, `values`
+
         '''
         return self._construct_type.keys()
     #--- End: def
@@ -788,6 +802,8 @@ removed even if it is referenced by coordinate reference coinstruct.
         '''Returns all of the metadata constructs, in arbitrary order.
 
 .. versionadded:: 1.7.0
+
+..seealso:: `get`, `items`, `keys`
 
         '''
         return self._dictionary().values()
@@ -846,12 +862,12 @@ removed even if it is referenced by coordinate reference coinstruct.
         return out
     #--- End: def
 
-    def construct(self, default=ValueError()):
+    def value(self, default=ValueError()):
         '''TODO
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `construct_key`, `get`
+.. seealso:: `get`, `key`, `values`
 
 :Parameters:
 
@@ -880,12 +896,12 @@ TODO
         return construct
     #--- End: def
     
-    def construct_key(self, default=ValueError()):
+    def key(self, default=ValueError()):
         '''TODO
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `construct`, `get`
+.. seealso:: `get`, `keys`, `value`
 
 :Parameters:
 
@@ -910,7 +926,7 @@ TODO
 
         if len(self) > 1:
             return self._default(default,
-                 "Can't get key more than one ({}) construct".format(len(self)))
+                 "Can't get key for {} constructs".format(len(self)))
         
         key, _ = self._dictionary().popitem()
             

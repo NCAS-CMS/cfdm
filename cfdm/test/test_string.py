@@ -73,7 +73,7 @@ class StringTest(unittest.TestCase):
     
             tas1 = cfdm.read(self.tempfilename)[0]
     
-            aux1 = tas1.constructs.filter_by_name('long_name=Grid latitude name').construct()
+            aux1 = tas1.constructs.filter_by_identity('long_name=Grid latitude name').value()
             self.assertTrue(aux0.data.shape == array.shape, aux0.data.shape)
             self.assertTrue(aux1.data.shape == array.shape, aux1.data.shape)
         #--- End: for

@@ -190,8 +190,8 @@ False
         return True
     #--- End: def
 
-    def names(self, extra=None):
-        '''Return a name.
+    def identities(self, extra=None):
+        '''Return TODO
 
 By default the name is the first found of the following:
 

@@ -55,7 +55,7 @@ x.__str__() <==> str(x)
             
             if dimension_coord:
                 # Dimension coordinate
-                name = variable.name(ncvar=True, default=cid)
+                name = variable.identity(ncvar=True, default=cid)
                 if variable.has_data():
                     name += '({0})'.format(variable.get_data().size)
                 elif hasattr(variable, 'nc_external'):
@@ -76,7 +76,7 @@ x.__str__() <==> str(x)
                 # Cell measure
                 # Field ancillary
                 # Domain ancillary
-                x = [variable.name(ncvar=True, default=cid)]
+                x = [variable.identity(ncvar=True, default=cid)]
 
                 if variable.has_data():
 #                    shape = [axis_names[axis] for axis in self.constructs_data_axes(cid)]
@@ -112,7 +112,7 @@ x.__str__() <==> str(x)
             for cid, dim in list(self.dimension_coordinates.items()):
 #                if self.constructs_data_axes()[cid] == (axis_cid,):
                 if constructs_data_axes[cid] == (axis_cid,):
-                    name = dim.name(default='key:{0}'.format(cid), ncvar=True)
+                    name = dim.identity(default='key:{0}'.format(cid), ncvar=True)
                     y = '{0}({1})'.format(name, dim.get_data().size)
                     if y != axis_names[axis_cid]:
                         y = '{0}({1})'.format(name, axis_names[axis_cid])

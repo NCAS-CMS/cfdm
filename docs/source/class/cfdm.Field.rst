@@ -23,8 +23,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.Field.dump
-   ~cfdm.Field.name
-   ~cfdm.Field.names
+   ~cfdm.Field.identity  
+   ~cfdm.Field.identities
 
 .. rubric:: Attributes
    

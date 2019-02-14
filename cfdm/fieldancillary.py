@@ -94,7 +94,7 @@ components, and provides selected values of all data arrays.
 
         '''
         if _title is None:
-            _title = 'Field Ancillary: ' + self.name(default='')
+            _title = 'Field Ancillary: ' + self.identity(default='')
 
         return super().dump(display=display, field=field, key=key,
                             _omit_properties=_omit_properties,

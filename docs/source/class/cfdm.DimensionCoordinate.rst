@@ -21,7 +21,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.dump
-   ~cfdm.DimensionCoordinate.name
+   ~cfdm.DimensionCoordinate.identity  
+   ~cfdm.DimensionCoordinate.identities
 
 .. rubric:: Attributes
    

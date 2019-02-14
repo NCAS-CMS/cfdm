@@ -41,134 +41,16 @@ TODO
         return self.constructs.data_constructs(copy=copy)
     #-- End: def
     
-#    def constructs_data_axes(self):
-#        '''Return the domain axes spanned by metadata construct data arrays.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `constructs`, `get_construct`
-#
-#:Returns:
-#
-#    `dict`
-#        The domain axis constructs spanned by the data of metadata
-#        constructs.
-#
-#**Examples:**
-#
-#>>> d = f.constructs_data_axes()
-#
-#        '''
-#        return self._get_constructs().constructs_data_axes()
-#    #--- End: def
-    
-#    def construct_type(self, key):
-#        '''TODO
-#
-#.. versionadded:: 1.7.0
-#        '''                
-#        return self._get_constructs().construct_type(key)
-#    #--- End: def
-#    
-#    def constructs_old(self, construct=None, copy=False):
-#        '''Return metadata constructs.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `constructs_data_axes`, `del_construct`, `get_construct`,
-#             `get_construct_key`, `has_construct`, `set_construct`
-#
-#:Parameters:
-#
-#    construct: (sequence of) `str`, optional
-#        Select constructs of the given type, or types. Valid types
-#        are:
-#
-#          ==========================  ================================
-#          *construct*                 Constructs
-#          ==========================  ================================
-#          ``'domain_ancillary'``      Domain ancillary constructs
-#          ``'dimension_coordinate'``  Dimension coordinate constructs
-#          ``'domain_axis'``           Domain axis constructs
-#          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-#          ``'cell_measure'``          Cell measure constructs
-#          ``'coordinate_reference'``  Coordinate reference constructs
-#          ``'cell_method'``           Cell method constructs
-#          ``'field_ancillary'``       Field ancillary constructs
-#          ==========================  ================================
-#
-#        *Parameter example:*
-#          ``construct='dimension_coordinate'``
-#
-#        *Parameter example:*
-#          ``construct=['auxiliary_coordinate']``
-#
-#        *Parameter example:*
-#          ``construct=('domain_ancillary', 'cell_method')``
-#
-#        Note that a domain never contains cell method nor field
-#        ancillary constructs.
-#
-#    copy: `bool`, optional
-#        If `True` then deep copies of the constructs are returned.
-#
-#:Returns:
-#
-#    `dict`
-#        Constructs are returned as values of a dictionary, keyed by
-#        their construct identifiers.
-#        
-#        If cell method contructs, and no other construct types, have
-#        been selected with the *construct* parameter then the
-#        constructs are returned in an ordered dictionary
-#        (`collections.OrderedDict`). The order is determined by the
-#        order in which the cell method constructs were originally
-#        added.
-#
-#**Examples:**
-#
-#>>> f.constructs()
-#{}
-#
-#>>> f.constructs()
-#{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-# 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-# 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
-# 'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>,
-# 'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-# 'cellmethod1': <CellMethod: domainaxis3: maximum>,
-# 'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
-# 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
-# 'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-# 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-# 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-# 'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-# 'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
-# 'domainancillary1': <DomainAncillary: ncvar%b(1) >,
-# 'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
-# 'domainaxis0': <DomainAxis: 1>,
-# 'domainaxis1': <DomainAxis: 10>,
-# 'domainaxis2': <DomainAxis: 9>,
-# 'domainaxis3': <DomainAxis: 1>,
-# 'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-#>>> f.constructs(construct='coordinate_reference')
-#{'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
-# 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
-#>>> f.constructs(construct='cell_method')
-#OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-#             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
-#>>> f.constructs(construct=['cell_method', 'field_ancillary'])
-#{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-# 'cellmethod1': <CellMethod: domainaxis3: maximum>,
-# 'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-#
-#        '''
-#        return self._get_constructs().constructs(construct=construct,
-#                                                 copy=copy)
-#    #--- End: def
-    
-    def del_construct(self, key):
+    def del_construct(self, key, default=ValueError()):
         '''Remove a metadata construct.
+
+If a domain axis construct is selected for removal then it can't be
+spanned by any metdata construct data, nor the field construct's
+data; nor be referenced by any cell method constructs.
+
+However, a domain ancillary construct may be removed even if it is
+referenced by coordinate reference construct. In this case the
+reference is replace with `None`.
 
 .. versionadded:: 1.7.0
 
@@ -178,11 +60,16 @@ TODO
 :Parameters:
 
     key: `str`, optional
-        The identifier of the metadata construct.
+        The key of the metadata construct to be removed.
 
         *Parameter example:*
           ``key='auxiliarycoordinate0'``
         
+    default: optional
+        Return the value of the *default* parameter if the construct
+        can not be removed, or does not exist. If set to an
+        `Exception` instance then it will be raised instead.
+
 :Returns:
 
         The removed metadata construct.
@@ -193,10 +80,10 @@ TODO
 <DimensionCoordinate: grid_latitude(111) degrees>
 
         '''
-        return self.constructs._del_construct(key)
+        return self.constructs._del_construct(key, default=default)
     #--- End: def
 
-    def get_construct(self, key):
+    def get_construct(self, key, default=ValueError()):
         '''Return a metadata construct.
 
 .. versionadded:: 1.7.0
@@ -207,10 +94,15 @@ TODO
 :Parameters:
 
     key: `str`
-        The identifier of the metadata construct.
+        The key of the metadata construct.
 
         *Parameter example:*
           ``key='domainaxis1'``
+
+    default: optional
+        Return the value of the *default* parameter if the construct
+        does not exist. If set to an `Exception` instance then it will
+        be raised instead.
 
 :Returns:
 
@@ -231,7 +123,7 @@ TODO
 <DimensionCoordinate: grid_latitude(10) degrees>
 
         '''
-        return self.constructs.get_construct(key)
+        return self.constructs.filter_by_key(key).value(default=default)
     #--- End: def
 
     def domain_axis_name(self, axis):

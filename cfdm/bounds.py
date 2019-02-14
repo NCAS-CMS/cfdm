@@ -102,7 +102,7 @@ of all data arrays.
 
         '''
         if _create_title and _title is None: 
-            _title = 'Bounds: ' + self.name(default='')
+            _title = 'Bounds: ' + self.identity(default='')
 
         return super().dump(display=display, field=field, key=key,
                             _omit_properties=_omit_properties,
@@ -195,7 +195,7 @@ None
         return deepcopy(self._get_component('inherited_properties', {}))
     #--- End: def   
 
-    def name(self, default=None, ncvar=True, custom=None,
+    def identity(self, default=None, ncvar=True, custom=None,
              all_names=False):
         '''Return a name.
 

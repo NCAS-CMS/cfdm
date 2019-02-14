@@ -21,7 +21,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.CellMeasure.dump
-   ~cfdm.CellMeasure.name
+   ~cfdm.CellMeasure.identity
+   ~cfdm.CellMeasure.identities
 
 .. rubric:: Attributes
    

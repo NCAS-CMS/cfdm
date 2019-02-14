@@ -105,7 +105,7 @@ components, and provides selected values of all data arrays.
 
 ''' 
         if _title is None:
-            name = self.name(default=self.get_property('units', ''))
+            name = self.identity(default=self.get_property('units', ''))
             _title = 'Cell Measure: ' + name
 
         if self.nc_external():
@@ -252,7 +252,7 @@ False
         return True
     #--- End: def
 
-    def name(self, default=None, ncvar=True, custom=None,
+    def identity(self, default=None, ncvar=True, custom=None,
              all_names=False):
         '''Return a name for the cell measure construct.
 
@@ -351,7 +351,7 @@ By default the name is the first found of the following:
         return default
     #--- End: def
 
-    def names(self, extra=None):
+    def identities(self, extra=None):
         '''Return a name.
 
 By default the name is the first found of the following:

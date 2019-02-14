@@ -109,7 +109,7 @@ components, and provides selected values of all data arrays.
 
         '''
         if _title is None:
-            _title = 'Auxiliary coordinate: ' + self.name(default='')
+            _title = 'Auxiliary coordinate: ' + self.identity(default='')
 
         return super().dump(display=display, field=field, key=key,
                             _level=_level, _title=_title,

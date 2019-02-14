@@ -132,7 +132,7 @@ False
         return True
     #--- End: def
 
-    def name(self, default=None, ncdim=True, custom=None,
+    def identity(self, default=None, ncdim=True, custom=None,
              all_names=False):
         '''Return a name for the domain axis construct.
 
@@ -202,7 +202,7 @@ By default the name is the first found of the following:
         return default
     #--- End: def
 
-    def names(self, extra=None):
+    def identities(self, extra=None):
         '''Return a name for the domain axis construct.
 
 By default the name is the first found of the following:

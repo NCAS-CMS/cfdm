@@ -20,7 +20,8 @@ Inspection
    :toctree: ../method/
    :template: method.rst
    
-   ~cfdm.DomainAxis.name
+   ~cfdm.DomainAxis.identity  
+   ~cfdm.DomainAxis.identities
 
 .. rubric:: Attributes
    

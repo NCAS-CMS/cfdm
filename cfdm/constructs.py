@@ -14,20 +14,20 @@ class Constructs(core.Constructs):
 
     ''' 
        
-    def __call__(self, *names):
-        '''Select metadata constructs by name.
+    def __call__(self, *identities):
+        '''Select metadata constructs by identity.
 
-Calling a `Constructs` instance is an alias for `filter_by_name`, so
-see that method method for details.
+Calling a `Constructs` instance is an alias for `filter_by_identity`,
+so see that method method for details.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_name`
+.. seealso:: `filter_by_identity`
 
 :Parameters:
 
-    names: optional
-        See `filter_by_name` for details.
+    identities: optional
+        See `filter_by_identity` for details.
 
 :Returns:
 
@@ -39,14 +39,14 @@ see that method method for details.
 >>> c('latitude')
 Constructs:
 {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
->>> c.filter_by_name('latitude')
+>>> c.filter_by_identity('latitude')
 Constructs:
 {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
 
- See `filter_by_name` for more examples.
+ See `filter_by_identity` for more examples.
 
         '''
-        return self.filter_by_name(*names)
+        return self.filter_by_identity(*identities)
     #--- End: def
     
     def __repr__(self):
@@ -157,7 +157,7 @@ x.__str__() <==> str(x)
         for dkey, dim in self.filter_by_type('dimension_coordinate').items():
             if constructs_data_axes[dkey] == (key,):
                 # Get the name from a dimension coordinate
-                name = dim.name(ncvar=False, default=None)
+                name = dim.identity(ncvar=False, default=None)
                 break
         #--- End: for
         if name is not None:
@@ -171,7 +171,7 @@ x.__str__() <==> str(x)
                     break
                 
                 # Get the name from an auxiliary coordinate
-                name = aux.name(ncvar=False, default=None)
+                name = aux.identity(ncvar=False, default=None)
                 found = True
         #--- End: for
         if name is not None:
@@ -354,7 +354,7 @@ x.__str__() <==> str(x)
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_key`, `filter_by_measure`, `filter_by_method`,
-             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_identity`, `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
@@ -474,13 +474,107 @@ Select constructs whose data spans the "domainaxis1" or the
         return out
     #--- End: def
 
+    def filter_by_identity(self, *identities):
+        '''Select metadata constructs by identity.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`
+
+:Parameters:
+
+    identities: optional
+
+        Select constructs that have any of the given identities.
+
+        An identity is specified by a string (e.g. ``'latitude'``,
+        ``'long_name=time'``, etc.); or a compiled regular expression
+        (e.g. ``re.compile('^atmosphere')``), for which all constructs
+        whose identities match (via `re.search`) are selected.
+
+        If no identities are provided then all constructs are selected.
+
+        Each construct has a number of identities, and is selected if
+        any of them match any of those provided. A construct's
+        identities are those returned by its `!identities` method. In
+        the following example, the construct ``c`` has four
+        identities:
+
+           >>> c.identities()
+           ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
+
+        In addition, each construct also has an identity based its
+        construct key (e.g. ``'key%dimensioncoordinate2'``)
+
+        Note that the identifiers of metadata constructs in the ouput
+        of a `print` or `!dump` call are always one of its identities,
+        and so may always be used as an *identities* argument.
+
+:Returns:
+
+    `Constructs`
+        The selected constructs and their construct keys.
+
+**Examples:**
+
+Select constructs that have a "standard_name" property of 'latitude':
+
+>>> d = c.filter_by_identity('latitude')
+
+Select constructs that have a "long_name" property of 'Height':
+
+>>> d = c.filter_by_identity('long_name=Height')
+
+Select constructs that have a "standard_name" property of 'latitude'
+or a "foo" property of 'bar':
+
+>>> d = c.filter_by_identity('latitude', 'foo=bar')
+
+Select constructs that have a netCDF variable name of 'time':
+
+>>> d = c.filter_by_identity('ncvar%time')
+
+        '''
+        out = self.shallow_copy()
+        
+        out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_identity': identities},)
+        
+        # Return all constructs if no identities have been provided
+        if not identities:
+            return out
+        
+        for cid, construct in tuple(out.items()):
+            ok = False
+            for value0 in identities:          
+                for value1 in construct.identities(extra=('key%'+cid,)):
+                    ok = self._matching_values(value0, construct, value1)
+                    if ok:
+                        break
+                #--- End: for
+
+                if ok:
+                    break
+            #--- End: for
+
+            if not ok:
+                # This construct does not match any of the identities
+                out._pop(cid)
+        #--- End: for
+
+        return out
+    #--- End: def
+
     def filter_by_key(self, *keys):
         '''Select metadata constructs by key.
 
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_axis`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
+             `filter_by_method`, `filter_by_identity`, `filter_by_ncdim`,
              `filter_by_ncvar`, `filter_by_property`,
              `filter_by_type`, `filters_applied`, `inverse_filter`
 
@@ -532,7 +626,7 @@ Select the constructs with keys 'dimensioncoordinate1' or
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_method`,
-             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_identity`, `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
@@ -634,7 +728,7 @@ Constructs:
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_name`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_identity`, `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
@@ -728,106 +822,13 @@ Constructs:
         return out
     #--- End: def
 
-    def filter_by_name(self, *names):
-        '''Select metadata constructs by name.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`
-
-:Parameters:
-
-    names: optional
-
-        Select constructs that have any of the given names.
-
-        A name is specified by a string (e.g. ``'latitude'``,
-        ``'long_name=time'``, etc.); or a compiled regular expression
-        (e.g. ``re.compile('^atmosphere')``), for which all constructs
-        whose names match (via `re.search`) are selected.
-
-        If no names are provided then all constructs are selected.
-
-        Each construct has a number of names, and is selected if any
-        of them match any of those provided. A construct's names are
-        those returned by its `!names` method. In the following
-        example, the construct ``c`` has four names:
-
-           >>> c.names()
-           ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
-
-        In addition, each construct also has a name based its
-        construct key (e.g. ``'key%dimensioncoordinate2'``)
-
-        Note that the identifiers of metadata constructs in the ouput
-        of a `print` or `!dump` call are always one of its names, and
-        so may always be used as a *names* argument.
-
-:Returns:
-
-    `Constructs`
-        The selected constructs and their construct keys.
-
-**Examples:**
-
-Select constructs that have a "standard_name" property of 'latitude':
-
->>> d = c.filter_by_name('latitude')
-
-Select constructs that have a "long_name" property of 'Height':
-
->>> d = c.filter_by_name('long_name=Height')
-
-Select constructs that have a "standard_name" property of 'latitude'
-or a "foo" property of 'bar':
-
->>> d = c.filter_by_name('latitude', 'foo=bar')
-
-Select constructs that have a netCDF variable name of 'time':
-
->>> d = c.filter_by_name('ncvar%time')
-
-        '''
-        out = self.shallow_copy()
-        
-        out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + ({'filter_by_name': names},)
-        
-        # Return all constructs if no names have been provided
-        if not names:
-            return out
-        
-        for cid, construct in tuple(out.items()):
-            ok = False
-            for value0 in names:          
-                for value1 in construct.names(extra=('key%'+cid,)):
-                    ok = self._matching_values(value0, construct, value1)
-                    if ok:
-                        break
-                #--- End: for
-
-                if ok:
-                    break
-            #--- End: for
-
-            if not ok:
-                # This construct does not match any of the names
-                out._pop(cid)
-        #--- End: for
-
-        return out
-    #--- End: def
-
     def filter_by_ncdim(self, *ncdims):
         '''Select domain axis constructs by netCDF dimension name.
 
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_name`, `filter_by_ncvar`,
+             `filter_by_method`, `filter_by_identity`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
@@ -906,7 +907,7 @@ Select the domain axis constructs with netCDF dimension name 'time' or
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
+             `filter_by_method`, `filter_by_identity`, `filter_by_ncdim`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
@@ -997,7 +998,7 @@ Select the constructs with netCDF variable name 'time' or 'lat':
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
+             `filter_by_method`, `filter_by_identity`, `filter_by_ncdim`,
              `filter_by_ncvar`, `filter_by_type`, `filters_applied`,
              `inverse_filter`
 
@@ -1118,7 +1119,7 @@ with the string 'air':
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
              `filter_by_method`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `filter_by_name`, `filter_by_property`,
+             `filter_by_identity`, `filter_by_property`,
              `filters_applied`, `inverse_filter`
 
 :Parameters:
@@ -1181,7 +1182,7 @@ If no filters have been applied then the tuple is empty.
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
+             `filter_by_method`, `filter_by_identity`, `filter_by_ncdim`,
              `filter_by_ncvar`, `filter_by_property`,
              `filter_by_type`, `inverse_filter`
 
@@ -1242,9 +1243,9 @@ describes the last filter applied.
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_name`, `filter_by_ncdim`,
-             `filter_by_ncvar`, `filter_by_property`,
-             `filter_by_type`, `filters_applied`
+             `filter_by_method`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`, `filters_applied`
 
 :Returns:
 

@@ -82,7 +82,7 @@ components, and provides selected values of all data arrays.
 
         '''
         if _create_title and _title is None: 
-            _title = 'List: ' + self.name(default='')
+            _title = 'List: ' + self.identity(default='')
 
         return super().dump(display=display, field=field, key=key,
                             _omit_properties=_omit_properties,
