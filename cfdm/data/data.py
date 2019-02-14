@@ -540,6 +540,36 @@ masked
                     array[i] = value[j]
     #--- End: def
 
+    #-----------------------------------------------------------------
+    # Attributes
+    #-----------------------------------------------------------------
+    @property
+    def compressed_array(self):
+        '''Return an independent numpy array containing the compressed data.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `get_compressed_axes`, `get_compressed_dimension`,
+             `get_compression_type`
+
+:Returns:
+
+     `numpy.ndarray`
+        An independent numpy array of the compressed data.
+
+**Examples:**
+
+>>> a = d.compressed_array
+
+        '''
+        ca = self._get_Array(None)
+
+        if not ca.get_compressed_axes():
+            raise ValueError("not compressed: can't get compressed array")
+
+        return ca.compressed_array
+    #--- End: def
+
     @property
     def datetime_array(self):
         '''Return an independent numpy array containing the date-time objects
@@ -787,7 +817,7 @@ data array shape.
 #        return array
 #    #--- End: def
 
-    def get_count_variable(self, *default):
+    def get_count_variable(self, default=ValueError()):
         '''Return the count variable for a compressed array.
 
 .. versionadded:: 1.7.0
@@ -797,38 +827,28 @@ data array shape.
 :Parameters:
 
     default: optional
-        Return *default* if a count variable has not been set.
+        Return the value of the *default* parameter if a count
+        variable has not been set. If set to an `Exception` instance
+        then it will be raised instead.
 
 :Returns:
 
-        The count variable. If unset then *default* is returned, if
-        provided.
+        The count variable.
 
 **Examples:**
 
->>> c = d.get_count_variable(None)
+>>> c = d.get_count_variable()
 
         '''
-        array = self._get_Array(None)
-        if array is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no count variable".format(
-                self.__class__.__name__))
-
-        variable = array.get_count_variable(None)
-        if variable is None:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no count variable".format(
-                self.__class__.__name__))
-        
-        return variable
+        try:
+            return self._get_Array().get_count_variable()
+        except (AttributeError, ValueError):
+            return self._default(default,
+                                 "{!r} has no count variable".format(
+                                 self.__class__.__name__))
     #--- End: def
 
-    def get_index_variable(self, *default):
+    def get_index_variable(self, default=ValueError()):
         '''Return the index variable for a compressed array.
 
 .. versionadded:: 1.7.0
@@ -840,36 +860,29 @@ data array shape.
     default: optional
         Return *default* if index variable has not been set.
 
+    default: optional
+        Return the value of the *default* parameter if an index
+        variable has not been set. If set to an `Exception` instance
+        then it will be raised instead.
+
 :Returns:
 
-        The index variable. If unset then *default* is returned, if
-        provided.
+        The index variable.
 
 **Examples:**
 
->>> i = d.get_index_variable(None)
+>>> i = d.get_index_variable()
 
         '''
-        array = self._get_Array(None)
-        if array is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no index variable".format(
-                self.__class__.__name__))
-
-        variable = array.get_index_variable(None)
-        if variable is None:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no index variable".format(
-                self.__class__.__name__))
-        
-        return variable
+        try:
+            return self._get_Array().get_index_variable()
+        except (AttributeError, ValueError):
+            return self._default(default,
+                                 "{!r} has no index variable".format(
+                                 self.__class__.__name__))
     #--- End: def
 
-    def get_list_variable(self, *default):
+    def get_list_variable(self, default=ValueError()):
         '''Return the list variable for a compressed array.
 
 .. versionadded:: 1.7.0
@@ -879,38 +892,28 @@ data array shape.
 :Parameters:
 
     default: optional
-        Return *default* if a list variable has not been set.
+        Return the value of the *default* parameter if an index
+        variable has not been set. If set to an `Exception` instance
+        then it will be raised instead.
 
 :Returns:
 
-        The list variable. If unset then *default* is returned, if
-        provided.
+        The list variable.
 
 **Examples:**
 
->>> l = d.get_list_variable(None)
+>>> l = d.get_list_variable()
 
         '''
-        array = self._get_Array(None)
-        if array is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no list variable".format(
-                self.__class__.__name__))
-
-        variable = array.get_list_variable(None)
-        if variable is None:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no list variable".format(
-                self.__class__.__name__))
-        
-        return variable
+        try:
+            return self._get_Array().get_list_variable()
+        except (AttributeError, ValueError):
+            return self._default(default,
+                                 "{!r} has no list variable".format(
+                                     self.__class__.__name__))        
     #--- End: def
 
-    def get_compressed_dimension(self, *default):
+    def get_compressed_dimension(self, default=ValueError()):
         '''Return the position of the compressed dimension in the compressed
 array.
 
@@ -922,27 +925,28 @@ array.
 :Parameters:
 
     default: optional
-        Return *default* if the underlying array is not compressed.
+        Return the value of the *default* parameter there is no
+        compressed dimension. If set to an `Exception` instance then
+        it will be raised instead.
 
 :Returns:
 
     `int`
         The position of the compressed dimension in the compressed
-        array. If the underlying is not compressed then *default* is
-        returned, if provided.
+        array.
 
 **Examples:**
 
->>> i = d.get_compressed_dimension()
+>>> d.get_compressed_dimension()
+2
 
-        '''        
-        a = self._get_Array(None)
-
-        compressed_dimension = a.get_compressed_dimension()
-        if compressed_dimension is None:
-            raise ValueError("not compressed: can't get compressed dimension")
-
-        return compressed_dimension
+        ''' 
+        try:
+            return self._get_Array().get_compressed_dimension()
+        except (AttributeError, ValueError):
+            return self._default(default,
+                                 "{!r} has no compressed dimension".format(
+                                     self.__class__.__name__))
     #--- End: def
 
     
@@ -1409,33 +1413,6 @@ Missing data array elements are omitted from the calculation.
         d._set_Array(array, copy=False)
 
         return d
-    #--- End: def
-
-    @property
-    def compressed_array(self):
-        '''Return an independent numpy array containing the compressed data.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `get_compressed_axes`, `get_compressed_dimension`,
-             `get_compression_type`
-
-:Returns:
-
-     `numpy.ndarray`
-        An independent numpy array of the compressed data.
-
-**Examples:**
-
->>> a = d.compressed_array
-
-        '''
-        ca = self._get_Array(None)
-
-        if not ca.get_compressed_axes():
-            raise ValueError("not compressed: can't get compressed array")
-
-        return ca.get_compressed_array()
     #--- End: def
 
     def get_compressed_axes(self):

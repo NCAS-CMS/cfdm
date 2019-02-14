@@ -153,7 +153,6 @@ x.__str__() <==> str(x)
             
             if dimension_coord:
                 # Dimension coordinate
-#                axis = self.get_construct_data_axes(key)[0]
                 axis = self.construct.data_axes()[key][0]
                 name = variable.name(ncvar=True, default=key)
                 if variable.has_data():
@@ -199,7 +198,6 @@ x.__str__() <==> str(x)
         #--- End: def
                           
         # Field ancillary variables
-#        x = [_print_item(self, key, anc, self.get_construct_data_axes(key=key), False)
         x = [_print_item(self, key, anc, self.constructs.data_axes()[key], False)
              for key, anc in sorted(self.field_ancillaries.items())]
         if x:
@@ -303,7 +301,6 @@ rules, the only differences being:
 
         # Replace domain axes
         domain_axes = new.domain_axes
-#        new_constructs = new._get_constructs()
         new_constructs = new.constructs
         for key, size in zip(data_axes, new.get_data().shape):
             domain_axis = domain_axes[key].copy()
@@ -432,14 +429,6 @@ field.
         else:
             return string
     #--- End: def
-
-
-#    def domain_axis_name(self, key):
-#        '''
-#        '''
-#        constructs = self._get_constructs()
-#        return constructs.domain_axis_name(key)
-#    #--- End: def
 
     def _set_dataset_compliance(self, value):
         '''Set the report of problems encountered whilst reading the field
@@ -808,8 +797,6 @@ False
         # ------------------------------------------------------------
         # Check the constructs
         # ------------------------------------------------------------              
-#        if not self._equals(self._get_constructs(),
-#                            other._get_constructs(), rtol=rtol,
         if not self._equals(self.constructs, other.constructs,
                             rtol=rtol, atol=atol, verbose=verbose,
                             ignore_data_type=ignore_data_type,

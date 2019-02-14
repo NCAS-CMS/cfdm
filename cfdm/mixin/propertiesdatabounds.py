@@ -452,7 +452,7 @@ also inserted into the bounds data array, if present.
         return c
     #--- End: def
     
-    def get_bounds(self, *default):
+    def get_bounds(self, default=ValueError()):
         '''Return the bounds.
 
 .. versionadd:: 1.7.0
@@ -463,12 +463,13 @@ also inserted into the bounds data array, if present.
 :Parameters:
 
     default: optional
-        Return *default* if and only if the bounds have not been set.
+        Return the value of the *default* parameter if bounds have not
+        been set. If set to an `Exception` instance then it will be
+        raised instead.
 
 :Returns:
 
-        The bounds. If the bounds have not been set, then return the
-        value of *default* parameter if provided.
+        The bounds.
 
 **Examples:**
 
@@ -489,17 +490,16 @@ None
 None
 
         '''
-        bounds = super().get_bounds(None)
+        bounds = super().get_bounds(default=None)
 
         if bounds is None:
-            return self._get_component('bounds', *default)
+            return super().get_bounds(default=default)
         
         properties = self.properties()
         bounds_properties = bounds.properties()
 
         inherited_properties = {prop: value
                                 for prop, value in properties.items()}
-#                                if prop not in bounds_properties}
 
         bounds._set_component('inherited_properties', inherited_properties)
         

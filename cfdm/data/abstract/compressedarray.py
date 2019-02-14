@@ -107,7 +107,7 @@ rules, the only differences being:
             if default:
                 return default[0]     
 
-            raise AttributeError("{!r} has no data".format(
+            raise ValueError("{!r} has no data".format(
                 self.__class__.__name__))
         
         return array   
@@ -276,9 +276,10 @@ dtype('float64')
     #--- End: def
 
     # ----------------------------------------------------------------
-    # Methods
+    # Attributes
     # ----------------------------------------------------------------
-    def get_compressed_array(self):
+    @property
+    def compressed_array(self):
         '''Return an independent numpy array containing the compressed data.
 
 :Returns:
@@ -288,7 +289,7 @@ dtype('float64')
 
 **Examples:**
 
->>> n = a.get_compressed_array()
+>>> n = a.compressed_array
 >>> isinstance(n, numpy.ndarray)
 True
 
@@ -296,6 +297,9 @@ True
         return self._get_compressed_Array().array
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def get_compressed_axes(self):
         '''Return axes that are compressed in the underlying array.
 

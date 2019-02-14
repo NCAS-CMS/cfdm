@@ -547,7 +547,7 @@ class NetCDFInstanceDimension(NetCDF):
 .. versionadded:: 1.7.0
 
     '''
-    def nc_del_instance_dimension(self,*default):
+    def nc_del_instance_dimension(self,default=ValueError()):
         '''Return the netCDF instance dimension name.
 
 .. versionadded:: 1.7.0

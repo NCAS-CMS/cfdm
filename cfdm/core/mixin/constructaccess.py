@@ -11,30 +11,6 @@ class ConstructAccess(object):
 .. versionadded:: 1.7.0
 
     '''   
-#    @abc.abstractmethod
-#    def _get_constructsk(self, *default):
-#        '''Return the `Constructs` object
-#
-#.. versionadded:: 1.7.0
-#
-#:Parameters:
-#
-#    default: optional
-#        If set then return *default* if there is no `Constructs` object.
-#
-#:Returns:
-#
-#        The `Constructs` object. If unset then return *default* if provided.
-#
-#**Examples:**
-#
-#>>> c = f._get_constructs()
-#>>> c = f._get_constructs(None)
-#
-#        '''
-#        raise NotImplementedError("Must implement this method in subclasses")
-#    #--- End: def
-    
     def data_constructs(self, copy=False):
         '''Return metadata constructs that support data arrays.
 
@@ -257,97 +233,6 @@ TODO
         '''
         return self.constructs.get_construct(key)
     #--- End: def
-
-    def get_construct_data_axes(self, key, *default):
-        '''Return the domain axis identifiers spanned by a metadata construct
-data array.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs_data_axes`, `get_construct`,
-             `set_construct_data_axes`
-
-:Parameters:
-
-    key: `str`
-        The construct identifier of the metadata construct.
-
-        *Parameter example:*
-          ``key='domainancillary1'``
-
-    default: optional
-        Return *default* if the metadata construct does not have a
-        data array, or no domain axes have been set.
-
-:Returns:
-
-        The identifiers of the domain axis constructs spanned by data
-        array. If a metadata construct does not have a data array, or
-        no domain axes have been set, then `None` is returned.
-
-**Examples:**
-
->>> f.get_construct_data_axes('domainancillary2')
-('domainaxis1', 'domainaxis0')
->>> da = f.get_construct('domainancillary2')
->>> data = da.del_data()
->>> print(f.get_construct_data_axes('domainancillary2', None))
-None
-
->>> f.get_construct_data_axes('cellmethod0', 'no axes')
-'no axes'
-
-        '''
-        axes = self.constructs.data_axes().get(key)
-        if axes is None:
-            if default:
-                return default[0]
-
-            raise ValueError("no axes.")
-
-        return axes
-    #--- End: def
-    
-#    def has_construct(self, key):
-#        '''Whether a construct exists.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct`
-#
-#:Parameters:
-#
-#    key: `str`
-#        The identifier of the metadata construct.
-#
-#        *Parameter example:*
-#          ``key='cellmeasure1'``
-#
-#:Returns:
-#
-#    `bool`
-#        True if the metadata construct exists, otherwise False.
-#
-#**Examples:**
-#
-#>>> f.constructs()
-#{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>,
-# 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>,
-# 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:greek_letters(10) >,
-# 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
-# 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-# 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-# 'domainaxis1': <DomainAxis: 10>,
-# 'domainaxis2': <DomainAxis: 9>}
-#>>> f.has_construct('dimensioncoordinate1')
-#True
-#>>> f.has_construct('domainaxis99')
-#False
-#
-#        '''
-#        return self._get_constructs().has_construct(key)
-#    #--- End: def
 
     def domain_axis_name(self, axis):
         '''TODO WHY DO WE NED THIS HERE?

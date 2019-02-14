@@ -204,10 +204,10 @@ AttributeError: Field doesn't have property 'standard_name'
         return field.auxiliary_coordinates
     #--- End: def
 
-    def get_bounds(self, parent, *default):
+    def get_bounds(self, parent, default=None):
         '''
         '''
-        return parent.get_bounds(*default)
+        return parent.get_bounds(default=default)
     #--- End: def
     
     def get_cell_measures(self, field):
@@ -222,14 +222,14 @@ AttributeError: Field doesn't have property 'standard_name'
         return field.cell_methods
     #--- End: def
        
-    def get_cell_method_axes(self, cell_method, *default):
+    def get_cell_method_axes(self, cell_method, default=None):
         '''
 
 :Returns:
 
     out: `tuple`
 '''
-        return cell_method.get_axes(*default)
+        return cell_method.get_axes(default=default)
     #--- End: for
     
     def get_cell_method_string(self, cell_method):
@@ -355,10 +355,10 @@ axes, and possibly other axes, are returned.
        return field.coordinates
     #--- End: def
     
-    def get_data_calendar(self, data, *default):
+    def get_data_calendar(self, data, default=None):
         '''
         '''
-        return data.get_calendar(*default)
+        return data.get_calendar(default=default)
     #--- End: def
 
     def get_data_compressed_axes(self, data):
@@ -434,10 +434,10 @@ axes, and possibly other axes, are returned.
         return parent.data.size
     #--- End: def
 
-    def get_data_units(self, data, *default):
+    def get_data_units(self, data, default=None):
         '''
         '''
-        return data.get_units(*default)
+        return data.get_units(default=default)
     #--- End: def
 
     def get_datum(self, coordinate_reference):
@@ -500,16 +500,16 @@ axes, and possibly other axes, are returned.
         return construct.get_data().get_compressed_dimension()
     #--- End: def
 
-    def nc_get_instance_dimension(self, index, *default):
+    def nc_get_instance_dimension(self, index, default=None):
         '''TODO
         '''
-        return index.nc_get_instance_dimension(*default)
+        return index.nc_get_instance_dimension(default=default)
     #--- End: def
     
-    def nc_get_sample_dimension(self, count, *default):
+    def nc_get_sample_dimension(self, count, default=None):
         '''TODO
         '''
-        return count.nc_get_sample_dimension(*default)
+        return count.nc_get_sample_dimension(default=default)
     #--- End: def
 
     def nc_get_unlimited_axes(self, field):
@@ -790,7 +790,7 @@ netCDF unlimited dimensions.
         return cell_measure.get_measure(None)
     #--- End: def
     
-    def nc_get_dimension(self, parent, *default):
+    def nc_get_dimension(self, parent, default=None):
         '''Return the netCDF variable name.
 
 :Examples 1:
@@ -811,10 +811,10 @@ netCDF unlimited dimensions.
 
 :Examples 2:
         '''
-        return parent.nc_get_dimension(*default)
+        return parent.nc_get_dimension(default=default)
     #--- End: def
 
-    def get_ncvar(self, construct, *default):
+    def get_ncvar(self, construct, default=None):
        '''
 
 :Parameters:
@@ -823,7 +823,7 @@ netCDF unlimited dimensions.
 
     out: `str`
        '''
-       return construct.nc_get_variable(*default)
+       return construct.nc_get_variable(default=default)
     #--- End: def
 
     def get_properties(self, parent):
@@ -855,7 +855,7 @@ netCDF unlimited dimensions.
         return parent.properties()
     #--- End: def
 
-    def get_property(self, construct, prop, *default):
+    def get_property(self, construct, prop, default=None):
        '''
 
 :Parameters:
@@ -864,10 +864,10 @@ netCDF unlimited dimensions.
 
     out:
        '''
-       return construct.get_property(prop, *default)
+       return construct.get_property(prop, default=default)
     #--- End: def
 
-    def get_data(self, parent, *default):
+    def get_data(self, parent, default=None):
         '''Return the data array.
 
 :Examples 1:
@@ -896,7 +896,7 @@ netCDF unlimited dimensions.
 >>> w.get_data(b)
 <Data(180, 2): [[-90, ..., 90]] degrees_north>
         '''
-        return parent.get_data(*default)
+        return parent.get_data(default=default)
     #--- End: def
 
     def initialise_AuxiliaryCoordinate(self):

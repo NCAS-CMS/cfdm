@@ -81,15 +81,10 @@ constructs.
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-#    def _get_constructs(self, *default):
-#        '''TODO
-#
-#.. versionadded:: 1.7.0
-#        
-#        '''
-#        return self._get_component('constructs', *default)
-#    #--- End: def
-    
+
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------   
     @property
     def constructs(self):
         '''<TODO>

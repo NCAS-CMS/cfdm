@@ -204,7 +204,6 @@ into the data.
 
 :Parameters:
 
-
     default: optional
         Return the value of the *default* parameter if data have not
         been set. If set to an `Exception` instance then it will be

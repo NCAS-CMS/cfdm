@@ -141,6 +141,9 @@ or the fact that the method was applied only over El Nino years).
         self._set_component('qualifiers', qualifiers, copy=copy)
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
     @property
     def construct_type(self):
         '''Return a description of the construct type.
@@ -156,6 +159,9 @@ or the fact that the method was applied only over El Nino years).
         return 'cell_method'
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def copy(self):
         '''Return a deep copy.
 
@@ -175,7 +181,7 @@ or the fact that the method was applied only over El Nino years).
         return type(self)(source=self, copy=True)
     #--- End: def
 
-    def del_axes(self, *default):
+    def del_axes(self, default=ValueError()):
         '''Remove the axes of the cell method.
 
 .. versionadded:: 1.7.0
@@ -185,13 +191,15 @@ or the fact that the method was applied only over El Nino years).
 :Parameters:
 
     default: optional
-        Return *default* if axes have not been set.
+        Return the value of the *default* parameter if axes have not
+        been set. If set to an `Exception` instance then it will be
+        raised instead.
 
 :Returns:
 
-    `tuple` or *default*
-        The removed axes, identified by field key or standard name. If
-        unset then *default* is returned, if provided.
+    `tuple`
+        The removed axes, identified by domain axis construct key or
+        standard name.
 
 **Examples:**
 
@@ -209,10 +217,15 @@ False
 'NO AXES'
 
         '''
-        return self._del_component('axes')
+        try:
+            return self._del_component('axes')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no axes".format(
+                                     self.__class__.__name__))
     #--- End: def
     
-    def del_method(self, *default):
+    def del_method(self, default=ValueError()):
         '''Remove the method of the cell method.
 
 .. versionadded:: 1.7.0
@@ -222,13 +235,14 @@ False
 :Parameters:
 
     default: optional
-        Return *default* if method has not been set.
+        Return the value of the *default* parameter if the method has
+        not been set. If set to an `Exception` instance then it will
+        be raised instead.
 
 :Returns:
 
-    `tuple` or *default*
-        The removed method. If unset then *default* is returned, if
-        provided.
+    `str`
+        The removed method.
 
 **Examples:**
 
@@ -246,10 +260,48 @@ False
 'NO METHOD'
 
         '''
-        return self._del_component('method', *default)
+        try:
+            return self._del_component('method')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no method".format(
+                                     self.__class__.__name__))
     #--- End: def
     
-    def get_axes(self, *default):
+    def del_qualifier(self, qualifier, default=ValueError()):
+        '''TODO
+
+.. versionadded:: 1.7.0
+
+.. seealso:: TODO
+
+:Parameters:
+
+    qualifier:
+        TODO
+
+    default: optional
+        Return the value of the *default* parameter if the qualifier
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
+
+:Returns:
+
+        TODO
+
+**Examples:**
+
+TODO
+
+        '''
+        try:
+            return self._get_component('qualifiers').pop(qualifier)
+        except KeyError:
+            return self._default(default, "{!r} has no {!r} qualifier".format(
+                self.__class__.__name__, qualifier))
+    #--- End: def
+
+    def get_axes(self, default=ValueError()):
         '''Return the axes of the cell method.
 
 .. versionadded:: 1.7.0
@@ -259,13 +311,46 @@ False
 :Parameters:
 
     default: optional
-        Return *default* if axes have not been set.
+        Return the value of the *default* parameter if axes have not
+        been set. If set to an `Exception` instance then it will be
+        raised instead.
 
 :Returns:
 
     `tuple`
-        The axes. If axes have not been set then return the value
-        of *default* parameter, if provided.
+        The axes.
+
+**Examples:**
+
+TODO
+
+        '''
+        try:
+            return self._get_component('axes')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no axes".format(
+                                     self.__class__.__name__))
+    #--- End: def
+
+    def get_method(self, default=ValueError()):
+        '''Return the method of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_method`, `has_method`, `set_method`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if the method has
+        not been set. If set to an `Exception` instance then it will
+        be raised instead.
+
+:Returns:
+
+    `str`
+        The method.
 
 **Examples:**
 
@@ -283,7 +368,12 @@ False
 'NO METHOD'
 
         '''
-        return self._get_component('axes', *default)
+        try:
+            return self._get_component('method')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no method".format(
+                                     self.__class__.__name__))
     #--- End: def
 
     def get_qualifier(self, qualifier, default=ValueError()):
@@ -297,9 +387,11 @@ False
 
     qualifier:
         TODO
-        
+
     default: optional
-        TODO
+        Return the value of the *default* parameter if the qualifier
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
 
 :Returns:
 
@@ -308,49 +400,13 @@ False
 **Examples:**
 
 TODO
+
         '''
         try:
             return self._get_component('qualifiers')[qualifier]
         except KeyError:
             return self._default(default, "{!r} has no {!r} qualifier".format(
                 self.__class__.__name__, qualifier))
-    #--- End: def
-
-    def get_method(self, *default):
-        '''Return the method of the cell method.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `del_method`, `has_method`, `set_method`
-
-:Parameters:
-
-    default: optional
-        Return *default* if the "method" property has not been set.
-
-:Returns:
-
-    `tuple`
-        The method. If the method has not been set then return the
-        value of *default* parameter, if provided.
-
-**Examples:**
-
->>> c.set_method('minimum')
->>> c.has_method()
-True
->>> c.get_method()
-'minimum'
->>> c.del_method()
->>> c.has_method()
-False
->>> c.get_method('NO METHOD')
-'NO METHOD'
->>> c.del_method('NO METHOD')
-'NO METHOD'
-
-        '''
-        return self._get_component('method', *default)
     #--- End: def
 
     def has_axes(self):

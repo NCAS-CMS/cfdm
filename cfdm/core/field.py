@@ -126,28 +126,6 @@ and institution).
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-#    def _get_constructs(self, *default):
-#        '''Return the `Constructs` instance contained by the field construct.
-#
-#.. versionadded:: 1.7.0
-#
-#:Parameters:
-#
-#    default: optional
-#        Return *default* if the `Constructs` instance has not been
-#        set.
-#
-#:Returns:
-#
-#    `Constucts`
-#
-#**Examples:**
-#
-#>>> c = f._get_contructs()
-#
-#        '''
-#        return self._get_component('constructs', *default)
-#    #--- End: def
 
     # ----------------------------------------------------------------
     # Attributes

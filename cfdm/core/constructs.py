@@ -331,61 +331,42 @@ x.__len__() <==> len(x)
         return default
     #--- End: def
 
-    def _del_data_axes(self, key, *default):
-        '''Remove a construct's axes, if any
+    def _del_data_axes(self, k, *d):
+        '''Remove and return a construct's axes, if any.
+
+If k is not found, d is returned if given, otherwise KeyError is
+raised
+
         '''
-        return self._construct_axes.pop(key, *default)
+        return self._construct_axes.pop(k, *d)
     #--- End: def
     
     # ----------------------------------------------------------------
     # Private dictionary-like methods    
     # ----------------------------------------------------------------
-    def _pop(self, key, *default):
-        '''D.pop(k[,d]) -> v, remove specified key and return the corresponding value.
+    def _pop(self, k, *d):
+        '''D.pop(k[,d]) -> v, remove specified key and return the
+corresponding value.
 
-If key is not found, d is returned if given, otherwise KeyError is
+If k is not found, d is returned if given, otherwise KeyError is
 raised
 
         '''
         # Remove the construct axes, if any
-#        self._construct_axes.pop(key, None)
-        self._del_data_axes(key, None)
+        self._del_data_axes(k, None)
         
         # Find the construct type
         try:
-            construct_type = self._construct_type.pop(key)
+            construct_type = self._construct_type.pop(k)
         except KeyError as error:
-            if default:
-                return default[0]
+            if d:
+                return d[0]
             
             raise KeyError(error)
             
         # Remove and return the construct
-        return self._constructs[construct_type].pop(key, *default)
+        return self._constructs[construct_type].pop(k, *d)
     #--- End: def
-
-#    def _popitem(self):
-#        '''
-#        '''
-#        key, value = self._dictionary()
-#
-#        # Remove the construct axes, if any
-#        self._construct_axes.pop(key, None)
-#
-#        # Find the construct type
-#        try:
-#            construct_type = self._construct_type.pop(key, None)
-#        except KeyError as error:
-#            if default:
-#                return default[0]
-#            
-#            raise KeyError(error)
-#            
-#        # Remove and return the construct
-#        del self._constructs[construct_type]
-#
-#        return key, value
-#    #--- End: def
 
     def _update(self, other):
         '''D.update(E) -> None. Update D from E.
@@ -1031,7 +1012,7 @@ TODO
 #
 #.. versionadded:: 1.7.0
 #
-#.. seealso:: `constructs`, `get_construct_data_axes`
+#.. seealso:: `constructs`
 #
 #:Returns:
 #
@@ -1076,8 +1057,6 @@ TODO
         '''Return the domain axes spanned by all construct data arrays.
 
 .. versionadded:: 1.7.0
-
-.. seealso:: `get_construct_data_axes`, `select`
 
 :Returns:
 

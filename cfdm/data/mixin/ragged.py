@@ -5,9 +5,9 @@ class RaggedContiguous(object):
     '''TODO
 
 .. versionadded:: 1.7.0
-    '''
 
-    def get_count_variable(self, *default):
+    '''
+    def get_count_variable(self, default=ValueError()):
         '''TODO
 
 .. versionadded:: 1.7.0
@@ -15,25 +15,25 @@ class RaggedContiguous(object):
 :Parameters:
 
     default: optional
-        Return *default* if the count variable has not been set.
+        Return the value of the *default* parameter if a count
+        variable has not been set. If set to an `Exception` instance
+        then it will be raised instead.
 
 :Returns:
 
-        TODO
+        The count variable.
 
 **Examples:**
 
 TODO
+
         '''
-        return self._get_component('count_variable', *default)
-#        try:
-#            return self._count_variable
-#        except AttributeError:
-#            if default:
-#                return default[0]
-#
-#            raise AttributeError("{!r} has no count variable".format(
-#                self.__class__.__name__))
+        try:
+            return self._get_component('count_variable')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no count variable".format(
+                                     self.__class__.__name__))
     #--- End: def
 
 #--- End: class
@@ -43,7 +43,7 @@ class RaggedIndexed(object):
     '''TODO
 
     '''
-    def get_index_variable(self, *default):
+    def get_index_variable(self, default=ValueError()):
         '''TODO
 
 .. versionadded:: 1.7.0
@@ -51,26 +51,25 @@ class RaggedIndexed(object):
 :Parameters:
 
     default: optional
-        Return *default* if the index variable has not been set.
+        Return the value of the *default* parameter if an index
+        variable has not been set. If set to an `Exception` instance
+        then it will be raised instead.
 
 :Returns:
 
-        TODO
+        The index variable.
 
 **Examples:**
 
 TODO
 
         '''
-        return self._get_component('index_variable', *default)
-#        try:
-#            return self._index_variable
-#        except AttributeError:
-#            if default:
-#                return default[0]
-#
-#            raise AttributeError("{!r} has no index variable".format(
-#                self.__class__.__name__))
+        try:
+            return self._get_component('index_variable')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no index variable".format(
+                                     self.__class__.__name__))
     #--- End: def
     
 #--- End: class

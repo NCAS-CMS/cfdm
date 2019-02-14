@@ -112,7 +112,7 @@ of all data arrays.
                             _axis_names=_axis_names)
     #--- End: def
     
-    def get_data(self, *default):
+    def get_data(self, default=ValueError()):
         '''Return the data.
 
 Note that the data are returned in a `Data` object. Use the
@@ -125,12 +125,13 @@ Note that the data are returned in a `Data` object. Use the
 :Parameters:
 
     default: optional
-        Return *default* if a data object has not been set.
+        Return the value of the *default* parameter if data have not
+        been set. If set to an `Exception` instance then it will be
+        raised instead.
 
 :Returns:
 
-        The data object. If unset then *default* is returned, if
-        provided.
+        The data.
 
 **Examples:**
 
@@ -150,10 +151,10 @@ None
 None
 
         '''
-        data = super().get_data(None)
+        data = super().get_data(default=None)
 
         if data is None:
-            return super().get_data(*default)
+            return super().get_data(default=default)
 
         if data.get_units(None) is None:
             units = self.inherited_properties().get('units')

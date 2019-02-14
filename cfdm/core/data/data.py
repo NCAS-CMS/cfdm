@@ -92,61 +92,19 @@ class Data(abstract.Container):
                 fill_value = None
         #--- End: if
 
-        self.set_units(units)
-        self.set_calendar(calendar)   
-        self.set_fill_value(fill_value)
+        if units is not None:
+            self.set_units(units)
 
-        if _use_array:
+        if calendar is not None:
+            self.set_calendar(calendar)   
+
+        if fill_value is not None:
+            self.set_fill_value(fill_value)
+
+        if _use_array and array is not None:
             self._set_Array(array, copy=copy)
     #--- End: def
 
-#    def __array__(self, *dtype):
-#        '''The numpy array interface.
-#
-#:Returns: 
-#
-#    `numpy.ndarray`
-#        An independent numpy array of the data.
-#
-#        '''
-#        array = self.get_array()
-#        if not dtype:
-#            return array
-#        else:
-#            return array.astype(dtype[0], copy=False)
-#    #--- End: def
-
-#    def __deepcopy__(self, memo):
-#        '''x.__deepcopy__() -> Deep copy of data.
-#
-#Used if copy.deepcopy is called on the object.
-#
-#        ''' 
-#        return self.copy()
-#    #--- End: def
-
-#    def __repr__(self):
-#        '''x.__repr__() <==> repr(x)
-#
-#        '''
-#        try:        
-#            shape = self.shape
-#        except AttributeError:
-#            shape = ''
-#        else:
-#            shape = str(shape)
-#            shape = shape.replace(',)', ')')
-#            
-#        return '<{0}{1}: {2}>'.format(self.__class__.__name__, shape, str(self))
-#    #--- End: def
-#
-#    def __str__(self):
-#        '''x.__str__() <==> str(x)
-#
-#        '''
-#        return str(self._get_Array(None))
-#    #--- End: def
-    
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -288,35 +246,7 @@ attribute.
         '''
         return type(self)(source=self, copy=True, _use_array=array)
     #--- End: def
-
-    def del_calendar(self):
-        '''Delete the calendar.
-
-.. seealso:: `get_calendar`, `set_calendar`
-
-:Returns:
-
-        The value of the deleted calendar, or `None` if calendar was
-        not set.
-
-**Examples:**
-
->>> d.set_calendar('proleptic_gregorian')
->>> d.get_calendar
-'proleptic_gregorian'
->>> d.del_calendar()
->>> d.get_calendar()
-AttributeError: Can't get non-existent calendar
->>> print(d.get_calendar(None))
-None
-
-        '''
-        return self._del_component('calendar')
-#        value = self._calendar
-#        self._calendar = None
-#        return value
-    #--- End: def
-
+    
     def _del_Array(self):
         '''Delete the data.
 
@@ -331,16 +261,58 @@ None
         '''
         return self._del_component('data')
     #--- End: def
-    
-    def del_fill_value(self):
+
+    def del_calendar(self, default=ValueError()):
+        '''Delete the calendar.
+
+.. seealso:: `get_calendar`, `set_calendar`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if the calendar
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
+
+:Returns:
+
+        The value of the deleted calendar.
+
+**Examples:**
+
+>>> d.set_calendar('proleptic_gregorian')
+>>> d.get_calendar
+'proleptic_gregorian'
+>>> d.del_calendar()
+>>> d.get_calendar()
+ValueError: Can't get non-existent calendar
+>>> print(d.get_calendar(None))
+None
+
+        '''
+        try:
+            return self._del_component('calendar')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no calendar".format(
+                                     self.__class__.__name__))
+    #--- End: def
+
+    def del_fill_value(self, default=ValueError()):
         '''Delete the fill value.
 
 .. seealso:: `get_fill_value`, `set_fill_value`
 
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if the fill value
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
+
 :Returns:
 
-        The value of the deleted fill value, or `None` if fill value
-        was not set.
+        The value of the deleted fill value.
 
 **Examples:**
 
@@ -350,7 +322,7 @@ None
 >>> print(f.del_fill_value())
 -9999
 >>> f.get_fill_value()
-AttributeError: Can't get non-existent fill value
+ValueError: Can't get non-existent fill value
 >>> f.get_fill_value(10**10)
 10000000000
 >>> print(f.get_fill_value(None))
@@ -360,21 +332,29 @@ None
 None
 
         '''
-        return self._del_component('fill_value')
-#        value = self._fill_value
-#        self._fill_value = None        
-#        return value
+        try:
+            return self._del_component('fill_value')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no fill value".format(
+                                     self.__class__.__name__))
     #--- End: def
 
-    def del_units(self):
+    def del_units(self, default=ValueError()):
         '''Delete the units.
 
 .. seealso:: `get_units`, `set_units`
 
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if the units has
+        not been set. If set to an `Exception` instance then it will
+        be raised instead.
+
 :Returns:
 
-        The value of the deleted units, or `None` if units was not
-        set.
+        The value of the deleted units.
 
 **Examples:**
 
@@ -383,15 +363,17 @@ None
 'metres'
 >>> d.del_units()
 >>> d.get_units()
-AttributeError: Can't get non-existent units
+ValueError: Can't get non-existent units
 >>> print(d.get_units(None))
 None
 
         '''
-        return self._del_component('units')
-#        value = self._units
-#        self._units = None        
-#        return value
+        try:
+            return self._del_component('units')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no units".format(
+                                     self.__class__.__name__))
     #--- End: def
 
     @property
@@ -429,41 +411,7 @@ True
         return array
     #--- End: def
 
-#    def get_array(self):
-#        '''Return an independent numpy array containing the data.
-#
-#If a fill value has been set (see `set_fill_value`) then it will be
-#used, otherwise the default numpy fill value appropriate to the data
-#type will be used.
-#
-#:Returns:
-#
-#    `numpy.ndarray`
-#        An independent numpy array of the data.
-#
-#**Examples:**
-#
-#>>> d = Data([1, 2, 3.0], 'km')
-#>>> n = d.get_array()
-#>>> isinstance(n, numpy.ndarray)
-#True
-#>>> print(n)
-#[ 1.,   2.,   3.]
-#>>> n[0] = 88
-#>>> print(repr(d))
-#<Data: [1.0, 2.0, 3.0] km>
-#
-#        '''
-#        array = self._get_Array().get_array()
-#
-#        # Set the numpy array fill value
-#        if numpy.ma.isMA(array):
-#            array.set_fill_value(self.get_fill_value(None))
-#
-#        return array
-#    #--- End: def
-
-    def get_calendar(self, *default):
+    def get_calendar(self, default=ValueError()):
         '''Return the calendar.
 
 .. seealso:: `del_calendar`, `set_calendar`
@@ -471,12 +419,13 @@ True
 :Parameters:
 
     default: optional
-        Return *default* if calendar has not been set.
+        Return the value of the *default* parameter if the calendar
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
 
 :Returns:
 
-        The calendar. If calendar has not been set then return the
-        value of *default* parameter, if provided.
+        The calendar.
 
 **Examples:**
 
@@ -485,54 +434,47 @@ True
 'metres'
 >>> d.del_calendar()
 >>> d.get_calendar()
-AttributeError: Can't get non-existent calendar
+ValueError: Can't get non-existent calendar
 >>> print(d.get_calendar(None))
 None
 
         '''
-        value = self._get_component('calendar', *default)
-#        value = self._calendar
-        if value is None:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no calendar".format(
-                self.__class__.__name__))
-        
-        return value
+        try:
+            return self._get_component('calendar')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no calendar".format(
+                                     self.__class__.__name__))
     #--- End: def
 
-    def _get_Array(self, *default):
-        '''Return the data.
+    def _get_Array(self, default=ValueError()):
+        '''Return the array object.
 
 :Parameters:
 
-    default: *optional*
-        If there is no data then *default* if returned if set.
+    default: optional
+        Return the value of the *default* parameter if the array
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
 
 :Returns:
 
-        The data. If the data has not been set then *default* is
-        returned, if set.
+        The array object.
 
 **Examples:**
 
->>> a = d.get_data(None)
+>>> a = d._get_Array(None)
 
         '''
-        array = self._get_component('array', *default)
-
-        if array is None:
-            if default:
-                return default[0]     
-
-            raise AttributeError("{!r} has no array".format(
-                self.__class__.__name__))
-        
-        return array   
+        try:
+            return self._get_component('array')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no array".format(
+                                     self.__class__.__name__))
     #--- End: def
 
-    def get_fill_value(self, *default):
+    def get_fill_value(self, default=ValueError()):
         '''Return the missing data value.
 
 .. seealso:: `del_fill_value`, `set_fill_vlaue`
@@ -540,12 +482,13 @@ None
 :Parameters:
 
     default: optional
-        Return *default* if fill value has not been set.
+        Return the value of the *default* parameter if the fill value
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
 
 :Returns:
 
-        The fill value. If fill value has not been set then return the
-        value of *default* parameter, if provided.
+        The fill value.
 
 **Examples:**
 
@@ -555,7 +498,7 @@ None
 >>> print(f.del_fill_value())
 -9999
 >>> f.get_fill_value()
-AttributeError: Can't get non-existent fill value
+ValueError: Can't get non-existent fill value
 >>> f.get_fill_value(10**10)
 10000000000
 >>> print(f.get_fill_value(None))
@@ -565,19 +508,15 @@ None
 None
 
         '''
-        value = self._get_component('fill_value', *default)
-#        value = self._fill_value
-        if value is None:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no fill value".format(
-                self.__class__.__name__))
-        
-        return value
+        try:
+            return self._get_component('fill_value')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no fill value".format(
+                                     self.__class__.__name__))
     #--- End: def
 
-    def get_units(self, *default):
+    def get_units(self, default=ValueError()):
         '''Return the units.
 
 .. seealso:: `del_units`, `set_units`
@@ -585,12 +524,13 @@ None
 :Parameters:
 
     default: optional
-        Return *default* if units has not been set.
+        Return the value of the *default* parameter if the units has
+        not been set. If set to an `Exception` instance then it will
+        be raised instead.
 
 :Returns:
 
-        The units. If units has not been set then return the value of
-        *default* parameter, if provided.
+        The units.
 
 **Examples:**
 
@@ -599,21 +539,17 @@ None
 'metres'
 >>> d.del_units()
 >>> d.get_units()
-AttributeError: Can't get non-existent units
+ValueError: Can't get non-existent units
 >>> print(d.get_units(None))
 None
 
         '''
-        value = self._get_component('units', *default)
-#        value = self._units
-        if value is None:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no units".format(
-                self.__class__.__name__))
-        
-        return value
+        try:
+            return self._get_component('units')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no units".format(
+                                     self.__class__.__name__))
     #--- End: def
 
     def set_calendar(self, calendar):
@@ -637,7 +573,7 @@ None
 'none'
 >>> d.del_calendar()
 >>> d.get_calendar()
-AttributeError: Can't get non-existent calendar
+ValueError: Can't get non-existent calendar
 >>> print(d.get_calendar(None))
 None
 
@@ -691,7 +627,7 @@ None
 >>> print(f.del_fill_value())
 -9999
 >>> f.get_fill_value()
-AttributeError: Can't get non-existent fill value
+ValueError: Can't get non-existent fill value
 >>> f.get_fill_value(10**10)
 10000000000
 >>> print(f.get_fill_value(None))
@@ -701,7 +637,6 @@ None
 None
 
         '''
-#        self._fill_value = value
         self._set_component('fill_value', value, copy=False)
     #--- End: def
 
@@ -726,13 +661,12 @@ None
 'watt'
 >>> d.del_units()
 >>> d.get_units()
-AttributeError: Can't get non-existent units
+ValueError: Can't get non-existent units
 >>> print(d.get_units(None))
 None
 
         '''
         self._set_component('units', value, copy=False)
-#        self._units = value
     #--- End: def
 
 #--- End: class

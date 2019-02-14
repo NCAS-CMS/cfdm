@@ -37,7 +37,6 @@ dtype('float64')
 <type 'numpy.dtype'>
 
         '''
-#        return self.array.dtype
         return self._get_component('array').dtype
     #--- End: def
 

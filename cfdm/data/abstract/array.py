@@ -93,7 +93,8 @@ array.
         return self._get_component('compression_type', '')
     #--- End: def
 
-    def get_compressed_array(self, *default):
+    @property
+    def compressed_array(self):
         '''Return an independent numpy array containing of the underlying
 compressed array.
 
@@ -106,12 +107,12 @@ compressed array.
 
 **Examples:**
 
->>> n = a.get_compressed_array()
+>>> n = a.compressed_array
 >>> isinstance(n, numpy.ndarray)
 True
 
         '''
-        return self._get_component('compressed_array').get_compressed_array()
+        return self._get_component('compressed_array').compressed_array
     #--- End: def
     
     def get_compressed_axes(self):
