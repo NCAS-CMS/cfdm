@@ -277,8 +277,8 @@ By default the name is the first found of the following:
 #            bounds.set_properties(properties)
             self = bounds
             
-        return super().name(default=default, ncvar=ncvar,
-                            custom=custom, all_names=all_names)
+        return super().identity(default=default, ncvar=ncvar,
+                                custom=custom, all_names=all_names)
     #--- End: def
 
 #--- End: class

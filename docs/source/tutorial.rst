@@ -12,9 +12,9 @@
 
 Version |release| for version |version| of the CF conventions.
  
-The code examples in this tutorial are available in an **IPython
-Jupyter notebook** (:download:`download <notebooks/tutorial.ipynb>`,
-80kB) [#files]_, [#notebook]_.
+.. The code examples in this tutorial are available in an **IPython
+   Jupyter notebook** (:download:`download
+   <notebooks/tutorial.ipynb>`, 80kB) [#files]_, [#notebook]_.
 
 .. _Import:
 
@@ -33,9 +33,7 @@ The cfdm package is imported as follows:
 .. _CF-version:
 
 **CF version**
---------------
-
-----
+^^^^^^^^^^^^^^
 
 The version of the `CF conventions <http://cfconventions.org>`_ and
 the :ref:`CF data model <CF-data-model>` being used may be found with
@@ -508,7 +506,7 @@ methods that behave exactly like their corresponding `dict` methods.
 
 .. code-block:: python
    :caption: *Retrieve the field construct's coordinate reference
-             contructs, and access them using dictionary methods.*
+             constructs, and access them using dictionary methods.*
       
    >>> t.coordinate_references
    <Constructs: coordinate_reference(2)>
@@ -526,7 +524,7 @@ methods that behave exactly like their corresponding `dict` methods.
 
 .. code-block:: python
    :caption: *Retrieve the field construct's dimension coordinate and
-             domain axis contructs.*
+             domain axis constructs.*
       
    >>> print(t.dimension_coordinates)
    Constructs:
@@ -606,7 +604,7 @@ is accessed with the `~Field.data` attribute of the field construct.
    >>> t.data
    <Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
 
-The data instance conetains an array of values, as well as attributes
+The data instance contains an array of values, as well as attributes
 to describe them and methods for describing :ref:`compression
 <Compression>`.
 
@@ -905,7 +903,7 @@ Filter criteria                                                             Meth
 Metadata construct identity                                                 `~Constructs.filter_by_identity`
 Metadata construct type                                                     `~Constructs.filter_by_type`
 Property values                                                             `~Constructs.filter_by_property` 
-Whether the data array spans particular domain axis constructs		    `~Constructs.filter_by_axis`
+The domain axis constructs spanned by the data        		            `~Constructs.filter_by_axis`
 Measure value (for cell measure constructs)				    `~Constructs.filter_by_measure`
 Method value (for cell method constructs)				    `~Constructs.filter_by_method`
 Construct key								    `~Constructs.filter_by_key`
@@ -913,8 +911,8 @@ Netcdf variable name (see the :ref:`netCDF interface <NetCDF-interface>`)   `~Co
 Netcdf dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)  `~Constructs.filter_by_ncdim`
 ==========================================================================  ================================
 
-Each of these methods returns a new `Constructs` instance contains the
-selected constructs.
+Each of these methods returns a new `Constructs` instance that
+contains the selected constructs.
 
 .. code-block:: python
    :caption: *Get constructs by their type*.
@@ -953,9 +951,9 @@ selected constructs.
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
    
 .. code-block:: python
-   :caption: *Get constructs whose data arrays span the 'domainaxis1'
-             domain axis construct; and those which also do not span
-             the 'domainaxis2' domain axis construct.*
+   :caption: *Get constructs whose data span the 'domainaxis1' domain
+             axis construct; and those which also do not span the
+             'domainaxis2' domain axis construct.*
 
    >>> print(t.constructs.filter_by_axis(domainaxis1=True))
    Constructs:
@@ -987,10 +985,10 @@ selected constructs.
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
 As each of these methods returns a `Constructs` instance, it is easy
-to perform further selections on their results:
+to perform further filter on their results:
    
 .. code-block:: python
-   :caption: *Make selections of previous selections.*
+   :caption: *Make selections from previous selections.*
 	     
    >>> print(t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis(domainaxis2=True))
    Constructs:
@@ -1003,9 +1001,9 @@ to perform further selections on their results:
    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
 
-A convenient method of selection is by metadata construct "identity".
+Another method of selection is by metadata construct "identity".
 Construct identities are used to describe constructs when they are
-inspected, and so it is often convienient to copy these identities
+inspected, and so it is often convenient to copy these identities
 when selecting metadata constructs. For example, the :ref:`three
 auxiliary coordinate constructs <Medium-detail>` in the field
 construct ``t`` have identities ``'latitude'``, ``'longitude'`` and
@@ -1026,7 +1024,7 @@ A construct's identity may be any one of the following
   (see the :ref:`netCDF interface <NetCDF-interface>`).
 
 .. Valid construct names are used to describe constructs when they are
-   inspected, and so it is often convienient to copy these names when
+   inspected, and so it is often convenient to copy these names when
    selecting metadata constructs. For example, the :ref:`three
    auxiliary coordinate constructs <Medium-detail>` in the field
    construct ``t`` have names ``'latitude'``, ``'longitude'`` and
@@ -1057,7 +1055,7 @@ A construct's identity may be any one of the following
    >>> print(t.constructs.filter_by_identity('latitude'))
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-   >>> print(t.constructsfilter_by_identity('long_name=Grid latitude name'))
+   >>> print(t.constructs.filter_by_identity('long_name=Grid latitude name'))
    Constructs:
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >}
    >>> print(t.constructs.filter_by_identity('measure:area'))
@@ -1072,9 +1070,9 @@ least ambiguous name (defined in the documentation of a construct's
 `!identity` method); and an `!identities` method that returns a list
 of all of the identities that would select the construct.
 
-As a further convienince, selection by construct identity is also
+As a further convenience, selection by construct identity is also
 possible by providing identities to a call of a `Constructs` instance
-itself, and this technique for selecting constucts by identity will be
+itself, and this technique for selecting constructs by identity will be
 used in the rest of this tutorial:
 
 .. code-block:: python
@@ -1112,7 +1110,7 @@ If no constructs match the given criteria, then an "empty"
    
 .. code-block:: python
    :caption: *If no constructs meet the criteria then an empty
-             "Contructs" object is returned.*
+             "Constructs" object is returned.*
 
    >>> c = t.constructs('radiation_wavelength')
    >>> c
@@ -1390,7 +1388,7 @@ variable.
 ^^^^^^^^
 
 Constructs representing time (identified by the presence of "reference
-time" units) have data array values that represent elapsed time sinece
+time" units) have data array values that represent elapsed time since
 a reference date. These values may converted into the date-time
 objects of the `cftime package <https://unidata.github.io/cftime/>`_
 with the `~Data.datetime_array` method of the `Data` instance.
@@ -1402,8 +1400,10 @@ with the `~Data.datetime_array` method of the `Data` instance.
    >>> time = q.constructs('time')
    >>> time
    <DimensionCoordinate: time(1) days since 2018-12-01 >
-   >>> time.get_property('units'), time.get_property('calendar', default='standard')
-   ('days since 2018-12-01', 'standard')
+   >>> time.get_property('units')
+   'days since 2018-12-01'
+   >>> time.get_property('calendar', default='standard')
+   'standard'
    >>> print(time.data.array)
    [ 31.]
    >>> print(time.data.datetime_array)
@@ -1420,12 +1420,13 @@ The :ref:`domain of the CF data model <CF-data-model>` is *not* a
 construct, but is defined collectively by various other metadata
 constructs included in the field construct. It is represented by the
 `Domain` class. The domain instance may be accessed with the
-`~Field.get_domain` method of the field construct.
+`~Field.domain` attribute, or `~Field.get_domain` method, of the field
+construct.
 
 .. code-block:: python
    :caption: *Get the domain, and inspect it.*
 
-   >>> domain = t.get_domain()
+   >>> domain = t.domain
    >>> domain
    <Domain: {1, 1, 9, 10}>
    >>> print(domain)
@@ -1445,11 +1446,12 @@ constructs included in the field construct. It is represented by the
    >>> description = domain.dump(display=False)
 
 Changes to domain instance are seen by the field construct, and vice
-versa. This is because the domain instance is merely "view" of the
-relevant metadata constructs contained in the field construct. The
-field construct also has a `~Field.domain` attribute that is an alias
-for the `~Field.get_domain` method, which makes it easier to access
-attributes and methods of the domain instance.
+versa. This is because the domain instance is merely a "view" of the
+relevant metadata constructs contained in the field construct.
+
+.. The field construct also has a `~Field.domain` attribute that is an
+   alias for the `~Field.get_domain` method, which makes it easier to
+   access attributes and methods of the domain instance.
 
 .. code-block:: python
    :caption: *Change a property of a metadata construct of the domain
@@ -1492,7 +1494,9 @@ the `~cfdm.DomainAxis.get_size()` method of the domain axis construct.
    {'domainaxis0': <DomainAxis: size(5)>,
     'domainaxis1': <DomainAxis: size(8)>,
     'domainaxis2': <DomainAxis: size(1)>}
-   >>> d = q.get_construct(key='domainaxis1')
+   >>> d = q.domain_axes.get('domainaxis1')
+   >>> d
+   <DomainAxis: size(8)>
    >>> d.get_size()
    8
 
@@ -1503,9 +1507,11 @@ the `~cfdm.DomainAxis.get_size()` method of the domain axis construct.
 
 ----
 
-There are two types of coordinate construct, dimension and
-auxiliary coordinate constructs, which can be retrieved together with
-the `~cfdm.Field.coordinates` method of the field construct.
+There are two types of coordinate construct, dimension and auxiliary
+coordinate constructs, which can be retrieved together with the
+`~cfdm.Field.coordinates` method of the field construct, as well as
+individually with the `~cfdm.Field.auxiliary_coordinates` and
+`~cfdm.Field.dimension_coordinates` methods.
 
 .. code-block:: python
    :caption: *Retrieve both types of coordinate constructs.*
@@ -1523,9 +1529,9 @@ A coordinate construct may contain an array of cell bounds that
 provides the extent of each cell by defining the locations of the cell
 vertices. This is in addition to the main data array that contains a
 grid point location for each cell. The cell bounds are stored in a
-`Bounds` class instance that is accessed with the
-`~Coordinate.get_bounds` method, or `~Coordinate.bounds` attribute the
-coordinate construct.
+`Bounds` class instance that is accessed with the `~Coordinate.bounds`
+attribute, or `~Coordinate.get_bounds` method, of the coordinate
+construct.
 
 A `Bounds` instance shares the :ref:`the same API as the field
 construct <Data>` for accessing its data.
@@ -1535,10 +1541,10 @@ construct <Data>` for accessing its data.
              inspect its data.*
       
    >>> lon = t.constructs('grid_longitude').value()
-   >>> bounds = lon.get_bounds()
+   >>> bounds = lon.bounds
    >>> bounds
    <Bounds: grid_longitude(9, 2) >
-   >>> bounds.get_data()
+   >>> bounds.data
    <Data(9, 2): [[-4.92, ..., -0.96]]>
    >>> print(bounds.data.array)
    [[-4.92 -4.48]
@@ -1582,12 +1588,14 @@ main data array.
    :caption: *Get the data and bounds data of a domain ancillary
              construct.*
       
-   >>> a = t.get_construct(key='domainancillary0')
+   >>> a = t.constructs.get('domainancillary0')
    >>> print(a.data.array)
    [10.]
-   >>> bounds = a.get_bounds()
+   >>> bounds = a.bounds
+   >>> bounds
+   <Bounds: ncvar%a_bounds(1, 2) >
    >>> print(bounds.data.array)
-   [[ 5. 15.]]
+   [[  5.  15.]]
 
 .. _Coordinate-systems:
 
@@ -1607,6 +1615,23 @@ A coordinate reference construct contains
   coordinate constructs to which it applies, accessed with the
   `~CoordinateReference.coordinates` method of the coordinate
   reference construct;
+
+..
+
+* the zeroes of the dimension and auxiliary coordinate constructs
+  which define the coordinate system, stored in a `Datum` instance,
+  which is accessed with the `~CoordinateReference.datum` attribute,
+  or `~CoordinateReference.get_datum` method, of the coordinate
+  reference construct; and
+
+..
+
+* a formula for converting coordinate values taken from the dimension
+  or auxiliary coordinate constructs to a different coordinate system,
+  stored in a `CoordinateConversion` class instance, which is accessed
+  with the `~CoordinateReference.coordinate_conversion` attribute, or
+  `~CoordinateReference.get_coordinate_conversion` method, of the
+  coordinate reference construct.
 
 .. code-block:: python
    :caption: *Select the vertical coordinate system construct and
@@ -1629,32 +1654,20 @@ A coordinate reference construct contains
    >>> crs.coordinates()
    {'dimensioncoordinate0'}
 
-* the zeroes of the dimension and auxiliary coordinate constructs
-  which define the coordinate system, stored in a `Datum` instance,
-  which is accessed with the `~CoordinateReference.get_datum` method,
-  or `~CoordinateReference.datum` attribute, of the coordinate
-  reference construct; and
-
 .. code-block:: python
    :caption: *Get the datum and inspect its parameters.*
 	     
-   >>> crs.get_datum()
+   >>> crs.datum
    <Datum: Parameters: earth_radius>
    >>> crs.datum.parameters()
    {'earth_radius': 6371007}
-   
-* a formula for converting coordinate values taken from the dimension
-  or auxiliary coordinate constructs to a different coordinate system,
-  stored in a `CoordinateConversion` class instance, which is accessed
-  with the `~CoordinateReference.get_coordinate_conversion` method,
-  or `~CoordinateReference.coordinate_conversion` attribute, of the
-  coordinate reference construct.
+
 
 .. code-block:: python
    :caption: *Get the coordinate conversion and inspect its parameters
              and referenced domain ancillary constructs.*
 	     
-   >>> crs.get_coordinate_conversion()
+   >>> crs.coordinate_conversion
    <CoordinateConversion: Parameters: computed_standard_name, standard_name; Ancillaries: a, b, orog>
    >>> crs.coordinate_conversion.parameters()
    {'computed_standard_name': 'altitude',
@@ -1687,10 +1700,10 @@ cell method constructs to be recorded.
 
 The application of cell methods is not commutative (e.g. a mean of
 variances is generally not the same as a variance of means), so a
-`Constructs` instance has as the `~Constructs.ordered` method to
-retrieve the cell method contructs in the same order that they were
-were added to the field construct during :ref:`field construct
-creation <Field-construct-creation>`.
+`Constructs` instance has an `~Constructs.ordered` method to retrieve
+the cell method constructs in the same order that they were were added
+to the field construct during :ref:`field construct creation
+<Field-creation>`.
 
 .. code-block:: python
    :caption: *Retrieve the cell method constructs in the same order
@@ -1722,10 +1735,36 @@ methods of the cell method construct.
    >>> cm.get_qualifier('where')
    'land'
 
-.. _Field-construct-creation:
+.. _Field-ancillaries:
+		
+**Field ancillaries**
+---------------------
 
-**Field construct creation**
-----------------------------
+----
+
+A field ancillary construct provides metadata which are distributed
+over the same domain as the field construct itself. For example, if a
+field construct holds a data retrieved from a satellite instrument, a
+field ancillary construct might provide the uncertainty estimates for
+those retrievals (varying over the same spatiotemporal domain).
+
+.. code-block:: python
+   :caption: *Get the properties and data of a field ancillary
+             construct.*
+
+   >>> a = t.get_construct('fieldancillary0')
+   >>> a
+   <FieldAncillary: air_temperature standard_error(10, 9) K>
+   >>> a.properties()
+   {'standard_name': 'air_temperature standard_error',
+    'units': 'K'}
+   >>> a.data
+   <Data(10, 9): [[0.76, ..., 0.32]] K>
+
+.. _Field-creation:
+
+**Field creation**
+------------------
 
 ----
 
@@ -2335,10 +2374,10 @@ latter. This is because the surface altitude netCDF variable in
 "grid_mapping" netCDF attributes that would link it to auxiliary
 coordinate, cell measure and grid mapping netCDF variables.
 
-.. _Copying:
+.. _Copying-and-equality:
 
-**Copying**
------------
+**Copying and equality**
+------------------------
 
 ----
 
@@ -2385,12 +2424,11 @@ that a copy takes up very little memory, even when the original
 constructs contain very large data arrays, and the copy operation is
 fast.
 
+
 .. _Equality:
 
 **Equality**
-------------
-
-----
+^^^^^^^^^^^^
 
 Whether or not two field constructs are the same is tested with either
 field construct's `~Field.equals` method.
@@ -2501,9 +2539,8 @@ When a netCDF dataset is read, netCDF elements (such as dimension and
 variable names, and some attribute values) that do not have a place in
 the CF data model are, nevertheless, stored within the appropriate
 cfdm constructs. This allows them to be used when writing field
-constructs to a new netCDF dataset, and also makes them accessible for
-metadata construct identification with the `~Field.constructs` and
-`~Field.get_construct` methods of the field construct:
+constructs to a new netCDF dataset, and also makes them accessible as
+filters to a `Constructs` instance:
 
 .. code-block:: python
    :caption: *Retrieve metadata constructs based on their netCDF
@@ -3023,9 +3060,7 @@ Examples of all of the above may be found in the sections on
 .. _Discrete-sampling-geometries:
    
 **Discrete sampling geometries**
---------------------------------
-
-----
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 `Discrete sampling geometry (DSG)`_ features may be compressed by
 combining them using one of three ragged array representations:
@@ -3252,9 +3287,7 @@ The content of the new file is:
 .. _Gathering:
 
 **Gathering**
--------------
-
-----
+^^^^^^^^^^^^^
 
 `Compression by gathering`_ combines axes of a multidimensional array
 into a new, discrete axis whilst omitting the missing values and thus

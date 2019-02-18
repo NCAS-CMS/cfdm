@@ -232,16 +232,21 @@ html_theme_options = {
 #    "link"            : '#ED1010', #'#5682AD', # light blue
 #    "link_hover"      : '#46DD6c',
 #    "sidebar_search_button" :  '#ED1010',
-    'fixed_sidebar' : 'true',
-    'sidebar_text' : '#RASE',
-    'github_user' : 'davidhassell',
-    'github_repo' : 'cfdm',
+
+    'fixed_sidebar': 'true',
+#    'sidebar_width': '15%',
+    'page_width': '80%',
+
+    'github_user': 'davidhassell',
+    'github_repo': 'https://github.com/NCAS-CMS/cfdm',
+    'github_button': 'true',
 
     'seealso_bg'     : 'transparent',
     'seealso_border' : 'transparent',
     
 #    'table_border': '#FFFFFF', #'#000000',
     'shadow'      : 'false',
+
     
     'show_powered_by' : 'true',
     'font_size'       : '13pt',
