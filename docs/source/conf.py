@@ -80,7 +80,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
               'sphinx.ext.doctest',
               'sphinx.ext.githubpages',
-              ]
+]
 
 
 # Boolean indicating whether to scan all found documents for
@@ -469,3 +469,4 @@ def linkcode_resolve(domain, info):
     else:
         # Point to local source code relative to this directory
         return "../../../cfdm/{0}{1}".format(fn, linespec)
+#--- End: def
