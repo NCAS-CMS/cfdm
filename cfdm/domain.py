@@ -55,14 +55,14 @@ x.__str__() <==> str(x)
             
             if dimension_coord:
                 # Dimension coordinate
-                name = variable.identity(ncvar=True, default=cid)
+                name = variable.identity(default=cid)
                 if variable.has_data():
                     name += '({0})'.format(variable.get_data().size)
                 elif hasattr(variable, 'nc_external'):
                     if variable.nc_external():
                         ncvar = variable.nc_get_variable(None)
                         if ncvar is not None:
-                            x.append(' (external variable: ncvar:{})'.format(ncvar))
+                            x.append(' (external variable: ncvar%{})'.format(ncvar))
                         else:
                             x.append(' (external variable)')
                             
@@ -76,10 +76,9 @@ x.__str__() <==> str(x)
                 # Cell measure
                 # Field ancillary
                 # Domain ancillary
-                x = [variable.identity(ncvar=True, default=cid)]
+                x = [variable.identity(default=cid)]
 
                 if variable.has_data():
-#                    shape = [axis_names[axis] for axis in self.constructs_data_axes(cid)]
                     shape = [axis_names[axis] for axis in axes]
                     shape = str(tuple(shape)).replace("'", "")
                     shape = shape.replace(',)', ')')
@@ -88,7 +87,7 @@ x.__str__() <==> str(x)
                     if variable.nc_external():
                         ncvar = variable.nc_get_variable(None)
                         if ncvar is not None:
-                            x.append(' (external variable: ncvar:{})'.format(ncvar))
+                            x.append(' (external variable: ncvar%{})'.format(ncvar))
                         else:
                             x.append(' (external variable)')
             #--- End: if
@@ -101,7 +100,7 @@ x.__str__() <==> str(x)
                           
         string = []
         
-        axis_name = self.domain_axis_name
+#        axis_name = self.domain_axis_name
 
         axis_names = self._unique_domain_axis_names()
 
@@ -110,9 +109,8 @@ x.__str__() <==> str(x)
         x = []
         for axis_cid in sorted(self.domain_axes):
             for cid, dim in list(self.dimension_coordinates.items()):
-#                if self.constructs_data_axes()[cid] == (axis_cid,):
                 if constructs_data_axes[cid] == (axis_cid,):
-                    name = dim.identity(default='key:{0}'.format(cid), ncvar=True)
+                    name = dim.identity(default='key%{0}'.format(cid))
                     y = '{0}({1})'.format(name, dim.get_data().size)
                     if y != axis_names[axis_cid]:
                         y = '{0}({1})'.format(name, axis_names[axis_cid])
@@ -387,12 +385,6 @@ coordinate reference coinstruct.
         return self.constructs.del_construct(key=cid)
     #--- End: def
 
-    def domain_axis_name(self, key):
-        '''TODO
-        '''
-        return self.constructs.domain_axis_name(key)
-    #--- End: def
-
     def dump(self, display=True, _level=0, _title=None):
         '''A full description of the domain.
 
@@ -478,12 +470,11 @@ last values.
         # Cell measures
         for cid, value in sorted(self.cell_measures.items()):
             string.append('')
-            string.append(
-                value.dump(display=False, field=self,
-                           key=cid, _level=_level,
-                           _title='Cell measure: {0}'.format(construct_name[cid]),
-                           _axes=constructs_data_axes[cid],
-                           _axis_names=axis_to_name))
+            string.append( value.dump(
+                display=False, _key=cid,
+                _level=_level, _title='Cell measure: {0}'.format(construct_name[cid]),
+                _axes=constructs_data_axes[cid],
+                _axis_names=axis_to_name))
             
 
         string.append('')
@@ -499,9 +490,18 @@ last values.
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_type=False):
-        '''TODO
+        '''Whether two domains are the same.
 
 .. versionadded:: 1.7.0
+
+**Examples:**
+
+>>> d.equals(d)
+True
+>>> d.equals(d.copy())
+True
+>>> d.equals('not a domain')
+False
         '''
         ignore_properties = tuple(ignore_properties) + ('Conventions',)
             

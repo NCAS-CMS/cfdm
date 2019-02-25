@@ -84,9 +84,8 @@ indicated by the cell method constructs.
     #--- End: def
 
     
-    def dump(self, display=True, _omit_properties=None, field=None,
-             key=None, _level=0, _title=None, _axes=None,
-             _axis_names=None):
+    def dump(self, display=True, _omit_properties=None, _key=None,
+             _level=0, _title=None, _axes=None, _axis_names=None):
         '''A full description of the auxiliary coordinate construct.
 
 Returns a description of all properties, including those of
@@ -111,8 +110,8 @@ components, and provides selected values of all data arrays.
         if _title is None:
             _title = 'Auxiliary coordinate: ' + self.identity(default='')
 
-        return super().dump(display=display, field=field, key=key,
-                            _level=_level, _title=_title,
+        return super().dump(display=display, _key=_key, _level=_level,
+                            _title=_title,
                             _omit_properties=_omit_properties,
                             _axes=_axes, _axis_names=_axis_names)
     #--- End: def

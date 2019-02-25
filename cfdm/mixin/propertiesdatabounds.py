@@ -128,35 +128,27 @@ rules, the only differences being:
         return new
     #--- End: def
 
-    def dump(self, display=True, field=None, key=None,
-             _omit_properties=None, _prefix='', _title=None,
-             _create_title=True, _level=0, _axes=None,
-             _axis_names=None):
-        '''TODO Return a string containing a full description of the instance.
+    def dump(self, display=True, _key=None, _omit_properties=None,
+             _prefix='', _title=None, _create_title=True, _level=0,
+             _axes=None, _axis_names=None):
+        '''A full description.
 
 :Parameters:
 
     display: `bool`, optional
         If False then return the description as a string. By default
-        the description is printed, i.e. ``f.dump()`` is equivalent to
-        ``print f.dump(display=False)``.
-
-    omit: sequence of `str`, optional
-        Omit the given CF properties from the description.
-
-    _prefix: optional
-        Ignored.
 
 :Returns:
 
-    `None` or `str`
-        A string containing the description.
+        The description. If *display* is True then the description is
+        printed and `None` is returned. Otherwise the description is
+        returned as a string.
 
         '''
         # ------------------------------------------------------------
         # Properties and Data
         # ------------------------------------------------------------
-        string = super().dump(display=False, field=field, key=key,
+        string = super().dump(display=False, _key=_key,
                               _omit_properties=_omit_properties,
                               _prefix=_prefix, _title=_title,
                               _create_title=_create_title,
@@ -170,8 +162,7 @@ rules, the only differences being:
         # ------------------------------------------------------------
         bounds = self.get_bounds(None)
         if bounds is not None:
-            string.append(bounds.dump(display=False, field=field,
-                                      key=key,
+            string.append(bounds.dump(display=False, _key=_key,
                                       _prefix=_prefix+'Bounds:',
                                       _create_title=False,
                                       _level=_level, _axes=_axes,
@@ -191,8 +182,7 @@ rules, the only differences being:
         # ------------------------------------------------------------
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            string.append(interior_ring.dump(display=False,
-                                             field=field, key=key,
+            string.append(interior_ring.dump(display=False, _key=_key,
                                              _prefix=_prefix+'Interior ring:',
                                              _create_title=False,
                                              _level=_level,
@@ -382,12 +372,6 @@ False
         return True
     #--- End: def
     
-    def del_part_ncdim(self):
-        '''TODO
-        '''        
-        return self._del_component('part_ncdim')
-    #--- End: def
-
     def insert_dimension(self, position):
         '''Expand the shape of the data array.
 
@@ -504,39 +488,6 @@ None
         bounds._set_component('inherited_properties', inherited_properties)
         
         return bounds
-    #--- End: def
-
-    def get_node_ncdim(self, *default):
-        '''TODO
-        '''        
-        return self._get_component('node_ncdim', *default)
-    #--- End: def
-
-    def get_part_ncdim(self, *default):
-        '''TODO
-        '''        
-        return self._get_component('part_ncdim', *default)
-    #--- End: def
-
-    def has_part_ncdim(self):
-        '''TODO
-        '''        
-        return self._has_component('part_ncdim')
-    #--- End: def
-
-    def set_node_ncdim(self, value):
-        '''TODO Set the netCDF name of the dimension of a node coordinate variable.
-
-        '''
-        return self._set_component('node_ncdim', value)
-    #--- End: def
-
-    def set_part_ncdim(self, value):
-        '''TODO Set the netCDF name of the dimension of the part_node_count
-variable.
-
-        '''
-        return self._set_component('part_ncdim', value)
     #--- End: def
 
     def squeeze(self, axes=None):

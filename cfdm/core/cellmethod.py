@@ -155,6 +155,11 @@ or the fact that the method was applied only over El Nino years).
     `str`
         The construct type.
 
+**Examples:**
+
+>>> f.construct_type
+'cell_method'
+
         '''
         return 'cell_method'
     #--- End: def

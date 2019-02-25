@@ -36,6 +36,11 @@ auxiliary coordinate construct or domain ancillary construct.
     `str`
         The construct type.
 
+**Examples:**
+
+>>> f.construct_type
+'field_ancillary'
+
         '''
         return 'field_ancillary'
     #--- End: def

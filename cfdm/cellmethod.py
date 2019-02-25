@@ -547,59 +547,78 @@ False
 #        return True
 #    #--- End: def
 
-    def identity(self, default=None):
-        '''Return a name for the cell method construct.
+    def identity(self, default=''):
+        '''Return the canonical identity for the cell method construct.
 
-By default the name is the first found of the following:
+By default the identity is the first found of the following:
 
-  1. The method, preceeded by 'method:'
-  2. The value of the *default* parameter.
+1. The method, preceeded by 'method:'
+2. The value of the *default* parameter.
 
 .. versionadded:: 1.7.0
+
+.. seealso:: `identities`
 
 :Parameters:
 
     default: optional
-        If no other name can be found then return the value of the
-        default parameter. By default `None` is returned in this case.
+        If no identity can be found then return the value of the
+        default parameter.
    
 :Returns:
 
-        TODO
+        The identity.
 
 **Examples:**
 
-TODO
+>>> c.get_method()
+'minimum;
+>>> c.identity()
+'method:minimum'
+>>> c.identity(default='no identity')
+'method:minimum'
+>>> c.del_method()
+'minimum'
+>>> c.identity()
+''
+>>> c.identity(default='no identity')
+'no identity'
 
         '''
-        out = []
-
         n = self.get_method(None)
         if n is not None:
-            out.append('method:{0}'.format(n))
+            return 'method:{0}'.format(n)
             
-        if out:
-            return out[-1]
-
         return default
     #--- End: def
 
-    def identities(self, extra=None):
-        '''TODO
+    def identities(self):
+        '''Return all possible identities.
+
+The identities comprise:
+
+* The method, preceeded by 'method:'.
 
 .. versionadded:: 1.7.0
 
-:Parameters:
-
-TODO
+.. seealso:: `identity`
 
 :Returns:
 
-        TODO
+    `list`
+        The identities.
 
 **Examples:**
 
-TODO
+>>> c.get_method()
+'minimum'
+>>> c.identities()
+['method:minimum']
+>>> c.del_method()
+'minimum'
+>>> c.identities()
+[]
+
         '''
         out = []
 
@@ -607,26 +626,6 @@ TODO
         if n is not None:
             out.append('method:{0}'.format(n))
             
-        if extra:
-            out.extend(extra)
-                        
-#        i = self.get_qualifier('interval', None)
-#        if i is not None:
-#            x = []
-#            for d in i:
-#                x.append(str(d))
-#
-#            out.append('interval:{0}'.format(', '.join(x)))    
-#
-#        qualifiers = self.qualifiers()
-#        qualifiers.pop('interval', None)
-#
-#
-#        x = ['{0}:{1}'.format(q, value)
-#             for q, value in sorted(qualifiers.items())]
-#
-#        out += x
-        
         return out
     #--- End: def
 
@@ -697,76 +696,5 @@ name, and any intervals are sorted accordingly.
 
         return new
     #--- End: def
-
-#    def match(self, description=None, inverse=False):
-#        '''
-#        '''
-#        if not isinstance(description (list, tuple)):
-#            description = (description,)
-#
-#        found_match = True
-#
-#        for d in description:
-#            found_match = True
-#            
-#            if isinstance(d , basestring):
-#                description = {'cell_method': d}
-#                
-#            c = type(self)(**d)
-#
-#            has_axes = False
-#            if c.axes:
-#                has_axes = True
-#                if len(self.axes) != len(c.axes):
-#                    return False
-#    
-#                c = c.sorted(argsort=[c.axes.index(axis) for axis in self.axes])
-#                
-#                if self.axes != c.axes:
-#                    found_match = False
-#                    continue
-#            #--- End: if
-#    
-#            for attr in ('method', 'within', 'over', 'where', 'comment'):
-#                x = getattr(c, attr)
-#                if x and x != getattr(self, attr):
-#                    found_match = False
-#                    break
-#            #--- End: for
-#        
-#            if not found_match:
-#                continue
-#    
-#            if c.interval:
-#                d = self.expand_intervals()
-#                c.expand_intervals(copy=False)
-#                    
-#                intervals0 = list(self.interval)
-#                intervals1 = list(c.interval)
-#    
-#                if len(intervals0) != len(intervals1):
-#                    return False
-#    
-#                if has_axes:                
-#                    for i0, i1 in zip(intervals0, intervals1):
-#                        if i0 != i1:
-#                            found_match = False
-#                            break
-#                else:            
-#                    for i0 in intervals0:
-#                        found_match = False
-#                        for n, i1 in enumerate(intervals1):
-#                            if i0 == i1:
-#                                del intervals1[n]
-#                                found_match = True
-#                                break
-#            #--- End: if
-#
-#            if not found_match:
-#                continue
-#        #--- End: for
-#
-#        return not bool(inverse)
-#    #--- End: def
 
 #--- End: class

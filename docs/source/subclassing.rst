@@ -90,7 +90,7 @@ example:
    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m     
-   >>> print(t.get_array())
+   >>> print(t.data.array)
    [[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
      [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
      [269.7 279.1 273.4 274.2 279.6 270.2 280.0 272.5 263.7]

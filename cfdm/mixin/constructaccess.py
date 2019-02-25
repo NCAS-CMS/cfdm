@@ -13,7 +13,6 @@ object.
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-
     def _unique_construct_names(self):
         '''TODO 
 
@@ -50,7 +49,7 @@ object.
         name_to_keys = {}
 
         for key, value in self.domain_axes.items():
-            name_size = (self.domain_axis_name(key), value.get_size(''))
+            name_size = (self.constructs.domain_axis_name(key), value.get_size(''))
             name_to_keys.setdefault(name_size, []).append(key)
             key_to_name[key] = name_size
 
@@ -86,6 +85,8 @@ object.
 
 :Returns:
 
+    `Constructs`
+        The  constructs and their construct keys.
     `dict`
         Constructs are returned as values of a dictionary, keyed by
         their construct identifiers.
@@ -116,9 +117,8 @@ Constructs:
 
 :Returns:
 
-    TODO
-        Constructs are returned as values of a dictionary, keyed by
-        their construct identifiers.
+    `Constructs`
+        The domain axis constructs and their construct keys.
 
 **Examples:**
 
@@ -147,9 +147,8 @@ Constructs:
 
 :Returns:
 
-    `dict`
-        Constructs are returned as values of a dictionary, keyed by
-        their construct identifiers.
+    `Constructs`
+        The auxiliary coordinate constructs and their construct keys.
 
 **Examples:**
 
@@ -177,9 +176,8 @@ Constructs:
 
 :Returns:
 
-    TODO
-        Constructs are returned as values of a dictionary, keyed by
-        their construct identifiers.
+    `Constructs`
+        The dimension coordinate constructs and their construct keys.
 
 **Examples:**
 
@@ -205,13 +203,13 @@ Constructs:
 .. versionadded:: 1.7.0
 
 .. seealso:: `auxiliary_coordinates`, `constructs`,
-             `dimension_coordinates`, `get_construct`
+             `dimension_coordinates`
 
 :Returns:
 
-    `dict`
-        Constructs are returned as values of a dictionary, keyed by
-        their construct identifiers.
+    `Constructs`
+        The auxiliary coordinate and dimension coordinate constructs
+        and their construct keys.
 
 **Examples:**
 
@@ -245,9 +243,8 @@ Constructs:
 
 :Returns:
 
-    `dict`
-        Constructs are returned as values of a dictionary, keyed by
-        their construct identifiers.
+    `Constructs`
+        The domain ancillary constructs and their construct keys.
 
 **Examples:**
 
@@ -257,8 +254,8 @@ Constructs:
 
 >>> f.domain_ancillaries
 Constructs:
-{'domainancillary0': <DomainAncillary: ncvar:a(1) m>,
- 'domainancillary1': <DomainAncillary: ncvar:b(1) >,
+{'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+ 'domainancillary1': <DomainAncillary: ncvar%b(1) >,
  'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
 
         '''
@@ -281,9 +278,8 @@ Constructs:
 
 :Returns:
 
-    `dict`
-        Constructs are returned as values of a dictionary, keyed by
-        their construct identifiers.
+    `Constructs`
+        The cell measure constructs and their construct keys.
 
 **Examples:**
 
@@ -302,264 +298,5 @@ Constructs:
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-#    def get_construct(self, key, default=ValueError()):
-#        '''Return a metadata construct.
-#
-#TODO The *unique* construct that satisfies *all* of the given criteria is
-#returned. All metadata constructs are selected if no parameters are
-#specified. By default an exception is raised if no unique construct is
-#selected.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: TODO `constructs`, `del_construct`, `get_construct_key`,
-#             `has_construct`, `set_construct`
-#
-#:Parameters:
-#
-#TODO
-#        
-#:Returns:
-#        TODO
-#
-#**Examples:**
-#
-#TODO
-#        '''
-#        return self.constructs.key(key).get(default=default)
-#   #--- End: def
-#
-#    def get_construct_key(self, name=None, properties=None,
-#                          measure=None, ncvar=None, ncdim=None,
-#                          key=None, axis=None, construct=None,
-#                          default=ValueError()):
-#        '''Return the key for a metadata construct.
-#
-#The key for the *unique* construct that satisfies *all* of the given
-#criteria is returned. All metadata constructs are selected if no
-#parameters are specified. By default an exception is raised if no
-#unique construct is selected.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `constructs`, `get_construct`,
-#
-#:Parameters:
-#
-#    name: (sequence of) `str`, optional
-#        Select constructs that have the given name. In general, a
-#        contruct's name is the string returned by its `!name` method.
-#
-#        The name may be one of:
-#
-#        * The value of the standard name property.
-#
-#          *Parameter example:*
-#            ``name='air_pressure'`` will select constructs that
-#            have a "standard_name" property with the value
-#            "air_pressure", as will ``name=['air_pressure']``.
-#
-#        * The value of any property prefixed by the property name and
-#          a colon (``:``).
-#
-#          *Parameter example:*
-#            ``name='positive:up'`` will select constructs that
-#            have a "positive" property with the value "up".
-#
-#          *Parameter example:*
-#            ``name='foo:bar'`` will select constructs that have
-#            a "foo" property with the value "bar".
-#
-#          *Parameter example:*
-#            ``name='standard_name:air_pressure'`` will select
-#            constructs that have a "standard_name" property with the
-#            value "air_pressure".
-#
-#          *Parameter example:*
-#            ``name=['air_pressure', long_name:Air Temperature']`` will
-#            select constructs that have a "standard_name" property
-#            with the value "air_pressure" or a "long_name" property
-#            with a value of "air Temperature".
-#
-#        * The measure of cell measure constructs, prefixed by
-#          ``measure%``.
-#
-#          *Parameter example:*
-#            ``name='measure%area'`` will select "area" cell
-#            measure constructs.
-#
-#        * A construct key, prefixed by ``key%`` (see also the *key*
-#          parameter).
-#
-#          *Parameter example:* 
-#            ``name='key%cellmethod1'`` will select cell method
-#            construct with construct key "cellmethod1". This is
-#            equivalent to ``key='cellmethod1'``.
-#
-#        * The netCDF variable name, prefixed by ``ncvar%`` (see also
-#          the *ncvar* parameter).
-#
-#          *Parameter example:*
-#            ``name='ncvar%lat'`` will select constructs with netCDF
-#            variable name "lat".
-#
-#        * The netCDF dimension name of domain axis constructs,
-#          prefixed by ``ncdim%`` (see also the *ncdim* parameter).
-#
-#          *Parameter example:*
-#            ``name='ncdim%time'`` will select domain axis constructs
-#            with netCDF dimension name "time".
-#
-#    measure: (sequence of) `str`, optional
-#        Select cell measure constructs which have the given
-#        measure. If multiple measures are specified then select the
-#        cell measure constructs which have any of the given measures.
-#
-#        *Parameter example:*
-#          ``meausure='area'``
-#
-#        *Parameter example:*
-#          ``measure=['area']``
-#
-#        *Parameter example:*
-#          ``measure=['area', 'volume']``
-#
-#    axis: (sequence of) `str`, optional
-#        Select constructs which have data that spans a domain axis
-#        construct, defined by its construct identifier. If multiple of
-#        domain axes are specified then select constructs whose data
-#        spans at least one the domain axis constructs.
-#
-#        *Parameter example:*
-#          ``axis='domainaxis1'``
-#
-#        *Parameter example:*
-#          ``axis=['domainaxis2']``
-#
-#        *Parameter example:*
-#          ``axis=['domainaxis0', 'domainaxis1']``
-#
-#    ncvar: (sequence of) `str`, optional
-#        Select constructs which have the given netCDF variable
-#        name. If multiple netCDF variable names are specified then
-#        select the constructs which have any of the given netCDF
-#        variable names.
-#
-#        *Parameter example:*
-#          ``ncvar='lon'``
-#
-#        *Parameter example:*
-#          ``ncvar=['lat']``
-#
-#        *Parameter example:*
-#          ``ncvar=['lon', 'lat']``
-#
-#    ncdim: (sequence of) `str`, optional
-#        Select domain axis constructs which have the given netCDF
-#        dimension name. If multiple netCDF dimension names are
-#        specified then select the domain axis constructs which have
-#        any of the given netCDF dimension names.
-#
-#        *Parameter example:*
-#          ``ncdim='lon'``
-#
-#        *Parameter example:*
-#          ``ncdim=['lat']``
-#
-#        *Parameter example:*
-#          ``ncdim=['lon', 'lat']``
-#
-#    key: (sequence of) `str`, optional
-#        Select the construct with the given construct key. If multiple
-#        keys are specified then select all of the metadata constructs
-#        which have any of the given keys.
-#
-#        *Parameter example:*
-#          ``key='domainancillary0'`` will the domain ancillary
-#          construct with construct identifier "domainancillary1". This
-#          is equivalent to ``name='key%domainancillary0'``.
-#
-#        *Parameter example:*
-#          ``key=['cellmethod2']``
-#
-#        *Parameter example:*
-#          ``key=('dimensioncoordinate1', 'fieldancillary0')``
-#
-#    construct: (sequence of) `str`, optional
-#        Select constructs of the given type, or types. Valid types
-#        are:
-#
-#          ==========================  ================================
-#          *construct* cccc            Constructs
-#          ==========================  ================================
-#          ``'domain_ancillary'``      Domain ancillary constructs
-#          ``'dimension_coordinate'``  Dimension coordinate constructs
-#          ``'domain_axis'``           Domain axis constructs
-#          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-#          ``'cell_measure'``          Cell measure constructs
-#          ``'coordinate_reference'``  Coordinate reference constructs
-#          ``'cell_method'``           Cell method constructs
-#          ``'field_ancillary'``       Field ancillary constructs
-#          ==========================  ================================
-#
-#        *Parameter example:*
-#          ``construct='dimension_coordinate'``
-#
-#        *Parameter example:*
-#          ``construct=['auxiliary_coordinate']``
-#
-#        *Parameter example:*
-#          ``construct=('domain_ancillary', 'cell_method')``
-#
-#        Note that a domain never contains cell method nor field
-#        ancillary constructs.
-#
-#    copy: `bool`, optional
-#        If True then return copies of the constructs. By default the
-#        constructs are not copied.
-#
-#    default: optional
-#        Return the value of the *default* parameter if no unique
-#        construct has been selected. By default an exception is raised
-#        in this case.
-#        
-#:Returns:
-#        The key of the unique selected construct. If there is no such
-#        construct then an exception is raised, or the value of the
-#        *default* parameter is returned, if provided.
-#
-#**Examples:**
-#
-#
-#>>> key = f.get_construct_key('grid_latitude')
-#>>> key = f.get_construct_key('long_name=Air Pressure')
-#>>> key = f.get_construct_key('ncvar%lat)
-#>>> key = f.get_construct_key('key%cellmeasure0')
-#>>> key = f.get_construct_key(key='domainaxis2')
-#>>> key = f.get_construct_key(construct='auxiliary_coordinate',
-#...                           axis=['domainaxis1'])
-#
-#        '''
-#        out = self.constructs.select(name=name, properties=properties,
-#                                     measure=measure, axis=axis,
-#                                     key=key, construct=construct,
-#                                     ncvar=ncvar, ncdim=ncdim)
-#        if not out:
-#            return self._default(default, "No construct meets criteria")
-#
-#        if len(out) > 1:
-#            return self._default(default, "More than one construct meets criteria")
-#        
-#        key, _ = dict(out).popitem()
-#
-#        # Return the unique construct key
-#        return key
-#    #--- End: def
-    
-    def domain_axis_name(self, axis):
-        '''TODO 
-        '''
-        return self.constructs.domain_axis_name(axis)
-    #--- End: def
-    
+
 #--- End: class

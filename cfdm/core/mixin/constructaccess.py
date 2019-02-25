@@ -126,14 +126,14 @@ reference is replace with `None`.
         return self.constructs.filter_by_key(key).value(default=default)
     #--- End: def
 
-    def domain_axis_name(self, axis):
-        '''TODO WHY DO WE NED THIS HERE?
-
-.. versionadded:: 1.7.0
-
-        '''
-        return self.constructs.domain_axis_name(axis)
-    #--- End: def
+#    def domain_axis_name(self, axis):
+#        '''TODO WHY DO WE NED THIS HERE?
+#
+#.. versionadded:: 1.7.0
+#
+#        '''
+#        return self.constructs.domain_axis_name(axis)
+#    #--- End: def
     
     def set_construct(self, construct, key=None, axes=None,
                       copy=True):
@@ -195,49 +195,171 @@ reference is replace with `None`.
                                               axes=axes, copy=copy)
     #--- End: def
 
-#    def set_construct_data_axes(self, key, axes):
-#        '''Set the domain axis constructs spanned by a metadata construct data
-#array.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct`
-#
-#:Parameters:
-#
-#    key: `str`
-#        The construct identifier of the metadata construct.
-#
-#        *Parameter example:*
-#          ``key='dimensioncoordinate2'``
-#
-#     axes: (sequence of) `str`
-#        The construct identifiers of the domain axis constructs
-#        spanned by the data array.
-#
-#        The axes may also be set with the `set_construct` method.
-#
-#        *Parameter example:*
-#          ``axes='domainaxis1'``
-#
-#        *Parameter example:*
-#          ``axes=['domainaxis1']``
-#
-#        *Parameter example:*
-#          ``axes=['domainaxis1', 'domainaxis0']``
-#
-#:Returns:
-#
-#    `None`
-#
-#**Examples:**
-#
-#>>> key = f.set_construct(c)
-#>>> f.set_construct_data_axes(key, axes='domainaxis1')
-#
-#        '''
-#        return self.constructs._set_construct_data_axes(key, axes)
-#    #--- End: def
+    def get_data_axes(self, key, default=ValueError):
+        '''Return the keys of the domain axes spanned by a data array.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `data`, `del_data_axes`, `get_data`, `set_data_axes`
+
+:Parameters:
+
+    key: `str`
+        <TODO>
+
+    default: optional
+        Return the value of the *default* parameter if the data axes
+        have not been set. If set to an `Exception` instance then it
+        will be raised instead.
+
+:Returns:
+
+    `tuple` 
+        The keys of the domain axis constructs spanned by the data.
+
+**Examples:**
+
+>>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
+>>> f.get_data_axes()
+('domainaxis0', 'domainaxis1')
+>>> f.del_data_axes()
+('domainaxis0', 'domainaxis1')
+>>> print(f.del_dataxes(None))
+None
+>>> print(f.get_data_axes(default=None))
+None
+
+        '''
+        try:
+            return self.constructs.data_axes()[key]
+        except KeyError:
+            return self._default(default, message='2736492783 e28037 TODO')
+    #--- End: def
+
+    def del_data_axes(self, key, default=ValueError()):
+        '''Remove the keys of the domain axes spanned by the data array.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `data`, `get_data_axes`, `set_data_axes`
+
+:Parameters:
+
+    key: `str`, optional
+        TODO
+
+    default: optional
+        Return the value of the *default* parameter if the data axes
+        have not been set. If set to an `Exception` instance then it
+        will be raised instead.
+
+:Returns:
+
+    `tuple` 
+        The removed keys of the domain axis constructs spanned by the
+        data.
+
+**Examples:**
+
+>>> f.del_data_axes(key='dimensioncoordinate2')
+('domainaxis1',)
+
+>>> f.has_data_axes(key='auxiliarycoordinate0')
+False
+>>> f.has_data_axes(key='auxiliarycoordinate0', default='no axes')
+'no axes'
+
+        '''   
+        try:
+            data_axes = self.constructs.data_axes()[key]
+        except KeyError:
+            return self._default(default, message='asd aosg8qwg dlb TODO')
+        else:
+            self.constructs._del_data_axes(key)
+                
+        return data_axes
+    #--- End: def
+    
+    def has_data_axes(self, key=None):
+        '''TODO
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `data`, `del_data_axes`, `get_data_axes`, `set_data_axes`
+
+:Parameters:
+
+    key: `str`, optional
+        <TODO>
+
+:Returns:
+
+    `bool` 
+        TODO
+
+**Examples:**
+
+>>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
+>>> f.get_data_axes()
+('domainaxis0', 'domainaxis1')
+>>> f.del_data_axes()
+('domainaxis0', 'domainaxis1')
+>>> print(f.del_dataxes(None))
+None
+>>> print(f.get_data_axes(default=None))
+None
+
+        '''
+        axes = self.get_data_axes(key, default=None)
+        if axes is None:
+            return False
+
+        return True
+    #--- End: def
+    
+    def set_data_axes(self, axes, key):
+        '''Set the domain axis constructs spanned by the data of a metadata
+construct.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `data`, `del_data_axes`, `get_data`, `get_data_axes`,
+             `has_data_axes`
+
+:Parameters:
+
+     axes: sequence of `str`
+        The identifiers of the domain axis constructs spanned by the
+        data of a metadata construct.
+
+        *Parameter example:*
+          ``axes=['domainaxis1', 'domainaxis0']``
+
+     key: `str`
+        Set the domain axis constructs of the data of metadata
+        constuct defined by given construct key.
+
+        *Parameter example:*
+          ``key='domainancillary1'``
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+>>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
+>>> f.get_data_axes()
+('domainaxis0', 'domainaxis1')
+>>> f.del_data_axes()
+('domainaxis0', 'domainaxis1')
+>>> print(f.del_dataxes(None))
+None
+>>> print(f.get_data_axes(None))
+None
+
+        '''
+        self.constructs._set_construct_data_axes(key=key, axes=axes)
+    #--- End: def
 
 #--- End: class

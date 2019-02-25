@@ -86,35 +86,26 @@ x.__str__() <==> str(x)
         return '{0}{1} {2}'.format(self.identity(''), dims, units)
     #--- End: def
 
-    def dump(self, display=True, field=None, key=None,
-             _omit_properties=(), _prefix='', _title=None,
-             _create_title=True, _level=0, _axes=None,
-             _axis_names=None):
-        '''TODO
+    def dump(self, display=True, _key=None, _omit_properties=(),
+             _prefix='', _title=None, _create_title=True, _level=0,
+             _axes=None, _axis_names=None):
+        '''A full description.
 
-Return a string containing a full description of the instance.
-
-.. versionadded:: 1.6
+.. versionadded:: 1.7.0
 
 :Parameters:
 
     display: `bool`, optional
         If False then return the description as a string. By default
-        the description is printed, i.e. ``f.dump()`` is equivalent to
-        ``print f.dump(display=False)``.
-
-    omit: sequence of `str`, optional
-        Omit the given CF properties from the description.
-
-    _prefix: optional
-        Ignored.
+        the description is printed.
 
 :Returns:
 
-    `None` or `str`
-        A string containing the description. TODO
+        The description. If *display* is True then the description is
+        printed and `None` is returned. Otherwise the description is
+        returned as a string.
 
-'''
+        '''
         indent0 = '    ' * _level
         indent1 = '    ' * (_level+1)
 
@@ -125,8 +116,8 @@ Return a string containing a full description of the instance.
         # ------------------------------------------------------------
         if _create_title:
             if _title is None:
-                if field and key:
-                    default = key
+                if _key:
+                    default = 'key%{0}'.format(_key)
                 else:
                     default = ''
                     
@@ -386,9 +377,9 @@ Inserts a new size 1 axis into the data array.
     #--- End: def
     
 #    def HDF_chunks(self, *chunksizes):
-#        '''TODO {+HDF_chunks}
+#        '''{+HDF_chunks}
 #        
-#.. versionadded:: 1.6
+#.. versionadded:: 1.7.0
 #
 #:Parameters:
 #
@@ -412,11 +403,10 @@ Inserts a new size 1 axis into the data array.
 #        return old_chunks
 #    #--- End: def
 
-    def identity(self, default=None, ncvar=True, custom=None,
-                 all_names=False):
-        '''Return a name.
+    def identity(self, default=''):
+        '''Return the canonical identity.
 
-By default the name is the first found of the following:
+By default the identity is the first found of the following:
 
 1. The "standard_name" property.
 2. The "cf_role" property, preceeded by ``'cf_role='``.
@@ -426,31 +416,17 @@ By default the name is the first found of the following:
 
 .. versionadded:: 1.7.0
 
+.. seealso:: `identities`
+
 :Parameters:
 
     default: optional
-        If no other name can be found then return the value of the
-        *default* parameter. By default `None` is returned in this
-        case.
-
-    ncvar: `bool`, optional
-        If False then do not consider the netCDF variable name.
-
-    custom: sequence of `str`, optional
-        Replace the ordered list of properties from which to seatch
-        for a name. The default list is ``['standard_name', 'cf_role',
-        'long_name']``.
-
-        *Parameter example:*
-          ``custom=['project']``
-
-        *Parameter example:*
-          ``custom=['project', 'long_name']``
+        If no identity can be found then return the value of the
+        default parameter.
 
 :Returns:
 
-        The name. If the *all_names* parameter is True then a list of
-        all possible names.
+        The identity.
 
 **Examples:**
 
@@ -460,162 +436,125 @@ By default the name is the first found of the following:
  'standard_name': 'air_temperature'}
 >>> f.nc_get_variable()
 'tas'
->>> f.name()
+>>> f.identity()
 'air_temperature'
->>> f.name(all_names=True)
-['air_temperature', 'long_name=Air Temperature', 'ncvar%tas']
->>> x = f.del_property('standard_name')
->>> f.name()
+>>> f.del_property('standard_name')
+'air_temperature'
+>>> f.identity(default='no identity')
+'air_temperature'
+>>> f.identity()
 'long_name=Air Temperature'
->>> x = f.del_property('long_name')
->>> f.name()
+>>> f.del_property('long_name')
+>>> f.identity()
 'ncvar%tas'
->>> f.name(custom=['foo'])
-'foo=bar'
->>> f.name(default='no name', custom=['foo'])
-['foo=bar', 'no name']
+>>> f.nc_del_variable()
+'tas'
+>>> f.identity()
+'ncvar%tas'
+>>> f.identity()
+''
+>>> f.identity(default='no identity')
+'no identity'
 
         '''
-        out = []
-
-        if not custom:
-            n = self.get_property('standard_name', None)
-            if n is not None:
-                return n
-
-            custom = ('cf_role', 'long_name')
-            
-        for prop in custom:
+        n = self.get_property('standard_name', None)
+        if n is not None:
+            return n
+        
+        for prop in  ('cf_role', 'long_name'):
             n = self.get_property(prop, None)
             if n is not None:
                 return '{0}={1}'.format(prop, n)
         #--- End: for
         
-        if ncvar:
-            n = self.nc_get_variable(None)
-            if n is not None:
-                return 'ncvar%{0}'.format(n)
-        #--- End: if
+        n = self.nc_get_variable(None)
+        if n is not None:
+            return 'ncvar%{0}'.format(n)
         
         return default
-#       out = []
-#
-#        if custom is None:
-#            n = self.get_property('standard_name', None)
-#            if n is not None:
-#                out.append(n)
-#
-#            custom = ('cf_role', 'long_name')
-#            
-#        if not out:
-#            for prop in custom:
-#                n = self.get_property(prop, None)
-#                if n is not None:
-#                    out.append('{0}={1}'.format(prop, n))
-#                    if not all_names:
-#                        break
-#        #--- End: if
-#        
-#        if ncvar and not out:
-#            n = self.nc_get_variable(None)
-#            if n is not None:
-#                out.append('ncvar%{0}'.format(n))
-#        #--- End: if
-#
-#        if all_names:
-#            if default is not None:
-#                out.append(default)
-#                
-#            return out
-#        
-#        if out:
-#            return out[-1]
-#
-#        return default
     #--- End: def
 
-#    def names(self, extra=None):
-#        '''Return a name.
-#
-#By default the name is the first found of the following:
-#
-#1. The "standard_name" property.
-#2. The "cf_role" property, preceeded by ``'cf_role='``.
-#3. The "long_name" property, preceeded by ``'long_name='``.
-#4. The netCDF variable name, preceeded by ``'ncvar%'``.
-#5. The value of the *default* parameter.
-#
-#.. versionadded:: 1.7.0
-#
-#:Parameters:
-#
-#    default: optional
-#        If no other name can be found then return the value of the
-#        *default* parameter. By default `None` is returned in this
-#        case.
-#
-#    ncvar: `bool`, optional
-#        If False then do not consider the netCDF variable name.
-#
-#    all_names: `bool`, optional
-#        If True then return a list of all possible names.
-#
-#    custom: sequence of `str`, optional
-#        Replace the ordered list of properties from which to seatch
-#        for a name. The default list is ``['standard_name', 'cf_role',
-#        'long_name']``.
-#
-#        *Parameter example:*
-#          ``custom=['project']``
-#
-#        *Parameter example:*
-#          ``custom=['project', 'long_name']``
-#
-#:Returns:
-#
-#        The name. If the *all_names* parameter is True then a list of
-#        all possible names.
-#
-#**Examples:**
-#
-#>>> f.properties()
-#{'foo': 'bar',
-# 'long_name': 'Air Temperature',
-# 'standard_name': 'air_temperature'}
-#>>> f.nc_get_variable()
-#'tas'
-#>>> f.name()
-#'air_temperature'
-#>>> f.name(all_names=True)
-#['air_temperature', 'long_name=Air Temperature', 'ncvar%tas']
-#>>> x = f.del_property('standard_name')
-#>>> f.name()
-#'long_name=Air Temperature'
-#>>> x = f.del_property('long_name')
-#>>> f.name()
-#'ncvar%tas'
-#>>> f.name(custom=['foo'])
-#'foo=bar'
-#>>> f.name(default='no name', custom=['foo'])
-#['foo=bar', 'no name']
-#
-#        '''
-#        out = ['{0}={1}'.format(prop, value)
-#               for prop, value in self.properties().items()]
-#
+    def identities(self):
+        '''Return all possible identities.
+
+The identities comprise:
+
+* The "standard_name" property.
+* All properties, preceeded by the property name and a colon,
+  e.g. ``'long_name:Air temperature'``.
+* The netCDF variable name, preceeded by ``'ncvar%'``.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `identity`
+
+:Returns:
+
+    `list`
+        The identities.
+
+**Examples:**
+
+>>> f.properties()
+{'foo': 'bar',
+ 'long_name': 'Air Temperature',
+ 'standard_name': 'air_temperature'}
+>>> f.nc_get_variable()
+'tas'
+>>> f.identities()
+['air_temperature',
+ 'long_name=Air Temperature',
+ 'foo=bar',
+ 'standard_name=air_temperature',
+ 'ncvar%tas']
+
+        '''
+        properties = self.properties()
+        cf_role = properties.pop('cf_role', None)
+        long_name = properties.pop('long_name', None)
+        standard_name = properties.pop('standard_name', None)
+
+        out = []
+
+        if standard_name is not None:
+            out.append(standard_name)
+            
+        if cf_role is not None:
+            out.append('cf_role={}'.format(cf_role))
+                    
+        if long_name is not None:
+            out.append('long_name={}'.format(long_name))
+            
+        out += ['{0}={1}'.format(prop, value)
+                for prop, value in sorted(properties.items())]
+
+        if standard_name is not None:
+            out.append('standard_name={}'.format(standard_name))
+            
 #        n = self.get_property('standard_name', None)
-#        if n is not None:
-#            out.insert(0, n)
-#            
-#        n = self.nc_get_variable(None)
-#        if n is not None:
-#            out.append('ncvar%{0}'.format(n))
+#        if standard_name is not None:
+#            out.append(0, 'standard_name={}'.format(standard_name))
 #
+        n = self.nc_get_variable(None)
+        if n is not None:
+#            out.insert(0, 'ncvar%{0}'.format(n))
+            out.append('ncvar%{0}'.format(n))
+
 #        if extra:
-#            out.extend(extra)
+#            out = list(extra) + out
+#            out += list(extra)
+            
+#        if long_name is not None:
+#            out.insert(0, 'long_name={}'.format(long_name))
 #            
-#        return out
-#    #--- End: def
+#        if cf_role is not None:
+#            out.insert(0, 'cf_role={}'.format(cf_role))
+#            
+#        if standard_name is not None:
+#            out.insert(0, standard_name)
+            
+        return out
+    #--- End: def
 
     def squeeze(self, axes=None):
         '''Remove size one axes from the data array.
@@ -713,8 +652,18 @@ may be selected for removal.
         return v
     #--- End: def
     
-    def _parse_axes(self, axes): #, ndim=None):
-        '''TODO
+    def _parse_axes(self, axes):
+        '''Conform axes.
+
+:Parameters:
+
+    axes: (sequence of) `int`
+
+:Returns:
+
+    `list`
+        The conformed axes.
+
         '''
         if axes is None:
             return axes

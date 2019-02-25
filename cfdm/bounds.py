@@ -77,7 +77,7 @@ provide properties to a bounds component.
         self._initialise_netcdf(source)
     #--- End: def
     
-    def dump(self, display=True, field=None, key=None, _title=None,
+    def dump(self, display=True, _key=None, _title=None,
              _create_title=True, _prefix=None, _level=0,
              _omit_properties=None, _axes=None, _axis_names=None):
         '''A full description of the bounds component.
@@ -104,7 +104,7 @@ of all data arrays.
         if _create_title and _title is None: 
             _title = 'Bounds: ' + self.identity(default='')
 
-        return super().dump(display=display, field=field, key=key,
+        return super().dump(display=display, _key=_key,
                             _omit_properties=_omit_properties,
                             _prefix=_prefix, _level=_level,
                             _title=_title,
@@ -195,71 +195,46 @@ None
         return deepcopy(self._get_component('inherited_properties', {}))
     #--- End: def   
 
-    def identity(self, default=None, ncvar=True, custom=None,
-             all_names=False):
-        '''Return a name.
+    def identity(self, default=''):
+        '''Return the canonical identity.
 
-By default the name is the first found of the following:
+By default the identity is the first found of the following:
 
 1. The "standard_name" property.
 2. The "cf_role" property, preceeded by ``'cf_role='``.
 3. The "long_name" property, preceeded by ``'long_name='``.
-4. The netCDF variable name, preceeded by ``'ncvar:'``.
+4. The netCDF variable name, preceeded by ``'ncvar%'``.
 5. The value of the *default* parameter.
 
+Properties include any inherited properties.
+
 .. versionadded:: 1.7.0
+
+.. seealso:: `identities`
 
 :Parameters:
 
     default: optional
-        If no other name can be found then return the value of the
-        *default* parameter. By default `None` is returned in this
-        case.
-
-    ncvar: `bool`, optional
-        If False then do not consider the netCDF variable name.
-
-    all_names: `bool`, optional
-        If True then return a list of all possible names.
-
-    custom: sequence of `str`, optional
-        Replace the ordered list of properties from which to seatch
-        for a name. The default list is ``['standard_name', 'cf_role',
-        'long_name']``.
-
-        *Parameter example:*
-          ``custom=['project']``
-
-        *Parameter example:*
-          ``custom=['project', 'long_name']``
+        If no identity can be found then return the value of the
+        default parameter.
 
 :Returns:
 
-        The name. If the *all_names* parameters is True then a list of
-        all possible names.
+        The identity.
 
 **Examples:**
 
->>> f.properties()
+>>> b.inherited_properties()
 {'foo': 'bar',
- 'long_name': 'Air Temperature',
- 'standard_name': 'air_temperature'}
->>> f.nc_get_variable()
-'tas'
->>> f.name()
-'air_temperature'
->>> f.name(all_names=True)
-['air_temperature', 'long_name:Air Temperature', 'ncvar:tas']
->>> x = f.del_property('standard_name')
->>> f.name()
-'long_name:Air Temperature'
->>> x = f.del_property('long_name')
->>> f.name()
-'ncvar:tas'
->>> f.name(custom=['foo'])
-'foo:bar'
->>> f.name(default='no name', custom=['foo'])
-['foo:bar', 'no name']
+ 'long_name': 'Longitude'}
+>>> b.properties()
+{'long_name': 'A different long name'}
+>>> b.identity()
+'long_name=A different long name'
+>>> b.del_property('long_name')
+'A different long name'
+>>> b.identity()
+'long_name=Longitude'
 
         '''
         inherited_properties = self.inherited_properties()
@@ -268,17 +243,9 @@ By default the name is the first found of the following:
             properties = bounds.properties()
             bounds.set_properties(inherited_properties)
             bounds.set_properties(properties)
-                        
-#            properties = inherited_properties.copy()
-#            properties.update(self.properties())
-#
-#            bounds = self.copy()
-#            bounds.clear_properties()
-#            bounds.set_properties(properties)
             self = bounds
             
-        return super().identity(default=default, ncvar=ncvar,
-                                custom=custom, all_names=all_names)
+        return super().identity(default=default)
     #--- End: def
 
 #--- End: class

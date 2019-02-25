@@ -64,6 +64,11 @@ to the order of the elements.
     `str`
         The construct type.
 
+**Examples:**
+
+>>> f.construct_type
+'domain_axis'
+
         '''
         return 'domain_axis'
     #--- End: def

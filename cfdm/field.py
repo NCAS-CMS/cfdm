@@ -1,15 +1,11 @@
 from __future__ import print_function
 from builtins import (str, super, zip)
-#primordial Kadavar - Come Back Life
-import re
+
 from . import mixin
 from . import core
-
 from . import Constructs
 from . import Domain
 
-_debug = False
-       
 
 class Field(mixin.NetCDFDataVariable,
             mixin.NetCDFVariable,
@@ -110,7 +106,7 @@ x.__str__() <==> str(x)
         # Append the netCDF variable name
         ncvar = self.nc_get_variable(None)
         if ncvar is not None:
-            title += " (ncvar:{0})".format(ncvar)
+            title += " (ncvar%{0})".format(ncvar)
         
         string = [title]
         string.append(''.ljust(len(string[0]), '-'))
@@ -121,7 +117,7 @@ x.__str__() <==> str(x)
         if calendar is not None:
             units += ' {0} {1}'.format(calendar)
             
-        axis_name = self.domain_axis_name
+#        axis_name = self.domain_axis_name
 
         # Axes
         data_axes = self.get_data_axes(default=())
@@ -154,14 +150,14 @@ x.__str__() <==> str(x)
             if dimension_coord:
                 # Dimension coordinate
                 axis = self.construct.data_axes()[key][0]
-                name = variable.identity(ncvar=True, default=key)
+                name = variable.identity(default=key)
                 if variable.has_data():
                     name += '({0})'.format(variable.get_data().size)
                 elif hasattr(variable, 'nc_get_external'):
                     if variable.nc_get_external():
                         ncvar = variable.nc_get_variable(None)
                         if ncvar is not None:
-                            x.append(' (external variable: ncvar:{})'.format(ncvar))
+                            x.append(' (external variable: ncvar%{})'.format(ncvar))
                         else:
                             x.append(' (external variable)')
                             
@@ -175,7 +171,7 @@ x.__str__() <==> str(x)
                 # Cell measure
                 # Field ancillary
                 # Domain ancillary
-                x = [variable.identity(ncvar=True, default=key)]
+                x = [variable.identity(default=key)]
 
                 if variable.has_data():
                     shape = [axis_names[axis] for axis in axes]
@@ -186,7 +182,7 @@ x.__str__() <==> str(x)
                     if variable.nc_get_external():
                         ncvar = variable.nc_get_variable(None)
                         if ncvar is not None:
-                            x.append(' (external variable: ncvar:{})'.format(ncvar))
+                            x.append(' (external variable: ncvar%{})'.format(ncvar))
                         else:
                             x.append(' (external variable)')
             #--- End: if
@@ -441,7 +437,7 @@ construct from a dataset.
 :Parameters:
 
     value:
-        TODO
+        The value of the data_compliance component
 
 :Returns:
 
@@ -497,16 +493,11 @@ False
     def del_construct(self, key=None, default=ValueError()):
         '''Remove a metadata construct.
 
-The *unique* construct that satisfies *all* of the given criteria is
-removed. All metadata constructs are selected if no parameters are
-specified. By default an exception is raised if no unique construct is
-selected.
-
 If a domain axis construct is selected for removal then it can't be
 spanned by any data arrays of the field nor metadata constructs, nor
 be referenced by any cell method constructs. However, a domain
-ancillary constructs may be removed even if it is referenced by
-coordinate reference coinstruct.
+ancillary construct may be removed even if it is referenced by
+coordinate reference construct.
 
 .. versionadded:: 1.7.0
 
@@ -516,7 +507,7 @@ coordinate reference coinstruct.
 :Parameters:
 
     key: `str`
-        TODO
+        Remove the metadata construct with the given construct key.
 
     default: optional
         Return the value of the *default* parameter if no unique
@@ -531,19 +522,27 @@ coordinate reference coinstruct.
 
 **Examples:**
 
-TODO
+>>> f.del_construct('auxiliarycoordinate2')
+<AuxiliaryCoordinate: latitude(111, 106) degrees_north>
+>>> f.del_construct('auxiliarycoordinate2')
+ValueError: Can't get remove non-existent construct
+>>> f.del_construct('auxiliarycoordinate2', default=False)
+False
+
         '''
-        if key in self.get_data_axes(default=()):
-            raise ValueError(
+        if key in self.domain_axes:
+            if key in self.get_data_axes(default=()):
+                raise ValueError(
 "Can't remove domain axis {!r} that is spanned by the data of the field construct".format(
     cid))
 
-        for cid, axes in self.constructs.data_axes().items():
-            if key in axes:
-                raise ValueError(
+            for cid, axes in self.constructs.data_axes().items():
+                if key in axes:
+                    raise ValueError(
 "Can't remove domain axis {!r} that is spanned by the the data of metadata construct {!r}".format(cid, key))
+        #--- End: if
 
-        return self.constructs._del_construct(key=key)
+        return self.constructs._del_construct(key, default=default)
     #--- End: def
 
     def dump(self, display=True, _level=0, _title=None):
@@ -578,9 +577,9 @@ data arrays.
             _title = self.identity(default=None)
             if ncvar is not None:
                 if _title is None:
-                    _title = "ncvar:{0}".format(ncvar)
+                    _title = "ncvar%{0}".format(ncvar)
                 else:
-                    _title += " (ncvar:{0})".format(ncvar)
+                    _title += " (ncvar%{0})".format(ncvar)
             #--- End: if
             if _title is None:
                 _title = ''
@@ -654,20 +653,6 @@ data arrays.
             return string
     #--- End: def
 
-#    def equal_datums(self, coordinate_reference0,
-#                     coordinate_reference1, rtol=None, atol=None,
-#                     verbose=False, ignore_data_type=False,
-#                     ignore_fill_value=False,
-#                     ignore_type=False):
-#        '''
-#        '''
-#        coordinate_references = self.coordinate_references()
-#        
-#        datum0 = coordinate_references[coordinate_reference0].get_datum()
-#        datum1 = coordinate_references[coordinate_reference1].get_datum()
-#        
-#    #--- End: def
-    
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
@@ -861,7 +846,6 @@ construct, into the data array.
         '''
         f = self.copy()
         
-#        domain_axis = self.domain_axes.filter_by_key(axis).value(default=None)
         domain_axis = self.domain_axes.get(axis, None)
         if domain_axis is None:
             raise ValueError("Can't insert non-existent domain axis: {}".format(axis))
@@ -887,22 +871,21 @@ construct, into the data array.
     #--- End: def
 
     def convert(self, key, full_domain=True):
-        '''Return a new field construct based on a metadata construct.
+        '''Convert a metadata construct into a new field construct.
 
-A unique metdata construct is identified with the *description* and
-*key* parameters, and a new field construct based on its properties
-and data is returned. The new field construct always has domain axis
-constructs corresponding to the data, and may also contain other
-metadata constructs that further define its domain.
+The new field construct has the properties and data of the metadata
+construct, and domain axis constructs corresponding to the data. By
+default it also contains other metadata constructs (such as dimension
+coordinate and coordinate reference constructs) that define its
+domain.
 
-The `cfdm.read` function allows field constructs to be derived
-directly from the netCDF variables that, in turn, correspond to
-metadata constructs. In this case, the new field constructs will have
-a domain limited to that which can be inferred from the corresponding
-netCDF variable, but without the connections that are defined by the
-parent netCDF data variable. This will usually result in different
-field constructs than are created with the `~Field.convert` method,
-regardless of the setting of the *full_domain* parameter.
+The `cfdm.read` function allows a field construct to be derived
+directly from a netCDF variable that corresponds to a metadata
+construct. In this case, the new field construct will have a domain
+limited to that which can be inferred from the corresponding netCDF
+variable - typically only domain axis and dimension coordinate
+constructs. This will usually result in a different field construct to
+that created with the `~Field.convert` method.
 
 .. versionadded:: 1.7.0
 
@@ -911,7 +894,7 @@ regardless of the setting of the *full_domain* parameter.
 :Parameters:
 
     key: `str` 
-        Select the metadata construct with the given construct key.
+        Convert the metadata construct with the given construct key.
 
     full_domain: `bool`, optional
         If False then do not create a domain, other than domain axis
@@ -962,18 +945,6 @@ Coord references: rotated_latitude_longitude
 Field: surface_altitude (ncvar%surface_altitude)
 ------------------------------------------------
 Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
->>> g = cfdm.read('file.nc', convert='domain_ancillary')
->>> g
-[<Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m>,
- <Field: ncvar%b(atmosphere_hybrid_height_coordinate(1))>,
- <Field: surface_altitude(grid_latitude(10), grid_longitude(9)) m>,
- <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
->>> print(g[2])
-Field: surface_altitude (ncvar%surface_altitude)
-------------------------------------------------
-Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
-Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
-                : grid_longitude(9) = [-4.7, ..., -1.18] degrees
 		   
         '''
         c = self.constructs.filter_by_key(key).value()
@@ -1017,20 +988,6 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
                     f.set_construct(construct, key=ccid, axes=axes, copy=True)
             #--- End: for
             
-#           for construct_type in ('dimension_coordinate',
-#                                  'auxiliary_coordinate',
-#                                  'cell_measure'):
-#               for ccid, construct in self.constructs.filter_by_type(construct_type).items():
-#                   axes = constructs_data_axes.get(ccid)
-#                   if axes is None:
-#                       continue
-#   
-#                   if set(axes).issubset(data_axes):
-#                       f.set_construct(construct, key=ccid, axes=axes,
-#                                       copy=True)
-#               #--- End: for
-#           #--- End: for
-       
             # Add coordinate references which span a subset of the item's
             # axes
             for rcid, ref in self.coordinate_references.items():
@@ -1165,27 +1122,10 @@ may be selected for removal.
 
         data_axes = self.get_data_axes(default=())
 
-#        domain_axes = self.domain_axes
-#            
-#        if axes is None:
-#            axes = [axis for axis in data_axes if domain_axes[axis].get_size(None) == 1]
-#        else:
-#            for axis in axes:
-#                if domain_axes[axis].get_size() != 1:
-#                    raise ValueError(
-#"Can't squeeze domain axis with size {}".format(domain_axes[axis].get_size(None)))
-#            #--- End: for
-#            
-#            axes = [axis for axis in axes if axis in data_axes]
-#        #--- End: if
-
-        new_data_axes = [data_axes[i] for i in range(self.data.ndim) if i not in axes]
+        new_data_axes = [data_axes[i]
+                         for i in range(self.data.ndim) if i not in axes]
         
-#        new_data_axes = [axis for axis in data_axes if axis not in axes]
-#        f.set_data_axes(new_data_axes)
-
         # Squeeze the field's data array
- #       iaxes = [data_axes.index(axis) for axis in axes]
         new_data = self.data.squeeze(axes)
 
         f.set_data(new_data, new_data_axes)
@@ -1270,9 +1210,11 @@ may be selected for removal.
 **Examples:**
 
 >>> f.field_ancillaries
+Constructs:
 {}
 
 >>> f.field_ancillaries
+Constructs:
 {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
         '''
@@ -1280,7 +1222,7 @@ may be selected for removal.
     #--- End: def
 
     @property
-    def cell_methods(self): #, copy=False):
+    def cell_methods(self):
         '''Return cell method constructs.
 
 .. versionadded:: 1.7.0
@@ -1304,75 +1246,16 @@ may be selected for removal.
 **Examples:**
 
 >>> f.cell_methods
-OrderedDict()
+Constructs:
+{}
 
 >>> f.cell_methods
-OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+Constructs:
+{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+ 'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
         '''
         return self.constructs.filter_by_type('cell_method')
     #--- End: def
-    
-#    def cell_methods(self, copy=False):
-#        '''
-#        '''
-#        out = self.Constructs.cell_methods(copy=copy)
-#
-#        if not description:
-#            return self.Constructs.cell_methods()
-#        
-#        if not isinstance(description, (list, tuple)):
-#            description = (description,)
-#            
-#        cms = []
-#        for d in description:
-#            if isinstance(d, dict):
-#                cms.append([self._CellMethod(**d)])
-#            elif isinstance(d, basestring):
-#                cms.append(self._CellMethod.parse(d))
-#            elif isinstance(d, self._CellMethod):
-#                cms.append([d])
-#            else:
-#                raise ValueError("asd 123948u m  BAD DESCRIPTION TYPE")
-#        #--- End: for
-#
-#        keys = self.cell_methods().keys()                    
-#        f_cell_methods = self.cell_methods().values()
-#        nf = len(f_cell_methods)
-#
-#        out = {}
-#        
-#        for d in cms:
-#            c = self._conform_cell_methods(d)
-#
-#            n = len(c)
-#            for j in range(nf-n+1):
-#                found_match = True
-#                for i in range(0, n):
-#                    if not f_cell_methods[j+i].match(c[i].properties()):
-#                        found_match = False
-#                        break
-#                #--- End: for
-#            
-#                if not found_match:
-#                    continue
-#
-#                # Still here?
-#                key = tuple(keys[j:j+n])
-#                if len(key) == 1:
-#                    key = key[0]
-#
-#                if key not in out:
-#                    value = f_cell_methods[j:j+n]
-#                    if copy:
-#                    value = [cm.copy() for cm in value]                        
-#
-#                out[key] = value
-#            #--- End: for
-#        #--- End: for
-#        
-#        return out
-#    #--- End: def
 
 #--- End: class

@@ -103,6 +103,11 @@ cell measure variables correspond to cell measure constructs.
     `str`
         The construct type.
 
+**Examples:**
+
+>>> f.construct_type
+'cell_measure'
+
         '''
         return 'cell_measure'
     #--- End: def

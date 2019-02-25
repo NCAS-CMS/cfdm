@@ -384,7 +384,25 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(h.data.ndim == f.data.ndim + 1)
         self.assertTrue(h.get_data_axes()[:-1] == f.get_data_axes())
     #--- End: def
+    
+    def test_Field_del_construct(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
 
+        f = self.f.copy()
+
+        a = f.del_construct('auxiliarycoordinate1')
+        self.assertTrue(a.construct_type == 'auxiliary_coordinate')
+
+        try:
+            a = f.del_construct('auxiliarycoordinate1')
+        except ValueError:
+            pass
+            
+        a = f.del_construct('auxiliarycoordinate1', default=None)
+        self.assertTrue(a == None)        
+    #--- End: def
+    
     def test_Field_field_ancillaries(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

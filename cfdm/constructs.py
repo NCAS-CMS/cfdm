@@ -130,7 +130,7 @@ x.__str__() <==> str(x)
 :Parameters:
 
     key: `str`
-        The key for the domain axis construct.
+        The construct key for the domain axis construct.
 
         *Parameter example:*
           ``key='domainaxis2'``
@@ -142,14 +142,15 @@ x.__str__() <==> str(x)
 
 **Examples:**
 
->>> f.domain_axis_name('domainaxis1')
+>>> c.domain_axis_name('domainaxis1')
 'longitude'
 
         '''
         domain_axes = self.filter_by_type('domain_axis')
         
         if key not in domain_axes:
-            return default
+            raise ValueError(
+                'No domain axis construct with key {!r}'.format(key))
 
         constructs_data_axes = self.data_axes()
 
@@ -157,10 +158,13 @@ x.__str__() <==> str(x)
         for dkey, dim in self.filter_by_type('dimension_coordinate').items():
             if constructs_data_axes[dkey] == (key,):
                 # Get the name from a dimension coordinate
-                name = dim.identity(ncvar=False, default=None)
+                name = dim.identity()
+                if name.startswith('ncvar%'):
+                    name = None
+                
                 break
         #--- End: for
-        if name is not None:
+        if name:
             return name
 
         found = False
@@ -171,10 +175,13 @@ x.__str__() <==> str(x)
                     break
                 
                 # Get the name from an auxiliary coordinate
-                name = aux.identity(ncvar=False, default=None)
+                name = aux.identity()
+                if name.startswith('ncvar%'):
+                    name = None
+
                 found = True
         #--- End: for
-        if name is not None:
+        if name:
             return name
 
         ncdim = domain_axes[key].nc_get_dimension(None)
@@ -550,7 +557,7 @@ Select constructs that have a netCDF variable name of 'time':
         for cid, construct in tuple(out.items()):
             ok = False
             for value0 in identities:          
-                for value1 in construct.identities(extra=('key%'+cid,)):
+                for value1 in construct.identities() + ['key%'+cid]:
                     ok = self._matching_values(value0, construct, value1)
                     if ok:
                         break

@@ -4,7 +4,6 @@ from builtins import super
 import textwrap
 
 import numpy
-import sys
 
 from . import Container
 
@@ -17,13 +16,13 @@ class Properties(Container):
     '''
     def _dump_properties(self, _prefix='', _level=0,
                          _omit_properties=None):
-        '''TODO
+        '''Dump the properties.
 
 .. versionadded:: 1.7.0
 
 :Parameters:
 
-    omit: sequence of `str`, optional
+    _omit_properties: sequence of `str`, optional
         Omit the given CF properties from the description.
 
     _level: `int`, optional
@@ -31,8 +30,6 @@ class Properties(Container):
 :Returns:
 
     `str`
-
-**Examples:**
 
 '''
         indent0 = '    ' * _level
@@ -188,101 +185,6 @@ False
         #--- End: for
 
         return True
-    #--- End: def
-
-    def identities(self, extra=None):
-        '''Return TODO
-
-By default the name is the first found of the following:
-
-1. The "standard_name" property.
-2. The "cf_role" property, preceeded by ``'cf_role='``.
-3. The "long_name" property, preceeded by ``'long_name='``.
-4. The netCDF variable name, preceeded by ``'ncvar%'``.
-5. The value of the *default* parameter.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    default: optional
-        If no other name can be found then return the value of the
-        *default* parameter. By default `None` is returned in this
-        case.
-
-    ncvar: `bool`, optional
-        If False then do not consider the netCDF variable name.
-
-    all_names: `bool`, optional
-        If True then return a list of all possible names.
-
-    custom: sequence of `str`, optional
-        Replace the ordered list of properties from which to seatch
-        for a name. The default list is ``['standard_name', 'cf_role',
-        'long_name']``.
-
-        *Parameter example:*
-          ``custom=['project']``
-
-        *Parameter example:*
-          ``custom=['project', 'long_name']``
-
-:Returns:
-
-        The name. If the *all_names* parameter is True then a list of
-        all possible names.
-
-**Examples:**
-
->>> f.properties()
-{'foo': 'bar',
- 'long_name': 'Air Temperature',
- 'standard_name': 'air_temperature'}
->>> f.nc_get_variable()
-'tas'
->>> f.name()
-'air_temperature'
->>> f.name(all_names=True)
-['air_temperature', 'long_name=Air Temperature', 'ncvar%tas']
->>> x = f.del_property('standard_name')
->>> f.name()
-'long_name=Air Temperature'
->>> x = f.del_property('long_name')
->>> f.name()
-'ncvar%tas'
->>> f.name(custom=['foo'])
-'foo=bar'
->>> f.name(default='no name', custom=['foo'])
-['foo=bar', 'no name']
-
-        '''
-        properties = self.properties()
-        properties.pop('cf_role', None)
-        properties.pop('long_name', None)
-        
-        out = ['{0}={1}'.format(prop, value)
-               for prop, value in sorted(properties.items())]
-
-        if extra:
-            out = list(extra) + out
-            
-        n = self.nc_get_variable(None)
-        if n is not None:
-            out.insert(0, 'ncvar%{0}'.format(n))
-
-        n = self.get_property('long_name', None)
-        if n is not None:
-            out.insert(0, 'long_name={}'.format(n))
-            
-        n = self.get_property('cf_role', None)
-        if n is not None:
-            out.insert(0, 'cf_role={}'.format(n))
-            
-        n = self.get_property('standard_name', None)
-        if n is not None:
-            out.insert(0, n)
-            
-        return out
     #--- End: def
 
 #--- End: class

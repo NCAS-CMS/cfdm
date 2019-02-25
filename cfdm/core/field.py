@@ -141,13 +141,38 @@ and institution).
     `str`
         The construct type.
 
+**Examples:**
+
+>>> f.construct_type
+'field'
+
         '''
         return 'field'
     #--- End: def        
 
     @property
     def constructs(self):
-        '''<TODO>
+        '''Return the metdata constructs.
+
+.. versionadded:: 1.7.0
+
+:Returns:
+
+    `Constructs`
+        The constructs.
+
+**Examples:**
+
+>>> prnt(f.constructs)
+Constructs:
+{'cellmethod0': <CellMethod: area: mean>,
+ 'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+ 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+ 'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+ 'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
+
         '''
         return self._get_component('constructs')
     #--- End: def
@@ -191,7 +216,10 @@ True
 :Parameters:
 
     key: `str`, optional
-        TODO
+        Specify a metadata construct, instead of the field construct.
+
+        *Parameter example:*
+          ``key='auxiliarycoordinate0'``
 
     default: optional
         Return the value of the *default* parameter if the data axes
@@ -206,26 +234,20 @@ True
 
 **Examples:**
 
->>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
->>> f.get_data_axes()
-('domainaxis0', 'domainaxis1')
 >>> f.del_data_axes()
 ('domainaxis0', 'domainaxis1')
->>> print(f.del_dataxes(None))
-None
->>> print(f.get_data_axes(None))
-None
+
+>>> f.del_data_axes(key='dimensioncoordinate2')
+('domainaxis1',)
+
+>>> f.has_data_axes()
+False
+>>> f.has_data_axes(default='no axes')
+'no axes'
 
         '''   
         if key is not None:
-            try:
-                data_axes = self.constructs.data_axes()[key]
-            except KeyError:
-                return self._default(default, message='asd aosg8qwg dlb')
-            else:
-                self.constructs._del_data_axes(key)
-                
-            return data_axes
+            return super().del_data_axes(key, default=default)
 
         try:
             return self._del_component('data_axes')
@@ -278,29 +300,64 @@ None
 
 **Examples:**
 
->>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
 >>> f.get_data_axes()
 ('domainaxis0', 'domainaxis1')
->>> f.del_data_axes()
-('domainaxis0', 'domainaxis1')
->>> print(f.del_dataxes(None))
-None
->>> print(f.get_data_axes(default=None))
-None
+
+>>> f.get_data_axes(key='dimensioncoordinate2')
+('domainaxis1',)
+
+>>> f.has_data_axes()
+False
+>>> f.get_data_axes(default='no axes')
+'no axes'
 
         '''
         if key is not None:
-            try:
-                return self.constructs.data_axes()[key]
-            except KeyError:
-                return self._default(default, message='2736492783 e28037')
-        #--- End: if
+            return super().get_data_axes(key, default=default)
         
         try:
             return self._get_component('data_axes')
         except ValueError:
             return self._default(default,
               "{!r} has no data axes".format(self.__class__.__name__))
+    #--- End: def
+
+    def has_data_axes(self, key=None):
+        '''Whether the domain axis constructs spanned by the data of the field
+or of a metadata construct have been set.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `data`, `del_data_axes`, `get_data_axes`, `set_data_axes`
+
+:Parameters:
+
+    key: `str`, optional
+        Specify a metadata construct, instead of the field construct.
+
+        *Parameter example:*
+          ``key='domainancillary1'``
+
+:Returns:
+
+    `bool` 
+        True if domain axis constructs that span the data been set,
+        otherwise False.
+
+**Examples:**
+
+>>> f.has_data_axes()
+True
+
+>>> f.has_data_axes(key='auxiliarycoordinate2')
+False
+
+        '''
+        axes = self.get_data_axes(key=key, default=None)
+        if axes is None:
+            return False
+
+        return True
     #--- End: def
     
     def del_construct(self, key):
@@ -379,19 +436,28 @@ TODO
     #--- End: def
 
     def set_data_axes(self, axes, key=None):
-        '''Set the domain axes spanned by the data array.
+        '''Set the domain axis constructs spanned by the data of the field or
+of a metadata construct.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `del_data_axes`, `get_data`, `get_data_axes`
+.. seealso:: `data`, `del_data_axes`, `get_data`, `get_data_axes`,
+             `has_data_axes`
 
 :Parameters:
 
      axes: sequence of `str`
-        The identifiers of the domain axes spanned by the data array.
+        The identifiers of the domain axis constructs spanned by the
+        data of the field or of a metadata construct.
 
         *Parameter example:*
-          ``axes=['domainaxis0', 'domainaxis1']``
+          ``axes=['domainaxis1', 'domainaxis0']``
+
+     key: `str`, optional
+        Specify a metadata construct, instead of the field construct.
+
+        *Parameter example:*
+          ``key='domainancillary1'``
 
 :Returns:
 
@@ -400,87 +466,21 @@ TODO
 **Examples:**
 
 >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
->>> f.get_data_axes()
-('domainaxis0', 'domainaxis1')
->>> f.del_data_axes()
-('domainaxis0', 'domainaxis1')
->>> print(f.del_dataxes(None))
-None
->>> print(f.get_data_axes(None))
-None
+
+>>> f.set_data_axes(['domainaxis0'], key='dimensioncoordinate1')
 
         '''
-        if key is None:
-            domain_axes = self.constructs.filter_by_type('domain_axis')
-            for axis in axes:
-                if axis not in domain_axes:
-                    raise ValueError(
+        if key is not None:
+            return super().set_data_axes(axes=axes, key=key)
+        
+        domain_axes = self.constructs.filter_by_type('domain_axis')
+        for axis in axes:
+            if axis not in domain_axes:
+                raise ValueError(
 "Can't set data axes: Domain axis {!r} doesn't exist".format(axis))
-            # <TODO> check shape
-            self._set_component('data_axes', tuple(axes), copy=False)
-        else:
-            self.constructs._set_construct_data_axes(key=key, axes=axes)
+
+        # <TODO> check shape
+        self._set_component('data_axes', tuple(axes), copy=False)
     #--- End: def
-    
-#    def cell_methods(self, copy=False):
-#        '''
-#        '''
-#        out = self.Constructs.cell_methods(copy=copy)
-#
-#        if not description:
-#            return self.Constructs.cell_methods()
-#        
-#        if not isinstance(description, (list, tuple)):
-#            description = (description,)
-#            
-#        cms = []
-#        for d in description:
-#            if isinstance(d, dict):
-#                cms.append([self._CellMethod(**d)])
-#            elif isinstance(d, basestring):
-#                cms.append(self._CellMethod.parse(d))
-#            elif isinstance(d, self._CellMethod):
-#                cms.append([d])
-#            else:
-#                raise ValueError("asd 123948u m  BAD DESCRIPTION TYPE")
-#        #--- End: for
-#
-#        keys = self.cell_methods().keys()                    
-#        f_cell_methods = self.cell_methods().values()
-#        nf = len(f_cell_methods)
-#
-#        out = {}
-#        
-#        for d in cms:
-#            c = self._conform_cell_methods(d)
-#
-#            n = len(c)
-#            for j in range(nf-n+1):
-#                found_match = True
-#                for i in range(0, n):
-#                    if not f_cell_methods[j+i].match(c[i].properties()):
-#                        found_match = False
-#                        break
-#                #--- End: for
-#            
-#                if not found_match:
-#                    continue
-#
-#                # Still here?
-#                key = tuple(keys[j:j+n])
-#                if len(key) == 1:
-#                    key = key[0]
-#
-#                if key not in out:
-#                    value = f_cell_methods[j:j+n]
-#                    if copy:
-#                    value = [cm.copy() for cm in value]                        
-#
-#                out[key] = value
-#            #--- End: for
-#        #--- End: for
-#        
-#        return out
-#    #--- End: def
     
 #--- End: class

@@ -147,6 +147,11 @@ frame and consists of the following:
     `str`
         The construct type.
 
+**Examples:**
+
+>>> f.construct_type
+'coordinate_reference'
+
         '''
         return 'coordinate_reference'
 

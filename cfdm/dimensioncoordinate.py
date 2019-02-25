@@ -85,9 +85,8 @@ indicated by the cell method constructs.
         self._initialise_netcdf(source)
     #--- End: def
 
-    def dump(self, display=True, _omit_properties=None, field=None,
-             key=None, _level=0, _title=None, _axes=None,
-             _axis_names=None):
+    def dump(self, display=True, _omit_properties=None, _key=None,
+             _level=0, _title=None, _axes=None, _axis_names=None):
         '''A full description of the dimension coordinate construct.
 
 Returns a description of all properties, including those of
@@ -110,18 +109,17 @@ components, and provides selected values of all data arrays.
 
         '''
         if _title is None:
-            if key is None:
+            if _key is None:
                 default = ''
             else:
-                default = key
+                default = 'key%{0}'.format(key)
                 
             _title = 'Dimension coordinate: ' + self.identity(default=default)
                 
         return super().dump(display=display,
                             _omit_properties=_omit_properties,
-                            field=field, key=key, _level=_level,
-                            _title=_title, _axes=_axes,
-                            _axis_names=_axis_names)
+                            _key=_key, _level=_level, _title=_title,
+                            _axes=_axes, _axis_names=_axis_names)
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, verbose=False,

@@ -4,7 +4,6 @@
 .. _Tutorial:
 
 
-
 **Tutorial**
 ============
 
@@ -1031,7 +1030,7 @@ A construct's identity may be any one of the following
    ``'long_name=Grid latitude name'``.
 
 .. code-block:: python3
-   :caption: *Get constructs by their name.*
+   :caption: *Get constructs by their identity.*
 	
    >>> print(t)
    Field: air_temperature (ncvar%ta)
@@ -1066,9 +1065,10 @@ A construct's identity may be any one of the following
    {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
 
 Each construct has an `!identity` method that, by default, returns the
-least ambiguous name (defined in the documentation of a construct's
-`!identity` method); and an `!identities` method that returns a list
-of all of the identities that would select the construct.
+least ambiguous identity (defined in the documentation of a
+construct's `!identity` method); and an `!identities` method that
+returns a list of all of the identities that would select the
+construct.
 
 As a further convenience, selection by construct identity is also
 possible by providing identities to a call of a `Constructs` instance
@@ -1261,7 +1261,7 @@ exist, exactly like the Python `dict.get` method.
    `~Constructs.get_key` method of the `Constructs` instance:
    
    .. code-block:: python3
-      :caption: *Get the construct key of the construct with name
+      :caption: *Get the construct key of the construct with identity
                 "latitude".*
    
       >>> t.constructs('latitude').get_key()
@@ -1300,8 +1300,9 @@ Metadata constructs share the :ref:`same API as the field construct
 
 .. code-block:: python3
    :caption: *Get the metadata construct with units of "km2", find its
-             canonical name, and all of its valid identities, that may
-             be used for selection by the "filter_by_identity" method*
+             canonical identity, and all of its valid identities, that
+             may be used for selection by the "filter_by_identity"
+             method*
 
    >>> area = t.constructs.filter_by_property(units='km2').value()
    >>> area
@@ -1635,9 +1636,7 @@ A coordinate reference construct contains
 
 .. code-block:: python3
    :caption: *Select the vertical coordinate system construct and
-             inspect its coordinate constructs. (Note that the
-             "construct" parameter is required since there is also a
-             dimension coordinate construct with the same name.)*
+             inspect its coordinate constructs.*
      
    >>> crs = t.constructs('standard_name:atmosphere_hybrid_height_coordinate').value()
    >>> crs
@@ -2745,7 +2744,7 @@ Output netCDF variable and dimension names read from a netCDF dataset
 are stored in the resulting field constructs, and may also be set
 manually with the `!nc_set_variable` and `nc_set_dimension`
 methods. If a name has not been set then one will be generated
-internally (usually based on the standard name if it exists).
+internally (usually based on the standard_name if it exists).
 
 It is possible to create netCDF unlimited dimensions and set the HDF5
 chunk size using the `nc_unlimited_dimensions` and

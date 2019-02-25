@@ -33,7 +33,12 @@ number of vertices of each cell.
     `str`
         The construct type.
 
-        '''
+**Examples:**
+
+>>> f.construct_type
+'domain_ancillary'
+
+'''
         return 'domain_ancillary' 
     #--- End: def
 

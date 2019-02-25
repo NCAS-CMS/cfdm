@@ -77,9 +77,8 @@ number of vertices of each cell.
         self._initialise_netcdf(source)
     #--- End: def
     
-    def dump(self, display=True, _omit_properties=None, field=None,
-             key='', _level=0, _title=None, _axes=None,
-             _axis_names=None):
+    def dump(self, display=True, _omit_properties=None, _key=None,
+             _level=0, _title=None, _axes=None, _axis_names=None):
         '''A full description of the domain ancillary construct.
 
 Returns a description of all properties, including those of
@@ -104,18 +103,17 @@ components, and provides selected values of all data arrays.
         if _title is None:
             ncvar = self.nc_get_variable(None)
             if ncvar is not None:
-                ncvar = ' (ncvar:{0})'.format(ncvar)
+                ncvar = ' (ncvar%{0})'.format(ncvar)
             else:
                 ncvar = ''
 
-            _title = 'Domain Ancillary: ' + self.identity(default=key) + ncvar
+            _title = 'Domain Ancillary: ' + self.identity(default=_key) + ncvar
             
 
         return super().dump(display=display,
                             _omit_properties=_omit_properties,
-                            field=field, key=key, _level=_level,
-                            _title=_title, _axes=_axes,
-                            _axis_names=_axis_names)
+                            _key=_key, _level=_level, _title=_title,
+                            _axes=_axes, _axis_names=_axis_names)
     #--- End: def`
 
     def equals(self, other, rtol=None, atol=None, verbose=False,

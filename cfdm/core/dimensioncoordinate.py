@@ -42,6 +42,11 @@ indicated by the cell method constructs.
     `str`
         The construct type.
 
+**Examples:**
+
+>>> f.construct_type
+'dimension_coordinate'
+
         '''
         return 'dimension_coordinate'
     #--- End: def

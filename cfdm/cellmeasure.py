@@ -1,6 +1,6 @@
 from __future__ import print_function
 from builtins import super
-#primordial Enter Shikari - Take My Country Back
+
 from . import mixin
 from . import core
 
@@ -80,9 +80,8 @@ cell measure variables correspond to cell measure constructs.
         self._initialise_netcdf(source)
     #--- End: def
     
-    def dump(self, display=True, _omit_properties=None, field=None,
-             key=None, _level=0, _title=None, _axes=None,
-             _axis_names=None):
+    def dump(self, display=True, _omit_properties=None, _key=None,
+             _level=0, _title=None, _axes=None, _axis_names=None):
         '''A full description of the cell measure construct.
 
 Returns a description of all properties, including those of
@@ -118,7 +117,7 @@ components, and provides selected values of all data arrays.
                     ncvar = ''
                 _title += ' (external variable: {0})'.format(ncvar)
                 
-        return super().dump( display=display, field=field, key=key,
+        return super().dump( display=display, _key=_key,
                              _omit_properties=_omit_properties,
                              _level=_level, _title=_title,
                              _axes=_axes, _axis_names=_axis_names)
@@ -252,14 +251,13 @@ False
         return True
     #--- End: def
 
-    def identity(self, default=None, ncvar=True, custom=None,
-             all_names=False):
-        '''Return a name for the cell measure construct.
+    def identity(self, default=''):
+        '''Return the canonical identity.
 
-By default the name is the first found of the following:
+By default the identity is the first found of the following:
 
-1. The "standard_name" property.
-2. The measure property, preceeded by 'measure:'.
+1. The measure property, preceeded by ``'measure:'``.
+2. The "standard_name" property.
 3. The "cf_role" property, preceeded by 'cf_role='.
 4. The "long_name" property, preceeded by 'long_name='.
 5. The netCDF variable name, preceeded by 'ncvar%'.
@@ -267,135 +265,113 @@ By default the name is the first found of the following:
 
 .. versionadded:: 1.7.0
 
+.. seealso:: `identities`
+
 :Parameters:
 
     default: optional
-        If no other name can be found then return the value of the
-        *default* parameter. By default `None` is returned in this
-        case.
-
-    ncvar: `bool`, optional
-        If False then do not consider the netCDF variable name.
-
-    all_names: `bool`, optional
-        If True then return a list of all possible names.
-
-    custom: sequence of `str`, optional
-        Replace the ordered list of properties from which to seatch
-        for a name. The default list is ``['standard_name', 'cf_role',
-        'long_name']``.
-
-        *Parameter example:*
-          ``custom=['project']``
-
-        *Parameter example:*
-          ``custom=['project', 'long_name']``
+        If no identity can be found then return the value of the
+        default parameter.
 
 :Returns:
 
-        The name. If the *all_names* parameter is True then a list of
-        all possible names.
+        The identity.
 
 **Examples:**
 
 >>> c.get_measure()
 'area'
->>> f.properties()
-{'foo': 'bar',
- 'long_name': 'Area',
+>>> c.properties()
+{'long_name': 'Area',
  'standard_name': 'cell_area'}
->>> c.name()
+>>> c.nc_get_variable()
+'areacello'
+>>> c.identity(default='no identity')
+'measure:area'
+>>> c.del_measure()
+'area'
+>>> c.identity()
 'cell_area'
->>> c.name(all_names=True)
-['cell_area', 'measure:area', 'long_name=Area', 'ncvar%areacella']
+>>> c.del_propery('standard_name')
+'cell_area'
+>>> c.identity()
+'long_name=Area'
+>>> c.del_propery('long_name')
+'Area'
+>>> c.identity()
+'ncvar%areacello'
+>>> c.nc_del_variable()
+'areacello'
+>>> c.identity()
+''
+>>> c.identity(default='no identity')
+'no identity'
 
         '''
-        out = []
+        n = self.get_measure(None)
+        if n is not None:
+            return 'measure:{0}'.format(n)
 
-        if custom is None:
-            n = self.get_property('standard_name', None)
+        n = self.get_property('standard_name', None)
+        if n is not None:
+            return n
+
+        for prop in ('cf_role', 'long_name'):
+            n = self.get_property(prop, None)
             if n is not None:
-                out.append(n)
-
-            if all_names or not out:
-                n = self.get_measure(None)
-                if n is not None:
-                    out.append('measure:{}'.format(n))
-
-            custom = ('cf_role', 'long_name')
-            
-        if all_names or not out:
-            for prop in custom:
-                n = self.get_property(prop, None)
-                if n is not None:
-                    out.append('{0}={1}'.format(prop, n))
-                    if not all_names:
-                        break
-        #--- End: if
+                return '{0}={1}'.format(prop, n)
+        #--- End: for
         
-        if ncvar and (all_names or not out):
-            n = self.nc_get_variable(None)
-            if n is not None:
-                out.append('ncvar%{0}'.format(n))
-        #--- End: if
-
-        if all_names:
-            if default is not None:
-                out.append(default)
-                
-            return out
-        
-        if out:
-            return out[-1]
+        n = self.nc_get_variable(None)
+        if n is not None:
+            return 'ncvar%{0}'.format(n)
 
         return default
     #--- End: def
 
-    def identities(self, extra=None):
-        '''Return a name.
+    def identities(self):
+        '''Return all possible identities.
 
-By default the name is the first found of the following:
+The identities comprise:
 
-1. The "standard_name" property.
-2. The "cf_role" property, preceeded by ``'cf_role='``.
-3. The "long_name" property, preceeded by ``'long_name='``.
-4. The netCDF variable name, preceeded by ``'ncvar%'``.
-5. The value of the *default* parameter.
+* The measure property, preceeded by ``'measure:'``.
+* The "standard_name" property.
+* All properties, preceeded by the property name and a colon,
+  e.g. ``'long_name:Air temperature'``.
+* The netCDF variable name, preceeded by ``'ncvar%'``.
 
 .. versionadded:: 1.7.0
 
-:Parameters:
-
-TODO
+.. seealso:: `identity`
 
 :Returns:
 
-        The name. If the *all_names* parameter is True then a list of
-        all possible names.
+    `list`
+        The identities.
 
 **Examples:**
 
-TODO
+>>> f.properties()
+{'foo': 'bar',
+ 'long_name': 'Area of cells',
+ 'standard_name': 'cell_area'}
+>>> f.nc_get_variable()
+'areacello'
+>>> f.identities()
+['measure:area',
+ 'cell_area',
+ 'long_name=Area of cells',
+ 'foo=bar',
+ 'standard_name=cell_area',
+ 'ncvar%areacello']
 
         '''
-        out = ['{0}={1}'.format(prop, value)
-               for prop, value in self.properties().items()]
-
+        out = super().identities()
+        
         n = self.get_measure(None)
         if n is not None:
-            out.insert(0, 'measure:{}'.format(n))
-            
-        n = self.get_property('standard_name', None)
-        if n is not None:
-            out.insert(0, n)
-            
-        n = self.nc_get_variable(None)
-        if n is not None:
-            out.append('ncvar%{0}'.format(n))
+            out.insert(0, 'measure:{0}'.format(n))
 
-        if extra:
-            out.extend(extra)
-            
         return out
     #--- End: def
 

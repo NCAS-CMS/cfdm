@@ -105,6 +105,7 @@ Metadata constructs
    ~cfdm.Field.set_construct
    ~cfdm.Field.del_data_axes
    ~cfdm.Field.get_data_axes
+   ~cfdm.Field.has_data_axes
    ~cfdm.Field.set_data_axes
 
 .. rubric:: Attributes

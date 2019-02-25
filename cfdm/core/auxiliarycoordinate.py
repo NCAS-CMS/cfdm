@@ -41,6 +41,11 @@ indicated by the cell method constructs.
     `str`
         The construct type.
 
+**Examples:**
+
+>>> f.construct_type
+'auxiliary_coordinate'
+
         '''
         return 'auxiliary_coordinate'
     #--- End: def

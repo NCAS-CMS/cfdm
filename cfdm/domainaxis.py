@@ -132,120 +132,77 @@ False
         return True
     #--- End: def
 
-    def identity(self, default=None, ncdim=True, custom=None,
-             all_names=False):
-        '''Return a name for the domain axis construct.
+    def identity(self, default=''):
+        '''Return the canonical identity.
 
-By default the name is the first found of the following:
+By default the identity is the first found of the following:
 
 1. The netCDF dimension name, preceeded by 'ncdim%'.
 2. The value of the default parameter.
 
 .. versionadded:: 1.7.0
 
+.. seealso:: `identities`
+
 :Parameters:
 
     default: optional
-        If no name can be found then return the value of the *default*
-        parameter. By default the default is `None`.
-
-    ncdim: `bool`, optional
-        If False then do not consider the netCDF dimension name.
-
-    all_names: `bool`, optional
-        If True then return a list of all possible names.
-
-    custom: optional
-        *Ignored.*
+        If no identity can be found then return the value of the
+        default parameter.
 
 :Returns:
 
-        The name. If the *all_names* parameter is True then a list of
-        all possible names.
+        The identity.
 
 **Examples:**
 
->>> d.name()
+>>> d.nc_get_dimension()
+'time'
+>>> d.identity()
 'ncdim%time'
->>> d.name(all_names=True)
-['ncdim%time']
->>> d.name('default_value', all_names=True)
-['ncdim%time', 'default_value']
+>>> d.identity(default='no identity')
+'ncdim%time'
 >>> d.nc_del_dimension()
 'time'
->>> d.name('default value')
-'default value'
->>> d.name('default value', all_names=True)
-['default value']
+>>> d.identity()
+''
+>>> d.identity(default='no identity')
+'no identity'
 
         '''
-        out = []
-
-        if all_names:
-            if ncdim:
-                n = self.nc_get_dimension(None)
-                if n is not None:
-                    out.append('ncdim%{0}'.format(n))
-            #--- End: if
-            
-            if default is not None:
-                out.append(default)
-
-            return out
-
-        if ncdim:
-            n = self.nc_get_dimension(None)
-            if n is not None:
-                return 'ncdim%{0}'.format(n)
-        #--- End: if
+        n = self.nc_get_dimension(None)
+        if n is not None:
+            return 'ncdim%{0}'.format(n)
         
         return default
     #--- End: def
 
-    def identities(self, extra=None):
-        '''Return a name for the domain axis construct.
+    def identities(self):
+        '''Return all possible identities.
 
-By default the name is the first found of the following:
+The identities comprise:
 
-1. The netCDF dimension name, preceeded by 'ncdim%'.
-2. The value of the default parameter.
+* The netCDF dimension name, preceeded by 'ncdim%'.
 
 .. versionadded:: 1.7.0
 
-:Parameters:
-
-    default: optional
-        If no name can be found then return the value of the *default*
-        parameter. By default the default is `None`.
-
-    ncdim: `bool`, optional
-        If False then do not consider the netCDF dimension name.
-
-    all_names: `bool`, optional
-        If True then return a list of all possible names.
-
-    custom: optional
-        *Ignored.*
+.. seealso:: `identity`
 
 :Returns:
 
-        The name. If the *all_names* parameter is True then a list of
-        all possible names.
+    `list`
+        The identities.
 
 **Examples:**
 
->>> d.name()
-'ncdim%time'
->>> d.name(all_names=True)
+>>> d.nc_get_dimension()
+'time'
+>>> d.identities()
 ['ncdim%time']
->>> d.name('default_value', all_names=True)
-['ncdim%time', 'default_value']
 >>> d.nc_del_dimension()
 'time'
->>> d.name('default value')
-'default value'
->>> d.name('default value', all_names=True)
-['default value']
+>>> d.identities()
+[]
 
         '''
         out = []
@@ -253,9 +210,6 @@ By default the name is the first found of the following:
         n = self.nc_get_dimension(None)
         if n is not None:
             out.append('ncdim%{0}'.format(n))
-            
-        if extra:
-            out.extend(extra)
             
         return out
     #--- End: def
