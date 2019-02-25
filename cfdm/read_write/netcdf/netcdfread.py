@@ -1167,8 +1167,10 @@ variable should be pre-filled with missing values.
         verbose = g['verbose']
         if verbose:
             print('    Geometry container =', ncvar)
+
+        geometry_type = attributes[ncvar].get('geometry_type')
             
-        g['geometries'][ncvar] = {'geometry_type': attributes[ncvar].get('geometry_type')}
+        g['geometries'][ncvar] = {'geometry_type': geometry_type}
 
         node_coordinates = attributes[ncvar].get('node_coordinates')
         node_count       = attributes[ncvar].get('node_count')
@@ -1182,6 +1184,7 @@ variable should be pre-filled with missing values.
         parsed_part_node_count  = self._split_string_by_white_space(ncvar, part_node_count)
 
         if verbose:
+            print('    geometry_type =', geometry_type)
             print('    node_coordinates =', node_coordinates)
             print('    interior_ring    =', interior_ring)
             print('    node_count       =', node_count)
@@ -1235,20 +1238,27 @@ variable should be pre-filled with missing values.
         node_dimension = None
         
         if node_count is not None:
-            # Do not attempt to create a field from a node count
-            # variable
+            # Do not attempt to create a field construct from a netCDF
+            # node count variable
             g['do_not_create_field'].add(node_count)
             
-            # Find the dimension for the total number of cells
+            # Find the netCDF dimension for the total number of cells
             cell_dimension = g['variable_dimensions'][node_count][0]
             
-            # Find the dimension for the total number of nodes
+            # Find the netCDF dimension for the total number of nodes
             node_dimension = g['variable_dimensions'][parsed_node_coordinates[0]][0]
 
-            nodes_per_geometry = self._create_data(node_count)
+#            nodes_per_geometry = self._create_data(node_count)
+            nodes_per_geometry = self._create_Count(ncvar=node_count,
+                                                    ncdim=cell_dimension)
 
             if part_node_count is None:
-                # There is exactly one part per cell
+                # ----------------------------------------------------
+                # Each cell has exactly one part.
+                #
+                # => we can treat the nodes as a contiguous ragged
+                # array
+                # ----------------------------------------------------
                 element_dimension = self._set_ragged_contiguous_parameters(
                     elements_per_instance=nodes_per_geometry,
                     sample_dimension=node_dimension,
@@ -1256,8 +1266,15 @@ variable should be pre-filled with missing values.
                     instance_dimension=cell_dimension)
             
             else:
-                # Do not attempt to create a field from a part node
-                # count variable
+                # ----------------------------------------------------
+                # At least one cell has two or more parts.
+                #
+                # => we must treat the nodes as an indexed contiguous
+                # ragged array
+                # ----------------------------------------------------
+
+                # Do not attempt to create a field construct from a
+                # netCDF part node count variable
                 g['do_not_create_field'].add(part_node_count)
                 
                 if interior_ring is not None:
@@ -1360,9 +1377,6 @@ variable should be pre-filled with missing values.
         instance_dimension_size = self.implementation.get_data_size(elements_per_instance)
         element_dimension_size  = int(self.implementation.get_data_max(elements_per_instance))
         
-#        if g['verbose']:
-#            print('    contiguous array implied shape:', (instance_dimension_size,element_dimension_size))
-    
         # Make sure that the element dimension name is unique
         base = element_dimension
         n = 0
@@ -2527,7 +2541,6 @@ variable's netCDF dimensions.
         g['bounds'][field_ncvar] = {}
         g['coordinates'][field_ncvar] = []
         
-
         properties = g['variable_attributes'][ncvar].copy()
         properties.pop('formula_terms', None)
 
@@ -2535,18 +2548,27 @@ variable's netCDF dimensions.
         attribute = 'bounds'
         ncbounds = None
         geometry = None
-        
+
+#        g['geometries'][geometryncvar]_.update(
+#            {'node_coordinates': parsed_node_coordinates,
+#             'interior_ring   ': interior_ring,
+#             'node_count      ': node_count,
+#             'part_node_count ': part_node_count,
+#             'node_dimension'  : node_dimension,
+#             'part_dimension'  : part_dimension,}
+#        )
+    #--- End: def
+
         # ------------------------------------------------------------
         # Look for a geometry container (CF >= 1.8)
         # ------------------------------------------------------------
         if g['file_version'] >= g['version']['1.8']:
-            ncnodes = properties.get('nodes')
-            if ncnodes is not None:        
+            ncbounds = properties.get('bounds')
+            if ncbounds is not None:        
                 geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
                 geometry = g['geometries'].get(geometry_ncvar)
-                if geometry is not None:
-                    attribute = 'nodes'
-                    ncbounds = ncnodes
+#                if geometry is not None:
+#                    attribute = 'bounds'
         #--- End: if
 
 #if len(axes) == len(ncdimensions):

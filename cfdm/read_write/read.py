@@ -8,62 +8,6 @@ from . import implementation
 from .netcdf import NetCDFRead
 
 
-#from .. import CF
-#
-#from .. import (AuxiliaryCoordinate,
-#                CellMethod,
-#                CellMeasure,
-#                CoordinateReference,
-#                DimensionCoordinate,
-#                DomainAncillary,
-#                DomainAxis,
-#                Field,
-#                FieldAncillary,
-#                Bounds,
-#                Count,
-#                List,
-#                Index,
-#                CoordinateConversion,
-#                Datum)
-#
-#from ..data import (Data,
-#                    GatheredArray,
-#                    NetCDFArray,
-#                    RaggedContiguousArray,
-#                    RaggedIndexedArray,
-#                    RaggedIndexedContiguousArray)
-#
-#from . import CFDMImplementation
-#
-#implementation = CFDMImplementation(
-#    cf_version = CF(),
-#    
-#    AuxiliaryCoordinate = AuxiliaryCoordinate,
-#    CellMeasure         = CellMeasure,
-#    CellMethod          = CellMethod,
-#    CoordinateReference = CoordinateReference,
-#    DimensionCoordinate = DimensionCoordinate,
-#    DomainAncillary     = DomainAncillary,
-#    DomainAxis          = DomainAxis,
-#    Field               = Field,
-#    FieldAncillary      = FieldAncillary,
-#    
-#    Bounds = Bounds,
-#    List   = List,
-#    Index=Index,
-#    Count=Count,
-#    
-#    CoordinateConversion = CoordinateConversion,
-#    Datum                = Datum,
-#    
-#    Data                         = Data,
-#    GatheredArray                = GatheredArray,
-#    NetCDFArray                  = NetCDFArray,
-#    RaggedContiguousArray        = RaggedContiguousArray,
-#    RaggedIndexedArray           = RaggedIndexedArray,
-#    RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
-#)
-
 _implementation = implementation()
 
 def read(filename, external=None, extra=None, verbose=False,
