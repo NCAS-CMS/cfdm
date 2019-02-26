@@ -1299,17 +1299,17 @@ variable should be pre-filled with missing values.
                         nodes_per_geometry)[cell_no])
                     print('i=', i, ', cell_no=', cell_no,
                           ', n_nodes_in_this_cell=',n_nodes_in_this_cell)
-                    n_parts_in_this_geometry = 0
-                    s = 0
+#                    n_parts_in_this_cell = 0
 
+                    partial_node_count = 0 # for this cell
                     for k in range(i, total_number_of_parts):
                         print('  k=', k)
                         print('  p=', p)
-                        n_parts_in_this_geometry += 1                        
+#                        n_parts_in_this_cell += 1                        
                         index.data[k] = p
-                        s += int(parts_data[k])
-                        print('  s=', s)
-                        if s >= n_nodes_in_this_cell:
+                        partial_node_count += int(parts_data[k])
+                        print('  partial_node_count=', partial_node_count)
+                        if partial_node_count >= n_nodes_in_this_cell:
                             i += k + 1
                             p += 1
                             break                        
