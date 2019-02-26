@@ -412,9 +412,10 @@ By default the identity is the first found of the following:
 
 1. The "standard_name" property.
 2. The "cf_role" property, preceeded by ``'cf_role='``.
-3. The "long_name" property, preceeded by ``'long_name='``.
-4. The netCDF variable name, preceeded by ``'ncvar%'``.
-5. The value of the *default* parameter.
+3. The "axis" property, preceeded by ``'axis='``.
+4. The "long_name" property, preceeded by ``'long_name='``.
+5. The netCDF variable name, preceeded by ``'ncvar%'``.
+6. The value of the *default* parameter.
 
 .. versionadded:: 1.7.0
 
@@ -463,7 +464,7 @@ By default the identity is the first found of the following:
         if n is not None:
             return n
         
-        for prop in  ('cf_role', 'long_name'):
+        for prop in  ('cf_role', 'axis', 'long_name'):
             n = self.get_property(prop, None)
             if n is not None:
                 return '{0}={1}'.format(prop, n)
@@ -513,6 +514,7 @@ The identities comprise:
         '''
         properties = self.properties()
         cf_role = properties.pop('cf_role', None)
+        axis = properties.pop('axis', None)
         long_name = properties.pop('long_name', None)
         standard_name = properties.pop('standard_name', None)
 
@@ -523,7 +525,10 @@ The identities comprise:
             
         if cf_role is not None:
             out.append('cf_role={}'.format(cf_role))
-                    
+                   
+        if axis is not None:
+            out.append('axis={}'.format(axis))
+                   
         if long_name is not None:
             out.append('long_name={}'.format(long_name))
             
@@ -533,27 +538,9 @@ The identities comprise:
         if standard_name is not None:
             out.append('standard_name={}'.format(standard_name))
             
-#        n = self.get_property('standard_name', None)
-#        if standard_name is not None:
-#            out.append(0, 'standard_name={}'.format(standard_name))
-#
         n = self.nc_get_variable(None)
         if n is not None:
-#            out.insert(0, 'ncvar%{0}'.format(n))
             out.append('ncvar%{0}'.format(n))
-
-#        if extra:
-#            out = list(extra) + out
-#            out += list(extra)
-            
-#        if long_name is not None:
-#            out.insert(0, 'long_name={}'.format(long_name))
-#            
-#        if cf_role is not None:
-#            out.insert(0, 'cf_role={}'.format(cf_role))
-#            
-#        if standard_name is not None:
-#            out.insert(0, standard_name)
             
         return out
     #--- End: def

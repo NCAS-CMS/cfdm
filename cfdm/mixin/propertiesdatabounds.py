@@ -371,6 +371,135 @@ False
 
         return True
     #--- End: def
+    def identities(self):
+        '''Return all possible identities.
+
+The identities comprise:
+
+* The "standard_name" property.
+* All properties, preceeded by the property name and a colon,
+  e.g. ``'long_name:Air temperature'``.
+* The netCDF variable name, preceeded by ``'ncvar%'``.
+
+If there are no such identities then the of the bounds, if any, are
+returned.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `identity`
+
+:Returns:
+
+    `list`
+        The identities.
+
+**Examples:**
+
+>>> f.properties()
+{'foo': 'bar',
+ 'long_name': 'Air Temperature',
+ 'standard_name': 'air_temperature'}
+>>> f.nc_get_variable()
+'tas'
+>>> f.identities()
+['air_temperature',
+ 'long_name=Air Temperature',
+ 'foo=bar',
+ 'standard_name=air_temperature',
+ 'ncvar%tas']
+
+>>> f.properties()
+{}
+>>> f.bounds.properties()
+{'axis': 'Z',
+ 'units': 'm'}
+>>> f.identities()
+['axis=Z', 'units=m', 'ncvar%z']
+
+        '''
+        identities = super().identities()
+        if identities:
+            return identities
+        
+        if self.has_bounds():
+            return self.bounds.identities()
+        
+        return []
+    #--- End: def
+
+    def identity(self, default=''):
+        '''Return the canonical identity.
+
+By default the identity is the first found of the following:
+
+1. The "standard_name" property.
+2. The "cf_role" property, preceeded by ``'cf_role='``.
+3. The "axis" property, preceeded by ``'axis='``.
+4. The "long_name" property, preceeded by ``'long_name='``.
+5. The netCDF variable name, preceeded by ``'ncvar%'``.
+6. The identity of the bounds, if any.
+7. The value of the *default* parameter.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `identities`
+
+:Parameters:
+
+    default: optional
+        If no identity can be found then return the value of the
+        default parameter.
+
+:Returns:
+
+        The identity.
+
+**Examples:**
+
+>>> f.properties()
+{'foo': 'bar',
+ 'long_name': 'Air Temperature',
+ 'standard_name': 'air_temperature'}
+>>> f.nc_get_variable()
+'tas'
+>>> f.identity()
+'air_temperature'
+>>> f.del_property('standard_name')
+'air_temperature'
+>>> f.identity(default='no identity')
+'air_temperature'
+>>> f.identity()
+'long_name=Air Temperature'
+>>> f.del_property('long_name')
+>>> f.identity()
+'ncvar%tas'
+>>> f.nc_del_variable()
+'tas'
+>>> f.identity()
+'ncvar%tas'
+>>> f.identity()
+''
+>>> f.identity(default='no identity')
+'no identity'
+
+>>> f.properties()
+{}
+>>> f.bounds.properties()
+{'axis': 'Z',
+ 'units': 'm'}
+>>> f.identity()
+'axis=Z'
+
+        '''
+        identity = super().identity(default=None)
+        if identity is not None:
+            return identity
+        
+        if self.has_bounds():
+            return self.bounds.identity(default=default)
+        
+        return default
+    #--- End: def            
     
     def insert_dimension(self, position):
         '''Expand the shape of the data array.

@@ -334,7 +334,7 @@ TODO
             # E.g. {'geometry_container': {
             #           'geometry_type'   : "polygon",
             #           'node_count'      : "node_count",
-            #           'node_coordinates': ["x", "y"],
+            #           'node_coordinates': set(["x", "y"]),
             #           'part_node_count  : "part_node_count",
             #           'interior_ring'   : "interior_ring"}
             #      }
@@ -1248,7 +1248,6 @@ variable should be pre-filled with missing values.
             # Find the netCDF dimension for the total number of nodes
             node_dimension = g['variable_dimensions'][parsed_node_coordinates[0]][0]
 
-#            nodes_per_geometry = self._create_data(node_count)
             nodes_per_geometry = self._create_Count(ncvar=node_count,
                                                     ncdim=cell_dimension)
 
@@ -1833,7 +1832,10 @@ variable should be pre-filled with missing values.
                 pass
     
             unpacked_dtype = numpy.result_type(*values)
-    
+
+        # Re-initialise node_coordinates_as_bounds
+        g['node_coordinates_as_bounds'] = set()
+        
         # ----------------------------------------------------------------
         # Initialize the field with its attributes
         # ----------------------------------------------------------------
@@ -2034,6 +2036,7 @@ variable should be pre-filled with missing values.
                     # Insert auxiliary coordinate
                     if verbose:
                         print('    [6] Inserting', repr(coord))
+                        
                     aux = self.implementation.set_auxiliary_coordinate(
                         f, coord, axes=dimensions, copy=False)
 
@@ -2049,12 +2052,61 @@ variable should be pre-filled with missing values.
             #--- End: for
         #--- End: if
 
-        # ----------------------------------------------------------------
-        # Add coordinate references from formula_terms properties
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
+        # Add auxiliary coordinate constructs from geometry node
+        # coordinates that are not already bounds of existing
+        # auxiliary coordinate constructs (CF >= 1.8)
+        # ------------------------------------------------------------
+        geometry = self._get_geometry(field_ncvar)
+        if geometry is not None:
+            node_coordinates = set(geometry['node_coordinates']).difference(
+                g['node_coordinates_as_bounds'])
+
+            for node_ncvar in node_coordinates:
+                # Set dimensions for this node coordinate variable
+                dimensions = self._get_domain_axes(node_ncvar)
+    
+                if node_ncvar in g['auxiliary_coordinate']:
+                    coord = g['auxiliary_coordinate'][node_ncvar].copy()
+                else:     
+                    coord = self._create_auxiliary_coordinate(field_ncvar=field_ncvar,
+                                                              ncvar=None,
+                                                              f=f,
+                                                              bounds=node_ncvar)
+
+                    # Move properties from the bounds to the parent
+#                    coord.set_properties(coord.bounds.clear_properties())
+
+                    geometry_type = geometry['geometry_type']
+                    if geometry_type is not None:                        
+                        self.implementation.set_geometry(coord, geometry_type)
+                    
+                    g['auxiliary_coordinate'][node_ncvar] = coord
+                    
+                # Insert auxiliary coordinate
+                if verbose:
+                    print('    [6] Inserting', repr(coord))
+
+                aux = self.implementation.set_auxiliary_coordinate(
+                    f, coord, axes=dimensions, copy=False)
+                    
+                self._reference(node_ncvar)
+                ncvar_to_key[node_ncvar] = aux
+        #--- End: if
+                
+
+        # ------------------------------------------------------------
+        # Add coordinate reference constructs from formula_terms
+        # properties
+        # ------------------------------------------------------------
         for key, coord in self.implementation.get_coordinates(field=f).items():
             coord_ncvar = self.implementation.get_ncvar(coord)
 
+            if coord_ncvar is None:
+                # This might be the case if the coordinate construct
+                # just contains geometry nodes
+                continue
+                        
             formula_terms = g['variable_attributes'][coord_ncvar].get('formula_terms')
             if formula_terms is None:
                 # This coordinate doesn't have a formula_terms attribute
@@ -2238,7 +2290,7 @@ variable should be pre-filled with missing values.
                         ncvar_to_key[grid_mapping_ncvar] = key
                 #--- End: for
         #--- End: if
-        
+
         # ----------------------------------------------------------------
         # Add cell measures to the field
         # ----------------------------------------------------------------
@@ -2361,6 +2413,15 @@ variable should be pre-filled with missing values.
         return f
     #--- End: def
 
+    def _get_geometry(self, field_ncvar):
+        '''
+        '''
+        g = self.read_vars        
+        if g['file_version'] >= g['version']['1.8']:
+            geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
+            return g['geometries'].get(geometry_ncvar)
+    #--- End: def
+        
     def _add_message(self, field_ncvar, ncvar, message=None,
                      attribute=None, dimensions=None, variable=None,
                      conformance=None):
@@ -2478,6 +2539,11 @@ variable's netCDF dimensions.
     def _create_auxiliary_coordinate(self, field_ncvar, ncvar, 
                                      f, bounds=None):
         '''
+
+:Returns:
+
+    The auxiliary coordinate constuct.
+
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
                                               ncvar=ncvar,
@@ -2489,6 +2555,10 @@ variable's netCDF dimensions.
     def _create_dimension_coordinate(self, field_ncvar, ncvar, f,
                                      bounds=None):
         '''
+:Returns:
+
+    The dimension coordinate constuct.
+
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
                                               ncvar=ncvar,
@@ -2500,6 +2570,10 @@ variable's netCDF dimensions.
     def _create_domain_ancillary(self, field_ncvar, ncvar, 
                                  f, bounds=None):
         '''
+:Returns:
+
+    The domain ancillary constuct.
+
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
                                               ncvar=ncvar,
@@ -2542,36 +2616,17 @@ variable's netCDF dimensions.
 
         g['bounds'][field_ncvar] = {}
         g['coordinates'][field_ncvar] = []
-        
-        properties = g['variable_attributes'][ncvar].copy()
-        properties.pop('formula_terms', None)
+
+        if ncvar is not None:
+            properties = g['variable_attributes'][ncvar].copy()
+            properties.pop('formula_terms', None)
+        else:
+            properties = {}
 
         has_bounds = False
         attribute = 'bounds'
         ncbounds = None
         geometry = None
-
-#        g['geometries'][geometryncvar]_.update(
-#            {'node_coordinates': parsed_node_coordinates,
-#             'interior_ring   ': interior_ring,
-#             'node_count      ': node_count,
-#             'part_node_count ': part_node_count,
-#             'node_dimension'  : node_dimension,
-#             'part_dimension'  : part_dimension,}
-#        )
-    #--- End: def
-
-        # ------------------------------------------------------------
-        # Look for a geometry container (CF >= 1.8)
-        # ------------------------------------------------------------
-        if g['file_version'] >= g['version']['1.8']:
-            ncbounds = properties.get('bounds')
-            if ncbounds is not None:        
-                geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
-                geometry = g['geometries'].get(geometry_ncvar)
-#                if geometry is not None:
-#                    attribute = 'bounds'
-        #--- End: if
 
 #if len(axes) == len(ncdimensions):
 #                    domain_ancillaries.append((ncvar, domain_anc, axes))
@@ -2586,7 +2641,14 @@ variable's netCDF dimensions.
 #                    ok = False
 #                    break
 
- 
+        # ------------------------------------------------------------
+        # Look for a geometry container (CF >= 1.8)
+        # ------------------------------------------------------------
+        geometry = self._get_geometry(field_ncvar)
+#        if g['file_version'] >= g['version']['1.8']:
+#            geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
+#            geometry = g['geometries'].get(geometry_ncvar)
+
         if bounds is None:
             if ncbounds is None:
                 ncbounds = properties.pop('bounds', None)
@@ -2598,15 +2660,11 @@ variable's netCDF dimensions.
             ncbounds = bounds
             
         if dimension:
-            properties.pop('compress', None) #??
+            properties.pop('compress', None)
             c = self.implementation.initialise_DimensionCoordinate()
         elif auxiliary:
             c = self.implementation.initialise_AuxiliaryCoordinate()
         elif domain_ancillary:
-#            properties.pop('coordinates', None)
-#            properties.pop('grid_mapping', None)
-#            properties.pop('cell_measures', None)
-#            properties.pop('positive', None)
             c = self.implementation.initialise_DomainAncillary()
         else:
             raise ValueError(
@@ -2617,7 +2675,7 @@ variable's netCDF dimensions.
         if attribute == 'climatology':
             self.implementation.set_geometry(coordinate=c, value='climatology')
 
-        if has_coordinates:
+        if has_coordinates and ncvar is not None:
             data = self._create_data(ncvar, c)
             self.implementation.set_data(c, data, copy=False)
 
@@ -2626,7 +2684,8 @@ variable's netCDF dimensions.
         # ------------------------------------------------------------
         if ncbounds:
                        
-            if attribute != 'nodes':
+            if geometry is None:
+                # Check "normal" boounds
                 cf_compliant = self._check_bounds(field_ncvar, ncvar,
                                                   attribute, ncbounds)
                 if not cf_compliant:
@@ -2638,9 +2697,9 @@ variable's netCDF dimensions.
             
             properties = g['variable_attributes'][ncbounds].copy()
             properties.pop('formula_terms', None)                
-            self.implementation.set_properties(bounds, properties, copy=False)
-        
-            bounds_data = self._create_data(ncbounds, bounds)
+            self.implementation.set_properties(bounds, properties)
+
+            bounds_data = self._create_data(ncbounds, bounds) # ppp
     
 #                # Make sure that the bounds dimensions are in the same
 #                # order as its parent's dimensions. It is assumed that we
@@ -2664,41 +2723,59 @@ variable's netCDF dimensions.
             self.implementation.nc_set_variable(bounds, ncbounds)
             
             self.implementation.set_bounds(c, bounds, copy=False)
+
+            if geometry is not None and ncbounds in geometry['node_coordinates']:                 
+                geometry_type = geometry['geometry_type']
+                if geometry_type is not None:                        
+                    self.implementation.set_geometry(c, geometry_type)
+
+                g['node_coordinates_as_bounds'].add(ncbounds)
             
             if not domain_ancillary:
                 g['bounds'][field_ncvar][ncvar] = ncbounds
+
+
         #--- End: if
 
-        # ------------------------------------------------------------
-        # Add geometry type and interior ring array (CF >= 1.8)
-        # ------------------------------------------------------------
-        if geometry is not None:
-            geometry_type = geometry.get('geometry_type')
-            if geometry_type is not None:
-                self.implementation.set_geometry(coordinate=c, value=geometry_type)
+#        g['geometries'][geometry_ncvar]_.update(
+#            {'node_coordinates': parsed_node_coordinates,
+#             'interior_ring   ': interior_ring,
+#             'node_count      ': node_count,
+#             'part_node_count ': part_node_count,
+#             'node_dimension'  : node_dimension,
+#             'part_dimension'  : part_dimension,}
+#        )
 
-            node_dimension = geometry.get('node_dimension')
-            if node_dimension is not None:
-                # Set the netCDF name of the dimension of node
-                # coordinate variables
-                self.implementation.set_node_ncdim(parent=c, ncdim=node_dimension)
-                
-            part_dimension = geometry.get('part_dimension')
-            if part_dimension is not None:
-                # Set the netCDF name of the dimension of the part_node_count
-                # variable
-                self.implementation.set_part_ncdim(parent=c, ncdim=part_dimension)
-                
-            interior_ring_ncvar = geometry.get('interior_ring')
-            if interior_ring_ncvar is not None:
-                interior_ring = g['interior_ring'].get('interior_ring_ncvar')
-                if interior_ring is None:
-                    # Create the interior ring array
-                    interior_ring = self._create_data(interior_ring_ncvar)
-                    g['interior_ring']['interior_ring_ncvar'] = interior_ring
-
-                self.implementation.set_interior_ring(parent=c, interior_ring=interior_ring)
-        #--- End: if
+#        # ------------------------------------------------------------
+#        # Add geometry type and interior ring array (CF >= 1.8)
+#        # ------------------------------------------------------------
+#        if geometry is not None:
+#            geometry_type = geometry.get('geometry_type')
+#            if geometry_type is not None:
+#                self.implementation.set_geometry(coordinate=c, value=geometry_type)
+#
+#            node_dimension = geometry.get('node_dimension')
+#            if node_dimension is not None:
+#                # Set the netCDF name of the dimension of node
+#                # coordinate variables
+#                self.implementation.set_node_ncdim(parent=c, ncdim=node_dimension)
+#                
+#            part_dimension = geometry.get('part_dimension')
+#            if part_dimension is not None:
+#                # Set the netCDF name of the dimension of the part_node_count
+#                # variable
+#                self.implementation.set_part_ncdim(parent=c, ncdim=part_dimension)
+#                
+#            interior_ring_ncvar = geometry.get('interior_ring')
+#            if interior_ring_ncvar is not None:
+#                interior_ring = g['interior_ring'].get('interior_ring_ncvar')
+#                if interior_ring is None:
+#                    # Create the interior ring array
+#                    interior_ring = self._create_data(interior_ring_ncvar)
+#                    g['interior_ring']['interior_ring_ncvar'] = interior_ring
+#
+#                self.implementation.set_interior_ring(parent=c, interior_ring=interior_ring)
+#        #--- End: if
         
         # Store the netCDF variable name
         self.implementation.nc_set_variable(c, ncvar)
@@ -2711,7 +2788,59 @@ variable's netCDF dimensions.
         # ---------------------------------------------------------
         return c
     #--- End: def
+
+    def _create_Bounds(self, field_ncvar, coord_ncvar, bounds_ncvar, attribute, geometry):
+        '''
+        '''
+        g = self.read_vars
+        
+        if bounds_ncvar is not None: 
+            
+            if geometry is None:
+                # Check "normal" boounds
+                cf_compliant = self._check_bounds(field_ncvar, coord_ncvar,
+                                                  attribute, bounds_ncvar)
+                if not cf_compliant:
+                    pass
+            else:
+                pass
+
+            bounds = self.implementation.initialise_Bounds()
+            
+            properties = g['variable_attributes'][bounds_ncvar].copy()
+            properties.pop('formula_terms', None)                
+            self.implementation.set_properties(bounds, properties)
+
+            bounds_data = self._create_data(bounds_ncvar, bounds)
     
+#                # Make sure that the bounds dimensions are in the same
+#                # order as its parent's dimensions. It is assumed that we
+#                # have already checked that the bounds netCDF variable has
+#                # appropriate dimensions.
+#                c_ncdims = nc.variables[ncvar].dimensions
+#                b_ncdims = nc.variables[ncbounds].dimensions
+#                c_ndim = len(c_ncdims)
+#                b_ndim = len(b_ncdims)
+#                if b_ncdims[:c_ndim] != c_ncdims:
+#                    axes = [c_ncdims.index(ncdim) for ncdim in b_ncdims[:c_ndim]
+#                            if ncdim in c_ncdims]
+#                    axes.extend(range(c_ndim, b_ndim))
+#                    bounds_data = self._transpose_data(bounds_data,
+#                                                       axes=axes, copy=False)
+#                #--- End: if
+    
+            self.implementation.set_data(bounds, bounds_data, copy=False)
+            
+            # Store the netCDF variable name
+            self.implementation.nc_set_variable(bounds, bounds_ncvar)
+            
+            if geometry is not None and bounds_ncvar in geometry['node_coordinates']:
+                g['node_coordinates_as_bounds'].add(bounds_ncvar)
+                 
+            if not domain_ancillary:
+                g['bounds'][field_ncvar][ncvar] = bounds_ncvar
+        #--- End: if
+
     def _create_cell_measure(self, measure, ncvar):
         '''Create a cell measure object.
     
@@ -2953,7 +3082,7 @@ variable's netCDF dimensions.
     
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None): 
-        '''Set the Data attribute of a variable.
+        '''Set the data of a construct or construct component.
 
 :Parameters:
 
@@ -2963,9 +3092,11 @@ variable's netCDF dimensions.
 
     unpacked_dtype: `False` or `numpy.dtype`, optional
 
+    uncompress_override: `bool`, optional
+
 :Returns:
 
-    out: `Data`
+    `Data`
 
 :Examples:
 

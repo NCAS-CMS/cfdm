@@ -99,6 +99,7 @@ Metadata constructs
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Field.construct
    ~cfdm.Field.del_construct
    ~cfdm.Field.get_construct
    ~cfdm.Field.has_construct

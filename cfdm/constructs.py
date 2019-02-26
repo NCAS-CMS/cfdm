@@ -749,7 +749,7 @@ Select constructs whose data spans the "domainaxis1" or the
         In addition, each construct also has an identity based its
         construct key (e.g. ``'key%dimensioncoordinate2'``)
 
-        Note that the identifiers of metadata constructs in the ouput
+        Note that the identifiers of metadata constructs in the output
         of a `print` or `!dump` call are always one of its identities,
         and so may always be used as an *identities* argument.
 

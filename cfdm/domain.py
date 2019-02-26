@@ -76,10 +76,18 @@ x.__str__() <==> str(x)
                 # Cell measure
                 # Field ancillary
                 # Domain ancillary
-                x = [variable.identity(default=cid)]
+                x = [variable.identity(default='key%{0}'.format(cid))]
 
                 if variable.has_data():
                     shape = [axis_names[axis] for axis in axes]
+                    shape = str(tuple(shape)).replace("'", "")
+                    shape = shape.replace(',)', ')')
+                    x.append(shape)
+                elif (variable.construct_type in ('auxiliary_coordinate', 'domain_ancillary') and
+                      variable.has_bounds() and variable.bounds.has_data()):                
+                    # Construct has no data but it does have bounds data
+                    shape = [axis_names[axis] for axis in axes]
+                    shape.extend([str(n) for n in variable.bounds.data.shape[len(axes):]])
                     shape = str(tuple(shape)).replace("'", "")
                     shape = shape.replace(',)', ')')
                     x.append(shape)
@@ -93,15 +101,17 @@ x.__str__() <==> str(x)
             #--- End: if
                 
             if variable.has_data():
-                x.append(' = {0}'.format(variable.get_data()))
-                
+                x.append(' = {0}'.format(variable.data))
+            elif (variable.construct_type in ('auxiliary_coordinate', 'domain_ancillary') and
+                  variable.has_bounds() and variable.bounds.has_data()):
+                # Construct has no data but it does have bounds data
+                x.append(' = {0}'.format(variable.bounds.data))
+               
             return ''.join(x)
         #--- End: def
                           
         string = []
         
-#        axis_name = self.domain_axis_name
-
         axis_names = self._unique_domain_axis_names()
 
         constructs_data_axes = self.constructs.data_axes()

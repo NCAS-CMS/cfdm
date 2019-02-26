@@ -1012,15 +1012,17 @@ A construct's identity may be any one of the following
 
 * The value of the "standard_name" property, e.g. ``'air_temperature'``,
 * The value of any property, preceded by the property name and an
-  equals, e.g. ``'long_name=Air Temperature'``, ``'units=km'``,
+  equals, e.g. ``'long_name=Air Temperature'``, ``'axis=X'``,
   ``'foo=bar'``, etc.,
 * The cell measure, preceded by "measure:", e.g. ``'measure:volume'``
 * The cell method, preceded by "method:", e.g. ``'method:maximum'``
 * The netCDF variable name, preceded by "ncvar%",
   e.g. ``'ncvar%tas'`` (see the :ref:`netCDF interface
-  <NetCDF-interface>`), and
+  <NetCDF-interface>`), 
 * The netCDF dimension name, preceded by "ncdim%" e.g. ``'ncdim%z'``
-  (see the :ref:`netCDF interface <NetCDF-interface>`).
+  (see the :ref:`netCDF interface <NetCDF-interface>`), and 
+* The construct key, preceded by "key%"
+  e.g. ``'key%auxiliarycoordinate2'``.
 
 .. Valid construct names are used to describe constructs when they are
    inspected, and so it is often convenient to copy these names when
