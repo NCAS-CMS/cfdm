@@ -52,7 +52,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
     # Methods
     # ----------------------------------------------------------------
     def clear_properties(self):
-        '''TODO Return or replace all properties.
+        '''Remove all properties.
 
 .. versionadded:: 1.7.0
 
@@ -101,8 +101,8 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get_property`, `has_property`, `properties`,
-             `set_property`, `clear_properties`
+.. seealso:: `clear_properties`, `get_property`, `has_property`,
+             `properties`, `set_property`
 
 :Parameters:
 
@@ -242,7 +242,7 @@ None
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `clear_property`, `get_property`, `has_property`
+.. seealso:: `clear_properties`, `get_property`, `has_property`
              `set_properties`
 
 :Returns:
@@ -264,7 +264,7 @@ None
     #--- End: def
 
     def set_properties(self, properties, copy=True):
-        '''TODO Replace all properties.
+        '''Set properties.
 
 .. versionadded:: 1.7.0
 
@@ -289,7 +289,14 @@ None
 
 **Examples:**
 
-<TODO>
+>>> f.properties()
+{'standard_name': 'altitude',
+ 'foo': 'bar'}
+>>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'}
+>>> f.properties()
+{'standard_name': 'air_pressure',
+ 'foo': 'bar',
+ 'long_name': 'Air Pressure'}
 
         '''
         if copy:

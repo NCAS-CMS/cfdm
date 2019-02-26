@@ -504,8 +504,8 @@ reference is replace with `None`.
             for xid, axes in data_axes.items():
                 if key in axes:
                     raise ValueError(
-"Can't remove domain axis construct {!r} that spans the data array of {!r}".format(
-    key, self.get_construct(key=xid)))
+"Can't remove domain axis construct {!r} that spans the data array of metadata construct {!r}".format(
+    key, xid))
     
             # Fail if the domain axis construct is referenced by a
             # cell method construct
@@ -520,8 +520,8 @@ reference is replace with `None`.
                     axes = cm.get_axes(())
                     if key in axes:
                         raise ValueError(
-"Can't remove domain axis construct {!r} that is referenced by {!r}".format(
-    key, cm))
+"Can't remove domain axis construct {!r} that is referenced by cell method construct {!r}".format(
+    key, xid))
         else:
             # Remove references to the removed construct in coordinate
             # reference constructs
@@ -1131,73 +1131,6 @@ TODO
                           _use_data=data, _ignore=self._ignore)
     #--- End: def
 
-    def axes_to_constructs(self):
-        '''TODO
-
-:Returns:
-
-    `dict`
-
-**Examples:**
-
->>> print c.axes_to_constructs()
-{('domainaxis1',): {
-        'auxiliary_coordinate': {'auxiliary_coordinate2': <AuxiliaryCoordinate: greek_letters(10) >},
-        'field_ancillary'     : {'fieldancillary2': <FieldAncillary: ncvar%ancillary_data_2(10) >},
-        'domain_ancillary'    : {}, 
-        'cell_measure'        : {}, 
-        'dimension_coordinate': {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
-        },
-('domainaxis1', 'domainaxis2'): {
-        'auxiliary_coordinate': {'auxiliary_coordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>},
-        'field_ancillary'     : {'fieldancillary0': <FieldAncillary: ncvar%ancillary_data(10, 9) >},
-        'domain_ancillary'    : {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>},
-        'cell_measure'        : {},
-        'dimension_coordinate': {}
-        },
-('domainaxis2', 'domainaxis1'): {
-        'auxiliary_coordinate': {'auxiliary_coordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>},
-        'field_ancillary'     : {},
-        'domain_ancillary'    : {},
-        'cell_measure'        : {'cell_measure0': <CellMeasure: area(9, 10) km2>},
-        'dimension_coordinate': {}
-        },
-('domainaxis0',): {
-        'auxiliary_coordinate': {},
-        'field_ancillary'     : {},
-        'domain_ancillary'    : {'domainancillary1': <DomainAncillary: ncvar%b(1) >, 'domainancillary0': <DomainAncillary: ncvar%a(1) m>},
-        'cell_measure'        : {},
-        'dimension_coordinate': {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >}
-        },
-('domainaxis2',): {
-        'auxiliary_coordinate': {},
-        'field_ancillary'     : {'fieldancillary1': <FieldAncillary: ncvar%ancillary_data_1(9) >},
-        'domain_ancillary'    : {},
-        'cell_measure'        : {},
-        'dimension_coordinate': {'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
-        }
-}
-
-'''
-        out = {}
-
-
-        data_axes = self.data_axes()
-        
-        for axes in data_axes.values():
-            d = {construct_type: {}
-                 for construct_type in self._array_constructs}
-
-            out[axes] = d
-        #--- End: for
-
-        for cid, construct in self.data_constructs().items():
-            axes = data_axes.get(cid)
-            construct_type = self._construct_type[cid]
-            out[axes][construct_type][cid] = construct
-
-        return out
-    #--- End: def
 
 #    def get_construct(self, key):
 #        '''Return a metadata construct.

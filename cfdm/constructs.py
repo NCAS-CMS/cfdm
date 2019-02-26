@@ -54,6 +54,8 @@ Constructs:
 
 x.__repr__() <==> repr(x)
 
+.. versionadded:: 1.7.0
+
         '''
         construct_types = ['{0}({1})'.format(c, len(v))
                            for c, v in sorted(self._constructs.items())
@@ -66,6 +68,8 @@ x.__repr__() <==> repr(x)
         '''Called by the `str` built-in function.
 
 x.__str__() <==> str(x)
+
+.. versionadded:: 1.7.0
 
         '''
         out = ['Constructs:']
@@ -91,6 +95,184 @@ x.__str__() <==> str(x)
         return '\n '.join(out)
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
+    def _axes_to_constructs(self):
+        '''Map domain axis constructs to the metadata constructs whose data
+span them.
+
+This is useful for ascertaining whether or not two `Constructs`
+instances are equal.
+
+.. versionadded:: 1.7.0
+
+:Returns:
+
+    `dict`
+
+**Examples:**
+
+>>> f.constructs._axes_to_constructs()
+{('domainaxis0',): {'auxiliary_coordinate': {},
+                    'cell_measure'        : {},
+                    'dimension_coordinate': {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >},
+                    'domain_ancillary'    : {'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+                                             'domainancillary1': <DomainAncillary: ncvar%b(1) >},
+                    'field_ancillary'     : {}},
+ ('domainaxis1',): {'auxiliary_coordinate': {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >},
+                    'cell_measure'        : {},
+                    'dimension_coordinate': {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>},
+                    'domain_ancillary'    : {},
+                    'field_ancillary'     : {}},
+ ('domainaxis1', 'domainaxis2'): {'auxiliary_coordinate': {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>},
+                                  'cell_measure'        : {},
+                                  'dimension_coordinate': {},
+                                  'domain_ancillary'    : {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>},
+                                  'field_ancillary'     : {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}},
+ ('domainaxis2',): {'auxiliary_coordinate': {},
+                    'cell_measure'        : {},
+                    'dimension_coordinate': {'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>},
+                    'domain_ancillary'    : {},
+                    'field_ancillary'     : {}},
+ ('domainaxis2', 'domainaxis1'): {'auxiliary_coordinate': {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>},
+                                  'cell_measure'        : {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>},
+                                  'dimension_coordinate': {},
+                                  'domain_ancillary'    : {},
+                                  'field_ancillary'     : {}},
+ ('domainaxis3',): {'auxiliary_coordinate': {},
+                    'cell_measure'        : {},
+                    'dimension_coordinate': {'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >},
+                    'domain_ancillary'    : {},
+                    'field_ancillary'     : {}}}
+
+        '''
+        out = {}
+
+
+        data_axes = self.data_axes()
+        
+        for axes in data_axes.values():
+            d = {construct_type: {}
+                 for construct_type in self._array_constructs}
+
+            out[axes] = d
+        #--- End: for
+
+        for cid, construct in self.data_constructs().items():
+            axes = data_axes.get(cid)
+            construct_type = self._construct_type[cid]
+            out[axes][construct_type][cid] = construct
+
+        return out
+    #--- End: def
+
+    def _equals_cell_method(self, other, rtol=None, atol=None,
+                            verbose=False, ignore_type=False,
+                            axis1_to_axis0=None, key1_to_key0=None):
+        '''
+
+        '''
+        cell_methods0 = self.filter_by_type('cell_method')
+        cell_methods1 = other.filter_by_type('cell_method')
+
+        if len(cell_methods0) != len(cell_methods1):
+            if verbose:
+                print(
+"Verbose: Different numbers of cell methods: {0!r} != {1!r}".format(
+    cell_methods0, cell_methods1))
+            return False
+        
+        axis0_to_axis1 = {axis0: axis1
+                          for axis0, axis1 in axis1_to_axis0.items()}
+            
+        for cm0, cm1 in zip(tuple(cell_methods0.values()),
+                            tuple(cell_methods1.values())):
+            
+            # Check that there are the same number of axes
+            axes0 = cm0.get_axes(())
+            axes1 = list(cm1.get_axes(()))
+            if len(axes0) != len(axes1):
+                if verbose:
+                    print(
+"{0}: Different cell methods (mismatched axes): {1!r}, {2!r}".format(
+    cm0.__class__.__name__, cell_methods0, cell_methods1))
+                return False
+    
+            indices = []
+            for axis0 in axes0:
+                if axis0 is None:
+                    return False
+                for axis1 in axes1:
+                    if axis0 in axis0_to_axis1 and axis1 in axis1_to_axis0:
+                        if axis1 == axis0_to_axis1[axis0]:
+                            axes1.remove(axis1)
+                            indices.append(cm1.get_axes(()).index(axis1))
+                            break
+                    elif axis0 in axis0_to_axis1 or axis1 in axis1_to_axis0:
+                        if verbose:
+                            print(
+"Verbose: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
+    cell_methods0, cell_methods1))
+                        return False
+                    elif axis0 == axis1:
+                        # Assume that the axes are standard names
+                        axes1.remove(axis1)
+                        indices.append(cm1.get_axes(()).index(axis1))
+                    elif axis1 is None:
+                        if verbose:
+                            print(
+"Verbose: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
+    cell_methods0, cell_methods1))
+                        return False
+            #--- End: for
+
+            if len(cm1.get_axes(())) != len(indices):
+                if verbose:
+                    print("Field: Different cell methods: {0!r}, {1!r}".format(
+                        cell_methods0, cell_methods1))
+                return False
+
+            cm1 = cm1.sorted(indices=indices)
+            cm1.set_axes(axes0)
+
+            if not cm0.equals(cm1, atol=atol, rtol=rtol,
+                              verbose=verbose,
+                              ignore_type=ignore_type):
+                if verbose:
+                    print(
+"Verbose: Different cell methods: {0!r}, {1!r}".format(
+    cell_methods0, cell_methods1))
+                return False                
+        #--- End: for
+
+        return True
+    #--- End: def
+
+    def _equals_domain_axis(self, other, rtol=None, atol=None,
+                            verbose=False, ignore_type=False,
+                            axis1_to_axis0=None, key1_to_key0=None):
+        '''
+        '''
+        self_sizes  = [d.get_size()
+                       for d in self.filter_by_type('domain_axis').values()]
+        other_sizes = [d.get_size()
+                       for d in other.filter_by_type('domain_axis').values()]
+      
+        if sorted(self_sizes) != sorted(other_sizes):
+            # There is not a 1-1 correspondence between axis sizes
+            if verbose:
+                print("{0}: Different domain axis sizes: {1} != {2}".format(
+                    self.__class__.__name__,
+                    sorted(self_sizes), sorted(other_sizes)))
+            return False
+
+        return True
+    #--- End: def
+    
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def copy(self, data=True):
         '''Return a deep copy.
 
@@ -195,19 +377,84 @@ x.__str__() <==> str(x)
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_compression=False, ignore_type=False):
-        '''TODO
+               ignore_compression=False, _ignore_type=False):
+        '''Whether two `Constructs` instances are the same.
+
+Two real numbers ``x`` and ``y`` are considered equal if
+``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
+differences) and ``rtol`` (the tolerance on relative differences) are
+positive, typically very small numbers. See the *atol* and *rtol*
+parameters.
+
+If data arrays are compressed then the compression type and the
+underlying compressed arrays must be the same, as well as the arrays
+in their uncompressed forms. See the *ignore_compression* parameter.
+
+Any type of object may be tested but equality is only possible with
+another `Constructs` construct, or a subclass of one.
+
+NetCDF elements, such as netCDF variable and dimension names, do not
+constitute part of the CF data model and so are not checked on any
+construct.
 
 .. versionadded:: 1.7.0
+
+:Parameters:
+
+    other: 
+        The object to compare for equality.
+
+    atol: float, optional
+        The tolerance on absolute differences between real
+        numbers. The default value is set by the `cfdm.ATOL` function.
         
+    rtol: float, optional
+        The tolerance on relative differences between real
+        numbers. The default value is set by the `cfdm.RTOL` function.
+
+    ignore_fill_value: `bool`, optional
+        If True then the "_FillValue" and "missing_value" properties
+        are omitted from the comparison for the metadata constructs.
+
+    verbose: `bool`, optional
+        If True then print information about differences that lead to
+        inequality.
+
+    ignore_data_type: `bool`, optional
+        If True then ignore the data types in all numerical
+        comparisons. By default different numerical data types imply
+        inequality, regardless of whether the elements are within the
+        tolerance for equality.
+
+    ignore_compression: `bool`, optional
+        If True then any compression applied to underlying arrays is
+        ignored and only uncompressed arrays are tested for
+        equality. By default the compression type and, if appliciable,
+        the underlying compressed arrays must be the same, as well as
+        the arrays in their uncompressed forms
+
+:Returns: 
+  
+    `bool`
+        Whether the two instances are equal.
+
+**Examples:**
+
+>>> x.equals(x)
+True
+>>> x.equals(x.copy())
+True
+>>> x.equals('something else')
+False
+
         '''
         if self is other:
             return True
         
         # Check that each instance is the same type
-        if type(self) != type(other):
+        if  not isinstance(other, self.__class__):
             if verbose:
-                print("{0}: Different object types: {0}, {1}".format(
+                print("{0}: Incompatible type: {1}".format(
                     self.__class__.__name__, other.__class__.__name__))
             return False
         
@@ -221,7 +468,7 @@ x.__str__() <==> str(x)
         # ------------------------------------------------------------
         if not self._equals_domain_axis(other, rtol=rtol, atol=atol,
                                         verbose=verbose,
-                                        ignore_type=ignore_type,
+                                        ignore_type=_ignore_type,
                                         axis1_to_axis0=axis1_to_axis0,
                                         key1_to_key0=key1_to_key0):
             return False
@@ -229,8 +476,8 @@ x.__str__() <==> str(x)
         # ------------------------------------------------------------
         # Constructs with arrays
         # ------------------------------------------------------------
-        axes_to_constructs0 = self.axes_to_constructs()
-        axes_to_constructs1 = other.axes_to_constructs()
+        axes_to_constructs0 = self._axes_to_constructs()
+        axes_to_constructs1 = other._axes_to_constructs()
         for axes0, constructs0 in axes_to_constructs0.items():
             matched_all_constructs_with_these_axes = False
 
@@ -271,7 +518,7 @@ x.__str__() <==> str(x)
                                             ignore_data_type=ignore_data_type,
                                             ignore_fill_value=ignore_fill_value,
                                             ignore_compression=ignore_compression,
-                                            ignore_type=ignore_type):
+                                            ignore_type=_ignore_type):
                                 del role_constructs1[key1]
                                 key1_to_key0[key1] = key0
                                 matched_construct = True
@@ -344,7 +591,7 @@ x.__str__() <==> str(x)
                     other,
                     rtol=rtol, atol=atol,
                     verbose=verbose,
-                    ignore_type=ignore_type,
+                    ignore_type=_ignore_type,
                     axis1_to_axis0=axis1_to_axis0,
                     key1_to_key0=key1_to_key0):
                 return False
@@ -463,20 +710,6 @@ Select constructs whose data spans the "domainaxis1" or the
                 # properties
                 out._pop(cid)
         #--- End: for
-
-   #    
-   #    axes = set(axes)
-   #
-   #    constructs_data_axes = self.data_axes()
-   #    for cid, construct in tuple(out.items()):
-   #        x = constructs_data_axes.get(cid)
-   #        if None in axes and x is not None:
-   #            continue
-   #        
-   #        if x is None or not axes.intersection(x):
-   #            # This construct does not span these axes
-   #            out._pop(cid)
-   #    #--- End: for
         
         return out
     #--- End: def
@@ -1419,115 +1652,4 @@ Constructs:
         return True
     #--- End: def
 
-    def _equals_cell_method(self, other, rtol=None, atol=None,
-                            verbose=False, ignore_type=False,
-                            axis1_to_axis0=None, key1_to_key0=None):
-        '''TODO
-
-        '''
-        cell_methods0 = self.filter_by_type('cell_method')
-        cell_methods1 = other.filter_by_type('cell_method')
-
-        if len(cell_methods0) != len(cell_methods1):
-            if verbose:
-                print(
-"Verbose: Different numbers of cell methods: {0!r} != {1!r}".format(
-    cell_methods0, cell_methods1))
-            return False
-        
-#        axis0_to_axis1 = {}
-#        for axis0, axis1 in axis1_to_axis0.items():
-#            axis0_to_axis1[axis0] = axis1
-            
-        axis0_to_axis1 = {axis0: axis1
-                          for axis0, axis1 in axis1_to_axis0.items()}
-            
-        for cm0, cm1 in zip(tuple(cell_methods0.values()),
-                            tuple(cell_methods1.values())):
-            
-            # Check that there are the same number of axes
-            axes0 = cm0.get_axes(())
-            axes1 = list(cm1.get_axes(()))
-            if len(axes0) != len(axes1):
-                if verbose:
-                    print(
-"{0}: Different cell methods (mismatched axes): {1!r}, {2!r}".format(
-    cm0.__class__.__name__, cell_methods0, cell_methods1))
-                return False
-    
-            indices = []
-            for axis0 in axes0:
-                if axis0 is None:
-                    return False
-                for axis1 in axes1:
-                    if axis0 in axis0_to_axis1 and axis1 in axis1_to_axis0:
-                        if axis1 == axis0_to_axis1[axis0]:
-                            axes1.remove(axis1)
-                            indices.append(cm1.get_axes(()).index(axis1))
-                            break
-                    elif axis0 in axis0_to_axis1 or axis1 in axis1_to_axis0:
-                        if verbose:
-                            print(
-"Verbose: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
-    cell_methods0, cell_methods1))
-                        return False
-                    elif axis0 == axis1:
-                        # Assume that the axes are standard names
-                        axes1.remove(axis1)
-                        indices.append(cm1.get_axes(()).index(axis1))
-                    elif axis1 is None:
-                        if verbose:
-                            print(
-"Verbose: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
-    cell_methods0, cell_methods1))
-                        return False
-            #--- End: for
-
-            if len(cm1.get_axes(())) != len(indices):
-                if verbose:
-                    print("Field: Different cell methods: {0!r}, {1!r}".format(
-                        cell_methods0, cell_methods1))
-                return False
-
-            cm1 = cm1.sorted(indices=indices)
-            cm1.set_axes(axes0)
-
-            if not cm0.equals(cm1, atol=atol, rtol=rtol,
-                              verbose=verbose,
-                              ignore_type=ignore_type):
-                if verbose:
-                    print(
-"Verbose: Different cell methods: {0!r}, {1!r}".format(
-    cell_methods0, cell_methods1))
-                return False                
-        #--- End: for
-
-        return True
-    #--- End: def
-
-    def _equals_domain_axis(self, other, rtol=None, atol=None,
-                            verbose=False, ignore_type=False,
-                            axis1_to_axis0=None, key1_to_key0=None):
-        '''TODO
-        '''
-        # ------------------------------------------------------------
-        # Domain axes
-        # ------------------------------------------------------------  
-        self_sizes  = [d.get_size()
-                       for d in self.filter_by_type('domain_axis').values()]
-        other_sizes = [d.get_size()
-                       for d in other.filter_by_type('domain_axis').values()]
-      
-        if sorted(self_sizes) != sorted(other_sizes):
-            # There is not a 1-1 correspondence between axis sizes
-            if verbose:
-                print("{0}: Different domain axes: {1} != {2}".format(
-                    self.__class__.__name__,
-                    sorted(self.values()),
-                    sorted(other.values())))
-            return False
-
-        return True
-    #--- End: def
-    
 #--- End: class

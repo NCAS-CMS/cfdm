@@ -141,9 +141,6 @@ domain ancillary constructs.
             return self._default(default,
                          "{!r} has no {!r} domain ancillary".format(
                              self.__class__.__name__, parameter))
-
-#        return self._get_component('domain_ancillaries').pop(
-#            domain_ancillary, None)
     #--- End: def
 
     def domain_ancillaries(self, domain_ancillaries=None, copy=True):
@@ -179,7 +176,16 @@ domain ancillary constructs.
 
 **Examples:**
 
-<TODO>
+>>> c.coordinate_conversion.domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1',
+ 'orog': 'domainancillary2'}
+
+>>> c.coordinate_conversion.domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1',
+ 'orog': None}
+
 
         '''
         out = self._get_component('domain_ancillaries').copy()
@@ -210,7 +216,6 @@ domain ancillary constructs.
     domain_ancillary: `str`
         The name of the term.
 
-
     default: optional
         Return the value of the *default* parameter if the domain
         ancillary term has not been set. If set to an `Exception`
@@ -222,7 +227,12 @@ domain ancillary constructs.
 
 **Examples:**
 
-<TODO>
+>>> c.coordinate_conversion.domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1',
+ 'orog': 'domainancillary2'}
+>>> c.coordinate_conversion.get_domain_ancillary('a')
+'domainancillary0'
 
         '''
         
@@ -243,14 +253,29 @@ domain ancillary constructs.
              `get_domain_ancillary`
 :Parameters:
 
-        <TODO>
+    term: `str`
+        The name of the term to be set.
+
+    value:
+        The value for the term.
+
+    copy: `bool`, optional
+        If True then set a deep copy of *value*.
+
 :Returns:
 
     `None`
 
 **Examples:**
 
-<TODO>
+>>> c.coordinate_conversion.domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1'}
+>>> c.coordinate_conversion.set_domain_ancillary('orog', 'domainancillary2')
+>>> c.coordinate_conversion.domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1',
+ 'orog': 'domainancillary2'}
 
         '''
         if copy:

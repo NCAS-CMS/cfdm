@@ -117,8 +117,6 @@ x.__str__() <==> str(x)
         if calendar is not None:
             units += ' {0} {1}'.format(calendar)
             
-#        axis_name = self.domain_axis_name
-
         # Axes
         data_axes = self.get_data_axes(default=())
         non_spanning_axes = set(self.domain_axes).difference(data_axes)
@@ -263,7 +261,7 @@ rules, the only differences being:
         # ------------------------------------------------------------
         # Subspace the field's data
         # ------------------------------------------------------------
-        new.set_data(data[tuple(indices)], data_axes)
+        new.set_data(data[tuple(indices)], axes=None) #, data_axes)
 
         # ------------------------------------------------------------
         # Subspace other constructs that contain arrays
@@ -303,62 +301,14 @@ rules, the only differences being:
             domain_axis.set_size(size)
             new_constructs.replace(key, domain_axis)
 
+        new.set_data_axes(axes=data_axes)
+
         return new
     #--- End: def
 
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-
-#    def _unique_construct_names(self, constructs):
-#        '''
-#
-#        '''    
-#        key_to_name = {}
-#        name_to_keys = {}
-#
-#        for key, construct in getattr(self, constructs)().items():
-#            name = construct.identity(default='cfdm%'+key)
-#            name_to_keys.setdefault(name, []).append(key)
-#            key_to_name[key] = name
-#
-#        for name, keys in name_to_keys.items():
-#            if len(keys) <= 1:
-#                continue
-#            
-#            for key in keys:
-#                key_to_name[key] = '{0}{{{1}}}'.format(
-#                    name,
-#                    re.findall('\d+$', key)[0])
-#        #--- End: for
-#        
-#        return key_to_name
-#    #--- End: def
-    
-#    def _unique_domain_axis_names(self):
-#        '''
-#        '''    
-#        key_to_name = {}
-#        name_to_keys = {}
-#
-#        for key, value in self.domain_axes.items():
-#            name_size = (self.domain_axis_name(key), value.get_size(''))
-#            name_to_keys.setdefault(name_size, []).append(key)
-#            key_to_name[key] = name_size
-#
-#        for (name, size), keys in name_to_keys.items():
-#            if len(keys) == 1:
-#                key_to_name[keys[0]] = '{0}({1})'.format(name, size)
-#            else:
-#                for key in keys:                    
-#                    key_to_name[key] = '{0}{{{1}}}({2})'.format(name,
-#                                                                re.findall('\d+$', key)[0],
-#                                                                size)
-#        #--- End: for
-#        
-#        return key_to_name
-#    #--- End: def
-    
     def _one_line_description(self, axis_names_sizes=None):
         '''
         '''
@@ -488,61 +438,6 @@ False
         new._set_dataset_compliance(self.dataset_compliance())
 
         return new
-    #--- End: def
-
-    def del_construct(self, key=None, default=ValueError()):
-        '''Remove a metadata construct.
-
-If a domain axis construct is selected for removal then it can't be
-spanned by any data arrays of the field nor metadata constructs, nor
-be referenced by any cell method constructs. However, a domain
-ancillary construct may be removed even if it is referenced by
-coordinate reference construct.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs`, `get_construct`, `has_construct`,
-             `set_construct`
-
-:Parameters:
-
-    key: `str`
-        Remove the metadata construct with the given construct key.
-
-    default: optional
-        Return the value of the *default* parameter if no unique
-        construct has been selected. By default an exception is raised
-        in this case.
-        
-:Returns:
-
-        The removed metadata construct. If there is no such construct
-        then an exception is raised, or the value of the *default*
-        parameter is returned, if provided.
-
-**Examples:**
-
->>> f.del_construct('auxiliarycoordinate2')
-<AuxiliaryCoordinate: latitude(111, 106) degrees_north>
->>> f.del_construct('auxiliarycoordinate2')
-ValueError: Can't get remove non-existent construct
->>> f.del_construct('auxiliarycoordinate2', default=False)
-False
-
-        '''
-        if key in self.domain_axes:
-            if key in self.get_data_axes(default=()):
-                raise ValueError(
-"Can't remove domain axis {!r} that is spanned by the data of the field construct".format(
-    cid))
-
-            for cid, axes in self.constructs.data_axes().items():
-                if key in axes:
-                    raise ValueError(
-"Can't remove domain axis {!r} that is spanned by the the data of metadata construct {!r}".format(cid, key))
-        #--- End: if
-
-        return self.constructs._del_construct(key, default=default)
     #--- End: def
 
     def dump(self, display=True, _level=0, _title=None):
@@ -787,7 +682,7 @@ False
                             ignore_data_type=ignore_data_type,
                             ignore_fill_value=ignore_fill_value,
                             ignore_compression=ignore_compression,
-                            ignore_type=ignore_type):
+                            _ignore_type=ignore_type):
             if verbose:
                 print(
                     "{0}: Different {1}".format(self.__class__.__name__, 'constructs'))
@@ -860,7 +755,6 @@ construct, into the data array.
                 "Can't insert a duplicate data array axis: {!r}".format(axis))
        
         data_axes.insert(position, axis)
-        f.set_data_axes(data_axes)
 
         # Expand the dims in the field's data array
         new_data = self.data.insert_dimension(position)
@@ -1021,6 +915,19 @@ Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
         '''A report of problems encountered whilst reading the field construct
 from a dataset.
 
+If the dataset is partially CF-compliant to the extent that it is not
+possible to unambiguously map an element of the netCDF dataset to an
+element of the CF data model, then a field construct is still returned
+by `cf.read`, but may be incomplete.
+
+Such "structural" non-compliance would occur, for example, if the
+"coordinates" attribute of a CF-netCDF data variable refers to another
+variable that does not exist, or refers to a variable that spans a
+netCDF dimension that does not apply to the data variable.
+
+Other types of non-compliance are not checked, such whether or not
+controlled vocabularies have been adhered to.
+
 .. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.read`
@@ -1037,6 +944,13 @@ from a dataset.
         The report. If *display* is True then the report is printed
         and `None` is returned. Otherwise the report is returned as a
         dictionary.
+
+**Examples:**
+
+If no problems were encountered, an empty dictionary is returned:
+
+>>> f.dataset_compliance()
+{}
 
         '''
         d = self._get_component('dataset_compliance', {})

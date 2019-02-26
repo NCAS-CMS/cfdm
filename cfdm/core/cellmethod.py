@@ -274,16 +274,20 @@ False
     #--- End: def
     
     def del_qualifier(self, qualifier, default=ValueError()):
-        '''TODO
+        '''Remove a qualifier of the cell method.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: TODO
+.. seealso:: `get_qualifier`, `has_qualifier`, `qualifiers`,
+             `set_qualifier`
 
 :Parameters:
 
     qualifier:
-        TODO
+         The name of the qualifier to be removed.
+
+        *Parameter example:*
+           ``qualifier='where'``
 
     default: optional
         Return the value of the *default* parameter if the qualifier
@@ -292,11 +296,19 @@ False
 
 :Returns:
 
-        TODO
+        The removed qualifier.
 
 **Examples:**
 
-TODO
+>>> c.set_qualifier('where', 'land')
+>>> c.get_qualifier('where', 'no qualifier')
+'land'
+>>> c.del_qualifier('where')
+'land'
+>>> c.get_qualifier('where')
+ValueError: 'CellMethod' has no 'where' qualifier
+>>> c.del_qualifier('where', 'no qualifier')
+'no qualifier'
 
         '''
         try:
@@ -327,7 +339,15 @@ TODO
 
 **Examples:**
 
-TODO
+>>> c.set_axes('area')
+>>> c.get_axes('area')
+'area'
+>>> c.del_axes('axes')
+'area'
+>>> c.get_axes('axes')
+ValueError: 'CellMethod' has no axes
+>>> c.get_axes('where', 'no axes')
+'no axes'
 
         '''
         try:
@@ -382,16 +402,20 @@ False
     #--- End: def
 
     def get_qualifier(self, qualifier, default=ValueError()):
-        '''TODO
+        '''Return a qualifier of the cell method.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: TODO
+.. seealso:: `del_qualifier`, `has_qualifier`, `qualifiers`,
+             `set_qualifier`
 
 :Parameters:
 
     qualifier:
-        TODO
+        The name of the qualifier to be returned.
+
+        *Parameter example:*
+            ``qualifier='where'``
 
     default: optional
         Return the value of the *default* parameter if the qualifier
@@ -400,11 +424,19 @@ False
 
 :Returns:
 
-        TODO
+        The value of the qualifier. 
 
 **Examples:**
 
-TODO
+>>> c.set_qualifier('where', 'land')
+>>> c.get_qualifier('where', 'no qualifier')
+'land'
+>>> c.del_qualifier('where')
+'land'
+>>> c.get_qualifier('where')
+ValueError: 'CellMethod' has no 'where' qualifier
+>>> c.get_qualifier('where', 'no qualifier')
+'no qualifier'
 
         '''
         try:
@@ -450,7 +482,7 @@ False
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_axxes`, `get_method`, `set_method`
+.. seealso:: `del_axes`, `get_method`, `set_method`
 
 :Returns:
 
@@ -477,15 +509,16 @@ False
     #--- End: def
 
     def has_qualifier(self, qualifier):
-        '''Whether a qualifier has been set.
+        '''Whether a qualifier of the cell method has been set.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: TODO
+.. seealso:: `del_qualifier`, `get_qualifier`, `qualifiers`,
+             `set_qualifier`
 
 :Parameters:
 
-    prop: `str`
+    qualifier: `str`
         The name of the qualifier.
 
 :Returns:
@@ -495,18 +528,25 @@ False
 
 **Examples:**
 
-TODO
+>>> c.set_qualifier('where', 'land')
+>>> c.has_qualifier('where')
+True
+>>> c.del_qualifier('where')
+'land'
+>>> c.has_qualifier('where')
+False
 
         '''
         return qualifier in self._get_component('qualifiers')
     #--- End: def
 
     def qualifiers(self):
-        '''TODO
+        '''Return all qualifiers of the cell method.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: TODO
+.. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`,
+             `set_qualifier`
 
 :Returns:
 
@@ -515,8 +555,9 @@ TODO
 
 **Examples:**
 
->>> f.qualifiers()
-TODO
+>>> c.qualifiers()
+{'interval': [<Data(): 0.1 degrees>], 
+ 'where': 'land'}
 
 >>> f.qualifiers()
 {}
@@ -604,10 +645,10 @@ False
 :Parameters:
 
     value: `str`
-        The method.
+        The value for the method.
 
-        *Parameter example:*
-          ``method='variance'``
+    copy: `bool`, optional
+        If True then set a deep copy of *value*.
 
 :Returns:
 
@@ -632,24 +673,33 @@ False
         return self._set_component('method', value, copy=copy)
     #--- End: def
 
-    def set_qualifier(self, value, copy=True):
+    def set_qualifier(self, qualifier, value, copy=True):
         '''Set a qualifier of the cell method.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`
-
+.. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`,
+             `qualifiers`
 :Parameters:
 
+    qualifier: `str`
+        The name of the qualifier to be set.
+
     value: 
-        TODO
+        The value for the qualifier.
+
+    copy: `bool`, optional
+        If True then set a deep copy of *value*.
 
 :Returns:
 
      `None`
 
 **Examples:**
-TODO
+
+>>> c.set_qualifier('where', 'land')
+>>> c.get_qualifier('where')
+'land'
 
         '''
         if copy:
@@ -658,6 +708,4 @@ TODO
         self._get_component('qualifiers')[qualifier] = value
     #--- End: def
     
-    #--- End: def
-
 #--- End: class

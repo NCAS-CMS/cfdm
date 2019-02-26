@@ -4,10 +4,9 @@ from builtins import super
 import abc
 
 from . import Properties
-#from . import DataContainer
+
 
 class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
-#class PropertiesData(with_metaclass(abc.ABCMeta, DataContainer, Properties)):
     '''Abstract base class for a data array with descriptive properties.
 
 .. versionadded:: 1.7.0
@@ -178,14 +177,6 @@ None
         except ValueError:
             return self._default(default,
                       "{!r} has no data".format(self.__class__.__name__))
-
-#        data = self._del_component('data', None)
-#        if data is None:
-#            return self._default(default,
-#                                 message="{!r} has no data".format(
-#                                     self.__class__.__name__))
-#
-#        return data
     #--- End: def
 
     def get_data(self, default=ValueError()):

@@ -1893,6 +1893,8 @@ variable should be pre-filled with missing values.
             else:
                 # There is no dimension coordinate for this dimension,
                 # so just create a domain axis with the correct size.
+
+                
                 if ncdim in g['new_dimensions']:
                     size = g['new_dimensions'][ncdim]
                 else:
@@ -3353,10 +3355,10 @@ dimensions are returned.
         variable = g['variables'][ncvar]
      
         ncdimensions = list(g['variable_dimensions'][ncvar])
-        
+
         # Remove a string-length dimension, if there is one. DCH ALERT
         if (variable.datatype.kind == 'S' and
-            variable.ndim >= 2 and variable.shape[-1] > 1):
+            variable.ndim >= 2): # and variable.shape[-1] > 1):
             ncdimensions.pop()
     
         # Check for dimensions which have been compressed. If there are
@@ -3702,7 +3704,6 @@ Checks that
                 ok = False
                 continue
 
-#            print ('unkown_external=', unknown_external)
             if not unknown_external:
                 dimensions = self._ncdimensions(ncvar)
                 if (not unknown_external and

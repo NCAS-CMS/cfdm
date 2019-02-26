@@ -27,6 +27,8 @@ rules, the only differences being:
   the way vector subscripts work in Fortran). This is the same
   behaviour as indexing on a Variable object of the netCDF4 package.
 
+.. versionadded:: 1.7.0
+
 :Returns:
 
         The subspace.

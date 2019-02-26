@@ -14,7 +14,20 @@ object.
     # Private methods
     # ----------------------------------------------------------------
     def _unique_construct_names(self):
-        '''TODO 
+        '''Return unique metadata construct names.
+
+.. versionadded:: 1.7.0
+
+**Examples:**
+
+>>> f._unique_construct_names()
+{'cellmethod0': 'method:mean',
+ 'dimensioncoordinate0': 'latitude',
+ 'dimensioncoordinate1': 'longitude',
+ 'dimensioncoordinate2': 'time',
+ 'domainaxis0': 'ncdim%lat',
+ 'domainaxis1': 'ncdim%lon',
+ 'domainaxis2': 'key%domainaxis2'}
 
         '''    
         key_to_name = {}
@@ -43,7 +56,17 @@ object.
     #--- End: def
     
     def _unique_domain_axis_names(self):
-        '''TODO 
+        '''Return unique domain axis construct names.
+
+.. versionadded:: 1.7.0
+
+**Examples:**
+
+>>> f._unique_domain_axis_names()
+{'domainaxis0': 'latitude(5)',
+ 'domainaxis1': 'longitude(8)',
+ 'domainaxis2': 'time(1)'}
+
         '''
         key_to_name = {}
         name_to_keys = {}

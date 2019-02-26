@@ -1289,7 +1289,7 @@ also be provided.
         if axes is None:
             construct.set_data(data, copy=copy)
         else:
-            construct.set_data(data, axes, copy=copy)
+            construct.set_data(data, axes=axes, copy=copy)
     #--- End: def
 
     def set_datum(self, coordinate_reference, datum):

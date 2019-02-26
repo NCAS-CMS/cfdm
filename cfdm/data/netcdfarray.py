@@ -1,10 +1,9 @@
 from future import standard_library
 standard_library.install_aliases()
 from builtins import (str, super)
-#from functools import reduce
+
 
 import os
-#import operator
 import urllib.parse
 
 import numpy
@@ -298,7 +297,10 @@ dtype('float64')
         '''The name of the netCDF file containing the array.
 
 **Examples:**
-TODO
+
+>>> a.get_filename()
+'file.nc'
+
         '''
         return self._get_component('filename')
     #--- End: def
@@ -308,14 +310,14 @@ TODO
 
 **Examples:**
 
->>> print(self.netcdf)
+>>> print(a.netcdf)
 'tas'
->>> print(self.varid)
+>>> print(a.varid)
 None
 
->>> print(self.netcdf)
+>>> print(a.netcdf)
 None
->>> print(self.varid)
+>>> print(a.varid)
 4
 
         '''
@@ -328,15 +330,16 @@ array.
 
 **Examples:**
 
->>> print(self.netcdf)
+>>> print(a.netcdf)
 'tas'
->>> print(self.varid)
+>>> print(a.varid)
 None
 
->>> print(self.netcdf)
+>>> print(a.netcdf)
 None
->>> print(self.varid)
+>>> print(a.varid)
 4
+
         '''
         return self._get_component('varid')
     #--- End: def
@@ -393,7 +396,7 @@ True
 **Examples:**
 
 >>> netcdf = a.open()
->>> variable = netcdf.variables[self.get_ncvar()]
+>>> variable = netcdf.variables[a.get_ncvar()]
 >>> variable.getncattr('standard_name')
 'eastward_wind'
 

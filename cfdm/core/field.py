@@ -52,10 +52,6 @@ and institution).
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         return instance
-    
-#        obj = object.__new__(cls, *args, **kwargs)
-#        obj._Constructs = Constructs
-#        return obj
     #--- End: def
 
     def __init__(self, properties={}, source=None, copy=True,
@@ -266,7 +262,7 @@ False
 :Returns:
 
     `Domain`
-        TODO
+         The domain.
 
 **Examples:**
 
@@ -276,8 +272,9 @@ False
         return self._Domain.fromconstructs(self.constructs)
     #--- End: def
 
-    def get_data_axes(self, key=None, default=ValueError):
-        '''Return the keys of the domain axes spanned by a data array.
+    def get_data_axes(self, key=None, default=ValueError()):
+        '''Return the keys of the domain axis constructs spanned by the data
+of the field or of a metadata construct.
 
 .. versionadded:: 1.7.0
 
@@ -286,7 +283,10 @@ False
 :Parameters:
 
     key: `str`, optional
-        <TODO>
+        Specify a metadata construct, instead of the field construct.
+
+        *Parameter example:*
+          ``key='auxiliarycoordinate0'``
 
     default: optional
         Return the value of the *default* parameter if the data axes
@@ -360,12 +360,19 @@ False
         return True
     #--- End: def
     
-    def del_construct(self, key):
+    def del_construct(self, key, default=ValueError()):
         '''Remove a metadata construct.
+
+If a domain axis construct is selected for removal then it can't be
+spanned by any data arrays of the field nor metadata constructs, nor
+be referenced by any cell method constructs. However, a domain
+ancillary construct may be removed even if it is referenced by
+coordinate reference construct.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get_construct`, `constructs`
+.. seealso:: `get_construct`, `constructs`, `has_construct`,
+             `set_construct`
 
 :Parameters:
 
@@ -375,26 +382,37 @@ False
 
         *Parameter example:*
           ``key='auxiliarycoordinate0'``
-        
+
+    default: optional
+        Return the value of the *default* parameter if the data axes
+        have not been set. If set to an `Exception` instance then it
+        will be raised instead.
+
 :Returns:
 
-    metadata construct
         The removed metadata construct.
 
 **Examples:**
 
->>> f.del_construct('auxiliarycoordinate0')
+
+>>> f.del_construct('auxiliarycoordinate2')
+<AuxiliaryCoordinate: latitude(111, 106) degrees_north>
+>>> f.del_construct('auxiliarycoordinate2')
+ValueError: Can't get remove non-existent construct
+>>> f.del_construct('auxiliarycoordinate2', default=False)
+False
 
         '''
-        if key in self.get_data_axes(default=()):
-            raise ValueError(
-                "Can't remove domain axis {!r} that is spanned by the field's data".format(key))
+        if key in self.domain_axes and key in self.get_data_axes(default=()):
+                raise ValueError(
+"Can't remove domain axis {!r} that is spanned by the data of the field construct".format(
+    key))
 
-        return super().del_construct(key)
+        return self.constructs._del_construct(key, default=default)
     #--- End: def
 
     def set_data(self, data, axes, copy=True):
-        '''Set the data.
+        '''Set the data of the field construct.
 
 The units, calendar and fill value properties of the data object are
 removed prior to insertion.
@@ -409,13 +427,25 @@ removed prior to insertion.
     data: `Data`
         The data to be inserted.
 
-    axes: sequence of `str` or `None`, optional
+    axes: (sequence of) `str`, or `None`
         The identifiers of the domain axes spanned by the data
-        array. If `None` then the data axes are not set.
+        array. If `None` instead then the data axes are not set.
 
         The axes may also be set afterwards with the `set_data_axes`
         method.
 
+        *Parameter example:*
+          ``axes=['domainaxis2']``
+        
+        *Parameter example:*
+          ``axes='domainaxis2'``
+        
+        *Parameter example:*
+          ``axes=['domainaxis2', 'domainaxis1']``
+        
+        *Parameter example:*
+          ``axes=None``
+        
     copy: `bool`, optional
         If False then do not copy the data prior to insertion. By
         default the data are copied.
@@ -426,13 +456,18 @@ removed prior to insertion.
 
 **Examples:**
 
-TODO
+Set the domain axis constructs spanned by the data of the field
+construct:
+
+>>> d
+<Data(10, 9): [[23.6, ..., 76.8]]>
+>>> f.set_data(d, axes=['domainaxis0', 'domainaxis1'])
 
         '''
-        if axes is not None:
-            self.set_data_axes(axes)
-
         super().set_data(data, copy=copy)
+
+        if axes is not None:
+            self.set_data_axes(axes=axes)
     #--- End: def
 
     def set_data_axes(self, axes, key=None):
@@ -451,6 +486,12 @@ of a metadata construct.
         data of the field or of a metadata construct.
 
         *Parameter example:*
+          ``axes='domainaxis1'``
+
+        *Parameter example:*
+          ``axes=['domainaxis1']``
+
+        *Parameter example:*
           ``axes=['domainaxis1', 'domainaxis0']``
 
      key: `str`, optional
@@ -465,21 +506,38 @@ of a metadata construct.
 
 **Examples:**
 
+Set the domain axis constructs spanned by the data of the field
+construct:
+
 >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
 
->>> f.set_data_axes(['domainaxis0'], key='dimensioncoordinate1')
+Set the domain axis constructs spanned by the data of a metadata
+construct:
+
+>>> f.set_data_axes(['domainaxis1'], key='dimensioncoordinate1')
 
         '''
+        if isinstance(axes, basestring):
+            axes = (axes,)
+            
         if key is not None:
             return super().set_data_axes(axes=axes, key=key)
         
         domain_axes = self.constructs.filter_by_type('domain_axis')
+
+        axes_shape = []
         for axis in axes:
             if axis not in domain_axes:
                 raise ValueError(
-"Can't set data axes: Domain axis {!r} doesn't exist".format(axis))
+"Can't set field construct data axes: Domain axis {!r} doesn't exist".format(axis))
 
-        # <TODO> check shape
+            axes_shape.append(domain_axes[axis].get_size())
+
+        if (self.has_data() and self.data.shape != tuple(axes_shape)):
+            raise ValueError(
+"Can't set field construct data axes: Data array shape of {!r} does not match the shape required by domain axes {}: {}".format(
+    self.data.shape, tuple(axes), tuple(axes_shape)))
+
         self._set_component('data_axes', tuple(axes), copy=False)
     #--- End: def
     

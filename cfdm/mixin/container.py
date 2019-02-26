@@ -146,14 +146,16 @@ casts them as numpy arrays and carried aout numericlly tolerant equality checks.
         '''Common preprocessing prior to testing of equality.
 
 * If the LHS operand is (object identity) the RHS operand then return
-  True.  ignore_type=True a sublcass of, the RHS operand
+  True.
 
 * If ignore_type=False and the LHS operand is not of the same type, or
   a sublcass of, the RHS operand then return False
 
 * If ignore_type=True and the LHS operand is not of the same type, or
-  a sublcass of, the RHS operand then instantiate a new instance of
-  the RHS class and return it.
+  a sublcass of, the RHS operand then instantiate a new instance based
+  on the the RHS class and return it.
+
+.. versionadded:: 1.7.0
 
         '''
         # Check for object identity
