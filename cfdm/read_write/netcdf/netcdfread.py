@@ -1166,7 +1166,7 @@ variable should be pre-filled with missing values.
         
         verbose = g['verbose']
         if verbose:
-            print('    Geometry container =', ncvar)
+            print('    Geometry container =', repr(ncvar))
 
         geometry_type = attributes[ncvar].get('geometry_type')
             
@@ -1184,15 +1184,15 @@ variable should be pre-filled with missing values.
         parsed_part_node_count  = self._split_string_by_white_space(ncvar, part_node_count)
 
         if verbose:
-            print('    geometry_type =', geometry_type)
-            print('    node_coordinates =', node_coordinates)
-            print('    interior_ring    =', interior_ring)
-            print('    node_count       =', node_count)
-            print('    part_node_count  =', part_node_count)
-            print('    parsed_node_coordinates =', parsed_node_coordinates)
-            print('    parsed_interior_ring    =', parsed_interior_ring)
-            print('    parsed_node_count       =', parsed_node_count)
-            print('    parsed_part_node_count  =', parsed_part_node_count)
+            print('        geometry_type    =', repr(geometry_type))
+            print('        node_coordinates =', repr(node_coordinates))
+            print('        interior_ring    =', repr(interior_ring))
+            print('        node_count       =', repr(node_count))
+            print('        part_node_count  =', repr(part_node_count))
+            print('        parsed_node_coordinates =', parsed_node_coordinates)
+            print('        parsed_interior_ring    =', parsed_interior_ring)
+            print('        parsed_node_count       =', parsed_node_count)
+            print('        parsed_part_node_count  =', parsed_part_node_count)
 
         cf_compliant = True
         
@@ -1283,19 +1283,22 @@ variable should be pre-filled with missing values.
 
                 part_dimension = g['variable_dimensions'][part_node_count][0]
                 
-                parts = self._create_data(part_node_count)
+                parts = self._create_Count(ncvar=part_node_count,
+                                           ncdim=part_dimension)
 
                 total_number_of_parts = self.implementation.get_data_size(parts)
 
+                parts_data = self.implementation.get_data(parts)
+                
                 index = parts.copy()
 
                 p = 0
                 i = 0
-                for j in range(self.implementation.get_data_size(nodes_per_geometry)):
-                    print('i=', i)
-                    print('j=', j)
-                    n_nodes_in_this_geometry = int(nodes_per_geometry[j])
-                    print('n_nodes_in_this_geometry=',n_nodes_in_this_geometry)
+                for cell_no in range(self.implementation.get_data_size(nodes_per_geometry)):
+                    n_nodes_in_this_cell = int(self.implementation.get_data(
+                        nodes_per_geometry)[cell_no])
+                    print('i=', i, ', cell_no=', cell_no,
+                          ', n_nodes_in_this_cell=',n_nodes_in_this_cell)
                     n_parts_in_this_geometry = 0
                     s = 0
 
@@ -1303,11 +1306,10 @@ variable should be pre-filled with missing values.
                         print('  k=', k)
                         print('  p=', p)
                         n_parts_in_this_geometry += 1                        
-                        index[k] = p
-                        s += int(parts[k])
+                        index.data[k] = p
+                        s += int(parts_data[k])
                         print('  s=', s)
-                        if s >= n_nodes_in_this_geometry:
-#                           parts_per_geometry[j] = n_parts_in_this_geometry
+                        if s >= n_nodes_in_this_cell:
                             i += k + 1
                             p += 1
                             break                        

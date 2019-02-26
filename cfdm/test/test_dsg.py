@@ -14,7 +14,7 @@ def _make_contiguous_file(filename):
     
     n.Conventions = 'CF-1.7'
     n.featureType = 'timeSeries'
-    
+
     station = n.createDimension('station', 4)
     obs     = n.createDimension('obs'    , 24)
     name_strlen = n.createDimension('name_strlen', 8)

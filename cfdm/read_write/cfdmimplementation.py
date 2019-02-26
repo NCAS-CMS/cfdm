@@ -881,8 +881,7 @@ netCDF unlimited dimensions.
 
 :Returns:
 
-    out: 
-        The data array.
+        The data.
 
 :Examples 2:
 
