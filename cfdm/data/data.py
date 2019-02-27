@@ -304,8 +304,9 @@ x.__str__() <==> str(x)
             return out
         #--- End: try
 
-        size = self.size
-        ndim = self.ndim
+        size  = self.size
+        shape = self.shape
+        ndim  = self.ndim
         open_brackets  = '[' * ndim
         close_brackets = ']' * ndim
 
@@ -335,7 +336,7 @@ x.__str__() <==> str(x)
                 out = '{0}{1!s}, ..., {2!s}{3}'.format(open_brackets,
                                                        first, last,
                                                        close_brackets)
-            elif size == 3:                
+            elif shape[-1:] == (3,):                
                 middle = self.second_element()
                 if isreftime:
                     # Convert reference time to date-time
@@ -348,6 +349,10 @@ x.__str__() <==> str(x)
                 out = '{0}{1!s}, {2!s}, {3!s}{4}'.format(open_brackets,
                                                          first, middle, last,
                                                          close_brackets)
+            elif size == 3:
+                out = '{0}{1!s}, ..., {2!s}{3}'.format(open_brackets,
+                                                       first, last,
+                                                       close_brackets)
             else:
                 out = '{0}{1!s}, {2!s}{3}'.format(open_brackets,
                                                   first, last,

@@ -328,16 +328,7 @@ TODO
             # Simple geometries
             # --------------------------------------------------------
             # Geometry containers, keyed by their netCDF variable name.
-            #
-            # E.g. {'geometry_container': {
-            #           'geometry_type'   : "polygon",
-            #           'node_count'      : "node_count",
-            #           'node_coordinates': set(["x", "y"]),
-            #           'part_node_count  : "part_node_count",
-            #           'interior_ring'   : "interior_ring"}
-            #      }
             'geometries'    : {},
-            'interior_ring' : {},
             
             'do_not_create_field':  set(),
             'references': {},
@@ -1168,7 +1159,6 @@ variable should be pre-filled with missing values.
         node_dimension = g['variable_dimensions'][parsed_node_coordinates[0]][0]
 
         if node_count is None:
-            print ('PPPPPPPPPPP')
             # --------------------------------------------------------
             # There is no node_count variable, so all geometries must
             # be single part point geometries => we can create a
@@ -1176,8 +1166,8 @@ variable should be pre-filled with missing values.
             # --------------------------------------------------------
             nodes_per_geometry = self.implementation.initialise_Count()
             size = g['nc'].dimensions[node_dimension].size
-            ones = self.implementation.initialise_Data(array=numpy.ones((size,), dtype='int32'),
-                                                       copy=False)
+            ones = self.implementation.initialise_Data(
+                array=numpy.ones((size,), dtype='int32'), copy=False)
             self.implementation.set_data(nodes_per_geometry, data=ones)
             cell_dimension = node_dimension 
         else:        
@@ -1295,7 +1285,6 @@ variable should be pre-filled with missing values.
             {'node_coordinates': parsed_node_coordinates,
              'node_dimension'  : node_dimension}
         )
-        print (g['geometries'])
     #--- End: def
 
     def _set_ragged_contiguous_parameters(self,
@@ -1889,8 +1878,7 @@ variable should be pre-filled with missing values.
             self.implementation.nc_set_unlimited_dimensions(f, unlimited)
     
         data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)
-        print ('f=', repr(f))
-        print ('data=', data.array)
+
         if verbose:
             print('    [3] Inserting', repr(data))
 
@@ -2013,7 +2001,7 @@ variable should be pre-filled with missing values.
             for node_ncvar in node_coordinates:
                 # Set dimensions for this node coordinate variable
                 dimensions = self._get_domain_axes(node_ncvar)
-    
+#                print ('dimensions=',dimensions, node_ncvar)
                 if node_ncvar in g['auxiliary_coordinate']:
                     coord = g['auxiliary_coordinate'][node_ncvar].copy()
                 else:     
@@ -2470,6 +2458,7 @@ variable's netCDF dimensions.
         else:
             ncdim_to_axis = g['ncdim_to_axis']
             ncdimensions = self._ncdimensions(ncvar)
+#            print (ncdim_to_axis, ncdimensions)
             axes = [ncdim_to_axis[ncdim] for ncdim in ncdimensions
                     if ncdim in ncdim_to_axis]
 
