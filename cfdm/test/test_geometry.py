@@ -141,6 +141,73 @@ def _make_geometry_2_file(filename):
     return filename
 #--- End: def
 
+def _make_geometry_3_file(filename):        
+    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
+    
+    n.Conventions = 'CF-1.8'
+    n.featureType = 'timeSeries'
+    
+    time     = n.createDimension('time'    , 4)
+    instance = n.createDimension('instance', 3)
+    node     = n.createDimension('node'    , 3)
+    
+    t =  n.createVariable('time', 'i4', ('time',))
+    t.units = "seconds since 2016-11-07 20:00 UTC" 
+    t[...] = [1, 2, 3, 4 ]
+
+#   lat = n.createVariable('lat', 'f8', ('instance',))
+#   lat.standard_name = "latitude"
+#   lat.units = "degrees_north"
+#   lat.bounds = "y"
+#   lat[...] = [30, 50, 70]
+#
+#   lon = n.createVariable('lon', 'f8', ('instance',))
+#   lon.standard_name = "longitude"
+#   lon.units = "degrees_east"
+#   lon.bounds = "x"
+#   lon[...] = [10, 60, 80]    
+
+    datum = n.createVariable('datum', 'i4', ())
+    datum.grid_mapping_name = "latitude_longitude"
+    datum.longitude_of_prime_meridian = 0.0
+    datum.semi_major_axis = 6378137.0
+    datum.inverse_flattening = 298.257223563
+    
+    geometry_container = n.createVariable('geometry_container', 'i4', ());
+    geometry_container.geometry_type = "point"
+    geometry_container.node_coordinates = "x y z"
+    
+    x = n.createVariable('x', 'f8', ('node',))
+    x.units = "degrees_east"
+    x.standard_name = "longitude"
+    x.axis = "X"
+    x[...] = [30, 10, 40]
+    
+    y = n.createVariable('y', 'f8', ('node',))
+    y.units = "degrees_north"
+    y.standard_name = "latitude"
+    y.axis = "Y"
+    y[...] = [10, 30, 40]
+    
+    z = n.createVariable('z', 'f8', ('node',))
+    z.units = "m"
+    z.standard_name = "altitude"
+    z.axis = "Z"
+    z[...] = [100, 150, 200]
+    
+    someData = n.createVariable('someData', 'f8', ('instance', 'time'))
+#    someData.coordinates = "time lat lon"
+    someData.grid_mapping = "datum"
+    someData.geometry = "geometry_container"
+    someData[...] = [[1,  2,  3,  4],
+                     [5,  6,  7,  8],
+                     [9, 10, 11, 12]]
+    
+    n.close()
+    
+    return filename
+#--- End: def
+
 def _make_interior_ring_file(filename):        
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
@@ -222,12 +289,14 @@ def _make_interior_ring_file(filename):
 
 geometry_1_file    = _make_geometry_1_file('geometry_1.nc')
 geometry_2_file    = _make_geometry_2_file('geometry_2.nc')
+geometry_3_file    = _make_geometry_3_file('geometry_3.nc')
 interior_ring_file = _make_interior_ring_file('geometry_interior_ring.nc')
 
 class DSGTest(unittest.TestCase):
     def setUp(self):
         self.geometry_1_file = geometry_1_file
         self.geometry_2_file = geometry_2_file
+        self.geometry_3_file = geometry_3_file
         self.geometry_interior_ring_file = interior_ring_file
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
@@ -245,8 +314,10 @@ class DSGTest(unittest.TestCase):
             return
                 
         f = cfdm.read(self.geometry_1_file, verbose=False)
-        for i in f:
-            i.dump()
+
+        self.assertTrue(len(f) == 1)
+        f = f[0]
+        self.assertTrue(f.equals(f.copy()))
     #--- End: def
 
     def test_geometry_2(self):
@@ -254,8 +325,23 @@ class DSGTest(unittest.TestCase):
             return
                 
         f = cfdm.read(self.geometry_2_file, verbose=False)
-        for i in f:
-            i.dump()
+
+        self.assertTrue(len(f) == 1)
+        f = f[0]
+        self.assertTrue(f.equals(f.copy()))
+    #--- End: def
+
+    def test_geometry_3(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+                
+        f = cfdm.read(self.geometry_3_file, verbose=True)
+
+        self.assertTrue(len(f) == 1)
+        f = f[0]
+        self.assertTrue(f.equals(f.copy()))
+        
+        f.dump()
     #--- End: def
 
     def test_geometry_interior_ring(self):
@@ -265,8 +351,11 @@ class DSGTest(unittest.TestCase):
         f = cfdm.read(self.geometry_interior_ring_file, verbose=False)
 
         self.assertTrue(len(f) == 1)
-        for i in f:
-            i.dump()
+
+        f = f[0]
+        self.assertTrue(f.equals(f.copy()))
+        
+#        f.dump()
     #--- End: def
 
 #--- End: class

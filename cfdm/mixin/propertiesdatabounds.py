@@ -158,6 +158,15 @@ rules, the only differences being:
         string = [string]
         
         # ------------------------------------------------------------
+        # Geometry type
+        # ------------------------------------------------------------
+        geometry = self.get_geometry(None)
+        if geometry is not None:
+            indent1 = '    ' * (_level + 1)
+            string.append(
+                '{0}{1}Geometry: {2}'.format(indent1, _prefix, geometry))
+
+        # ------------------------------------------------------------
         # Bounds
         # ------------------------------------------------------------
         bounds = self.get_bounds(None)
@@ -168,22 +177,13 @@ rules, the only differences being:
                                       _level=_level, _axes=_axes,
                                       _axis_names=_axis_names))
 
-        # ------------------------------------------------------------
-        # Geometry type
-        # ------------------------------------------------------------
-        geometry = self.get_geometry(None)
-        if geometry is not None:
-            indent1 = '    ' * (_level + 1)
-            string.append(
-                '{0}{1}Geometry: {2}'.format(indent1, _prefix, geometry))
-
         #-------------------------------------------------------------
         # Interior ring
         # ------------------------------------------------------------
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
             string.append(interior_ring.dump(display=False, _key=_key,
-                                             _prefix=_prefix+'Interior ring:',
+                                             _prefix=_prefix+'Interior Ring:',
                                              _create_title=False,
                                              _level=_level,
                                              _axes=_axes,

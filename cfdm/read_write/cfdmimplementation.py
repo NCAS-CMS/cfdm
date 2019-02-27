@@ -17,6 +17,7 @@ from .. import (AuxiliaryCoordinate,
                 Count,
                 List,
                 Index,
+                InteriorRing,
                 CoordinateConversion,
                 Datum)
 
@@ -47,6 +48,7 @@ class CFDMImplementation(Implementation):
                  List=None,
                  Count=None,
                  Index=None,
+                 InteriorRing=None,
 
                  CoordinateConversion=None,
                  Datum=None,
@@ -111,8 +113,9 @@ class CFDMImplementation(Implementation):
             Bounds=Bounds,
             List=List,
             Count=Count,
-            Index=Index,
-            
+            Index=Index,        
+            InteriorRing=InteriorRing,
+
             CoordinateConversion=CoordinateConversion,
             Datum=Datum,
 
@@ -1053,6 +1056,14 @@ netCDF unlimited dimensions.
         return cls()
     #--- End: def
 
+    def initialise_InteriorRing(self):
+        '''
+
+        '''
+        cls = self.get_class('InteriorRing')
+        return cls()
+    #--- End: def
+
     def initialise_List(self):
         '''
 
@@ -1430,6 +1441,19 @@ also be provided.
         construct.nc_set_dimension(ncdim)
     #--- End: def
 
+    def nc_set_geometry_container(self, field, ncvar):
+        '''TODO
+
+:Parameters:
+
+:Returns:
+
+    `None`
+
+        '''
+        field.nc_set_geometry_container(ncvar)
+    #--- End: def
+
     def nc_set_variable(self, parent, ncvar):
         '''
 
@@ -1586,9 +1610,10 @@ _implementation = CFDMImplementation(
     FieldAncillary      = FieldAncillary,
     
     Bounds = Bounds,
-    List   = List,
-    Index=Index,
-    Count=Count,
+    List  = List,
+    Index = Index,
+    Count = Count,
+    InteriorRing = InteriorRing,
     
     CoordinateConversion = CoordinateConversion,
     Datum                = Datum,

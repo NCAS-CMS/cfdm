@@ -55,15 +55,15 @@ properties.
         the `set_geometry` method.
   
     interior_ring: `InteriorRing`, optional
-        Set the interior ring array. Ignored if the *source* parameter
+        Set the interior ring data. Ignored if the *source* parameter
         is set.
         
-        The interior ring array may also be set after initialisation
+        The interior ring data may also be set after initialisation
         with the `set_interior_ring` method.
   
     source: optional
-        Initialize the properties, data and bounds from those of
-        *source*.
+        Initialize the properties, geometry type, data, bounds and
+        interior ring from those of *source*.
  
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
@@ -121,9 +121,6 @@ properties.
 
 ``f.bounds`` is equivalent to ``f.get_bounds()`` 
 
-Note that a `Bounds` instance is returned. Use its `array` attribute
-to return the bounds as an indpendent `numpy` array.
-
 .. versionadded:: 1.7.0
 
 .. seealso:: `data`, `del_bounds`, `get_bounds`, `has_bounds`,
@@ -155,9 +152,35 @@ True
 
     @property
     def interior_ring(self):
-        '''TODO
+        '''Return the interior ring variable for polygon geometries.
 
-.. versionadded:: 1.8
+``f.interior_ring`` is equivalent to ``f.get_interior_ring()`` 
+
+.. versionadded:: 1.8.0
+
+.. seealso:: `data`, `del_interior_ring`, `get_interior_ring`,
+             `has_interior_ring`, `set_interior_ring`
+
+:Returns:
+
+    `InteriorRing`
+        The interior ring variable.
+
+**Examples:**
+
+>>> import numpy
+>>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+>>> c.set_interior_ring(i)
+>>> c.has_interior_ring()
+True
+>>> i = c.interior_ring
+>>> i
+<InteriorRing: (5, 2) >
+>>> i.data
+<Data(5, 2): [[0, ..., 9]]>
+>>> i.data.shape
+(5, 2)
+
         '''
         return self.get_interior_ring()
     #--- End: def
@@ -246,9 +269,9 @@ None
     #--- End: def
 
     def del_geometry(self, default=ValueError()):
-        '''Delete the geometry type. TODO
+        '''TODO
 
-.. versionadd:: 1.8
+.. versionadd:: 1.8.0
 
 .. seealso:: `get_geometry`, `has_geometry`, `set_geometry`
 
@@ -322,7 +345,7 @@ None
     def get_geometry(self, default=ValueError()):
         '''Return the geometry type.
 
-.. versionadded:: 1.8
+.. versionadded:: 1.8.0
 
 .. seealso:: `get_array`, `get_data`, `has_bounds`, `set_bounds`
 
@@ -350,12 +373,14 @@ TODO
     #--- End: def
 
     def get_interior_ring(self, default=ValueError()):
-        '''Return the interior_ring.
+        '''Return the interior ring variable for polygon geometries.
 
-.. versionadded:: 1.8
+``f.get_interior_ring()`` is equivalent to ``f.interior_ring`` 
 
-.. seealso:: `del_interior_ring`, `get_bounds`, `has_interior_ring`,
-             `set_interior_ring`
+.. versionadded:: 1.8.0
+
+.. seealso:: `data`, `del_interior_ring`, `has_interior_ring`,
+             `interior_ring`, `set_interior_ring`
 
 :Parameters:
 
@@ -366,18 +391,29 @@ TODO
 
 :Returns:
 
-        TODO
+        The interior ring variable.
 
 **Examples:**
 
+>>> import numpy
+>>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+>>> c.set_interior_ring(i)
+>>> c.has_interior_ring()
+True
 >>> i = c.get_interior_ring()
+>>> i
+<InteriorRing: (5, 2) >
+>>> i.data
+<Data(5, 2): [[0, ..., 9]]>
+>>> i.data.shape
+(5, 2)
 
         '''
         try:
             return self._get_component('interior_ring')
         except ValueError:
             return self._default(default,
-                    "{!r} has no interior ring".format(self.__class__.__name__))
+                    "{!r} has no interior ring variable".format(self.__class__.__name__))
     #--- End: def
 
     def has_bounds(self):
@@ -418,9 +454,9 @@ None
     def has_geometry(self):
         '''True if there is a goemetry type. TODO
         
-.. versionadded:: 1.8
+.. versionadded:: 1.8.0
 
-.. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
+.. seealso:: TODO
 
 :Returns:
 
@@ -437,9 +473,10 @@ None
     def has_interior_ring(self):
         '''True if there are interior_ring. TODO
         
-.. versionadded:: 1.8
+.. versionadded:: 1.8.0
 
-.. seealso:: `del_interior_ring`, `get_interior_ring`, `has_data`, `set_interior_ring`
+.. seealso:: `del_interior_ring`, `get_interior_ring`,
+             `interior_ring`, `set_interior_ring`
 
 :Returns:
 
@@ -505,19 +542,22 @@ None
     def set_geometry(self, value, copy=True):
         '''Set the geometry type.
 
-.. versionadded:: 1.8
+.. versionadded:: 1.8.0
 
-.. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
+.. seealso: TODO
 
 :Parameters:
 
     value: `str`
+        TODO
 
 :Returns:
 
     `None`
 
 **Examples:**
+
+TODO
         '''
         self._set_component('geometry', value, copy=copy)
     #--- End: def
@@ -525,9 +565,9 @@ None
     def set_interior_ring(self, interior_ring, copy=True):
         '''Set the interior_ring.
 
-.. versionadded:: 1.8
+.. versionadded:: 1.8.0
 
-.. seealso: `del_interior_ring`, `get_interior_ring`,
+.. seealso: `del_interior_ring`, `get_interior_ring`, `interior_ring`,
             `has_interior_ring`
 
 :Parameters:
@@ -545,7 +585,8 @@ None
 
 **Examples:**
 
->>> c.set_interior_ring(b)
+>>> c.set_interior_ring(i)
+
         '''
         if copy:
             interior_ring = interior_ring.copy()

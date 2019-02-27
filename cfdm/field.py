@@ -9,6 +9,7 @@ from . import Domain
 
 class Field(mixin.NetCDFDataVariable,
             mixin.NetCDFVariable,
+            mixin.NetCDFGeometryContainer,
             mixin.ConstructAccess,
             mixin.PropertiesData,
             core.Field):

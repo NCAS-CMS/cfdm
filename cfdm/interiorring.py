@@ -4,7 +4,8 @@ from . import mixin
 from . import core
 
 
-class InteriorRing(mixin.NetCDFVariable,
+class InteriorRing(mixin.NetCDFDimension,
+                   mixin.NetCDFVariable,
                    mixin.PropertiesData,
                    core.InteriorRing):
     '''An interior ring array with properties.
@@ -22,7 +23,7 @@ indexes the geometries for each cell.
 .. versionadded:: 1.8.0
 
     '''
-    def __init__(self, properties={}, data=None, source=None,
+    def __init__(self, properties=None, data=None, source=None,
                  copy=True, _use_data=True):
         '''TODO
         '''
@@ -33,19 +34,20 @@ indexes the geometries for each cell.
         self._initialise_netcdf(source)
     #--- End: def
     
-    def dump(self, display=True, field=None, key=None, _title=None,
+    def dump(self, display=True, _key=None, _title=None,
              _create_title=True, _prefix=None, _level=0,
-             _omit_properties=None):
+             _omit_properties=None, _axes=None, _axis_names=None):
         '''TODO
         '''
         if _create_title and _title is None: 
             _title = 'Interior Ring: ' + self.identity(default='')
 
-        return super().dump(display=display, field=field, key=key,
+        return super().dump(display=display, _key=_key,
                             _omit_properties=_omit_properties,
                             _prefix=_prefix, _level=_level,
                             _title=_title,
-                            _create_title=_create_title)
+                            _create_title=_create_title, _axes=_axes,
+                            _axis_names=_axis_names)
     #--- End: def
     
 #--- End: class
