@@ -1157,58 +1157,59 @@ metadata construct:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 An individual metadata construct may be returned, without its
-construct key, by any of three techniques:
+construct key, by any of four techniques:
 
-* with the `~Construct.value` method of a `Constructs` instance
+* with the `~Field.construct` method of a field construct,
+
+* with the `~Constructs.value` method of a `Constructs` instance
   that contains one construct,
 
-* with the `~Construct.get` method of a `Constructs` instance, or
+.. code-block:: python3
+   :caption: *Get the "latitude" metadata construct by its identity.*
+	     
+   >>> print(t.constructs('latitude'))
+   Constructs:
+   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
+   >>> t.construct('latitude')
+   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+   >>> t.constructs('latitude').value()
+   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
-* by indexing a `Constructs` instance.
+* with the `~Constructs.get` method of a `Constructs` instance, or
 
-The latter two of these require the construct key, which may be found
-by inspection (i.e. printing a `Constructs` instance) or by the
-`~Construct.key` method of a `Constructs` instance.
-
-.. An individual metadata construct may be returned, without its
-   construct key, via the `~Field.get_construct` method of the field
-   construct, which supports the same filtering options as the
-   `~Field.constructs` method. A metadata construct may be removed
-   with the `~Field.del_construct` method and the existence of a
-   metadata constructs may be checked with the `~Field.has_construct`
-   method, which returns a count of how many metadata constructs match
-   the criteria.
+* by indexing a `Constructs` instance with  a construct key.
 
 .. code-block:: python3
-   :caption: *Get the "latitude" metadata construct by each of the
-             three techniques.*
+   :caption: *Get the "latitude" metadata construct with its construct
+             key.*
 	     
    >>> c = t.constructs('latitude')
    >>> print(c)
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-   >>> len(c)
-   1
-   >>> c.value()
-   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
    >>> key = c.key()
    >>> key
    'auxiliarycoordinate0'
-   >>> c.get(key)
+   >>> t.constructs.get(key)
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
-   >>> c[key]
+   >>> t.constructs[key]
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
-The `~Constructs.construct` method will, by default, raise an
-exception if there is not exactly one construct in a `Constructs`
-instance, but a default value may be returned instead, or a customized
-exception may be raised.
-
+The `~Field.construct` method of the field construct and the
+`~Constructs.value` method of the `Constructs` instance will raise an
+exception of there is not a unique metadata construct to return, but
+this may be replaced with returning a default value or raising a
+customised exception:
+   
 .. code-block:: python3
    :caption: *By default an exception is raised if there is not a
              unique construct that meets the criteria. Alternatively,
              the value of the "default" parameter is returned.*
 
+   >>> t.construct('measure:volume')
+   ValueError: Can't return zero constructs
+   >>> t.construct('measure:volume', False)
+   False
    >>> c = t.constructs.filter_by_measure('volume')
    >>> len(c)
    0
@@ -1230,55 +1231,6 @@ The `~Constructs.get` method of a `Constructs` instance accepts an
 optional second argument to be returned if the construct key does not
 exist, exactly like the Python `dict.get` method.
 
-  
-   
-.. A metadata construct may also be retreived by its construct key,
-   either via the `~Field.get_construct` method of the field construct,
-   or by the standard dictionary-like methods of a `Constructs` instance:
-   
-   .. code-block:: python3
-      :caption: *Get constructs by construct key.*
-   
-      >>> t.get_construct(key='domainancillary2')
-      <DomainAncillary: surface_altitude(10, 9) m>
-      >>> t.get_construct(key='cellmethod1')
-      <CellMethod: domainaxis3: maximum>
-      >>> len(t.constructs.filter_by_key('auxiliarycoordinate999'))
-      0
-      >>> t.get_construct(key='auxiliarycoordinate999', default='NO CONSTRUCT')
-      'NO CONSTRUCT'
-   
-   .. code-block:: python3
-      :caption: *Get constructs by construct key using dictionary
-                functionality.*
-   
-      >>> t.constructs['domainancillary2']
-      <DomainAncillary: surface_altitude(10, 9) m>
-      >>> t.constructs.get('cellmethod1') TODO
-      <CellMethod: domainaxis3: maximum>
-      >>> t.constructs.get('auxiliarycoordinate999', 'NO CONSTRUCT') TODO
-      'NO CONSTRUCT'
-
-.. The key of a metadata construct may be found with the
-   `~Constructs.get_key` method of the `Constructs` instance:
-   
-   .. code-block:: python3
-      :caption: *Get the construct key of the construct with identity
-                "latitude".*
-   
-      >>> t.constructs('latitude').get_key()
-      'auxiliarycoordinate0'
-      
-   A metadata construct may also be retrieved by indexing the `Constructs`
-   instance with the construct's key.
-   
-   .. code-block:: python3
-      :caption: *Get the construct by indexing the "Constructs"
-                instance.*
-   
-      >>> t.constructs['auxiliarycoordinate0']
-      <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
-   
 .. _Metadata-construct-properties:
 
 **Metadata construct properties**
@@ -3515,16 +3467,16 @@ The content of the new file is:
             <https://github.com/NCAS-CMS/cfdm/tree/master/docs/_downloads>`_
             of the on-line code repository.
 
-.. [#notebook] The Jupyter notebook is quite long. To aid navigation
-               it has been written so that it may optionally be used
-               with the "Collapsible Headings" Jupyter notebook
-               extension. See
-               https://jupyter-contrib-nbextensions.readthedocs.io/en/latest
-               for details.
-
 .. [#opendap2] Requires the netCDF4 python package to have been built
                with OPeNDAP support enabled. See
                http://unidata.github.io/netcdf4-python for details.
+
+.. .. [#notebook] The Jupyter notebook is quite long. To aid navigation
+                  it has been written so that it may optionally be used
+                  with the "Collapsible Headings" Jupyter notebook
+                  extension. See
+                  https://jupyter-contrib-nbextensions.readthedocs.io/en/latest
+                  for details.
 
 .. .. [#language] In the terminology of the CF data model, a "construct"
                   is an abstract concept which is distinct from its

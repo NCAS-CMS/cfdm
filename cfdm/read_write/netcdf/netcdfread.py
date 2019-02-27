@@ -1289,38 +1289,39 @@ variable should be pre-filled with missing values.
                 total_number_of_parts = self.implementation.get_data_size(parts)
 
                 parts_data = self.implementation.get_data(parts)
+                nodes_per_geometry_data = self.implementation.get_data(
+                    nodes_per_geometry)
                 
                 index = parts.copy()
 
-                p = 0
+                instance_index = 0
                 i = 0
                 for cell_no in range(self.implementation.get_data_size(nodes_per_geometry)):
-                    n_nodes_in_this_cell = int(self.implementation.get_data(
-                        nodes_per_geometry)[cell_no])
-                    print('i=', i, ', cell_no=', cell_no,
-                          ', n_nodes_in_this_cell=',n_nodes_in_this_cell)
-#                    n_parts_in_this_cell = 0
+                    n_nodes_in_this_cell = int(nodes_per_geometry_data[cell_no])
+#                    print('i=', i, ', cell_no=', cell_no,
+#                          ', n_nodes_in_this_cell=',n_nodes_in_this_cell)
 
-                    partial_node_count = 0 # for this cell
+                    # Initiailize partial_node_count, a running count
+                    # of how many nodes there are in this geometry
+                    node_count = 0
+                    
                     for k in range(i, total_number_of_parts):
-                        print('  k=', k)
-                        print('  p=', p)
-#                        n_parts_in_this_cell += 1                        
-                        index.data[k] = p
-                        partial_node_count += int(parts_data[k])
-                        print('  partial_node_count=', partial_node_count)
-                        if partial_node_count >= n_nodes_in_this_cell:
+#                        print('  k=', k)
+#                        print('  instance_index=', instance_index)
+
+                        index.data[k] = instance_index
+                        node_count += int(parts_data[k])
+#                        print('  node_count=', node_count)
+                        if node_count >= n_nodes_in_this_cell:
+                            instance_index += 1
                             i += k + 1
-                            p += 1
                             break                        
                     #--- End: for
-
-                    i += 1
                 #--- End: for
                 
 
-                print('index=', index.data.array)
-                print('part_node_count=',part_node_count)
+#                print('index=', index.data.array)
+#                print('part_node_count=',part_node_count)
                 
                 element_dimension_1 = self._set_ragged_contiguous_parameters(
                     elements_per_instance=parts,
@@ -1462,7 +1463,7 @@ variable should be pre-filled with missing values.
         
         g['compression'].setdefault(indexed_sample_dimension, {})['ragged_indexed'] = {
             'elements_per_instance'  : elements_per_instance,
-            'index_variable'         : index, #instances,
+            'index_variable'         : index,
             'implied_ncdimensions'   : (instance_dimension,
                                         element_dimension),
             'element_dimension'      : element_dimension,

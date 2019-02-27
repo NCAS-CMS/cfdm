@@ -770,7 +770,7 @@ reference is replace with `None`.
 
 .. versionadded:: 1.7.0
 
-..seealso:: `get`, `items`, `keys`, `values`
+.. seealso:: `items`, `keys`, `values`
 
         '''
         return self._dictionary().get(key, *default)
@@ -781,7 +781,7 @@ reference is replace with `None`.
 
 .. versionadded:: 1.7.0
 
-..seealso:: `get`, `keys`, `values`
+.. seealso:: `get`, `keys`, `values`
 
         '''
         return self._dictionary().items()
@@ -792,7 +792,7 @@ reference is replace with `None`.
 
 .. versionadded:: 1.7.0
 
-..seealso:: `get`, `items`, `values`
+.. seealso:: `get`, `items`, `values`
 
         '''
         return self._construct_type.keys()
@@ -803,7 +803,7 @@ reference is replace with `None`.
 
 .. versionadded:: 1.7.0
 
-..seealso:: `get`, `items`, `keys`
+.. seealso:: `get`, `items`, `keys`
 
         '''
         return self._dictionary().values()

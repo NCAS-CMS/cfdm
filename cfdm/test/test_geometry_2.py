@@ -108,10 +108,11 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.geometry_interior_ring_file, verbose=True)
+        f = cfdm.read(self.geometry_interior_ring_file, verbose=False)
 
-        for i in f:
-            i.dump()
+        self.assertTrue(len(f) == 1)
+#        for i in f:
+#            i.dump()
     #--- End: def
 
 #--- End: class
