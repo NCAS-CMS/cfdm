@@ -150,6 +150,7 @@ def _make_geometry_3_file(filename):
     
     time     = n.createDimension('time'    , 4)
     instance = n.createDimension('instance', 3)
+    node     = n.createDimension('node'    , 3)
     
     t =  n.createVariable('time', 'i4', ('time',))
     t.units = "seconds since 2016-11-07 20:00 UTC" 
@@ -176,6 +177,7 @@ def _make_geometry_3_file(filename):
     geometry_container = n.createVariable('geometry_container', 'i4', ());
     geometry_container.geometry_type = "point"
     geometry_container.node_coordinates = "x y z"
+    geometry_container.geometry_dimension = "instance"
     
     x = n.createVariable('x', 'f8', ('instance',))
     x.units = "degrees_east"
@@ -334,7 +336,7 @@ class DSGTest(unittest.TestCase):
         f = f[0]
         self.assertTrue(f.equals(f.copy()))
 
-#        f.dump()
+        f.dump()
     #--- End: def
 
     def test_geometry_2(self):
@@ -347,7 +349,7 @@ class DSGTest(unittest.TestCase):
         f = f[0]
         self.assertTrue(f.equals(f.copy()))
 
-#        f.dump()
+        f.dump()
     #--- End: def
 
     def test_geometry_3(self):
@@ -360,7 +362,7 @@ class DSGTest(unittest.TestCase):
         f = f[0]
         self.assertTrue(f.equals(f.copy()))
         
-#        f.dump()
+        f.dump()
     #--- End: def
 
     def test_geometry_interior_ring(self):
@@ -374,7 +376,7 @@ class DSGTest(unittest.TestCase):
         f = f[0]
         self.assertTrue(f.equals(f.copy()))
         
-#        f.dump()
+        f.dump()
     #--- End: def
 
 #--- End: class

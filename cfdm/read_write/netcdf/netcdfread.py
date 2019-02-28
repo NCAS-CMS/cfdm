@@ -1111,27 +1111,30 @@ variable should be pre-filled with missing values.
             
         g['geometries'][geometry_ncvar] = {'geometry_type': geometry_type}
 
-        node_coordinates = attributes[geometry_ncvar].get('node_coordinates')
-        node_count       = attributes[geometry_ncvar].get('node_count')
-        coordinates      = attributes[geometry_ncvar].get('coordinates')
-        part_node_count  = attributes[geometry_ncvar].get('part_node_count')
-        interior_ring    = attributes[geometry_ncvar].get('interior_ring')
+        node_coordinates   = attributes[geometry_ncvar].get('node_coordinates')
+        node_count         = attributes[geometry_ncvar].get('node_count')
+        coordinates        = attributes[geometry_ncvar].get('coordinates')
+        part_node_count    = attributes[geometry_ncvar].get('part_node_count')
+        interior_ring      = attributes[geometry_ncvar].get('interior_ring')
+        geometry_dimension = attributes[geometry_ncvar].get('geometry_dimension')
         
         if verbose:
-            print('        geometry_type    =', repr(geometry_type))
-            print('        node_coordinates =', repr(node_coordinates))
-            print('        interior_ring    =', repr(interior_ring))
-            print('        node_count       =', repr(node_count))
-            print('        part_node_count  =', repr(part_node_count))
+            print('        geometry_type      =', repr(geometry_type))
+            print('        node_coordinates   =', repr(node_coordinates))
+            print('        interior_ring      =', repr(interior_ring))
+            print('        node_count         =', repr(node_count))
+            print('        part_node_count    =', repr(part_node_count))
+            print('        geometry_dimension =', repr(geometry_dimension))
 #            print('        parsed_node_coordinates =', parsed_node_coordinates)
 #            print('        parsed_interior_ring    =', parsed_interior_ring)
 #            print('        parsed_node_count       =', parsed_node_count)
 #            print('        parsed_part_node_count  =', parsed_part_node_count)
 
-        parsed_node_coordinates = self._split_string_by_white_space(geometry_ncvar, node_coordinates)
-        parsed_interior_ring    = self._split_string_by_white_space(geometry_ncvar, interior_ring)
-        parsed_node_count       = self._split_string_by_white_space(geometry_ncvar, node_count)
-        parsed_part_node_count  = self._split_string_by_white_space(geometry_ncvar, part_node_count)
+        parsed_node_coordinates   = self._split_string_by_white_space(geometry_ncvar, node_coordinates)
+        parsed_interior_ring      = self._split_string_by_white_space(geometry_ncvar, interior_ring)
+        parsed_node_count         = self._split_string_by_white_space(geometry_ncvar, node_count)
+        parsed_part_node_count    = self._split_string_by_white_space(geometry_ncvar, part_node_count)
+        parsed_geometry_dimension = self._split_string_by_white_space(geometry_ncvar, geometry_dimension)
 
 
         cf_compliant = True
@@ -1142,7 +1145,14 @@ variable should be pre-filled with missing values.
                               message=('part_node_count attribute', 'is missing'),
                               attribute=attribute)
             cf_compliant = False
-   
+
+        if node_count is None and geometry_dimension is None:                
+            attribute = {field_ncvar+':geometry': attributes[field_ncvar]['geometry']}
+            self._add_message(field_ncvar, geometry_ncvar,
+                              message=('geometry_dimension attribute', 'is missing'),
+                              attribute=attribute)
+            cf_compliant = False
+            
         cf_compliant = cf_compliant & self._check_node_coordinates(field_ncvar, geometry_ncvar,
                                                                    node_coordinates,
                                                                    parsed_node_coordinates)
@@ -1175,12 +1185,20 @@ variable should be pre-filled with missing values.
             # be single part point geometries => we can create a
             # node_count variable in this case.
             # --------------------------------------------------------
+            if geometry_dimension is None:                
+                attribute = {field_ncvar+':geometry': attributes[field_ncvar]['geometry']}
+                self._add_message(field_ncvar, geometry_ncvar,
+                                  message=('part_node_count attribute', 'is missing'),
+                                  attribute=attribute)
+                cf_compliant = False
+                return
+            
             nodes_per_geometry = self.implementation.initialise_Count()
             size = g['nc'].dimensions[node_dimension].size
             ones = self.implementation.initialise_Data(
                 array=numpy.ones((size,), dtype='int32'), copy=False)
             self.implementation.set_data(nodes_per_geometry, data=ones)
-            cell_dimension = node_dimension 
+            cell_dimension = geometry_dimension # node_dimension 
         else:        
             # Find the netCDF dimension for the total number of cells
             cell_dimension = g['variable_dimensions'][node_count][0]
@@ -1192,12 +1210,12 @@ variable should be pre-filled with missing values.
             g['do_not_create_field'].add(node_count)
         
         if part_node_count is None:
-            # ----------------------------------------------------
-            # Each cell has exactly one part.
+            # --------------------------------------------------------
+            # There is no part_count variable, i.e.  cell has exactly
+            # one part.
             #
-            # => we can treat the nodes as a contiguous ragged
-            # array
-            # ----------------------------------------------------
+            # => we can treat the nodes as a contiguous ragged array
+            # --------------------------------------------------------
             element_dimension = self._set_ragged_contiguous_parameters(
                 elements_per_instance=nodes_per_geometry,
                 sample_dimension=node_dimension,
@@ -1206,12 +1224,12 @@ variable should be pre-filled with missing values.
 
             g['compression'][node_dimension]['netCDF_variables'] = parsed_node_coordinates[:]
         else:
-            # ---------------------------------------------------- ppp
-            # At least one cell has two or more parts.
+            # --------------------------------------------------------
+            # There is a part_count variable.
             #
             # => we must treat the nodes as an indexed contiguous
             # ragged array
-            # ----------------------------------------------------
+            # --------------------------------------------------------
 
             # Do not attempt to create a field construct from a
             # netCDF part node count variable
