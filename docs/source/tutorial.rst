@@ -1480,6 +1480,11 @@ individually with the `~cfdm.Field.auxiliary_coordinates` and
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
 
+.. _Bounds:
+
+**Bounds**
+^^^^^^^^^^
+
 A coordinate construct may contain an array of cell bounds that
 provides the extent of each cell by defining the locations of the cell
 vertices. This is in addition to the main data array that contains a
@@ -3458,9 +3463,9 @@ The content of the new file is:
      4, 0, 5 ;
    }
 
-----
-
 .. rubric:: Footnotes
+
+----
 
 .. [#files] The tutorial files may be also found in the `downloads
             directory
@@ -3491,7 +3496,7 @@ The content of the new file is:
                   occasions when the original abstract meaning is
                   intended.
 	    
-.. External links to the CF conventions (will need updating with new version of CF)
+.. External links to the CF conventions (will need updating with new versions of CF)
    
 .. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#external-variables
 .. _Discrete sampling geometry (DSG): http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#discrete-sampling-geometries

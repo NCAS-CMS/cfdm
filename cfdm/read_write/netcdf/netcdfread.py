@@ -358,11 +358,13 @@ TODO
             'vertical_crs': {},
 
             # 
-            'version': {'1.6': LooseVersion('1.6'),
-                        '1.7': LooseVersion('1.7'),
-                        '1.8': LooseVersion('1.8')},
+            'version': {},
         }
         g = self.read_vars
+
+        # Set versions
+        for version in ('1.6', '1.7', '1.8', '1.9'):
+            g['version'][version] = LooseVersion(version)        
 
         # ------------------------------------------------------------
         # Add custom read vars
@@ -451,7 +453,7 @@ TODO
         # ------------------------------------------------------------
         # Find the CF version for the file
         # ------------------------------------------------------------
-        # DCH ALERT: haven't yet dealt with multiple conventions!
+        # DCH ALERT: haven't yet dealt with multiple conventions! TODO
         file_version = g['global_attributes'].get('Conventions', '').replace('CF-', '', 1)
         if not file_version:
             if default_version is not None:
@@ -464,6 +466,10 @@ TODO
         #--- End: if
         
         g['file_version'] = LooseVersion(file_version)
+
+        # Set minimum versions
+        for vn in ('1.6', '1.7', '1.8', '1.9'):
+            g['CF>='+vn] = (g['file_version'] >= g['version'][vn])
 
         # ------------------------------------------------------------
         # Create a dictionary keyed by netCDF variable names where
@@ -569,11 +575,11 @@ TODO
             g['do_not_create_field'].add(ncvar)
         
         # ------------------------------------------------------------
-        # DSG variables  (>= CF-1.6)
+        # DSG variables (CF>=1.6)
         #
         # Identify and parse all DSG count and DSG index variables
         # ------------------------------------------------------------
-        if g['file_version'] >= g['version']['1.6']:
+        if g['CF>=1.6']:
             featureType = g['global_attributes'].get('featureType')
             if featureType is not None:
                 g['featureType'] = featureType
@@ -637,11 +643,11 @@ TODO
         #--- End: if
 
         # ------------------------------------------------------------
-        # Geometry variables (>= CF-1.8)
+        # Geometry variables (CF>=1.8)
         #
         # Identify and parse all geometry container variables
         # ------------------------------------------------------------
-        if g['file_version'] >= g['version']['1.8']:
+        if g['CF>=1.8']:
             for ncvar, attributes in variable_attributes.items():
                 if 'geometry' not in attributes:
                     continue
@@ -655,9 +661,9 @@ TODO
         #--- End: if
         
         # ------------------------------------------------------------
-        # Parse external variables (>= CF-1.7)
+        # Parse external variables (CF>=1.7)
         # ------------------------------------------------------------
-        if g['file_version'] >= g['version']['1.7']:
+        if g['CF>=1.7']:
             netcdf_external_variables = global_attributes.pop('external_variables', None)
             parsed_external_variables = self._split_string_by_white_space(
                 None, netcdf_external_variables)
@@ -669,9 +675,9 @@ TODO
             return self.read_vars
 
         # ------------------------------------------------------------
-        # Get external variables (>= CF-1.7)
+        # Get external variables (CF>=1.7)
         # ------------------------------------------------------------
-        if g['file_version'] >= g['version']['1.7']:
+        if g['CF>=1.7']:
             if verbose:
                 print('    External variables:', sorted(g['external_variables']))
                 print('    External files    :', g['external_files'])
@@ -691,9 +697,9 @@ TODO
         #--- End: for
         
         # ------------------------------------------------------------
-        # Check for unreferenced external variables (>= CF-1.7)
+        # Check for unreferenced external variables (CF>=1.7)
         # ------------------------------------------------------------
-        if g['file_version'] >= g['version']['1.7']:
+        if g['CF>=1.7']:
             unreferenced_external_variables = g['external_variables'].difference(
                 g['referenced_external_variables'])
             for ncvar in unreferenced_external_variables:
@@ -766,7 +772,7 @@ TODO
                                            netcdf_external_variables):
         '''Get external variables from external files.
 
-..versionadded:: 1.7
+..versionadded:: 1.7.0
 
 :Parameters:
 
@@ -1074,8 +1080,10 @@ variable should be pre-filled with missing values.
         del g['compression'][sample_dimension]['ragged_contiguous']
     #--- End: def
        
-    def _parse_geometry(self, field_ncvar, ncvar, attributes):
-        '''
+    def _parse_geometry(self, field_ncvar, geometry_ncvar, attributes):
+        '''TODO
+
+.. versionadded:: 1.8.0
 
 :Parameters:
 
@@ -1097,17 +1105,17 @@ variable should be pre-filled with missing values.
         
         verbose = g['verbose']
         if verbose:
-            print('    Geometry container =', repr(ncvar))
+            print('    Geometry container =', repr(geometry_ncvar))
 
-        geometry_type = attributes[ncvar].get('geometry_type')
+        geometry_type = attributes[geometry_ncvar].get('geometry_type')
             
-        g['geometries'][ncvar] = {'geometry_type': geometry_type}
+        g['geometries'][geometry_ncvar] = {'geometry_type': geometry_type}
 
-        node_coordinates = attributes[ncvar].get('node_coordinates')
-        node_count       = attributes[ncvar].get('node_count')
-        coordinates      = attributes[ncvar].get('coordinates')
-        part_node_count  = attributes[ncvar].get('part_node_count')
-        interior_ring    = attributes[ncvar].get('interior_ring')
+        node_coordinates = attributes[geometry_ncvar].get('node_coordinates')
+        node_count       = attributes[geometry_ncvar].get('node_count')
+        coordinates      = attributes[geometry_ncvar].get('coordinates')
+        part_node_count  = attributes[geometry_ncvar].get('part_node_count')
+        interior_ring    = attributes[geometry_ncvar].get('interior_ring')
         
         if verbose:
             print('        geometry_type    =', repr(geometry_type))
@@ -1120,34 +1128,34 @@ variable should be pre-filled with missing values.
 #            print('        parsed_node_count       =', parsed_node_count)
 #            print('        parsed_part_node_count  =', parsed_part_node_count)
 
-        parsed_node_coordinates = self._split_string_by_white_space(ncvar, node_coordinates)
-        parsed_interior_ring    = self._split_string_by_white_space(ncvar, interior_ring)
-        parsed_node_count       = self._split_string_by_white_space(ncvar, node_count)
-        parsed_part_node_count  = self._split_string_by_white_space(ncvar, part_node_count)
+        parsed_node_coordinates = self._split_string_by_white_space(geometry_ncvar, node_coordinates)
+        parsed_interior_ring    = self._split_string_by_white_space(geometry_ncvar, interior_ring)
+        parsed_node_count       = self._split_string_by_white_space(geometry_ncvar, node_count)
+        parsed_part_node_count  = self._split_string_by_white_space(geometry_ncvar, part_node_count)
 
 
         cf_compliant = True
         
         if interior_ring is not None and part_node_count is None:
             attribute = {field_ncvar+':geometry': attributes[field_ncvar]['geometry']}
-            self._add_message(field_ncvar, ncvar,
+            self._add_message(field_ncvar, geometry_ncvar,
                               message=('part_node_count attribute', 'is missing'),
                               attribute=attribute)
             cf_compliant = False
    
-        cf_compliant = cf_compliant & self._check_node_coordinates(field_ncvar, ncvar,
+        cf_compliant = cf_compliant & self._check_node_coordinates(field_ncvar, geometry_ncvar,
                                                                    node_coordinates,
                                                                    parsed_node_coordinates)
 
-        cf_compliant = cf_compliant & self._check_node_count(field_ncvar, ncvar,
+        cf_compliant = cf_compliant & self._check_node_count(field_ncvar, geometry_ncvar,
                                                              node_count,
                                                              parsed_node_count)
 
-        cf_compliant = cf_compliant & self._check_part_node_count(field_ncvar, ncvar,
+        cf_compliant = cf_compliant & self._check_part_node_count(field_ncvar, geometry_ncvar,
                                                                   part_node_count,
                                                                   parsed_part_node_count)
 
-        cf_compliant = cf_compliant & self._check_interior_ring(field_ncvar, ncvar,
+        cf_compliant = cf_compliant & self._check_interior_ring(field_ncvar, geometry_ncvar,
                                                                 interior_ring,
                                                                 parsed_interior_ring)
 
@@ -1215,7 +1223,7 @@ variable should be pre-filled with missing values.
                 g['do_not_create_field'].add(interior_ring)
                 
             part_dimension = g['variable_dimensions'][part_node_count][0]
-            g['geometries'][ncvar]['part_dimension'] = part_dimension
+            g['geometries'][geometry_ncvar]['part_dimension'] = part_dimension
 
             parts = self._create_Count(ncvar=part_node_count,
                                        ncdim=part_dimension)
@@ -1282,10 +1290,10 @@ variable should be pre-filled with missing values.
             interior_ring_part_dimension = g['variable_dimensions'][interior_ring][0]
             ir = self._create_InteriorRing(ncvar=interior_ring,
                                            ncdim=interior_ring_part_dimension)
-            g['geometries'][ncvar]['interior_ring'] = ir
+            g['geometries'][geometry_ncvar]['interior_ring'] = ir
         #--- End: if
         
-        g['geometries'][ncvar].update(
+        g['geometries'][geometry_ncvar].update(
             {'node_coordinates': parsed_node_coordinates,
              'node_dimension'  : node_dimension}
         )
@@ -1451,6 +1459,8 @@ variable should be pre-filled with missing values.
     def _check_formula_terms(self, field_ncvar, coord_ncvar,
                              formula_terms, z_ncdim=None):
         '''asdsdsa
+
+.. versionadded:: 1.7.0
 
 :Parameters:
     
@@ -1779,10 +1789,10 @@ variable should be pre-filled with missing values.
         self.implementation.nc_set_global_attributes(f, g['global_attributes'])
 
         # ----------------------------------------------------------------
-        # Remove the field's "geometry" property, saving its value (CF
-        # >= 1.8)
+        # Remove the field's "geometry" property, saving its value
+        # (CF>=1.8)
         # ----------------------------------------------------------------
-        if g['file_version'] >= g['version']['1.8']:
+        if g['CF>=1.8']:
             geometry = self.implementation.del_property(f, 'geometry', None)
             if geometry is not None:
                 self.implementation.nc_set_geometry_container(f, geometry)
@@ -1996,7 +2006,7 @@ variable should be pre-filled with missing values.
         # ------------------------------------------------------------
         # Add auxiliary coordinate constructs from geometry node
         # coordinates that are not already bounds of existing
-        # auxiliary coordinate constructs (CF >= 1.8)
+        # auxiliary coordinate constructs (CF>=1.8)
         # ------------------------------------------------------------
         geometry = self._get_geometry(field_ncvar)
         if geometry is not None:
@@ -2348,10 +2358,23 @@ variable should be pre-filled with missing values.
     #--- End: def
 
     def _get_geometry(self, field_ncvar):
-        '''
+        '''TODO
+
+.. versionadded:: 1.8.0
+
+:Parameters:
+
+    field_ncvar
+
+:Returns:
+
+        A dictionary contining geometry container information. If
+        there is no geometry container for this data variable, or if
+        the file version is pre-CF-1.8, then `None` is returned.
+
         '''
         g = self.read_vars        
-        if g['file_version'] >= g['version']['1.8']:
+        if g['CF>=1.8']:
             geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
             return g['geometries'].get(geometry_ncvar)
     #--- End: def
@@ -2575,12 +2598,9 @@ variable's netCDF dimensions.
 #                    break
 
         # ------------------------------------------------------------
-        # Look for a geometry container (CF >= 1.8)
+        # Look for a geometry container
         # ------------------------------------------------------------
         geometry = self._get_geometry(field_ncvar)
-#        if g['file_version'] >= g['version']['1.8']:
-#            geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
-#            geometry = g['geometries'].get(geometry_ncvar)
 
         if bounds is None:
             if ncbounds is None:
@@ -2661,7 +2681,7 @@ variable's netCDF dimensions.
                 g['bounds'][field_ncvar][ncvar] = ncbounds
 
             # --------------------------------------------------------
-            # Geometries (CF >= 1.8)            
+            # Geometries
             # --------------------------------------------------------
             if geometry is not None and ncbounds in geometry['node_coordinates']:
                 geometry_type = geometry['geometry_type']
@@ -3727,7 +3747,7 @@ Checks that
                                  'is not in file nor referenced by the external_variables global attribute')
 
         g = self.read_vars
-        version = g['file_version']
+#        version = g['file_version']
         
         if not parsed_string:
             self._add_message(field_ncvar, field_ncvar,
@@ -4160,6 +4180,8 @@ Checks that
     def _check_instance_dimension(self, parent_ncvar, instance_dimension):
         '''asdasd
 
+.. versionadded:: 1.7.0
+
 CF-1.7 Appendix A
 
 * instance_dimension: An attribute which identifies an index variable
@@ -4184,6 +4206,8 @@ CF-1.7 Appendix A
                 
     def _check_sample_dimension(self, parent_ncvar, sample_dimension):
         '''asdasd
+
+.. versionadded:: 1.7.0
 
 CF-1.7 Appendix A
 
@@ -4212,9 +4236,12 @@ CF-1.7 Appendix A
 
     def _parse_grid_mapping(self, parent_ncvar, string):
         '''
+
+.. versionadded:: 1.7.0
+
         '''
         g = self.read_vars
-        if g['file_version'] >= g['version']['1.6']:
+        if g['CF>=1.6']:
             return self._parse_x(parent_ncvar, string)
         else:
             # Pre v1.6, the grid mapping attribute may only point to a
@@ -4228,6 +4255,8 @@ CF-1.7 Appendix A
     
     def _parse_x(self, parent_ncvar, string):
         '''
+
+.. versionadded:: 1.7.0
 
         '''
         # ============================================================
