@@ -1,5 +1,6 @@
 from __future__ import print_function
 import datetime
+import inspect
 import os
 import tempfile
 import unittest
@@ -149,24 +150,23 @@ def _make_geometry_3_file(filename):
     
     time     = n.createDimension('time'    , 4)
     instance = n.createDimension('instance', 3)
-    node     = n.createDimension('node'    , 3)
     
     t =  n.createVariable('time', 'i4', ('time',))
     t.units = "seconds since 2016-11-07 20:00 UTC" 
     t[...] = [1, 2, 3, 4 ]
 
-#   lat = n.createVariable('lat', 'f8', ('instance',))
-#   lat.standard_name = "latitude"
-#   lat.units = "degrees_north"
-#   lat.bounds = "y"
-#   lat[...] = [30, 50, 70]
-#
-#   lon = n.createVariable('lon', 'f8', ('instance',))
-#   lon.standard_name = "longitude"
-#   lon.units = "degrees_east"
-#   lon.bounds = "x"
-#   lon[...] = [10, 60, 80]    
-
+    lat = n.createVariable('lat', 'f8', ('instance',))
+    lat.standard_name = "latitude"
+    lat.units = "degrees_north"
+    lat.bounds = "y"
+    lat[...] = [30, 50, 70]
+    
+    lon = n.createVariable('lon', 'f8', ('instance',))
+    lon.standard_name = "longitude"
+    lon.units = "degrees_east"
+    lon.bounds = "x"
+    lon[...] = [10, 60, 80]    
+    
     datum = n.createVariable('datum', 'i4', ())
     datum.grid_mapping_name = "latitude_longitude"
     datum.longitude_of_prime_meridian = 0.0
@@ -177,26 +177,26 @@ def _make_geometry_3_file(filename):
     geometry_container.geometry_type = "point"
     geometry_container.node_coordinates = "x y z"
     
-    x = n.createVariable('x', 'f8', ('node',))
+    x = n.createVariable('x', 'f8', ('instance',))
     x.units = "degrees_east"
     x.standard_name = "longitude"
     x.axis = "X"
     x[...] = [30, 10, 40]
     
-    y = n.createVariable('y', 'f8', ('node',))
+    y = n.createVariable('y', 'f8', ('instance',))
     y.units = "degrees_north"
     y.standard_name = "latitude"
     y.axis = "Y"
     y[...] = [10, 30, 40]
     
-    z = n.createVariable('z', 'f8', ('node',))
+    z = n.createVariable('z', 'f8', ('instance',))
     z.units = "m"
     z.standard_name = "altitude"
     z.axis = "Z"
     z[...] = [100, 150, 200]
     
     someData = n.createVariable('someData', 'f8', ('instance', 'time'))
-#    someData.coordinates = "time lat lon"
+    someData.coordinates = "lat lon"
     someData.grid_mapping = "datum"
     someData.geometry = "geometry_container"
     someData[...] = [[1,  2,  3,  4],
@@ -220,6 +220,7 @@ def _make_interior_ring_file(filename):
     instance = n.createDimension('instance', 2)
     node     = n.createDimension('node', 12)
     part     = n.createDimension('part', 4)
+    strlen   = n.createDimension('strlen', 2)
 
     # Variables
     t = n.createVariable('time', 'i4', ('time',))
@@ -227,6 +228,11 @@ def _make_interior_ring_file(filename):
     t.units = "days since 2000-01-01"
     t[...] = [1, 2, 3, 4]
 
+    instance_id = n.createVariable('instance_id', 'S1', ('instance', 'strlen'))
+    instance_id.cf_role = "timeseries_id"
+    instance_id[...] = [['x', '1'],
+                        ['y', '2']]
+    
     x = n.createVariable('x', 'f8', ('node',))
     x.units = "degrees_east"
     x.standard_name = "longitude"
@@ -238,6 +244,12 @@ def _make_interior_ring_file(filename):
     y.standard_name = "longitude"
     y.axis = "Y"
     y[...] = [0, 15, 0, 5, 10, 5, 20, 35, 20, 0, 15, 0]
+ 
+    z = n.createVariable('z', 'f8', ('node',))
+    z.units = "m"
+    z.standard_name = "altitude"
+    z.axis = "Z"
+    z[...] = [1, 2, 4, 2, 3, 4, 5, 1, 4, 3, 2, 1]
  
     lat = n.createVariable('lat', 'f8', ('instance',))
     lat.units = "degrees_north" 
@@ -254,7 +266,7 @@ def _make_interior_ring_file(filename):
     geometry_container = n.createVariable('geometry_container', 'i4', ())
     geometry_container.geometry_type = "polygon"
     geometry_container.node_count = "node_count"
-    geometry_container.node_coordinates = "x y"
+    geometry_container.node_coordinates = "x y z"
     geometry_container.grid_mapping = "datum"
     geometry_container.coordinates = "lat lon"
     geometry_container.part_node_count = "part_node_count"
@@ -276,7 +288,7 @@ def _make_interior_ring_file(filename):
     datum.longitude_of_prime_meridian = 0.
     
     someData = n.createVariable('someData', 'f8', ('instance', 'time'))
-    someData.coordinates = "time lat lon"
+    someData.coordinates = "time lat lon instance_id"
     someData.grid_mapping = "datum"
     someData.geometry = "geometry_container"
     someData[...]= [[1, 2, 3, 4],
@@ -303,6 +315,9 @@ class DSGTest(unittest.TestCase):
         os.close(fd)
         
         self.test_only = []
+#        self.test_only = ['test_geometry_1']
+#        self.test_only = ['test_geometry_3']
+
     #--- End: def
  
     def tearDown(self):
@@ -318,6 +333,8 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(len(f) == 1)
         f = f[0]
         self.assertTrue(f.equals(f.copy()))
+
+#        f.dump()
     #--- End: def
 
     def test_geometry_2(self):
@@ -329,6 +346,8 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(len(f) == 1)
         f = f[0]
         self.assertTrue(f.equals(f.copy()))
+
+#        f.dump()
     #--- End: def
 
     def test_geometry_3(self):
@@ -341,7 +360,7 @@ class DSGTest(unittest.TestCase):
         f = f[0]
         self.assertTrue(f.equals(f.copy()))
         
-        f.dump()
+#        f.dump()
     #--- End: def
 
     def test_geometry_interior_ring(self):

@@ -446,7 +446,7 @@ TODO
         
         g['global_attributes'] = global_attributes
         if verbose:
-            print('    global attributes:', g['global_attributes'])
+            print('    Global attributes:', g['global_attributes'])
 
         # ------------------------------------------------------------
         # Find the CF version for the file
@@ -1109,21 +1109,22 @@ variable should be pre-filled with missing values.
         part_node_count  = attributes[ncvar].get('part_node_count')
         interior_ring    = attributes[ncvar].get('interior_ring')
         
-        parsed_node_coordinates = self._split_string_by_white_space(ncvar, node_coordinates)
-        parsed_interior_ring    = self._split_string_by_white_space(ncvar, interior_ring)
-        parsed_node_count       = self._split_string_by_white_space(ncvar, node_count)
-        parsed_part_node_count  = self._split_string_by_white_space(ncvar, part_node_count)
-
         if verbose:
             print('        geometry_type    =', repr(geometry_type))
             print('        node_coordinates =', repr(node_coordinates))
             print('        interior_ring    =', repr(interior_ring))
             print('        node_count       =', repr(node_count))
             print('        part_node_count  =', repr(part_node_count))
-            print('        parsed_node_coordinates =', parsed_node_coordinates)
-            print('        parsed_interior_ring    =', parsed_interior_ring)
-            print('        parsed_node_count       =', parsed_node_count)
-            print('        parsed_part_node_count  =', parsed_part_node_count)
+#            print('        parsed_node_coordinates =', parsed_node_coordinates)
+#            print('        parsed_interior_ring    =', parsed_interior_ring)
+#            print('        parsed_node_count       =', parsed_node_count)
+#            print('        parsed_part_node_count  =', parsed_part_node_count)
+
+        parsed_node_coordinates = self._split_string_by_white_space(ncvar, node_coordinates)
+        parsed_interior_ring    = self._split_string_by_white_space(ncvar, interior_ring)
+        parsed_node_count       = self._split_string_by_white_space(ncvar, node_count)
+        parsed_part_node_count  = self._split_string_by_white_space(ncvar, part_node_count)
+
 
         cf_compliant = True
         
@@ -1157,7 +1158,9 @@ variable should be pre-filled with missing values.
 
         # Find the netCDF dimension for the total number of nodes
         node_dimension = g['variable_dimensions'][parsed_node_coordinates[0]][0]
-
+        if verbose:
+            print('        node_dimension =', repr(node_dimension))
+            
         if node_count is None:
             # --------------------------------------------------------
             # There is no node_count variable, so all geometries must
@@ -1192,9 +1195,10 @@ variable should be pre-filled with missing values.
                 sample_dimension=node_dimension,
                 element_dimension='node',
                 instance_dimension=cell_dimension)
-        
+
+            g['compression'][node_dimension]['netCDF_variables'] = parsed_node_coordinates[:]
         else:
-            # ----------------------------------------------------
+            # ---------------------------------------------------- ppp
             # At least one cell has two or more parts.
             #
             # => we must treat the nodes as an indexed contiguous
@@ -1889,6 +1893,7 @@ variable should be pre-filled with missing values.
         # the field
         # ----------------------------------------------------------------
         coordinates = self.implementation.del_property(f, 'coordinates', None)
+
         if coordinates is not None:
             parsed_coordinates = self._split_string_by_white_space(field_ncvar, coordinates)
             for ncvar in parsed_coordinates:
@@ -1971,7 +1976,7 @@ variable should be pre-filled with missing values.
                 else:
                     # Insert auxiliary coordinate
                     if verbose:
-                        print('    [6] Inserting', repr(coord))
+                        print('    [6 PPP] Inserting', repr(coord))
                         
                     aux = self.implementation.set_auxiliary_coordinate(
                         f, coord, axes=dimensions, copy=False)
@@ -2001,7 +2006,7 @@ variable should be pre-filled with missing values.
             for node_ncvar in node_coordinates:
                 # Set dimensions for this node coordinate variable
                 dimensions = self._get_domain_axes(node_ncvar)
-#                print ('dimensions=',dimensions, node_ncvar)
+
                 if node_ncvar in g['auxiliary_coordinate']:
                     coord = g['auxiliary_coordinate'][node_ncvar].copy()
                 else:     
@@ -2028,8 +2033,7 @@ variable should be pre-filled with missing values.
                     
                 self._reference(node_ncvar)
                 ncvar_to_key[node_ncvar] = aux
-        #--- End: if
-                
+        #--- End: if                
 
         # ------------------------------------------------------------
         # Add coordinate reference constructs from formula_terms
@@ -2458,7 +2462,7 @@ variable's netCDF dimensions.
         else:
             ncdim_to_axis = g['ncdim_to_axis']
             ncdimensions = self._ncdimensions(ncvar)
-#            print (ncdim_to_axis, ncdimensions)
+
             axes = [ncdim_to_axis[ncdim] for ncdim in ncdimensions
                     if ncdim in ncdim_to_axis]
 
@@ -2628,7 +2632,7 @@ variable's netCDF dimensions.
             properties.pop('formula_terms', None)                
             self.implementation.set_properties(bounds, properties)
 
-            bounds_data = self._create_data(ncbounds, bounds) # ppp
+            bounds_data = self._create_data(ncbounds, bounds)
     
 #                # Make sure that the bounds dimensions are in the same
 #                # order as its parent's dimensions. It is assumed that we
@@ -2656,25 +2660,23 @@ variable's netCDF dimensions.
             if not domain_ancillary:
                 g['bounds'][field_ncvar][ncvar] = ncbounds
 
-            # Geometries
-            if geometry is not None and ncbounds in geometry['node_coordinates']:                 
+            # --------------------------------------------------------
+            # Geometries (CF >= 1.8)            
+            # --------------------------------------------------------
+            if geometry is not None and ncbounds in geometry['node_coordinates']:
                 geometry_type = geometry['geometry_type']
                 if geometry_type is not None:                        
                     self.implementation.set_geometry(c, geometry_type)
 
-                g['node_coordinates_as_bounds'].add(ncbounds)            
-        #--- End: if
+                g['node_coordinates_as_bounds'].add(ncbounds)
 
-        # ------------------------------------------------------------
-        # Add an interior ring variable (CF >= 1.8)
-        # ------------------------------------------------------------
-        if geometry is not None:
-            interior_ring = geometry.get('interior_ring')
-            if interior_ring is not None:
-                self.implementation.set_interior_ring(parent=c,
-                                                      interior_ring=interior_ring)
+                # Add an interior ring variable
+                interior_ring = geometry.get('interior_ring')
+                if interior_ring is not None:
+                    self.implementation.set_interior_ring(parent=c,
+                                                          interior_ring=interior_ring)
         #--- End: if
-        
+       
         # Store the netCDF variable name
         self.implementation.nc_set_variable(c, ncvar)
 
@@ -2968,13 +2970,14 @@ variable's netCDF dimensions.
     
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None): 
-        '''Set the data of a construct or construct component.
+        '''TODO ppp
 
 :Parameters:
 
     ncvar: `str`
+        The name of the netCDF variable that contains the data.
 
-    construct: `Variable`, optional
+    construct: optional
 
     unpacked_dtype: `False` or `numpy.dtype`, optional
 
@@ -2984,7 +2987,7 @@ variable's netCDF dimensions.
 
     `Data`
 
-:Examples:
+**Examples:**
 
         '''
         g = self.read_vars
@@ -3006,7 +3009,6 @@ variable's netCDF dimensions.
             # The array is not compressed (or not to be uncompressed)
             # --------------------------------------------------------
             pass
-            #data = self._create_Data(array, ncvar=ncvar)
             
         else:
             # --------------------------------------------------------
@@ -3020,6 +3022,15 @@ variable's netCDF dimensions.
                     # This dimension represents two or more compressed
                     # dimensions
                     c = compression[ncdim]
+
+                    if ncvar not in c.get('netCDF_variables', (ncvar,)):
+                        # This variable is not compressed, even though
+                        # it spans a dimension that is compressed for
+                        # some other variables For example, this sort
+                        # of situation may arise with simple
+                        # geometries.
+                        continue
+
                     if 'gathered' in c:
                         # --------------------------------------------
                         # Compression by gathering. Note the
@@ -3410,12 +3421,21 @@ dimensions are returned.
             for ncdim in ncdimensions:
                 if ncdim in compression:
                     c = compression[ncdim]
+
+                    if ncvar not in c.get('netCDF_variables', (ncvar,)):
+                        # This variable is not compressed, even though
+                        # it spans a dimension that is compressed for
+                        # some other variables For example, this sort
+                        # of situation may arise with simple
+                        # geometries.
+                        continue
+                    
                     if 'gathered' in c:
                         # Compression by gathering
                         i = ncdimensions.index(ncdim)
                         ncdimensions[i:i+1] = c['gathered']['implied_ncdimensions']
                     elif 'ragged_indexed_contiguous' in c:
-                        # Indexed contiguous ragged array.
+                        # Indexed contiguous ragged array. ppp
                         #
                         # Check this before ragged_indexed and
                         # ragged_contiguous because both of these will
