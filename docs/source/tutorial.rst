@@ -640,6 +640,8 @@ alternative means of retrieving the data instance, that allows for a
 default to be returned if no data have been set; as well as a
 `~Field.del_data` method for removing the data.
 
+TODO: Data.astype
+
 All of the methods and attributes related to the data are listed
 :ref:`here <Field-Data>`.
 
