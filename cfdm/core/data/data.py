@@ -669,5 +669,32 @@ None
         self._set_component('units', value, copy=False)
     #--- End: def
 
+    def underlying_array(self, default=ValueError()):
+        '''Return the array object.
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if the array
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
+
+:Returns:
+
+        The array object.
+
+**Examples:**
+
+>>> TODO
+
+        '''
+        try:
+            return  self._get_component('array')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no underlying array".format(
+                                     self.__class__.__name__))
+    #--- End: def
+        
 #--- End: class
 

@@ -49,7 +49,6 @@ class DataTest(unittest.TestCase):
                 message = "cfdm.Data[{}, {}]={}={} failed".format(j, i, dvalue, avalue)
                 d[j, i] = dvalue
                 a[j, i] = avalue
-#                x = d.get_array()
                 x = d.array
                 self.assertTrue((x == a).all() in (True, numpy.ma.masked), message)
                 m = numpy.ma.getmaskarray(x)
@@ -70,7 +69,6 @@ class DataTest(unittest.TestCase):
             message = 'cfdm.Data[%s, %s]=%s failed' % (j, i, dvalue)
             d[j, i] = dvalue
             a[j, i] = dvalue
-#            x = d.get_array()
             x = d.array
             self.assertTrue((x == a).all() in (True, numpy.ma.masked), message)
             m = numpy.ma.getmaskarray(x)
@@ -80,24 +78,45 @@ class DataTest(unittest.TestCase):
         # Scalar numeric array
         d = cfdm.Data(9, units='km')
         d[...] = cfdm.masked
-#        a = d.get_array()
         a = d.array
         self.assertTrue(a.shape == ())
         self.assertTrue(a[()] is numpy.ma.masked)
     #--- End: def
 
-    def test_Data_get_array(self):
+    def test_Data_astype(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        a = numpy.array([1.5, 2, 2.5], dtype=float)       
+        d = cfdm.Data(a)
+        
+        self.assertTrue(d.dtype == numpy.dtype(float))
+        self.assertTrue(d.array.dtype == numpy.dtype(float))
+        self.assertTrue((d.array == a).all())
+
+        d.astype('int32')
+        self.assertTrue(d.dtype == numpy.dtype('int32'))
+        self.assertTrue(d.array.dtype == numpy.dtype('int32'))
+        self.assertTrue((d.array == [1, 2, 2]).all())
+
+        d = cfdm.Data(a)
+        try:
+            d.astype(numpy.dtype(int, casting='safe'))
+            self.assertTrue(False)
+        except TypeError:
+            pass
+    #--- End: def
+
+    def test_Data_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         # Scalar numeric array
         d = cfdm.Data(9, units='km')
-#        a = d.get_array()
         a = d.array
         self.assertTrue(a.shape == ())
         self.assertTrue(a == numpy.array(9))
         d[...] = cfdm.masked
-#        a = d.get_array()
         a = d.array
         self.assertTrue(a.shape == ())
         self.assertTrue(a[()] is numpy.ma.masked)
@@ -105,10 +124,8 @@ class DataTest(unittest.TestCase):
         # Non-scalar numeric array
         b = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
         d = cfdm.Data(b, 'km')
-#        a = d.get_array()
         a = d.array
         a[0,0,0,0] = -999
-#        a2 = d.get_array()
         a2 = d.array
         self.assertTrue(a2[0,0,0,0] == 0)
         self.assertTrue(a2.shape == b.shape)
@@ -139,7 +156,6 @@ class DataTest(unittest.TestCase):
                 message = 'cfdm.Data.transpose({}) failed: d.shape={}, a.shape={}'.format(
                     axes, d.shape, a.shape)
                 self.assertTrue(d.shape == a.shape, message)
-#                self.assertTrue((d.get_array() == a).all(), message)
                 self.assertTrue((d.array == a).all(), message)
             #--- End: for
         #--- End: for
@@ -152,14 +168,12 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units='metre')
         u = d.unique()
         self.assertTrue(u.shape == (4,))
-#        self.assertTrue((u.get_array() == cfdm.Data([1, 2, 3, 4], 'metre').get_array()).all())
         self.assertTrue((u.array == cfdm.Data([1, 2, 3, 4], 'metre').array).all())
         
 
         d[1, -1] = cfdm.masked
         u = d.unique()
         self.assertTrue(u.shape == (3,))        
-#        self.assertTrue((u.get_array() == cfdm.Data([1, 2, 4], 'metre').get_array()).all())
         self.assertTrue((u.array == cfdm.Data([1, 2, 4], 'metre').array).all())
     #--- End: def
 

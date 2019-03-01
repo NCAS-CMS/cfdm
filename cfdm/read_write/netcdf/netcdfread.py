@@ -1106,6 +1106,7 @@ variable should be pre-filled with missing values.
         verbose = g['verbose']
         if verbose:
             print('    Geometry container =', repr(geometry_ncvar))
+            print('        netCDF attributes:', attributes[geometry_ncvar])
 
         geometry_type = attributes[geometry_ncvar].get('geometry_type')
             
@@ -1118,24 +1119,16 @@ variable should be pre-filled with missing values.
         interior_ring      = attributes[geometry_ncvar].get('interior_ring')
         geometry_dimension = attributes[geometry_ncvar].get('geometry_dimension')
         
-        if verbose:
-            print('        geometry_type      =', repr(geometry_type))
-            print('        node_coordinates   =', repr(node_coordinates))
-            print('        interior_ring      =', repr(interior_ring))
-            print('        node_count         =', repr(node_count))
-            print('        part_node_count    =', repr(part_node_count))
-            print('        geometry_dimension =', repr(geometry_dimension))
-#            print('        parsed_node_coordinates =', parsed_node_coordinates)
-#            print('        parsed_interior_ring    =', parsed_interior_ring)
-#            print('        parsed_node_count       =', parsed_node_count)
-#            print('        parsed_part_node_count  =', parsed_part_node_count)
-
         parsed_node_coordinates   = self._split_string_by_white_space(geometry_ncvar, node_coordinates)
         parsed_interior_ring      = self._split_string_by_white_space(geometry_ncvar, interior_ring)
         parsed_node_count         = self._split_string_by_white_space(geometry_ncvar, node_count)
         parsed_part_node_count    = self._split_string_by_white_space(geometry_ncvar, part_node_count)
-        parsed_geometry_dimension = self._split_string_by_white_space(geometry_ncvar, geometry_dimension)
 
+        if verbose:
+            print('        parsed_node_coordinates =', parsed_node_coordinates)
+            print('        parsed_interior_ring    =', parsed_interior_ring)
+            print('        parsed_node_count       =', parsed_node_count)
+            print('        parsed_part_node_count  =', parsed_part_node_count)
 
         cf_compliant = True
         
@@ -1186,13 +1179,16 @@ variable should be pre-filled with missing values.
             # node_count variable in this case.
             # --------------------------------------------------------
             if geometry_dimension is None:                
-                attribute = {field_ncvar+':geometry': attributes[field_ncvar]['geometry']}
-                self._add_message(field_ncvar, geometry_ncvar,
-                                  message=('part_node_count attribute', 'is missing'),
-                                  attribute=attribute)
+                self._add_message(None, geometry_ncvar,
+                                  message=('geometry_dimension attribute', 'is missing'),
+                                  attribute=None)
                 cf_compliant = False
                 return
-            
+
+            if not self._check_geometry_dimension(geometry_ncvar, geometry_dimension):
+                cf_compliant = False
+                return
+                
             nodes_per_geometry = self.implementation.initialise_Count()
             size = g['nc'].dimensions[node_dimension].size
             ones = self.implementation.initialise_Data(
@@ -1211,7 +1207,7 @@ variable should be pre-filled with missing values.
         
         if part_node_count is None:
             # --------------------------------------------------------
-            # There is no part_count variable, i.e.  cell has exactly
+            # There is no part_count variable, i.e. cell has exactly
             # one part.
             #
             # => we can treat the nodes as a contiguous ragged array
@@ -1259,30 +1255,19 @@ variable should be pre-filled with missing values.
             i = 0
             for cell_no in range(self.implementation.get_data_size(nodes_per_geometry)):
                 n_nodes_in_this_cell = int(nodes_per_geometry_data[cell_no])
-#                print('i=', i, ', cell_no=', cell_no,
-#                      ', n_nodes_in_this_cell=',n_nodes_in_this_cell)
 
                 # Initiailize partial_node_count, a running count
                 # of how many nodes there are in this geometry
                 n_nodes = 0
                 
                 for k in range(i, total_number_of_parts):
-#                    print('  k=', k)
-#                    print('  instance_index=', instance_index)
-
                     index.data[k] = instance_index
                     n_nodes += int(parts_data[k])
-#                    print('  n_nodes=', n_nodes)
                     if n_nodes >= n_nodes_in_this_cell:
                         instance_index += 1
                         i += k + 1
                         break                        
-                #--- End: for
             #--- End: for
-            
-
-#            print('index=', index.data.array)
-#            print('part_node_count=',part_node_count)
             
             element_dimension_1 = self._set_ragged_contiguous_parameters(
                 elements_per_instance=parts,
@@ -1300,15 +1285,15 @@ variable should be pre-filled with missing values.
                 sample_dimension=node_dimension,
                 instance_dimension=cell_dimension)
 
-            # ----------------------------------------------------
-            # Create the interior ring variable (do this after
-            # setting up the indexed ragged array compression
-            # parameters).
-            # ----------------------------------------------------
-            interior_ring_part_dimension = g['variable_dimensions'][interior_ring][0]
-            ir = self._create_InteriorRing(ncvar=interior_ring,
-                                           ncdim=interior_ring_part_dimension)
-            g['geometries'][geometry_ncvar]['interior_ring'] = ir
+            # --------------------------------------------------------
+            # Create an interior ring variable (do this after setting
+            # up the indexed ragged array compression parameters).
+            # --------------------------------------------------------
+            if interior_ring is not None:
+                interior_ring_part_dimension = g['variable_dimensions'][interior_ring][0]
+                ir = self._create_InteriorRing(ncvar=interior_ring,
+                                               ncdim=interior_ring_part_dimension)
+                g['geometries'][geometry_ncvar]['interior_ring'] = ir
         #--- End: if
         
         g['geometries'][geometry_ncvar].update(
@@ -4222,6 +4207,25 @@ CF-1.7 Appendix A
         return True
     #--- End: def
                 
+    def _check_geometry_dimension(self, parent_ncvar, geometry_dimension):
+        '''asdasd
+
+.. versionadded:: 1.8.0
+
+        '''
+        attribute={parent_ncvar+':geometry_dimension': geometry_dimension}
+        
+        # Check that the geometry dimension name is a netCDF dimension
+        ok = (geometry_dimension in self.read_vars['internal_dimension_sizes'])
+        
+        if not ok:
+            self._add_message(None, geometry_ncvar,
+                              message=('geometry_dimension attribute', 'does not name a dimension'),
+                              attribute=attribute)
+            
+        return ok
+    #--- End: def
+         
     def _check_sample_dimension(self, parent_ncvar, sample_dimension):
         '''asdasd
 
@@ -4236,7 +4240,7 @@ CF-1.7 Appendix A
                     used for a collection of features.
 
         '''        
-        # Check that the named netCDF dimension exists in the file
+        # Check that the sample dimension name is a netCDF dimension
         return sample_dimension in self.read_vars['internal_dimension_sizes']
     #--- End: def
         

@@ -336,7 +336,7 @@ class DSGTest(unittest.TestCase):
         f = f[0]
         self.assertTrue(f.equals(f.copy()))
 
-        f.dump()
+#        f.dump()
     #--- End: def
 
     def test_geometry_2(self):
@@ -349,7 +349,7 @@ class DSGTest(unittest.TestCase):
         f = f[0]
         self.assertTrue(f.equals(f.copy()))
 
-        f.dump()
+#        f.dump()
     #--- End: def
 
     def test_geometry_3(self):
@@ -362,7 +362,7 @@ class DSGTest(unittest.TestCase):
         f = f[0]
         self.assertTrue(f.equals(f.copy()))
         
-        f.dump()
+#        f.dump()
     #--- End: def
 
     def test_geometry_interior_ring(self):
@@ -376,7 +376,7 @@ class DSGTest(unittest.TestCase):
         f = f[0]
         self.assertTrue(f.equals(f.copy()))
         
-        f.dump()
+#        f.dump()
     #--- End: def
 
 #--- End: class

@@ -2962,10 +2962,10 @@ however, views compressed arrays in their uncompressed form.
 
 Therefore, the field construct contains domain axis constructs for the
 compressed dimensions and presents a view of compressed data in its
-uncompressed form, even though their "underlying arrays" (i.e. the
-arrays contained in `Data` instances) are compressed. This means that
-the cfdm package includes algorithms that are required to uncompress
-each type of compressed array.
+uncompressed form, even though the "underlying array" (i.e. the actual
+array on disk or in memory that is contained in a `Data` instance) is
+compressed. This means that the cfdm package includes algorithms for
+uncompressing each type of compressed array.
 
 There are two basic types of compression supported by the CF
 conventions: ragged arrays (as used by :ref:`discrete sampling
@@ -2980,8 +2980,8 @@ both:
 
 * Accessing the data via the `~Data.array` attribute of a `Data`
   instance returns a numpy array that is uncompressed. The underlying
-  array will, however, remain in its compressed form. The underlying
-  compressed array may be retrieved as a numpy array with the
+  array will, however, remain in its compressed form. The compressed
+  underlying array may be retrieved as a numpy array with the
   `~Data.compressed_array` attribute of the `Data` instance.
 
 ..
@@ -2996,8 +2996,8 @@ both:
 ..
 
 * If data elements are modified by :ref:`assigning <Assignment>` to
-  indices of the uncompressed form of the data, then the underlying
-  compressed array is replaced by its uncompressed form.
+  indices of the uncompressed form of the data, then the compressed
+  underlying array is replaced by its uncompressed form.
 
 ..
 
@@ -3020,6 +3020,8 @@ Examples of all of the above may be found in the sections on
 **Discrete sampling geometries**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. versionadded:: CF-1.6
+		  
 `Discrete sampling geometry (DSG)`_ features may be compressed by
 combining them using one of three ragged array representations:
 `contiguous`_, `indexed`_ or `indexed contiguous`_.

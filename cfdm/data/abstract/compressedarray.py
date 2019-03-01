@@ -83,18 +83,19 @@ rules, the only differences being:
         raise NotImplementedError()
     #--- End: def
 
-    def _get_compressed_Array(self, *default):
+    def _get_compressed_Array(self, default=ValueError()):
         '''TODO
 
 :Parameters:
 
-    default: *optional*
-        If there is no data then *default* if returned if set.
+    default: optional
+        Return the value of the *default* parameter if the array
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
 
 :Returns:
 
-        The data. If the data has not been set then *default* is
-        returned, if set.
+        The compressed Array instance.
 
 **Examples:**
 
@@ -104,12 +105,9 @@ rules, the only differences being:
         array = self._get_component('compressed_Array', None)
 
         if array is None:
-            if default:
-                return default[0]     
-
-            raise ValueError("{!r} has no data".format(
-                self.__class__.__name__))
-        
+            return self._default(default,
+                                 "{!r} has no {!r} property".format(
+                                     self.__class__.__name__, prop))
         return array   
     #--- End: def
 
@@ -133,11 +131,7 @@ rules, the only differences being:
 
         '''
         if not isinstance(array, Array):
-            raise TypeError("asdads  0000000000000000000")
-#            if not isinstance(array, numpy.ndarray):
-#                data = numpy.asanyarray(array)
-#                
-#            array = NumpyArray(array)
+            raise TypeError("asdads  0000000000000000000 TODO")
 
         if copy:
             array = array.copy()
@@ -324,4 +318,26 @@ True
         return list(range(compressed_dimension, self.ndim - (compressed_ndim - compressed_dimension - 1)))
     #--- End: def
 
+    def underlying_array(self, default=ValueError()):
+        '''Return the array object.
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if the array
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
+
+:Returns:
+
+        The underlying array.
+
+**Examples:**
+
+>>> TODO
+
+        '''
+        return self._get_compressed_Array(default=default)
+    #--- End: def
+        
 #--- End: class

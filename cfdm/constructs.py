@@ -307,7 +307,9 @@ instances are equal.
     #--- End: def
 
     def domain_axis_name(self, key):
-        '''Return the canonical name for an axis.
+        '''Return the canonical identity for an axis.
+
+TODO (basd on spanning 1-d contriccts)
 
 :Parameters:
 
@@ -320,12 +322,18 @@ instances are equal.
 :Returns:
 
     `str`
-        The canonical name for the axis.
+        The identity.
 
 **Examples:**
 
->>> c.domain_axis_name('domainaxis1')
+>>> c.domain_axis_identity('domainaxis1')
 'longitude'
+>>> c.domain_axis_identity('domainaxis2')
+'axis=Y'
+>>> c.domain_axis_identity('domainaxis3')
+'cf_role=timeseries_id'
+>>> c.domain_axis_identity('domainaxis4')
+'key%domainaxis4')
 
         '''
         domain_axes = self.filter_by_type('domain_axis')
@@ -336,42 +344,71 @@ instances are equal.
 
         constructs_data_axes = self.data_axes()
 
-        name = None        
+        identity = ''
         for dkey, dim in self.filter_by_type('dimension_coordinate').items():
             if constructs_data_axes[dkey] == (key,):
-                # Get the name from a dimension coordinate
-                name = dim.identity()
-                if name.startswith('ncvar%'):
-                    name = None
+                # Get the identity from a dimension coordinate
+                identity = dim.identity()
+                if identity.startswith('ncvar%'):
+                    identity = ''
                 
                 break
         #--- End: for
-        if name:
-            return name
+        if identity:
+            return identity
 
-        found = False
+        identities = []
         for akey, aux in self.filter_by_type('auxiliary_coordinate').items():
             if constructs_data_axes[akey] == (key,):
-                if found:
-                    name = None
-                    break
-                
-                # Get the name from an auxiliary coordinate
-                name = aux.identity()
-                if name.startswith('ncvar%'):
-                    name = None
-
-                found = True
+                identity = aux.identity()
+                if not identity.startswith('ncvar%'):
+                    identities.append(identity)
         #--- End: for
-        if name:
-            return name
+
+        if not identities:
+            pass
+        elif len(identities) == 1:
+            return z[0]
+        elif len(identities) > 1:
+            cf_role = []
+            axis = []
+            for i in identities:
+                if i.startswith('axis='):
+                    axis.append(i)
+                elif i.startswith('cf_role='):
+                    cf_role.append(i)
+            #--- End: for
+            
+            if len(cf_role) == 1:
+                return cf_role[0]
+            
+            if len(axis) == 1:
+                return axis[0]
+        #--- End: if
+
+#        found = False
+#        for akey, aux in self.filter_by_type('auxiliary_coordinate').items():
+#            if constructs_data_axes[akey] == (key,):
+#                if found:
+#                    identity = ''
+#                    break
+#                
+#                # Get the identity from an auxiliary coordinate
+#                identity = aux.identity()
+#                if identity.startswith('ncvar%'):
+#                    identity = ''
+#
+#                found = True
+#        #--- End: for
+#        if identity:
+#            return identity
 
         ncdim = domain_axes[key].nc_get_dimension(None)
         if ncdim is not None:
-            # Get the name from a netCDF dimension
+            # Get the identity from a netCDF dimension
             return 'ncdim%{0}'.format(ncdim)
 
-        # Get the name from the identifier
+        # Get the identity from the domain axis construct key
         return 'key%{0}'.format(key)
     #--- End: def
 
