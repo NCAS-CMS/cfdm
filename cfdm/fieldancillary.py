@@ -27,6 +27,12 @@ the domain definition of the parent field construct but does not
 contribute to the domain's definition, unlike, for instance, an
 auxiliary coordinate construct or domain ancillary construct.
 
+**NetCDF interface**
+
+The netCDF variable name of the construct may be accessed with the
+`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+`nc_has_variable` methods.
+
 .. versionadded:: 1.7.0
 
     '''

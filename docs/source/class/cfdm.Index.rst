@@ -92,18 +92,18 @@ NetCDF
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Index.nc_del_instance_dimension
-   ~cfdm.Index.nc_get_instance_dimension
-   ~cfdm.Index.nc_has_instance_dimension
-   ~cfdm.Index.nc_set_instance_dimension 
-   ~cfdm.Index.nc_del_sample_dimension
-   ~cfdm.Index.nc_get_sample_dimension
-   ~cfdm.Index.nc_has_sample_dimension
-   ~cfdm.Index.nc_set_sample_dimension 
    ~cfdm.Index.nc_del_variable
    ~cfdm.Index.nc_get_variable
    ~cfdm.Index.nc_has_variable
    ~cfdm.Index.nc_set_variable 
+   ~cfdm.Index.nc_del_sample_dimension
+   ~cfdm.Index.nc_get_sample_dimension
+   ~cfdm.Index.nc_has_sample_dimension
+   ~cfdm.Index.nc_set_sample_dimension 
+   ~cfdm.Index.nc_del_dimension
+   ~cfdm.Index.nc_get_dimension
+   ~cfdm.Index.nc_has_dimension
+   ~cfdm.Index.nc_set_dimension 
 
 Special
 -------

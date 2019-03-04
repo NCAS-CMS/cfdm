@@ -19,6 +19,12 @@ spans the domain axis constructs of the domain, with the optional
 exception of size one axes, because their presence makes no difference
 to the order of the elements.
 
+**NetCDF interface**
+
+The netCDF dimension name of the construct may be accessed with the
+`nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension` and
+`nc_has_dimension` methods.
+
 .. versionadded:: 1.7.0
 
     '''

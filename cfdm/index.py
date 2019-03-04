@@ -6,7 +6,7 @@ from . import core
 
 class Index(mixin.NetCDFVariable,
             mixin.NetCDFDimension,
-            mixin.NetCDFInstanceDimension,
+#            mixin.NetCDFInstanceDimension,
             mixin.NetCDFSampleDimension,
             mixin.PropertiesData,
             core.abstract.PropertiesData):
@@ -19,6 +19,31 @@ the values of each feature in the collection are interleaved.
 The information needed to uncompress the data is stored in an index
 variable that specifies the feature that each element of the sample
 dimension belongs to.
+
+**NetCDF interface**
+
+The netCDF variable name of the index variable may be accessed with
+the `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+`nc_has_variable` methods.
+
+The name of the netCDF dimension spanned by the index variable's data
+(which does not correspeond to a domain axis contruct) may be accessed
+with the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension`
+and `nc_has_dimension` methods.
+
+The name of the netCDF sample dimension spanned by the compressed data
+(which does not correspond to a domain axis contruct) may be accessed
+with the `nc_set_sample_dimension`, `nc_get_sample_dimension`,
+`nc_del_sample_dimension` and `nc_has_sample_dimension` methods.
+
+   .. note:: The netCDF sample dimension and the netCDF dimension
+             spanned by the index variable's data are should be the
+             same, unless the compresed data is an indexed contiguous
+             ragged array, in which case they must be different.
+
+The name of the netCDF instance dimension (that is stored in the
+"instance_dimension" netCDF attribute) is accessed via the
+corresponding domain axis construct.
 
 .. versionadded:: 1.7.0
 

@@ -32,6 +32,12 @@ relate to an independent axis of the domain. Note that, for
 climatological time axes, the bounds are interpreted in a special way
 indicated by the cell method constructs.
 
+**NetCDF interface**
+
+The netCDF variable name of the construct may be accessed with the
+`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+`nc_has_variable` methods.
+
 .. versionadded:: 1.7.0
 
     '''

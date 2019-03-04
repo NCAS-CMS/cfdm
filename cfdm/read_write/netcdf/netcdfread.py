@@ -932,7 +932,8 @@ TODO
 
         instance_dimension = g['variable_dimensions'][ncvar][0] 
         
-        elements_per_instance = self._create_Count(ncvar, ncdim=instance_dimension)
+        elements_per_instance = self._create_Count(ncvar=ncvar,
+                                                   ncdim=instance_dimension)
 
         # Make up a netCDF dimension name for the element dimension
         featureType = g['featureType'].lower()
@@ -2775,7 +2776,7 @@ variable's netCDF dimensions.
 
 :Returns:
 
-    out: `Count`
+    out: Count variable instance
 
         '''
         g = self.read_vars
@@ -2783,15 +2784,21 @@ variable's netCDF dimensions.
         # Initialise the count variable
         variable = self.implementation.initialise_Count()
 
-        # Store the netCDF variable name
-        self.implementation.nc_set_variable(variable, ncvar)
-
+        # Set the CF properties
         properties = g['variable_attributes'][ncvar]
         sample_ncdim = properties.pop('sample_dimension', None)
         self.implementation.set_properties(variable, properties)
+
+        # Set the netCDF variable name
+        self.implementation.nc_set_variable(variable, ncvar)
+
+        # Set the netCDF sample dimension name
         if sample_ncdim is not None:
             self.implementation.nc_set_sample_dimension(variable, sample_ncdim)
 
+        # Set the name of the netCDF dimension spaned by the variable
+        # (which, for indexed contiguous ragged arrays, will not be the
+        # same as the netCDF instance dimension)
         self.implementation.nc_set_dimension(variable, ncdim)
             
         data = self._create_data(ncvar, variable, uncompress_override=True)
@@ -2819,28 +2826,36 @@ variable's netCDF dimensions.
 
 :Returns:
 
-    out: `Index`
+    out: Index variable
 
         '''
         g = self.read_vars
         
-        # Initialise the list variable
+        # Initialise the index variable
         variable = self.implementation.initialise_Index()
 
-        # Store the netCDF variable name
-        self.implementation.nc_set_variable(variable, ncvar)
-
+        # Set the CF properties
         properties = g['variable_attributes'][ncvar]
         instance_ncdim = properties.pop('instance_dimension', None)
         self.implementation.set_properties(variable, properties)
-        if instance_ncdim is not None:
-            self.implementation.nc_set_instance_dimension(variable, instance_ncdim)
 
-        sample_ncdim = ncdim #g['variable_dimensions'][ncvar][0]
+        # Set the netCDF variable name
+        self.implementation.nc_set_variable(variable, ncvar)
+
+#        # Set the netCDF instance dimension name                
+#        if instance_ncdim is not None:
+#            self.implementation.nc_set_instance_dimension(variable, instance_ncdim)
+
+        # Set the netCDF sample dimension name
+        sample_ncdim = ncdim
         self.implementation.nc_set_sample_dimension(variable, sample_ncdim)
 
+        # Set the name of the netCDF dimension spaned by the variable
+        # (which, for indexed contiguous ragged arrays, will not be
+        # the same as the netCDF sample dimension)
         self.implementation.nc_set_dimension(variable, ncdim)
-        
+
+        # Set the data
         data = self._create_data(ncvar, variable, uncompress_override=True)
         self.implementation.set_data(variable, data, copy=False)
             

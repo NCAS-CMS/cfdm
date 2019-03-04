@@ -28,6 +28,12 @@ does not depend on axes of the domain which are not spanned by the
 array, along which the values are implicitly propagated. CF-netCDF
 cell measure variables correspond to cell measure constructs.
 
+**NetCDF interface**
+
+The netCDF variable name of the construct may be accessed with the
+`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+`nc_has_variable` methods.
+
 .. versionadded:: 1.7.0
 
     '''

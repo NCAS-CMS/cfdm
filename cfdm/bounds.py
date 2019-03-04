@@ -26,6 +26,12 @@ coordinate construct itself. However, it is sometimes desired to store
 attributes on a CF-netCDF bounds variable, so it is also allowed to
 provide properties to a bounds component.
 
+**NetCDF interface**
+
+The netCDF variable name of the bounds may be accessed with the
+`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+`nc_has_variable` methods.
+
 .. versionadded:: 1.7.0
 
     '''

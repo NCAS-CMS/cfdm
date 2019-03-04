@@ -503,14 +503,26 @@ axes, and possibly other axes, are returned.
         return construct.get_data().get_compressed_dimension()
     #--- End: def
 
-    def nc_get_instance_dimension(self, index, default=None):
-        '''TODO
-        '''
-        return index.nc_get_instance_dimension(default=default)
-    #--- End: def
+#    def nc_get_instance_dimension(self, index, default=None):
+#        '''Return the name of the netCDF instance dimension.
+#
+#:Returns: 
+#
+#    `str`
+#        The name of the netCDF instance dimension.
+#
+#        '''
+#        return index.nc_get_instance_dimension(default=default)
+#    #--- End: def
     
     def nc_get_sample_dimension(self, count, default=None):
-        '''TODO
+        '''Return the name of the netCDF sample dimension.
+
+:Returns: 
+
+    `str`
+        The name of the netCDF sample dimension.
+
         '''
         return count.nc_get_sample_dimension(default=default)
     #--- End: def

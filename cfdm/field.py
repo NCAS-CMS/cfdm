@@ -38,6 +38,12 @@ some netCDF attributes of variables (e.g. units, long_name and
 standard_name), and some netCDF global file attributes (e.g. history
 and institution).
 
+**NetCDF interface**
+
+The netCDF variable name of the construct may be accessed with the
+`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+`nc_has_variable` methods.
+
 .. versionadded:: 1.7.0
 
     '''

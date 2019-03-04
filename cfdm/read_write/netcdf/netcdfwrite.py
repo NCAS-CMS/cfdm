@@ -322,7 +322,7 @@ If the construct has no data, then return `None`
 
 :Parameters:
 
-    field: `Field`
+    field: Field construct
 
     key: `str`
 
@@ -410,7 +410,7 @@ If the construct has no data, then return `None`
     ncdim: `str`
         The netCDF dimension name.
 
-    f: `Field`
+    f: Field construct
    
     axis: `str` or `None`
         The field's domain axis identifier.
@@ -513,11 +513,11 @@ a new netCDF dimension for the bounds.
 
 :Parameters:
 
-    f: `Field`
+    f: Field construct
    
     key: `str`
 
-    coord: `DimensionCoordinate`
+    coord: Dimension coordinate construct
 
 :Returns:
 
@@ -618,11 +618,32 @@ a new netCDF dimension for the bounds.
         return sample_ncdim
     #--- End: def
     
-    def _write_index_variable(self, f, index_variable, ncdim=None,
+    def _write_index_variable(self, f, index_variable,
+                              sample_dimension, ncdim=None,
                               create_ncdim=True,
-                              instance_dimension=None,
-                              sample_dimension=None):
-        '''
+                              instance_dimension=None):
+        '''Write an index variable to the netCDF file.
+
+:Parameters:
+
+    f: Field construct
+
+    index_variable: Index variable
+
+    sample_dimension: `str`
+        The name of the netCDF sample dimension.
+
+    ncdim: `str`, optional
+
+    create_ncdim: bool, optional
+
+    instance_dimension: `str`, optional
+        The name of the netCDF instance dimension.
+
+:Returns:
+
+    `str`
+        The name of the netCDF sample dimension.
 
         '''
         g = self.write_vars
@@ -651,9 +672,8 @@ a new netCDF dimension for the bounds.
 #            instance_ncdim =  self.implementation.nc_get_instance_dimension(
 #                index_variable, 'instance')
             
-            extra = {'instance_dimension': instance_dimension}
-
             # Create a new list variable
+            extra = {'instance_dimension': instance_dimension}
             self._write_netcdf_variable(ncvar, (ncdim,),
                                         index_variable, extra=extra)
 
@@ -706,7 +726,7 @@ a new netCDF bounds dimension.
 
 :Parameters:
 
-    data: `Data`
+    data: Data instance
    
     ncvar: `str`
 
@@ -891,7 +911,7 @@ then the input coordinate is not written.
     
 :Parameters:
 
-    f: `Field`
+    f: Field construct
    
     axis : str
         The field's axis identifier for the scalar coordinate.
@@ -945,7 +965,7 @@ then the input coordinate is not written.
     
 :Parameters:
 
-    f: `Field`
+    f: Field construct
    
     key: `str`
 
@@ -1007,12 +1027,12 @@ it is not re-written.
     
 :Parameters:
 
-    f: `Field`
+    f: Field construct
    
     key: `str`
         The internal identifier of the domain ancillary object.
 
-    anc: `DomainAncillary`
+    anc: Domain ancillary construct
     
 :Returns:
 
@@ -1074,11 +1094,11 @@ it is not re-written.
     
 :Parameters:
 
-    f : `Field`
+    f : Field construct
    
     key : str
 
-    anc : `FieldAncillary`
+    anc : Field ancillary construct
 
 :Returns:
 
@@ -1120,13 +1140,13 @@ measure will not be written.
 
 :Parameters:
 
-    field: `Field`
+    field: Field construct
         The field containing the cell measure.
 
     key: `str`
         The identifier of the cell measure (e.g. 'cellmeasure0').
 
-    cell_measure: `CellMeasure`
+    cell_measure: Cell measure construct
 
 :Returns:
 
@@ -1242,9 +1262,9 @@ measure will not be written.
 
 :Parameters:
 
-    f: `Field`
+    f: Field construct
 
-    ref: `CoordinateReference`
+    ref: Coordinate reference construct
         The grid mapping coordinate reference to write to the file.
 
     multiple_grid_mappings: `bool`
@@ -1515,7 +1535,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
 
 :Parameters:
 
-    data: `Data`
+    data: Data instance
 
     ncvar: `str`
 
@@ -1588,16 +1608,16 @@ created. The ``seen`` dictionary is updated for *cfvar*.
     def _convert_to_char(self, data):
         '''Convert string data into character data
 
-The return `Data` object will have data type 'S1' and will have an
+The return Data instance object will have data type 'S1' and will have an
 extra trailing dimension.
     
 :Parameters:
     
-    data: `Data`
+    data: Data instance
 
 :Returns:
 
-    out: `Data`
+    out: Data instance
 
         '''
         strlen = data.dtype.itemsize
@@ -1618,7 +1638,7 @@ extra trailing dimension.
     
 :Parameters:
 
-    f : `Field`
+    f : Field construct
 
     add_to_seen : bool, optional
 
@@ -1928,9 +1948,9 @@ extra trailing dimension.
                 index_ncdim = self.implementation.nc_get_dimension(index)
                 sample_ncdim = self._write_index_variable(
                     f, index,
+                    sample_dimension=index_ncdim,
                     ncdim=index_ncdim, create_ncdim=True,
-                    instance_dimension=data_ncdimensions[0],
-                    sample_dimension=index_ncdim)
+                    instance_dimension=data_ncdimensions[0])
 
             elif compression_type == 'ragged indexed contiguous':
                 # ----------------------------------------------------
@@ -1949,9 +1969,9 @@ extra trailing dimension.
                 index = self.implementation.get_index_variable(f)
                 self._write_index_variable(
                     f, index,
+                    sample_dimension=sample_ncdim,
                     ncdim=index_ncdim, create_ncdim=False,
-                    instance_dimension=data_ncdimensions[0],
-                    sample_dimension=sample_ncdim)
+                    instance_dimension=data_ncdimensions[0])
 
                 g['sample_ncdim'][compressed_ncdims[0:2]] = index_ncdim
 
@@ -2284,7 +2304,7 @@ extra trailing dimension.
 
 :Parameters:
   
-    field: `Field`
+    field: Field construct
 
     axis: `str`
    

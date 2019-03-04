@@ -24,6 +24,12 @@ An array of cell bounds spans the same domain axes as the data array,
 with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
+**NetCDF interface**
+
+The netCDF variable name of the construct may be accessed with the
+`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+`nc_has_variable` methods.
+
 .. versionadded:: 1.7.0
 
     '''
