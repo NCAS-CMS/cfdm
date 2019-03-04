@@ -57,8 +57,8 @@ enabled.
 .B \-c, \-\-complete
 Display complete descriptions. All properties of all constructs,
 including metadata constructs and their components are described
-without abbreviation with the exception of data arrays with more than
-three elements, which are abbreviated to their first and last values.
+without abbreviation with the exception of data arrays which are
+generally abbreviated to their first and last values.
 .
 .
 .TP
