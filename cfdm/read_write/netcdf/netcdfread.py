@@ -2881,7 +2881,7 @@ variable's netCDF dimensions.
 
 :Returns:
 
-    out: `InteriorRing`
+    out: Interior ring variable
 
         '''
         g = self.read_vars

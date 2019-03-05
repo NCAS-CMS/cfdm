@@ -18,6 +18,55 @@ from . import constants
 
 zzz = False
 
+
+class _GeometryContainer(object):
+    def __init__(self, field):
+        '''
+        '''
+        self.node_coordinates = []
+        
+        geometry = None
+        for a in field.auxiliary_coordinates.values():
+            g = a.get_geometry(None)
+            if g is None:
+                continue
+
+            bounds = a.get_bounds(None)
+            if bounds is None:
+                continue
+
+            ncvar = bounds.nc_get_variable(None)
+
+            if ncvar is None:
+                # set a ncvar
+                pass
+            
+            self.node_coordinates.append(ncvar)
+            geometry = g
+
+    #--- End: def
+
+    def equals(self, other, **kwargs):
+        '''
+        '''
+        if not isinstance(other, self.__class__):
+            return False
+        
+        for attribute in ('geometry_type', 'node_count',
+                          'node_coordinates', 'grid_mapping',
+                          'coordinates', 'part_node_count',
+                          'interior_ring'):
+            x = getattr(self, attribute, None)
+            y = getattr(other, attribute, None)
+            if x != y:
+                return False
+        #--- End: for
+        
+        return True
+    #--- End: def
+
+#--- End: class
+    
 class NetCDFWrite(IOWrite):
     '''
     '''
@@ -814,7 +863,7 @@ name.
 
     coord: `BoundedVariable`
 
-    coord_ncdimensions: `tuple`
+    coord_ncdimensions: `tuple` of `str`
         The ordered netCDF dimension names of the coordinate's
         dimensions (which do not include the bounds dimension).
 
@@ -855,9 +904,7 @@ name.
             # This bounds variable has been previously created, so no
             # need to do so again.
             ncvar = g['seen'][id(bounds)]['ncvar']
-    
         else:
-    
             # This bounds variable has not been previously created, so
             # create it now.
             ncdim_to_size = g['ncdim_to_size']
@@ -992,24 +1039,28 @@ then the input coordinate is not written.
         if self._already_in_file(coord, ncdimensions):
             ncvar = g['seen'][id(coord)]['ncvar']
         else:
-            ncvar = self._create_netcdf_variable_name(coord,
-                                                      default='auxiliary')
-
+            if (not self.implementation.get_properties(coord) and
+                self.implementation.get_data(coord, default=None) is None):
+                # No coordinates, but possibly bounds
+                self._write_bounds(coord, ncdimensions, ncvar)
+            else:
+                ncvar = self._create_netcdf_variable_name(coord,
+                                                          default='auxiliary')
+    
+                # TODO: move setting of bounds ncvar to here
+                
+                # If this auxiliary coordinate has bounds then create the
+                # bounds netCDF variable and add the bounds or climatology
+                # attribute to the dictionary of extra attributes
+                extra = self._write_bounds(coord, ncdimensions, ncvar)
+    
+                # Create a new auxiliary coordinate variable
+                self._write_netcdf_variable(ncvar, ncdimensions, coord,
+                                            extra=extra)
             
+                g['key_to_ncvar'][key] = ncvar
+        #--- End: if
 
-            # TODO: move setting of bounds ncvar to here
-            
-            # If this auxiliary coordinate has bounds then create the
-            # bounds netCDF variable and add the bounds or climatology
-            # attribute to the dictionary of extra attributes
-            extra = self._write_bounds(coord, ncdimensions, ncvar)
-
-            # Create a new auxiliary coordinate variable
-            self._write_netcdf_variable(ncvar, ncdimensions, coord,
-                                        extra=extra)
-        
-            g['key_to_ncvar'][key] = ncvar
-        
         coordinates.append(ncvar)        
 
         return coordinates
@@ -1842,9 +1893,6 @@ extra trailing dimension.
                             if axis_size0 != axis_size1:
                                 continue
     
-#                            if not constructs1:
-#                                continue
-
                             constructs1 = constructs1.copy()
                             
                             for key0, (construct0, index0) in spanning_constructs.items():
@@ -1993,6 +2041,9 @@ extra trailing dimension.
         
         data_ncdimensions = tuple(data_ncdimensions)
 
+        # Create a geometry container
+        
+        
         # ----------------------------------------------------------------
         # Create auxiliary coordinate variables, except those which might
         # be completely specified elsewhere by a transformation.
@@ -2000,10 +2051,6 @@ extra trailing dimension.
         # Initialize the list of 'coordinates' attribute variable values
         # (each of the form 'name')
         for key, aux_coord in sorted(self.implementation.get_auxiliary_coordinates(f).items()):
-#            if self.implementation.is_geometry(aux_coord):
-#                coordinates = self._write_geometry_coordinate(f, key, aux_coord,
-#                                                              coordinates)
-
             coordinates = self._write_auxiliary_coordinate(f, key, aux_coord,
                                                            coordinates)
     

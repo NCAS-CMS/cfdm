@@ -445,10 +445,10 @@ properties may be completely removed with the
 All of the methods related to the properties are listed :ref:`here
 <Field-Properties>`.
 
-.. _Metadata-constructs-1:
+.. _Metadata-constructs:
 
-**Metadata constructs 1**
--------------------------
+**Metadata constructs**
+-----------------------
 
 ----
 
@@ -887,11 +887,10 @@ class.
                    : latitude(5) = [75.0, ..., -75.0] degrees_north
                    : longitude(1) = [22.5] degrees_east
 
+.. _Filtering-metadata-constructs:
 
-.. _Metadata-constructs-2:
-
-**Metadata constructs 2**
--------------------------
+**Filtering metadata constructs**
+---------------------------------
 
 ----
 
@@ -986,7 +985,7 @@ contains the selected constructs.
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
 As each of these methods returns a `Constructs` instance, it is easy
-to perform further filter on their results:
+to perform further filters on their results:
    
 .. code-block:: python3
    :caption: *Make selections from previous selections.*
@@ -1153,10 +1152,11 @@ metadata construct:
    >>> print(t.cell_measures)
    Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
-.. _Accessing-an-individual-metadata-construct:
 
-**Accessing an individual metadata construct**
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. _Metadata-construct-access:
+
+**Metadata construct access**
+-----------------------------
 
 An individual metadata construct may be returned, without its
 construct key, by any of four techniques:

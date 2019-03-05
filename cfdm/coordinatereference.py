@@ -56,6 +56,13 @@ frame and consists of the following:
   construct relates the coordinate values of the field to locations in
   a planetary reference frame.
 
+
+**NetCDF interface**
+
+The netCDF grid mapping variable name of a coordinate reference
+construct may be accessed with the `nc_set_variable`,
+`nc_get_variable`, `nc_del_variable` and `nc_has_variable` methods.
+
 .. versionadded:: 1.7.0
 
     '''

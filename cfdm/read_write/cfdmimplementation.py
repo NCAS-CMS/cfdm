@@ -1145,6 +1145,24 @@ netCDF unlimited dimensions.
         return bool(coordinate.get_geometry(None) == 'climatology')
     #--- End: def
 
+    def is_geometry(self, coordinate):
+        '''Return True if the coordinate bounds are geometries.
+
+:Parameters:
+
+    coordinate: 
+        The coordinate construct.
+
+:Returns:
+
+    out: `bool`
+         True if the coordinate bounds are geometries, otherwise
+         False.
+
+        '''
+        return bool(coordinate.get_geometry(None) in ('point', 'line', 'polygon'))
+    #--- End: def
+
     def nc_set_instance_dimension(self, variable, ncdim):
         '''
         '''

@@ -26,7 +26,10 @@ The netCDF variable name of the interior ring variable may be accessed
 with the `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
 `nc_has_variable` methods.
 
-TODO dimension
+The name of the netCDF dimension spanned by the interior ring
+variable's data (which does not correspeond to a domain axis contruct)
+may be accessed with the `nc_set_dimension`, `nc_get_dimension`,
+`nc_del_dimension` and `nc_has_dimension` methods.
 
 .. versionadded:: 1.8.0
 
