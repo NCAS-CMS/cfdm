@@ -2585,7 +2585,7 @@ variable's netCDF dimensions.
 
         has_bounds = False
         attribute = 'bounds'
-        ncbounds = None
+#        ncbounds = None
         geometry = None
 
 #if len(axes) == len(ncdimensions):
@@ -2607,12 +2607,15 @@ variable's netCDF dimensions.
         geometry = self._get_geometry(field_ncvar)
 
         if bounds is None:
+            ncbounds = properties.pop('bounds', None)
             if ncbounds is None:
-                ncbounds = properties.pop('bounds', None)
-                if ncbounds is None:
-                    ncbounds = properties.pop('climatology', None)
+                ncbounds = properties.pop('climatology', None)
+                if ncbounds is not None:
+                    attribute = 'climatology'
+                else:
+                    ncbounds = properties.pop('nodes', None)
                     if ncbounds is not None:
-                        attribute = 'climatology'                        
+                        attribute = 'nodes'
         else:
             ncbounds = bounds
             

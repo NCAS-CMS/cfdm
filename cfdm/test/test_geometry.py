@@ -27,13 +27,13 @@ def _make_geometry_1_file(filename):
     lat = n.createVariable('lat', 'f8', ('instance',))
     lat.standard_name = "latitude"
     lat.units = "degrees_north"
-    lat.bounds = "y"
+    lat.nodes = "y"
     lat[...] = [30, 50]
 
     lon = n.createVariable('lon', 'f8', ('instance',))
     lon.standard_name = "longitude"
     lon.units = "degrees_east"
-    lon.bounds = "x"
+    lon.nodes = "x"
     lon[...] = [10, 60]    
 
     datum = n.createVariable('datum', 'i4', ())
@@ -90,13 +90,13 @@ def _make_geometry_2_file(filename):
     lat = n.createVariable('lat', 'f8', ('instance',))
     lat.standard_name = "latitude"
     lat.units = "degrees_north"
-    lat.bounds = "y"
+    lat.nodes = "y"
     lat[...] = [30, 50]
 
     lon = n.createVariable('lon', 'f8', ('instance',))
     lon.standard_name = "longitude"
     lon.units = "degrees_east"
-    lon.bounds = "x"
+    lon.nodes = "x"
     lon[...] = [10, 60]    
 
     datum = n.createVariable('datum', 'i4', ())
@@ -159,13 +159,13 @@ def _make_geometry_3_file(filename):
     lat = n.createVariable('lat', 'f8', ('instance',))
     lat.standard_name = "latitude"
     lat.units = "degrees_north"
-    lat.bounds = "y"
+    lat.nodes = "y"
     lat[...] = [30, 50, 70]
     
     lon = n.createVariable('lon', 'f8', ('instance',))
     lon.standard_name = "longitude"
     lon.units = "degrees_east"
-    lon.bounds = "x"
+    lon.nodes = "x"
     lon[...] = [10, 60, 80]    
     
     datum = n.createVariable('datum', 'i4', ())
@@ -256,13 +256,13 @@ def _make_interior_ring_file(filename):
     lat = n.createVariable('lat', 'f8', ('instance',))
     lat.units = "degrees_north" 
     lat.standard_name = "latitude"
-    lat.bounds = "y"
+    lat.nodes = "y"
     lat[...] = [25, 7]
 
     lon = n.createVariable('lon', 'f8', ('instance',))
     lon.units = "degrees_east"
     lon.standard_name = "longitude"
-    lon.bounds = "x"
+    lon.nodes = "x"
     lon[...] = [10, 40]
 
     geometry_container = n.createVariable('geometry_container', 'i4', ())

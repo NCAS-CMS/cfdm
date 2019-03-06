@@ -541,6 +541,7 @@ None
 
 #--- End: class
 
+
 class NetCDFInstanceDimension(NetCDF):
     '''Mixin class for accessing the netCDF instance dimension name.
 
@@ -885,7 +886,7 @@ class NetCDFGeometryContainer(NetCDF):
     def nc_del_geometry_container(self, default=ValueError()):
         '''Remove the netCDF geometry container name.
 
-.. versionadded:: 1.7.0
+.. versionadded:: 1.8.0
 
 .. seealso:: `nc_get_geometry_container`, `nc_has_geometry_container`,
              `nc_set_geometry_container`
@@ -930,7 +931,7 @@ None
     def nc_get_geometry_container(self, default=ValueError()):
         '''Return the netCDF geometry container name.
 
-.. versionadded:: 1.7.0
+.. versionadded:: 1.8.0
 
 .. seealso:: `nc_del_geometry_container`, `nc_has_geometry_container`,
              `nc_set_geometry_container`
@@ -975,7 +976,7 @@ None
     def nc_has_geometry_container(self):
         '''Whether the netCDF geometry container name has been set.
 
-.. versionadded:: 1.7.0
+.. versionadded:: 1.8.0
 
 .. seealso:: `nc_del_geometry_container`, `nc_get_geometry_container`,
              `nc_set_geometry_container`
@@ -1009,7 +1010,7 @@ None
     def nc_set_geometry_container(self, value):
         '''Set the netCDF geometry container name.
         
-.. versionadded:: 1.7.0
+.. versionadded:: 1.8.0
 
 .. seealso:: `nc_del_geometry_container`, `nc_get_geometry_container`,
              `nc_has_geometry_container`
