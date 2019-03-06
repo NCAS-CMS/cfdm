@@ -2193,7 +2193,7 @@ variable should be pre-filled with missing values.
                     create_new = True
                     
                     if not coordinates:
-                        # DCH ALERT -  what to do about duplicate standard names?
+                        # DCH ALERT -  what to do about duplicate standard names? TODO
                         name = parameters.get('grid_mapping_name', None)
                         for n in constants.coordinate_reference_coordinates.get(name, ()):
                             for key, coord in self.implementation.get_coordinates(field=f).items():

@@ -25,25 +25,38 @@ class _GeometryContainer(object):
         '''
         self.node_coordinates = []
         
-        geometry = None
-        for a in field.auxiliary_coordinates.values():
-            g = a.get_geometry(None)
-            if g is None:
+        geometry_types = set(())
+
+        gc = {}        
+        for key, a in field.auxiliary_coordinates.items():
+            geometry_type = a.get_geometry(None)
+            if geometry_type in (None, 'climatology'):
+                # No geometry bounds for this auxiliary coordinate
                 continue
 
             bounds = a.get_bounds(None)
             if bounds is None:
+                # No geometry bounds for this auxiliary coordinate                
                 continue
-
-            ncvar = bounds.nc_get_variable(None)
-
-            if ncvar is None:
-                # set a ncvar
-                pass
             
-            self.node_coordinates.append(ncvar)
-            geometry = g
+            coord_ncvar = a.nc_get_variable(None)
+            node_ncvar = bounds.nc_get_variable(None)
 
+            gc[geometry_type].setdefault('node_coordinates', []).append(node_ncvar)
+            gc[geometry_type].setdefault('coordinates', []).append(coord_ncvar)
+
+            for cr in field.coordinate_references.values():
+                if key in cr.coordinates():
+                    gc[geometry_type].setdefault('grid_mapping', []).append(cr_ncvar)
+            #--- End: for
+            
+            if 'grid_mapping' in gc[geometry_type]:
+                if len(gc[geometry_type]['grid_mapping']) == 1:
+                    gc[geometry_type]['grid_mapping'] = gc[geometry_type]['grid_mapping'].pop()
+                else:
+                    print('TODO')
+            #--- End: for
+                    
     #--- End: def
 
     def equals(self, other, **kwargs):
@@ -52,10 +65,8 @@ class _GeometryContainer(object):
         if not isinstance(other, self.__class__):
             return False
         
-        for attribute in ('geometry_type', 'node_count',
-                          'node_coordinates', 'grid_mapping',
-                          'coordinates', 'part_node_count',
-                          'interior_ring'):
+        for attribute in ('geometry_type', 'node_coordinates',
+                          'grid_mapping', 'coordinates'):
             x = getattr(self, attribute, None)
             y = getattr(other, attribute, None)
             if x != y:
