@@ -1,5 +1,3 @@
-from distutils.version import LooseVersion
-
 _CODE0 = {
         # Physically meaningful and corresponding to constructs
         'Cell measures variable' : 100,
@@ -40,15 +38,22 @@ _CODE1 = {
         'spans incorrect dimensions': 4,
         'is not in file nor referenced by the external_variables global attribute': 5,
         'has incompatible terms': 6,
-        'that spans the vertical dimension has no bounds': 7,
+
+    'that spans the vertical dimension has no bounds': 7,
     'that does not span the vertical dimension is inconsistent with the formula_terms of the parametric coordinate variable': 8,
     }
 
+# --------------------------------------------------------------------
+# Recognised netCDF file magic numbers
+# --------------------------------------------------------------------
 MAGIC_NUMBER = (21382211,
                 1128547841,
                 1178880137,
                 38159427)
 
+# --------------------------------------------------------------------
+# Datum-defining parameters names
+# --------------------------------------------------------------------
 datum_parameters = ('earth_radius',
                     'geographic_crs_name',
                     'geoid_name',
@@ -63,7 +68,17 @@ datum_parameters = ('earth_radius',
                     'towgs84',
 )
 
-# Col 0: Georeference name Col 1+: Set of coordinates to which it applies
+# --------------------------------------------------------------------
+# Mapping of each coordinate reference canonical name to the
+# coordinates to which it applies. The coordinates are defined by
+# their standard names.
+#
+# A coordiante reference canonical name is either the value of the
+# grid_mapping_name attribute of a grid mapping variable
+# (e.g. 'lambert_azimuthal_equal_area'), or the standard name of a
+# vertical coordinate variable with a formula_terms attribute
+# (e.g. ocean_sigma_coordinate').
+# --------------------------------------------------------------------
 coordinate_reference_coordinates = {
     'albers_conical_equal_area'                  : ('projection_x_coordinate',
                                                     'projection_y_coordinate',
@@ -134,21 +149,27 @@ coordinate_reference_coordinates = {
     'ocean_double_sigma_coordinate'              : ('ocean_double_sigma_coordinate',),
 }
 
-description_of_file_contents_attributes = ('comment',
-                                           'Conventions',
-                                           'featureType',
-                                           'history',
-                                           'institution',
-                                           'references',
-                                           'source',
-                                           'title',)
+# --------------------------------------------------------------------
+# Description of file contents properties
+# --------------------------------------------------------------------
+description_of_file_contents_attributes = (
+    'comment',
+    'Conventions',
+    'featureType',
+    'history',
+    'institution',
+    'references',
+    'source',
+    'title',
+)
 
 # --------------------------------------------------------------------
-# Valid cell method qualifiers
+# Cell method qualifiers
 # --------------------------------------------------------------------
-cell_method_qualifiers = set(('within',
-                              'where',
-                              'over',
-                              'interval',
-                              'comment',
+cell_method_qualifiers = set((
+    'within',
+    'where',
+    'over',
+    'interval',
+    'comment',
 ))
