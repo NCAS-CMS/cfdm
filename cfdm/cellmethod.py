@@ -299,7 +299,7 @@ Equality is strict by default. This means that:
   *ignore_qualifiers* parameter).
 
 The axes of the cell method constructs are *not* considered, because
-they may ony be correctly interpreted by the field constructs that
+they may only be correctly interpreted by the field constructs that
 contain the cell method constructs in question. They are, however,
 taken into account when two fields constructs are tested for equality.
 

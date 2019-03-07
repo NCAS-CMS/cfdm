@@ -200,7 +200,7 @@ constitute part of the CF data model and so are not checked.
     ignore_compression: `bool`, optional
         If True then any compression applied to the underlying arrays
         is ignored and only the uncompressed arrays are tested for
-        equality. By default the compression type and, if appliciable,
+        equality. By default the compression type and, if applicable,
         the underlying compressed arrays must be the same, as well as
         the arrays in their uncompressed forms
 
@@ -298,11 +298,11 @@ By default the identity is the first found of the following:
 'area'
 >>> c.identity()
 'cell_area'
->>> c.del_propery('standard_name')
+>>> c.del_property('standard_name')
 'cell_area'
 >>> c.identity()
 'long_name=Area'
->>> c.del_propery('long_name')
+>>> c.del_properly('long_name')
 'Area'
 >>> c.identity()
 'ncvar%areacello'

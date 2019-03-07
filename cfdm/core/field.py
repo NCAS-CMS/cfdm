@@ -1,4 +1,5 @@
 from builtins import super
+from past.builtins import basestring
 
 from . import abstract
 from . import mixin

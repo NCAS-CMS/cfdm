@@ -222,7 +222,7 @@ selected.
 If a domain axis construct is selected for removal then it can't be
 spanned by any data arrays of the metadata constructs. However, a
 domain ancillary constructs may be removed even if it is referenced by
-coordinate reference coinstruct.
+coordinate reference construct.
 
 .. versionadded:: 1.7.0
 
@@ -234,7 +234,7 @@ coordinate reference coinstruct.
 
     name: (sequence of) `str`, optional
         Select constructs that have the given name. In general, a
-        contruct's name is the string returned by its `!name` method.
+        construct's name is the string returned by its `!name` method.
 
         The name may be one of:
 
@@ -341,7 +341,7 @@ coordinate reference coinstruct.
     axis: (sequence of) `str`, optional
         Select constructs which have data that spans one or more of
         the given domain axis constructs, in any order. Domain axis
-        contructs are specified by their construct keys.
+        constructs are specified by their construct keys.
 
         *Parameter example:*
           ``axis='domainaxis2'``

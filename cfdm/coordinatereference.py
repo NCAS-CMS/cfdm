@@ -231,7 +231,7 @@ Equality is strict by default. This means that:
 
 The dimension coordinate, auxiliary coordinate and domain ancillary
 constructs of the coordinate reference constructs are *not*
-considered, because they may ony be correctly interpreted by the field
+considered, because they may only be correctly interpreted by the field
 constructs that contain the coordinate reference constructs in
 question. They are, however, taken into account when two fields
 constructs are tested for equality.

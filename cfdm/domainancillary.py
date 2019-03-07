@@ -78,8 +78,6 @@ The netCDF variable name of the construct may be accessed with the
                          interior_ring=interior_ring, source=source,
                          copy=copy, _use_data=_use_data)
         
-#        if source is not None:
- #           self._intialise_ncvar_from(source)
         self._initialise_netcdf(source)
     #--- End: def
     
@@ -126,7 +124,7 @@ components, and provides selected values of all data arrays.
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
                ignore_type=False):
-        '''Whether two domain anxillary constructs are the same.
+        '''Whether two domain ancillary constructs are the same.
 
 Equality is strict by default. This means that:
 
@@ -200,7 +198,7 @@ constitute part of the CF data model and so are not checked.
     ignore_compression: `bool`, optional
         If True then any compression applied to the underlying arrays
         is ignored and only the uncompressed arrays are tested for
-        equality. By default the compression type and, if appliciable,
+        equality. By default the compression type and, if applicable,
         the underlying compressed arrays must be the same, as well as
         the arrays in their uncompressed forms
 

@@ -30,7 +30,7 @@ may be accessed with the `nc_set_dimension`, `nc_get_dimension`,
 
 The name of the netCDF sample dimension spanned by the compressed data
 (that is stored in the "sample_dimension" netCDF attribute and which
-does not correspond to a domain axis contruct) may be accessed with
+does not correspond to a domain axis construct) may be accessed with
 the `nc_set_sample_dimension`, `nc_get_sample_dimension`,
 `nc_del_sample_dimension` and `nc_has_sample_dimension` methods.
 

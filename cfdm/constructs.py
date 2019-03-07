@@ -8,7 +8,7 @@ from . import core
 
 
 class Constructs(core.Constructs):
-    '''A container for metadata constucts.
+    '''A container for metadata constructs.
 
 .. versionadded:: 1.7.0
 
@@ -466,7 +466,7 @@ construct.
     ignore_compression: `bool`, optional
         If True then any compression applied to underlying arrays is
         ignored and only uncompressed arrays are tested for
-        equality. By default the compression type and, if appliciable,
+        equality. By default the compression type and, if applicable,
         the underlying compressed arrays must be the same, as well as
         the arrays in their uncompressed forms
 
@@ -528,7 +528,7 @@ False
                 matched_roles = False
 
                 if len_axes0 != len(axes1):
-                    # axes1 and axes0 contain differents number of
+                    # axes1 and axes0 contain different number of
                     # domain axes.
                     continue
 
@@ -924,7 +924,7 @@ Select the constructs with keys 'dimensioncoordinate1' or
 :Returns:
 
     `Constructs`
-        The selected cell meausure constructs and their construct
+        The selected cell measure constructs and their construct
         keys.
         
 **Examples:**

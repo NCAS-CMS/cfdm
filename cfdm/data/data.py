@@ -578,7 +578,7 @@ masked
     @property
     def datetime_array(self):
         '''Return an independent numpy array containing the date-time objects
-corresponding to time since a refernce date.
+corresponding to time since a reference date.
 
 Only applicable for reference time units.
 
@@ -717,7 +717,7 @@ data array shape.
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
-                "Can't expand dimension sof data: Invalid position: {!r}".format(position))
+                "Can't insert dimension: Invalid position: {!r}".format(position))
 
         array = self.array
         array = numpy.expand_dims(array, position)
@@ -759,7 +759,7 @@ data array shape.
 
 #    def get_dtarray(self):
 #        '''Return an independent numpy array containing the date-time objects
-#corresponding to time since a refernce date.
+#corresponding to time since a reference date.
 #
 #Only applicable for reference time units.
 #
@@ -1381,9 +1381,9 @@ Missing data array elements are omitted from the calculation.
 
 >>> d.shape
 (19, 73, 96)
->>> d.tranpose().shape
+>>> d.transpose().shape
 (96, 73, 19)
->>> d.tranpose([1, 0, 2]).shape
+>>> d.transpose([1, 0, 2]).shape
 (73, 19, 96)
 
         '''
@@ -1519,7 +1519,7 @@ differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*
 parameters.
 
-The compression type and, if appliciable, the underlying compressed
+The compression type and, if applicable, the underlying compressed
 arrays must be the same, as well as the arrays in their uncompressed
 forms. See the *ignore_compression* parameter.
 
@@ -1558,7 +1558,7 @@ one. See the *ignore_type* parameter.
     ignore_compression: `bool`, optional
         If True then any compression applied to the underlying arrays
         is ignored and only the uncompressed arrays are tested for
-        equality. By default the compression type and, if appliciable,
+        equality. By default the compression type and, if applicable,
         the underlying compressed arrays must be the same, as well as
         the arrays in their uncompressed forms
 

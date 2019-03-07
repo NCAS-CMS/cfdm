@@ -200,7 +200,7 @@ constitute part of the CF data model and so are not checked.
     ignore_compression: `bool`, optional
         If True then any compression applied to the underlying arrays
         is ignored and only the uncompressed arrays are tested for
-        equality. By default the compression type and, if appliciable,
+        equality. By default the compression type and, if applicable,
         the underlying compressed arrays must be the same, as well as
         the arrays in their uncompressed forms
 

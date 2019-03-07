@@ -263,7 +263,7 @@ rules, the only differences being:
         data_axes = new.get_data_axes()
         
         # Open any files that contained the original data (this not
-        # necessary, is an optimsation)
+        # necessary, is an optimisation)
         
         # ------------------------------------------------------------
         # Subspace the field's data
@@ -632,7 +632,7 @@ construct.
     ignore_compression: `bool`, optional
         If True then any compression applied to underlying arrays is
         ignored and only uncompressed arrays are tested for
-        equality. By default the compression type and, if appliciable,
+        equality. By default the compression type and, if applicable,
         the underlying compressed arrays must be the same, as well as
         the arrays in their uncompressed forms
 
@@ -1084,9 +1084,9 @@ may be selected for removal.
 
 >>> f.data.shape
 (19, 73, 96)
->>> f.tranpose().data.shape
+>>> f.transpose().data.shape
 (96, 73, 19)
->>> f.tranpose([1, 0, 2]).data.shape
+>>> f.transpose([1, 0, 2]).data.shape
 (73, 19, 96)
 
         '''
@@ -1109,7 +1109,7 @@ may be selected for removal.
     #--- End: def
 
     @property
-    def field_ancillaries(self): #, copy=False):
+    def field_ancillaries(self):
         '''Return field ancillary constructs.
 
 .. versionadded:: 1.7.0
@@ -1124,9 +1124,8 @@ may be selected for removal.
 
 :Returns:
 
-    `dict`
-        Constructs are returned as values of a dictionary, keyed by
-        their construct identifiers.
+    `Constructs`
+        The field ancillary constructs and their construct keys.
 
 **Examples:**
 
@@ -1146,6 +1145,10 @@ Constructs:
     def cell_methods(self):
         '''Return cell method constructs.
 
+The cell methods are not returned in the order in which they were
+applied. To achieve this use the `~Constructs.ordered` of the returned
+`Constructs` instance.
+
 .. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`, `set_construct`
@@ -1158,11 +1161,8 @@ Constructs:
 
 :Returns:
 
-    `collections.OrderDict`
-        Constructs are returned as values of an ordered dictionary,
-        keyed by their construct identifiers. The order is determined
-        by the order in which the cell method constructs were added to
-        the field construct.
+    `Constructs`
+        The cell method constructs and their construct keys.
 
 **Examples:**
 
@@ -1172,8 +1172,12 @@ Constructs:
 
 >>> f.cell_methods
 Constructs:
-{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
- 'cellmethod1': <CellMethod: domainaxis3: maximum>}
+{'cellmethod1': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+ 'cellmethod0': <CellMethod: domainaxis3: maximum>}
+
+>>> f.cell_methods.ordered()
+OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
         '''
         return self.constructs.filter_by_type('cell_method')

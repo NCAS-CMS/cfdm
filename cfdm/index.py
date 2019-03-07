@@ -27,18 +27,18 @@ the `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
 `nc_has_variable` methods.
 
 The name of the netCDF dimension spanned by the index variable's data
-(which does not correspeond to a domain axis contruct) may be accessed
+(which does not correspond to a domain axis construct) may be accessed
 with the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension`
 and `nc_has_dimension` methods.
 
 The name of the netCDF sample dimension spanned by the compressed data
-(which does not correspond to a domain axis contruct) may be accessed
+(which does not correspond to a domain axis contract) may be accessed
 with the `nc_set_sample_dimension`, `nc_get_sample_dimension`,
 `nc_del_sample_dimension` and `nc_has_sample_dimension` methods.
 
    .. note:: The netCDF sample dimension and the netCDF dimension
              spanned by the index variable's data are should be the
-             same, unless the compresed data is an indexed contiguous
+             same, unless the compressed data is an indexed contiguous
              ragged array, in which case they must be different.
 
 The name of the netCDF instance dimension (that is stored in the

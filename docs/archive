@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 if [[ ! $1 ]] ; then 
   echo "No version \$1 (e.g. 1.7.0)"
   exit 1
@@ -26,7 +28,9 @@ make html $version
 # --------------------------------------------------------------------
 # Add, commit and push
 # --------------------------------------------------------------------
-#git add $version
+cd $version
+git add _downloads/*.nc *.html */*.html _sources
 git commit -a -m "archive v$version documentation"
 git push origin master
 
+set +x
