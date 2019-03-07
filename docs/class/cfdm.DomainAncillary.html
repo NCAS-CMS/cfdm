@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -99,7 +99,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.DomainAncillary">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">DomainAncillary</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/domainancillary.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">DomainAncillary</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/domainancillary.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.core.domainancillary.DomainAncillary</span></code></p>
 <p>A domain ancillary construct of the CF data model.</p>
 <p>A domain ancillary construct provides information which is needed for
@@ -114,6 +114,10 @@ data.</p>
 <p>An array of cell bounds spans the same domain axes as the data array,
 with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.</p>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF variable name of the construct may be accessed with the
+<a class="reference internal" href="../method/cfdm.DomainAncillary.nc_set_variable.html#cfdm.DomainAncillary.nc_set_variable" title="cfdm.DomainAncillary.nc_set_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.DomainAncillary.nc_get_variable.html#cfdm.DomainAncillary.nc_get_variable" title="cfdm.DomainAncillary.nc_get_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.DomainAncillary.nc_del_variable.html#cfdm.DomainAncillary.nc_del_variable" title="cfdm.DomainAncillary.nc_del_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_del_variable</span></code></a> and
+<a class="reference internal" href="../method/cfdm.DomainAncillary.nc_has_variable.html#cfdm.DomainAncillary.nc_has_variable" title="cfdm.DomainAncillary.nc_has_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_has_variable</span></code></a> methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -173,8 +177,11 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.dump.html#cfdm.DomainAncillary.dump" title="cfdm.DomainAncillary.dump"><code class="xref py py-obj docutils literal"><span class="pre">dump</span></code></a></td>
 <td>A full description of the domain ancillary construct.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.name.html#cfdm.DomainAncillary.name" title="cfdm.DomainAncillary.name"><code class="xref py py-obj docutils literal"><span class="pre">name</span></code></a></td>
-<td>Return a name.</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.identity.html#cfdm.DomainAncillary.identity" title="cfdm.DomainAncillary.identity"><code class="xref py py-obj docutils literal"><span class="pre">identity</span></code></a></td>
+<td>Return the canonical identity.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.identities.html#cfdm.DomainAncillary.identities" title="cfdm.DomainAncillary.identities"><code class="xref py py-obj docutils literal"><span class="pre">identities</span></code></a></td>
+<td>Return all possible identities.</td>
 </tr>
 </tbody>
 </table>
@@ -213,13 +220,13 @@ initialization. By default arguments are deep copied.</p>
 <td>Set a property.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.properties.html#cfdm.DomainAncillary.properties" title="cfdm.DomainAncillary.properties"><code class="xref py py-obj docutils literal"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
+<td>Return all properties.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.clear_properties.html#cfdm.DomainAncillary.clear_properties" title="cfdm.DomainAncillary.clear_properties"><code class="xref py py-obj docutils literal"><span class="pre">clear_properties</span></code></a></td>
-<td>Return or replace all properties.</td>
+<td>Remove all properties.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.set_properties.html#cfdm.DomainAncillary.set_properties" title="cfdm.DomainAncillary.set_properties"><code class="xref py py-obj docutils literal"><span class="pre">set_properties</span></code></a></td>
-<td>Replace all properties.</td>
+<td>Set properties.</td>
 </tr>
 </tbody>
 </table>
@@ -318,7 +325,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return a deep copy.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.equals.html#cfdm.DomainAncillary.equals" title="cfdm.DomainAncillary.equals"><code class="xref py py-obj docutils literal"><span class="pre">equals</span></code></a></td>
-<td>Whether two domain anxillary constructs are the same.</td>
+<td>Whether two domain ancillary constructs are the same.</td>
 </tr>
 </tbody>
 </table>

@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -99,7 +99,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CoordinateReference">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/coordinatereference.py#L45"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/coordinatereference.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.core.coordinatereference.CoordinateReference</span></code></p>
 <p>A coordinate reference construct of the CF data model.</p>
 <p>A coordinate reference construct relates the coordinate values of the
@@ -141,6 +141,10 @@ constructs to a different coordinate system. A coordinate reference
 construct relates the coordinate values of the field to locations in
 a planetary reference frame.</li>
 </ul>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF grid mapping variable name of a coordinate reference
+construct may be accessed with the <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_set_variable.html#cfdm.CoordinateReference.nc_set_variable" title="cfdm.CoordinateReference.nc_set_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_set_variable</span></code></a>,
+<a class="reference internal" href="../method/cfdm.CoordinateReference.nc_get_variable.html#cfdm.CoordinateReference.nc_get_variable" title="cfdm.CoordinateReference.nc_get_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_del_variable.html#cfdm.CoordinateReference.nc_del_variable" title="cfdm.CoordinateReference.nc_del_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_del_variable</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_has_variable.html#cfdm.CoordinateReference.nc_has_variable" title="cfdm.CoordinateReference.nc_has_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_has_variable</span></code></a> methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -204,8 +208,11 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.dump.html#cfdm.CoordinateReference.dump" title="cfdm.CoordinateReference.dump"><code class="xref py py-obj docutils literal"><span class="pre">dump</span></code></a></td>
 <td>A full description of the coordinate reference construct.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.name.html#cfdm.CoordinateReference.name" title="cfdm.CoordinateReference.name"><code class="xref py py-obj docutils literal"><span class="pre">name</span></code></a></td>
-<td>Return a name.</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.identity.html#cfdm.CoordinateReference.identity" title="cfdm.CoordinateReference.identity"><code class="xref py py-obj docutils literal"><span class="pre">identity</span></code></a></td>
+<td>Return the canonical identity.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.identities.html#cfdm.CoordinateReference.identities" title="cfdm.CoordinateReference.identities"><code class="xref py py-obj docutils literal"><span class="pre">identities</span></code></a></td>
+<td>Return all possible identities.</td>
 </tr>
 </tbody>
 </table>

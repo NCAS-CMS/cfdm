@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -100,21 +100,20 @@
 <h1>cfdm.Field.convert<a class="headerlink" href="#cfdm-field-convert" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.convert">
-<code class="descclassname">Field.</code><code class="descname">convert</code><span class="sig-paren">(</span><em>key</em>, <em>full_domain=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/field.py#L906"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.convert" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a new field construct based on a metadata construct.</p>
-<p>A unique metdata construct is identified with the <em>description</em> and
-<em>key</em> parameters, and a new field construct based on its properties
-and data is returned. The new field construct always has domain axis
-constructs corresponding to the data, and may also contain other
-metadata constructs that further define its domain.</p>
-<p>The <a class="reference internal" href="../function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.read</span></code></a> function allows field constructs to be derived
-directly from the netCDF variables that, in turn, correspond to
-metadata constructs. In this case, the new field constructs will have
-a domain limited to that which can be inferred from the corresponding
-netCDF variable, but without the connections that are defined by the
-parent netCDF data variable. This will usually result in different
-field constructs than are created with the <a class="reference internal" href="#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal"><span class="pre">convert</span></code></a> method,
-regardless of the setting of the <em>full_domain</em> parameter.</p>
+<code class="descclassname">Field.</code><code class="descname">convert</code><span class="sig-paren">(</span><em>key</em>, <em>full_domain=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/field.py#L774"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a metadata construct into a new field construct.</p>
+<p>The new field construct has the properties and data of the metadata
+construct, and domain axis constructs corresponding to the data. By
+default it also contains other metadata constructs (such as dimension
+coordinate and coordinate reference constructs) that define its
+domain.</p>
+<p>The <a class="reference internal" href="../function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.read</span></code></a> function allows a field construct to be derived
+directly from a netCDF variable that corresponds to a metadata
+construct. In this case, the new field construct will have a domain
+limited to that which can be inferred from the corresponding netCDF
+variable - typically only domain axis and dimension coordinate
+constructs. This will usually result in a different field construct to
+that created with the <a class="reference internal" href="#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal"><span class="pre">convert</span></code></a> method.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -127,23 +126,8 @@ regardless of the setting of the <em>full_domain</em> parameter.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>key: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Select the construct with the given construct key. If multiple
-keys are specified then select all of the metadata constructs
-which have any of the given keys.</p>
-<dl class="last docutils">
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal"><span class="pre">key='domainancillary0'</span></code> will the domain ancillary
-construct with construct identifier &#8220;domainancillary1&#8221;. This
-is equivalent to <code class="docutils literal"><span class="pre">name='key%domainancillary0'</span></code>.</p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal"><span class="pre">key=['cellmethod2']</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal"><span class="pre">key=('dimensioncoordinate1',</span> <span class="pre">'fieldancillary0')</span></code></p>
-</dd>
-</dl>
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a> </dt>
+<dd><p class="first last">Convert the metadata construct with the given construct key.</p>
 </dd>
 <dt>full_domain: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not create a domain, other than domain axis
@@ -163,10 +147,7 @@ the domain as possible is copied to the new field construct.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
-<span class="go">[&lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%ta)</span>
 <span class="go">---------------------------------</span>
@@ -203,74 +184,6 @@ the domain as possible is copied to the new field construct.</p>
 <span class="go">Field: surface_altitude (ncvar%surface_altitude)</span>
 <span class="go">------------------------------------------------</span>
 <span class="go">Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="s1">&#39;domain_ancillary&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
-<span class="go">[&lt;Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m&gt;,</span>
-<span class="go"> &lt;Field: ncvar%b(atmosphere_hybrid_height_coordinate(1))&gt;,</span>
-<span class="go"> &lt;Field: surface_altitude(grid_latitude(10), grid_longitude(9)) m&gt;,</span>
-<span class="go"> &lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-<span class="go">Field: surface_altitude (ncvar%surface_altitude)</span>
-<span class="go">------------------------------------------------</span>
-<span class="go">Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m</span>
-<span class="go">Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees</span>
-<span class="go">                : grid_longitude(9) = [-4.7, ..., -1.18] degrees</span>
-</pre></div>
-</div>
-<p>Independent field constructs may be created from metadata in two ways:
-either from a netCDF variable using the <a class="reference internal" href="../function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.read</span></code></a> function, or from
-a metadata construct using the <a class="reference internal" href="#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal"><span class="pre">convert</span></code></a> method of the field
-construct.</p>
-<p>The <a class="reference internal" href="#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal"><span class="pre">convert</span></code></a> method of the field construct identifies a unique
-metadata construct and returns a new field construct based on its
-properties and data. The new field construct has domain axis
-constructs corresponding to the data, and (by default) any other
-metadata constructs that further define its domain.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">orog</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">)</span>     
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">orog</span><span class="p">)</span>
-<span class="go">Field: surface_altitude</span>
-<span class="go">-----------------------</span>
-<span class="go">Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m</span>
-<span class="go">Dimension coords: grid_latitude(10) = [0.0, ..., 9.0] degrees</span>
-<span class="go">                : grid_longitude(9) = [0.0, ..., 8.0] degrees</span>
-<span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] degrees_north</span>
-<span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] degrees_east</span>
-<span class="go">                : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., j]</span>
-<span class="go">Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2</span>
-<span class="go">Coord references: rotated_latitude_longitude</span>
-</pre></div>
-</div>
-<p>The <a class="reference internal" href="#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal"><span class="pre">convert</span></code></a> method has an option to only include domain axis
-constructs in the new field construct, with no other metadata
-constructs.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">orog1</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">,</span> <span class="n">full_domain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">orog1</span><span class="p">)</span>
-<span class="go">Field: surface_altitude</span>
-<span class="go">-----------------------</span>
-<span class="go">Data            : surface_altitude(key%domainaxis2(10), key%domainaxis3(9)) m</span>
-</pre></div>
-</div>
-<p>The <a class="reference internal" href="../function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.read</span></code></a> function allows field constructs to be derived
-directly from the netCDF variables that correspond to metadata
-constructs. In this case, the new field constructs will have a domain
-limited to that which can be inferred from the corresponding netCDF
-variable, but without the connections that are defined by the parent
-netCDF data variable. This will often result in a new field construct
-that has fewer metadata constructs than one created with the
-<a class="reference internal" href="#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal"><span class="pre">convert</span></code></a> method.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tas</span><span class="p">,</span> <span class="s1">&#39;tas.nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;tas.nc&#39;</span><span class="p">,</span> <span class="n">convert</span><span class="o">=</span><span class="s1">&#39;domain_ancillary&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span>
-<span class="go">[&lt;Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m&gt;,</span>
-<span class="go"> &lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;,</span>
-<span class="go"> &lt;Field: ncvar%b(atmosphere_hybrid_height_coordinate(1)) 1&gt;,</span>
-<span class="go"> &lt;Field: surface_altitude(grid_latitude(10), grid_longitude(9)) m&gt;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-<span class="go">Field: surface_altitude (ncvar%surface_altitude)</span>
-<span class="go">------------------------------------------------</span>
-<span class="go">Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m</span>
-<span class="go">Dimension coords: grid_latitude(10) = [0.0, ..., 9.0] degrees</span>
-<span class="go">                : grid_longitude(9) = [0.0, ..., 8.0] degrees</span>
 </pre></div>
 </div>
 </dd></dl>

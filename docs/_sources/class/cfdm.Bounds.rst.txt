@@ -21,7 +21,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.Bounds.dump
-   ~cfdm.Bounds.name
+   ~cfdm.Bounds.identity
+   ~cfdm.Bounds.identities
    
 Properties
 ----------

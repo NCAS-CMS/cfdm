@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -99,8 +99,8 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Field">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/field.py#L14"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.netcdf.NetCDFDataVariable</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.core.field.Field</span></code></p>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/field.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.netcdf.NetCDFDataVariable</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.netcdf.NetCDFGeometryContainer</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.core.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes all
 the other constructs. A field corresponds to a CF-netCDF data variable
@@ -122,6 +122,10 @@ of the data that are independent of the domain. These correspond to
 some netCDF attributes of variables (e.g. units, long_name and
 standard_name), and some netCDF global file attributes (e.g. history
 and institution).</p>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF variable name of the construct may be accessed with the
+<a class="reference internal" href="../method/cfdm.Field.nc_set_variable.html#cfdm.Field.nc_set_variable" title="cfdm.Field.nc_set_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Field.nc_get_variable.html#cfdm.Field.nc_get_variable" title="cfdm.Field.nc_get_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Field.nc_del_variable.html#cfdm.Field.nc_del_variable" title="cfdm.Field.nc_del_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_del_variable</span></code></a> and
+<a class="reference internal" href="../method/cfdm.Field.nc_has_variable.html#cfdm.Field.nc_has_variable" title="cfdm.Field.nc_has_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_has_variable</span></code></a> methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -170,11 +174,11 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.dump.html#cfdm.Field.dump" title="cfdm.Field.dump"><code class="xref py py-obj docutils literal"><span class="pre">dump</span></code></a></td>
 <td>A full description of the field construct.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.name.html#cfdm.Field.name" title="cfdm.Field.name"><code class="xref py py-obj docutils literal"><span class="pre">name</span></code></a></td>
-<td>Return a name.</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.identity.html#cfdm.Field.identity" title="cfdm.Field.identity"><code class="xref py py-obj docutils literal"><span class="pre">identity</span></code></a></td>
+<td>Return the canonical identity.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.names.html#cfdm.Field.names" title="cfdm.Field.names"><code class="xref py py-obj docutils literal"><span class="pre">names</span></code></a></td>
-<td>Return a name.</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.identities.html#cfdm.Field.identities" title="cfdm.Field.identities"><code class="xref py py-obj docutils literal"><span class="pre">identities</span></code></a></td>
+<td>Return all possible identities.</td>
 </tr>
 </tbody>
 </table>
@@ -213,13 +217,13 @@ initialization. By default arguments are deep copied.</p>
 <td>Set a property.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.properties.html#cfdm.Field.properties" title="cfdm.Field.properties"><code class="xref py py-obj docutils literal"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
+<td>Return all properties.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.clear_properties.html#cfdm.Field.clear_properties" title="cfdm.Field.clear_properties"><code class="xref py py-obj docutils literal"><span class="pre">clear_properties</span></code></a></td>
-<td>Return or replace all properties.</td>
+<td>Remove all properties.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.set_properties.html#cfdm.Field.set_properties" title="cfdm.Field.set_properties"><code class="xref py py-obj docutils literal"><span class="pre">set_properties</span></code></a></td>
-<td>Replace all properties.</td>
+<td>Set properties.</td>
 </tr>
 </tbody>
 </table>
@@ -243,16 +247,16 @@ initialization. By default arguments are deep copied.</p>
 <td>Whether a data has been set.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.set_data.html#cfdm.Field.set_data" title="cfdm.Field.set_data"><code class="xref py py-obj docutils literal"><span class="pre">set_data</span></code></a></td>
-<td>Set the data.</td>
+<td>Set the data of the field construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.del_data_axes.html#cfdm.Field.del_data_axes" title="cfdm.Field.del_data_axes"><code class="xref py py-obj docutils literal"><span class="pre">del_data_axes</span></code></a></td>
 <td>Remove the keys of the domain axes spanned by the data array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.get_data_axes.html#cfdm.Field.get_data_axes" title="cfdm.Field.get_data_axes"><code class="xref py py-obj docutils literal"><span class="pre">get_data_axes</span></code></a></td>
-<td>Return the keys of the domain axes spanned by a data array.</td>
+<td>Return the keys of the domain axis constructs spanned by the data of the field or of a metadata construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.set_data_axes.html#cfdm.Field.set_data_axes" title="cfdm.Field.set_data_axes"><code class="xref py py-obj docutils literal"><span class="pre">set_data_axes</span></code></a></td>
-<td>Set the domain axes spanned by the data array.</td>
+<td>Set the domain axis constructs spanned by the data of the field or of a metadata construct.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.insert_dimension.html#cfdm.Field.insert_dimension" title="cfdm.Field.insert_dimension"><code class="xref py py-obj docutils literal"><span class="pre">insert_dimension</span></code></a></td>
 <td>Expand the shape of the data array.</td>
@@ -287,26 +291,32 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.del_construct.html#cfdm.Field.del_construct" title="cfdm.Field.del_construct"><code class="xref py py-obj docutils literal"><span class="pre">del_construct</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.construct.html#cfdm.Field.construct" title="cfdm.Field.construct"><code class="xref py py-obj docutils literal"><span class="pre">construct</span></code></a></td>
+<td>Select a metadata construct by its identity.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.del_construct.html#cfdm.Field.del_construct" title="cfdm.Field.del_construct"><code class="xref py py-obj docutils literal"><span class="pre">del_construct</span></code></a></td>
 <td>Remove a metadata construct.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal"><span class="pre">get_construct</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal"><span class="pre">get_construct</span></code></a></td>
 <td>Return a metadata construct.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Field.has_construct</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Field.has_construct</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.set_construct.html#cfdm.Field.set_construct" title="cfdm.Field.set_construct"><code class="xref py py-obj docutils literal"><span class="pre">set_construct</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.set_construct.html#cfdm.Field.set_construct" title="cfdm.Field.set_construct"><code class="xref py py-obj docutils literal"><span class="pre">set_construct</span></code></a></td>
 <td>Set a metadata construct.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.del_data_axes.html#cfdm.Field.del_data_axes" title="cfdm.Field.del_data_axes"><code class="xref py py-obj docutils literal"><span class="pre">del_data_axes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.del_data_axes.html#cfdm.Field.del_data_axes" title="cfdm.Field.del_data_axes"><code class="xref py py-obj docutils literal"><span class="pre">del_data_axes</span></code></a></td>
 <td>Remove the keys of the domain axes spanned by the data array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.get_data_axes.html#cfdm.Field.get_data_axes" title="cfdm.Field.get_data_axes"><code class="xref py py-obj docutils literal"><span class="pre">get_data_axes</span></code></a></td>
-<td>Return the keys of the domain axes spanned by a data array.</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.get_data_axes.html#cfdm.Field.get_data_axes" title="cfdm.Field.get_data_axes"><code class="xref py py-obj docutils literal"><span class="pre">get_data_axes</span></code></a></td>
+<td>Return the keys of the domain axis constructs spanned by the data of the field or of a metadata construct.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.has_data_axes.html#cfdm.Field.has_data_axes" title="cfdm.Field.has_data_axes"><code class="xref py py-obj docutils literal"><span class="pre">has_data_axes</span></code></a></td>
+<td>Whether the domain axis constructs spanned by the data of the field or of a metadata construct have been set.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.set_data_axes.html#cfdm.Field.set_data_axes" title="cfdm.Field.set_data_axes"><code class="xref py py-obj docutils literal"><span class="pre">set_data_axes</span></code></a></td>
-<td>Set the domain axes spanned by the data array.</td>
+<td>Set the domain axis constructs spanned by the data of the field or of a metadata construct.</td>
 </tr>
 </tbody>
 </table>
@@ -317,34 +327,34 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal"><span class="pre">constructs</span></code></a></td>
-<td>&lt;TODO&gt;</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal"><span class="pre">constructs</span></code></a></td>
+<td>Return the metdata constructs.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Field.auxiliary_coordinates.html#cfdm.Field.auxiliary_coordinates" title="cfdm.Field.auxiliary_coordinates"><code class="xref py py-obj docutils literal"><span class="pre">auxiliary_coordinates</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.auxiliary_coordinates.html#cfdm.Field.auxiliary_coordinates" title="cfdm.Field.auxiliary_coordinates"><code class="xref py py-obj docutils literal"><span class="pre">auxiliary_coordinates</span></code></a></td>
 <td>Return auxiliary coordinate constructs.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Field.cell_measures.html#cfdm.Field.cell_measures" title="cfdm.Field.cell_measures"><code class="xref py py-obj docutils literal"><span class="pre">cell_measures</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.cell_measures.html#cfdm.Field.cell_measures" title="cfdm.Field.cell_measures"><code class="xref py py-obj docutils literal"><span class="pre">cell_measures</span></code></a></td>
 <td>Return cell measure constructs.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Field.cell_methods.html#cfdm.Field.cell_methods" title="cfdm.Field.cell_methods"><code class="xref py py-obj docutils literal"><span class="pre">cell_methods</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.cell_methods.html#cfdm.Field.cell_methods" title="cfdm.Field.cell_methods"><code class="xref py py-obj docutils literal"><span class="pre">cell_methods</span></code></a></td>
 <td>Return cell method constructs.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Field.coordinates.html#cfdm.Field.coordinates" title="cfdm.Field.coordinates"><code class="xref py py-obj docutils literal"><span class="pre">coordinates</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.coordinates.html#cfdm.Field.coordinates" title="cfdm.Field.coordinates"><code class="xref py py-obj docutils literal"><span class="pre">coordinates</span></code></a></td>
 <td>Return dimension and auxiliary coordinate constructs.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Field.coordinate_references.html#cfdm.Field.coordinate_references" title="cfdm.Field.coordinate_references"><code class="xref py py-obj docutils literal"><span class="pre">coordinate_references</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.coordinate_references.html#cfdm.Field.coordinate_references" title="cfdm.Field.coordinate_references"><code class="xref py py-obj docutils literal"><span class="pre">coordinate_references</span></code></a></td>
 <td>Return coordinate reference constructs.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Field.dimension_coordinates.html#cfdm.Field.dimension_coordinates" title="cfdm.Field.dimension_coordinates"><code class="xref py py-obj docutils literal"><span class="pre">dimension_coordinates</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.dimension_coordinates.html#cfdm.Field.dimension_coordinates" title="cfdm.Field.dimension_coordinates"><code class="xref py py-obj docutils literal"><span class="pre">dimension_coordinates</span></code></a></td>
 <td>Return dimension coordinate constructs.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Field.domain_ancillaries.html#cfdm.Field.domain_ancillaries" title="cfdm.Field.domain_ancillaries"><code class="xref py py-obj docutils literal"><span class="pre">domain_ancillaries</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.domain_ancillaries.html#cfdm.Field.domain_ancillaries" title="cfdm.Field.domain_ancillaries"><code class="xref py py-obj docutils literal"><span class="pre">domain_ancillaries</span></code></a></td>
 <td>Return domain ancillary constructs.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Field.domain_axes.html#cfdm.Field.domain_axes" title="cfdm.Field.domain_axes"><code class="xref py py-obj docutils literal"><span class="pre">domain_axes</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.domain_axes.html#cfdm.Field.domain_axes" title="cfdm.Field.domain_axes"><code class="xref py py-obj docutils literal"><span class="pre">domain_axes</span></code></a></td>
 <td>Return domain axis constructs.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Field.field_ancillaries.html#cfdm.Field.field_ancillaries" title="cfdm.Field.field_ancillaries"><code class="xref py py-obj docutils literal"><span class="pre">field_ancillaries</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.field_ancillaries.html#cfdm.Field.field_ancillaries" title="cfdm.Field.field_ancillaries"><code class="xref py py-obj docutils literal"><span class="pre">field_ancillaries</span></code></a></td>
 <td>Return field ancillary constructs.</td>
 </tr>
 </tbody>
@@ -393,7 +403,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Whether two field constructs are the same.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal"><span class="pre">convert</span></code></a></td>
-<td>Return a new field construct based on a metadata construct.</td>
+<td>Convert a metadata construct into a new field construct.</td>
 </tr>
 </tbody>
 </table>

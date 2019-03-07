@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -100,7 +100,7 @@
 <h1>cfdm.core.Data.get_fill_value<a class="headerlink" href="#cfdm-core-data-get-fill-value" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.Data.get_fill_value">
-<code class="descclassname">Data.</code><code class="descname">get_fill_value</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/core/data/data.py#L535"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.get_fill_value" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">get_fill_value</code><span class="sig-paren">(</span><em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/core/data/data.py#L477"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.get_fill_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the missing data value.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -112,13 +112,14 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if fill value has not been set.</p>
+<dd><p class="first last">Return the value of the <em>default</em> parameter if the fill value
+has not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">Exception</span></code></a> instance then it
+will be raised instead.</p>
 </dd>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The fill value. If fill value has not been set then return the
-value of <em>default</em> parameter, if provided.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The fill value.</p>
 </td>
 </tr>
 </tbody>
@@ -130,7 +131,7 @@ value of <em>default</em> parameter, if provided.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_fill_value</span><span class="p">())</span>
 <span class="go">-9999</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_fill_value</span><span class="p">()</span>
-<span class="go">AttributeError: Can&#39;t get non-existent fill value</span>
+<span class="go">ValueError: Can&#39;t get non-existent fill value</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_fill_value</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">10</span><span class="p">)</span>
 <span class="go">10000000000</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_fill_value</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>

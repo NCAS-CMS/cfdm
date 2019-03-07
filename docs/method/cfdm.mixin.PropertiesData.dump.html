@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -40,7 +40,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -85,11 +85,10 @@
 <h1>cfdm.mixin.PropertiesData.dump<a class="headerlink" href="#cfdm-mixin-propertiesdata-dump" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.mixin.PropertiesData.dump">
-<code class="descclassname">PropertiesData.</code><code class="descname">dump</code><span class="sig-paren">(</span><em>display=True</em>, <em>field=None</em>, <em>key=None</em>, <em>_omit_properties=()</em>, <em>_prefix=''</em>, <em>_title=None</em>, <em>_create_title=True</em>, <em>_level=0</em>, <em>_axes=None</em>, <em>_axis_names=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/mixin/propertiesdata.py#L89"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.mixin.PropertiesData.dump" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-<p>Return a string containing a full description of the instance.</p>
+<code class="descclassname">PropertiesData.</code><code class="descname">dump</code><span class="sig-paren">(</span><em>display=True</em>, <em>_key=None</em>, <em>_omit_properties=()</em>, <em>_prefix=''</em>, <em>_title=None</em>, <em>_create_title=True</em>, <em>_level=0</em>, <em>_axes=None</em>, <em>_axis_names=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/mixin/propertiesdata.py#L91"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.mixin.PropertiesData.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>A full description.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.6.</span></p>
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -98,23 +97,14 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>display: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then return the description as a string. By default
-the description is printed, i.e. <code class="docutils literal"><span class="pre">f.dump()</span></code> is equivalent to
-<code class="docutils literal"><span class="pre">print</span> <span class="pre">f.dump(display=False)</span></code>.</p>
-</dd>
-<dt>omit: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first last">Omit the given CF properties from the description.</p>
-</dd>
-<dt>_prefix: optional</dt>
-<dd><p class="first last">Ignored.</p>
+the description is printed.</p>
 </dd>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a></dt>
-<dd><p class="first last">A string containing the description. TODO</p>
-</dd>
-</dl>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The description. If <em>display</em> is True then the description is
+printed and <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a> is returned. Otherwise the description is
+returned as a string.</p>
 </td>
 </tr>
 </tbody>

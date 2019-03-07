@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -29,7 +29,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Count.nc_get_sample_dimension" href="cfdm.Count.nc_get_sample_dimension.html" />
-    <link rel="prev" title="cfdm.Count.equals" href="cfdm.Count.equals.html" />
+    <link rel="prev" title="cfdm.Count.nc_set_variable" href="cfdm.Count.nc_set_variable.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -65,7 +65,7 @@
   <li><a href="../reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Count.html">cfdm.Count</a><ul>
-      <li>Previous: <a href="cfdm.Count.equals.html" title="previous chapter">cfdm.Count.equals</a></li>
+      <li>Previous: <a href="cfdm.Count.nc_set_variable.html" title="previous chapter">cfdm.Count.nc_set_variable</a></li>
       <li>Next: <a href="cfdm.Count.nc_get_sample_dimension.html" title="next chapter">cfdm.Count.nc_get_sample_dimension</a></li>
   </ul></li>
   </ul></li>
@@ -100,7 +100,7 @@
 <h1>cfdm.Count.nc_del_sample_dimension<a class="headerlink" href="#cfdm-count-nc-del-sample-dimension" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Count.nc_del_sample_dimension">
-<code class="descclassname">Count.</code><code class="descname">nc_del_sample_dimension</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/mixin/netcdf.py#L382"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count.nc_del_sample_dimension" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Count.</code><code class="descname">nc_del_sample_dimension</code><span class="sig-paren">(</span><em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/mixin/netcdf.py#L381"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count.nc_del_sample_dimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the netCDF sample dimension name.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -115,17 +115,17 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional        </dt>
-<dd><p class="first last">Return <em>default</em> if the netCDF sample dimension name has not
-been set.</p>
+<dt>default: optional</dt>
+<dd><p class="first last">Return the value of the <em>default</em> parameter if the netCDF
+sample dimension name has not been set. If set to an
+<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">Exception</span></code></a> instance then it will be raised instead.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a></dt>
-<dd><p class="first last">The removed netCDF sample dimension name. If unset then
-<em>default</em> is returned, if provided.</p>
+<dd><p class="first last">The removed netCDF sample dimension name.</p>
 </dd>
 </dl>
 </td>

@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -99,7 +99,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.DimensionCoordinate">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">DimensionCoordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/core/dimensioncoordinate.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">DimensionCoordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/core/dimensioncoordinate.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">cfdm.core.abstract.coordinate.Coordinate</span></code></p>
 <p>A dimension coordinate construct of the CF data model.</p>
 <p>A dimension coordinate construct provides information which locate the
@@ -168,14 +168,14 @@ set.</p>
 the <code class="xref py py-obj docutils literal"><span class="pre">set_geometry</span></code> method.</p>
 </dd>
 <dt>interior_ring: <code class="xref py py-obj docutils literal"><span class="pre">InteriorRing</span></code>, optional</dt>
-<dd><p class="first">Set the interior ring array. Ignored if the <em>source</em> parameter
+<dd><p class="first">Set the interior ring data. Ignored if the <em>source</em> parameter
 is set.</p>
-<p class="last">The interior ring array may also be set after initialisation
+<p class="last">The interior ring data may also be set after initialisation
 with the <code class="xref py py-obj docutils literal"><span class="pre">set_interior_ring</span></code> method.</p>
 </dd>
 <dt>source: optional</dt>
-<dd><p class="first last">Initialize the properties, data and bounds from those of
-<em>source</em>.</p>
+<dd><p class="first last">Initialize the properties, geometry type, data, bounds and
+interior ring from those of <em>source</em>.</p>
 </dd>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
@@ -225,13 +225,13 @@ initialization. By default arguments are deep copied.</p>
 <td>Set a property.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.DimensionCoordinate.properties.html#cfdm.core.DimensionCoordinate.properties" title="cfdm.core.DimensionCoordinate.properties"><code class="xref py py-obj docutils literal"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
+<td>Return all properties.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.DimensionCoordinate.clear_properties.html#cfdm.core.DimensionCoordinate.clear_properties" title="cfdm.core.DimensionCoordinate.clear_properties"><code class="xref py py-obj docutils literal"><span class="pre">clear_properties</span></code></a></td>
-<td>Return or replace all properties.</td>
+<td>Remove all properties.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.DimensionCoordinate.set_properties.html#cfdm.core.DimensionCoordinate.set_properties" title="cfdm.core.DimensionCoordinate.set_properties"><code class="xref py py-obj docutils literal"><span class="pre">set_properties</span></code></a></td>
-<td>Replace all properties.</td>
+<td>Set properties.</td>
 </tr>
 </tbody>
 </table>

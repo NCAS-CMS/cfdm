@@ -65,7 +65,7 @@ body {
 
 
 div.document {
-    width: 940px;
+    width: 80%;
     margin: 30px auto 0 auto;
 }
 
@@ -99,7 +99,7 @@ div.body > .section {
 }
 
 div.footer {
-    width: 940px;
+    width: 80%;
     margin: 20px auto 30px auto;
     font-size: 14px;
     color: #888;
@@ -179,7 +179,7 @@ div.sphinxsidebar h3 a:hover {
 }
 
 div.sphinxsidebar p {
-    color: #RASE;
+    color: #555;
     margin: 10px 0;
 }
 

@@ -21,7 +21,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.DomainAncillary.dump
-   ~cfdm.DomainAncillary.name
+   ~cfdm.DomainAncillary.identity  
+   ~cfdm.DomainAncillary.identities
 
 .. rubric:: Attributes
    

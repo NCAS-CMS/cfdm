@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -100,7 +100,7 @@
 <h1>cfdm.Data.set_units<a class="headerlink" href="#cfdm-data-set-units" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.set_units">
-<code class="descclassname">Data.</code><code class="descname">set_units</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/core/data/data.py#L708"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.set_units" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">set_units</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/core/data/data.py#L643"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.set_units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the units.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -128,7 +128,7 @@
 <span class="go">&#39;watt&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">del_units</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_units</span><span class="p">()</span>
-<span class="go">AttributeError: Can&#39;t get non-existent units</span>
+<span class="go">ValueError: Can&#39;t get non-existent units</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get_units</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
 </pre></div>

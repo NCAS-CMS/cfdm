@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -100,7 +100,7 @@
 <h1>cfdm.core.abstract.Parameters.del_parameter<a class="headerlink" href="#cfdm-core-abstract-parameters-del-parameter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.abstract.Parameters.del_parameter">
-<code class="descclassname">Parameters.</code><code class="descname">del_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/core/abstract/parameters.py#L89"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.del_parameter" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Parameters.</code><code class="descname">del_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/core/abstract/parameters.py#L89"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.del_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a parameter.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -119,8 +119,9 @@
 <dd><p class="first last">The name of the parameter to be deleted.</p>
 </dd>
 <dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the parameter has not been set. By default
-an exception is raised in this case.</p>
+<dd><p class="first last">Return the value of the <em>default</em> parameter if the parameter
+has not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">Exception</span></code></a> instance then it
+will be raised instead.</p>
 </dd>
 </dl>
 </td>

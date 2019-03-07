@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -100,7 +100,7 @@
 <h1>cfdm.Data.equals<a class="headerlink" href="#cfdm-data-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.equals">
-<code class="descclassname">Data.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em>, <em>_check_values=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/data/data.py#L1512"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em>, <em>_check_values=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/data/data.py#L1494"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two data arrays are the same.</p>
 <p>Equality is strict by default. This means that for data arrays to be
 considered equal:</p>
@@ -121,7 +121,7 @@ parameter).</li>
 differences) and <code class="docutils literal"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
 positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
 parameters.</p>
-<p>The compression type and, if appliciable, the underlying compressed
+<p>The compression type and, if applicable, the underlying compressed
 arrays must be the same, as well as the arrays in their uncompressed
 forms. See the <em>ignore_compression</em> parameter.</p>
 <p>Any type of object may be tested but, in general, equality is only
@@ -162,7 +162,7 @@ tolerance for equality.</p>
 <dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then any compression applied to the underlying arrays
 is ignored and only the uncompressed arrays are tested for
-equality. By default the compression type and, if appliciable,
+equality. By default the compression type and, if applicable,
 the underlying compressed arrays must be the same, as well as
 the arrays in their uncompressed forms</p>
 </dd>

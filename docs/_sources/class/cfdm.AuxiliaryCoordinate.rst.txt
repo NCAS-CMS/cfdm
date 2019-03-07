@@ -21,7 +21,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.AuxiliaryCoordinate.dump
-   ~cfdm.AuxiliaryCoordinate.name
+   ~cfdm.AuxiliaryCoordinate.identity
+   ~cfdm.AuxiliaryCoordinate.identities
 
 .. rubric:: Attributes
    

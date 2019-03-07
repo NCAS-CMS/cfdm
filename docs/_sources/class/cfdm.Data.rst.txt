@@ -67,7 +67,7 @@ Fill value
    ~cfdm.Data.set_fill_value
 
 Dimensions
-------------
+----------
 
 .. rubric:: Methods
 
@@ -105,6 +105,7 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Data.astype
    ~cfdm.Data.copy
    ~cfdm.Data.equals
    

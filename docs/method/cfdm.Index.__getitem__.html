@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -100,7 +100,7 @@
 <h1>cfdm.Index.__getitem__<a class="headerlink" href="#cfdm-index-getitem" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Index.__getitem__">
-<code class="descclassname">Index.</code><code class="descname">__getitem__</code><span class="sig-paren">(</span><em>indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/mixin/propertiesdata.py#L14"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Index.__getitem__" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Index.</code><code class="descname">__getitem__</code><span class="sig-paren">(</span><em>indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/mixin/propertiesdata.py#L14"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Index.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subspace defined by indices</p>
 <p>f.__getitem__(indices) &lt;==&gt; f[indices]</p>
 <p>Indexing follows rules that are very similar to the numpy indexing
@@ -113,6 +113,9 @@ these indices work independently along each dimension (similar to
 the way vector subscripts work in Fortran). This is the same
 behaviour as indexing on a Variable object of the netCDF4 package.</li>
 </ul>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

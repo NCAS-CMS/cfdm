@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -100,15 +100,15 @@
 <h1>cfdm.CellMethod.equals<a class="headerlink" href="#cfdm-cellmethod-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CellMethod.equals">
-<code class="descclassname">CellMethod.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_properties=()</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/cellmethod.py#L292"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMethod.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CellMethod.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_qualifiers=()</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/cellmethod.py#L292"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMethod.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two cell method constructs are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
-<li>the descriptive properties must be the same (see the
-<em>ignore_properties</em> parameter).</li>
+<li>the descriptive qualifiers must be the same (see the
+<em>ignore_qualifiers</em> parameter).</li>
 </ul>
 <p>The axes of the cell method constructs are <em>not</em> considered, because
-they may ony be correctly interpreted by the field constructs that
+they may only be correctly interpreted by the field constructs that
 contain the cell method constructs in question. They are, however,
 taken into account when two fields constructs are tested for equality.</p>
 <p>Two real numbers <code class="docutils literal"><span class="pre">x</span></code> and <code class="docutils literal"><span class="pre">y</span></code> are considered equal if
@@ -144,8 +144,8 @@ numbers. The default value is set by the <a class="reference internal" href="../
 <dd><p class="first last">If True then print information about differences that lead to
 inequality.</p>
 </dd>
-<dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first last">The names of properties to omit from the comparison.</p>
+<dt>ignore_qualifiers: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first last">The names of qualifiers to omit from the comparison.</p>
 </dd>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">Any type of object may be tested but, in general, equality is

@@ -21,7 +21,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.CoordinateReference.dump
-   ~cfdm.CoordinateReference.name
+   ~cfdm.CoordinateReference.identity  
+   ~cfdm.CoordinateReference.identities
 
 .. rubric:: Attributes
    

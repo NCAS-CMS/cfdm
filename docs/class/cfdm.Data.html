@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -99,7 +99,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Data">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/data/data.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/data/data.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.core.data.data.Data</span></code></p>
 <p>An orthogonal multidimensional array with masked values and units.</p>
 <div class="versionadded">
@@ -221,7 +221,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return an independent numpy array containing the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Data.datetime_array.html#cfdm.Data.datetime_array" title="cfdm.Data.datetime_array"><code class="xref py py-obj docutils literal"><span class="pre">datetime_array</span></code></a></td>
-<td>Return an independent numpy array containing the date-time objects corresponding to time since a refernce date.</td>
+<td>Return an independent numpy array containing the date-time objects corresponding to time since a reference date.</td>
 </tr>
 </tbody>
 </table>
@@ -322,10 +322,13 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.copy.html#cfdm.Data.copy" title="cfdm.Data.copy"><code class="xref py py-obj docutils literal"><span class="pre">copy</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.astype.html#cfdm.Data.astype" title="cfdm.Data.astype"><code class="xref py py-obj docutils literal"><span class="pre">astype</span></code></a></td>
+<td>Cast the data to a specified type.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.copy.html#cfdm.Data.copy" title="cfdm.Data.copy"><code class="xref py py-obj docutils literal"><span class="pre">copy</span></code></a></td>
 <td>Return a deep copy.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.equals.html#cfdm.Data.equals" title="cfdm.Data.equals"><code class="xref py py-obj docutils literal"><span class="pre">equals</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.equals.html#cfdm.Data.equals" title="cfdm.Data.equals"><code class="xref py py-obj docutils literal"><span class="pre">equals</span></code></a></td>
 <td>Whether two data arrays are the same.</td>
 </tr>
 </tbody>

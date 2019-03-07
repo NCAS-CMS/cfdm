@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -100,7 +100,7 @@
 <h1>cfdm.DomainAxis.nc_del_dimension<a class="headerlink" href="#cfdm-domainaxis-nc-del-dimension" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.DomainAxis.nc_del_dimension">
-<code class="descclassname">DomainAxis.</code><code class="descname">nc_del_dimension</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/mixin/netcdf.py#L44"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAxis.nc_del_dimension" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DomainAxis.</code><code class="descname">nc_del_dimension</code><span class="sig-paren">(</span><em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/mixin/netcdf.py#L44"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAxis.nc_del_dimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the netCDF dimension name.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -116,16 +116,16 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the netCDF dimension name has not been
-set.</p>
+<dd><p class="first last">Return the value of the <em>default</em> parameter if the netCDF
+dimension name has not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">Exception</span></code></a>
+instance then it will be raised instead.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a></dt>
-<dd><p class="first last">The removed netCDF dimension name. If unset then <em>default</em> is
-returned, if provided.</p>
+<dd><p class="first last">The removed netCDF dimension name.</p>
 </dd>
 </dl>
 </td>

@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.0b15',
+        VERSION:     '1.7.0b17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">Python cfdm package 1.7.0b15</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -99,7 +99,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.AuxiliaryCoordinate">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b15/cfdm/auxiliarycoordinate.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/auxiliarycoordinate.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal"><span class="pre">cfdm.core.auxiliarycoordinate.AuxiliaryCoordinate</span></code></p>
 <p>An auxiliary coordinate construct of the CF data model.</p>
 <p>An auxiliary coordinate construct provides information which locate
@@ -123,6 +123,10 @@ does not correspond to a domain axis construct since it does not
 relate to an independent axis of the domain. Note that, for
 climatological time axes, the bounds are interpreted in a special way
 indicated by the cell method constructs.</p>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF variable name of the construct may be accessed with the
+<a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_set_variable.html#cfdm.AuxiliaryCoordinate.nc_set_variable" title="cfdm.AuxiliaryCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_get_variable.html#cfdm.AuxiliaryCoordinate.nc_get_variable" title="cfdm.AuxiliaryCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_del_variable.html#cfdm.AuxiliaryCoordinate.nc_del_variable" title="cfdm.AuxiliaryCoordinate.nc_del_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_del_variable</span></code></a> and
+<a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_has_variable.html#cfdm.AuxiliaryCoordinate.nc_has_variable" title="cfdm.AuxiliaryCoordinate.nc_has_variable"><code class="xref py py-obj docutils literal"><span class="pre">nc_has_variable</span></code></a> methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -182,8 +186,11 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.dump.html#cfdm.AuxiliaryCoordinate.dump" title="cfdm.AuxiliaryCoordinate.dump"><code class="xref py py-obj docutils literal"><span class="pre">dump</span></code></a></td>
 <td>A full description of the auxiliary coordinate construct.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.name.html#cfdm.AuxiliaryCoordinate.name" title="cfdm.AuxiliaryCoordinate.name"><code class="xref py py-obj docutils literal"><span class="pre">name</span></code></a></td>
-<td>Return a name.</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.identity.html#cfdm.AuxiliaryCoordinate.identity" title="cfdm.AuxiliaryCoordinate.identity"><code class="xref py py-obj docutils literal"><span class="pre">identity</span></code></a></td>
+<td>Return the canonical identity.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.identities.html#cfdm.AuxiliaryCoordinate.identities" title="cfdm.AuxiliaryCoordinate.identities"><code class="xref py py-obj docutils literal"><span class="pre">identities</span></code></a></td>
+<td>Return all possible identities.</td>
 </tr>
 </tbody>
 </table>
@@ -222,13 +229,13 @@ initialization. By default arguments are deep copied.</p>
 <td>Set a property.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.properties.html#cfdm.AuxiliaryCoordinate.properties" title="cfdm.AuxiliaryCoordinate.properties"><code class="xref py py-obj docutils literal"><span class="pre">properties</span></code></a></td>
-<td>Return or replace all properties.</td>
+<td>Return all properties.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.clear_properties.html#cfdm.AuxiliaryCoordinate.clear_properties" title="cfdm.AuxiliaryCoordinate.clear_properties"><code class="xref py py-obj docutils literal"><span class="pre">clear_properties</span></code></a></td>
-<td>Return or replace all properties.</td>
+<td>Remove all properties.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.set_properties.html#cfdm.AuxiliaryCoordinate.set_properties" title="cfdm.AuxiliaryCoordinate.set_properties"><code class="xref py py-obj docutils literal"><span class="pre">set_properties</span></code></a></td>
-<td>Replace all properties.</td>
+<td>Set properties.</td>
 </tr>
 </tbody>
 </table>
