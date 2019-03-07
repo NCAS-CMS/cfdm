@@ -361,11 +361,21 @@ by using the ``cfdump`` tool, for example:
    :caption: *Use cfdump on the command line to inspect the field
              constructs contained in a dataset. The "-s" option
              requests short, minimal detail as output.*
-	     
+
+   $ cfdump
+   USAGE: cfdump [-s] [-c] [-e file [-e file] ...] [-h] file
+     [-s]      Display short, one-line descriptions
+     [-c]      Display complete descriptions
+     [-e file] External files
+     [-h]      Display the full man page
+     file      Name of netCDF file (or URL if DAP access enabled)
    $ cfdump -s file.nc
    Field: specific_humidity(latitude(5), longitude(8)) 1
    Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
 
+``cfdump`` may also be used with :ref:`external files
+<External-variables-with-cfdump>`.
+     
 .. _Properties:
 
 **Properties**
@@ -456,21 +466,21 @@ The metadata constructs describe the field construct that contains
 them. Each :ref:`CF data model metadata construct <CF-data-model>` has
 a corresponding cfdm class:
 
-=======================  ==============================  =====================
-CF data model construct  Description                     cfdm class           
-=======================  ==============================  =====================
-Domain axis              Independent axes of the domain  `DomainAxis`         
-Dimension coordinate     Domain cell locations           `DimensionCoordinate`
-Auxiliary coordinate     Domain cell locations           `AuxiliaryCoordinate`
-Coordinate reference     Domain coordinate systems       `CoordinateReference`
-Domain ancillary         Cell locations in alternative   `DomainAncillary`    
-                         coordinate systems		                      
-Cell measure             Domain cell size or shape       `CellMeasure`        
-Field ancillary          Ancillary metadata which vary   `FieldAncillary`     
-                         within the domain		                      
-Cell method              Describes how data represent    `CellMethod`         
-                         variation within cells		                      
-=======================  ==============================  =====================
+=====================  =======================  ==============================
+cfdm class             CF data model construct  Description                     
+=====================  =======================  ==============================
+`DomainAxis`           Domain axis              Independent axes of the domain
+`DimensionCoordinate`  Dimension coordinate     Domain cell locations         
+`AuxiliaryCoordinate`  Auxiliary coordinate     Domain cell locations         
+`CoordinateReference`  Coordinate reference     Domain coordinate systems     
+`DomainAncillary`      Domain ancillary         Cell locations in alternative 
+                                                coordinate systems	       
+`CellMeasure`          Cell measure             Domain cell size or shape     
+`FieldAncillary`       Field ancillary          Ancillary metadata which vary 
+                                                within the domain	       
+`CellMethod`           Cell method              Describes how data represent  
+                                                variation within cells	       
+=====================  =======================  ==============================
 
 Metadata constructs of a particular type can be retrieved with the
 following attributes of the field construct:
@@ -493,11 +503,11 @@ Attribute                       Metadata constructs
 Each of these attributes returns a `Constructs` class instance that
 maps metadata constructs to a unique identifiers called a "construct
 keys". A `~Constructs` instance has methods for selecting constructs
-that meet particular criteria (see the :ref:`further section on
-metadata constructs <Metadata-constructs-2>` for more details) whilst
-also being like a "read-only" Python dictionary, in that it has
+that meet particular criteria (see the section on :ref:`filtering
+metadata constructs <Filtering-metadata-constructs>`). It also behaves
+like a "read-only" Python dictionary, in that it has
 `~Constructs.items`, `~Constructs.keys` and `~Constructs.values`
-methods that behave exactly like their corresponding `dict` methods.
+methods that work exactly like their corresponding `dict` methods.
 
 .. Each of these methods returns a dictionary whose values are the
    metadata constructs of one type, keyed by a unique identifier
@@ -603,12 +613,12 @@ is accessed with the `~Field.data` attribute of the field construct.
    >>> t.data
    <Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
 
-The data instance contains an array of values, as well as attributes
-to describe them and methods for describing :ref:`compression
-<Compression>`.
+The `Data` instance provide access to full array of values, as well as
+attributes to describe the array and methods for describing any
+:ref:`data compression <Compression>`.
 
 .. code-block:: python3
-   :caption: *Retrieve the numpy array of the data.*
+   :caption: *Retrieve a numpy array of the data.*
       
    >>> print(t.data.array)
    [[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
@@ -624,7 +634,7 @@ to describe them and methods for describing :ref:`compression
    
 .. code-block:: python3
    :caption: *Inspect the data type, number of dimensions, dimension
-             sizes and number of elements of the data array.*
+             sizes and number of elements of the data.*
 	     
    >>> t.data.dtype
    dtype('float64')
@@ -636,11 +646,9 @@ to describe them and methods for describing :ref:`compression
    90
 
 The field construct also has a `~Field.get_data` method as an
-alternative means of retrieving the data instance, that allows for a
+alternative means of retrieving the data instance, which allows for a
 default to be returned if no data have been set; as well as a
 `~Field.del_data` method for removing the data.
-
-TODO: Data.astype
 
 All of the methods and attributes related to the data are listed
 :ref:`here <Field-Data>`.
@@ -651,7 +659,7 @@ All of the methods and attributes related to the data are listed
 ^^^^^^^^^^^^^
 
 The data array of the field construct spans all the domain axis
-constructs with the possible exception of any size one domain axis
+constructs with the possible exception of size one domain axis
 constructs. The domain axis constructs spanned by the field
 construct's data are found with the `~Field.get_data_axes` method of
 the field construct. For example, the data of the field construct
@@ -674,6 +682,27 @@ the field construct. For example, the data of the field construct
    (1, 10, 9)
    >>> t.get_data_axes()
    ('domainaxis0', 'domainaxis1', 'domainaxis2')
+
+The data may be set with the `~Field.set_data` method of the `Field`
+construct. The domain axis constucts spanned by the data must be
+considered, either by explicitly providing them via their construct
+keys, or by using those that may have already been set. In any case,
+the data axes may be set at any time with the `~Field.set_data_axes`
+method of the `Field` construct.
+
+.. code-block:: python3
+   :caption: *Delete the data and then reinstate it, using the
+             existing data axes.*
+	    
+   >>> data = t.del_data()
+   >>> t.has_data()
+   False
+   >>> t.set_data(data, axes=None)
+   >>> t.data
+   <Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
+
+See the section :ref:`field construct creation <Field-creation>` for
+more examples.
    
 .. _Indexing:
 
@@ -897,19 +926,19 @@ class.
 A `Constructs` instance has filtering methods for selecting constructs
 that meet various criteria:
 
-==========================================================================  ================================
-Filter criteria                                                             Method
-==========================================================================  ================================
-Metadata construct identity                                                 `~Constructs.filter_by_identity`
-Metadata construct type                                                     `~Constructs.filter_by_type`
-Property values                                                             `~Constructs.filter_by_property` 
-The domain axis constructs spanned by the data        		            `~Constructs.filter_by_axis`
-Measure value (for cell measure constructs)				    `~Constructs.filter_by_measure`
-Method value (for cell method constructs)				    `~Constructs.filter_by_method`
-Construct key								    `~Constructs.filter_by_key`
-Netcdf variable name (see the :ref:`netCDF interface <NetCDF-interface>`)   `~Constructs.filter_by_ncvar`
-Netcdf dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)  `~Constructs.filter_by_ncdim`
-==========================================================================  ================================
+================================  ==========================================================================  
+Method                            Filter criteria                                                             
+================================  ==========================================================================  
+`~Constructs.filter_by_identity`  Metadata construct identity                                                 
+`~Constructs.filter_by_type`      Metadata construct type                                                     
+`~Constructs.filter_by_property`  Property values                                                              
+`~Constructs.filter_by_axis`      The domain axis constructs spanned by the data        		            
+`~Constructs.filter_by_measure`   Measure value (for cell measure constructs)				    
+`~Constructs.filter_by_method`    Method value (for cell method constructs)				    
+`~Constructs.filter_by_key`       Construct key								    
+`~Constructs.filter_by_ncvar`     Netcdf variable name (see the :ref:`netCDF interface <NetCDF-interface>`)   
+`~Constructs.filter_by_ncdim`     Netcdf dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)  
+================================  ==========================================================================  
 
 Each of these methods returns a new `Constructs` instance that
 contains the selected constructs.
@@ -2950,6 +2979,38 @@ and provide an external file name to the `cfdm.write` function:
 
    >>> cfdm.write(g, 'new_parent.nc', external='new_external.nc')
 
+.. _External-variables-with-cfdump:
+
+**External variables with cfdump**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+One or more external files may also be included with :ref:`cfdump
+<cfdump>`.
+
+.. code-block:: shell
+   :caption: *Use cfdump to describe the parent file without resolving
+             the external variable reference.*
+	     
+   $ cfdump parent.nc 
+   Field: eastward_wind (ncvar%eastward_wind)
+   ------------------------------------------
+   Data            : eastward_wind(latitude(10), longitude(9)) m s-1
+   Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees_north
+                   : longitude(9) = [0.0, ..., 8.0] degrees_east
+   Cell measures   : measure:area (external variable: ncvar%areacella)
+
+.. code-block:: shell
+   :caption: *Providing an external file with the "-e" option allows
+             the reference to be resolved.*
+	     
+   $ cfdump -e external.nc parent.nc 
+   Field: eastward_wind (ncvar%eastward_wind)
+   ------------------------------------------
+   Data            : eastward_wind(latitude(10), longitude(9)) m s-1
+   Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees_north
+                   : longitude(9) = [0.0, ..., 8.0] degrees_east
+   Cell measures   : measure:area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2
+   
 .. _Compression:
    
 **Compression**
@@ -3022,8 +3083,6 @@ Examples of all of the above may be found in the sections on
 **Discrete sampling geometries**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. versionadded:: CF-1.6
-		  
 `Discrete sampling geometry (DSG)`_ features may be compressed by
 combining them using one of three ragged array representations:
 `contiguous`_, `indexed`_ or `indexed contiguous`_.

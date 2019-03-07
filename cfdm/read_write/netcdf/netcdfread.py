@@ -359,7 +359,11 @@ TODO
 
             # 
             'version': {},
+
+#            # Initialise node_coordinates_as_bounds
+#            'node_coordinates_as_bounds': set(),
         }
+        
         g = self.read_vars
 
         # Set versions
@@ -2017,10 +2021,26 @@ variable should be pre-filled with missing values.
             node_coordinates = set(geometry['node_coordinates']).difference(
                 g['node_coordinates_as_bounds'])
 
-            for node_ncvar in node_coordinates:
-                # Set dimensions for this node coordinate variable
-                dimensions = self._get_domain_axes(node_ncvar)
+            #            print('FIELD:', field_ncvar)
+ #           print('node_coordinates=', geometry['node_coordinates'])
+#            print('node_coordinates_as_bounds=', g['node_coordinates_as_bounds'])
+#            print (set(geometry['node_coordinates']).difference(g['node_coordinates_as_bounds']))
+#            print('XXXX=', node_coordinates)
 
+            for node_ncvar in geometry['node_coordinates']:
+                found = any([(self.implementation.get_bounds_ncvar(a) == node_ncvar)
+                             for a in f.auxiliary_coordinates.values()])
+#                found = False
+#                for a in f.auxiliary_coordinates.values():
+#                    if a.bounds.nc_get_variable() == node_ncvar:
+#                        found = True
+ #                       break
+#                #--- End: for
+                
+                if found:
+                    continue
+
+                # 
                 if node_ncvar in g['auxiliary_coordinate']:
                     coord = g['auxiliary_coordinate'][node_ncvar].copy()
                 else:     
@@ -2028,9 +2048,6 @@ variable should be pre-filled with missing values.
                                                               ncvar=None,
                                                               f=f,
                                                               bounds=node_ncvar)
-
-                    # Move properties from the bounds to the parent
-#                    coord.set_properties(coord.bounds.clear_properties())
 
                     geometry_type = geometry['geometry_type']
                     if geometry_type is not None:                        
@@ -2047,7 +2064,39 @@ variable should be pre-filled with missing values.
                     
                 self._reference(node_ncvar)
                 ncvar_to_key[node_ncvar] = aux
-        #--- End: if                
+        #--- End: if
+            
+#            for node_ncvar in node_coordinates:
+#                # Set dimensions for this node coordinate variable
+#                dimensions = self._get_domain_axes(node_ncvar)
+#
+#                if node_ncvar in g['auxiliary_coordinate']:
+#                    coord = g['auxiliary_coordinate'][node_ncvar].copy()
+#                else:     
+#                    coord = self._create_auxiliary_coordinate(field_ncvar=field_ncvar,
+#                                                              ncvar=None,
+#                                                              f=f,
+#                                                              bounds=node_ncvar)
+#
+#                    # Move properties from the bounds to the parent
+##                    coord.set_properties(coord.bounds.clear_properties())
+#
+#                    geometry_type = geometry['geometry_type']
+#                    if geometry_type is not None:                        
+#                        self.implementation.set_geometry(coord, geometry_type)
+#                    
+#                    g['auxiliary_coordinate'][node_ncvar] = coord
+#                    
+#                # Insert auxiliary coordinate
+#                if verbose:
+#                    print('    [6] Inserting', repr(coord))
+#
+#                aux = self.implementation.set_auxiliary_coordinate(
+#                    f, coord, axes=dimensions, copy=False)
+#                    
+#                self._reference(node_ncvar)
+#                ncvar_to_key[node_ncvar] = aux
+#        #--- End: if                
 
         # ------------------------------------------------------------
         # Add coordinate reference constructs from formula_terms
@@ -2643,7 +2692,6 @@ variable's netCDF dimensions.
         # Add any bounds
         # ------------------------------------------------------------
         if ncbounds:
-                       
             if geometry is None:
                 # Check "normal" boounds
                 cf_compliant = self._check_bounds(field_ncvar, ncvar,
@@ -2695,6 +2743,7 @@ variable's netCDF dimensions.
                 if geometry_type is not None:                        
                     self.implementation.set_geometry(c, geometry_type)
 
+# ppp                    
                 g['node_coordinates_as_bounds'].add(ncbounds)
 
                 # Add an interior ring variable

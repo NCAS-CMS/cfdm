@@ -371,6 +371,7 @@ False
 
         return True
     #--- End: def
+
     def identities(self):
         '''Return all possible identities.
 
@@ -380,9 +381,7 @@ The identities comprise:
 * All properties, preceeded by the property name and a colon,
   e.g. ``'long_name:Air temperature'``.
 * The netCDF variable name, preceeded by ``'ncvar%'``.
-
-If there are no such identities then the of the bounds, if any, are
-returned.
+* The identities of the bounds, if any.
 
 .. versionadded:: 1.7.0
 
@@ -418,13 +417,12 @@ returned.
 
         '''
         identities = super().identities()
-        if identities:
-            return identities
         
         if self.has_bounds():
-            return self.bounds.identities()
-        
-        return []
+            identities.extend([i for i in self.bounds.identities()
+                               if i not in identities])
+            
+        return identities
     #--- End: def
 
     def identity(self, default=''):
@@ -494,7 +492,7 @@ By default the identity is the first found of the following:
         identity = super().identity(default=None)
         if identity is not None:
             return identity
-        
+
         if self.has_bounds():
             return self.bounds.identity(default=default)
         

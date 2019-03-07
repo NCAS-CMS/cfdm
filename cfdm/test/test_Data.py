@@ -83,29 +83,29 @@ class DataTest(unittest.TestCase):
         self.assertTrue(a[()] is numpy.ma.masked)
     #--- End: def
 
-    def test_Data_astype(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        a = numpy.array([1.5, 2, 2.5], dtype=float)       
-        d = cfdm.Data(a)
-        
-        self.assertTrue(d.dtype == numpy.dtype(float))
-        self.assertTrue(d.array.dtype == numpy.dtype(float))
-        self.assertTrue((d.array == a).all())
-
-        d.astype('int32')
-        self.assertTrue(d.dtype == numpy.dtype('int32'))
-        self.assertTrue(d.array.dtype == numpy.dtype('int32'))
-        self.assertTrue((d.array == [1, 2, 2]).all())
-
-        d = cfdm.Data(a)
-        try:
-            d.astype(numpy.dtype(int, casting='safe'))
-            self.assertTrue(False)
-        except TypeError:
-            pass
-    #--- End: def
+#    def test_Data_astype(self):
+#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+#            return
+#
+#        a = numpy.array([1.5, 2, 2.5], dtype=float)       
+#        d = cfdm.Data(a)
+#        
+#        self.assertTrue(d.dtype == numpy.dtype(float))
+#        self.assertTrue(d.array.dtype == numpy.dtype(float))
+#        self.assertTrue((d.array == a).all())
+#
+#        d.astype('int32')
+#        self.assertTrue(d.dtype == numpy.dtype('int32'))
+#        self.assertTrue(d.array.dtype == numpy.dtype('int32'))
+#        self.assertTrue((d.array == [1, 2, 2]).all())
+#
+#        d = cfdm.Data(a)
+#        try:
+#            d.astype(numpy.dtype(int, casting='safe'))
+#            self.assertTrue(False)
+#        except TypeError:
+#            pass
+#    #--- End: def
 
     def test_Data_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

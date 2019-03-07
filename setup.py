@@ -121,6 +121,6 @@ setup(name = "cfdm",
       install_requires = [
           'future>=0.16.0',
           'netcdf4>=1.4.0',
-          'numpy>=1.11',
+          'numpy>=1.15',
       ],
 )

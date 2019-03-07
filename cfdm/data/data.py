@@ -1775,66 +1775,66 @@ False
         return self._item((slice(0, 1),)*(self.ndim-1) + (slice(1, 2),))
     #--- End: def
 
-    def astype(self, dtype, casting='unsafe'):
-        '''Cast the data to a specified type.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `dtype`
-
-:Parameters:
-
-    dtype: `str` or `numpy.dtype`
-        Typecode or data-type to which the array is cast.
-
-    casting : `str`, optional
-        Controls what kind of data casting may occur. Defaults to
-        'unsafe'.
-    
-        ===============  =============================================
-        *casting*        Casting rules
-        ===============  =============================================
-        ``'no'``         The data types should not be cast at all.
-        ``'equiv'``      Only byte-order changes are allowed.
-        ``'safe'``       Only casts which can preserve values are
-                         allowed.
-        ``'same_kind'``  Only safe casts or casts within a kind, like
-                         float64 to float32, are allowed.
-        ``'unsafe'``     Any data conversions may be done.
-        ===============  =============================================
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> d = cfdm.Data([1.5, 2, 2.5])
->>> d.dtype
-dtype('float64')
->>> print(d.array)
-[1.5 2.  2.5]
->>> d.astype('int32')
->>> d.dtype
-dtype('int32')
->>> print(d.array)
-[1 2 2]
->>> d.astype(float)
->>> print(d.array)
-[1. 2. 2.]
-
->>> d = cfdm.Data([1.5, 2, 2.5])
->>> d.dtype
-dtype('float64')
->>> d.astype('int', casting='safe')
-TypeError: Cannot cast array from dtype('float64') to dtype('int64') according to the rule 'safe'
-
-        '''
-        dtype = numpy.dtype(dtype)
-        if dtype != self.dtype:
-            array = self.array.astype(dtype=dtype, casting=casting)
-            self._set_Array(array, copy=False)
-    #--- End: def
+#    def astype(self, dtype, casting='unsafe'):
+#        '''Cast the data to a specified type.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `dtype`
+#
+#:Parameters:
+#
+#    dtype: `str` or `numpy.dtype`
+#        Typecode or data-type to which the array is cast.
+#
+#    casting : `str`, optional
+#        Controls what kind of data casting may occur. Defaults to
+#        'unsafe'.
+#    
+#        ===============  =============================================
+#        *casting*        Casting rules
+#        ===============  =============================================
+#        ``'no'``         The data types should not be cast at all.
+#        ``'equiv'``      Only byte-order changes are allowed.
+#        ``'safe'``       Only casts which can preserve values are
+#                         allowed.
+#        ``'same_kind'``  Only safe casts or casts within a kind, like
+#                         float64 to float32, are allowed.
+#        ``'unsafe'``     Any data conversions may be done.
+#        ===============  =============================================
+#
+#:Returns:
+#
+#    `None`
+#
+#**Examples:**
+#
+#>>> d = cfdm.Data([1.5, 2, 2.5])
+#>>> d.dtype
+#dtype('float64')
+#>>> print(d.array)
+#[1.5 2.  2.5]
+#>>> d.astype('int32')
+#>>> d.dtype
+#dtype('int32')
+#>>> print(d.array)
+#[1 2 2]
+#>>> d.astype(float)
+#>>> print(d.array)
+#[1. 2. 2.]
+#
+#>>> d = cfdm.Data([1.5, 2, 2.5])
+#>>> d.dtype
+#dtype('float64')
+#>>> d.astype('int', casting='safe')
+#TypeError: Cannot cast array from dtype('float64') to dtype('int64') according to the rule 'safe'
+#
+#        '''
+#        dtype = numpy.dtype(dtype)
+#        if dtype != self.dtype:
+#            array = self.array.astype(dtype, casting=casting)
+#            self._set_Array(array, copy=False)
+#    #--- End: def
 
     def underlying_array(self, default=ValueError()):
         '''Return the array object.

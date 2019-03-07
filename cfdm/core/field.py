@@ -430,7 +430,7 @@ removed prior to insertion.
 
     axes: (sequence of) `str`, or `None`
         The identifiers of the domain axes spanned by the data
-        array. If `None` instead then the data axes are not set.
+        array. If `None` then the data axes are not set.
 
         The axes may also be set afterwards with the `set_data_axes`
         method.

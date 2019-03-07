@@ -213,6 +213,16 @@ AttributeError: Field doesn't have property 'standard_name'
         return parent.get_bounds(default=default)
     #--- End: def
     
+    def get_bounds_ncvar(self, parent, default=None):
+        '''
+        '''
+        bounds = parent.get_bounds(None)
+        if bounds is None:
+            return default
+
+        return self.get_ncvar(bounds, default=default)
+    #--- End: def
+    
     def get_cell_measures(self, field):
        '''
        '''
@@ -287,9 +297,24 @@ AttributeError: Field doesn't have property 'standard_name'
     #--- End: def
 
     def get_compression_type(self, construct):
+        '''TODO
+
+:Parameters:
+
+    construct:      
+
+:Returns:
+
+    `str`
+        The compression type. If there is no compression then an empty
+        string is returned.
+
         '''
-        '''
-        return construct.get_data().get_compression_type()
+        data = construct.get_data(None)
+        if data is None:
+            return ''
+        
+        return data.get_compression_type()
     #--- End: def
         
     def get_construct_data_axes(self, field, key):
@@ -880,6 +905,18 @@ netCDF unlimited dimensions.
     out:
        '''
        return construct.get_property(prop, default=default)
+    #--- End: def
+
+    def get_geometry(self, construct, default=None):
+       '''
+
+:Parameters:
+
+:Returns:
+
+    out:
+       '''
+       return construct.get_geometry(default=default)
     #--- End: def
 
     def get_data(self, parent, default=None):

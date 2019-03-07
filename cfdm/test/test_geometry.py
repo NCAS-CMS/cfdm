@@ -62,12 +62,20 @@ def _make_geometry_1_file(filename):
     y.axis = "Y"
     y[...] = [10, 30, 40, 60, 50]
     
-    someData = n.createVariable('someData', 'f8', ('instance', 'time'))
-    someData.coordinates = "time lat lon"
-    someData.grid_mapping = "datum"
-    someData.geometry = "geometry_container"
-    someData[...] = [[1, 2, 3, 4],
-                     [5, 6, 7, 8]]
+    someData_1 = n.createVariable('someData_1', 'f8', ('instance', 'time'))
+    someData_1.coordinates = "time lat lon"
+    someData_1.grid_mapping = "datum"
+    someData_1.geometry = "geometry_container"
+    someData_1[...] = [[1, 2, 3, 4],
+                       [5, 6, 7, 8]]
+
+    someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
+    someData_2.coordinates = "time lat lon"
+    someData_2.grid_mapping = "datum"
+    someData_2.geometry = "geometry_container"
+    someData_2[...] = [[10, 20, 30, 40],
+                       [50, 60, 70, 80]]
+
     n.close()
     
     return filename
@@ -197,13 +205,21 @@ def _make_geometry_3_file(filename):
     z.axis = "Z"
     z[...] = [100, 150, 200]
     
-    someData = n.createVariable('someData', 'f8', ('instance', 'time'))
-    someData.coordinates = "lat lon"
-    someData.grid_mapping = "datum"
-    someData.geometry = "geometry_container"
-    someData[...] = [[1,  2,  3,  4],
-                     [5,  6,  7,  8],
-                     [9, 10, 11, 12]]
+    someData_1 = n.createVariable('someData_1', 'f8', ('instance', 'time'))
+    someData_1.coordinates = "lat lon"
+    someData_1.grid_mapping = "datum"
+    someData_1.geometry = "geometry_container"
+    someData_1[...] = [[1,  2,  3,  4],
+                       [5,  6,  7,  8],
+                       [9, 10, 11, 12]]
+    
+    someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
+    someData_2.coordinates = "lat lon"
+    someData_2.grid_mapping = "datum"
+    someData_2.geometry = "geometry_container"
+    someData_2[...] = [[10,  20,  30,  40],
+                       [50,  60,  70,  80],
+                       [90, 100, 110, 120]]
     
     n.close()
     
@@ -332,11 +348,13 @@ class DSGTest(unittest.TestCase):
                 
         f = cfdm.read(self.geometry_1_file, verbose=False)
 
-        self.assertTrue(len(f) == 1)
-        f = f[0]
-        self.assertTrue(f.equals(f.copy()))
+        self.assertTrue(len(f) == 2)
 
-#        f.dump()
+        for g in f:
+            self.assertTrue(g.equals(g.copy()))
+
+#        f[0].dump()
+#        f[1].dump()
     #--- End: def
 
     def test_geometry_2(self):
@@ -358,11 +376,14 @@ class DSGTest(unittest.TestCase):
                 
         f = cfdm.read(self.geometry_3_file, verbose=False)
 
-        self.assertTrue(len(f) == 1)
-        f = f[0]
-        self.assertTrue(f.equals(f.copy()))
+        self.assertTrue(len(f) == 2)
+
+        for g in f:
+            self.assertTrue(g.equals(g.copy()))
+            self.assertTrue(len(g.auxiliary_coordinates) == 3)
         
-#        f.dump()
+        f[0].dump()
+        f[1].dump()
     #--- End: def
 
     def test_geometry_interior_ring(self):
@@ -373,10 +394,10 @@ class DSGTest(unittest.TestCase):
 
         self.assertTrue(len(f) == 1)
 
-        f = f[0]
-        self.assertTrue(f.equals(f.copy()))
-        
-#        f.dump()
+        for g in f:
+            self.assertTrue(g.equals(g.copy()))
+
+#        f[0].dump()
     #--- End: def
 
 #--- End: class
