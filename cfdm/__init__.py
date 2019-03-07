@@ -34,9 +34,9 @@ up to the user to use them in a CF-compliant way.
 '''
 
 __author__       = 'David Hassell'
-__date__         = '2019-02-08'
+__date__         = '2019-03-07'
 __cf_version__   = '1.7'
-__version__      = '1.7.0b16'
+__version__      = '1.7.0b17'
 
 requires = ('numpy',
             'netCDF4',
