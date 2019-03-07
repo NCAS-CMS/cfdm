@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -x
+
+if [[ ! $1 ]] ; then 
+  echo "No version \$1 (e.g. 1.7.0)"
+  exit 1
+fi
+
+# --------------------------------------------------------------------
+# Make the archive docs    
+# --------------------------------------------------------------------
+rm -fr .doctrees
+
+make html .
+
+# --------------------------------------------------------------------
+# Add, commit and push
+# --------------------------------------------------------------------
+git add \
+    *.html \
+    class/*.html \
+    function/*.html \
+    method/*.html \
+    attribute/*.html \
+    _downloads/*.nc \
+    _sources
+
+git commit -a -m "v$version master documentation"
+git push origin master
+
+set +x

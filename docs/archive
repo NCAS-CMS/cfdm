@@ -28,8 +28,15 @@ make html $version
 # --------------------------------------------------------------------
 # Add, commit and push
 # --------------------------------------------------------------------
-cd $version
-git add _downloads/*.nc *.html */*.html _sources
+git add \
+    $version/*.html \
+    $version/class/*.html \
+    $version/function/*.html \
+    $version/method/*.html \
+    $version/attribute/*.html \
+    $version/_downloads/*.nc \
+    $version/_sources
+
 git commit -a -m "archive v$version documentation"
 git push origin master
 
