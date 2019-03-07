@@ -1,0 +1,7 @@
+cfdm.AuxiliaryCoordinate.expand_dims
+====================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.AuxiliaryCoordinate.expand_dims

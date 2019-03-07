@@ -1,0 +1,7 @@
+cfdm.Constructs.ncdim
+=====================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Constructs.ncdim
