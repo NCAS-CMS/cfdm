@@ -1,0 +1,7 @@
+cfdm.AuxiliaryCoordinate.name
+=============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.AuxiliaryCoordinate.name

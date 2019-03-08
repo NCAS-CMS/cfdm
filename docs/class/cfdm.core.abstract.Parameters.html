@@ -1,31 +1,21 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>cfdm.core.abstract.Parameters &#8212; Documentation</title>
-    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1.7.0b17',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.core.abstract.Parameters.del_parameter" href="../method/cfdm.core.abstract.Parameters.del_parameter.html" />
@@ -36,8 +26,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   <div class="document">
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -80,12 +69,14 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -100,7 +91,7 @@
 <dl class="class">
 <dt id="cfdm.core.abstract.Parameters">
 <em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/core/abstract/parameters.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>Abstract base class for a collection of named parameters.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -111,21 +102,21 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">dict</span></code></a>, optional</dt>
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Set parameters. The dictionary keys are parameter names, with
 corresponding values. Ignored if the <em>source</em> parameter is set.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
 </dd>
 </dl>
 <p class="last">Parameters may also be set after initialisation with the
-<code class="xref py py-obj docutils literal"><span class="pre">parameters</span></code> and <code class="xref py py-obj docutils literal"><span class="pre">set_parameter</span></code> methods.</p>
+<a class="reference internal" href="../method/cfdm.core.abstract.Parameters.parameters.html#cfdm.core.abstract.Parameters.parameters" title="cfdm.core.abstract.Parameters.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a> and <a class="reference internal" href="../method/cfdm.core.abstract.Parameters.set_parameter.html#cfdm.core.abstract.Parameters.set_parameter" title="cfdm.core.abstract.Parameters.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
 </dd>
 <dt>source: optional</dt>
 <dd><p class="first last">Initialize the parameters from those of <em>source</em>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
@@ -145,16 +136,16 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.del_parameter.html#cfdm.core.abstract.Parameters.del_parameter" title="cfdm.core.abstract.Parameters.del_parameter"><code class="xref py py-obj docutils literal"><span class="pre">del_parameter</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.del_parameter.html#cfdm.core.abstract.Parameters.del_parameter" title="cfdm.core.abstract.Parameters.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></td>
 <td>Delete a parameter.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.get_parameter.html#cfdm.core.abstract.Parameters.get_parameter" title="cfdm.core.abstract.Parameters.get_parameter"><code class="xref py py-obj docutils literal"><span class="pre">get_parameter</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.get_parameter.html#cfdm.core.abstract.Parameters.get_parameter" title="cfdm.core.abstract.Parameters.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></td>
 <td>Get a parameter value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.set_parameter.html#cfdm.core.abstract.Parameters.set_parameter" title="cfdm.core.abstract.Parameters.set_parameter"><code class="xref py py-obj docutils literal"><span class="pre">set_parameter</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.set_parameter.html#cfdm.core.abstract.Parameters.set_parameter" title="cfdm.core.abstract.Parameters.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></td>
 <td>Set a parameter-valued term.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.parameters.html#cfdm.core.abstract.Parameters.parameters" title="cfdm.core.abstract.Parameters.parameters"><code class="xref py py-obj docutils literal"><span class="pre">parameters</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.parameters.html#cfdm.core.abstract.Parameters.parameters" title="cfdm.core.abstract.Parameters.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></td>
 <td>Return or replace all parameter-valued terms.</td>
 </tr>
 </tbody>
@@ -169,7 +160,7 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.copy.html#cfdm.core.abstract.Parameters.copy" title="cfdm.core.abstract.Parameters.copy"><code class="xref py py-obj docutils literal"><span class="pre">copy</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.copy.html#cfdm.core.abstract.Parameters.copy" title="cfdm.core.abstract.Parameters.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
 <td>Return a deep copy.</td>
 </tr>
 </tbody>
@@ -184,8 +175,8 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.__deepcopy__.html#cfdm.core.abstract.Parameters.__deepcopy__" title="cfdm.core.abstract.Parameters.__deepcopy__"><code class="xref py py-obj docutils literal"><span class="pre">__deepcopy__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.__deepcopy__.html#cfdm.core.abstract.Parameters.__deepcopy__" title="cfdm.core.abstract.Parameters.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
 </tr>
 </tbody>
 </table>
@@ -202,8 +193,8 @@ initialization. By default arguments are deep copied.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.core.abstract.Parameters.rst.txt"

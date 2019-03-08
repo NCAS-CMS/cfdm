@@ -1,31 +1,21 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>cfdm.Constructs.filter_by_axis &#8212; Documentation</title>
-    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1.7.0b17',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Constructs.filter_by_type" href="cfdm.Constructs.filter_by_type.html" />
@@ -36,8 +26,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   <div class="document">
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -82,12 +71,14 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -107,10 +98,10 @@
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cfdm.Constructs.filter_by_key.html#cfdm.Constructs.filter_by_key" title="cfdm.Constructs.filter_by_key"><code class="xref py py-obj docutils literal"><span class="pre">filter_by_key</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_measure.html#cfdm.Constructs.filter_by_measure" title="cfdm.Constructs.filter_by_measure"><code class="xref py py-obj docutils literal"><span class="pre">filter_by_measure</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_method.html#cfdm.Constructs.filter_by_method" title="cfdm.Constructs.filter_by_method"><code class="xref py py-obj docutils literal"><span class="pre">filter_by_method</span></code></a>,
-<a class="reference internal" href="cfdm.Constructs.filter_by_identity.html#cfdm.Constructs.filter_by_identity" title="cfdm.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal"><span class="pre">filter_by_identity</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_ncdim.html#cfdm.Constructs.filter_by_ncdim" title="cfdm.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal"><span class="pre">filter_by_ncdim</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_ncvar.html#cfdm.Constructs.filter_by_ncvar" title="cfdm.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal"><span class="pre">filter_by_ncvar</span></code></a>,
-<a class="reference internal" href="cfdm.Constructs.filter_by_property.html#cfdm.Constructs.filter_by_property" title="cfdm.Constructs.filter_by_property"><code class="xref py py-obj docutils literal"><span class="pre">filter_by_property</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_type.html#cfdm.Constructs.filter_by_type" title="cfdm.Constructs.filter_by_type"><code class="xref py py-obj docutils literal"><span class="pre">filter_by_type</span></code></a>,
-<a class="reference internal" href="cfdm.Constructs.filters_applied.html#cfdm.Constructs.filters_applied" title="cfdm.Constructs.filters_applied"><code class="xref py py-obj docutils literal"><span class="pre">filters_applied</span></code></a>, <a class="reference internal" href="cfdm.Constructs.inverse_filter.html#cfdm.Constructs.inverse_filter" title="cfdm.Constructs.inverse_filter"><code class="xref py py-obj docutils literal"><span class="pre">inverse_filter</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.Constructs.filter_by_key.html#cfdm.Constructs.filter_by_key" title="cfdm.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_measure.html#cfdm.Constructs.filter_by_measure" title="cfdm.Constructs.filter_by_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_measure</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_method.html#cfdm.Constructs.filter_by_method" title="cfdm.Constructs.filter_by_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_method</span></code></a>,
+<a class="reference internal" href="cfdm.Constructs.filter_by_identity.html#cfdm.Constructs.filter_by_identity" title="cfdm.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_ncdim.html#cfdm.Constructs.filter_by_ncdim" title="cfdm.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_ncvar.html#cfdm.Constructs.filter_by_ncvar" title="cfdm.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a>,
+<a class="reference internal" href="cfdm.Constructs.filter_by_property.html#cfdm.Constructs.filter_by_property" title="cfdm.Constructs.filter_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_property</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_type.html#cfdm.Constructs.filter_by_type" title="cfdm.Constructs.filter_by_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_type</span></code></a>,
+<a class="reference internal" href="cfdm.Constructs.filters_applied.html#cfdm.Constructs.filters_applied" title="cfdm.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>, <a class="reference internal" href="cfdm.Constructs.inverse_filter.html#cfdm.Constructs.inverse_filter" title="cfdm.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -119,9 +110,9 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>and_or: optional</dt>
 <dd><p class="first">Define the behaviour when multiple axes are provided.</p>
-<p class="last">By default (or if the <em>and_or</em> parameter is <code class="docutils literal"><span class="pre">'and'</span></code>) a
+<p class="last">By default (or if the <em>and_or</em> parameter is <code class="docutils literal notranslate"><span class="pre">'and'</span></code>) a
 construct is selected if it matches all of the given axis
-requirements, but if the <em>and_or</em> parameter is <code class="docutils literal"><span class="pre">'or'</span></code> then a
+requirements, but if the <em>and_or</em> parameter is <code class="docutils literal notranslate"><span class="pre">'or'</span></code> then a
 construct will be selected when at least one of the axis
 requirements is met.</p>
 </dd>
@@ -131,17 +122,17 @@ requirements is met.</p>
 <div><p>Select constructs whose data array does, or does not, span
 particular domain axis constructs.</p>
 <p>A domain axis construct is identified by a keyword parameter
-of the domain axis construct key (e.g. <code class="docutils literal"><span class="pre">domainaxis1</span></code>). The
+of the domain axis construct key (e.g. <code class="docutils literal notranslate"><span class="pre">domainaxis1</span></code>). The
 value is a boolean indicating if a construct should be
-selected when its data does span the axis (<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>), or
-selected when its data does not span the axis (<a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>).</p>
+selected when its data does span the axis (<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>), or
+selected when its data does not span the axis (<a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>).</p>
 <p>If no axes are provided then all constructs that have data,
 spanning any domain axes constructs, are selected.</p>
 </div></blockquote>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="../class/cfdm.Constructs.html#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal"><span class="pre">Constructs</span></code></a></dt>
+<dt><a class="reference internal" href="../class/cfdm.Constructs.html#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a></dt>
 <dd><p class="first last">The selected constructs and their construct keys.</p>
 </dd>
 </dl>
@@ -150,24 +141,24 @@ spanning any domain axes constructs, are selected.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<p>Select constructs whose data spans the &#8220;domainaxis1&#8221; domain axis
+<p>Select constructs whose data spans the “domainaxis1” domain axis
 construct:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="n">domainaxis1</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="n">domainaxis1</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Select constructs whose data does not span the &#8220;domainaxis2&#8221; domain
+<p>Select constructs whose data does not span the “domainaxis2” domain
 axis construct:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="n">domainaxis2</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="n">domainaxis2</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Select constructs whose data spans the &#8220;domainaxis1&#8221;, but not the
-&#8220;domainaxis2&#8221; domain axis constructs:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="n">domainaxis1</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">domainaxis2</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<p>Select constructs whose data spans the “domainaxis1”, but not the
+“domainaxis2” domain axis constructs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="n">domainaxis1</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">domainaxis2</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Select constructs whose data spans the &#8220;domainaxis1&#8221; or the
-&#8220;domainaxis2&#8221; domain axis constructs:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="n">domainaxis1</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">domainaxis2</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<p>Select constructs whose data spans the “domainaxis1” or the
+“domainaxis2” domain axis constructs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="n">domainaxis1</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">domainaxis2</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -184,8 +175,8 @@ axis construct:</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Constructs.filter_by_axis.rst.txt"

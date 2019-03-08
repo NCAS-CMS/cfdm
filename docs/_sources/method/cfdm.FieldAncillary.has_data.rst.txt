@@ -1,0 +1,7 @@
+cfdm.FieldAncillary.has_data
+============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.FieldAncillary.has_data

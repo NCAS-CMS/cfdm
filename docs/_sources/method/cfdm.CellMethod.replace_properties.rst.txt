@@ -1,0 +1,7 @@
+cfdm.CellMethod.replace_properties
+==================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CellMethod.replace_properties

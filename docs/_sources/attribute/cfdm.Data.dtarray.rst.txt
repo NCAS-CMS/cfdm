@@ -1,0 +1,7 @@
+cfdm.Data.dtarray
+=================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.Data.dtarray

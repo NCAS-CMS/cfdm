@@ -1,31 +1,21 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>cfdm.Array &#8212; Documentation</title>
-    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1.7.0b17',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Array.dtype" href="../attribute/cfdm.Array.dtype.html" />
@@ -36,8 +26,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   <div class="document">
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -80,12 +69,14 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -100,11 +91,11 @@
 <dl class="class">
 <dt id="cfdm.Array">
 <em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Array</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/data/abstract/array.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">cfdm.core.data.abstract.array.Array</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.abstract.array.Array</span></code></p>
 <p>Abstract base class for a container of an underlying array.</p>
 <p>The form of the array is defined by the initialization parameters of a
 subclass.</p>
-<p>See <a class="reference internal" href="cfdm.NumpyArray.html#cfdm.NumpyArray" title="cfdm.NumpyArray"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.NumpyArray</span></code></a> for an example implementation.</p>
+<p>See <a class="reference internal" href="cfdm.NumpyArray.html#cfdm.NumpyArray" title="cfdm.NumpyArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.NumpyArray</span></code></a> for an example implementation.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -133,19 +124,19 @@ subclass.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Array.dtype.html#cfdm.Array.dtype" title="cfdm.Array.dtype"><code class="xref py py-obj docutils literal"><span class="pre">dtype</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Array.dtype.html#cfdm.Array.dtype" title="cfdm.Array.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
 <td>Data-type of the data elements.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Array.ndim.html#cfdm.Array.ndim" title="cfdm.Array.ndim"><code class="xref py py-obj docutils literal"><span class="pre">ndim</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Array.ndim.html#cfdm.Array.ndim" title="cfdm.Array.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
 <td>Number of array dimensions</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Array.shape.html#cfdm.Array.shape" title="cfdm.Array.shape"><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Array.shape.html#cfdm.Array.shape" title="cfdm.Array.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
 <td>Tuple of array dimension sizes.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Array.size.html#cfdm.Array.size" title="cfdm.Array.size"><code class="xref py py-obj docutils literal"><span class="pre">size</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Array.size.html#cfdm.Array.size" title="cfdm.Array.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
 <td>Number of elements in the array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Array.array.html#cfdm.Array.array" title="cfdm.Array.array"><code class="xref py py-obj docutils literal"><span class="pre">array</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Array.array.html#cfdm.Array.array" title="cfdm.Array.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></td>
 <td>Return an independent numpy array containing the data.</td>
 </tr>
 </tbody>
@@ -160,16 +151,16 @@ subclass.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Array.get_compressed_array</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Array.get_compressed_array</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Array.get_compressed_axes.html#cfdm.Array.get_compressed_axes" title="cfdm.Array.get_compressed_axes"><code class="xref py py-obj docutils literal"><span class="pre">get_compressed_axes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Array.get_compressed_axes.html#cfdm.Array.get_compressed_axes" title="cfdm.Array.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></td>
 <td>Return axes that are compressed in the underlying array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Array.get_compressed_dimension.html#cfdm.Array.get_compressed_dimension" title="cfdm.Array.get_compressed_dimension"><code class="xref py py-obj docutils literal"><span class="pre">get_compressed_dimension</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Array.get_compressed_dimension.html#cfdm.Array.get_compressed_dimension" title="cfdm.Array.get_compressed_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_dimension</span></code></a></td>
 <td>Return the position of the compressed dimension in the compressed array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Array.get_compression_type.html#cfdm.Array.get_compression_type" title="cfdm.Array.get_compression_type"><code class="xref py py-obj docutils literal"><span class="pre">get_compression_type</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Array.get_compression_type.html#cfdm.Array.get_compression_type" title="cfdm.Array.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></td>
 <td>The type of compression that has been applied to the underlying array.</td>
 </tr>
 </tbody>
@@ -184,7 +175,7 @@ subclass.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Array.copy.html#cfdm.Array.copy" title="cfdm.Array.copy"><code class="xref py py-obj docutils literal"><span class="pre">copy</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Array.copy.html#cfdm.Array.copy" title="cfdm.Array.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
 <td>Return a deep copy of the array.</td>
 </tr>
 </tbody>
@@ -199,20 +190,20 @@ subclass.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Array.__array__.html#cfdm.Array.__array__" title="cfdm.Array.__array__"><code class="xref py py-obj docutils literal"><span class="pre">__array__</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Array.__array__.html#cfdm.Array.__array__" title="cfdm.Array.__array__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__array__</span></code></a></td>
 <td>The numpy array interface.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Array.__deepcopy__.html#cfdm.Array.__deepcopy__" title="cfdm.Array.__deepcopy__"><code class="xref py py-obj docutils literal"><span class="pre">__deepcopy__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Array.__deepcopy__.html#cfdm.Array.__deepcopy__" title="cfdm.Array.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Array.__getitem__.html#cfdm.Array.__getitem__" title="cfdm.Array.__getitem__"><code class="xref py py-obj docutils literal"><span class="pre">__getitem__</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Array.__getitem__.html#cfdm.Array.__getitem__" title="cfdm.Array.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
 <td>Return a subspace as an independent numpy array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Array.__repr__.html#cfdm.Array.__repr__" title="cfdm.Array.__repr__"><code class="xref py py-obj docutils literal"><span class="pre">__repr__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">repr</span></code></a> built-in function.</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Array.__repr__.html#cfdm.Array.__repr__" title="cfdm.Array.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Array.__str__.html#cfdm.Array.__str__" title="cfdm.Array.__str__"><code class="xref py py-obj docutils literal"><span class="pre">__str__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a> built-in function.</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Array.__str__.html#cfdm.Array.__str__" title="cfdm.Array.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
 </tr>
 </tbody>
 </table>
@@ -229,8 +220,8 @@ subclass.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.Array.rst.txt"

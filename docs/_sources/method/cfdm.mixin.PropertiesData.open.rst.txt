@@ -1,0 +1,7 @@
+cfdm.mixin.PropertiesData.open
+==============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.mixin.PropertiesData.open

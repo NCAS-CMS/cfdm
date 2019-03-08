@@ -1,0 +1,7 @@
+cfdm.List.replace_properties
+============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.List.replace_properties

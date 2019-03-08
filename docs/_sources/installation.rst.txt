@@ -10,6 +10,13 @@
 
 Version |release| for version |version| of the CF conventions.
 
+.. _Python:
+
+**Python**
+----------
+
+cfdm works for Python 2.7 and Python 3.
+
 .. _pip:
   
 **pip**
@@ -17,7 +24,8 @@ Version |release| for version |version| of the CF conventions.
 
 ----
 
-To install cfdm and all of its dependencies run, for example:
+To install cfdm and all of its :ref:`dependencies <Dependencies>` run,
+for example:
 
 .. code-block:: shell
    :caption: *Install as root, with any missing dependencies.*
@@ -69,12 +77,13 @@ To install from source:
 
 1. Download the cfdm package from https://pypi.org/project/cfdm
 
-2. Unpack the library:
+2. Unpack the library (replacing ``<version>`` with the version that
+   you want to install, e.g. ``1.7.0``):
 
    .. code:: bash
 	 
-      tar zxvf cfdm-1.7.0b13.tar.gz
-      cd cfdm-1.7.0b13
+      tar zxvf cfdm-<version>.tar.gz
+      cd cfdm-<version>
 
 3. Install the package:
   
@@ -97,16 +106,16 @@ To install from source:
 
        python setup.py install --home=<directory>
 
-.. _Command-line-utility:
+.. _cfdump-command-line-utility:
 
-**Command line utility**
-------------------------
+**cfdump command line utility**
+-------------------------------
 
 ----
 
-During installation the ``cfdump`` command line tool is also
-installed, which generates text descriptions of the field constructs
-contained in a netCDF dataset.
+During installation the :ref:`cfdump command line utility <cfdump>` is
+also installed, which generates text descriptions of the field
+constructs contained in a netCDF dataset.
 
 .. _Tests:
 
@@ -121,8 +130,6 @@ Tests are run from within the ``cfdm/test`` directory:
  
    python run_tests.py
        
-.. _Code-repository:
-
 .. _Dependencies:
 
 **Dependencies**
@@ -134,15 +141,17 @@ The cfdm package requires:
 
 * `Python <https://www.python.org/>`_, version 2.7 or 3 or newer,
 
-* `numpy <http://www.numpy.org/>`_, version 1.11 or newer,
+* `numpy <http://www.numpy.org/>`_, version 1.15 or newer,
 
 * `netCDF4 <http://unidata.github.io/netcdf4-python/>`_, version 1.4.0
   or newer, and
 
-* `cftime <https://unidata.github.io/cftime/>`_, version 1.0 or
-  newer,
+* `cftime <https://unidata.github.io/cftime/>`_, version 1.0 or newer
+  (this is installed with netCDF4),
 
 * `future <https://python-future.org/>`_, version 0.16.0 or newer.
+
+.. _Code-repository:
 
 **Code repository**
 -------------------

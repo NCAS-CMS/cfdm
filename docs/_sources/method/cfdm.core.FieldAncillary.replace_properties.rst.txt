@@ -1,0 +1,7 @@
+cfdm.core.FieldAncillary.replace_properties
+===========================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.core.FieldAncillary.replace_properties

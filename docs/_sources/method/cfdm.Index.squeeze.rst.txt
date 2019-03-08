@@ -1,0 +1,7 @@
+cfdm.Index.squeeze
+==================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Index.squeeze
