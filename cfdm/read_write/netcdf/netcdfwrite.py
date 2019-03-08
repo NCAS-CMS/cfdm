@@ -860,6 +860,8 @@ a new netCDF bounds dimension.
                 continue
             
             gc.setdefault(geometry_type, {'geometry_type': geometry_type})
+
+            print('coord=', repr(coord))
             print('bounds=', repr(bounds))
             bounds_ncvar = g['seen'][id(bounds)]['ncvar']
 
@@ -961,10 +963,18 @@ dictionary.
 
     def _write_geometry_container(self, f, geometry_container):
         '''
+
+:Returns:
+
+    `str`
+        The netCDF variable name for the geometry container.
+          
         '''
         g = self.write_vars
+        
         for ncvar, gc in g['geometry_containers'].items():
             if geometry_container == gc:
+                # Use this existing geometry container
                 return ncvar
         #--- End: for
 
@@ -987,6 +997,7 @@ dictionary.
         # Update the 'geometry_containers' dictionary
         g['geometry_containers'][ncvar] = geometry_container
         print ('lll',  g['geometry_containers'])
+
         return ncvar
     #--- End: def
         
@@ -1014,7 +1025,11 @@ name.
 
 :Examples:
 
->>> extra = _write_bounds(c, ('dim2',))
+>>> _write_bounds(c, ('dim2',))
+{'bounds': 'lat_bounds'}
+
+>>> _write_bounds(c, ('dim2',))
+{'nodes': 'x'}
 
         '''
         g = self.write_vars
@@ -1037,7 +1052,7 @@ name.
     
         # Check if this bounds variable has not been previously
         # created.
-        ncdimensions = coord_ncdimensions +(ncdim,)        
+        ncdimensions = coord_ncdimensions + (ncdim,)
         if self._already_in_file(bounds, ncdimensions):
             # This bounds variable has been previously created, so no
             # need to do so again.
@@ -1057,17 +1072,19 @@ name.
                         ncdim=ncdim, size=size))
             #--- End: if
 
+            # Set an appropriate default netCDF bounds variable name
             if coord_ncvar is not None:
                 default = coord_ncvar+'_bounds'
             else:
-                if self.implementation.get_geometry(coord, None) in ('line', 'point', 'polygon'):
-                    axis = self.implementation.get_property(bounds, 'axis')
-                    if axis is not None:
-                        default = str(axis).lower()
-                    else:
-                        default = 'nodes'
-                else:
-                    default = 'bounds'
+                default = 'bounds' # 1.7
+#1.8                if not self.implementation.is_geometry(coord):
+#1.8                    default = 'bounds'
+#1.8                else:
+#1.8                    axis = self.implementation.get_property(bounds, 'axis')
+#1.8                    if axis is not None:
+#1.8                        default = str(axis).lower()
+#1.8                    else:
+#1.8                        default = 'nodes'
             #--- End: if
 
             ncvar = self.implementation.get_ncvar(bounds, default=default)
@@ -1090,6 +1107,8 @@ name.
     
         if self.implementation.is_climatology(coord):
             extra['climatology'] = ncvar
+#1.8        elif self.implementation.is_geometry(coord):
+#1.8            extra['nodes'] = ncvar
         else:
             extra['bounds'] = ncvar
     
@@ -2237,7 +2256,6 @@ extra trailing dimension.
                         c.append((key, coord))
 
                 if len(c) == 1:
-#                    owning_coord_key, owning_coord = c[0]
                     owning_coord_key, _ = c[0]
             #--- End: if
     
@@ -2383,18 +2401,6 @@ extra trailing dimension.
 
             extra['ancillary_variables'] = ancillary_variables
             
-#        # Flag values
-#        if hasattr(f, 'flag_values'):
-#            extra['flag_values'] = f.flag_values
-#    
-#        # Flag masks
-#        if hasattr(f, 'flag_masks'):
-#            extra['flag_masks'] = f.flag_masks
-#    
-#        # Flag meanings
-#        if hasattr(f, 'flag_meanings'):
-#            extra['flag_meanings'] = f.flag_meanings
-    
         # name can be a dimension of the variable, a scalar coordinate
         # variable, a valid standard name, or the word 'area'
         cell_methods = self.implementation.get_cell_methods(f)
@@ -2421,12 +2427,15 @@ extra trailing dimension.
 
             extra['cell_methods'] = cell_methods
 
-        # Geometry container
-#        geometry_container = self._create_geometry_container(f)
-#        if geometry_container:
-#            print(geometry_container)
-#            gc_ncvar = self._write_geometry_container(f, geometry_container)
-#            extra['geometry'] = gc_ncvar
+#1.8        # Geometry container
+#1.8        geometry_container = self._create_geometry_container(f)
+#1.8        if geometry_container:
+#1.8            print(geometry_container)
+#1.8            gc_ncvar = self._write_geometry_container(f, geometry_container)
+#1.8            if verbose:
+#1.8                print('    TODO')
+#1.8
+#1.8            extra['geometry'] = gc_ncvar
 
         # Create a new data variable
         self._write_netcdf_variable(ncvar, ncdimensions, f,

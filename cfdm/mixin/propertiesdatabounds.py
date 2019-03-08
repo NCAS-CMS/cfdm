@@ -128,6 +128,75 @@ rules, the only differences being:
         return new
     #--- End: def
 
+    def __str__(self):
+        '''Called by the `str` built-in function.
+
+x.__str__() <==> str(x)
+
+.. versionadded:: 1.7.0
+
+        '''
+        name = self.identity('')
+        
+        shape = None        
+        data = self.get_data(None)
+        if data is not None:
+            shape = data.shape
+        else:            
+            bounds_data = self.get_bounds_data(None)
+            if bounds_data is not None:        
+                shape = bounds_data.shape[:-1] # geometry TODO
+        #--- End: if
+        
+        if shape is not None:        
+            dims = ', '.join([str(x) for x in shape])
+            dims = '({0})'.format(dims)
+        else:
+            dims = ''
+        
+#        data = self.get_data(None)
+#        if data is not None:
+#            dims = ', '.join([str(x) for x in data.shape])
+#            dims = '({0})'.format(dims)
+#        else:
+#            bounds = self.get_bounds(None)
+#            if bounds is not None:
+#                data = bounds.get_data(None)
+#                if data is not None:
+#                    dims = ', '.join([str(x) for x in data.shape[:-1]])
+#                    dims = '({0})'.format(dims)
+#                else:
+#                    dims = ''
+#            else:
+#                dims = ''
+#        #--- End: if
+        
+        # Units
+        bounds = self.get_bounds(None)
+        
+        units = self.get_property('units', None)
+        if units is None and bounds is not None:
+            units = bounds.get_property('units', None)
+            
+        calendar = self.get_property('calendar', None)
+        if calendar is None and bounds is not None:
+            calendar = bounds.get_property('calendar', None)
+
+        if units is None:
+            isreftime = (calendar is not None)
+            units = ''
+        else:
+            isreftime = 'since' in units
+                        
+        if isreftime:
+            if calendar is None:
+                calendar = ''
+
+            units += ' ' + calendar
+            
+        return '{0}{1} {2}'.format(self.identity(''), dims, units)
+    #--- End: def
+
     def dump(self, display=True, _key=None, _omit_properties=None,
              _prefix='', _title=None, _create_title=True, _level=0,
              _axes=None, _axis_names=None):
@@ -615,6 +684,36 @@ None
         bounds._set_component('inherited_properties', inherited_properties)
         
         return bounds
+    #--- End: def
+
+    def get_bounds_data(self, default=ValueError()):
+        '''Return the bounds data.
+
+.. versionadd:: 1.7.0
+
+.. seealso:: `bounds`, `get_bounds`, `get_data`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if bounds have not
+        been set. If set to an `Exception` instance then it will be
+        raised instead.
+
+:Returns:
+
+        The bounds data.
+
+**Examples:**
+
+TODO
+
+        '''
+        bounds = self.get_bounds(default=None)
+        if bounds is None:
+            return self.get_bounds(default=default)
+
+        return bounds.get_data(default=default)
     #--- End: def
 
     def squeeze(self, axes=None):
