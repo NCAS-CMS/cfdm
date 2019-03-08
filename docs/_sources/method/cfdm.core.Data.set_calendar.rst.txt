@@ -1,7 +1,0 @@
-cfdm.core.Data.set_calendar
-===========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Data.set_calendar

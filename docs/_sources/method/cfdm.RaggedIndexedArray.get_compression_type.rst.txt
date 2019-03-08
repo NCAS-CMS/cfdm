@@ -1,7 +1,0 @@
-cfdm.RaggedIndexedArray.get_compression_type
-============================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.RaggedIndexedArray.get_compression_type

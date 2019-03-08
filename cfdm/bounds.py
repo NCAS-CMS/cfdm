@@ -82,7 +82,37 @@ The netCDF variable name of the bounds may be accessed with the
 
         self._initialise_netcdf(source)
     #--- End: def
+
+#    # ----------------------------------------------------------------
+#    # Private methods
+#    # ----------------------------------------------------------------
+#    def _set_coordinates_ndim(self, ndim):
+#        '''TODO
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso `get_coordinates_ndim`
+#
+#:Parameters:
+#
+#    ndim: `int`
+#        TODO
+#
+#:Returns:
+#
+#    `None`
+#
+#**Examples:**
+#
+#TODO
+#
+#        '''
+#        self._set_component('coordinates_ndim', copy=False)
+#    #--- End: def
     
+    # ----------------------------------------------------------------
+    # Public methods
+    # ----------------------------------------------------------------    
     def dump(self, display=True, _key=None, _title=None,
              _create_title=True, _prefix='', _level=0,
              _omit_properties=None, _axes=None, _axis_names=None):
@@ -118,6 +148,34 @@ of all data arrays.
                             _axis_names=_axis_names)
     #--- End: def
     
+#    def get_coordinates_ndim(self, default=ValueError()):
+#        '''TODO
+#
+#.. versionadded:: 1.7.0
+#
+#:Parameters:
+#
+#    ndim: `int`
+#        TODO
+#
+#     default: optional
+#        Return the value of the *default* parameter if number of
+#        coordinate dimensions has not been set. If set to an
+#        `Exception` instance then it will be raised instead.
+#
+#:Returns:
+#
+#    `int`
+#        TODO
+#
+#**Examples:**
+#
+#TODO
+#
+#        '''
+#        return self._get_component('coordinates_ndim', default=default)
+#    #--- End: def
+
     def get_data(self, default=ValueError()):
         '''Return the data.
 

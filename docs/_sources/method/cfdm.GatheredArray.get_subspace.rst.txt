@@ -1,7 +1,0 @@
-cfdm.GatheredArray.get_subspace
-===============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.GatheredArray.get_subspace
