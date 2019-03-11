@@ -536,7 +536,7 @@ construct:
 
         if (self.has_data() and self.data.shape != tuple(axes_shape)):
             raise ValueError(
-"Can't set field construct data axes: Data array shape of {!r} does not match the shape required by domain axes {}: {}".format(
+"Can't set field construct data axes: Data array shape of {!r} does not match the shape of the given domain axes {}: {}".format(
     self.data.shape, tuple(axes), tuple(axes_shape)))
 
         self._set_component('data_axes', tuple(axes), copy=False)

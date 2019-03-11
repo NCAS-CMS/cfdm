@@ -126,15 +126,6 @@ reference is replace with `None`.
         return self.constructs.filter_by_key(key).value(default=default)
     #--- End: def
 
-#    def domain_axis_name(self, axis):
-#        '''TODO WHY DO WE NED THIS HERE?
-#
-#.. versionadded:: 1.7.0
-#
-#        '''
-#        return self.constructs.domain_axis_name(axis)
-#    #--- End: def
-    
     def set_construct(self, construct, key=None, axes=None,
                       copy=True):
         '''Set a metadata construct.

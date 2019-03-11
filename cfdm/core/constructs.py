@@ -164,7 +164,8 @@ class Constructs(object):
         self._construct_axes = {}
 
         # The construct type for each key. For example:
-        # {'domainaxis1':'domain_axis', 'auxiliarycoordinate3':'auxiliary_coordinate'}
+        # {'domainaxis1'         :'domain_axis',
+        #  'auxiliarycoordinate3':'auxiliary_coordinate'}
         self._construct_type = {}
         
         self._constructs     = {}
@@ -282,20 +283,6 @@ x.__len__() <==> len(x)
         return len(self._dictionary())
     #--- End: def
     
-#    def __repr__(self):
-#        '''x.__repr__() <==> repr(x)
-#
-#        '''
-#        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-#    #--- End: def
-#
-#    def __str__(self):
-#        '''x.__str__() <==> str(x)
-#
-#        '''
-#        return 'TODO'
-#    #--- End: def
-    
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -307,18 +294,18 @@ x.__len__() <==> len(x)
 :Parameters:
 
     default: 
-        <TODO>
+        TODO
         
     message: `str`, optional 
-        <TODO>
+        TODO
         
 :Returns:
 
-    <TODO>
+    TODO
 
 **Examples:**
 
-<TODO>
+TODO
 
         '''
         if isinstance(default, Exception):
@@ -434,12 +421,6 @@ TODO
         '''
         return construct_type.replace('_', ' ')
     #--- End: def
-
-#    def _set_construct_axes(self, key, axes):
-#        '''TODO
-#        '''
-#        self._construct_axes[key] = tuple(axes)
-#    #--- End: def
 
     def _dictionary(self, copy=False):
         '''
@@ -557,7 +538,6 @@ reference is replace with `None`.
     construct:
         The metadata construct to be inserted.
 
-
     key: `str`, optional
         The construct identifier to be used for the construct. If not
         set then a new, unique identifier is created automatically. If
@@ -613,53 +593,11 @@ reference is replace with `None`.
 #          *Parameter example:*
 #             ``extra_axes=1``
 
-#        construct_type = construct.construct_type
         construct_type = self._check_construct_type(construct.construct_type)
                                                 
         if key is None:
             # Create a new construct identifier
             key = self.new_identifier(construct_type)
-    
-#        if construct_type in self._array_constructs:
-#            #------------------------defaulrt=---------------------------------
-#            # The construct could have a data array
-#            #---------------------------------------------------------
-#            if axes is None:
-#                raise ValueError(
-#"Can't set {} construct: Must specify the domain axes for the data array".format(
-#    self._construct_type_description(construct_type)))
-#            
-#            if isinstance(axes, basestring):
-#                axes = (axes,)
-#            
-##            domain_axes = self.constructs(construct='domain_axis')
-#            domain_axes = self.select(construct='domain_axis')
-#
-#            axes_shape = []
-#            for axis in axes:
-#                if axis not in domain_axes:
-#                    raise ValueError(                    
-#"Can't set {!r}: Domain axis {!r} does not exist".format(
-#    construct, axis))
-#
-#                axes_shape.append(domain_axes[axis].get_size())
-#            #--- End: for
-#            axes_shape = tuple(axes_shape)
-#            extra_axes=0        
-#            if (construct.has_data() and 
-#                construct.data.shape[:construct.data.ndim - extra_axes] != axes_shape):
-#                raise ValueError(
-#                    "Can't set {!r}: Data array shape of {!r} does not match the shape required by domain axes {}: {}".format(
-#    construct, construct.data.shape, tuple(axes), axes_shape))
-#
-#            self._set_construct_axes(key, axes)
-#
-#        elif axes is not None:
-#            raise ValueError(
-#"Can't set {!r}: Can't provide domain axis constructs for {} construct".format(
-#    construct, self._construct_type_description(construct_type)))
-#        #--- End: if
-
 
         if construct_type in self._array_constructs:
             #---------------------------------------------------------
@@ -692,7 +630,7 @@ reference is replace with `None`.
     #--- End: def
 
     def _set_construct_data_axes(self, key, axes, construct=None):
-        '''<TODO>
+        '''TODO
 
 .. versionadded:: 1.7.0
 
@@ -752,13 +690,28 @@ reference is replace with `None`.
             axes_shape.append(domain_axes[axis].get_size())
 
         axes_shape = tuple(axes_shape)
-        extra_axes=0        
-        if (construct.has_data() and 
-            construct.data.shape[:construct.data.ndim - extra_axes] != axes_shape):
-            raise ValueError(
-"Can't set {!r}: Data array shape of {!r} does not match the shape required by domain axes {}: {}".format(
-    construct, construct.data.shape, tuple(axes), axes_shape))
 
+        extra_axes=0
+        data = construct.get_data(None)
+        if data is not None:
+            if data.shape[:data.ndim - extra_axes] != axes_shape:
+                raise ValueError(
+"Can't set {!r}: Data shape of {!r} does not match the shape required by domain axes {}: {}".format(
+    construct, data.shape, tuple(axes), axes_shape))
+
+        try:
+            bounds = construct.get_bounds(None)
+        except AttributeError:
+            pass
+        else:
+            if bounds is not None:
+                data = bounds.get_data(None)
+                if data is not None and data.shape[:len(axes_shape)] != axes_shape:
+                    raise ValueError(
+"Can't set {!r}: Bounds data shape of {!r} does not match the shape required by domain axes {}: {}".format(
+    construct, data.shape, tuple(axes), axes_shape))
+        #--- End: try
+        
         self._construct_axes[key] = tuple(axes)
     #--- End: def
 
@@ -933,142 +886,6 @@ TODO
         return key
     #--- End: def
         
-#    def constructs(self, construct=None, copy=False):
-#        '''Return metadata constructs
-#
-#Constructs are returned as values of a dictionary, keyed by their
-#construct identifiers.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `del_construct`, `get_construct`, `set_construct`
-#
-#:Parameters:
-#
-#    construct_type: (sequence of) `str`, optional
-#        Select constructs of the given type, or types. Valid types
-#        are:
-#
-#          ==========================  ================================
-#          *construct*                 Constructs
-#          ==========================  ================================
-#          ``'domain_ancillary'``      Domain ancillary constructs
-#          ``'dimension_coordinate'``  Dimension coordinate constructs
-#          ``'domain_axis'``           Domain axis constructs
-#          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-#          ``'cell_measure'``          Cell measure constructs
-#          ``'coordinate_reference'``  Coordinate reference constructs
-#          ``'cell_method'``           Cell method constructs
-#          ``'field_ancillary'``       Field ancillary constructs
-#          ==========================  ================================
-#
-#        *Parameter example:*
-#          ``construct='dimension_coordinate'``
-#
-#        *Parameter example:*
-#          ``construct=['auxiliary_coordinate']``
-#
-#        *Parameter example:*
-#          ``construct=['domain_ancillary', 'cell_method']``
-#
-#        Note that a domain never contains cell method nor field
-#        ancillary constructs.
-#
-#    copy: `bool`, optional
-#        If True then return copies of the constructs. By default the
-#        constructs are not copied.
-#
-#:Returns:
-#
-#    `Constructs`
-#        <TODO>
-#
-#**Examples:**
-#
-#>>> f.constructs()
-#<TODO>
-#
-#        '''
-#        return self.select(copy=copy)
-#        out = self._view(ignore=self._ignore)
-#                              
-#        
-#        if construct is not None:
-#            if isinstance(construct, basestring):
-#                construct = (construct,)
-#        #--- End: if
-#        
-#        if construct is not None:
-#            if construct == ('cell_method',):
-#                out = self._constructs[construct[0]].copy()
-#            else:                
-#                out = {}
-#                
-#            for ct in construct:
-#                ct = self._check_construct_type(ct)
-#                out.update(self._constructs[ct])            
-#        else:
-#            out = {}
-#            ignore = self._ignore
-#            for key, value in self._constructs.items():
-#                if key not in ignore:
-#                    out.update(value)
-#        #--- End: if
-#
-#        if copy:
-#            for key, construct in list(out.items()):
-#                out[key] = construct.copy()
-#        #--- End: if
-#
-#        return out
-    #--- End: def
-
-#    def constructs_data_axes(self):
-#        '''Return the domain axes spanned by metadata construct data arrays.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `constructs`
-#
-#:Returns:
-#
-#    `dict`
-#        <TODO>
-#        The identifiers of the domain axes constructs spanned by
-#        metadata construct data arrays. If a metadata construct does
-#        not have a data array then `None` is returned.
-#
-#**Examples:**
-#
-#>>> f.constructs_data_axes()
-#<TODO>
-#
-#        '''
-##        if cid is None:
-#        # Return all of the constructs' axes
-#        if not self._ignore:
-#            return self._construct_axes.copy()
-#        else:
-#            ignore = self._ignore
-#            out = {}
-#            for construct_type, keys in self._constructs.items():
-#                if construct_type not in ignore:
-#                    for key in keys:
-#                        _ = self._construct_axes.get(key)
-#                        if _ is not None:
-#                            out[key] = _
-#            #--- End: for
-#
-#            return out
-#        #--- End: if
-        
-#        # Return a particular construct's axes
-#        if self._ignore and self.construct_type(cid) is None:
-#            cid = None#
-#
-#        return self._construct_axes.get(cid)
-    #--- End: def
-    
     def data_axes(self):
         '''Return the domain axes spanned by all construct data arrays.
 
@@ -1130,102 +947,6 @@ TODO
         return type(self)(source=self, copy=True, _view=False,
                           _use_data=data, _ignore=self._ignore)
     #--- End: def
-
-
-#    def get_construct(self, key):
-#        '''Return a metadata construct.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `del_construct`, `select`, `set_construct`
-#
-#:Parameters:
-#
-#    key: `str`
-#        The identifier of the metadata construct.
-#
-#        *Parameter example:*
-#          ``key='domainaxis1'``
-#
-#:Returns:
-#
-#        The metadata construct.
-#
-#**Examples:**
-#
-#>>> f.constructs()
-#{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>,
-# 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>,
-# 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:greek_letters(10) >,
-# 'cellmethod0': <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>,
-# 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
-# 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-# 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-# 'domainaxis1': <DomainAxis: 10>,
-# 'domainaxis2': <DomainAxis: 9>}
-#>>> f.get_construct('dimensioncoordinate1')
-#<DimensionCoordinate: grid_latitude(10) degrees>
-#
-#        '''
-#        construct_type = self.construct_type(key)
-#        if construct_type is None:
-#            raise ValueError('No metadata construct found')
-#            
-#        d = self._constructs.get(construct_type)
-#        if d is None:
-#            d = {}
-#            
-#        try:            
-#            return d[key]
-#        except KeyError:
-#            raise ValueError('No metadata construct found')
-#    #--- End: def
-    
-#    def has_construct(self, key):
-#        '''Whether a construct exists.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct`
-#
-#:Parameters:
-#
-#    key: `str`
-#        The identifier of the metadata construct.
-#
-#        *Parameter example:*
-#          ``key='cellmeasure1'``
-#
-#:Returns:
-#
-#    `bool`
-#        True if the metadata construct exists, otherwise False.
-#
-#**Examples:**
-#
-#>>> f.constructs()
-#{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>,
-# 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>,
-# 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:greek_letters(10) >,
-# 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
-# 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-# 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-# 'domainaxis1': <DomainAxis: 10>,
-# 'domainaxis2': <DomainAxis: 9>}
-#>>> f.has_construct('dimensioncoordinate1')
-#True
-#>>> f.has_construct('domainaxis99')
-#False
-#
-#        '''
-#        try:
-#            self.get_construct(key)
-#        except ValueError:
-#            return False
-#        else:
-#            return True        
-#    #--- End: def
 
     def new_identifier(self, construct_type):
         '''Return a new, unique identifier for a construct.
@@ -1319,74 +1040,6 @@ TODO
         return OrderedDict(self._constructs[tuple(self._ordered_constructs)[0]])
     #--- End: def
     
-#    def select(self, construct=None):
-#        '''Select metadata constructs.
-#
-#By default all metadata constructs are selected, but a subset may be
-#chosen via the optional parameters. If multiple parameters are
-#specified, then the constructs that satisfy *all* of the criteria are
-#returned.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `get`, `items`, `keys`, `values`
-#
-#:Parameters:
-#
-#    construct: (sequence of) `str`, optional
-#        Select constructs of the given type, or types. Valid types
-#        are:
-#
-#          ==========================  ================================
-#          *construct*                 Constructs
-#          ==========================  ================================
-#          ``'domain_ancillary'``      Domain ancillary constructs
-#          ``'dimension_coordinate'``  Dimension coordinate constructs
-#          ``'domain_axis'``           Domain axis constructs
-#          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-#          ``'cell_measure'``          Cell measure constructs
-#          ``'coordinate_reference'``  Coordinate reference constructs
-#          ``'cell_method'``           Cell method constructs
-#          ``'field_ancillary'``       Field ancillary constructs
-#          ==========================  ================================
-#
-#        *Parameter example:*
-#          ``construct='dimension_coordinate'``
-#
-#        *Parameter example:*
-#          ``construct=['auxiliary_coordinate']``
-#
-#        *Parameter example:*
-#          ``construct=['domain_ancillary', 'cell_method']``
-#
-#        Note that a domain can never contain cell method nor field
-#        ancillary constructs.
-#
-#:Returns:
-#
-#     `Constructs`
-#         <TODO>
-#
-#**Examples:**
-#
-#<TODO>
-#
-#        '''
-#        
-#        if construct is not None and isinstance(construct, basestring):
-#            construct = (construct,)
-#
-#        if construct:
-#            # Ignore the all but the requested construct types
-#            ignore = set(self._key_base)
-#            ignore.difference_update(set(construct))
-#        else:
-#            # Keep all construct types
-#            ignore = self._ignore
-#
-#        return type(self)(source=self, _ignore=ignore, _view=False, copy=False)
-#    #--- End: def
-
     def filter_by_type(self,*types):
         '''Select metadata constructs by their type.
 

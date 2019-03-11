@@ -1113,16 +1113,20 @@ variable should be pre-filled with missing values.
             print('    Geometry container =', repr(geometry_ncvar))
             print('        netCDF attributes:', attributes[geometry_ncvar])
 
+        if geometry_ncvar in g['geometries']:
+            # We've already parsed this geometry container
+            return
+        
         geometry_type = attributes[geometry_ncvar].get('geometry_type')
             
         g['geometries'][geometry_ncvar] = {'geometry_type': geometry_type}
 
+        geometry_dimension = attributes[geometry_ncvar].get('geometry_dimension')
         node_coordinates   = attributes[geometry_ncvar].get('node_coordinates')
         node_count         = attributes[geometry_ncvar].get('node_count')
         coordinates        = attributes[geometry_ncvar].get('coordinates')
         part_node_count    = attributes[geometry_ncvar].get('part_node_count')
         interior_ring      = attributes[geometry_ncvar].get('interior_ring')
-        geometry_dimension = attributes[geometry_ncvar].get('geometry_dimension')
         
         parsed_node_coordinates   = self._split_string_by_white_space(geometry_ncvar, node_coordinates)
         parsed_interior_ring      = self._split_string_by_white_space(geometry_ncvar, interior_ring)
@@ -1252,7 +1256,7 @@ variable should be pre-filled with missing values.
             parts_data = self.implementation.get_data(parts)
             nodes_per_geometry_data = self.implementation.get_data(
                 nodes_per_geometry)
-            
+
             index = self.implementation.initialise_Index()
             self.implementation.set_data(index, data=parts_data)
             
@@ -1302,8 +1306,9 @@ variable should be pre-filled with missing values.
         #--- End: if
         
         g['geometries'][geometry_ncvar].update(
-            {'node_coordinates': parsed_node_coordinates,
-             'node_dimension'  : node_dimension}
+            {'geometry_dimension': geometry_dimension,
+             'node_coordinates'  : parsed_node_coordinates,
+             'node_dimension'    : node_dimension}
         )
     #--- End: def
 
@@ -1994,7 +1999,7 @@ variable should be pre-filled with missing values.
                 else:
                     # Insert auxiliary coordinate
                     if verbose:
-                        print('    [6 PPP] Inserting', repr(coord))
+                        print('    [6] Inserting', repr(coord))
                         
                     aux = self.implementation.set_auxiliary_coordinate(
                         f, coord, axes=dimensions, copy=False)
@@ -2059,8 +2064,11 @@ variable should be pre-filled with missing values.
                 if verbose:
                     print('    [6] Inserting', repr(coord))
 
+                # TODO check that geometry_dimension is a dimension of the data variable
                 aux = self.implementation.set_auxiliary_coordinate(
-                    f, coord, axes=dimensions, copy=False)
+                    f, coord,
+                    axes=(g['ncdim_to_axis'][geometry['geometry_dimension']],),
+                    copy=False)
                     
                 self._reference(node_ncvar)
                 ncvar_to_key[node_ncvar] = aux
@@ -2421,7 +2429,7 @@ variable should be pre-filled with missing values.
 
 :Returns:
 
-        A dictionary contining geometry container information. If
+        A dictionary containing geometry container information. If
         there is no geometry container for this data variable, or if
         the file version is pre-CF-1.8, then `None` is returned.
 
@@ -4275,7 +4283,7 @@ CF-1.7 Appendix A
     #--- End: def
                 
     def _check_geometry_dimension(self, parent_ncvar, geometry_dimension):
-        '''asdasd
+        '''TODO
 
 .. versionadded:: 1.8.0
 

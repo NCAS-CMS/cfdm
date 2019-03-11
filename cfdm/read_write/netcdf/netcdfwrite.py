@@ -19,55 +19,6 @@ from . import constants
 zzz = False
 
 
-def aaaaazzz(field):
-    '''
-    '''
-    geometry_types = set(())
-    
-    gc = {}        
-    for key, coord in field.auxiliary_coordinates.items():
-        geometry_type = coord.get_geometry(None)
-        if geometry_type not in ('line', 'point', 'polygon'):
-            # No geometry bounds for this auxiliary coordinate
-            continue
-        
-        bounds = coord.get_bounds(None)
-        if bounds is None:
-            # No geometry bounds for this auxiliary coordinate                
-            continue
-        
-        coord_ncvar = coord.nc_get_variable(None)
-        node_ncvar = bounds.nc_get_variable(None)
-        
-#        gc[geometry_type]['geometry_type'] = geometry_type
-#        gc[geometry_type].setdefault('node_coordinates', []).append(node_ncvar)
-#        gc[geometry_type].setdefault('coordinates', []).append(coord_ncvar)
-        gc[geometry_type]['geometry_type'] = geometry_type
-        gc[geometry_type].setdefault('node_coordinates', []).append(bounds)
-        gc[geometry_type].setdefault('coordinates', []).append(coord)
-        
-        for cr in field.coordinate_references.values():
-            if key in cr.coordinates():
-#                gc[geometry_type].setdefault('grid_mapping', []).append(cr_ncvar)
-                gc[geometry_type].setdefault('grid_mapping', []).append(cr)
-        #--- End: for
-        
-        if 'grid_mapping' in gc[geometry_type]:
-            if len(gc[geometry_type]['grid_mapping']) > 1:
-                raise ValueError(
-"Can't write {!r}: Geometry has multiple grid mappings: {!r}".format(
-    gc[geometry_type]['grid_mapping']))
-
-            gc[geometry_type]['grid_mapping'] = gc[geometry_type]['grid_mapping'].pop()
-    #--- End: for
-
-    out = []
-    for x, v in gc.items():
-        out.append(_GeometryContainer(**v))
-                   
-    return out
-#--- End: def                   
-
 class _GeometryContainer(object):
     def __init__(self, **kwargs):
         '''
@@ -863,10 +814,12 @@ a new netCDF bounds dimension.
 
             print('coord=', repr(coord))
             print('bounds=', repr(bounds))
-            bounds_ncvar = g['seen'][id(bounds)]['ncvar']
 
+            # node_coordinates
+            bounds_ncvar = g['seen'][id(bounds)]['ncvar']
             gc[geometry_type].setdefault('node_coordinates', []).append(bounds_ncvar)
-            
+
+            # coordinates
             try:
                 coord_ncvar  = g['seen'][id(coord)]['ncvar']
             except KeyError:
@@ -874,37 +827,60 @@ a new netCDF bounds dimension.
                 pass
             else:
                 gc[geometry_type].setdefault('coordinates', []).append(coord_ncvar)
-            
+
+            # grid_mapping
             grid_mappings = [
                 g['seen'][id(cr)]['ncvar'] for cr in field.coordinate_references.values()
                 if (cr.coordinate_conversion.get_parameter('grid_mapping_name', None) is not None and 
                     key in cr.coordinates())]
             gc[geometry_type].setdefault('grid_mapping', []).extend(grid_mappings)
+
+            # interior_ring
+            ir = coord.get_interior_ring(None)
+            if ir is not None:
+                try:
+                    ir_ncvar  = g['seen'][id(ir)]['ncvar']
+                except KeyError:
+                    # There is no netCDF interior ring variable
+                    pass
+                else:
+                    gc[geometry_type].setdefault('interior_ring', []).append(ir_ncvar)
         #--- End: for
 
         if not gc:
             # This field has no geometries
             return {}
 
-        if len(gc) > 1:
-            # This field has more than one geometry
-            raise ValueError(
-"Can't write {!r}: Multiple geometry containers: {!r}".format(
-    field, list(gc.keys())))
-
         for x in gc.values():
+            # node_coordinates
             x['node_coordinates'] = ' '.join(sorted(x['node_coordinates']))
 
+            # coordinates
             x['coordinates'] = ' '.join(sorted(x['coordinates']))
 
+            # grid_mapping
             grid_mappings = set(x['grid_mapping'])
-            if len(grid_mappings) > 1:
+            if len(grid_mappings) == 1:
+                x['grid_mapping'] = grid_mappings.pop()
+            elif len(grid_mappings) > 1:
                 raise ValueError(
-"Can't write {!r}: Geometry container has multiple grid mappings: {!r}".format(
+"Can't write {!r}: Geometry container has multiple grid mapping variables: {!r}".format(
     field, x['grid_mapping']))
 
-            x['grid_mapping'] = grid_mappings.pop()
+            # interior_ring
+            ir = set(x['ir'])
+            if len(ir) == 1:
+                x['interior_ring'] = ir.pop()
+            elif len(ir) > 1:
+                raise ValueError(
+"Can't write {!r}: Geometry container has multiple interior ring variables: {!r}".format(
+    field, x['ir']))
         #--- End: for
+
+        if len(gc) > 1:
+            raise ValueError(
+"Can't write {!r}: Multiple geometry containers: {!r}".format(
+    field, list(gc.values())))
 
         _, geometry_container = gc.popitem()
         
@@ -979,7 +955,7 @@ dictionary.
         #--- End: for
 
         # Still here? Then write the geometry container to the file
-        ncvar = self._netcdf_name(f.nc_get_geometry_container('geometry')) # TODO change to nc_get_geometry
+        ncvar = self._netcdf_name(f.nc_get_geometry_container('geometry'))
         
         if g['verbose']:
             print('    Writing geometry container to netCDF variable: {}'.format(ncvar))
@@ -996,7 +972,7 @@ dictionary.
         
         # Update the 'geometry_containers' dictionary
         g['geometry_containers'][ncvar] = geometry_container
-        print ('lll',  g['geometry_containers'])
+        print ('geometry_containers =',  g['geometry_containers'])
 
         return ncvar
     #--- End: def
@@ -1214,7 +1190,7 @@ then the input coordinate is not written.
             if (not self.implementation.get_properties(coord) and
                 self.implementation.get_data(coord, default=None) is None):
                 # No coordinates, but possibly bounds
-                self._write_bounds(coord, ncdimensions)
+                self._write_bounds(coord, ncdimensions, None)
             else:
                 ncvar = self._create_netcdf_variable_name(coord,
                                                           default='auxiliary')

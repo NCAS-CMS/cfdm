@@ -10,7 +10,11 @@ import netCDF4
 
 import cfdm
 
-def _make_geometry_1_file(filename):        
+def _make_geometry_1_file(filename):
+    '''Make a netCDF file with 2 node coordinates variables, each of which
+has a corresponding auxiliary coordinate variable.
+
+    '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
     n.Conventions = 'CF-1.8'
@@ -46,6 +50,7 @@ def _make_geometry_1_file(filename):
     geometry_container.geometry_type = "line"
     geometry_container.node_count = "node_count"
     geometry_container.node_coordinates = "x y"
+    geometry_container.geometry_dimension = "instance"
     
     node_count = n.createVariable('node_count', 'i4', ('instance',))
     node_count[...] = [3, 2]
@@ -82,6 +87,10 @@ def _make_geometry_1_file(filename):
 #--- End: def
 
 def _make_geometry_2_file(filename):        
+    '''Make a netCDF file with 3 node coordinates variables, only two of
+which have a corresponding auxiliary coordinate variable.
+
+    '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
     n.Conventions = 'CF-1.8'
@@ -117,6 +126,7 @@ def _make_geometry_2_file(filename):
     geometry_container.geometry_type = "line"
     geometry_container.node_count = "node_count"
     geometry_container.node_coordinates = "x y z"
+    geometry_container.geometry_dimension = "instance"
     
     node_count = n.createVariable('node_count', 'i4', ('instance',))
     node_count[...] = [3, 2]
@@ -145,12 +155,26 @@ def _make_geometry_2_file(filename):
     someData.geometry = "geometry_container"
     someData[...] = [[1, 2, 3, 4],
                      [5, 6, 7, 8]]
+
+    someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
+    someData_2.coordinates = "time lat lon"
+    someData_2.grid_mapping = "datum"
+    someData_2.geometry = "geometry_container"
+    someData_2[...] = [[1, 2, 3, 4],
+                       [5, 6, 7, 8]]
+
     n.close()
     
     return filename
 #--- End: def
 
 def _make_geometry_3_file(filename):        
+    '''Make a netCDF file with 3 node coordinates variables, each of which
+contains only one point, only two of which have a corresponding
+auxiliary coordinate variables. There is no node count variable.
+
+    '''
+    
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
     n.Conventions = 'CF-1.8'
@@ -187,19 +211,19 @@ def _make_geometry_3_file(filename):
     geometry_container.node_coordinates = "x y z"
     geometry_container.geometry_dimension = "instance"
     
-    x = n.createVariable('x', 'f8', ('instance',))
+    x = n.createVariable('x', 'f8', ('node',))
     x.units = "degrees_east"
     x.standard_name = "longitude"
     x.axis = "X"
     x[...] = [30, 10, 40]
     
-    y = n.createVariable('y', 'f8', ('instance',))
+    y = n.createVariable('y', 'f8', ('node',))
     y.units = "degrees_north"
     y.standard_name = "latitude"
     y.axis = "Y"
     y[...] = [10, 30, 40]
     
-    z = n.createVariable('z', 'f8', ('instance',))
+    z = n.createVariable('z', 'f8', ('node',))
     z.units = "m"
     z.standard_name = "altitude"
     z.axis = "Z"
@@ -221,6 +245,78 @@ def _make_geometry_3_file(filename):
                        [50,  60,  70,  80],
                        [90, 100, 110, 120]]
     
+    n.close()
+    
+    return filename
+#--- End: def
+
+def _make_geometry_4_file(filename):
+    '''Make a netCDF file with 2 node coordinates variables, none of which
+have a corresponding auxiliary coordinate variable.
+
+    '''
+    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
+    
+    n.Conventions = 'CF-1.8'
+    n.featureType = 'timeSeries'
+    
+    time     = n.createDimension('time'    , 4)
+    instance = n.createDimension('instance', 2)
+    node     = n.createDimension('node'    , 5)
+    strlen   = n.createDimension('strlen'  , 2)
+
+    # Variables
+    t = n.createVariable('time', 'i4', ('time',))
+    t.standard_name = "time" 
+    t.units = "days since 2000-01-01"
+    t[...] = [1, 2, 3, 4]
+
+    instance_id = n.createVariable('instance_id', 'S1', ('instance', 'strlen'))
+    instance_id.cf_role = "timeseries_id"
+    instance_id[...] = [['x', '1'],
+                        ['y', '2']]
+
+    datum = n.createVariable('datum', 'i4', ())
+    datum.grid_mapping_name = "latitude_longitude"
+    datum.longitude_of_prime_meridian = 0.0
+    datum.semi_major_axis = 6378137.0
+    datum.inverse_flattening = 298.257223563
+    
+    geometry_container = n.createVariable('geometry_container', 'i4', ());
+    geometry_container.geometry_type = "line"
+    geometry_container.node_count = "node_count"
+    geometry_container.node_coordinates = "x y"
+    geometry_container.geometry_dimension = "instance"
+    
+    node_count = n.createVariable('node_count', 'i4', ('instance',))
+    node_count[...] = [3, 2]
+    
+    x = n.createVariable('x', 'f8', ('node',))
+    x.units = "degrees_east"
+    x.standard_name = "longitude"
+    x.axis = "X"
+    x[...] = [30, 10, 40, 50, 50]
+    
+    y = n.createVariable('y', 'f8', ('node',))
+    y.units = "degrees_north"
+    y.standard_name = "latitude"
+    y.axis = "Y"
+    y[...] = [10, 30, 40, 60, 50]
+    
+    someData_1 = n.createVariable('someData_1', 'f8', ('instance', 'time'))
+    someData_1.coordinates = "instance_id"
+    someData_1.grid_mapping = "datum"
+    someData_1.geometry = "geometry_container"
+    someData_1[...] = [[1, 2, 3, 4],
+                       [5, 6, 7, 8]]
+
+    someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
+    someData_2.coordinates = "instance_id"
+    someData_2.grid_mapping = "datum"
+    someData_2.geometry = "geometry_container"
+    someData_2[...] = [[10, 20, 30, 40],
+                       [50, 60, 70, 80]]
+
     n.close()
     
     return filename
@@ -289,7 +385,8 @@ def _make_interior_ring_file(filename):
     geometry_container.coordinates = "lat lon"
     geometry_container.part_node_count = "part_node_count"
     geometry_container.interior_ring = "interior_ring"
-
+    geometry_container.geometry_dimension = "instance"
+    
     node_count = n.createVariable('node_count', 'i4', ('instance'))
     node_count[...] = [9, 3]
 
@@ -312,6 +409,13 @@ def _make_interior_ring_file(filename):
     someData[...]= [[1, 2, 3, 4],
                     [5, 6, 7, 8]]
   
+    someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
+    someData_2.coordinates = "time lat lon instance_id"
+    someData_2.grid_mapping = "datum"
+    someData_2.geometry = "geometry_container"
+    someData_2[...]= [[1, 2, 3, 4],
+                      [5, 6, 7, 8]]
+  
     n.close()
     
     return filename
@@ -320,6 +424,7 @@ def _make_interior_ring_file(filename):
 geometry_1_file    = _make_geometry_1_file('geometry_1.nc')
 geometry_2_file    = _make_geometry_2_file('geometry_2.nc')
 geometry_3_file    = _make_geometry_3_file('geometry_3.nc')
+geometry_4_file    = _make_geometry_4_file('geometry_4.nc')
 interior_ring_file = _make_interior_ring_file('geometry_interior_ring.nc')
 
 class DSGTest(unittest.TestCase):
@@ -327,13 +432,14 @@ class DSGTest(unittest.TestCase):
         self.geometry_1_file = geometry_1_file
         self.geometry_2_file = geometry_2_file
         self.geometry_3_file = geometry_3_file
+        self.geometry_4_file = geometry_4_file
         self.geometry_interior_ring_file = interior_ring_file
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
         os.close(fd)
         
         self.test_only = []
-#        self.test_only = ['test_geometry_1']
+#        self.test_only = ['test_geometry_4']
 #        self.test_only = ['test_geometry_3']
 
     #--- End: def
@@ -352,9 +458,7 @@ class DSGTest(unittest.TestCase):
 
         for g in f:
             self.assertTrue(g.equals(g.copy()))
-
-#        f[0].dump()
-#        f[1].dump()
+#            g.dump()
     #--- End: def
 
     def test_geometry_2(self):
@@ -363,11 +467,11 @@ class DSGTest(unittest.TestCase):
                 
         f = cfdm.read(self.geometry_2_file, verbose=False)
 
-        self.assertTrue(len(f) == 1)
-        f = f[0]
-        self.assertTrue(f.equals(f.copy()))
+        self.assertTrue(len(f) == 2)
 
-#        f.dump()
+        for g in f:
+            self.assertTrue(g.equals(g.copy()))
+#            g.dump()
     #--- End: def
 
     def test_geometry_3(self):
@@ -381,9 +485,21 @@ class DSGTest(unittest.TestCase):
         for g in f:
             self.assertTrue(g.equals(g.copy()))
             self.assertTrue(len(g.auxiliary_coordinates) == 3)
-        
-        f[0].dump()
-        f[1].dump()
+#            g.dump()
+    #--- End: def
+
+    def test_geometry_4(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+                
+        f = cfdm.read(self.geometry_4_file, verbose=False)
+
+        self.assertTrue(len(f) == 2)
+
+        for g in f:
+            self.assertTrue(g.equals(g.copy()))
+            self.assertTrue(len(g.auxiliary_coordinates) == 3)
+#            g.dump()
     #--- End: def
 
     def test_geometry_interior_ring(self):
@@ -392,12 +508,11 @@ class DSGTest(unittest.TestCase):
 
         f = cfdm.read(self.geometry_interior_ring_file, verbose=False)
 
-        self.assertTrue(len(f) == 1)
+        self.assertTrue(len(f) == 2)
 
         for g in f:
             self.assertTrue(g.equals(g.copy()))
-
-#        f[0].dump()
+#            g.dump()
     #--- End: def
 
 #--- End: class
