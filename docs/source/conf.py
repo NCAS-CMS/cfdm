@@ -234,7 +234,7 @@ html_theme_options = {
 #    "sidebar_search_button" :  '#ED1010',
 
     'fixed_sidebar': 'true',
-    'sidebar_width': '20%',
+#    'sidebar_width': '15%',
     'page_width': '85%',
 
     'github_user': 'davidhassell',

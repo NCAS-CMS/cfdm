@@ -999,13 +999,16 @@ name.
 
     out: `dict`
 
-:Examples:
+**:Examples:**
 
 >>> _write_bounds(c, ('dim2',))
 {'bounds': 'lat_bounds'}
 
 >>> _write_bounds(c, ('dim2',))
 {'nodes': 'x'}
+
+>>> _write_bounds(c, ('dim2',))
+{'climatology': 'time_bnds'}
 
         '''
         g = self.write_vars
@@ -1091,6 +1094,154 @@ name.
         g['bounds'][coord_ncvar] = ncvar
             
         return extra
+    #--- End: def
+            
+    def _write_node_coordinate(self, coord, coord_ncvar=None):
+        '''Create a bounds netCDF variable, creating a new bounds netCDF
+dimension if required. Return the bounds variable's netCDF variable
+name.
+    
+.. note:: This function updates ``g['netcdf']``.
+    
+:Parameters:
+
+    coord: 
+
+    coord_ncvar: `str`
+        The netCDF variable name of the parent variable
+
+:Returns:
+
+    out: `dict`
+
+**:Examples:**
+
+>>> _write_bounds(c, 1)
+{'nodes': 'x'}
+
+        '''
+        g = self.write_vars
+
+        bounds = self.implementation.get_bounds(coord, None)
+        if bounds is None:
+            return {}
+
+        data = self.implementation.get_data(bounds, None) 
+        if data is None:
+            return {}
+
+        # Still here? Then this coordinate has a bounds attribute
+        # which contains data.
+        extra = {}
+        
+        size = numpy.ma.count(data.array) # TODO cfdmimplementation
+    
+        ncdim = self._netcdf_name('node', dimsize=size)
+    
+        if self._already_in_file(bounds, (ncdim,)):
+            # This node coordinates variable has been previously
+            # created, so no need to do so again.
+            ncvar = g['seen'][id(bounds)]['ncvar']
+        else:
+            # This node coordinates variable has not been previously
+            # created, so create it now.
+            ncdim_to_size = g['ncdim_to_size']
+            if ncdim not in ncdim_to_size:
+                if g['verbose']:
+                    print('    Writing size', size, 'netCDF dimension for node coordinates', ncdim)
+                    
+                ncdim_to_size[ncdim] = size
+                g['netcdf'].createDimension(ncdim, size)
+
+            # Set an appropriate default netCDF node coordinates
+            # variable name
+            axis = self.implementation.get_property(bounds, 'axis')
+            if axis is not None:
+                default = str(axis).lower()
+            else:
+                default = 'nodes'
+
+            ncvar = self.implementation.get_ncvar(bounds, default=default)
+            ncvar = self._netcdf_name(ncvar)
+            
+            # Create the netCDF node coordinates variable
+            self._write_netcdf_variable(ncvar, (ncdim,), bounds, omit=omit)
+        #--- End: if
+
+        if coord_ncvar is not None:
+            g['bounds'][coord_ncvar] = ncvar
+            
+        return {'nodes': ncvar}
+    #--- End: def
+
+    def _write_part_node_count(self, coord):
+        '''Create a bounds netCDF variable, creating a new bounds netCDF
+dimension if required. Return the bounds variable's netCDF variable
+name.
+    
+:Parameters:
+
+    coord: 
+
+    coord_ncvar: `str`
+        The netCDF variable name of the parent variable
+
+:Returns:
+
+    out: `dict`
+
+**:Examples:**
+
+>>> _write_part_node_count(b)
+{'part_node_count': 'pnc'}
+
+>>> _write_part_node_count(b)
+{}
+
+        '''
+        if coord.bounds.data.ndim < 3: # TODO cfdmimplemtation
+            # Only one part per cell, so no need for a part node count
+            # variable.
+            return {}
+
+        g = self.write_vars
+
+        array = numpy.trim_zeros(numpy.ma.count(coord.bounds.data.array, axis=2).flatten())
+
+        pnc = self.implementation.get_count_variable(coord.bounds)
+        if pnc is None:
+            print ("TODO create an empty count variable now ....")
+        else: 
+            pnc = self.implementation.copy_construct(pnc)
+            
+        data = self.implementation.initialise_Data(array=array, copy=False)
+        self.implementation.set_data(pnc, data, copy=False)
+
+        size = array.size
+        part_ncdim = self.implementation.nc_get_dimension(pnc, 'part')
+        part_ncdim = self._netcdf_name(part_ncdim, dimsize=size)
+    
+        if self._already_in_file(pnc, (part_ncdim,)):
+            # This part node count variable has been previously
+            # created, so no need to do so again.
+            ncvar = g['seen'][id(pnc)]['ncvar']
+        else:
+            ncdim_to_size = g['ncdim_to_size']
+            if part_ncdim not in ncdim_to_size:
+                if g['verbose']:
+                    print('    Writing size', size, 'netCDF dimension for part node counts', part_ncdim)
+                        
+                ncdim_to_size[part_ncdim] = size
+                g['netcdf'].createDimension(part_ncdim, size)
+            
+            ncvar = self.implementation.get_ncvar(pnc, default='part_node_count')
+            ncvar = self._netcdf_name(ncvar)
+            
+            # Create the netCDF part_node_count variable
+            self._write_netcdf_variable(ncvar, (part_ncdim,), pnc)
+
+        return {'part_node_count': ncvar,
+                'part_ncdim'     : part_ncdim}
     #--- End: def
             
     def _write_scalar_coordinate(self, f, key, coord_1d, axis, coordinates,

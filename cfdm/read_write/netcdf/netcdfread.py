@@ -1184,8 +1184,8 @@ variable should be pre-filled with missing values.
         if node_count is None:
             # --------------------------------------------------------
             # There is no node_count variable, so all geometries must
-            # be single part point geometries => we can create a
-            # node_count variable in this case.
+            # be size 1 point geometries => we can create a node_count
+            # variable in this case.
             # --------------------------------------------------------
             if geometry_dimension is None:                
                 self._add_message(None, geometry_ncvar,

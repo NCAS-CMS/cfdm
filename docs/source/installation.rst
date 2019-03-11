@@ -106,10 +106,10 @@ To install from source:
 
        python setup.py install --home=<directory>
 
-.. _cfdump-command-line-utility:
+.. _cfdump-utility:
 
-**cfdump command line utility**
--------------------------------
+**cfdump utility**
+------------------
 
 ----
 

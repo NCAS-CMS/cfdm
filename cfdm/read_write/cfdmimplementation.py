@@ -757,7 +757,7 @@ netCDF unlimited dimensions.
 >>> w.get_measure(c)
 'area'
         '''
-        return construct.get_data().get_count_variable()
+        return construct.get_data().get_count_variable(default=None)
     #--- End: def
     
     def get_index_variable(self, construct):
@@ -773,7 +773,7 @@ netCDF unlimited dimensions.
 :Examples:
 
         '''
-        return construct.get_data().get_index_variable()
+        return construct.get_data().get_index_variable(default=None)
     #--- End: def
     
     def get_list_variable(self, construct):
@@ -800,7 +800,7 @@ netCDF unlimited dimensions.
 >>> w.get_measure(c)
 'area'
         '''
-        return construct.get_data().get_list_variable()
+        return construct.get_data().get_list_variable(default=None)
     #--- End: def
     
     def get_measure(self, cell_measure):
@@ -827,7 +827,7 @@ netCDF unlimited dimensions.
 >>> w.get_measure(c)
 'area'
         '''
-        return cell_measure.get_measure(None)
+        return cell_measure.get_measure(default=None)
     #--- End: def
     
     def nc_get_dimension(self, parent, default=None):

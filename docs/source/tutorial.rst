@@ -1274,7 +1274,7 @@ Metadata constructs share the :ref:`same API as the field construct
    :caption: *Retrieve the "longitude" metadata construct, set a new
              property, and then inspect all of the properties.*
 
-   >>> lon = q.constructs('longitude').value()
+   >>> lon = q.construct('longitude')
    >>> lon
    <DimensionCoordinate: longitude(8) degrees_east>
    >>> lon.set_property('long_name', 'Longitude')
@@ -1551,7 +1551,9 @@ construct <Data>` for accessing its data.
 The `Bounds` instance inherits the descriptive properties from its
 parent coordinate construct, but it may also have its own properties
 (although setting these is not recommended).
-    
+
+.. TODO CF-1.8 change not on bounds properties
+
 .. code-block:: python3
    :caption: *Inspect the inherited and bespoke properties of a Bounds
              instance.*
@@ -2740,6 +2742,18 @@ It is possible to create netCDF unlimited dimensions and set the HDF5
 chunk size using the `nc_unlimited_dimensions` and
 `~Field.nc_chunksize` methods of the field construct.
 
+A field construct is not transformed through being written to a file
+on disk and subsequently read back from that file.
+
+.. code-block:: python3
+   :caption: *Read a file that has been created by writing a field
+             construct, and compare the result with the original field
+             construct in memory.*
+	     
+   >>> f = cfdm.read('q_file.nc')[0]
+   >>> q.equals(f)
+   True
+
 .. _Scalar-coordinate-variables
 
 **Scalar coordinate variables**
@@ -2970,7 +2984,7 @@ its `~CellMeasure.nc_external` method.
 
 To create a reference to an external variable in the an output netCDF
 file and simultaneously create an external file containing the
-variable set the status of the cell measure construct to "external"
+variable, set the status of the cell measure construct to "external"
 and provide an external file name to the `cfdm.write` function:
 
 .. code-block:: python3
@@ -2981,8 +2995,8 @@ and provide an external file name to the `cfdm.write` function:
 
 .. _External-variables-with-cfdump:
 
-**External variables with cfdump**
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**External files with cfdump**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 One or more external files may also be included with :ref:`cfdump
 <cfdump>`.
@@ -3018,7 +3032,7 @@ One or more external files may also be included with :ref:`cfdump
 
 ----
 
-The CF conventions have support for space saving by identifying
+The CF conventions have support for saving space by identifying
 unwanted missing data.  Such compression techniques store the data
 more efficiently and result in no precision loss. The CF data model,
 however, views compressed arrays in their uncompressed form.
@@ -3029,6 +3043,8 @@ uncompressed form, even though the "underlying array" (i.e. the actual
 array on disk or in memory that is contained in a `Data` instance) is
 compressed. This means that the cfdm package includes algorithms for
 uncompressing each type of compressed array.
+
+.. TODO CF-1.8 Note that geometries use ragged arrays
 
 There are two basic types of compression supported by the CF
 conventions: ragged arrays (as used by :ref:`discrete sampling
@@ -3225,17 +3241,18 @@ field construct with an underlying contiguous ragged array:
    import cfdm
    
    # Define the ragged array values
-   ragged_array = numpy.array([280, 282.5, 281, 279, 278, 279.5],
+   ragged_array = numpy.array([280, 281, 279, 278, 279.5],
                               dtype='float32')
 
    # Define the count array values
-   count_array = [2, 4]
+   count_array = [1, 4]
 
    # Create the count variable
    count_variable = cfdm.Count(data=cfdm.Data(count_array))
    count_variable.set_property('long_name', 'number of obs for this timeseries')
 
-   # Create the contiguous ragged array object
+   # Create the contiguous ragged array object, specifying the
+   # uncompressed shape
    array = cfdm.RaggedContiguousArray(
                     compressed_array=cfdm.NumpyArray(ragged_array),
                     shape=(2, 4), size=8, ndim=2,
@@ -3263,17 +3280,17 @@ The new field construct can now be inspected and written to a netCDF file:
    >>> T
    <Field: air_temperature(key%domainaxis1(2), key%domainaxis0(4)) K>
    >>> print(T.data.array)
-   [[280.0 282.5    --    --]
+   [[280.0    --    --    --]
     [281.0 279.0 278.0 279.5]]
    >>> T.data.get_compression_type()
    'ragged contiguous'
    >>> print(T.data.compressed_array)
-   [280.  282.5 281.  279.  278.  279.5]
+   [280.  281.  279.  278.  279.5]
    >>> count_variable = T.data.get_count_variable()
    >>> count_variable
    <Count: long_name=number of obs for this timeseries(2) >
    >>> print(count_variable.data.array)
-   [2 4]
+   [1 4]
    >>> cfdm.write(T, 'T_contiguous.nc')
 
 The content of the new file is:
@@ -3286,7 +3303,7 @@ The content of the new file is:
    netcdf T_contiguous {
    dimensions:
    	dim = 2 ;
-   	element = 6 ;
+   	element = 5 ;
    variables:
    	int64 count(dim) ;
    		count:long_name = "number of obs for this timeseries" ;
@@ -3300,9 +3317,9 @@ The content of the new file is:
 		:featureType = "timeSeries" ;
    data:
    
-    count = 2, 4 ;
+    count = 1, 4 ;
    
-    air_temperature = 280, 282.5, 281, 279, 278, 279.5 ;
+    air_temperature = 280, 281, 279, 278, 279.5 ;
    }
 
 .. _Gathering:
@@ -3442,7 +3459,8 @@ simple field construct with an underlying gathered array:
    # Create the list variable
    list_variable = cfdm.List(data=cfdm.Data(list_array))
 
-   # Create the gathered array object
+   # Create the gathered array object, specifying the uncompressed
+   # shape
    array = cfdm.GatheredArray(
                     compressed_array=cfdm.NumpyArray(gathered_array),
 		    compressed_dimension=1,
