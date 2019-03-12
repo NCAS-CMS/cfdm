@@ -90,7 +90,7 @@ x.__str__() <==> str(x)
 
     def dump(self, display=True, _key=None, _omit_properties=(),
              _prefix='', _title=None, _create_title=True, _level=0,
-             _axes=None, _axis_names=None):
+             _axes=None, _axis_names=None, _omit_data=False):
         '''A full description.
 
 .. versionadded:: 1.7.0
@@ -142,23 +142,25 @@ x.__str__() <==> str(x)
         # ------------------------------------------------------------
         # Data
         # ------------------------------------------------------------
-        data = self.get_data(None)
-        if data is not None:
-            if _axes and _axis_names:
-                x = [_axis_names[axis] for axis in _axes]
-                ndim = data.ndim
-                x = x[:ndim]                    
-                if len(x) < ndim:
-                    x.extend([str(size) for size in data.shape[len(x):]])
-            else:
-                x = [str(size) for size in data.shape]
-
-            shape = ', '.join(x)
-            
-            string.append('{0}{1}Data({2}) = {3}'.format(indent1,
-                                                         _prefix,
-                                                         shape,
-                                                         str(data)))
+        if not _omit_data:
+            data = self.get_data(None)
+            if data is not None:
+                if _axes and _axis_names:
+                    x = [_axis_names[axis] for axis in _axes]
+                    ndim = data.ndim
+                    x = x[:ndim]                    
+                    if len(x) < ndim:
+                        x.extend([str(size) for size in data.shape[len(x):]])
+                else:
+                    x = [str(size) for size in data.shape]
+    
+                shape = ', '.join(x)
+                
+                string.append('{0}{1}Data({2}) = {3}'.format(indent1,
+                                                             _prefix,
+                                                             shape,
+                                                             str(data)))
+        #--- End: if
         
         string = '\n'.join(string)
        
