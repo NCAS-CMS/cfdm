@@ -14,6 +14,17 @@ class Properties(Container):
 .. versionadded:: 1.7.0
 
     '''
+    def __str__(self):
+        '''Called by the `str` built-in function.
+
+x.__str__() <==> str(x)
+
+.. versionadded:: 1.7.0
+
+        '''
+        return '{0}'.format(self.identity(''))
+    #--- End: def
+
     def _dump_properties(self, _prefix='', _level=0,
                          _omit_properties=None):
         '''Dump the properties.
@@ -54,6 +65,64 @@ class Properties(Container):
                               subsequent_indent=subsequent_indent))
         
         return '\n'.join(string)
+    #--- End: def
+
+    def dump(self, display=True, _key=None, _omit_properties=(),
+             _prefix='', _title=None, _create_title=True, _level=0):
+        '''A full description.
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+
+    display: `bool`, optional
+        If False then return the description as a string. By default
+        the description is printed.
+
+:Returns:
+
+        The description. If *display* is True then the description is
+        printed and `None` is returned. Otherwise the description is
+        returned as a string.
+
+        '''
+        indent0 = '    ' * _level
+        indent1 = '    ' * (_level+1)
+
+        string = []
+
+        # ------------------------------------------------------------
+        # Title
+        # ------------------------------------------------------------
+        if _create_title:
+            if _title is None:
+                if _key:
+                    default = 'key%{0}'.format(_key)
+                else:
+                    default = ''
+                    
+                string.append('{0}{1}: {2}'.format(indent0,
+                                                   self.__class__.__name__,
+                                                   self.identity(default=default)))
+            else:
+                string.append(indent0 + _title)
+        #--- End: if
+        
+        # ------------------------------------------------------------
+        # Properties
+        # ------------------------------------------------------------
+        properties = self._dump_properties(_prefix=_prefix,
+                                           _level=_level+1,
+                                           _omit_properties=_omit_properties)
+        if properties:
+            string.append(properties)
+
+        string = '\n'.join(string)
+       
+        if display:
+            print(string)
+        else:
+            return string
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
@@ -185,6 +254,146 @@ False
         #--- End: for
 
         return True
+    #--- End: def
+
+    def identity(self, default=''):
+        '''Return the canonical identity.
+
+By default the identity is the first found of the following:
+
+1. The "standard_name" property.
+2. The "cf_role" property, preceeded by ``'cf_role='``.
+3. The "axis" property, preceeded by ``'axis='``.
+4. The "long_name" property, preceeded by ``'long_name='``.
+5. The netCDF variable name, preceeded by ``'ncvar%'``.
+6. The value of the *default* parameter.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `identities`
+
+:Parameters:
+
+    default: optional
+        If no identity can be found then return the value of the
+        default parameter.
+
+:Returns:
+
+        The identity.
+
+**Examples:**
+
+>>> f.properties()
+{'foo': 'bar',
+ 'long_name': 'Air Temperature',
+ 'standard_name': 'air_temperature'}
+>>> f.nc_get_variable()
+'tas'
+>>> f.identity()
+'air_temperature'
+>>> f.del_property('standard_name')
+'air_temperature'
+>>> f.identity(default='no identity')
+'air_temperature'
+>>> f.identity()
+'long_name=Air Temperature'
+>>> f.del_property('long_name')
+>>> f.identity()
+'ncvar%tas'
+>>> f.nc_del_variable()
+'tas'
+>>> f.identity()
+'ncvar%tas'
+>>> f.identity()
+''
+>>> f.identity(default='no identity')
+'no identity'
+
+        '''
+        n = self.get_property('standard_name', None)
+        if n is not None:
+            return n
+        
+        for prop in  ('cf_role', 'axis', 'long_name'):
+            n = self.get_property(prop, None)
+            if n is not None:
+                return '{0}={1}'.format(prop, n)
+        #--- End: for
+        
+        n = self.nc_get_variable(None)
+        if n is not None:
+            return 'ncvar%{0}'.format(n)
+        
+        return default
+    #--- End: def
+
+    def identities(self):
+        '''Return all possible identities.
+
+The identities comprise:
+
+* The "standard_name" property.
+* All properties, preceeded by the property name and a colon,
+  e.g. ``'long_name:Air temperature'``.
+* The netCDF variable name, preceeded by ``'ncvar%'``.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `identity`
+
+:Returns:
+
+    `list`
+        The identities.
+
+**Examples:**
+
+>>> f.properties()
+{'foo': 'bar',
+ 'long_name': 'Air Temperature',
+ 'standard_name': 'air_temperature'}
+>>> f.nc_get_variable()
+'tas'
+>>> f.identities()
+['air_temperature',
+ 'long_name=Air Temperature',
+ 'foo=bar',
+ 'standard_name=air_temperature',
+ 'ncvar%tas']
+
+        '''
+        properties = self.properties()
+        cf_role = properties.pop('cf_role', None)
+        axis = properties.pop('axis', None)
+        long_name = properties.pop('long_name', None)
+        standard_name = properties.pop('standard_name', None)
+
+        out = []
+
+        if standard_name is not None:
+            out.append(standard_name)
+            
+        if cf_role is not None:
+            out.append('cf_role={}'.format(cf_role))
+                   
+        if axis is not None:
+            out.append('axis={}'.format(axis))
+                   
+        if long_name is not None:
+            out.append('long_name={}'.format(long_name))
+            
+        out += ['{0}={1}'.format(prop, value)
+                for prop, value in sorted(properties.items())]
+
+        if standard_name is not None:
+            out.append('standard_name={}'.format(standard_name))
+            
+        n = self.nc_get_variable(None)
+        if n is not None:
+            out.append('ncvar%{0}'.format(n))
+            
+        return out
     #--- End: def
 
 #--- End: class

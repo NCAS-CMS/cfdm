@@ -368,7 +368,7 @@ TODO (basd on spanning 1-d contriccts)
         if not identities:
             pass
         elif len(identities) == 1:
-            return z[0]
+            return identities[0]
         elif len(identities) > 1:
             cf_role = []
             axis = []

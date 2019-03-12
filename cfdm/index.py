@@ -47,7 +47,7 @@ corresponding domain axis construct.
 .. versionadded:: 1.7.0
 
     '''
-    def __init__(self, properties={}, data=None, source=None,
+    def __init__(self, properties=None, data=None, source=None,
                  copy=True, _use_data=True):
         '''**Initialization**
 

@@ -105,6 +105,8 @@ from .count import Count
 from .index import Index
 from .list  import List
 
+from .partnodecount import PartNodeCount
+
 from .bounds               import Bounds
 from .coordinateconversion import CoordinateConversion
 from .datum                import Datum
