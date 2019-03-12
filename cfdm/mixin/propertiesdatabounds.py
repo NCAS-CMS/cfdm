@@ -444,6 +444,77 @@ False
         return True
     #--- End: def
 
+    def get_part_node_count(self, default=ValueError()):
+        '''Return the part node count variable for polygon geometries.
+
+.. versionadded:: 1.8.0
+
+.. seealso:: `get_interior_ring`, `del_part_node_count`,
+             `has_part_node_count`, `set_part_node_count`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if interior ring
+        data have not been set. If set to an `Exception` instance then
+        it will be raised instead.
+
+:Returns:
+
+        The part node count variable.
+
+**Examples:**
+
+>>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+>>> c.set_part_node_count(p)
+>>> c.has_part_node_count()
+True
+>>> c.get_part_node_count()
+<PartNodeCount: long_name=part node counts>
+>>> c.del_part_node_count()
+<PartNodeCount: long_name=part node counts>
+>>> c.has_part_node_count()
+False
+
+        '''
+        try:
+            return self._get_component('part_node_count')
+        except ValueError:
+            return self._default(default,
+                    "{!r} has no part node count variable".format(
+                        self.__class__.__name__))
+    #--- End: def
+
+    def has_part_node_count(self):
+        '''Whether or not there is a part node count variable.
+        
+.. versionadded:: 1.8.0
+
+.. seealso:: `del_part_node_count`, `get_part_node_count`,
+             `set_part_node_count`
+
+:Returns:
+
+    `bool`
+        True if is a part node count variable, otherwise False.
+
+**Examples:**
+
+>>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+>>> c.set_part_node_count(p)
+>>> c.has_part_node_count()
+True
+>>> c.get_part_node_count()
+<PartNodeCount: long_name=part node counts>
+>>> c.del_part_node_count()
+<PartNodeCount: long_name=part node counts>
+>>> c.has_part_node_count()
+False
+
+        '''
+        return self._has_component('part_node_count')
+    #--- End: def
+
     def identities(self):
         '''Return all possible identities.
 

@@ -866,6 +866,22 @@ netCDF unlimited dimensions.
        return construct.nc_get_variable(default=default)
     #--- End: def
 
+    def get_part_node_count_variable(self, construct):
+        '''
+
+:Parameters:
+
+  
+:Returns:
+
+    out: 
+
+:Examples:
+
+        '''
+        return construct.get_part_node_count(default=None)
+    #--- End: def
+    
     def get_properties(self, parent):
         '''Return all properties.
 

@@ -18,15 +18,14 @@ The netCDF variable name of the part node count variable may be
 accessed with the `nc_set_variable`, `nc_get_variable`,
 `nc_del_variable` and `nc_has_variable` methods.
 
-The name of the netCDF dimension spanned by the part node count
+The name of the netCDF dimension spanned by the netCDF part node count
 variable's data may be accessed with the `nc_set_dimension`,
 `nc_get_dimension`, `nc_del_dimension` and `nc_has_dimension` methods.
 
 .. versionadded:: 1.8.0
 
     '''
-    def __init__(self, properties=None, data=None, source=None,
-                 copy=True, _use_data=True):
+    def __init__(self, properties=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:

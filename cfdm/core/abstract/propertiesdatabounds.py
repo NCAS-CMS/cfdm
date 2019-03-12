@@ -185,44 +185,9 @@ True
         return self.get_interior_ring()
     #--- End: def
 
-#    # ----------------------------------------------------------------
-#    # Methods
-#    # ----------------------------------------------------------------
-#    def copy(self, data=True):
-#        '''Return a deep copy.
-#
-#``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
-#
-#`Data` instances contained within are copied with a copy-on-write
-#technique. This means that a copy takes up very little extra memory,
-#even when the original contains very large data arrays, and the copy
-#operation is fast.
-#
-#.. versionadded:: 1.7.0
-#
-#:Parameters:
-#
-#    data: `bool`, optional
-#        If False then do not copy the data, bounds nor interior ring
-#        arrays. By default they are copied.
-#
-#:Returns:
-#
-#        The deep copy.
-#
-#**Examples:**
-#
-#>>> g = f.copy()
-#>>> g = f.copy(data=False)
-#>>> g.has_data()
-#False
-#>>> g.bounds.has_data()
-#False
-#
-#        '''
-#        return super().copy(data=data)
-#    #--- End: def
-
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def del_bounds(self, default=ValueError()):
         '''Remove the bounds.
 
@@ -471,7 +436,7 @@ None
     #--- End: def
 
     def has_interior_ring(self):
-        '''True if there are interior_ring. TODO
+        '''Whether or not there is an interior ring variable.
         
 .. versionadded:: 1.8.0
 
@@ -481,13 +446,12 @@ None
 :Returns:
 
     `bool`
-        True if there are interior_ring, otherwise False.
+        True if there is an interior ring variable, otherwise False.
 
 **Examples:**
 
->>> x = f.has_interior_ring()
 >>> if c.has_interior_ring():
-...     print 'Has interior_ring'
+...     print 'Has interior ring'
 
         '''
         return self._has_component('interior_ring')
