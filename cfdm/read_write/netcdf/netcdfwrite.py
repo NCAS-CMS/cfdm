@@ -55,14 +55,18 @@ class NetCDFWrite(IOWrite):
         return self._netcdf_name(ncvar)
     #--- End: def
     
-    def _netcdf_name(self, base, dimsize=None):
+    def _netcdf_name(self, base, dimsize=None, role=None):
         '''Return a new netCDF variable or dimension name.
     
+.. versionadded:: 1.7.0
+
 :Parameters:
 
     base: `str`
 
     dimsize: `int`, optional
+
+    role: `str`, optional
 
 :Returns:
 
@@ -78,10 +82,15 @@ class NetCDFWrite(IOWrite):
         existing_names = g['ncvar_names'].union(ncdim_names )
         
         if dimsize is not None:
-            if base in ncdim_names and dimsize == g['ncdim_to_size'][base]:
-                # Return the name of an existing netCDF dimension with
-                # this name and this size
-                return base
+            if not role:
+                raise ValueError("Must supply role when providing dimsize")
+
+            if base in g['dimensions_with_role'].get(role, ()):
+                if base in ncdim_names and dimsize == g['ncdim_to_size'][base]:
+                    # Return the name of an existing netCDF dimension
+                    # with this name, this size, and matching the
+                    # given role.
+                    return base                    
         #--- End: if
     
         if base in existing_names:
@@ -94,11 +103,13 @@ class NetCDFWrite(IOWrite):
         else:
             ncvar = base
 
-
         ncvar = ncvar.replace(' ', '_')
             
         ncvar_names.add(ncvar)
-    
+
+        if role and dimsize is not None:
+            g['dimensions_with_role'].setdefault(role, []).append(ncvar)
+        
         return ncvar
     #--- End: def
     
@@ -292,7 +303,8 @@ If the input variable has no `!dtype` attribute (or it is None) then
         # ----------------------------------------------------------------
         # Create a new dimension for the maximum string length
         # ----------------------------------------------------------------
-        ncdim = self._netcdf_name('strlen{0}'.format(size), dimsize=size)
+        ncdim = self._netcdf_name('strlen{0}'.format(size),
+                                  dimsize=size, role='string_length')
         
         if ncdim not in g['ncdim_to_size']:
             # This string length dimension needs creating
@@ -692,6 +704,8 @@ a new netCDF bounds dimension.
     def _create_geometry_container(self, field):
         '''TODO
 
+.. versionadded:: 1.8.0
+
 :Parameters:
 
     field: Field construct
@@ -713,46 +727,61 @@ a new netCDF bounds dimension.
                 # No geometry bounds for this auxiliary coordinate
                 continue
             
-            bounds = coord.get_bounds(None)
-            if bounds is None:
-                # No geometry bounds for this auxiliary coordinate                
+            nodes = coord.get_bounds(None)
+            if nodes is None:
+                # No geometry nodes for this auxiliary coordinate                
                 continue
-            
-            gc.setdefault(geometry_type, {'geometry_type': geometry_type})
+
+            ncdim = g['axis_to_ncdim'][field.get_data_axes(coord)[0]] # TODO
+
+            geometry_id = (ncdim, geometry_type)
+            gc.setdefault(geometry_id, {'geometry_type'     : geometry_type,
+                                        'geometry_dimension': ncdim})
 
             print('coord=', repr(coord))
-            print('bounds=', repr(bounds))
+            print('nodes=', repr(nodes))
 
-            # node_coordinates
-            bounds_ncvar = g['seen'][id(bounds)]['ncvar']
-            gc[geometry_type].setdefault('node_coordinates', []).append(bounds_ncvar)
+            # Nodes
+            nodes_ncvar = g['seen'][id(nodes)]['ncvar']
+            gc[geometry_id].setdefault('node_coordinates', []).append(nodes_ncvar)
 
-            # coordinates
+            # Coordinates
             try:
                 coord_ncvar  = g['seen'][id(coord)]['ncvar']
             except KeyError:
                 # There is no netCDF auxiliary coordinate variable
                 pass
             else:
-                gc[geometry_type].setdefault('coordinates', []).append(coord_ncvar)
+                gc[geometry_id].setdefault('coordinates', []).append(coord_ncvar)
 
-            # grid_mapping
+            # Grid mapping
             grid_mappings = [
                 g['seen'][id(cr)]['ncvar'] for cr in field.coordinate_references.values()
                 if (cr.coordinate_conversion.get_parameter('grid_mapping_name', None) is not None and 
                     key in cr.coordinates())]
-            gc[geometry_type].setdefault('grid_mapping', []).extend(grid_mappings)
+            gc[geometry_id].setdefault('grid_mapping', []).extend(grid_mappings)
 
-            # interior_ring
+            # Interior ring
             ir = coord.get_interior_ring(None)
             if ir is not None:
                 try:
-                    ir_ncvar  = g['seen'][id(ir)]['ncvar']
+                    ncvar  = g['seen'][id(ir)]['ncvar']
                 except KeyError:
-                    # There is no netCDF interior ring variable
+                    # There is no interior ring variable
                     pass
                 else:
-                    gc[geometry_type].setdefault('interior_ring', []).append(ir_ncvar)
+                    gc[geometry_id].setdefault('interior_ring', []).append(ncvar)
+
+            # Part node count
+            pnc = coord.get_part_node_count(None)
+            if pnc is not None:
+                try:
+                    ncvar  = g['seen'][id(pnc)]['ncvar']
+                except KeyError:
+                    # There is no part node count variable
+                    pass
+                else:
+                    gc[geometry_id].setdefault('part_node_count', []).append(ncvar)
         #--- End: for
 
         if not gc:
@@ -760,13 +789,13 @@ a new netCDF bounds dimension.
             return {}
 
         for x in gc.values():
-            # node_coordinates
+            # Nodes
             x['node_coordinates'] = ' '.join(sorted(x['node_coordinates']))
 
-            # coordinates
+            # Coordinates
             x['coordinates'] = ' '.join(sorted(x['coordinates']))
 
-            # grid_mapping
+            # Grid mapping
             grid_mappings = set(x['grid_mapping'])
             if len(grid_mappings) == 1:
                 x['grid_mapping'] = grid_mappings.pop()
@@ -775,14 +804,23 @@ a new netCDF bounds dimension.
 "Can't write {!r}: Geometry container has multiple grid mapping variables: {!r}".format(
     field, x['grid_mapping']))
 
-            # interior_ring
-            ir = set(x['ir'])
+            # Interior ring
+            ir = set(x['interior_ring'])
             if len(ir) == 1:
                 x['interior_ring'] = ir.pop()
             elif len(ir) > 1:
                 raise ValueError(
 "Can't write {!r}: Geometry container has multiple interior ring variables: {!r}".format(
-    field, x['ir']))
+    field, x['interior_ring']))
+
+            # Part node count
+            pnc = set(x['part_node_count'])
+            if len(pnc) == 1:
+                x['part_node_count'] = pnc.pop()
+            elif len(pnc) > 1:
+                raise ValueError(
+"Can't write {!r}: Geometry container has multiple part node count variables: {!r}".format(
+    field, x['part_node_count']))
         #--- End: for
 
         if len(gc) > 1:
@@ -935,7 +973,8 @@ name.
         
         size = data.shape[-1]
     
-        ncdim = self._netcdf_name('bounds{0}'.format(size), dimsize=size)
+        ncdim = self._netcdf_name('bounds{0}'.format(size),
+                                  dimsize=size, role='bounds')
     
         # Check if this bounds variable has not been previously
         # created.
@@ -1032,25 +1071,24 @@ name.
         
         g = self.write_vars
 
-        bounds = self.implementation.get_bounds(coord, None)
-        if bounds is None:
+        nodes = self.implementation.get_bounds(coord, None)
+        if nodes is None:
             return out
 
-        data = self.implementation.get_data(bounds, None) 
+        data = self.implementation.get_data(nodes, None) 
         if data is None:
             return out
 
-        # Still here? Then this coordinate has a bounds attribute
+        # Still here? Then this coordinate has a nodes attribute
         # which contains data.
+        size = numpy.ma.count(self.implementation.get_array(data))
         
-        size = numpy.ma.count(data.array) # TODO cfdmimplementation
+        ncdim = self._netcdf_name('node', dimsize=size, role='node')
     
-        ncdim = self._netcdf_name('node', dimsize=size)
-    
-        if self._already_in_file(bounds, (ncdim,)):
+        if self._already_in_file(nodes, (ncdim,)):
             # This node coordinates variable has been previously
             # created, so no need to do so again.
-            ncvar = g['seen'][id(bounds)]['ncvar']
+            ncvar = g['seen'][id(nodes)]['ncvar']
         else:
             # This node coordinates variable has not been previously
             # created, so create it now.
@@ -1064,17 +1102,17 @@ name.
 
             # Set an appropriate default netCDF node coordinates
             # variable name
-            axis = self.implementation.get_property(bounds, 'axis')
+            axis = self.implementation.get_property(nodes, 'axis')
             if axis is not None:
                 default = str(axis).lower()
             else:
                 default = 'nodes'
 
-            ncvar = self.implementation.get_ncvar(bounds, default=default)
+            ncvar = self.implementation.get_ncvar(nodes, default=default)
             ncvar = self._netcdf_name(ncvar)
             
             # Create the netCDF node coordinates variable
-            self._write_netcdf_variable(ncvar, (ncdim,), bounds, omit=omit)
+            self._write_netcdf_variable(ncvar, (ncdim,), nodes)
         #--- End: if
 
         if coord_ncvar is not None:
@@ -1092,25 +1130,36 @@ name.
     #--- End: def
 
     def _get_part_ncdimension(self, coord, default=None):
-        '''
+        '''Get the base of the netCDF dimension for part node count and
+interior ring variables.
+
 .. versionadded:: 1.8.0
+
+:Returns:
+
 
         '''
         ncdim = None
         
         pnc = self.implementation.get_part_node_count_variable(coord)
         if pnc is not None:
+            # Try to get the netCDF dimension from a part node count
+            # variable
             ncdim = self.implementation.nc_get_dimension(pnc, default=None)
 
         if ncdim is None:
-            interior_ring = self.implementation.get_interior_ring_variable(coord)
+            # Try to get the netCDF dimension from an interior ring
+            # variable
+            interior_ring = self.implementation.get_interior_ring(coord)
             if interior_ring is not None:
                 ncdim = self.implementation.nc_get_dimension(interior_ring, default=None)
         #--- End: if
 
         if ncdim is not None:
+            # Found a netCDF dimension
             return ncdim
-        
+
+        # Retrun the default
         return default
     #--- End: def    
          
@@ -1147,26 +1196,36 @@ name.
 
         g = self.write_vars
 
-        array = numpy.trim_zeros(numpy.ma.count(coord.bounds.data.array, axis=2).flatten())
-
-        count = self.implementation.initialise_Count()
+        # Create the part node count flattened data
+        array = self.implementation.get_array(self.implementation.get_data(bounds))
+        array = numpy.trim_zeros(numpy.ma.count(array, axis=2).flatten())
         data = self.implementation.initialise_Data(array=array, copy=False)
+        
+        # ------------------------------------------------------------
+        # Create a count variable to hold the part node count data and
+        # properties. This is what will be written to disk.
+        # ------------------------------------------------------------
+        count = self.implementation.initialise_Count()
         self.implementation.set_data(count, data, copy=False)
 
+        # Find the base of the netCDF part_node_count variable name
         pnc = self.implementation.get_part_node_count_variable(coord)
         if pnc is not None:
+            ncvar = self.implementation.get_ncvar(pnc, default='part_node_count')
+            # Copy part node count variable properties to the new
+            # count variable
             properties = self.implementation.get_properties(pnc)
             self.implementation.set_properties(count, properties)
-            ncvar = self.implementation.get_ncvar(pnc, default='part_node_count')
         else:
             ncvar = 'part_node_count'
 
+        # Find the base of the netCDF part dimension name
         size = self.implementation.get_data_size(count)
         if 'part_ncdim' in out:
             ncdim = out['part_ncdim']
         else:
             ncdim = self._get_part_ncdimension(coord, default='part')
-            ncdim = self._netcdf_name(ncdim, dimsize=size)            
+            ncdim = self._netcdf_name(ncdim, dimsize=size, role='part')
 
         if self._already_in_file(count, (ncdim,)):
             # This part node count variable has been previously
@@ -1176,7 +1235,7 @@ name.
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
                 if g['verbose']:
-                    print('    Writing size', size, 'netCDF dimension for part node counts', ncdim)
+                    print('    Writing size', size, 'netCDF part dimension', ncdim)
                         
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
@@ -1212,7 +1271,7 @@ name.
 TODO
 
         '''
-        interior_ring = self.implementation.get_interior_ring_variable(coord)
+        interior_ring = self.implementation.get_interior_ring(coord)
         if interior_ring is None:
             return {}
 
@@ -1232,7 +1291,7 @@ TODO
             ncdim = out['part_ncdim']
         else:
             ncdim = self._get_part_ncdimension(coord, default='part')
-            ncdim = self._netcdf_name(ncdim, dimsize=size)            
+            ncdim = self._netcdf_name(ncdim, dimsize=size, role='part')
     
         if self._already_in_file(interior_ring, (ncdim,)):
             # This interior ring variable has been previously created,
@@ -1242,7 +1301,7 @@ TODO
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
                 if g['verbose']:
-                    print('    Writing size', size, 'netCDF dimension for interior ring', ncdim)
+                    print('    Writing size', size, 'netCDF part dimension', ncdim)
                         
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
@@ -2013,6 +2072,9 @@ extra trailing dimension.
 
         # Map a netCDF node dimension to a netCDF data dimension
         g['node_ncdim'] = {}
+    
+        # TODO
+        g['dimensions_with_role'] = {}
     
         # Initialize the list of the field's auxiliary/scalar coordinates
         coordinates = []

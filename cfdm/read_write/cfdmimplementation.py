@@ -776,6 +776,22 @@ netCDF unlimited dimensions.
         return construct.get_data().get_index_variable(default=None)
     #--- End: def
     
+    def get_interior_ring(self, construct):
+        '''
+
+:Parameters:
+
+  
+:Returns:
+
+    out: 
+
+:Examples:
+
+        '''
+        return construct.get_interior_ring(default=None)
+    #--- End: def
+    
     def get_list_variable(self, construct):
         '''Return the measure property of a cell measure contruct.
 
