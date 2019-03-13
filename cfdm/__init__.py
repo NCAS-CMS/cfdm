@@ -82,6 +82,13 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(min_vn):
         "Bad netCDF4 version: cfdm requires netCDF4 version {} or later. Got {}".format(
             min_vn, netCDF4.__version__))
 
+# Check the version of numpy
+min_vn = '1.15'
+if LooseVersion(numpy.__version__) < LooseVersion(min_vn):
+    raise ValueError(
+        "Bad numpy version: cfdm requires numpy version {} or later. Got {}".format(
+            min_vn, numpy.__version__))
+
 from .constants  import *
 
 from .constructs import Constructs

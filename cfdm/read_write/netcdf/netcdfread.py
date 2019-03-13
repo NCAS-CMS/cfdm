@@ -1210,10 +1210,15 @@ variable should be pre-filled with missing values.
 
             nodes_per_geometry = self._create_Count(ncvar=node_count,
                                                     ncdim=cell_dimension)
+            
             # Do not attempt to create a field construct from a netCDF
             # node count variable
             g['do_not_create_field'].add(node_count)
-        
+
+        # Record the netCDF node dimension as the sample dimension of
+        # the count variable
+        self.implementation.nc_set_sample_dimension(nodes_per_geometry, node_dimension)
+
         if part_node_count is None:
             # --------------------------------------------------------
             # There is no part_count variable, i.e. cell has exactly
@@ -2747,11 +2752,15 @@ variable's netCDF dimensions.
             # Geometries
             # --------------------------------------------------------
             if geometry is not None and ncbounds in geometry['node_coordinates']:
+                # Record the netCDF node dimension name
+                count = self.implementation.get_count_variable(bounds)
+                node_ncdim = self.implementation.nc_get_sample_dimension(count)
+                self.implementation.nc_set_dimension(bounds, node_ncdim)
+
                 geometry_type = geometry['geometry_type']
                 if geometry_type is not None:                        
                     self.implementation.set_geometry(c, geometry_type)
 
-# ppp                    
                 g['node_coordinates_as_bounds'].add(ncbounds)
 
                 # Add an interior ring variable
@@ -2876,13 +2885,13 @@ variable's netCDF dimensions.
         The name of the netCDF index variable.
 
         *Parameter example:*
-           ``ncvar='landpoints'``
+          ``ncvar='landpoints'``
 
     ncdim: `str`
         The name of the index variable's netCDF dimension.
 
         *Parameter example:*
-           ``ncdim='profile'``
+          ``ncdim='profile'``
 
 :Returns:
 
@@ -2925,19 +2934,21 @@ variable's netCDF dimensions.
     def _create_InteriorRing(self, ncvar, ncdim):
         '''Create a 
     
+.. versionadded:: 1.8.0
+
 :Parameters:
     
     ncvar: `str`
         The name of the netCDF interior ring variable.
 
         *Parameter example:*
-           ``ncvar='interior_ring'``
+          ``ncvar='interior_ring'``
 
     ncdim: `str`
-        The name of theinterior ring variable's netCDF dimension.
+        The name of the interior ring variable's netCDF dimension.
 
         *Parameter example:*
-           ``ncdim='parts'``
+          ``ncdim='parts'``
 
 :Returns:
 

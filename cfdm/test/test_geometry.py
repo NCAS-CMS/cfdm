@@ -459,6 +459,12 @@ class DSGTest(unittest.TestCase):
         for g in f:
             self.assertTrue(g.equals(g.copy()))
 #            g.dump()
+        
+#        cfdm.write(f, self.tempfilename, verbose=True)
+#
+#        f2 = cfdm.read(self.tempfilename, verbose=False)
+#        for a, b in zip(f, f2):
+#            self.assertTrue(a.equals(b))        
     #--- End: def
 
     def test_geometry_2(self):

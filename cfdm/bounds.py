@@ -7,6 +7,7 @@ from . import core
 
 
 class Bounds(mixin.NetCDFVariable,
+             mixin.NetCDFDimension,
              mixin.PropertiesData,
              core.Bounds):
     '''A cell bounds component of a coordinate or domain ancillary
