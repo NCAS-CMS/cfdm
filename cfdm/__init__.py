@@ -79,14 +79,14 @@ except ImportError as error1:
 min_vn = '1.4.0'
 if LooseVersion(netCDF4.__version__) < LooseVersion(min_vn):
     raise ValueError(
-        "Bad netCDF4 version: cfdm requires netCDF4 version {} or later. Got {} ({})".format(
+        "Bad netCDF4 version: cfdm requires netCDF4 version {} or later. Got {} at {}".format(
             min_vn, netCDF4.__version__, netCDF4.__file__))
 
 # Check the version of numpy
 min_vn = '1.15'
 if LooseVersion(numpy.__version__) < LooseVersion(min_vn):
     raise ValueError(
-        "Bad numpy version: cfdm requires numpy version {} or later. Got {} ({})".format(
+        "Bad numpy version: cfdm requires numpy version {} or later. Got {} at {}".format(
             min_vn, numpy.__version__, numpy.__file__))
 
 from .constants  import *
