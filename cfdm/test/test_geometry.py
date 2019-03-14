@@ -456,6 +456,7 @@ class DSGTest(unittest.TestCase):
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=True))
+            self.assertTrue(len(g.auxiliary_coordinates) == 2)
 #            g.dump()
         
         g = f[0]
@@ -490,7 +491,8 @@ class DSGTest(unittest.TestCase):
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=True))
-#            g.dump()
+            self.assertTrue(len(g.auxiliary_coordinates) == 3)
+            #            g.dump()
 
         g = f[0]
         for axis in ('X', 'Y', 'Z'):
@@ -551,6 +553,7 @@ class DSGTest(unittest.TestCase):
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=True))
+            self.assertTrue(len(g.auxiliary_coordinates) == 3)
 #            g.dump()
 
         g = f[0]
