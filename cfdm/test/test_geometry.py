@@ -439,7 +439,7 @@ class DSGTest(unittest.TestCase):
         os.close(fd)
         
         self.test_only = []
-#        self.test_only = ['test_geometry_4']
+#        self.test_only = ['test_geometry_1']
 #        self.test_only = ['test_geometry_3']
 
     #--- End: def
@@ -454,17 +454,25 @@ class DSGTest(unittest.TestCase):
                 
         f = cfdm.read(self.geometry_1_file, verbose=False)
 
-        self.assertTrue(len(f) == 2)
+        self.assertTrue(len(f) == 2, 'f = '+repr(f))
 
         for g in f:
-            self.assertTrue(g.equals(g.copy()))
+            self.assertTrue(g.equals(g.copy(), verbose=True))
 #            g.dump()
         
+#        cfdm.write(f, 'delme.nc', verbose=True)
+        
 #        cfdm.write(f, self.tempfilename, verbose=True)
-#
-#        f2 = cfdm.read(self.tempfilename, verbose=False)
+##
+#        f2 = cfdm.read(self.tempfilename, verbose=True)
+#        self.assertTrue(len(f2) == 2, 'f2 = '+repr(f2))
+#        
 #        for a, b in zip(f, f2):
-#            self.assertTrue(a.equals(b))        
+#            print (repr(a))
+#            print (repr(b))
+#            print (a.properties())
+#            print (b.properties())
+#            self.assertTrue(a.equals(b, verbose=True))
     #--- End: def
 
     def test_geometry_2(self):
@@ -473,10 +481,10 @@ class DSGTest(unittest.TestCase):
                 
         f = cfdm.read(self.geometry_2_file, verbose=False)
 
-        self.assertTrue(len(f) == 2)
+        self.assertTrue(len(f) == 2, 'f = '+repr(f))
 
         for g in f:
-            self.assertTrue(g.equals(g.copy()))
+            self.assertTrue(g.equals(g.copy(), verbose=True))
 #            g.dump()
     #--- End: def
 
@@ -486,10 +494,10 @@ class DSGTest(unittest.TestCase):
                 
         f = cfdm.read(self.geometry_3_file, verbose=False)
 
-        self.assertTrue(len(f) == 2)
+        self.assertTrue(len(f) == 2, 'f = '+repr(f))
 
         for g in f:
-            self.assertTrue(g.equals(g.copy()))
+            self.assertTrue(g.equals(g.copy(), verbose=True))
             self.assertTrue(len(g.auxiliary_coordinates) == 3)
 #            g.dump()
     #--- End: def
@@ -500,10 +508,10 @@ class DSGTest(unittest.TestCase):
                 
         f = cfdm.read(self.geometry_4_file, verbose=False)
 
-        self.assertTrue(len(f) == 2)
+        self.assertTrue(len(f) == 2, 'f = '+repr(f))
 
         for g in f:
-            self.assertTrue(g.equals(g.copy()))
+            self.assertTrue(g.equals(g.copy(), verbose=True))
             self.assertTrue(len(g.auxiliary_coordinates) == 3)
 #            g.dump()
     #--- End: def
@@ -514,10 +522,10 @@ class DSGTest(unittest.TestCase):
 
         f = cfdm.read(self.geometry_interior_ring_file, verbose=False)
 
-        self.assertTrue(len(f) == 2)
+        self.assertTrue(len(f) == 2, 'f = '+repr(f))
 
         for g in f:
-            self.assertTrue(g.equals(g.copy()))
+            self.assertTrue(g.equals(g.copy(), verbose=True))
 #            g.dump()
     #--- End: def
 

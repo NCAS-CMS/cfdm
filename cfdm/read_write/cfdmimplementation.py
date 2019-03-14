@@ -14,12 +14,15 @@ from .. import (AuxiliaryCoordinate,
                 Field,
                 FieldAncillary,
                 Bounds,
+                InteriorRing,
+                CoordinateConversion,
+                Datum,
                 Count,
                 List,
                 Index,
-                InteriorRing,
-                CoordinateConversion,
-                Datum)
+                NodeCount,
+                PartNodeCount,
+)
 
 from ..data import (Data,
                     GatheredArray,
@@ -45,20 +48,22 @@ class CFDMImplementation(Implementation):
                  FieldAncillary=None,
                  
                  Bounds=None,
-                 List=None,
-                 Count=None,
-                 Index=None,
                  InteriorRing=None,
-
                  CoordinateConversion=None,
                  Datum=None,
-                 
                  Data=None,
+                 
                  GatheredArray=None,
                  NetCDFArray=None,
                  RaggedContiguousArray=None,
                  RaggedIndexedArray=None,
                  RaggedIndexedContiguousArray=None,
+                 
+                 List=None,
+                 Count=None,
+                 Index=None,
+                 NodeCount=None,
+                 PartNodeCount=None,
     ):
         '''**Initialisation**
 
@@ -125,6 +130,9 @@ class CFDMImplementation(Implementation):
             RaggedContiguousArray=RaggedContiguousArray,
             RaggedIndexedArray=RaggedIndexedArray,
             RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
+
+            NodeCount=NodeCount,
+            PartNodeCount=PartNodeCount,
         )
     #--- End: def
 
@@ -220,7 +228,7 @@ AttributeError: Field doesn't have property 'standard_name'
         if bounds is None:
             return default
 
-        return self.get_ncvar(bounds, default=default)
+        return self.nc_get_variable(bounds, default=default)
     #--- End: def
     
     def get_cell_measures(self, field):
@@ -539,7 +547,22 @@ axes, and possibly other axes, are returned.
 #        '''
 #        return index.nc_get_instance_dimension(default=default)
 #    #--- End: def
-    
+
+    def nc_get_geometry(self, field, default=None):
+        '''TODO
+
+.. versionadded:: 1.8.0
+
+:Parameters:
+
+:Returns:
+
+    `str`
+
+        '''
+        return field.nc_get_geometry(default)
+    #--- End: def
+
     def nc_get_sample_dimension(self, count, default=None):
         '''Return the name of the netCDF sample dimension.
 
@@ -733,7 +756,7 @@ netCDF unlimited dimensions.
         return parent.data.sum()
     #--- End: def
     
-    def get_count_variable(self, construct):
+    def get_count(self, construct):
         '''Return the measure property of a cell measure contruct.
 
 :Examples 1:
@@ -757,10 +780,10 @@ netCDF unlimited dimensions.
 >>> w.get_measure(c)
 'area'
         '''
-        return construct.get_data().get_count_variable(default=None)
+        return construct.get_data().get_count(default=None)
     #--- End: def
     
-    def get_index_variable(self, construct):
+    def get_index(self, construct):
         '''
 
 :Parameters:
@@ -773,7 +796,7 @@ netCDF unlimited dimensions.
 :Examples:
 
         '''
-        return construct.get_data().get_index_variable(default=None)
+        return construct.get_data().get_index(default=None)
     #--- End: def
     
     def get_interior_ring(self, construct):
@@ -792,7 +815,7 @@ netCDF unlimited dimensions.
         return construct.get_interior_ring(default=None)
     #--- End: def
     
-    def get_list_variable(self, construct):
+    def get_list(self, construct):
         '''Return the measure property of a cell measure contruct.
 
 :Examples 1:
@@ -816,7 +839,7 @@ netCDF unlimited dimensions.
 >>> w.get_measure(c)
 'area'
         '''
-        return construct.get_data().get_list_variable(default=None)
+        return construct.get_data().get_list(default=None)
     #--- End: def
     
     def get_measure(self, cell_measure):
@@ -870,7 +893,7 @@ netCDF unlimited dimensions.
         return parent.nc_get_dimension(default=default)
     #--- End: def
 
-    def get_ncvar(self, construct, default=None):
+    def nc_get_variable(self, construct, default=None):
        '''
 
 :Parameters:
@@ -882,8 +905,28 @@ netCDF unlimited dimensions.
        return construct.nc_get_variable(default=default)
     #--- End: def
 
-    def get_part_node_count_variable(self, construct):
+    def get_node_count(self, construct):
         '''
+
+.. versionadded:: 1.8.0
+
+:Parameters:
+
+  
+:Returns:
+
+    out: 
+
+:Examples:
+
+        '''
+        return construct.get_node_count(default=None)
+    #--- End: def
+    
+    def get_part_node_count(self, construct):
+        '''
+
+.. versionadded:: 1.8.0
 
 :Parameters:
 
@@ -1161,6 +1204,22 @@ netCDF unlimited dimensions.
         cls = self.get_class('NetCDFArray')
         return cls(filename=filename, ncvar=ncvar, dtype=dtype,
                    ndim=ndim, shape=shape, size=size)
+    #--- End: def
+
+    def initialise_NodeCount(self):
+        '''
+
+        '''
+        cls = self.get_class('NodeCount')
+        return cls()
+    #--- End: def
+
+    def initialise_PartNodeCount(self):
+        '''
+
+        '''
+        cls = self.get_class('PartNodeCount')
+        return cls()
     #--- End: def
 
     def initialise_RaggedContiguousArray(self, compressed_array=None,
@@ -1505,6 +1564,49 @@ also be provided.
         coordinate.set_geometry(value)
     #--- End: def
 
+    def set_node_count(self, parent, node_count, copy=True):
+        '''Insert TODO
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    `None`
+        '''
+        parent.set_node_count(node_count, copy=copy)
+    #--- End: def
+
+    def set_part_node_count(self, parent, part_node_count, copy=True):
+        '''Insert TODO
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    `None`
+        '''
+        parent.set_part_node_count(part_node_count, copy=copy)
+    #--- End: def
+
+    def set_interior_ring(self, parent, interior_ring, copy=True):
+        '''Insert an interior ring array into a coordiante.
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    `None`
+
+        '''
+        parent.set_interior_ring(interior_ring, copy=copy)
+    #--- End: def
+
     def set_interior_ring(self, parent, interior_ring, copy=True):
         '''Insert an interior ring array into a coordiante.
 
@@ -1540,7 +1642,7 @@ also be provided.
         construct.nc_set_dimension(ncdim)
     #--- End: def
 
-    def nc_set_geometry_container(self, field, ncvar):
+    def nc_set_geometry(self, field, ncvar):
         '''TODO
 
 :Parameters:
@@ -1550,7 +1652,7 @@ also be provided.
     `None`
 
         '''
-        field.nc_set_geometry_container(ncvar)
+        field.nc_set_geometry(ncvar)
     #--- End: def
 
     def nc_set_variable(self, parent, ncvar):
@@ -1709,13 +1811,16 @@ _implementation = CFDMImplementation(
     FieldAncillary      = FieldAncillary,
     
     Bounds = Bounds,
-    List  = List,
-    Index = Index,
-    Count = Count,
     InteriorRing = InteriorRing,
     
     CoordinateConversion = CoordinateConversion,
     Datum                = Datum,
+
+    List          = List,
+    Index         = Index,
+    Count         = Count,
+    NodeCount     = NodeCount,
+    PartNodeCount = PartNodeCount,
     
     Data                         = Data,
     GatheredArray                = GatheredArray,

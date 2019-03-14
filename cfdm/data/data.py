@@ -822,12 +822,12 @@ data array shape.
 #        return array
 #    #--- End: def
 
-    def get_count_variable(self, default=ValueError()):
-        '''Return the count variable for a compressed array.
+    def get_count(self, default=ValueError()):
+        '''Return the countcount_va variable for a compressed array.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get_index_variable`, `get_list_variable`
+.. seealso:: `get_index`, `get_list`
 
 :Parameters:
 
@@ -842,23 +842,23 @@ data array shape.
 
 **Examples:**
 
->>> c = d.get_count_variable()
+>>> c = d.get_count()
 
         '''
         try:
-            return self._get_Array().get_count_variable()
+            return self._get_Array().get_count()
         except (AttributeError, ValueError):
             return self._default(default,
                                  "{!r} has no count variable".format(
                                  self.__class__.__name__))
     #--- End: def
 
-    def get_index_variable(self, default=ValueError()):
+    def get_index(self, default=ValueError()):
         '''Return the index variable for a compressed array.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get_count_variable`, `get_list_variable`
+.. seealso:: `get_count`, `get_list`
 
 :Parameters:
 
@@ -876,23 +876,23 @@ data array shape.
 
 **Examples:**
 
->>> i = d.get_index_variable()
+>>> i = d.get_index()
 
         '''
         try:
-            return self._get_Array().get_index_variable()
+            return self._get_Array().get_index()
         except (AttributeError, ValueError):
             return self._default(default,
                                  "{!r} has no index variable".format(
                                  self.__class__.__name__))
     #--- End: def
 
-    def get_list_variable(self, default=ValueError()):
+    def get_list(self, default=ValueError()):
         '''Return the list variable for a compressed array.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get_count_variable`, `get_index_variable`
+.. seealso:: `get_count`, `get_index`
 
 :Parameters:
 
@@ -907,11 +907,11 @@ data array shape.
 
 **Examples:**
 
->>> l = d.get_list_variable()
+>>> l = d.get_list()
 
         '''
         try:
-            return self._get_Array().get_list_variable()
+            return self._get_Array().get_list()
         except (AttributeError, ValueError):
             return self._default(default,
                                  "{!r} has no list variable".format(

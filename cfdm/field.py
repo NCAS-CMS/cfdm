@@ -9,7 +9,7 @@ from . import Domain
 
 class Field(mixin.NetCDFDataVariable,
             mixin.NetCDFVariable,
-            mixin.NetCDFGeometryContainer,
+            mixin.NetCDFGeometry,
             mixin.ConstructAccess,
             mixin.PropertiesData,
             core.Field):
@@ -691,8 +691,8 @@ False
                             ignore_compression=ignore_compression,
                             _ignore_type=ignore_type):
             if verbose:
-                print(
-                    "{0}: Different {1}".format(self.__class__.__name__, 'constructs'))
+                print("{0}: Different metadata constructs".format(
+                    self.__class__.__name__))
             return False
 
         return True

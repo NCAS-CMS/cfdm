@@ -4,23 +4,18 @@ from . import mixin
 from . import core
 
 
-class PartNodeCount(mixin.NetCDFVariable,
-                    mixin.NetCDFDimension,
-                    mixin.Properties,
-                    core.abstract.Properties):
-    '''A part node count variable TODO
+class NodeCount(mixin.NetCDFVariable,
+                mixin.Properties,
+                core.abstract.Properties):
+    '''A node count variable TODO
 
 TODO
 
 **NetCDF interface**
 
-The netCDF part node count variable name may be accessed with the
+The netCDF node count variable name may be accessed with the
 `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
 `nc_has_variable` methods.
-
-The name of the netCDF dimension spanned by the netCDF part node count
-variable's data may be accessed with the `nc_set_dimension`,
-`nc_get_dimension`, `nc_del_dimension` and `nc_has_dimension` methods.
 
 .. versionadded:: 1.8.0
 
@@ -36,7 +31,7 @@ variable's data may be accessed with the `nc_set_dimension`,
         parameter is set.
 
         *Parameter example:*
-          ``properties={'long_name': 'number of obs for this station'}``
+          ``properties={'long_name': 'number of nodes for each geometry'}``
 
         Properties may also be set after initialisation with the
         `properties` and `set_property` methods.
@@ -58,7 +53,7 @@ variable's data may be accessed with the `nc_set_dimension`,
     def dump(self, display=True, _key=None, _title=None,
              _create_title=True, _prefix='', _level=0,
              _omit_properties=None):
-        '''A full description of the part node count variable.
+        '''A full description of the node count variable.
 
 Returns a description of all properties.
 
@@ -79,7 +74,7 @@ Returns a description of all properties.
 
         '''
         if _create_title and _title is None: 
-            _title = 'Part Node Count: ' + self.identity(default='')
+            _title = 'Node Count: ' + self.identity(default='')
 
         return super().dump(display=display, _key=_key,
                             _omit_properties=_omit_properties,

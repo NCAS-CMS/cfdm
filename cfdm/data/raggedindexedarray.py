@@ -84,7 +84,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         # The uncompressed array has dimensions (instance
         # dimension, element dimension).
         # --------------------------------------------------------
-        index_array = self.get_index_variable().data.array
+        index_array = self.get_index().data.array
         
         for i in range(uarray.shape[0]):
             sample_dimension_indices = numpy.where(index_array == i)[0]

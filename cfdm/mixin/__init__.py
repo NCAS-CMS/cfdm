@@ -10,7 +10,7 @@ from .parametersdomainancillaries import ParametersDomainAncillaries
 from .netcdf                      import (NetCDFDataVariable,
                                           NetCDFDimension,
                                           NetCDFExternal,
-                                          NetCDFGeometryContainer,
+                                          NetCDFGeometry,
                                           NetCDFInstanceDimension,
                                           NetCDFSampleDimension,
                                           NetCDFVariable)

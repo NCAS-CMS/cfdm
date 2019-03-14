@@ -563,7 +563,8 @@ False
                         #--- End: for
 
                         if not matched_construct:
-                            log.append("Can't match "+construct_type+" "+repr(item0))
+                            log.append("{0}: Can't match {1!r}".format(
+                                self.__class__.__name__, item0))
                             break
                     #--- End: for
 
@@ -587,12 +588,15 @@ False
             if not matched_all_constructs_with_these_axes:
                 if verbose:
                     names = [self.domain_axis_name(axis0) for axis0 in axes0]
-                    print("Can't match constructs spanning axes {0}".format(names))
+                    print("{0}: Can't match constructs spanning axes {1}".format(
+                        self.__class__.__name__, names))
                     print('\n'.join(log))
-                    print()
-                    print(axes_to_constructs0)
-                    print()
-                    print(axes_to_constructs1)
+#                    print()
+##                    print(axes_to_constructs0)
+#                    print(self)
+#                    print()
+##                    print(axes_to_constructs1)
+#                    print(other)
                 return False
 
             # Map item axes in the two instances
@@ -604,14 +608,16 @@ False
                 if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:
                     if verbose:
                         print(
-"Field: Ambiguous axis mapping ({} -> both {} and {})".format(
+"{0}: Ambiguous axis mapping ({1} -> both {2} and {3})".format(
+    self.__class__.__name__,
     self.domain_axis_name(axes0), other.domain_axis_name(axis1),
     other.domain_axis_name(axis0_to_axis1[axis0])))
                     return False
                 elif axis1 in axis1_to_axis0 and axis0 != axis1_to_axis0[axis1]:
                     if verbose:
                         print(
-"Field: Ambiguous axis mapping ({} -> both {} and {})".format(
+"{0}: Ambiguous axis mapping ({1} -> both {2} and {3})".format(
+    self.__class__.__name__,
     self.domain_axis_name(axis0), self.domain_axis_name(axis1_to_axis0[axis0]),
     other.domain_axis_name(axes1)))
                     return False

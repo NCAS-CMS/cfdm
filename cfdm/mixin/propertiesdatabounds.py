@@ -13,7 +13,6 @@ bounds.
 .. versionadded:: 1.7.0
 
     '''
-    
     def __getitem__(self, indices):
         '''Return a subspace of the construct defined by indices
 
@@ -110,20 +109,6 @@ rules, the only differences being:
                 new_interior_ring.set_data(data[indices], copy=False)
         #--- End: if
 
-#       # Subspace the ancillary arrays, if there are any.
-#       new_ancillaries = new.ancillaries()
-#       if new_ancillaries:
-#           ancillary_indices = tuple(indices) + (Ellipsis,)
-#           
-#           for name, ancillary in self.ancillaries.iteritems():
-#               data = ancillary.get_data(None)
-#               if data is None:
-#                   continue
-#
-#               new_ancillary = new_ancillaries[name]
-#               new_ancillary.set_data(data[ancillary_indices], copy=False)
-#       #--- End: if
-
         # Return the new bounded variable
         return new
     #--- End: def
@@ -198,6 +183,85 @@ x.__str__() <==> str(x)
             units += ' ' + calendar
             
         return '{0}{1} {2}'.format(self.identity(''), dims, units)
+    #--- End: def
+    
+    def del_node_count(self, default=ValueError()):
+        '''Remove the node count variable for geometry bounds.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `get_node_count`, `has_node_count`, `set_node_count`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if the node count
+        variable has not been set. If set to an `Exception` instance
+        then it will be raised instead.
+
+:Returns:
+
+        The removed node count variable.
+
+**Examples:**
+
+>>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+>>> c.set_node_count(n)
+>>> c.has_node_count()
+True
+>>> c.get_node_count()
+<NodeCount: long_name=node counts>
+>>> c.del_node_count()
+<NodeCount: long_name=node counts>
+>>> c.has_node_count()
+False
+
+        '''
+        try:
+            return self._del_component('node_count')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no node count variable".format(self.__class__.__name__))
+    #--- End: def
+    
+    def del_part_node_count(self, default=ValueError()):
+        '''Remove the part node count variable for geometry bounds.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `get_part_node_count`, `has_part_node_count`,
+             `set_part_node_count`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if the part node
+        count variable has not been set. If set to an `Exception`
+        instance then it will be raised instead.
+
+:Returns:
+
+        The removed part_node count variable.
+
+**Examples:**
+
+>>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+>>> c.set_part_node_count(p)
+>>> c.has_part_node_count()
+True
+>>> c.get_part_node_count()
+<PartNodeCount: long_name=part node counts>
+>>> c.del_part_node_count()
+<PartNodeCount: long_name=part node counts>
+>>> c.has_part_node_count()
+False
+
+        '''
+        try:
+            return self._del_component('part_node_count')
+        except ValueError:
+            return self._default(default,
+                                 "{!r} has no part node count variable".format(self.__class__.__name__))
     #--- End: def
 
     def dump(self, display=True, _key=None, _omit_properties=None,
@@ -444,8 +508,48 @@ False
         return True
     #--- End: def
 
+    def get_node_count(self, default=ValueError()):
+        '''Return the node count variable for geometry bounds.
+
+.. versionadded:: 1.8.0
+
+.. seealso:: del_node_count`, `has_node_count`, `set_node_count`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if a node count
+        variable has not been set. If set to an `Exception` instance
+        then it will be raised instead.
+
+:Returns:
+
+        The node count variable.
+
+**Examples:**
+
+>>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+>>> c.set_node_count(n)
+>>> c.has_node_count()
+True
+>>> c.get_node_count()
+<NodeCount: long_name=node counts>
+>>> c.del_node_count()
+<NodeCount: long_name=node counts>
+>>> c.has_node_count()
+False
+
+        '''
+        try:
+            return self._get_component('node_count')
+        except ValueError:
+            return self._default(default,
+                    "{!r} has no node count variable".format(
+                        self.__class__.__name__))
+    #--- End: def
+
     def get_part_node_count(self, default=ValueError()):
-        '''Return the part node count variable for polygon geometries.
+        '''Return the part node count variable for geometry bounds.
 
 .. versionadded:: 1.8.0
 
@@ -455,9 +559,9 @@ False
 :Parameters:
 
     default: optional
-        Return the value of the *default* parameter if interior ring
-        data have not been set. If set to an `Exception` instance then
-        it will be raised instead.
+        Return the value of the *default* parameter if the part node
+        count variable has not been set. If set to an `Exception`
+        instance then it will be raised instead.
 
 :Returns:
 
@@ -485,8 +589,39 @@ False
                         self.__class__.__name__))
     #--- End: def
 
+    def has_node_count(self):
+        '''Whether or not there is a node count variable for geometry bounds..
+        
+.. versionadded:: 1.8.0
+
+.. seealso:: `del_node_count`, `get_node_count`, `set_node_count`
+
+:Returns:
+
+    `bool`
+        True if there is a node count variable, otherwise False.
+
+**Examples:**
+
+
+>>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+>>> c.set_node_count(n)
+>>> c.has_node_count()
+True
+>>> c.get_node_count()
+<NodeCount: long_name=node counts>
+>>> c.del_node_count()
+<NodeCount: long_name=node counts>
+>>> c.has_node_count()
+False
+
+        '''
+        return self._has_component('part_node_count')
+    #--- End: def
+
     def has_part_node_count(self):
-        '''Whether or not there is a part node count variable.
+        '''Whether or not there is a part node count variable for geometry
+bounds..
         
 .. versionadded:: 1.8.0
 
@@ -496,7 +631,7 @@ False
 :Returns:
 
     `bool`
-        True if is a part node count variable, otherwise False.
+        True if there is a part node count variable, otherwise False.
 
 **Examples:**
 
@@ -791,7 +926,70 @@ also inserted into the bounds data array, if present.
 
         return c
     #--- End: def
-    
+
+    def set_node_count(self, node_count, copy=True):
+        '''Set the node count variable for geometry bounds.
+
+.. versionadded:: 1.7.0
+
+.. seealso: `del_node_count`, `get_node_count`, `has_node_count`
+
+:Parameters:
+
+    node_count: `NodeCount`
+        The node count variable to be inserted.
+
+    copy: `bool`, optional
+        If False then do not copy the node count variable prior to
+        insertion. By default it is copied.
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+TODO
+
+        '''
+        if copy:
+            node_count = node_count.copy()
+
+        self._set_component('node_count', node_count, copy=False)
+    #--- End: def
+
+    def set_part_node_count(self, part_node_count, copy=True):
+        '''Set the part node count variable for geometry bounds.
+
+.. versionadded:: 1.7.0
+
+.. seealso: `del_part_node_count`, `get_part_node_count`,
+            `has_part_node_count`
+
+:Parameters:
+
+    part_node_count: `PartNodeCount`
+        The part node count variable to be inserted.
+
+    copy: `bool`, optional
+        If False then do not copy the part node count variable prior
+        to insertion. By default it is copied.
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+TODO
+
+        '''
+        if copy:
+            part_node_count = part_node_count.copy()
+
+        self._set_component('part_node_count', part_node_count, copy=False)
+    #--- End: def
+
     def squeeze(self, axes=None):
         '''Remove size one axes from the data array.
 
@@ -944,7 +1142,7 @@ Boundaries" of the CF conventions for details.
         a_axes.append(-1)
 
         # ------------------------------------------------------------
-        # Transpose the interior_ring
+        # Transpose the interior ring
         # ------------------------------------------------------------
         interior_ring = c.get_interior_ring(None)
         if interior_ring is not None:

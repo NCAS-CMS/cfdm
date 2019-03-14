@@ -88,8 +88,8 @@ indexing (given the restrictions on the type of indices allowed) is:
         # Initialise the un-sliced uncompressed array
         uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
-        count_array = self.get_count_variable().data.array
-        index_array = self.get_index_variable().data.array
+        count_array = self.get_count().data.array
+        index_array = self.get_index().data.array
         
         # Loop over instances
         for i in range(uarray.shape[0]):

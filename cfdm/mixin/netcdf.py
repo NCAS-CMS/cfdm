@@ -877,19 +877,19 @@ True
 #--- End: class
 
 
-class NetCDFGeometryContainer(NetCDF):
-    '''Mixin class for accessing the netCDF geometry container name.
+class NetCDFGeometry(NetCDF):
+    '''Mixin class for accessing the netCDF geometry container variable
+name.
 
 .. versionadded:: 1.8.0
 
     '''   
-    def nc_del_geometry_container(self, default=ValueError()):
-        '''Remove the netCDF geometry container name.
+    def nc_del_geometry(self, default=ValueError()):
+        '''Remove the netCDF geometry container variable name.
 
 .. versionadded:: 1.8.0
 
-.. seealso:: `nc_get_geometry_container`, `nc_has_geometry_container`,
-             `nc_set_geometry_container`
+.. seealso:: `nc_get_geometry`, `nc_has_geometry`, `nc_set_geometry`
 
 :Parameters:
 
@@ -901,40 +901,39 @@ class NetCDFGeometryContainer(NetCDF):
 :Returns:
 
     `str`
-        The removed netCDF geometry container name.
+        The removed netCDF geometry container variable name.
 
 **Examples:**
 
->>> f.nc_set_geometry_container('geometry_container')
->>> f.nc_has_geometry_container()
+>>> f.nc_set_geometry('geometry')
+>>> f.nc_has_geometry()
 True
->>> f.nc_get_geometry_container()
-'geometry_container'
->>> f.nc_del_geometry_container()
-'geometry_container'
->>> f.nc_has_geometry_container()
+>>> f.nc_get_geometry()
+'geometry'
+>>> f.nc_del_geometry()
+'geometry'
+>>> f.nc_has_geometry()
 False
->>> print(f.nc_get_geometry_container(None))
+>>> print(f.nc_get_geometry(None))
 None
->>> print(f.nc_del_geometry_container(None))
+>>> print(f.nc_del_geometry(None))
 None
 
         '''
         try:
-            return self._get_component('netcdf').pop('geometry_container')
+            return self._get_component('netcdf').pop('geometry')
         except KeyError:
             return self._default(default,
-                   "{!r} has no netCDF geometry_container name".format(
+                   "{!r} has no netCDF geometry name".format(
                        self.__class__.__name__))
     #--- End: def
 
-    def nc_get_geometry_container(self, default=ValueError()):
-        '''Return the netCDF geometry container name.
+    def nc_get_geometry(self, default=ValueError()):
+        '''Return the netCDF geometry container variable name.
 
 .. versionadded:: 1.8.0
 
-.. seealso:: `nc_del_geometry_container`, `nc_has_geometry_container`,
-             `nc_set_geometry_container`
+.. seealso:: `nc_del_geometry`, `nc_has_geometry`, `nc_set_geometry`
 
 :Parameters:
 
@@ -946,79 +945,77 @@ None
 :Returns:
 
     `str`
-        The netCDF geometry container name.
+        The netCDF geometry container variable name.
 
 **Examples:**
 
->>> f.nc_set_geometry_container('geometry_container')
->>> f.nc_has_geometry_container()
+>>> f.nc_set_geometry('geometry')
+>>> f.nc_has_geometry()
 True
->>> f.nc_get_geometry_container()
-'geometry_container'
->>> f.nc_del_geometry_container()
-'geometry_container'
->>> f.nc_has_geometry_container()
+>>> f.nc_get_geometry()
+'geometry'
+>>> f.nc_del_geometry()
+'geometry'
+>>> f.nc_has_geometry()
 False
->>> print(f.nc_get_geometry_container(None))
+>>> print(f.nc_get_geometry(None))
 None
->>> print(f.nc_del_geometry_container(None))
+>>> print(f.nc_del_geometry(None))
 None
 
         '''   
         try:
-            return self._get_component('netcdf')['geometry_container']
+            return self._get_component('netcdf')['geometry']
         except KeyError:
             return self._default(default,
-                   "{!r} has no netCDF geometry_container name".format(
+                   "{!r} has no netCDF geometry name".format(
                        self.__class__.__name__))
     #--- End: def
 
-    def nc_has_geometry_container(self):
-        '''Whether the netCDF geometry container name has been set.
+    def nc_has_geometry(self):
+        '''Whether the netCDF geometry container variable name has been set.
 
 .. versionadded:: 1.8.0
 
-.. seealso:: `nc_del_geometry_container`, `nc_get_geometry_container`,
-             `nc_set_geometry_container`
+.. seealso:: `nc_del_geometry`, `nc_get_geometry`, `nc_set_geometry`
 
 :Returns:
 
     `bool`
-        True if the netCDF geometry container name has been set, otherwise
-        False.
+        True if the netCDF geometry container variable name has been
+        set, otherwise False.
 
 **Examples:**
 
->>> f.nc_set_geometry_container('geometry_container')
->>> f.nc_has_geometry_container()
+>>> f.nc_set_geometry('geometry')
+>>> f.nc_has_geometry()
 True
->>> f.nc_get_geometry_container()
-'geometry_container'
->>> f.nc_del_geometry_container()
-'geometry_container'
->>> f.nc_has_geometry_container()
+>>> f.nc_get_geometry()
+'geometry'
+>>> f.nc_del_geometry()
+'geometry'
+>>> f.nc_has_geometry()
 False
->>> print(f.nc_get_geometry_container(None))
+>>> print(f.nc_get_geometry(None))
 None
->>> print(f.nc_del_geometry_container(None))
+>>> print(f.nc_del_geometry(None))
 None
 
         '''
-        return 'geometry_container' in self._get_component('netcdf')
+        return 'geometry' in self._get_component('netcdf')
     #--- End: def
 
-    def nc_set_geometry_container(self, value):
-        '''Set the netCDF geometry container name.
+    def nc_set_geometry(self, value):
+        '''Set the netCDF geometry container variable name.
         
 .. versionadded:: 1.8.0
 
-.. seealso:: `nc_del_geometry_container`, `nc_get_geometry_container`,
-             `nc_has_geometry_container`
+.. seealso:: `nc_del_geometry`, `nc_get_geometry`, `nc_has_geometry`
 
 :Parameters:
 
     value: `str`
-        The value for the netCDF geometry container name.
+        The value for the netCDF geometry container variable name.
 
 :Returns:
 
@@ -1026,22 +1023,22 @@ None
 
 **Examples:**
 
->>> f.nc_set_geometry_container('geometry_container')
->>> f.nc_has_geometry_container()
+>>> f.nc_set_geometry('geometry')
+>>> f.nc_has_geometry()
 True
->>> f.nc_get_geometry_container()
-'geometry_container'
->>> f.nc_del_geometry_container()
-'geometry_container'
->>> f.nc_has_geometry_container()
+>>> f.nc_get_geometry()
+'geometry'
+>>> f.nc_del_geometry()
+'geometry'
+>>> f.nc_has_geometry()
 False
->>> print(f.nc_get_geometry_container(None))
+>>> print(f.nc_get_geometry(None))
 None
->>> print(f.nc_del_geometry_container(None))
+>>> print(f.nc_del_geometry(None))
 None
 
         '''
-        self._get_component('netcdf')['geometry_container'] = value
+        self._get_component('netcdf')['geometry'] = value
     #--- End: def
 
 #--- End: class

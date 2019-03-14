@@ -99,7 +99,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         sample_indices = [slice(None)] * compressed_array.ndim
         u_indices      = [slice(None)] * self.ndim        
 
-        list_array = self.get_list_variable().data.array
+        list_array = self.get_list().data.array
         
         zeros = [0] * n_compressed_axes
         for j, b in enumerate(list_array):
@@ -126,7 +126,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
 
-    def get_list_variable(self, *default):
+    def get_list(self, *default):
         '''TODO
 
 .. versionadded:: 1.7.0

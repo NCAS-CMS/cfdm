@@ -122,9 +122,9 @@ Compression
    ~cfdm.Data.get_compressed_axes
    ~cfdm.Data.get_compressed_array
    ~cfdm.Data.get_compressed_dimension
-   ~cfdm.Data.get_count_variable
-   ~cfdm.Data.get_index_variable
-   ~cfdm.Data.get_list_variable
+   ~cfdm.Data.get_count
+   ~cfdm.Data.get_index
+   ~cfdm.Data.get_list
    
 Special
 -------

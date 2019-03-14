@@ -233,9 +233,8 @@ False
                 
         if set(self_properties) != set(other_properties):
             if verbose:
-                _ =  set(self_properties).symmetric_difference(other_properties)
-                for prop in set(self_properties).symmetric_difference(other_properties):                    
-                    print("{0}: Non-common property name: {1}".format( 
+                for prop in set(self_properties).symmetric_difference(other_properties):
+                    print("{0}: Missing property: {1}".format( 
                         self.__class__.__name__, prop))
             return False
 
@@ -248,7 +247,7 @@ False
                                 ignore_data_type=True, #ignore_data_type,
                                 verbose=verbose):
                 if verbose:
-                    print("{0}: Different {1}: {2!r}, {3!r}".format(
+                    print("{0}: Different {1!r} property values: {2!r}, {3!r}".format(
                         self.__class__.__name__, prop, x, y))
                 return False
         #--- End: for

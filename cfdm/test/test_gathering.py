@@ -248,8 +248,8 @@ class DSGTest(unittest.TestCase):
                 break
 
 #        print(g.get_array())
-#        print(repr(g.data.get_list_variable().get_array()))
-#        print(g.data.get_list_variable().get_array())
+#        print(repr(g.data.get_list().data.array())
+#        print(g.data.get_list().data.array)
 #        print('compression_type=',g.data.get_compression_type())
 #        print(g.data.get_compressed_axes())
 #        print(g.data.shape)
@@ -332,7 +332,7 @@ class DSGTest(unittest.TestCase):
             [[280. , 282.5, 281. ],
              [279. , 278. , 277.5]], dtype='float32')).all())
         
-        self.assertTrue((tas.data.get_list_variable().data.array == numpy.array(
+        self.assertTrue((tas.data.get_list().data.array == numpy.array(
             [1, 4, 5])).all())
     #--- End: def
 

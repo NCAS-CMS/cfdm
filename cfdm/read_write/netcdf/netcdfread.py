@@ -226,7 +226,7 @@ contents and any file suffix is not not considered.
              verbose=False, warnings=True):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
 location.
-
+        
 The file may be big or little endian.
 
 NetCDF dimension names are stored in the `ncdim` attributes of the
@@ -298,15 +298,13 @@ TODO
         # Initialise netCDF read parameters
         # ------------------------------------------------------------
         self.read_vars = {
-            #
             'new_dimensions': {},
-            #
             'formula_terms': {},
-            #
             'compression': {},
+
             # Verbose?
             'verbose': verbose,
-
+            
             # Warnings?
             'warnings': warnings,
             
@@ -324,44 +322,44 @@ TODO
             
             'bounds': {},
             
-            # --------------------------------------------------------            
-            # Simple geometries
             # --------------------------------------------------------
-            # Geometry containers, keyed by their netCDF variable name.
-            'geometries'    : {},
+            # Geometry containers, keyed by their netCDF geometry
+            # container variable names.
+            # --------------------------------------------------------
+            'geometries': {},
             
             'do_not_create_field':  set(),
             'references': {},
-
+            
             # --------------------------------------------------------
             # External variables
             # --------------------------------------------------------
             # Variables listed by the global external_variables
             # attribute
             'external_variables': set(),
-
+            
             # External variables that are actually referenced from
             # within the parent file
             'referenced_external_variables': set(),
-
+            
             # --------------------------------------------------------
             # Coordinate references
             # --------------------------------------------------------
             # Grid mapping attributes that describe horizontal datum
             'datum_parameters': constants.datum_parameters,
-
+            
             # Vertical coordinate reference constructs, keyed by the
             # netCDF variable name of their parent parametric vertical
             # coordinate variable.
             #
             # E.g. {'ocean_s_coordinate': <CoordinateReference: ocean_s_coordinate>}
             'vertical_crs': {},
-
+            
             # 
             'version': {},
-
-#            # Initialise node_coordinates_as_bounds
-#            'node_coordinates_as_bounds': set(),
+            
+            #            # Initialise node_coordinates_as_bounds
+            #            'node_coordinates_as_bounds': set(),
         }
         
         g = self.read_vars
@@ -647,7 +645,7 @@ TODO
         #--- End: if
 
         # ------------------------------------------------------------
-        # Geometry variables (CF>=1.8)
+        # Geometry container variables (CF>=1.8)
         #
         # Identify and parse all geometry container variables
         # ------------------------------------------------------------
@@ -742,7 +740,7 @@ TODO
             for construct_type in g['extra']:
                 for f in fields0:
                     for construct in g['get_constructs'][construct_type](f).values():
-                        ncvar = self.implementation.get_ncvar(construct)
+                        ncvar = self.implementation.nc_get_variable(construct)
                         if ncvar not in all_fields:
                             continue
                         
@@ -1245,10 +1243,7 @@ variable should be pre-filled with missing values.
             # netCDF part node count variable
             g['do_not_create_field'].add(part_node_count)
             
-            if interior_ring is not None:
-                # Do not attempt to create a field from an
-                # interior ring variable
-                g['do_not_create_field'].add(interior_ring)
+#            if interior_ring is not None:
                 
             part_dimension = g['variable_dimensions'][part_node_count][0]
             g['geometries'][geometry_ncvar]['part_dimension'] = part_dimension
@@ -1300,6 +1295,17 @@ variable should be pre-filled with missing values.
                 instance_dimension=cell_dimension)
 
             # --------------------------------------------------------
+            # Create a part node count variable
+            # --------------------------------------------------------
+            interior_ring_part_dimension = g['variable_dimensions'][interior_ring][0]
+            pnc = self._create_PartNodeCount(ncvar=part_node_count)
+            g['geometries'][geometry_ncvar]['part_node_count'] = pnc
+            
+            # Do not attempt to create a field construct from a
+            # netCDF part node count variable
+            g['do_not_create_field'].add(part_node_count)
+                
+            # --------------------------------------------------------
             # Create an interior ring variable (do this after setting
             # up the indexed ragged array compression parameters).
             # --------------------------------------------------------
@@ -1308,6 +1314,10 @@ variable should be pre-filled with missing values.
                 ir = self._create_InteriorRing(ncvar=interior_ring,
                                                ncdim=interior_ring_part_dimension)
                 g['geometries'][geometry_ncvar]['interior_ring'] = ir
+
+                # Do not attempt to create a field from an
+                # interior ring variable
+                g['do_not_create_field'].add(interior_ring)
         #--- End: if
         
         g['geometries'][geometry_ncvar].update(
@@ -1813,7 +1823,7 @@ variable should be pre-filled with missing values.
         if g['CF>=1.8']:
             geometry = self.implementation.del_property(f, 'geometry', None)
             if geometry is not None:
-                self.implementation.nc_set_geometry_container(f, geometry)
+                self.implementation.nc_set_geometry(f, geometry)
         #--- End: if
         
         # Map netCDF dimension names to domain axis names.
@@ -1865,7 +1875,7 @@ variable should be pre-filled with missing values.
                 self._reference(ncdim)
                 if coord.has_bounds():
                     bounds = self.implementation.get_bounds(coord)
-                    self._reference(self.implementation.get_ncvar(bounds))
+                    self._reference(self.implementation.nc_get_variable(bounds))
                     
                 # Set unlimited status of axis
                 if nc.dimensions[ncdim].isunlimited():
@@ -1994,7 +2004,7 @@ variable should be pre-filled with missing values.
                     self._reference(ncvar)
                     if self.implementation.has_bounds(coord):
                         bounds = self.implementation.get_bounds(coord)
-                        self._reference(self.implementation.get_ncvar(bounds))
+                        self._reference(self.implementation.nc_get_variable(bounds))
                                         
                     dimensions = [axis]
                     ncvar_to_key[ncvar] = dim
@@ -2012,7 +2022,7 @@ variable should be pre-filled with missing values.
                     self._reference(ncvar)
                     if self.implementation.has_bounds(coord):
                         bounds = self.implementation.get_bounds(coord)
-                        self._reference(self.implementation.get_ncvar(bounds))
+                        self._reference(self.implementation.nc_get_variable(bounds))
 
                     ncvar_to_key[ncvar] = aux
 
@@ -2031,21 +2041,9 @@ variable should be pre-filled with missing values.
             node_coordinates = set(geometry['node_coordinates']).difference(
                 g['node_coordinates_as_bounds'])
 
-            #            print('FIELD:', field_ncvar)
- #           print('node_coordinates=', geometry['node_coordinates'])
-#            print('node_coordinates_as_bounds=', g['node_coordinates_as_bounds'])
-#            print (set(geometry['node_coordinates']).difference(g['node_coordinates_as_bounds']))
-#            print('XXXX=', node_coordinates)
-
             for node_ncvar in geometry['node_coordinates']:
                 found = any([(self.implementation.get_bounds_ncvar(a) == node_ncvar)
                              for a in f.auxiliary_coordinates.values()])
-#                found = False
-#                for a in f.auxiliary_coordinates.values():
-#                    if a.bounds.nc_get_variable() == node_ncvar:
-#                        found = True
- #                       break
-#                #--- End: for
                 
                 if found:
                     continue
@@ -2079,44 +2077,12 @@ variable should be pre-filled with missing values.
                 ncvar_to_key[node_ncvar] = aux
         #--- End: if
             
-#            for node_ncvar in node_coordinates:
-#                # Set dimensions for this node coordinate variable
-#                dimensions = self._get_domain_axes(node_ncvar)
-#
-#                if node_ncvar in g['auxiliary_coordinate']:
-#                    coord = g['auxiliary_coordinate'][node_ncvar].copy()
-#                else:     
-#                    coord = self._create_auxiliary_coordinate(field_ncvar=field_ncvar,
-#                                                              ncvar=None,
-#                                                              f=f,
-#                                                              bounds=node_ncvar)
-#
-#                    # Move properties from the bounds to the parent
-##                    coord.set_properties(coord.bounds.clear_properties())
-#
-#                    geometry_type = geometry['geometry_type']
-#                    if geometry_type is not None:                        
-#                        self.implementation.set_geometry(coord, geometry_type)
-#                    
-#                    g['auxiliary_coordinate'][node_ncvar] = coord
-#                    
-#                # Insert auxiliary coordinate
-#                if verbose:
-#                    print('    [6] Inserting', repr(coord))
-#
-#                aux = self.implementation.set_auxiliary_coordinate(
-#                    f, coord, axes=dimensions, copy=False)
-#                    
-#                self._reference(node_ncvar)
-#                ncvar_to_key[node_ncvar] = aux
-#        #--- End: if                
-
         # ------------------------------------------------------------
         # Add coordinate reference constructs from formula_terms
         # properties
         # ------------------------------------------------------------
         for key, coord in self.implementation.get_coordinates(field=f).items():
-            coord_ncvar = self.implementation.get_ncvar(coord)
+            coord_ncvar = self.implementation.nc_get_variable(coord)
 
             if coord_ncvar is None:
                 # This might be the case if the coordinate construct
@@ -2188,7 +2154,7 @@ variable should be pre-filled with missing values.
                 self._reference(ncvar)
                 if self.implementation.has_bounds(domain_anc):
                     bounds = self.implementation.get_bounds(domain_anc)
-                    self._reference(self.implementation.get_ncvar(bounds))
+                    self._reference(self.implementation.nc_get_variable(bounds))
 
                 if ncvar not in ncvar_to_key:
                     ncvar_to_key[ncvar] = da_key
@@ -2424,19 +2390,20 @@ variable should be pre-filled with missing values.
     #--- End: def
 
     def _get_geometry(self, field_ncvar):
-        '''TODO
+        '''Return a geometry container for this field construct.
 
 .. versionadded:: 1.8.0
 
 :Parameters:
 
-    field_ncvar
+    field_ncvar: `str`
+        The netCDF varibalename for the field construct.
 
 :Returns:
 
-        A dictionary containing geometry container information. If
-        there is no geometry container for this data variable, or if
-        the file version is pre-CF-1.8, then `None` is returned.
+        A `dict` containing geometry container information. If there
+        is no geometry container for this data variable, or if the
+        file version is pre-CF-1.8, then `None` is returned.
 
         '''
         g = self.read_vars        
@@ -2448,7 +2415,7 @@ variable should be pre-filled with missing values.
     def _add_message(self, field_ncvar, ncvar, message=None,
                      attribute=None, dimensions=None, variable=None,
                      conformance=None):
-        '''aaaaaa
+        '''TODO
 
 :Parameters:
 
@@ -2646,8 +2613,7 @@ variable's netCDF dimensions.
             properties = {}
 
         has_bounds = False
-        attribute = 'bounds'
-#        ncbounds = None
+        attribute = 'bounds' # TODO Bad default? consider if bounds != None
         geometry = None
 
 #if len(axes) == len(ncdimensions):
@@ -2668,13 +2634,15 @@ variable's netCDF dimensions.
         # ------------------------------------------------------------
         geometry = self._get_geometry(field_ncvar)
 
+        # If there are bounds then find the name of the attribute that
+        # names them, and the netCDF varibale name of the bounds.
         if bounds is None:
             ncbounds = properties.pop('bounds', None)
             if ncbounds is None:
                 ncbounds = properties.pop('climatology', None)
                 if ncbounds is not None:
                     attribute = 'climatology'
-                else:
+                elif geometry:
                     ncbounds = properties.pop('nodes', None)
                     if ncbounds is not None:
                         attribute = 'nodes'
@@ -2753,7 +2721,7 @@ variable's netCDF dimensions.
             # --------------------------------------------------------
             if geometry is not None and ncbounds in geometry['node_coordinates']:
                 # Record the netCDF node dimension name
-                count = self.implementation.get_count_variable(bounds)
+                count = self.implementation.get_count(bounds)
                 node_ncdim = self.implementation.nc_get_sample_dimension(count)
                 self.implementation.nc_set_dimension(bounds, node_ncdim)
 
@@ -2762,6 +2730,18 @@ variable's netCDF dimensions.
                     self.implementation.set_geometry(c, geometry_type)
 
                 g['node_coordinates_as_bounds'].add(ncbounds)
+
+                # Add a node count variable
+                nc = geometry.get('node_count')
+                if nc is not None:
+                    self.implementation.set_node_count(parent=c,
+                                                       node_count=nc)
+
+                # Add a part node count variable
+                pnc = geometry.get('part_node_count')
+                if pnc is not None:
+                    self.implementation.set_part_node_count(parent=c,
+                                                            part_node_count=pnc)
 
                 # Add an interior ring variable
                 interior_ring = geometry.get('interior_ring')
@@ -3002,6 +2982,70 @@ variable's netCDF dimensions.
         data = self._create_data(ncvar, variable, uncompress_override=True)
         self.implementation.set_data(variable, data, copy=False)
             
+        return variable
+    #--- End: def
+
+    def _create_NodeCount(self, ncvar):
+        '''Create a TODO
+    
+.. versionadded:: 1.8.0
+
+:Parameters:
+    
+    ncvar: `str`
+        The name of the netCDF node count variable.
+
+        *Parameter example:*
+          ``ncvar='node_count'``
+
+:Returns:
+
+    out: Node count variable
+
+        '''
+        g = self.read_vars
+        
+        # Initialise the interior ring variable
+        variable = self.implementation.initialise_NodeCount()
+
+        # Store the netCDF variable name
+        self.implementation.nc_set_variable(variable, ncvar)
+
+        properties = g['variable_attributes'][ncvar]
+        self.implementation.set_properties(variable, properties)
+
+        return variable
+    #--- End: def
+
+    def _create_PartNodeCount(self, ncvar):
+        '''Create a TODO
+    
+.. versionadded:: 1.8.0
+
+:Parameters:
+    
+    ncvar: `str`
+        The name of the netCDF part node count variable.
+
+        *Parameter example:*
+          ``ncvar='part_node_count'``
+
+:Returns:
+
+    out: Part node count variable
+
+        '''
+        g = self.read_vars
+        
+        # Initialise the interior ring variable
+        variable = self.implementation.initialise_PartNodeCount()
+
+        # Store the netCDF variable name
+        self.implementation.nc_set_variable(variable, ncvar)
+
+        properties = g['variable_attributes'][ncvar]
+        self.implementation.set_properties(variable, properties)
+
         return variable
     #--- End: def
 

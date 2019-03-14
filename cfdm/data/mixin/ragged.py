@@ -7,7 +7,7 @@ class RaggedContiguous(object):
 .. versionadded:: 1.7.0
 
     '''
-    def get_count_variable(self, default=ValueError()):
+    def get_count(self, default=ValueError()):
         '''TODO
 
 .. versionadded:: 1.7.0
@@ -43,7 +43,7 @@ class RaggedIndexed(object):
     '''TODO
 
     '''
-    def get_index_variable(self, default=ValueError()):
+    def get_index(self, default=ValueError()):
         '''TODO
 
 .. versionadded:: 1.7.0

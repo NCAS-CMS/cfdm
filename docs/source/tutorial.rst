@@ -3192,7 +3192,7 @@ file:
    >>> print(h.data.compressed_array)
    [0.12 0.05 0.18 0.05 0.11 0.2 0.15 0.08 0.04 0.06 0.15 0.19 0.15 0.17 0.07
     0.11 0.03 0.14 0.16 0.02 0.09 0.1 0.04 0.11]
-   >>> count_variable = h.data.get_count_variable()
+   >>> count_variable = h.data.get_count()
    >>> count_variable
    <Count: long_name=number of observations for this station(4) >
    >>> print(count_variable.data.array)
@@ -3286,7 +3286,7 @@ The new field construct can now be inspected and written to a netCDF file:
    'ragged contiguous'
    >>> print(T.data.compressed_array)
    [280.  281.  279.  278.  279.5]
-   >>> count_variable = T.data.get_count_variable()
+   >>> count_variable = T.data.get_count()
    >>> count_variable
    <Count: long_name=number of obs for this timeseries(2) >
    >>> print(count_variable.data.array)
@@ -3407,7 +3407,7 @@ file:
    >>> print(p.data.compressed_array)
    [[0.000122 0.0008   0.000177 0.000175 0.00058 0.000206 0.0007  ]
     [0.000202 0.000174 0.00084  0.000201 0.0057  0.000223 0.000102]]
-   >>> list_variable = p.data.get_list_variable()
+   >>> list_variable = p.data.get_list()
    >>> list_variable
    <List: ncvar%landpoint(7) >
    >>> print(list_variable.data.array)
@@ -3506,7 +3506,7 @@ The new field construct can now be inspected and written a netCDF file:
    >>> print(P.data.compressed_array)
    [[2. 1. 3.]
     [4. 0. 5.]]
-   >>> list_variable = P.data.get_list_variable()
+   >>> list_variable = P.data.get_list()
    >>> list_variable 
    <List: (3) >
    >>> print(list_variable.data.array)

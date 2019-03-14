@@ -108,10 +108,10 @@ from .functions import (CF,
                         ATOL,
                         RTOL)
 
-from .count import Count
-from .index import Index
-from .list  import List
-
+from .count         import Count
+from .index         import Index
+from .list          import List
+from .nodecount     import NodeCount
 from .partnodecount import PartNodeCount
 
 from .bounds               import Bounds
