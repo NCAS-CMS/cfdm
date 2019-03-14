@@ -553,8 +553,8 @@ class DSGTest(unittest.TestCase):
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=True))
-            self.assertTrue(len(g.auxiliary_coordinates) == 3)
-#            g.dump()
+            self.assertTrue(len(g.auxiliary_coordinates) == 4)
+            g.dump()
 
         g = f[0]
         for axis in ('X', 'Y', 'Z'):
@@ -562,10 +562,6 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(coord.has_node_count(), 'axis='+axis)
             self.assertTrue(coord.has_part_node_count(), 'axis='+axis)
             self.assertTrue(coord.has_interior_ring(), 'axis='+axis)
-
-        g.construct('axis=X').get_node_count().dump()
-        g.construct('axis=X').get_part_node_count().dump()
-        g.construct('axis=X').get_interior_ring().dump()
     #--- End: def
 
 #--- End: class

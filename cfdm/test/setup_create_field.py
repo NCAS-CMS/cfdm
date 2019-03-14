@@ -28,7 +28,6 @@ class create_fieldTest(unittest.TestCase):
         dim0.set_property('standard_name', 'grid_longitude')
         dim0.set_property('units', 'degrees')
 
-#        array = dim0.get_array()
         array = dim0.data.array
 
         array = numpy.array([array-0.5, array+0.5]).transpose((1,0))
@@ -194,10 +193,10 @@ class create_fieldTest(unittest.TestCase):
         if verbose:
             print("####################################################")
             
-        cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
+        cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=False)
 #        sys.exit(0)
 
-        g = cfdm.read(self.filename, verbose=verbose) #, squeeze=True)
+        g = cfdm.read(self.filename, verbose=False)
 #        for x in g:
 #            x.print_read_report()
 

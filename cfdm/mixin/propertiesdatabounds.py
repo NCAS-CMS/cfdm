@@ -88,7 +88,8 @@ bounds.
         '''
         # Initialise properties, data, geometry and interior ring
         super().__init__(properties=properties, data=data,
-                         source=source, geometry=geometry,
+                         bounds=bounds, source=source,
+                         geometry=geometry,
                          interior_ring=interior_ring, copy=copy,
                          _use_data=_use_data)
 
@@ -422,8 +423,7 @@ False
             string.append(interior_ring.dump(display=False, _key=_key,
                                              _prefix=_prefix+'Interior Ring:',
                                              _create_title=False,
-                                             _level=_level,
-                                             _axes=_axes,
+                                             _level=_level, _axes=_axes,
                                              _axis_names=_axis_names))
             
         string = '\n'.join(string)
