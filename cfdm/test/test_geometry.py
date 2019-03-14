@@ -554,7 +554,7 @@ class DSGTest(unittest.TestCase):
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=True))
             self.assertTrue(len(g.auxiliary_coordinates) == 4)
-            g.dump()
+#            g.dump()
 
         g = f[0]
         for axis in ('X', 'Y', 'Z'):

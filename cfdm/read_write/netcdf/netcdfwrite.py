@@ -4,6 +4,9 @@ from past.builtins import basestring
 
 import copy
 import os
+import re
+
+from distutils.version import LooseVersion
 
 import numpy
 import netCDF4
@@ -929,7 +932,7 @@ dictionary.
         ncvar = self._netcdf_name(ncvar)
         
         if g['verbose']:
-            print('    Writing netCDF geometry container variable {!r}:'.format(ncvar))
+            print('    Writing geometry container variable: {}'.format(ncvar))
             print('        ', geometry_container)
             
         kwargs = {'varname': ncvar,
@@ -993,13 +996,14 @@ name.
         if data is None:
             return {}
 
-#1.8        if self.implementation.is_geometry(coord): # and conventions >= 1.8
-#1.8            # --------------------------------------------------------
-#1.8            # We have geometry bounds, which are dealt with separately
-#1.8            # --------------------------------------------------------
-#1.8            extra = self._write_node_coordinates(coord, coord_ncvar,
-#1.8                                                 coord_ncdimensions)
-#1.8            return extra
+        if (g['output_version'] >= g['version']['1.8'] and
+            self.implementation.is_geometry(coord)):
+            # --------------------------------------------------------
+            # We have geometry bounds, which are dealt with separately
+            # --------------------------------------------------------
+            extra = self._write_node_coordinates(coord, coord_ncvar,
+                                                 coord_ncdimensions)
+            return extra
         
         # Still here? Then this coordinate has non-geometry bounds
         # with data
@@ -1234,10 +1238,10 @@ name.
 
         geometry_dimension = coord_ncdimensions[0]
     
-        if self._already_in_file(nodes, (geometry_dimension,)):
+        if self._already_in_file(count, (geometry_dimension,)):
             # This node count variable has been previously created, so
             # no need to do so again.
-            ncvar = g['seen'][id(nodes)]['ncvar']
+            ncvar = g['seen'][id(count)]['ncvar']
         else:
             # This node count variable has not been previously
             # created, so create it now.
@@ -1583,9 +1587,12 @@ then the input coordinate is not written.
                     self._write_netcdf_variable(ncvar, ncdimensions, coord,
                                                 extra=extra)
             
-                g['key_to_ncvar'][key] = ncvar
-                g['key_to_ncdims'][key] = ncdimensions
+#                g['key_to_ncvar'][key] = ncvar
+#                g['key_to_ncdims'][key] = ncdimensions
         #--- End: if
+
+        g['key_to_ncvar'][key] = ncvar
+        g['key_to_ncdims'][key] = ncdimensions
 
         if ncvar is not None:
             coordinates.append(ncvar)        
@@ -2748,20 +2755,18 @@ extra trailing dimension.
             extra['cell_methods'] = cell_methods
 
         # Geometry container
-        geometry_container = self._create_geometry_container(f)
-        if geometry_container:
-            print(geometry_container)
-            gc_ncvar = self._write_geometry_container(f, geometry_container)
-            if verbose:
-                print('    TODO')
-
-            extra['geometry'] = gc_ncvar
-
+        if g['output_version'] >= g['version']['1.8']:
+            geometry_container = self._create_geometry_container(f)
+            if geometry_container:
+                gc_ncvar = self._write_geometry_container(f, geometry_container)
+                extra['geometry'] = gc_ncvar
+        #--- End: if
+                
         # Create a new data variable
         self._write_netcdf_variable(ncvar, ncdimensions, f,
                                     omit=g['global_attributes'],
                                     extra=extra, data_variable=True)
-        
+            
         # Update the 'seen' dictionary, if required
         if add_to_seen:
             seen[id_f] = {'variable': org_f,
@@ -2893,29 +2898,53 @@ write them to the netCDF4.Dataset.
                         break
         #--- End: for
 
-        # ------------------------------------------------------------
+        # -----------------------------------------------------------
         # Write the Conventions global attribute to the file
         # ------------------------------------------------------------
-        Conventions = ['CF-'+self.implementation.get_cf_version()]
+#        Conventions = ['CF-'+self.implementation.get_cf_version()]
         delimiter = ' '
-        
+
         if g['Conventions']:
             if isinstance(g['Conventions'], basestring):
                 g['Conventions'] = [g['Conventions']]
 
+            found_cf_version = False
+            for c in g['Conventions']:
+                x = re.search('CF-\d.*', c)
+                if x:
+                    if found_cf_version:
+                        raise ValueError(
+                            "Can't set more than one CF version: {}".format(g['Conventions']))
+                                         
+                    version = x.groups[0]
+                    if LooseVersion(version) < g['version']['1.7']:
+                        raise ValueError(
+                            "Can't create a CF-{} file (version too old)".format(version))
+                    elif LooseVersion(version) > g['latest_version']:
+                        raise ValueError(
+                            "Can't create a CF-{} file (version too new)".format(version))
+
+                    found_cf_version = True
+            #--- End: for
+                            
             if [x for x in g['Conventions'] if ',' in x]:
                 raise ValueError("Conventions can not contain commas: {0}".format(
                     g['Conventions']))
 
-            Conventions += list(g['Conventions'])
-            
+            if found_cf_version:
+                g['output_version'] = LooseVersion(version)
+            else:
+                g['output_version'] = g['latest_version']
+                g['Conventions'] = ['CF-'+self.implementation.get_cf_version()] + list(g['Conventions'])
             if [x for x in g['Conventions'] if ' ' in x]:
                 # One of the conventions contains blanks space, so
                 # join them with commas.
                 delimiter = ','
-        #--- End: if
+        else:
+            g['output_version'] = g['latest_version']
+            g['Conventions'] = ['CF-'+self.implementation.get_cf_version()]
         
-        g['netcdf'].setncattr('Conventions', delimiter.join(Conventions))
+        g['netcdf'].setncattr('Conventions', delimiter.join(g['Conventions']))
         
         # ------------------------------------------------------------
         # Write the other global attributes to the file
@@ -3054,6 +3083,29 @@ and auxiliary coordinate roles for different data variables.
           numpy.dtype('float32'), numpy.dtype(int):
           numpy.dtype('int32')}``.
 
+    Conventions: (sequence of) `str`, optional
+         Specify conventions to be recorded by the netCDF global
+         "Conventions" attribute. These conventions are in addition to
+         version of CF being used e.g. ``'CF-1.7'``, which must not be
+         specified. If the "Conventions" property is set on a field
+         construct then it is ignored. Note that a convention name is
+         not allowed to contain any commas.
+
+         *Parameter example:*
+           ``Conventions='UGRID-1.0'``
+
+         *Parameter example:*
+           ``Conventions=['UGRID-1.0']``
+
+         *Parameter example:*
+           ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
+
+         *Parameter example:*
+           ``Conventions='CF-1.7'``
+
+         *Parameter example:*
+           ``Conventions=['CF-1.7', 'CMIP-6.2']``
+
 :Returns:
 
     `None`
@@ -3131,9 +3183,16 @@ and auxiliary coordinate roles for different data variables.
             'geometry_encodings':  {},
             
             'dimensions_with_role': {},
+
+            'latest_version': LooseVersion(self.implementation.get_cf_version()),
+            'version': {},
         }
         g = self.write_vars
-        
+
+        # Set versions
+        for version in ('1.7', '1.8', '1.9'):
+            g['version'][version] = LooseVersion(version)        
+
         if extra_write_vars:
             g.update(copy.deepcopy(extra_write_vars))
 
