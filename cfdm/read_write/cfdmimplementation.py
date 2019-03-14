@@ -116,21 +116,20 @@ class CFDMImplementation(Implementation):
             FieldAncillary=FieldAncillary,
 
             Bounds=Bounds,
-            List=List,
-            Count=Count,
-            Index=Index,        
             InteriorRing=InteriorRing,
-
             CoordinateConversion=CoordinateConversion,
             Datum=Datum,
-
             Data=Data,
+            
             GatheredArray=GatheredArray,
             NetCDFArray=NetCDFArray,
             RaggedContiguousArray=RaggedContiguousArray,
             RaggedIndexedArray=RaggedIndexedArray,
             RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
 
+            List=List,
+            Count=Count,
+            Index=Index,        
             NodeCount=NodeCount,
             PartNodeCount=PartNodeCount,
         )
@@ -906,18 +905,17 @@ netCDF unlimited dimensions.
     #--- End: def
 
     def get_node_count(self, construct):
-        '''
+        '''TODO
 
 .. versionadded:: 1.8.0
 
 :Parameters:
 
+    construct: 
   
 :Returns:
 
-    out: 
-
-:Examples:
+    out: Node count variable
 
         '''
         return construct.get_node_count(default=None)
@@ -1560,6 +1558,9 @@ also be provided.
 
     def set_geometry(self, coordinate, value):
         '''
+
+.. versionadded:: 1.8.0
+
         '''
         coordinate.set_geometry(value)
     #--- End: def
@@ -1581,6 +1582,8 @@ also be provided.
     def set_part_node_count(self, parent, part_node_count, copy=True):
         '''Insert TODO
 
+.. versionadded:: 1.8.0
+
 :Parameters:
 
     copy: `bool`, optional
@@ -1594,6 +1597,8 @@ also be provided.
 
     def set_interior_ring(self, parent, interior_ring, copy=True):
         '''Insert an interior ring array into a coordiante.
+
+.. versionadded:: 1.8.0
 
 :Parameters:
 
@@ -1609,6 +1614,8 @@ also be provided.
 
     def set_interior_ring(self, parent, interior_ring, copy=True):
         '''Insert an interior ring array into a coordiante.
+
+.. versionadded:: 1.8.0
 
 :Parameters:
 
@@ -1681,7 +1688,7 @@ also be provided.
     #--- End: def
 
     def set_part_ncdim(self, parent, ncdim):
-        '''Set the netCDF name of the dimension of the part_node_count
+        '''Set the netCDF name of the dimension of the part_node count
 variable.
 
 :Parameters:

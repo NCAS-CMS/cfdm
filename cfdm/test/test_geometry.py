@@ -11,14 +11,14 @@ import netCDF4
 import cfdm
 
 def _make_geometry_1_file(filename):
-    '''Make a netCDF file with 2 node coordinates variables, each of which
-has a corresponding auxiliary coordinate variable.
+    '''See n.comment for details
 
     '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
     n.Conventions = 'CF-1.8'
     n.featureType = 'timeSeries'
+    n.comment     = "Make a netCDF file with 2 node coordinates variables, each of which has a corresponding auxiliary coordinate variable."
     
     time     = n.createDimension('time'    , 4)
     instance = n.createDimension('instance', 2)
@@ -87,15 +87,15 @@ has a corresponding auxiliary coordinate variable.
 #--- End: def
 
 def _make_geometry_2_file(filename):        
-    '''Make a netCDF file with 3 node coordinates variables, only two of
-which have a corresponding auxiliary coordinate variable.
+    '''See n.comment for details
 
     '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
     n.Conventions = 'CF-1.8'
     n.featureType = 'timeSeries'
-    
+    n.comment     = 'A netCDF file with 3 node coordinates variables, only two of which have a corresponding auxiliary coordinate variable.'
+   
     time     = n.createDimension('time'    , 4)
     instance = n.createDimension('instance', 2)
     node     = n.createDimension('node'    , 5)
@@ -169,17 +169,16 @@ which have a corresponding auxiliary coordinate variable.
 #--- End: def
 
 def _make_geometry_3_file(filename):        
-    '''Make a netCDF file with 3 node coordinates variables, each of which
-contains only one point, only two of which have a corresponding
-auxiliary coordinate variables. There is no node count variable.
+    '''See n.comment for details
 
     '''
-    
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
     n.Conventions = 'CF-1.8'
     n.featureType = 'timeSeries'
-    
+    n.comment     = "A netCDF file with 3 node coordinates variables, each of which contains only one point, only two of which have a corresponding auxiliary coordinate variables. There is no node count variable."
+
+   
     time     = n.createDimension('time'    , 4)
     instance = n.createDimension('instance', 3)
     node     = n.createDimension('node'    , 3)
@@ -251,14 +250,13 @@ auxiliary coordinate variables. There is no node count variable.
 #--- End: def
 
 def _make_geometry_4_file(filename):
-    '''Make a netCDF file with 2 node coordinates variables, none of which
-have a corresponding auxiliary coordinate variable.
-
+    '''See n.comment for details.
     '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
     n.Conventions = 'CF-1.8'
     n.featureType = 'timeSeries'
+    n.comment     = "A netCDF file with 2 node coordinates variables, none of which have a corresponding auxiliary coordinate variable."
     
     time     = n.createDimension('time'    , 4)
     instance = n.createDimension('instance', 2)
@@ -460,6 +458,13 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g.equals(g.copy(), verbose=True))
 #            g.dump()
         
+        g = f[0]
+        for axis in ('X', 'Y'):
+            coord = g.construct('axis='+axis)
+            self.assertTrue( coord.has_node_count(), 'axis='+axis)
+            self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
+            self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
+
 #        cfdm.write(f, 'delme.nc', verbose=True)
         
 #        cfdm.write(f, self.tempfilename, verbose=True)
@@ -486,6 +491,13 @@ class DSGTest(unittest.TestCase):
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=True))
 #            g.dump()
+
+        g = f[0]
+        for axis in ('X', 'Y', 'Z'):
+            coord = g.construct('axis='+axis)
+            self.assertTrue( coord.has_node_count(), 'axis='+axis)
+            self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
+            self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
     #--- End: def
 
     def test_geometry_3(self):
@@ -500,6 +512,13 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g.equals(g.copy(), verbose=True))
             self.assertTrue(len(g.auxiliary_coordinates) == 3)
 #            g.dump()
+
+        g = f[0]
+        for axis in ('X', 'Y', 'Z'):
+            coord = g.construct('axis='+axis)
+            self.assertFalse(coord.has_node_count(), 'axis='+axis)
+            self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
+            self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
     #--- End: def
 
     def test_geometry_4(self):
@@ -514,6 +533,12 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g.equals(g.copy(), verbose=True))
             self.assertTrue(len(g.auxiliary_coordinates) == 3)
 #            g.dump()
+
+        for axis in ('X', 'Y'):
+            coord = g.construct('axis='+axis)
+            self.assertTrue( coord.has_node_count(), 'axis='+axis)
+            self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
+            self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
     #--- End: def
 
     def test_geometry_interior_ring(self):
@@ -527,6 +552,17 @@ class DSGTest(unittest.TestCase):
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=True))
 #            g.dump()
+
+        g = f[0]
+        for axis in ('X', 'Y', 'Z'):
+            coord = g.construct('axis='+axis)
+            self.assertTrue(coord.has_node_count(), 'axis='+axis)
+            self.assertTrue(coord.has_part_node_count(), 'axis='+axis)
+            self.assertTrue(coord.has_interior_ring(), 'axis='+axis)
+
+        g.construct('axis=X').get_node_count().dump()
+        g.construct('axis=X').get_part_node_count().dump()
+        g.construct('axis=X').get_interior_ring().dump()
     #--- End: def
 
 #--- End: class

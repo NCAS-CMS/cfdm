@@ -55,11 +55,11 @@ properties.
         the `set_geometry` method.
   
     interior_ring: `InteriorRing`, optional
-        Set the interior ring data. Ignored if the *source* parameter
-        is set.
+        Set the interior ring variable. Ignored if the *source*
+        parameter is set.
         
-        The interior ring data may also be set after initialisation
-        with the `set_interior_ring` method.
+        The interior ring variable may also be set after
+        initialisation with the `set_interior_ring` method.
   
     source: optional
         Initialize the properties, geometry type, data, bounds and
@@ -100,16 +100,16 @@ properties.
                 
             self.set_bounds(bounds, copy=False)
 
+        # Initialise the geometry type
+        if geometry is not None:
+            self.set_geometry(geometry)
+            
         # Initialise interior ring
         if interior_ring is not None:
             if copy or not _use_data:
                 interior_ring = interior_ring.copy(data=_use_data)
                 
             self.set_interior_ring(interior_ring, copy=False)
-            
-        # Initialise the geometry type
-        if geometry is not None:
-            self.set_geometry(geometry)
     #--- End: def
 
     # ----------------------------------------------------------------

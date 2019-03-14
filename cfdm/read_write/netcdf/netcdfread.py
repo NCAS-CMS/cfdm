@@ -357,9 +357,6 @@ TODO
             
             # 
             'version': {},
-            
-            #            # Initialise node_coordinates_as_bounds
-            #            'node_coordinates_as_bounds': set(),
         }
         
         g = self.read_vars
@@ -1209,8 +1206,15 @@ variable should be pre-filled with missing values.
             nodes_per_geometry = self._create_Count(ncvar=node_count,
                                                     ncdim=cell_dimension)
             
-            # Do not attempt to create a field construct from a netCDF
-            # node count variable
+            # --------------------------------------------------------
+            # Create a node count variable (which does not contain any
+            # data)
+            # --------------------------------------------------------
+            nc = self._create_NodeCount(ncvar=node_count)
+            g['geometries'][geometry_ncvar]['node_count'] = nc
+            
+            # Do not attempt to create a field construct from a
+            # netCDF part node count variable
             g['do_not_create_field'].add(node_count)
 
         # Record the netCDF node dimension as the sample dimension of
@@ -1243,8 +1247,6 @@ variable should be pre-filled with missing values.
             # netCDF part node count variable
             g['do_not_create_field'].add(part_node_count)
             
-#            if interior_ring is not None:
-                
             part_dimension = g['variable_dimensions'][part_node_count][0]
             g['geometries'][geometry_ncvar]['part_dimension'] = part_dimension
 
@@ -1295,10 +1297,11 @@ variable should be pre-filled with missing values.
                 instance_dimension=cell_dimension)
 
             # --------------------------------------------------------
-            # Create a part node count variable
+            # Create a part node count variable (which does not
+            # contain any data)
             # --------------------------------------------------------
-            interior_ring_part_dimension = g['variable_dimensions'][interior_ring][0]
-            pnc = self._create_PartNodeCount(ncvar=part_node_count)
+            pnc = self._create_PartNodeCount(ncvar=part_node_count,
+                                             ncdim=part_dimension)
             g['geometries'][geometry_ncvar]['part_node_count'] = pnc
             
             # Do not attempt to create a field construct from a
@@ -1310,9 +1313,9 @@ variable should be pre-filled with missing values.
             # up the indexed ragged array compression parameters).
             # --------------------------------------------------------
             if interior_ring is not None:
-                interior_ring_part_dimension = g['variable_dimensions'][interior_ring][0]
+                part_dimension = g['variable_dimensions'][interior_ring][0]
                 ir = self._create_InteriorRing(ncvar=interior_ring,
-                                               ncdim=interior_ring_part_dimension)
+                                               ncdim=part_dimension)
                 g['geometries'][geometry_ncvar]['interior_ring'] = ir
 
                 # Do not attempt to create a field from an
@@ -1801,7 +1804,7 @@ variable should be pre-filled with missing values.
     
             unpacked_dtype = numpy.result_type(*values)
 
-        # Re-initialise node_coordinates_as_bounds
+        # Initialise node_coordinates_as_bounds
         g['node_coordinates_as_bounds'] = set()
         
         # ----------------------------------------------------------------
@@ -2925,10 +2928,10 @@ variable's netCDF dimensions.
           ``ncvar='interior_ring'``
 
     ncdim: `str`
-        The name of the interior ring variable's netCDF dimension.
+        The name of the part dimension.
 
         *Parameter example:*
-          ``ncdim='parts'``
+          ``ncdim='part'``
 
 :Returns:
 
@@ -2986,14 +2989,14 @@ variable's netCDF dimensions.
     #--- End: def
 
     def _create_NodeCount(self, ncvar):
-        '''Create a TODO
+        '''Create a node count variable.
     
 .. versionadded:: 1.8.0
 
 :Parameters:
     
     ncvar: `str`
-        The name of the netCDF node count variable.
+        The netCDF node count variable name.
 
         *Parameter example:*
           ``ncvar='node_count'``
@@ -3017,9 +3020,9 @@ variable's netCDF dimensions.
         return variable
     #--- End: def
 
-    def _create_PartNodeCount(self, ncvar):
-        '''Create a TODO
-    
+    def _create_PartNodeCount(self, ncvar, ncdim):
+        '''Create a part node count variable.
+ 
 .. versionadded:: 1.8.0
 
 :Parameters:
@@ -3029,6 +3032,12 @@ variable's netCDF dimensions.
 
         *Parameter example:*
           ``ncvar='part_node_count'``
+
+    ncdim: `str`
+        The name of the part dimension.
+
+        *Parameter example:*
+          ``ncdim='part'``
 
 :Returns:
 
@@ -3042,7 +3051,8 @@ variable's netCDF dimensions.
 
         # Store the netCDF variable name
         self.implementation.nc_set_variable(variable, ncvar)
-
+        self.implementation.nc_set_dimension(variable, ncdim)
+        
         properties = g['variable_attributes'][ncvar]
         self.implementation.set_properties(variable, properties)
 

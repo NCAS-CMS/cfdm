@@ -74,7 +74,7 @@ may be accessed with the `nc_set_dimension`, `nc_get_dimension`,
     #--- End: def
     
     def dump(self, display=True, _key=None, _title=None,
-             _create_title=True, _prefix=None, _level=0,
+             _create_title=True, _prefix='', _level=0,
              _omit_properties=None, _axes=None, _axis_names=None):
         '''A full description of the interior ring variable.
 

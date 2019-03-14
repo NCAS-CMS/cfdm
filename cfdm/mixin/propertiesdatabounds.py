@@ -13,6 +13,107 @@ bounds.
 .. versionadded:: 1.7.0
 
     '''
+    def __init__(self, properties=None, data=None, bounds=None,
+                 geometry=None, interior_ring=None, node_count=None,
+                 part_node_count=None, source=None, copy=True,
+                 _use_data=True):
+        '''**Initialization**
+
+:Parameters:
+
+    properties: `dict`, optional
+        Set descriptive properties. The dictionary keys are property
+        names, with corresponding values. Ignored if the *source*
+        parameter is set.
+
+        *Parameter example:*
+           ``properties={'standard_name': 'longitude'}``
+        
+        Properties may also be set after initialisation with the
+        `properties` and `set_property` methods.
+  
+    data: `Data`, optional
+        Set the data array. Ignored if the *source* parameter is set.
+        
+        The data array may also be set after initialisation with the
+        `set_data` method.
+  
+    bounds: `Bounds`, optional
+        Set the bounds array. Ignored if the *source* parameter is
+        set.
+        
+        The bounds array may also be set after initialisation with the
+        `set_bounds` method.
+  
+    geometry: `str`, optional
+        Set the geometry type. Ignored if the *source* parameter is
+        set.
+        
+        *Parameter example:*
+           ``geometry='polygon'``
+        
+        The geometry type may also be set after initialisation with
+        the `set_geometry` method.
+  
+    interior_ring: `InteriorRing`, optional
+        Set the interior ring variable. Ignored if the *source*
+        parameter is set.
+        
+        The interior ring variable may also be set after
+        initialisation with the `set_interior_ring` method.
+
+    node_count: `NodeCount`, optional
+        Set the node count variable for geometry bounds. Ignored if
+        the *source* parameter is set.
+        
+        The node count variable may also be set after initialisation
+        with the `set_node_count` method.
+    
+    part_node_count: `PartNodeCount`, optional
+        Set the part node count variable for geometry bounds. Ignored
+        if the *source* parameter is set.
+        
+        The part node count variable may also be set after
+        initialisation with the `set_node_count` method.
+    
+    source: optional
+        Initialize the properties, geometry type, data, bounds,
+        interior ring variable, node count variable and part node
+        count variable from those of *source*.
+ 
+    copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization. By default arguments are deep copied.
+
+        '''
+        # Initialise properties, data, geometry and interior ring
+        super().__init__(properties=properties, data=data,
+                         source=source, geometry=geometry,
+                         interior_ring=interior_ring, copy=copy,
+                         _use_data=_use_data)
+
+        # Get node count and part node count variables from source
+        if source is not None:
+            try:
+                node_count = source.get_node_count(None)
+            except AttributeError:
+                node_count = None
+
+            try:
+                part_node_count = source.get_part_node_count(None)
+            except AttributeError:
+                part_node_count = None
+        #--- End: if
+
+        # Initialise node count
+        if node_count is not None:
+            self.set_node_count(node_count, copy=copy)
+            
+        # Initialise part node count
+        if part_node_count is not None:
+            self.set_part_node_count(part_node_count, copy=copy)
+    #--- End: def
+
     def __getitem__(self, indices):
         '''Return a subspace of the construct defined by indices
 
@@ -553,7 +654,7 @@ False
 
 .. versionadded:: 1.8.0
 
-.. seealso:: `get_interior_ring`, `del_part_node_count`,
+.. seealso:: `del_part_node_count`, `get_node_count`,
              `has_part_node_count`, `set_part_node_count`
 
 :Parameters:
@@ -616,7 +717,7 @@ True
 False
 
         '''
-        return self._has_component('part_node_count')
+        return self._has_component('node_count')
     #--- End: def
 
     def has_part_node_count(self):
