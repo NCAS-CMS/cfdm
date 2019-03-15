@@ -645,7 +645,7 @@ False
         return True
     #--- End: def
 
-    def filter_by_axis(self, *and_or, **axes):
+    def filter_by_axis(self, *mode, **axes):
         '''Select metadata constructs by axes spanned by their data.
 
 .. versionadded:: 1.7.0
@@ -657,12 +657,12 @@ False
 
 :Parameters:
 
-    and_or: optional
+    mode: optional
         Define the behaviour when multiple axes are provided.
 
-        By default (or if the *and_or* parameter is ``'and'``) a
+        By default (or if the *modes* parameter is ``'and'``) a
         construct is selected if it matches all of the given axis
-        requirements, but if the *and_or* parameter is ``'or'`` then a
+        requirements, but if the *mode* parameter is ``'or'`` then a
         construct will be selected when at least one of the axis
         requirements is met.
 
@@ -711,14 +711,14 @@ Select constructs whose data spans the "domainaxis1" or the
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + ({'filter_by_axis': (and_or, axes)},)
+        out._filters_applied = self.filters_applied() + ({'filter_by_axis': (mode, axes)},)
 
         _or = False
-        if and_or:
-            if len(and_or) > 1:
+        if mode:
+            if len(mode) > 1:
                 raise ValueError("Can provide at most one positional argument")
             
-            x = and_or[0]
+            x = mode[0]
             if x == 'or':
                 _or = True
             elif x != 'and':
@@ -1275,7 +1275,7 @@ Select the constructs with netCDF variable name 'time' or 'lat':
 
         return False
     
-    def filter_by_property(self, *and_or, **properties):
+    def filter_by_property(self, *mode, **properties):
         '''Select metadata constructs by property.
 
 .. versionadded:: 1.7.0
@@ -1287,12 +1287,12 @@ Select the constructs with netCDF variable name 'time' or 'lat':
 
 :Parameters:
         
-    and_or: optional
+    mode: optional
         Define the behaviour when multiple properties are provided.
 
-        By default (or if the *and_or* parameter is ``'and'``) a
+        By default (or if the *mode* parameter is ``'and'``) a
         construct is selected if it matches all of the given
-        properties, but if the *and_or* parameter is ``'or'`` then a
+        properties, but if the *mode* parameter is ``'or'`` then a
         construct will be selected when at least one of its properties
         matches.
 
@@ -1302,8 +1302,8 @@ Select the constructs with netCDF variable name 'time' or 'lat':
 
         By default a construct is selected if it matches all of the
         given properties, but it may alternatively be selected when at
-        least one of its properties matches (see the *and_or*
-        positional parameter).
+        least one of its properties matches (see the *mode* positional
+        parameter).
 
         A property value is given by a keyword parameter of the
         property name. The value may be a scalar or vector
@@ -1346,14 +1346,14 @@ with the string 'air':
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + ({'filter_by_property': (and_or, properties)},)
+        out._filters_applied = self.filters_applied() + ({'filter_by_property': (mode, properties)},)
         
         _or = False
-        if and_or:
-            if len(and_or) > 1:
+        if mode:
+            if len(mode) > 1:
                 raise ValueError("Can provide at most one positional argument")
             
-            x = and_or[0]
+            x = mode[0]
             if x == 'or':
                 _or = True
             elif x != 'and':
