@@ -155,10 +155,13 @@ method of a field construct.
          property.
 
          *Parameter example:*
-            ``global_attributes='project'``
+           ``global_attributes='project'``
 
          *Parameter example:*
-            ``global_attributes=['project', 'experiment']``
+           ``global_attributes=['project']``
+
+         *Parameter example:*
+           ``global_attributes=['project', 'experiment']``
 
     variable_attributes: (sequence of) `str`, optional
          Create netCDF data variable attributes from the specified
@@ -172,10 +175,13 @@ method of a field construct.
          will always be created as a netCDF data variable attribute
 
          *Parameter example:*
-            ``variable_attributes='project'``
+           ``variable_attributes='project'``
 
          *Parameter example:*
-            ``variable_attributes=['project', 'doi']``
+           ``variable_attributes=['project']``
+
+         *Parameter example:*
+           ``variable_attributes=['project', 'doi']``
 
     external: `str`, optional   
         Write metadata constructs that have data and are marked as
@@ -191,10 +197,10 @@ method of a field construct.
          not allowed to contain any commas.
 
          *Parameter example:*
-            ``Conventions='UGRID-1.0'``
+           ``Conventions='UGRID-1.0'``
 
          *Parameter example:*
-            ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
+           ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
 
     datatype: `dict`, optional
         Specify data type conversions to be applied prior to writing

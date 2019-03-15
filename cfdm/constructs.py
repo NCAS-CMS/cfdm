@@ -667,8 +667,7 @@ False
         requirements is met.
 
     axes: optional
-
-        Select constructs whose data array does, or does not, span
+        Select constructs whose data does, or does not, span
         particular domain axis constructs.
 
         A domain axis construct is identified by a keyword parameter

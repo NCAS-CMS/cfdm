@@ -23,6 +23,36 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
                 del self._class[key]
     #--- End: def
 
+    def classes(self):
+        '''Return all the classes of the implmeentation.
+
+:Returns:
+    
+    `dict`
+        The classes, keyed by their class name.
+
+**Examples:**
+
+>>> sorted(i.classes())
+['AuxiliaryCoordinate',
+ 'Bounds',
+ 'CellMeasure',
+ 'CellMethod',
+ 'CoordinateConversion',
+ 'CoordinateReference',
+ 'Data',
+ 'Datum',
+ 'DimensionCoordinate',
+ 'DomainAncillary',
+ 'DomainAxis',
+ 'Field',
+ 'FieldAncillary',
+ 'InteriorRing']
+
+        '''
+        return self._class.copy()
+    #--- End: def
+
     def copy(self):
         '''Copy 
         
@@ -43,8 +73,7 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
           ``name='Field'``
 
 :Returns:
-    
-    out:
+       
         The class object.
 
 **Examples:**
@@ -64,7 +93,7 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
 
 :Returns:
     
-    out: `str`
+    `str`
         The version.
 
 **Examples:**

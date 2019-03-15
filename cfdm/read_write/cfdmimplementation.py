@@ -135,6 +135,15 @@ class CFDMImplementation(Implementation):
         )
     #--- End: def
 
+    def __repr__(self):
+        '''Called by the `repr` built-in function.
+
+x.__repr__() <==> repr(x)
+
+        '''
+        return '<{0}: >'.format(self.__class__.__name__)
+    #--- End: def
+    
     def construct_insert_dimension(self, construct, position):
         '''TODO
 
@@ -1853,7 +1862,32 @@ def implementation():
 
 >>> i = cfdm.implementation()
 >>> i
-<cfdm.read_write.cfdmimplementation.CFDMImplementation at 0x7fc1b45d2f10>
+<CFDMImplementation: >
+>>> i.classes()
+{'AuxiliaryCoordinate': cfdm.auxiliarycoordinate.AuxiliaryCoordinate,
+ 'Bounds': cfdm.bounds.Bounds,
+ 'CellMeasure': cfdm.cellmeasure.CellMeasure,
+ 'CellMethod': cfdm.cellmethod.CellMethod,
+ 'CoordinateConversion': cfdm.coordinateconversion.CoordinateConversion,
+ 'CoordinateReference': cfdm.coordinatereference.CoordinateReference,
+ 'Count': cfdm.count.Count,
+ 'Data': cfdm.data.data.Data,
+ 'Datum': cfdm.datum.Datum,
+ 'DimensionCoordinate': cfdm.dimensioncoordinate.DimensionCoordinate,
+ 'DomainAncillary': cfdm.domainancillary.DomainAncillary,
+ 'DomainAxis': cfdm.domainaxis.DomainAxis,
+ 'Field': cfdm.field.Field,
+ 'FieldAncillary': cfdm.fieldancillary.FieldAncillary,
+ 'GatheredArray': cfdm.data.gatheredarray.GatheredArray,
+ 'Index': cfdm.index.Index,
+ 'InteriorRing': cfdm.interiorring.InteriorRing,
+ 'List': cfdm.list.List,
+ 'NetCDFArray': cfdm.data.netcdfarray.NetCDFArray,
+ 'NodeCount': cfdm.nodecount.NodeCount,
+ 'PartNodeCount': cfdm.partnodecount.PartNodeCount,
+ 'RaggedContiguousArray': cfdm.data.raggedcontiguousarray.RaggedContiguousArray,
+ 'RaggedIndexedArray': cfdm.data.raggedindexedarray.RaggedIndexedArray,
+ 'RaggedIndexedContiguousArray': cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray}
 
     '''
     return _implementation.copy()
