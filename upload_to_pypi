@@ -7,10 +7,6 @@
 # It is presumed that `python setup.py sdist` has already been run.
 #
 #>> ./upload_to_pypi 1.7
-
-
-
-
 # --------------------------------------------------------------------
 
 set -x
