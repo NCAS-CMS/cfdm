@@ -86,7 +86,7 @@ data array; and the units of the data.
 .
 .
 .SH SEE ALSO
-ncdump(1)
+ncdump
 .
 .
 .
