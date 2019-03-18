@@ -33,7 +33,6 @@ def _get_version():
 
 version      = _get_version()
 packages     = ['cfdm']
-#etc_files    = [f for f in find_package_data_files('cfdm/etc')]
 
 long_description = """The **cfdm** Python package is a complete implementation of the `CF
 data model <https://www.geosci-model-dev.net/10/4619/2017>`_, that
