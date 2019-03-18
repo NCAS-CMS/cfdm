@@ -113,16 +113,16 @@ components, and provides selected values of all data arrays.
             name = self.identity(default=self.get_property('units', ''))
             _title = 'Cell Measure: ' + name
 
-        if self.nc_external():
+        if self.nc_get_external():
             if not (self.has_data() or self.properties()):
-
                 ncvar = self.nc_get_variable(None)
                 if ncvar is not None:
                     ncvar = 'ncvar%'+ncvar
                 else:
                     ncvar = ''
                 _title += ' (external variable: {0})'.format(ncvar)
-                
+        #--- End: if
+        
         return super().dump( display=display, _key=_key,
                              _omit_properties=_omit_properties,
                              _level=_level, _title=_title,

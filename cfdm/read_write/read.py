@@ -30,8 +30,10 @@ be read within a session, and makes the read operation fast.
 **NetCDF unlimited dimensions**
 
 Domain axis constructs that correspond to NetCDF unlimited dimensions
-may be viewed with the `~cfdm.Field.nc_unlimited_dimensions` method of
-a field construct.
+may be accessed with the `~cfdm.Field.nc_unlimited_dimensions`
+`~cfdm.Field.nc_set_unlimited_dimensions` and
+`~cfdm.Field.nc_clear_unlimited_dimensions` methods of a field
+construct.
 
 **CF-compliance**
 

@@ -622,7 +622,7 @@ netCDF unlimited dimensions.
         unlimited.
 
         '''
-        return field.nc_unlimited_dimensions(unlimited)
+        return field.nc_set_unlimited_dimensions(unlimited)
     #--- End: def
     
     def nc_get_global_attributes(self, field):
@@ -634,7 +634,7 @@ netCDF unlimited dimensions.
     def nc_set_global_attributes(self, field, attributes):
         '''TODO
         '''
-        return field.nc_global_attributes(attributes)
+        return field.nc_set_global_attributes(attributes)
     #--- End: def
     
     def equal_constructs(self, construct0, construct1,
@@ -698,10 +698,10 @@ netCDF unlimited dimensions.
 
 :Examples 2:
         '''
-        if not hasattr(parent, 'nc_external'):
+        if not hasattr(parent, 'nc_get_external'):
             return False
         
-        return parent.nc_external()
+        return parent.nc_get_external()
     #--- End: def
     
     def get_field_ancillaries(self, field):
@@ -1542,7 +1542,7 @@ also be provided.
     def nc_set_external(self, construct):
         '''
         '''
-        construct.nc_external(True)
+        construct.nc_set_external(True)
     #--- End: def
 
     def set_field_ancillary(self, field, construct, axes, copy=True):

@@ -718,9 +718,9 @@ variable.
 .. versionadded:: 1.7.0
 
     '''
-    def nc_global_attributes(self, attributes=None):
-        '''Return or replace the selection of properties to be written as
-netCDF global attributes.
+    def nc_global_attributes(self):
+        '''Return the selection of properties to be written as netCDF global
+attributes.
 
 When multiple field constructs are being written to the same file, it
 is not possible to create a netCDF global attribute from a property
@@ -737,13 +737,102 @@ possible, so selecting them is optional.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `cfdm.write`, `nc_unlimited_dimensions`
+.. seealso:: `cfdm.write`, `nc_clear_global_attributes`,
+             `nc_set_global_attributes`
+
+:Returns:
+
+    `set`
+        The selection of properties to be written as netCDF global
+        attributes.
+
+**Examples:**
+
+>>> f.nc_set_global_attributes(['Conventions', 'project'])
+>>> f.nc_global_attributes()
+{'Conventions', 'project'}
+>>> f.nc_set_global_attributes(['project', 'comment'])
+>>> f.nc_global_attributes()
+{'Conventions', 'project', 'comment'}
+>>> f.nc_clear_global_attributes()
+{'Conventions', 'project', 'comment'}
+>>> f.nc_global_attributes()
+set()
+
+        '''
+        out = self._get_component('netcdf').get('global_attributes')
+        
+        if out is None:
+            return set()
+
+        return set(out)
+    #--- End: def
+    
+    def nc_clear_global_attributes(self):
+        '''Remove the selection of properties to be written as netCDF global
+attributes.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `cfdm.write`, `nc_global_attributes`,
+             `nc_set_global_attributes`
+
+:Returns:
+
+    `set`
+        The selection of properties that has been removed.
+
+**Examples:**
+
+>>> f.nc_set_global_attributes(['Conventions', 'project'])
+>>> f.nc_global_attributes()
+{'Conventions', 'project'}
+>>> f.nc_set_global_attributes(['project', 'comment'])
+>>> f.nc_global_attributes()
+{'Conventions', 'project', 'comment'}
+>>> f.nc_clear_global_attributes()
+{'Conventions', 'project', 'comment'}
+>>> f.nc_global_attributes()
+set()
+
+        '''
+        out = self._get_component('netcdf').get('global_attributes')
+        
+        if out is None:
+            out = set()
+        else:
+            out = set(out)
+
+        self._get_component('netcdf')['global_attributes'] = ()
+
+        return out
+    #--- End: def
+    
+    def nc_set_global_attributes(self, attributes):
+        '''Select properties to be written as netCDF global attributes.
+
+When multiple field constructs are being written to the same file, it
+is not possible to create a netCDF global attribute from a property
+that has different values for different fields being written. In this
+case the property will not be written as a netCDF global attribute,
+even if it has been selected as such by this method, but will appear
+instead as an attribute on the netCDF data variable corresponding to
+the field construct.
+
+The `description of file contents
+<http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents>`_
+properties are always written as netCDF global attributes, if
+possible, so selecting them is optional.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `cfdm.write`, `nc_global_attributes`,
+             `nc_clear_global_attributes`
 
 :Parameters:
 
-    attributes: sequence of `str`, optional   
-        Replace the exisiting selection of properties to be written
-        out as netCDF global attributes.
+    attributes: sequence of `str`
+        Select the properties from the sequence provided.
 
         *Parameter example:*
           ``attributes=['project']``
@@ -753,18 +842,18 @@ possible, so selecting them is optional.
 
 :Returns:
 
-    `set`
-        The selection of domain axis constructs prior to being
-        changed, or the current selection if no changes were
-        specified.
+    `None`
 
 **Examples:**
 
->>> x = f.nc_global_attributes(['Conventions', 'project'])
+>>> f.nc_set_global_attributes(['Conventions', 'project'])
 >>> f.nc_global_attributes()
 {'Conventions', 'project'}
->>> f.nc_global_attributes([])
-{'Conventions', 'project'}
+>>> f.nc_set_global_attributes(['project', 'comment'])
+>>> f.nc_global_attributes()
+{'Conventions', 'project', 'comment'}
+>>> f.nc_clear_global_attributes()
+{'Conventions', 'project', 'comment'}
 >>> f.nc_global_attributes()
 set()
 
@@ -773,29 +862,70 @@ set()
         
         if out is None:
             out = set()
+        else:
+            out = set(out)
 
-        if attributes:
-            self._get_component('netcdf')['global_attributes'] = tuple(attributes)
-
-        return set(out)
+        out.update(attributes)
+            
+        self._get_component('netcdf')['global_attributes'] = tuple(out)
     #--- End: def
     
-    def nc_unlimited_dimensions(self, axes=None):
-        '''Return or replace the selection of domain axis constructs to be
-written as netCDF unlimited dimensions.
+    def nc_unlimited_dimensions(self):
+        '''Return the selection of domain axis constructs to be written as
+netCDF unlimited dimensions.
 
 By default output netCDF dimensions are not unlimited.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `cfdm.write`, `nc_global_attributes`
+.. seealso:: `cfdm.write`, `nc_clear_unlimited_dimensions`,
+             `nc_set_unlimited_dimensions`
+
+:Returns:
+
+    `set`
+        The selection of domain axis constructs to be written as
+        netCDF unlimited dimensions.
+
+**Examples:**
+
+>>> f.nc_set_unlimited_dimensions(['domainaxis0'])
+>>> f.nc_unlimited_dimensions()
+{'domainaxis0'}
+>>> f.nc_set_unlimited_dimensions(['domainaxis1'])
+>>> f.nc_unlimited_dimensions()
+{'domainaxis0', 'domainaxis1'}
+>>> f.nc_clear_unlimited_dimensions()
+{'domainaxis0', 'domainaxis1'}
+>>> f.nc_unlimited_dimensions()
+set()
+
+        '''
+        out = self._get_component('netcdf').get('unlimited_dimensions')
+        
+        if out is None:
+            return set()
+
+        return set(out)
+    #--- End: def
+
+    def nc_set_unlimited_dimensions(self, axes):
+        '''Select domain axis constructs to be written as netCDF unlimited
+dimensions.
+
+By default output netCDF dimensions are not unlimited.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `cfdm.write`, `nc_unlimited_dimensions`,
+             `nc_clear_unlimited_dimensions`
 
 :Parameters:
 
     axes: sequence of `str`, optional   
-        Replace the exisiting selection of domain axis constructs to
-        be written out as netCDF unlimited dimensions. Domain axis
-        constructs are identified by their construct identifiers.
+        Select the domain axis constructs from the sequence
+        provided. Domain axis constructs are identified by their
+        construct identifiers.
 
         *Parameter example:*
           ``axes=['domainaxis0', 'domainaxis1']``
@@ -805,32 +935,77 @@ By default output netCDF dimensions are not unlimited.
 
 :Returns:
 
-    `set`
-        The selection of domain axis construct identifiers prior to
-        being changed, or the current selection if no changes were
-        specified.
+    `None`
 
 **Examples:**
 
->>> x = f.nc_unlimited_dimensions(['domainaxis1'])
+>>> f.nc_set_unlimited_dimensions(['domainaxis0'])
 >>> f.nc_unlimited_dimensions()
-{'domainaxis1'}
->>> f.nc_unlimited_dimensions([])
-{'domainaxis1'}
+{'domainaxis0'}
+>>> f.nc_set_unlimited_dimensions(['domainaxis1'])
+>>> f.nc_unlimited_dimensions()
+{'domainaxis0', 'domainaxis1'}
+>>> f.nc_clear_unlimited_dimensions()
+{'domainaxis0', 'domainaxis1'}
 >>> f.nc_unlimited_dimensions()
 set()
 
         '''
         out = self._get_component('netcdf').get('unlimited_dimensions')
-
+        
         if out is None:
             out = set()
+        else:
+            out = set(out)
 
-        if axes:
-            self._get_component('netcdf')['unlimited_dimensions'] = tuple(axes)
+        out.update(axes)
+            
+        self._get_component('netcdf')['unlimited_dimensions'] = tuple(out)
+    #--- End: def
 
-        return set(out)
-#--- End: def
+    def nc_clear_unlimited_dimensions(self):
+        '''Remove the selection of domain axis constructs to be written as
+netCDF unlimited dimensions.
+
+By default output netCDF dimensions are not unlimited.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `cfdm.write`, `nc_unlimited_dimensions`,
+             `nc_set_unlimited_dimensions`
+
+:Returns:
+
+    `set`
+        The selection of domain axis constructs that has been removed.
+
+**Examples:**
+
+>>> f.nc_set_unlimited_dimensions(['domainaxis0'])
+>>> f.nc_unlimited_dimensions()
+{'domainaxis0'}
+>>> f.nc_set_unlimited_dimensions(['domainaxis1'])
+>>> f.nc_unlimited_dimensions()
+{'domainaxis0', 'domainaxis1'}
+>>> f.nc_clear_unlimited_dimensions()
+{'domainaxis0', 'domainaxis1'}
+>>> f.nc_unlimited_dimensions()
+set()
+
+        '''
+        out = self._get_component('netcdf').get('unlimited_dimensions')
+        
+        if out is None:
+            out = set()
+        else:
+            out = set(out)
+
+        self._get_component('netcdf')['unlimited_dimensions'] = ()
+
+        return out
+    #--- End: def
+    
+#--- End: class
 
 
 class NetCDFExternal(NetCDF):
@@ -839,39 +1014,59 @@ class NetCDFExternal(NetCDF):
 .. versionadded:: 1.7.0
 
     '''
-    def nc_external(self, *external):
+    def nc_get_external(self):
         '''Whether the construct correponds to an external netCDF variable.
 
 .. versionadded:: 1.7.0
 
-:Parameters:
-
-    external: `bool`, optional
-        Set the external status. If True then the construct will be
-        written to a netCDF extenal file, if specified during the
-        write process.
+.. seealso:: `nc_set_external`
 
 :Returns:
 
     `bool`
-        The external status or, if the *external* parameter was set,
-        the original status.
+        The external status.
 
 **Examples:**
 
->>> c.nc_external()
+>>> c.nc_get_external()
 False
->>> c.nc_external(True)
-False
->>> c.nc_external()
+>>> c.nc_set_external(True)
+>>> c.nc_get_external()
 True
 
         '''
-        old =  self._get_component('netcdf').get('external', False)
-        if external:
-            self._get_component('netcdf')['external'] = bool(external[0])
+        return self._get_component('netcdf').get('external', False)
+    #--- End: def
 
-        return old
+    def nc_set_external(self, external):
+        '''Set external status of a netCDF variable.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `nc_get_external`
+
+:Parameters:
+
+    external: `bool`, optional
+        Set the external status.
+
+        *Parameter example:*
+          ``external=True``
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+>>> c.nc_get_external()
+False
+>>> c.nc_set_external(True)
+>>> c.nc_get_external()
+True
+
+        '''
+        self._get_component('netcdf')['external'] = bool(external)
     #--- End: def
 
 #--- End: class

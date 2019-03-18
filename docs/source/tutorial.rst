@@ -13,7 +13,7 @@ Version |release| for version |version| of the CF conventions.
  
 .. The code examples in this tutorial are available in an **IPython
    Jupyter notebook** (:download:`download
-   <notebooks/tutorial.ipynb>`, 80kB) [#files]_, [#notebook]_.
+   <notebooks/tutorial.ipynb>`, 80kB) [asdasds#files]_, [assadasdsa#notebook]_.
 
 .. _Import:
 
@@ -2590,63 +2590,73 @@ Method                            Description
 
 The complete collection of netCDF interface methods is:
 
-============================  =======================================  =====================================
-Method                        Classes                                  NetCDF element
-============================  =======================================  =====================================
-`!nc_del_variable`            `Field`, `DimensionCoordinate`,          Variable name
-                              `AuxiliaryCoordinate`, `CellMeasure`,
-                              `DomainAncillary`, `FieldAncillary`,
-                              `CoordinateReference`,  `Bounds`,
-			      `Count`, `Index`, `List`
-			      				
-`!nc_get_variable`            `Field`, `DimensionCoordinate`,          Variable name
-                              `AuxiliaryCoordinate`, `CellMeasure`,
-                              `DomainAncillary`, `FieldAncillary`,
-                              `CoordinateReference`, `Bounds`,
-			      `Count`, `Index`, `List`
-			      
-`!nc_has_variable`            `Field`, `DimensionCoordinate`,          Variable name
-                              `AuxiliaryCoordinate`, `CellMeasure`,
-                              `DomainAncillary`, `FieldAncillary`,
-                              `CoordinateReference`, `Bounds`,
-			      `Count`, `Index`, `List`
-			      
-`!nc_set_variable`            `Field`, `DimensionCoordinate`,          Variable name
-                              `AuxiliaryCoordinate`, `CellMeasure`,
-                              `DomainAncillary`, `FieldAncillary`,
-                              `CoordinateReference`, `Bounds`,
-			      `Count`, `Index`, `List`
+================================  =======================================  =====================================
+Method                            Classes                                  NetCDF element
+================================  =======================================  =====================================
+`!nc_del_variable`                `Field`, `DimensionCoordinate`,          Variable name
+                                  `AuxiliaryCoordinate`, `CellMeasure`,
+                                  `DomainAncillary`, `FieldAncillary`,
+                                  `CoordinateReference`,  `Bounds`,
+			          `Count`, `Index`, `List`
+			          				
+`!nc_get_variable`                `Field`, `DimensionCoordinate`,          Variable name
+                                  `AuxiliaryCoordinate`, `CellMeasure`,
+                                  `DomainAncillary`, `FieldAncillary`,
+                                  `CoordinateReference`, `Bounds`,
+			          `Count`, `Index`, `List`
+			          
+`!nc_has_variable`                `Field`, `DimensionCoordinate`,          Variable name
+                                  `AuxiliaryCoordinate`, `CellMeasure`,
+                                  `DomainAncillary`, `FieldAncillary`,
+                                  `CoordinateReference`, `Bounds`,
+			          `Count`, `Index`, `List`
+			          
+`!nc_set_variable`                `Field`, `DimensionCoordinate`,          Variable name
+                                  `AuxiliaryCoordinate`, `CellMeasure`,
+                                  `DomainAncillary`, `FieldAncillary`,
+                                  `CoordinateReference`, `Bounds`,
+			          `Count`, `Index`, `List`
+			          
+`!nc_del_dimension`               `DomainAxis`, `Count`, `Index`           Dimension name
+			          
+`!nc_get_dimension`	          `DomainAxis`, `Count`, `Index`           Dimension name
+			          			                    
+`!nc_has_dimension`	          `DomainAxis`, `Count`, `Index`           Dimension name
+			          			                    
+`!nc_set_dimension`	          `DomainAxis`, `Count`, `Index`           Dimension name
+			          
+`!nc_global_attributes`	          `Field`                                  Global attributes
+			          
+`!nc_set_global_attributes`       `Field`                                  Global attributes
+			          
+`!nc_clear_global_attributes`     `Field`                                  Global attributes
+			          
+`!nc_unlimited_dimensions`        `Field`                                  Unlimited dimensions
+			     
+`!nc_set_unlimited_dimensions`    `Field`                                  Unlimited dimensions
+			     
+`!nc_clear_unlimited_dimensions`  `Field`                                  Unlimited dimensions
+			     
+`!nc_get_external`                `CellMeasure`                            External variable status
 
-`!nc_del_dimension`           `DomainAxis`                             Dimension name
-			      
-`!nc_get_dimension`	      `DomainAxis`                             Dimension name
-			      			                    
-`!nc_has_dimension`	      `DomainAxis`                             Dimension name
-			      			                    
-`!nc_set_dimension`	      `DomainAxis`                             Dimension name
-			      
-`!nc_global_attributes`	      `Field`                                  Global attributes
-
-`!nc_unlimited_dimensions`    `Field`                                  Unlimited dimensions
-
-`!nc_external`                `CellMeasure`                            External variable status
-
-`!nc_del_instance_dimension`  `Index`                                  Instance dimension of a ragged array
-
-`!nc_get_instance_dimension`  `Index`                                  Instance dimension of a ragged array
-
-`!nc_has_instance_dimension`  `Index`                                  Instance dimension of a ragged array
-
-`!nc_set_instance_dimension`  `Index`                                  Instance dimension of a ragged array
-  
-`!nc_del_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array
-
-`!nc_get_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array
-    
-`!nc_has_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array   
-
-`!nc_set_sample_dimension`    `Count`, `Index`                         Sample  dimension of a ragged array
-============================  =======================================  =====================================
+`!nc_set_external`                `CellMeasure`                            External variable status
+			          
+`!nc_del_instance_dimension`      `Index`                                  Instance dimension
+			          
+`!nc_get_instance_dimension`      `Index`                                  Instance dimension
+			          
+`!nc_has_instance_dimension`      `Index`                                  Instance dimension
+			          
+`!nc_set_instance_dimension`      `Index`                                  Instance dimension
+  			          
+`!nc_del_sample_dimension`        `Count`, `Index`                         Sample dimension
+			          
+`!nc_get_sample_dimension`        `Count`, `Index`                         Sample dimension
+    			          
+`!nc_has_sample_dimension`        `Count`, `Index`                         Sample dimension
+			          
+`!nc_set_sample_dimension`        `Count`, `Index`                         Sample dimension
+================================  =======================================  =====================================
    
 .. _Writing-to-disk:
    
@@ -2931,7 +2941,7 @@ is still created, but one without any metadata or data:
    >>> area = u.constructs('measure:area').value()
    >>> area
    <CellMeasure: measure:area >
-   >>> area.nc_external()
+   >>> area.nc_get_external()
    True
    >>> area.nc_get_variable()
    'areacella'
@@ -2966,7 +2976,7 @@ variable had been present in the parent dataset:
    >>> area = u.constructs('measure:area').value()
    >>> area
    <CellMeasure: cell_area(9, 10) m2>
-   >>> area.nc_external()
+   >>> area.nc_get_external()
    False
    >>> area.nc_get_variable()
    'areacella'
@@ -2983,14 +2993,13 @@ attribute.
 
 To create a reference to an external variable in an output netCDF
 file, set the status of the cell measure construct to "external" with
-its `~CellMeasure.nc_external` method.
+its `~CellMeasure.nc_set_external` method.
 
 .. code-block:: python3
    :caption: *Flag the cell measure as external and write the field
              construct to a new file.*
 
-   >>> area.nc_external(True)
-   False
+   >>> area.nc_set_external(True)
    >>> cfdm.write(g, 'new_parent.nc')
 
 To create a reference to an external variable in the an output netCDF

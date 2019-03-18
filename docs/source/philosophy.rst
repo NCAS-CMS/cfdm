@@ -67,6 +67,10 @@ arithmetically, etc. It has, however, been designed to be
 packages that build on this cfdm implementation whilst also adding
 extra, higher level functionality.
 
+The `cf-python <https://cfpython.bitbucket.io/>`_ [#devel]_ and
+`cf-plot <http://ajheaps.github.io/cf-plot/>`_ packages are built on
+the CF data model and incude much more higher level functionality.
+
 **API**
 -------
 
@@ -118,5 +122,14 @@ package:
 ----------------
 
 ----
+
+*Coming soon ...*
+
+.. rubric:: Footnotes
+
+----
+
+.. [#devel] The `cf-python <https://cfpython.bitbucket.io/>`_ package
+            does not yet import the cfdm package, but it will soon.
 
 .. TODO

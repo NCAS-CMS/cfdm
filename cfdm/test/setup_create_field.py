@@ -12,9 +12,17 @@ verbose  = False
 warnings = False
 
 class create_fieldTest(unittest.TestCase):
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'test_file.nc')
+    def setUp(self):
+        filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'test_file.nc')
+        self.filename = filename
 
+        try:
+            os.remove(self.filename)
+        except FileNotFoundError:
+            pass        
+    #--- End: def
+            
     def test_create_field(self):
 
         # Dimension coordinates
