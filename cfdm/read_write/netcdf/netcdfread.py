@@ -461,7 +461,7 @@ TODO
             else:
                 # Assume the file has the same version of the CFDM
                 # implementation
-                file_version = self.implementation.get_version()
+                file_version = self.implementation.get_cf_version()
         #--- End: if
         
         g['file_version'] = LooseVersion(file_version)

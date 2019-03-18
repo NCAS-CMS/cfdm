@@ -48,16 +48,16 @@ help:
 
 
 html:
-	rm -f $(NOTEBOOK)
-	@echo "Removed old Jupyter notebook file: $(NOTEBOOK)"
+#	rm -f $(NOTEBOOK)
+#	@echo "Removed old Jupyter notebook file: $(NOTEBOOK)"
 
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
 
-	@echo "Jupyter notebook file: $(NOTEBOOK)" 
-	sed 's/Version .* for version .* of the CF conventions./$(X)/' $(NOTEBOOK) > $(NOTEBOOK).tmp0
-	sed 's/ncas-cms.github.io\/cfdm\//&$(VERSION)\//g' $(NOTEBOOK).tmp0 > $(NOTEBOOK).tmp
-	rm $(NOTEBOOK).tmp0
-	mv $(NOTEBOOK).tmp $(NOTEBOOK) 
+#	@echo "Jupyter notebook file: $(NOTEBOOK)" 
+#	sed 's/Version .* for version .* of the CF conventions./$(X)/' $(NOTEBOOK) > $(NOTEBOOK).tmp0
+#	sed 's/ncas-cms.github.io\/cfdm\//&$(VERSION)\//g' $(NOTEBOOK).tmp0 > $(NOTEBOOK).tmp
+#	rm $(NOTEBOOK).tmp0
+#	mv $(NOTEBOOK).tmp $(NOTEBOOK) 
 
 	@echo
 	@echo "$(X)"

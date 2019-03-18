@@ -48,6 +48,10 @@ This indicates which version of the CF conventions are represented by
 this release of the cfdm package, and therefore the version can not be
 changed.
 
+Note, however, that datasets of different versions may be :ref:`read
+<Reading-datasets>` from, or :ref:`written <Writing-to-disk>` to,
+disk.
+
 .. _Reading-datasets:
 
 **Reading datasets**
@@ -63,6 +67,9 @@ instances, each of which represents a field construct. (Henceforth,
 the phrase "field construct" will be assumed to mean "`Field`
 instance".) The list contains a field construct to represent each of
 the CF-netCDF data variables in the file.
+
+Datasets of any version of CF up to and including CF-|version| can be
+read.
 
 All formats of netCDF3 and netCDF4 files can be read.
 
@@ -684,7 +691,7 @@ the field construct. For example, the data of the field construct
    ('domainaxis0', 'domainaxis1', 'domainaxis2')
 
 The data may be set with the `~Field.set_data` method of the `Field`
-construct. The domain axis constucts spanned by the data must be
+construct. The domain axis constructs spanned by the data must be
 considered, either by explicitly providing them via their construct
 keys, or by using those that may have already been set. In any case,
 the data axes may be set at any time with the `~Field.set_data_axes`
@@ -1998,15 +2005,13 @@ the field construct.
        units = 'degrees_east'
        Data(longitude(8)) = [0.0, ..., 7.0] degrees_east
 
-The "Conventions" property is not set because it is automatically
-included in output files as a netCDF global "Conventions" attribute
-corresponding to the version number of CF being used, as returned by
-the `cfdm.CF` function. If the "Conventions" property is set on a
-field construct then it is ignored during the write process. For
-example, a CF version of ``'1.7'`` will produce a netCDF global
-"Conventions" attribute value of ``'CF-1.7'``. Additional conventions
-can be added with the "Conventions" parameter of the `cfdm.write`
-function.
+The "Conventions" property does not need to be set because it is
+automatically included in output files as a netCDF global
+"Conventions" attribute, either as the CF version of the cfdm package
+(as returned by the `cfdm.CF` function), or else specified via a
+parameter to the `cfdm.write` function (when additional conventions
+can be also added). If the "Conventions" property is set on a field
+construct then it is ignored during the write process.
 
 If this field were to be written to a netCDF dataset then, in the
 absence of pre-defined names, default netCDF variable and dimension
@@ -2714,6 +2719,8 @@ A sequence of field constructs is written in exactly the same way:
     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
    >>> cfdm.write(x, 'new_file.nc')
 
+By default the output file will be for CF-|version|.
+   
 The `cfdm.write` function has optional parameters to
 
 * set the output netCDF format (all netCDF3 and netCDF4 formats are
@@ -2725,6 +2732,10 @@ The `cfdm.write` function has optional parameters to
   
 * create :ref:`external variables <External-variables>` in an external
   file;
+
+* specify the version of the CF conventions (from CF-1.6 up to
+  CF-|version|), and of any other conventions that the file adheres
+  to;
 
 * change the data type of output data arrays;
   

@@ -72,15 +72,6 @@ This project is hosted on a `GitHub repository
 <https://github.com/NCAS-CMS/cfdm>`_ where you may access the most
 up-to-date source."""
 
-## --------------------------------------------------------------------
-## Installation dependencies
-## --------------------------------------------------------------------
-#install_requires = [
-#    'future>=0.16.0',
-#    'netcdf4>=1.4.0',
-#    'numpy==1.11',
-#]
-
 setup(name = "cfdm",
       long_description = long_description,
       version      = version,

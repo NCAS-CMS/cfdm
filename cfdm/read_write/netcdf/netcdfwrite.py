@@ -725,9 +725,6 @@ a new netCDF bounds dimension.
         '''
         g = self.write_vars
 
-        # if not conventions >= 1.8
-        #    return {}
-        
         gc = {}        
         for key, coord in self.implementation.get_auxiliary_coordinates(field).items():
             geometry_type = self.implementation.get_geometry(coord, None)
@@ -740,8 +737,6 @@ a new netCDF bounds dimension.
                 # No geometry nodes for this auxiliary coordinate                
                 continue
             
-#            data_axes = self.implementation.get_construct_data_axes(field, key)
-#            geometry_dimension = g['axis_to_ncdim'][data_axes[0]]
             geometry_dimension = g['key_to_ncdims'][key][0]  # assuming 1-d coord ...
 
             geometry_id = (geometry_dimension, geometry_type)
@@ -805,10 +800,12 @@ a new netCDF bounds dimension.
 
         for x in gc.values():
             # Node coordinates
-            x['node_coordinates'] = ' '.join(sorted(x['node_coordinates']))
+            if 'node_coordinates' in x:
+                x['node_coordinates'] = ' '.join(sorted(x['node_coordinates']))
 
             # Coordinates
-            x['coordinates'] = ' '.join(sorted(x['coordinates']))
+            if 'coordinates' in x:
+                x['coordinates'] = ' '.join(sorted(x['coordinates']))
 
             # Grid mapping
             grid_mappings = set(x.get('grid_mapping', ()))
@@ -908,7 +905,7 @@ dictionary.
     #--- End: def
 
     def _write_geometry_container(self, field, geometry_container):
-        '''TODO
+        '''Write a netCDF geometry container variable.
 
 .. versionadded:: 1.8.0
 
@@ -947,7 +944,6 @@ dictionary.
         
         # Update the 'geometry_containers' dictionary
         g['geometry_containers'][ncvar] = geometry_container
-#        print ('geometry_containers =',  g['geometry_containers'])
 
         return ncvar
     #--- End: def
@@ -996,10 +992,11 @@ name.
         if data is None:
             return {}
 
-        if (g['output_version'] >= g['version']['1.8'] and
+        if (g['output_version'] >= g['CF-1.8'] and
             self.implementation.is_geometry(coord)):
             # --------------------------------------------------------
-            # We have geometry bounds, which are dealt with separately
+            # CF>=1.8 and we have geometry bounds, which are dealt
+            # with separately
             # --------------------------------------------------------
             extra = self._write_node_coordinates(coord, coord_ncvar,
                                                  coord_ncdimensions)
@@ -1162,7 +1159,8 @@ This will create:
 
             encodings = {}
             
-            _ = self._write_node_count(coord, bounds, coord_ncdimensions, encodings)
+            _ = self._write_node_count(coord, bounds,
+                                       coord_ncdimensions, encodings)
             encodings.update(_)
             
             _ = self._write_part_node_count(coord, bounds, encodings)
@@ -1171,12 +1169,14 @@ This will create:
             _ = self._write_interior_ring(coord, bounds, encodings)
             encodings.update(_)
             
-            g['geometry_encodings'][ncvar] = encodings            
+            g['geometry_encoding'][ncvar] = encodings            
 
             # We need to log the original Bounds variable as being in
             # the file, too. This is so that the geometry container
             # variable can be created later on.
-            g['seen'][id(bounds)] = {'ncvar': ncvar, 'variable': bounds, 'ncdims': None}
+            g['seen'][id(bounds)] = {'ncvar'   : ncvar,
+                                     'variable': bounds,
+                                     'ncdims'  : None}
         #--- End: if
 
         if coord_ncvar is not None:
@@ -1187,9 +1187,7 @@ This will create:
 
     def _write_node_count(self, coord, bounds, coord_ncdimensions,
                           encodings):
-        '''Create a bounds netCDF variable, creating a new bounds netCDF
-dimension if required. Return the bounds variable's netCDF variable
-name.
+        '''Create a netCDF node count variable.
 
 .. versionadded:: 1.8.0
     
@@ -1197,16 +1195,18 @@ name.
 
     coord: 
 
-    coord_ncvar: `str`
-        The netCDF variable name of the parent variable
+    bounds: 
+
+    coord_ncdimensions: sequence of `str`
+
+    encodings: `dict`
+        Ignored.
 
 :Returns:
 
     out: `dict`
 
         '''
-        out = {}
-        
         g = self.write_vars
 
         # Create the node count flattened data
@@ -1254,12 +1254,13 @@ name.
             self._write_netcdf_variable(ncvar, (geometry_dimension,), count)
         #--- End: if
 
+        # Return encodings
         return {'geometry_dimension': geometry_dimension,
-                'node_count_ncvar'  : ncvar}                
+                'node_count'        : ncvar}                
     #--- End: def
 
     def _get_part_ncdimension(self, coord, default=None):
-        '''Get the base of the netCDF dimension for part node count and
+        '''Get the base of the tCDF dimension for part node count and
 interior ring variables.
 
 .. versionadded:: 1.8.0
@@ -1269,7 +1270,7 @@ interior ring variables.
         '''
         ncdim = None
         
-        pnc = self.implementation.get_part_node_count_variable(coord)
+        pnc = self.implementation.get_part_node_count(coord)
         if pnc is not None:
             # Try to get the netCDF dimension from a part node count
             # variable
@@ -1309,7 +1310,7 @@ interior ring variables.
         return default
     #--- End: def    
          
-    def _write_part_node_count(self, coord, bounds, out):
+    def _write_part_node_count(self, coord, bounds, encodings):
         '''Create a bounds netCDF variable, creating a new bounds netCDF
 dimension if required. Return the bounds variable's netCDF variable
 name.
@@ -1325,7 +1326,7 @@ name.
 
 :Returns:
 
-    out: `dict`
+    `dict`
 
 **:Examples:**
 
@@ -1355,7 +1356,7 @@ name.
         self.implementation.set_data(count, data, copy=False)
 
         # Find the base of the netCDF part_node_count variable name
-        pnc = self.implementation.get_part_node_count_variable(coord)
+        pnc = self.implementation.get_part_node_count(coord)
         if pnc is not None:
             ncvar = self.implementation.nc_get_variable(pnc, default='part_node_count')
             # Copy part node count variable properties to the new
@@ -1367,8 +1368,8 @@ name.
 
         # Find the base of the netCDF part dimension name
         size = self.implementation.get_data_size(count)
-        if 'part_ncdim' in out:
-            ncdim = out['part_ncdim']
+        if 'part_ncdim' in encodings:
+            ncdim = encodings['part_ncdim']
         else:
             ncdim = self._get_part_ncdimension(coord, default='part')
             ncdim = self._netcdf_name(ncdim, dimsize=size, role='part')
@@ -1396,7 +1397,7 @@ name.
                 'part_ncdim'     : ncdim}
     #--- End: def
             
-    def _write_interior_ring(self, coord, bounds, out):
+    def _write_interior_ring(self, coord, bounds, encodings):
         '''TODO
 
 .. versionadded:: 1.8.0
@@ -1410,7 +1411,7 @@ name.
 
 :Returns:
 
-    out: `dict`
+    `dict`
 
 **:Examples:**
 
@@ -1433,8 +1434,8 @@ TODO
         ncvar = self.implementation.nc_get_variable(interior_ring, default='interior_ring')
 
         size = self.implementation.get_data_size(interior_ring)
-        if 'part_ncdim' in out:
-            ncdim = out['part_ncdim']
+        if 'part_ncdim' in encodings:
+            ncdim = encodings['part_ncdim']
         else:
             ncdim = self._get_part_ncdimension(coord, default='part')
             ncdim = self._netcdf_name(ncdim, dimsize=size, role='part')
@@ -1606,10 +1607,8 @@ then the input coordinate is not written.
 If an equal domain ancillary has already been written to the file athen
 it is not re-written.
 
-:Examples 1:
+.. versionadded:: 1.7.0
 
->>> ncvar = w._write_domain_ancillary(f, 'domainancillary2', d)
-    
 :Parameters:
 
     f: Field construct
@@ -1621,10 +1620,8 @@ it is not re-written.
     
 :Returns:
 
-    out: `str`
+    `str`
         The netCDF variable name of the domain ancillary variable.
-
-:Examples 2:
 
         '''
         g = self.write_vars
@@ -1797,6 +1794,8 @@ measure will not be written.
                          ncvar=None, ncdimensions=None):
         '''Create a new field to flag it for being written the external file.
 
+.. versionadded:: 1.7.0
+
         '''
         g = self.write_vars
         
@@ -1824,6 +1823,8 @@ measure will not be written.
     
     def _createVariable(self, **kwargs):
         '''
+.. versionadded:: 1.7.0
+
         '''
         g = self.write_vars
 
@@ -2754,8 +2755,10 @@ extra trailing dimension.
 
             extra['cell_methods'] = cell_methods
 
-        # Geometry container
-        if g['output_version'] >= g['version']['1.8']:
+        # ------------------------------------------------------------
+        # Geometry container (CF>=1.8)
+        # ------------------------------------------------------------
+        if g['output_version'] >= g['CF-1.8']:
             geometry_container = self._create_geometry_container(f)
             if geometry_container:
                 gc_ncvar = self._write_geometry_container(f, geometry_container)
@@ -2901,28 +2904,34 @@ write them to the netCDF4.Dataset.
         # -----------------------------------------------------------
         # Write the Conventions global attribute to the file
         # ------------------------------------------------------------
-#        Conventions = ['CF-'+self.implementation.get_cf_version()]
         delimiter = ' '
 
-        if g['Conventions']:
+        if not g['Conventions']:
+            g['output_version'] = g['latest_version']
+            g['Conventions'] = ['CF-'+str(g['output_version'])]
+        else:            
             if isinstance(g['Conventions'], basestring):
                 g['Conventions'] = [g['Conventions']]
 
             found_cf_version = False
             for c in g['Conventions']:
-                x = re.search('CF-\d.*', c)
+                x = re.search('CF-(\d.*)', c)
                 if x:
                     if found_cf_version:
                         raise ValueError(
-                            "Can't set more than one CF version: {}".format(g['Conventions']))
+                            "Can't set more than one version of CF: {}".format(
+                                g['Conventions']))
                                          
-                    version = x.groups[0]
-                    if LooseVersion(version) < g['version']['1.7']:
+                    version = x.groups()[0]
+
+                    if LooseVersion(version) < g['CF-1.7']:
                         raise ValueError(
-                            "Can't create a CF-{} file (version too old)".format(version))
+                            "Can't create a CF-{} file (version too old)".format(
+                                version))
                     elif LooseVersion(version) > g['latest_version']:
                         raise ValueError(
-                            "Can't create a CF-{} file (version too new)".format(version))
+                            "Can't create a CF-{} file (version too new)".format(
+                                version))
 
                     found_cf_version = True
             #--- End: for
@@ -2935,15 +2944,14 @@ write them to the netCDF4.Dataset.
                 g['output_version'] = LooseVersion(version)
             else:
                 g['output_version'] = g['latest_version']
-                g['Conventions'] = ['CF-'+self.implementation.get_cf_version()] + list(g['Conventions'])
+                g['Conventions'] = ['CF-'+str(g['output_version'])] + list(g['Conventions'])
+                
             if [x for x in g['Conventions'] if ' ' in x]:
                 # One of the conventions contains blanks space, so
                 # join them with commas.
                 delimiter = ','
-        else:
-            g['output_version'] = g['latest_version']
-            g['Conventions'] = ['CF-'+self.implementation.get_cf_version()]
-        
+        #--- End: if
+
         g['netcdf'].setncattr('Conventions', delimiter.join(g['Conventions']))
         
         # ------------------------------------------------------------
@@ -3017,6 +3025,8 @@ which have equal values across all input fields.
 Logically identical field components are only written to the file
 once, apart from when they need to fulfil both dimension coordinate
 and auxiliary coordinate roles for different data variables.
+
+.. versionadded:: 1.7.0
     
 :Parameters:
 
@@ -3180,7 +3190,7 @@ and auxiliary coordinate roles for different data variables.
             'external_fields'   : [],
 
             'geometry_containers': {},
-            'geometry_encodings':  {},
+            'geometry_encoding':  {},
             
             'dimensions_with_role': {},
 
@@ -3189,9 +3199,11 @@ and auxiliary coordinate roles for different data variables.
         }
         g = self.write_vars
 
-        # Set versions
-        for version in ('1.7', '1.8', '1.9'):
-            g['version'][version] = LooseVersion(version)        
+        # ------------------------------------------------------------
+        # Set possible versions
+        # ------------------------------------------------------------
+        for version in ('1.6', '1.7', '1.8', '1.9'):
+            g['CF-'+version] = LooseVersion(version)        
 
         if extra_write_vars:
             g.update(copy.deepcopy(extra_write_vars))
@@ -3271,13 +3283,6 @@ and auxiliary coordinate roles for different data variables.
         # ---------------------------------------------------------------
         filename = os.path.expanduser(os.path.expandvars(filename))
         
-        if external is not None:
-            external = os.path.expanduser(os.path.expandvars(external))
-            if os.path.realpath(external) == os.path.realpath(filename):
-                raise ValueError("Can't set filename and external to the same path")
-        #--- End: if
-        g['external_file'] = external
-
         if os.path.isfile(filename):
             if not overwrite:
                 raise IOError(
@@ -3312,7 +3317,19 @@ and auxiliary coordinate roles for different data variables.
         # is used in the _write_field function.
         # ---------------------------------------------------------------
         self._write_global_attributes(fields)
-    
+
+        if external is not None:
+            if g['output_version'] < g['CF-1.7']:
+                raise ValueError(
+                    "Can't create external variables at CF-{} (version too old)".format(
+                        g['output_version']))
+                
+            external = os.path.expanduser(os.path.expandvars(external))
+            if os.path.realpath(external) == os.path.realpath(filename):
+                raise ValueError("Can't set filename and external to the same path")
+        #--- End: if
+        g['external_file'] = external
+
         # ---------------------------------------------------------------
         #
         # ---------------------------------------------------------------

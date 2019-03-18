@@ -80,28 +80,27 @@ method of a field construct.
     fmt: `str`, optional
         The format of the output file. One of:
 
-          ==========================  =============================== 
+          ==========================  ================================
           *fmt*                       Output file type                
-          ==========================  =============================== 
-          ``'NETCDF4'``               NetCDF4 format file. This is    
-                                      the default.                    
+          ==========================  ================================ 
+          ``'NETCDF4'``               NetCDF4 format file. This is the   
+                                      default.                    
                                                                       
-          ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file     
-                                      (see below)                     
+          ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see    
+                                      below)                     
                                                                       
           ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file 
                                       (limited to file sizes less     
                                       than 2GB).                      
                                                                       
-          ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format    
+          ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
                                       file                            
                                                                       
-          ``'NETCDF3_64BIT'``         An alias for                    
+          ``'NETCDF3_64BIT'``         An alias for
                                       ``'NETCDF3_64BIT_OFFSET'``      
                                                                       
           ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format    
-                                      file with extensions (see       
-                                      below)                          
+                                      file with extensions (see below)      
           ==========================  ================================
 
         By default the format is ``'NETCDF4'``.
@@ -190,17 +189,28 @@ method of a field construct.
 
     Conventions: (sequence of) `str`, optional
          Specify conventions to be recorded by the netCDF global
-         "Conventions" attribute. These conventions are in addition to
-         version of CF being used e.g. ``'CF-1.7'``, which must not be
-         specified. If the "Conventions" property is set on a field
-         construct then it is ignored. Note that a convention name is
-         not allowed to contain any commas.
+         "Conventions" attribute. By default the current conventions
+         are always included, in addition to any specified, but if an
+         older CF conventions may is defined then this is used
+         instead.
 
          *Parameter example:*
            ``Conventions='UGRID-1.0'``
 
          *Parameter example:*
+           ``Conventions=['UGRID-1.0']``
+
+         *Parameter example:*
            ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
+
+         *Parameter example:*
+           ``Conventions='1.7'``
+
+         *Parameter example:*
+           ``Conventions=['1.7', 'UGRID-1.0']``
+
+         Note that if the "Conventions" property is set on a field
+         construct then it is ignored.
 
     datatype: `dict`, optional
         Specify data type conversions to be applied prior to writing
@@ -324,8 +334,12 @@ method of a field construct.
 **Examples:**
 
 >>> cfdm.write(f, 'file.nc')
+
 >>> cfdm.write(f, 'file.nc', fmt='NETCDF3_CLASSIC')
+
 >>> cfdm.write(f, 'file.nc', external='cell_measures.nc')
+
+>>> cfdm.write(f, 'file.nc', conventions='CMIP-6.2')
 
     '''
     # ----------------------------------------------------------------
