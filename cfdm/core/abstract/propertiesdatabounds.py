@@ -236,7 +236,7 @@ None
     def del_geometry(self, default=ValueError()):
         '''TODO
 
-.. versionadd:: 1.8.0
+.. versionadded:: 1.8.0
 
 .. seealso:: `get_geometry`, `has_geometry`, `set_geometry`
 
@@ -264,7 +264,7 @@ None
     def get_bounds(self, default=ValueError()):
         '''Return the bounds.
 
-.. versionadd:: 1.7.0
+.. versionadded:: 1.7.0
 
 .. seealso:: `bounds`, `get_data`, `del_bounds`, `has_bounds`,
              `set_bounds`
@@ -312,7 +312,7 @@ None
 
 .. versionadded:: 1.8.0
 
-.. seealso:: `get_array`, `get_data`, `has_bounds`, `set_bounds`
+.. seealso:: `get_data`, `has_bounds`, `set_bounds`
 
 :Parameters:
 

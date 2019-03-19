@@ -159,7 +159,8 @@ instances are equal.
             out[axes] = d
         #--- End: for
 
-        for cid, construct in self.data_constructs().items():
+#        for cid, construct in self.data_constructs().items():
+        for cid, construct in self.filter_by_data().items():
             axes = data_axes.get(cid)
             construct_type = self._construct_type[cid]
             out[axes][construct_type][cid] = construct
@@ -306,10 +307,19 @@ instances are equal.
         return out
     #--- End: def
 
-    def domain_axis_name(self, key):
-        '''Return the canonical identity for an axis.
+    def domain_axis_identity(self, key):
+        '''Return the canonical identity for an domain axis construct.
 
-TODO (basd on spanning 1-d contriccts)
+The identity is the first found of the following:
+
+1. The canonical identity of a dimension coordinate contruct that span
+   the domain axis construct.
+2. The identity of a one-dimensional auxiliary coordinate construct
+   that spans the domain axis construct. This will either be the value
+   of a "standard_name", "cf_role" (preceeded by ``'cf_role='``) or
+   "axis" (preceeded by ``'axis='``) property, as appropriate.
+3. The netCDF dimension name, preceeded by 'ncdim%'.
+4. The domain axis construct key, preceeded by 'key%'.
 
 :Parameters:
 
@@ -385,23 +395,6 @@ TODO (basd on spanning 1-d contriccts)
             if len(axis) == 1:
                 return axis[0]
         #--- End: if
-
-#        found = False
-#        for akey, aux in self.filter_by_type('auxiliary_coordinate').items():
-#            if constructs_data_axes[akey] == (key,):
-#                if found:
-#                    identity = ''
-#                    break
-#                
-#                # Get the identity from an auxiliary coordinate
-#                identity = aux.identity()
-#                if identity.startswith('ncvar%'):
-#                    identity = ''
-#
-#                found = True
-#        #--- End: for
-#        if identity:
-#            return identity
 
         ncdim = domain_axes[key].nc_get_dimension(None)
         if ncdim is not None:
@@ -587,7 +580,7 @@ False
 
             if not matched_all_constructs_with_these_axes:
                 if verbose:
-                    names = [self.domain_axis_name(axis0) for axis0 in axes0]
+                    names = [self.domain_axis_identity(axis0) for axis0 in axes0]
                     print("{0}: Can't match constructs spanning axes {1}".format(
                         self.__class__.__name__, names))
                     print('\n'.join(log))
@@ -610,16 +603,16 @@ False
                         print(
 "{0}: Ambiguous axis mapping ({1} -> both {2} and {3})".format(
     self.__class__.__name__,
-    self.domain_axis_name(axes0), other.domain_axis_name(axis1),
-    other.domain_axis_name(axis0_to_axis1[axis0])))
+    self.domain_axis_identity(axes0), other.domain_axis_identity(axis1),
+    other.domain_axis_identity(axis0_to_axis1[axis0])))
                     return False
                 elif axis1 in axis1_to_axis0 and axis0 != axis1_to_axis0[axis1]:
                     if verbose:
                         print(
 "{0}: Ambiguous axis mapping ({1} -> both {2} and {3})".format(
     self.__class__.__name__,
-    self.domain_axis_name(axis0), self.domain_axis_name(axis1_to_axis0[axis0]),
-    other.domain_axis_name(axes1)))
+    self.domain_axis_identity(axis0), self.domain_axis_identity(axis1_to_axis0[axis0]),
+    other.domain_axis_identity(axes1)))
                     return False
 
                 axis0_to_axis1[axis0] = axis1
@@ -650,8 +643,9 @@ False
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_key`, `filter_by_measure`, `filter_by_method`,
-             `filter_by_identity`, `filter_by_ncdim`, `filter_by_ncvar`,
+.. seealso:: `filter_by_data`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
@@ -756,13 +750,55 @@ Select constructs whose data spans the "domainaxis1" or the
         return out
     #--- End: def
 
+    def filter_by_data(self):
+        '''Select metadata constructs by whether they could contain data.
+
+Selection is not based on whether they thay actually have data, rather
+by whether the construct supports the inclusion of data. For example,
+constructs selected by this method will all have `!get_data` method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`
+
+:Returns:
+
+    `Constructs`
+        The selected constructs and their construct keys.
+
+**Examples:**
+
+Select constructs that could contain data:
+
+>>> d = c.filter_by_data()
+
+        '''       
+        out = self.shallow_copy()
+
+        out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_data': ()},)
+        
+        for cid in tuple(out):
+            if out._construct_type[cid] not in self._array_constructs:
+                # This construct can not have data
+                out._pop(cid)
+        #--- End: for
+                
+        return out
+    #--- End: def
+
     def filter_by_identity(self, *identities):
         '''Select metadata constructs by identity.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_ncdim`, `filter_by_ncvar`,
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_method`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
@@ -855,10 +891,11 @@ Select constructs that have a netCDF variable name of 'time':
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_identity`, `filter_by_ncdim`,
-             `filter_by_ncvar`, `filter_by_property`,
-             `filter_by_type`, `filters_applied`, `inverse_filter`
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`
 
 :Parameters:
 
@@ -907,8 +944,9 @@ Select the constructs with keys 'dimensioncoordinate1' or
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_method`,
-             `filter_by_identity`, `filter_by_ncdim`, `filter_by_ncvar`,
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_method`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
@@ -1009,8 +1047,9 @@ Constructs:
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_identity`, `filter_by_ncdim`, `filter_by_ncvar`,
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
@@ -1109,8 +1148,9 @@ Constructs:
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_identity`, `filter_by_ncvar`,
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_method`,
+             `filter_by_identity`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
@@ -1188,8 +1228,9 @@ Select the domain axis constructs with netCDF dimension name 'time' or
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_identity`, `filter_by_ncdim`,
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_method`,
+             `filter_by_identity`, `filter_by_ncdim`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
@@ -1279,8 +1320,9 @@ Select the constructs with netCDF variable name 'time' or 'lat':
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_identity`, `filter_by_ncdim`,
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_method`,
+             `filter_by_identity`, `filter_by_ncdim`,
              `filter_by_ncvar`, `filter_by_type`, `filters_applied`,
              `inverse_filter`
 
@@ -1320,7 +1362,7 @@ Select the constructs with netCDF variable name 'time' or 'lat':
         The selected constructs and their construct keys.
 
 **Examples:**
-
+g
 Select constructs that have a "standard_name" of 'latitude':
 
 >>> d = c.filter_by_property(standard_name='latitude')
@@ -1399,8 +1441,9 @@ with the string 'air':
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_ncdim`, `filter_by_ncvar`,
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_method`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_identity`, `filter_by_property`,
              `filters_applied`, `inverse_filter`
 
@@ -1463,8 +1506,9 @@ If no filters have been applied then the tuple is empty.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_identity`, `filter_by_ncdim`,
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_method`,
+             `filter_by_identity`, `filter_by_ncdim`,
              `filter_by_ncvar`, `filter_by_property`,
              `filter_by_type`, `inverse_filter`
 
@@ -1524,10 +1568,11 @@ describes the last filter applied.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_identity`,
-             `filter_by_ncdim`, `filter_by_ncvar`,
-             `filter_by_property`, `filter_by_type`, `filters_applied`
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_method`,
+             `filter_by_identity`, `filter_by_ncdim`,
+             `filter_by_ncvar`, `filter_by_property`,
+             `filter_by_type`, `filters_applied`
 
 :Returns:
 

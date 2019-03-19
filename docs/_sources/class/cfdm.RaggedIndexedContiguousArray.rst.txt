@@ -20,12 +20,11 @@ Inspection
    :toctree: ../method/
    :template: method.rst
       
-   ~cfdm.RaggedIndexedContiguousArray.get_compressed_array
    ~cfdm.RaggedIndexedContiguousArray.get_compressed_axes
    ~cfdm.RaggedIndexedContiguousArray.get_compressed_dimension
    ~cfdm.RaggedIndexedContiguousArray.get_compression_type
-   ~cfdm.RaggedIndexedContiguousArray.get_count_variable
-   ~cfdm.RaggedIndexedContiguousArray.get_index_variable
+   ~cfdm.RaggedIndexedContiguousArray.get_count
+   ~cfdm.RaggedIndexedContiguousArray.get_index
    
 .. rubric:: Attributes
 
@@ -34,11 +33,12 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.RaggedIndexedContiguousArray.array
+   ~cfdm.RaggedIndexedContiguousArray.compressed_array
    ~cfdm.RaggedIndexedContiguousArray.dtype
    ~cfdm.RaggedIndexedContiguousArray.ndim
    ~cfdm.RaggedIndexedContiguousArray.shape
    ~cfdm.RaggedIndexedContiguousArray.size
-   ~cfdm.RaggedIndexedContiguousArray.array
 
 Miscellaneous
 -------------

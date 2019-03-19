@@ -20,11 +20,10 @@ Inspection
    :toctree: ../method/
    :template: method.rst
       
-   ~cfdm.GatheredArray.get_compressed_array
    ~cfdm.GatheredArray.get_compressed_axes
    ~cfdm.GatheredArray.get_compressed_dimension
    ~cfdm.GatheredArray.get_compression_type
-   ~cfdm.GatheredArray.get_list_variable
+   ~cfdm.GatheredArray.get_list
    
 .. rubric:: Attributes
 
@@ -33,11 +32,12 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.GatheredArray.array
+   ~cfdm.GatheredArray.compressed_array
    ~cfdm.GatheredArray.dtype
    ~cfdm.GatheredArray.ndim
    ~cfdm.GatheredArray.shape
    ~cfdm.GatheredArray.size
-   ~cfdm.GatheredArray.array
 
 Miscellaneous
 -------------

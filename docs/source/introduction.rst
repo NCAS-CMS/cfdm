@@ -101,10 +101,9 @@ is available to download at https://doi.org/10.5194/gmd-10-4619-2017
 The cfdm package implements the CF data model for its internal data
 structures and so is able to process any CF-compliant dataset. It is
 not strict about CF-compliance, however, so that partially conformant
-datasets may be modified in memory, as well as ingested from existing
-datasets and written to new datasets. This is so that datasets which
-are partially conformant may nonetheless be modified in memory and
-written to new datasets.
+datasets may be ingested from existing datasets and written to new
+datasets.This is so that datasets which are partially conformant may
+nonetheless be modified in memory.
 
 The cfdm package can
 

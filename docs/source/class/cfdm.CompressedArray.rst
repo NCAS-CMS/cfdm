@@ -20,12 +20,13 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.CompressedArray.array
+   ~cfdm.CompressedArray.compressed_array
    ~cfdm.CompressedArray.dtype
    ~cfdm.CompressedArray.ndim
    ~cfdm.CompressedArray.shape
    ~cfdm.CompressedArray.size
-   ~cfdm.CompressedArray.array
-  
+ 
 Compression
 -----------
 
@@ -36,7 +37,6 @@ Compression
    :toctree: ../method/
    :template: method.rst
       
-   ~cfdm.CompressedArray.get_compressed_array
    ~cfdm.CompressedArray.get_compressed_axes
    ~cfdm.CompressedArray.get_compressed_dimension
    ~cfdm.CompressedArray.get_compression_type

@@ -251,6 +251,7 @@ domain ancillary constructs.
 
 .. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
              `get_domain_ancillary`
+
 :Parameters:
 
     term: `str`

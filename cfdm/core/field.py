@@ -204,11 +204,12 @@ True
     # Methods
     # ----------------------------------------------------------------
     def del_data_axes(self, key=None, default=ValueError()):
-        '''Remove the keys of the domain axes spanned by the data array.
+        '''Remove the keys of the domain axis constructs spanned by the data
+of the field or of a metadata construct.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `get_data_axes`, `set_data_axes`
+.. seealso:: `get_data_axes`, `has_data_axes`, `set_data_axes`
 
 :Parameters:
 

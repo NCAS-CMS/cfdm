@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Installation" href="installation.html" />
-    <link rel="prev" title="Python cfdm package" href="index.html" />
+    <link rel="prev" title="cfdm python package" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -31,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cfdm 1.7.0b17</a></b></h3>
+<h3><b><a href="index.html">cfdm 1.7.0b18</a></b></h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Introduction</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#cf-conventions"><strong>CF conventions</strong></a></li>
@@ -40,8 +40,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="versioning.html"><strong>Versioning</strong></a></li>
@@ -51,7 +51,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter"><strong>Python cfdm package</strong></a></li>
+      <li>Previous: <a href="index.html" title="previous chapter"><strong>cfdm python package</strong></a></li>
       <li>Next: <a href="installation.html" title="next chapter"><strong>Installation</strong></a></li>
   </ul></li>
 </ul>
@@ -84,7 +84,7 @@
   <div class="section" id="introduction">
 <h1><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.7.0b17 for version 1.7 of the CF conventions.</p>
+<p>Version 1.7.0b18 for version 1.7 of the CF conventions.</p>
 <p>The Python cfdm package is a complete implementation of the CF data
 model.</p>
 <div class="section" id="cf-conventions">
@@ -164,10 +164,9 @@ implementation (cf-python v2.1), Geosci. Model Dev., 10,
 <p>The cfdm package implements the CF data model for its internal data
 structures and so is able to process any CF-compliant dataset. It is
 not strict about CF-compliance, however, so that partially conformant
-datasets may be modified in memory, as well as ingested from existing
-datasets and written to new datasets. This is so that datasets which
-are partially conformant may nonetheless be modified in memory and
-written to new datasets.</p>
+datasets may be ingested from existing datasets and written to new
+datasets.This is so that datasets which are partially conformant may
+nonetheless be modified in memory.</p>
 <p>The cfdm package can</p>
 <ul class="simple">
 <li>read field constructs from netCDF datasets,</li>

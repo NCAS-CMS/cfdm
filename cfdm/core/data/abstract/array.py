@@ -51,7 +51,7 @@ True
 True
 
         '''
-        array = self.get_array()
+        array = self.array
         if not dtype:
             return array
         else:
@@ -244,7 +244,7 @@ original or the new copy.
 
 **Examples:**
 
->>> n = a.get_array()
+>>> n = a.array
 >>> isinstance(n, numpy.ndarray)
 True
 

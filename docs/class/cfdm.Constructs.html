@@ -31,12 +31,12 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>API reference</strong></a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
@@ -51,7 +51,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.FieldAncillary.__str__.html" title="previous chapter">cfdm.FieldAncillary.__str__</a></li>
       <li>Next: <a href="../method/cfdm.Constructs.filter_by_identity.html" title="next chapter">cfdm.Constructs.filter_by_identity</a></li>
@@ -90,7 +90,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Constructs">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Constructs</code><span class="sig-paren">(</span><em>auxiliary_coordinate=None</em>, <em>dimension_coordinate=None</em>, <em>domain_ancillary=None</em>, <em>field_ancillary=None</em>, <em>cell_measure=None</em>, <em>coordinate_reference=None</em>, <em>domain_axis=None</em>, <em>cell_method=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em>, <em>_view=False</em>, <em>_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/constructs.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Constructs</code><span class="sig-paren">(</span><em>auxiliary_coordinate=None</em>, <em>dimension_coordinate=None</em>, <em>domain_ancillary=None</em>, <em>field_ancillary=None</em>, <em>cell_measure=None</em>, <em>coordinate_reference=None</em>, <em>domain_axis=None</em>, <em>cell_method=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em>, <em>_view=False</em>, <em>_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/constructs.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.constructs.Constructs</span></code></p>
 <p>A container for metadata constructs.</p>
 <div class="versionadded">
@@ -206,22 +206,25 @@ constructs deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.filter_by_axis.html#cfdm.Constructs.filter_by_axis" title="cfdm.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_axis</span></code></a></td>
 <td>Select metadata constructs by axes spanned by their data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.filter_by_type.html#cfdm.Constructs.filter_by_type" title="cfdm.Constructs.filter_by_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_type</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.filter_by_data.html#cfdm.Constructs.filter_by_data" title="cfdm.Constructs.filter_by_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_data</span></code></a></td>
+<td>Select metadata constructs by whether they could contain data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.filter_by_type.html#cfdm.Constructs.filter_by_type" title="cfdm.Constructs.filter_by_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_type</span></code></a></td>
 <td>Select metadata constructs by type.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.filter_by_key.html#cfdm.Constructs.filter_by_key" title="cfdm.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.filter_by_key.html#cfdm.Constructs.filter_by_key" title="cfdm.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a></td>
 <td>Select metadata constructs by key.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.filter_by_ncdim.html#cfdm.Constructs.filter_by_ncdim" title="cfdm.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.filter_by_ncdim.html#cfdm.Constructs.filter_by_ncdim" title="cfdm.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a></td>
 <td>Select domain axis constructs by netCDF dimension name.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.filter_by_ncvar.html#cfdm.Constructs.filter_by_ncvar" title="cfdm.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.filter_by_ncvar.html#cfdm.Constructs.filter_by_ncvar" title="cfdm.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a></td>
 <td>Select domain axis constructs by netCDF variable name.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.filters_applied.html#cfdm.Constructs.filters_applied" title="cfdm.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.filters_applied.html#cfdm.Constructs.filters_applied" title="cfdm.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a></td>
 <td>A history of filters that have been applied.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.inverse_filter.html#cfdm.Constructs.inverse_filter" title="cfdm.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.inverse_filter.html#cfdm.Constructs.inverse_filter" title="cfdm.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a></td>
 <td>Return the inverse of the previous filter.</td>
 </tr>
 </tbody>

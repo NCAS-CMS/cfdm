@@ -29,7 +29,6 @@ class create_fieldTest_2(unittest.TestCase):
         dim0.set_property('standard_name', 'projection_x_coordinate')
         dim0.set_property('units', 'm')
 
-#        array = dim0.get_array()
         array = dim0.data.array
 
         array = numpy.array([array-0.5, array+0.5]).transpose((1,0))

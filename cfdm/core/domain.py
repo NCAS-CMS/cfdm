@@ -87,7 +87,26 @@ constructs.
     # ----------------------------------------------------------------   
     @property
     def constructs(self):
-        '''<TODO>
+        '''Return the metdata constructs.
+
+.. versionadded:: 1.7.0
+
+:Returns:
+
+    `Constructs`
+        The constructs.
+
+**Examples:**
+
+>>> print(d.constructs)
+Constructs:
+{'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+ 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+ 'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+ 'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
+
         '''
         return self._get_component('constructs')
     #--- End: def

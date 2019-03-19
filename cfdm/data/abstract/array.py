@@ -92,78 +92,7 @@ array.
         '''
         return self._get_component('compression_type', '')
     #--- End: def
-
-    @property
-    def compressed_array(self):
-        '''Return an independent numpy array containing of the underlying
-compressed array.
-
-.. versionadded:: 1.7.0
-
-:Returns:
-
-    `numpy.ndarray`
-        The compressed array.
-
-**Examples:**
-
->>> n = a.compressed_array
->>> isinstance(n, numpy.ndarray)
-True
-
-        '''
-        return self._get_component('compressed_array').compressed_array
-    #--- End: def
     
-    def get_compressed_axes(self):
-        '''Return axes that are compressed in the underlying array.
-
-.. versionadded:: 1.7.0
-
-:Returns:
-
-    `list`
-        The compressed axes described by their integer positions in
-        the list of uncompressed axes. If no axes have been compressed
-        then the list is empty.
-
-**Examples:**
-
-<TODO>
-
-        '''
-        return []
-    #--- End: def
-
-    def get_compressed_dimension(self, *default):
-        '''Return the position of the compressed dimension in the compressed
-array.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `get_compressed_axearray`, `get_compressed_axes`,
-             `get_compressed_type`
-
-:Parameters:
-
-    default: optional
-        Return *default* if the underlying array is not compressed.
-
-:Returns:
-
-    `int`
-        The position of the compressed dimension in the compressed
-        array. If the underlying is not compressed then *default* is
-        returned, if provided.
-
-**Examples:**
-
->>> i = d.get_compressed_dimension()
-
-        '''
-        return self._get_component('compressed_dimension', *default)
-    #--- End: def
-
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
         '''Return a subspace, defined by indices, of a numpy array.
@@ -188,7 +117,7 @@ difference to numpy indexing is
         
     indices: 
         The indices that define the subspace.
-     ..
+
         Must be either `Ellipsis` or a sequence that contains an index
         for each dimension. In the latter case, each dimension's index
         must either be a `slice` object or a sequence of two or more

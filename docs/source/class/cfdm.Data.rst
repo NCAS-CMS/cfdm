@@ -31,12 +31,12 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.Data.array
+   ~cfdm.Data.datetime_array
    ~cfdm.Data.dtype
    ~cfdm.Data.ndim
    ~cfdm.Data.shape
    ~cfdm.Data.size
-   ~cfdm.Data.array
-   ~cfdm.Data.datetime_array
  
 Units
 -----
@@ -120,12 +120,20 @@ Compression
 
    ~cfdm.Data.get_compression_type
    ~cfdm.Data.get_compressed_axes
-   ~cfdm.Data.get_compressed_array
    ~cfdm.Data.get_compressed_dimension
    ~cfdm.Data.get_count
    ~cfdm.Data.get_index
    ~cfdm.Data.get_list
    
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.Data.compressed_array
+
 Special
 -------
 

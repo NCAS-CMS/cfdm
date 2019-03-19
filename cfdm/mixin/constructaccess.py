@@ -55,14 +55,14 @@ object.
         return key_to_name
     #--- End: def
     
-    def _unique_domain_axis_names(self):
+    def _unique_domain_axis_identities(self):
         '''Return unique domain axis construct names.
 
 .. versionadded:: 1.7.0
 
 **Examples:**
 
->>> f._unique_domain_axis_names()
+>>> f._unique_domain_axis_identities()
 {'domainaxis0': 'latitude(5)',
  'domainaxis1': 'longitude(8)',
  'domainaxis2': 'time(1)'}
@@ -72,7 +72,7 @@ object.
         name_to_keys = {}
 
         for key, value in self.domain_axes.items():
-            name_size = (self.constructs.domain_axis_name(key), value.get_size(''))
+            name_size = (self.constructs.domain_axis_identity(key), value.get_size(''))
             name_to_keys.setdefault(name_size, []).append(key)
             key_to_name[key] = name_size
 

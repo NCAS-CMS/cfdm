@@ -141,7 +141,7 @@ False
     def identity(self, default=''):
         '''Return the canonical identity.
 
-By default the identity is the first found of the following:
+The identity is the first found of the following:
 
 1. The netCDF dimension name, preceeded by 'ncdim%'.
 2. The value of the default parameter.

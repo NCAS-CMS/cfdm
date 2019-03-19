@@ -31,12 +31,12 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>API reference</strong></a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
@@ -51,7 +51,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../functions.html"><strong>cfdm functions</strong></a><ul>
       <li>Previous: <a href="../functions.html" title="previous chapter"><strong>cfdm functions</strong></a></li>
       <li>Next: <a href="cfdm.write.html" title="next chapter">cfdm.write</a></li>
@@ -89,7 +89,7 @@
 <h1>cfdm.read<a class="headerlink" href="#cfdm-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.read">
-<code class="descclassname">cfdm.</code><code class="descname">read</code><span class="sig-paren">(</span><em>filename</em>, <em>external=None</em>, <em>extra=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>_implementation=&lt;cfdm.read_write.cfdmimplementation.CFDMImplementation object&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/read_write/read.py#L13"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.read" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cfdm.</code><code class="descname">read</code><span class="sig-paren">(</span><em>filename</em>, <em>external=None</em>, <em>extra=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/read_write/read.py#L13"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read field constructs from a dataset.</p>
 <p>The dataset may be a netCDF file on disk or on an OPeNDAP server.</p>
 <p>The returned field constructs are sorted by the netCDF variable names
@@ -102,8 +102,10 @@ array contents. This maximises the number of field constructs that may
 be read within a session, and makes the read operation fast.</p>
 <p><strong>NetCDF unlimited dimensions</strong></p>
 <p>Domain axis constructs that correspond to NetCDF unlimited dimensions
-may be viewed with the <a class="reference internal" href="../method/cfdm.Field.nc_unlimited_dimensions.html#cfdm.Field.nc_unlimited_dimensions" title="cfdm.Field.nc_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></a> method of
-a field construct.</p>
+may be accessed with the <a class="reference internal" href="../method/cfdm.Field.nc_unlimited_dimensions.html#cfdm.Field.nc_unlimited_dimensions" title="cfdm.Field.nc_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></a>
+<a class="reference internal" href="../method/cfdm.Field.nc_set_unlimited_dimensions.html#cfdm.Field.nc_set_unlimited_dimensions" title="cfdm.Field.nc_set_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited_dimensions</span></code></a> and
+<a class="reference internal" href="../method/cfdm.Field.nc_clear_unlimited_dimensions.html#cfdm.Field.nc_clear_unlimited_dimensions" title="cfdm.Field.nc_clear_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_unlimited_dimensions</span></code></a> methods of a field
+construct.</p>
 <p><strong>CF-compliance</strong></p>
 <p>If the dataset is partially CF-compliant to the extent that it is not
 possible to unambiguously map an element of the netCDF dataset to an

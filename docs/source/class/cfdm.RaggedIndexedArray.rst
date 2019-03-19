@@ -20,13 +20,10 @@ Inspection
    :toctree: ../method/
    :template: method.rst
       
-   ~cfdm.RaggedIndexedArray.get_array
-   ~cfdm.RaggedIndexedArray.get_compressed_array
    ~cfdm.RaggedIndexedArray.get_compressed_axes
    ~cfdm.RaggedIndexedArray.get_compressed_dimension
    ~cfdm.RaggedIndexedArray.get_compression_type
-   ~cfdm.RaggedIndexedArray.get_index_variable
-   ~cfdm.RaggedIndexedArray.array
+   ~cfdm.RaggedIndexedArray.get_index
 
 .. rubric:: Attributes
 
@@ -35,6 +32,8 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.RaggedIndexedArray.array
+   ~cfdm.RaggedIndexedArray.compressed_array
    ~cfdm.RaggedIndexedArray.dtype
    ~cfdm.RaggedIndexedArray.ndim
    ~cfdm.RaggedIndexedArray.shape

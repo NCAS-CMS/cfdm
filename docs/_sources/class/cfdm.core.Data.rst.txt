@@ -2,7 +2,7 @@
 .. default-role:: obj
 
 cfdm.core.Data
-=========
+==============
 
 ----
 
@@ -20,11 +20,11 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.core.Data.array
    ~cfdm.core.Data.dtype
    ~cfdm.core.Data.ndim
    ~cfdm.core.Data.shape
    ~cfdm.core.Data.size
-   ~cfdm.core.Data.array
  
 Units
 -----

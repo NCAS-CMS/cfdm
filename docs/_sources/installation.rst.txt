@@ -10,10 +10,10 @@
 
 Version |release| for version |version| of the CF conventions.
 
-.. _Python:
+.. _Python-versions:
 
-**Python**
-----------
+**Python versions**
+-------------------
 
 cfdm works for Python 2.7 and Python 3.
 
@@ -106,10 +106,10 @@ To install from source:
 
        python setup.py install --home=<directory>
 
-.. _cfdump-command-line-utility:
+.. _cfdump-utility:
 
-**cfdump command line utility**
--------------------------------
+**cfdump utility**
+------------------
 
 ----
 

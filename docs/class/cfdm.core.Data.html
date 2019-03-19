@@ -18,7 +18,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.Data.dtype" href="../attribute/cfdm.core.Data.dtype.html" />
+    <link rel="next" title="cfdm.core.Data.array" href="../attribute/cfdm.core.Data.array.html" />
     <link rel="prev" title="cfdm.core.Domain.__deepcopy__" href="../method/cfdm.core.Domain.__deepcopy__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -31,12 +31,12 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>API reference</strong></a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
@@ -51,10 +51,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.core.Domain.__deepcopy__.html" title="previous chapter">cfdm.core.Domain.__deepcopy__</a></li>
-      <li>Next: <a href="../attribute/cfdm.core.Data.dtype.html" title="next chapter">cfdm.core.Data.dtype</a></li>
+      <li>Next: <a href="../attribute/cfdm.core.Data.array.html" title="next chapter">cfdm.core.Data.array</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -90,7 +90,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.Data">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/core/data/data.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/core/data/data.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>An orthogonal multidimensional array with masked values and units.</p>
 <div class="versionadded">
@@ -170,20 +170,20 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.Data.dtype.html#cfdm.core.Data.dtype" title="cfdm.core.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
-<td>Data-type of the data elements.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.core.Data.ndim.html#cfdm.core.Data.ndim" title="cfdm.core.Data.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
-<td>Number of data dimensions.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.Data.shape.html#cfdm.core.Data.shape" title="cfdm.core.Data.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
-<td>Tuple of data dimension sizes.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.core.Data.size.html#cfdm.core.Data.size" title="cfdm.core.Data.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
-<td>Number of elements in the data.</td>
-</tr>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.Data.array.html#cfdm.core.Data.array" title="cfdm.core.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></td>
 <td>Return an independent numpy array containing the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.core.Data.dtype.html#cfdm.core.Data.dtype" title="cfdm.core.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
+<td>Data-type of the data elements.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.Data.ndim.html#cfdm.core.Data.ndim" title="cfdm.core.Data.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
+<td>Number of data dimensions.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.core.Data.shape.html#cfdm.core.Data.shape" title="cfdm.core.Data.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
+<td>Tuple of data dimension sizes.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.Data.size.html#cfdm.core.Data.size" title="cfdm.core.Data.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
+<td>Number of elements in the data.</td>
 </tr>
 </tbody>
 </table>

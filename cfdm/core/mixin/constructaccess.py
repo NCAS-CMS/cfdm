@@ -11,35 +11,39 @@ class ConstructAccess(object):
 .. versionadded:: 1.7.0
 
     '''   
-    def data_constructs(self, copy=False):
-        '''Return metadata constructs that support data arrays.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs`, `get_construct`
-
-:Parameters:
-
-    copy: `bool`, optional
-        If True then return copies of the constructs. By default the
-        constructs are not copied.
-
-:Returns:
-
-    `dict`
-        Constructs are returned as values of a dictionary, keyed by
-        their construct identifiers.
-
-**Examples:**
-
->>> f.constructs()
-TODO
->>> f.data_constructs()
-TODO
-
-        '''
-        return self.constructs.data_constructs(copy=copy)
-    #-- End: def
+#    def data_constructs(self, copy=False):
+#        '''Return metadata constructs that support data arrays.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `constructs`, `get_construct`
+#
+#:Parameters:
+#
+#    copy: `bool`, optional
+#        If True then return copies of the constructs. By default the
+#        constructs are not copied.
+#
+#:Returns:
+#
+#    `dict`
+#        Constructs are returned as values of a dictionary, keyed by
+#        their construct identifiers.
+#
+#**Examples:**
+#
+#>>> f.data_constructs()
+#{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+# 'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
+# 'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+# 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+# 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+# 'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
+# 'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+#
+#        '''
+#        return self.constructs.data_constructs(copy=copy)
+#    #-- End: def
     
     def del_construct(self, key, default=ValueError()):
         '''Remove a metadata construct.
@@ -126,6 +130,39 @@ reference is replace with `None`.
         return self.constructs.filter_by_key(key).value(default=default)
     #--- End: def
 
+    def has_construct(self, key):
+        '''Whather a metadata construct exisits.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`,
+             `set_construct`
+
+:Parameters:
+
+    key: `str`, optional
+        The key of the metadata construct.
+
+        *Parameter example:*
+          ``key='auxiliarycoordinate0'``
+
+:Returns:
+
+    `bool` 
+        True if the construct exisits, otherwise False.
+
+**Examples:**
+
+>>> f.has_construct('dimensioncoordinate1')
+True
+
+>>> f.has_construct('dimensioncoordinate99')
+False
+
+        '''
+        return self.constructs._del_construct(key, default=default)
+    #--- End: def
+
     def set_construct(self, construct, key=None, axes=None,
                       copy=True):
         '''Set a metadata construct.
@@ -133,7 +170,7 @@ reference is replace with `None`.
 .. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `del_construct`, `get_construct`,
-             `set_construct_data_axes`
+             `set_data_axes`
 
 :Parameters:
 
@@ -187,16 +224,20 @@ reference is replace with `None`.
     #--- End: def
 
     def get_data_axes(self, key, default=ValueError):
-        '''Return the keys of the domain axes spanned by a data array.
+        '''Return the keys of the domain axis constructs spanned by the data
+of a metadata construct.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `del_data_axes`, `get_data`, `set_data_axes`
+.. seealso:: `del_data_axes`, `has_data_axes`, `set_data_axes`
 
 :Parameters:
 
-    key: `str`
-        <TODO>
+    key: `str`, optional
+        Specify a metadata construct.
+
+        *Parameter example:*
+          ``key='auxiliarycoordinate0'``
 
     default: optional
         Return the value of the *default* parameter if the data axes
@@ -228,16 +269,20 @@ None
     #--- End: def
 
     def del_data_axes(self, key, default=ValueError()):
-        '''Remove the keys of the domain axes spanned by the data array.
+        '''Remove the keys of the domain axis constructs spanned by the data
+of a metadata construct.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `get_data_axes`, `set_data_axes`
+.. seealso:: `get_data_axes`, `has_data_axes`, `set_data_axes`
 
 :Parameters:
 
     key: `str`, optional
-        TODO
+        Specify a metadata construct, instead of the field construct.
+
+        *Parameter example:*
+          ``key='auxiliarycoordinate0'``
 
     default: optional
         Return the value of the *default* parameter if the data axes
@@ -272,21 +317,26 @@ False
     #--- End: def
     
     def has_data_axes(self, key=None):
-        '''TODO
+        '''Whether the domain axis constructs spanned by the data of a
+metadata construct have been set.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `del_data_axes`, `get_data_axes`, `set_data_axes`
+.. seealso:: `del_data_axes`, `get_data_axes`, `set_data_axes`
 
 :Parameters:
 
     key: `str`, optional
-        <TODO>
+        Specify a metadata construct.
+
+        *Parameter example:*
+          ``key='domainancillary1'``
 
 :Returns:
 
     `bool` 
-        TODO
+        True if domain axis constructs that span the data been set,
+        otherwise False.
 
 **Examples:**
 
@@ -321,14 +371,19 @@ construct.
 
      axes: sequence of `str`
         The identifiers of the domain axis constructs spanned by the
-        data of a metadata construct.
+        data of the field or of a metadata construct.
+
+        *Parameter example:*
+          ``axes='domainaxis1'``
+
+        *Parameter example:*
+          ``axes=['domainaxis1']``
 
         *Parameter example:*
           ``axes=['domainaxis1', 'domainaxis0']``
 
-     key: `str`
-        Set the domain axis constructs of the data of metadata
-        constuct defined by given construct key.
+     key: `str`, optional
+        Specify a metadata construct.
 
         *Parameter example:*
           ``key='domainancillary1'``

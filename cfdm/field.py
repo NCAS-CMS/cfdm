@@ -128,7 +128,7 @@ x.__str__() <==> str(x)
         data_axes = self.get_data_axes(default=())
         non_spanning_axes = set(self.domain_axes).difference(data_axes)
 
-        axis_names = self._unique_domain_axis_names()
+        axis_names = self._unique_domain_axis_identities()
         
         # Data
         string.append(
@@ -276,7 +276,8 @@ rules, the only differences being:
         self_constructs = self.constructs
         new_constructs_data_axes = new.constructs.data_axes()
         
-        for key, construct in new.data_constructs().items():
+        for key, construct in new.constructs.filter_by_data().items():
+#        for key, construct in new.data_constructs().items():
             data = self.constructs[key].get_data(default=None)
             if data is None:
                 # This construct has no data
@@ -320,7 +321,7 @@ rules, the only differences being:
         '''
         '''
         if axis_names_sizes is None:
-            axis_names_sizes = self._unique_domain_axis_names()
+            axis_names_sizes = self._unique_domain_axis_identities()
             
         x = [axis_names_sizes[axis] for axis in self.get_data_axes(default=())]
         axis_names = ', '.join(x)
@@ -494,7 +495,7 @@ data arrays.
         # Title
         string = [line, indent0+_title, line]
 
-        axis_to_name = self._unique_domain_axis_names()
+        axis_to_name = self._unique_domain_axis_identities()
 
         name = self._unique_construct_names()
 
@@ -517,7 +518,7 @@ data arrays.
                 isreftime = 'since' in units
     
             if isreftime:
-                data = data.asdata(data.dtarray)
+                data = data.asdata(data.datatime_array)
                 
             string.append('')
             string.append('{0}Data({1}) = {2}'.format(indent0,

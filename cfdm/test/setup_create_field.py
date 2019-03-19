@@ -19,7 +19,7 @@ class create_fieldTest(unittest.TestCase):
 
         try:
             os.remove(self.filename)
-        except FileNotFoundError:
+        except:
             pass        
     #--- End: def
             

@@ -31,12 +31,12 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>API reference</strong></a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
@@ -51,7 +51,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Domain.html">cfdm.Domain</a><ul>
       <li>Previous: <a href="cfdm.Domain.set_construct.html" title="previous chapter">cfdm.Domain.set_construct</a></li>
@@ -91,14 +91,15 @@
 <h1>cfdm.Domain.del_data_axes<a class="headerlink" href="#cfdm-domain-del-data-axes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Domain.del_data_axes">
-<code class="descclassname">Domain.</code><code class="descname">del_data_axes</code><span class="sig-paren">(</span><em>key</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/core/mixin/constructaccess.py#L239"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.del_data_axes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove the keys of the domain axes spanned by the data array.</p>
+<code class="descclassname">Domain.</code><code class="descname">del_data_axes</code><span class="sig-paren">(</span><em>key</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/core/mixin/constructaccess.py#L271"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.del_data_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the keys of the domain axis constructs spanned by the data
+of a metadata construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code>, <a class="reference internal" href="cfdm.Domain.get_data_axes.html#cfdm.Domain.get_data_axes" title="cfdm.Domain.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a>, <a class="reference internal" href="cfdm.Domain.set_data_axes.html#cfdm.Domain.set_data_axes" title="cfdm.Domain.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.Domain.get_data_axes.html#cfdm.Domain.get_data_axes" title="cfdm.Domain.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a>, <a class="reference internal" href="cfdm.Domain.has_data_axes.html#cfdm.Domain.has_data_axes" title="cfdm.Domain.has_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data_axes</span></code></a>, <a class="reference internal" href="cfdm.Domain.set_data_axes.html#cfdm.Domain.set_data_axes" title="cfdm.Domain.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -106,7 +107,12 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first last">TODO</p>
+<dd><p class="first">Specify a metadata construct, instead of the field construct.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">key='auxiliarycoordinate0'</span></code></p>
+</dd>
+</dl>
 </dd>
 <dt>default: optional</dt>
 <dd><p class="first last">Return the value of the <em>default</em> parameter if the data axes

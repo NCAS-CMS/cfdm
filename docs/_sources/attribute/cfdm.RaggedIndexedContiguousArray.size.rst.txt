@@ -1,7 +1,7 @@
 cfdm.RaggedIndexedContiguousArray.size
 ======================================
 
-.. currentmodule:: cf
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. autoattribute:: cfdm.RaggedIndexedContiguousArray.size

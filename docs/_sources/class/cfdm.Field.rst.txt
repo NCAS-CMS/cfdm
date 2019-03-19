@@ -73,6 +73,7 @@ Data
    ~cfdm.Field.set_data
    ~cfdm.Field.del_data_axes
    ~cfdm.Field.get_data_axes
+   ~cfdm.Field.has_data_axes
    ~cfdm.Field.set_data_axes
    ~cfdm.Field.insert_dimension
    ~cfdm.Field.squeeze
@@ -184,7 +185,11 @@ NetCDF
    ~cfdm.Field.nc_has_variable
    ~cfdm.Field.nc_set_variable 
    ~cfdm.Field.nc_global_attributes
+   ~cfdm.Field.nc_clear_global_attributes
+   ~cfdm.Field.nc_set_global_attributes
    ~cfdm.Field.nc_unlimited_dimensions
+   ~cfdm.Field.nc_clear_unlimited_dimensions
+   ~cfdm.Field.nc_set_unlimited_dimensions
    ~cfdm.Field.dataset_compliance
 
 .. _Field-Special:

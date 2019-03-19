@@ -33,21 +33,19 @@ Properties
    :template: method.rst
 
    ~cfdm.core.CellMethod.del_axes
-   ~cfdm.core.CellMethod.get_axes
+   ~cfdm.core.CellMethod.get_axes 
    ~cfdm.core.CellMethod.has_axes
    ~cfdm.core.CellMethod.set_axes
    ~cfdm.core.CellMethod.del_method
    ~cfdm.core.CellMethod.get_method
    ~cfdm.core.CellMethod.has_method
    ~cfdm.core.CellMethod.set_method
-   ~cfdm.core.CellMethod.del_property
-   ~cfdm.core.CellMethod.set_property
-   ~cfdm.core.CellMethod.get_property
-   ~cfdm.core.CellMethod.has_property
-   ~cfdm.core.CellMethod.properties
-   ~cfdm.core.CellMethod.clear_properties
-   ~cfdm.core.CellMethod.set_properties
- 
+   ~cfdm.core.CellMethod.del_qualifier
+   ~cfdm.core.CellMethod.get_qualifier
+   ~cfdm.core.CellMethod.has_qualifier
+   ~cfdm.core.CellMethod.set_qualifier
+   ~cfdm.core.CellMethod.qualifiers
+
 Miscellaneous
 -------------
 

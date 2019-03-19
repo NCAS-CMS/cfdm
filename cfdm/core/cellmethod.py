@@ -680,6 +680,7 @@ False
 
 .. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`,
              `qualifiers`
+
 :Parameters:
 
     qualifier: `str`

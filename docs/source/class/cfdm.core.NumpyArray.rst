@@ -20,11 +20,11 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
    
+   ~cfdm.core.NumpyArray.array
    ~cfdm.core.NumpyArray.dtype
    ~cfdm.core.NumpyArray.ndim
    ~cfdm.core.NumpyArray.shape
    ~cfdm.core.NumpyArray.size
-   ~cfdm.core.NumpyArray.array
       
 Miscellaneous
 -------------

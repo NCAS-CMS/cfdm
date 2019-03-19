@@ -2,7 +2,7 @@
 .. default-role:: obj
 
 #######################
-**Python cfdm package**
+**cfdm python package**
 #######################
 
 ----
@@ -20,7 +20,7 @@
    introduction
    installation
    tutorial
-   reference
+   api_reference
    subclassing
    philosophy
    versioning

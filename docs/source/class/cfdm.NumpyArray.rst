@@ -20,11 +20,7 @@ Inspection
    :toctree: ../method/
    :template: method.rst
    
-
-   ~cfdm.NumpyArray.get_compressed_array
-   ~cfdm.NumpyArray.get_compressed_axes
    ~cfdm.NumpyArray.get_compression_type
-   ~cfdm.NumpyArray.get_sample_axis
    ~cfdm.NumpyArray.get_subspace
    
 .. rubric:: Attributes
@@ -34,11 +30,11 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
    
+   ~cfdm.NumpyArray.array
    ~cfdm.NumpyArray.dtype
    ~cfdm.NumpyArray.ndim
    ~cfdm.NumpyArray.shape
    ~cfdm.NumpyArray.size
-   ~cfdm.NumpyArray.array
 
 Miscellaneous
 -------------

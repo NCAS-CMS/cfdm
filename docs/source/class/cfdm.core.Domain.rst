@@ -2,7 +2,7 @@
 .. default-role:: obj
 
 cfdm.core.Domain
-===========
+================
 
 ----
 
@@ -20,15 +20,24 @@ Metadata constructs
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.Domain.constructs
    ~cfdm.core.Domain.del_construct
    ~cfdm.core.Domain.get_construct
    ~cfdm.core.Domain.has_construct
    ~cfdm.core.Domain.set_construct
-   ~cfdm.core.Domain.constructs_data_axes
-   ~cfdm.core.Domain.get_construct_data_axes
-   ~cfdm.core.Domain.set_construct_data_axes
+   ~cfdm.core.Domain.del_data_axes
+   ~cfdm.core.Domain.get_data_axes
+   ~cfdm.core.Domain.has_data_axes
+   ~cfdm.core.Domain.set_data_axes
 
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.Domain.constructs
+   
 Miscellaneous
 -------------
 

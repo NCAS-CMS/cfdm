@@ -4,17 +4,13 @@
 .. _Tutorial:
 
 
-**Tutorial**
-============
+**cfdm tutorial**
+=================
 
 ----
 
 Version |release| for version |version| of the CF conventions.
  
-.. The code examples in this tutorial are available in an **IPython
-   Jupyter notebook** (:download:`download
-   <notebooks/tutorial.ipynb>`, 80kB) [asdasds#files]_, [assadasdsa#notebook]_.
-
 .. _Import:
 
 **Import**
@@ -61,7 +57,7 @@ disk.
 
 The `cfdm.read` function reads a `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
-from an `OPeNDAP <https://www.opendap.org/>`_ URL [#opendap2]_, and
+from an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, and
 returns the contents as a list of zero or more `Field` class
 instances, each of which represents a field construct. (Henceforth,
 the phrase "field construct" will be assumed to mean "`Field`
@@ -474,7 +470,7 @@ them. Each :ref:`CF data model metadata construct <CF-data-model>` has
 a corresponding cfdm class:
 
 =====================  =======================  ==============================
-cfdm class             CF data model construct  Description                     
+Class                  CF data model construct  Description                     
 =====================  =======================  ==============================
 `DomainAxis`           Domain axis              Independent axes of the domain
 `DimensionCoordinate`  Dimension coordinate     Domain cell locations         
@@ -500,10 +496,8 @@ Attribute                       Metadata constructs
 `~Field.auxiliary_coordinates`  Auxiliary coordinates  
 `~Field.coordinate_references`  Coordinate references  
 `~Field.domain_ancillaries`     Domain ancillaries     
-				                               
 `~Field.cell_measures`          Cell measures          
 `~Field.field_ancillaries`      Field ancillaries      
-				                              
 `~Field.cell_methods`           Cell methods                               
 ==============================  =====================  
 
@@ -514,7 +508,10 @@ that meet particular criteria (see the section on :ref:`filtering
 metadata constructs <Filtering-metadata-constructs>`). It also behaves
 like a "read-only" Python dictionary, in that it has
 `~Constructs.items`, `~Constructs.keys` and `~Constructs.values`
-methods that work exactly like their corresponding `dict` methods.
+methods that work exactly like their corresponding `dict` methods. It
+also has a `~Constructs.get` method and indexing like a Python
+dictionary (see the section on :ref:`metadata construct access
+<Metadata-construct-access>` for details).
 
 .. Each of these methods returns a dictionary whose values are the
    metadata constructs of one type, keyed by a unique identifier
@@ -942,6 +939,7 @@ Method                            Filter criteria
 `~Constructs.filter_by_axis`      The domain axis constructs spanned by the data        		            
 `~Constructs.filter_by_measure`   Measure value (for cell measure constructs)				    
 `~Constructs.filter_by_method`    Method value (for cell method constructs)				    
+`~Constructs.filter_by_data`      Whether or not there could be be data.
 `~Constructs.filter_by_key`       Construct key								    
 `~Constructs.filter_by_ncvar`     Netcdf variable name (see the :ref:`netCDF interface <NetCDF-interface>`)   
 `~Constructs.filter_by_ncdim`     Netcdf dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)  
@@ -1378,13 +1376,14 @@ variable.
 .. _Time:
 
 **Time**
-^^^^^^^^
+--------
 
-Constructs representing time (identified by the presence of "reference
-time" units) have data array values that represent elapsed time since
-a reference date. These values may converted into the date-time
-objects of the `cftime package <https://unidata.github.io/cftime/>`_
-with the `~Data.datetime_array` method of the `Data` instance.
+Constructs representing elapsed time (identified by the presence of
+"reference time" units) have data array values that represent elapsed
+time since a reference date. These values may be converted into the
+date-time objects of the `cftime package
+<https://unidata.github.io/cftime/>`_ with the `~Data.datetime_array`
+method of the `Data` instance.
 
 .. code-block:: python3
    :caption: *Inspect the the values of a "time" construct as elapsed
@@ -2775,7 +2774,7 @@ on disk and subsequently read back from that file.
    >>> q.equals(f)
    True
 
-.. _Scalar-coordinate-variables
+.. _Scalar-coordinate-variables:
 
 **Scalar coordinate variables**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3075,6 +3074,7 @@ both:
 
 * Whether or not the data are compressed is tested with the
   `~Data.get_compression_type` method of the `Data` instance.
+
 ..
 
 * Accessing the data via the `~Data.array` attribute of a `Data`
@@ -3125,13 +3125,11 @@ combining them using one of three ragged array representations:
 
 The count variable that is required to uncompress a contiguous, or
 indexed contiguous, ragged array is stored in a `Count` instance and
-is accessed with the `~Data.get_count_variable` method of the `Data`
-instance.
+is accessed with the `~Data.get_count` method of the `Data` instance.
 
 The index variable that is required to uncompress an indexed, or
 indexed contiguous, ragged array is stored in an `Index` instance and
-is accessed with the `~Data.get_index_variable` method of the `Data`
-instance.
+is accessed with the `~Data.get_index` method of the `Data` instance.
 
 The contiguous case is is illustrated with the file ``contiguous.nc``
 (:download:`download <netcdf_files/contiguous.nc>`, 2kB) [#files]_:
@@ -3352,8 +3350,8 @@ into a new, discrete axis whilst omitting the missing values and thus
 reducing the number of values that need to be stored.
 
 The list variable that is required to uncompress a gathered array is
-stored in a `List` object and is retrieved with the
-`~Data.get_list_variable` method of the `Data` instance.
+stored in a `List` object and is retrieved with the `~Data.get_list`
+method of the `Data` instance.
 
 This is illustrated with the file ``gathered.nc`` (:download:`download
 <netcdf_files/gathered.nc>`, 1kB) [#files]_:
@@ -3568,14 +3566,14 @@ The content of the new file is:
 
 ----
 
+.. [#dap] Requires the netCDF4 python package to have been built with
+          OPeNDAP support enabled. See
+          http://unidata.github.io/netcdf4-python for details.
+
 .. [#files] The tutorial files may be also found in the `downloads
             directory
             <https://github.com/NCAS-CMS/cfdm/tree/master/docs/_downloads>`_
             of the on-line code repository.
-
-.. [#opendap2] Requires the netCDF4 python package to have been built
-               with OPeNDAP support enabled. See
-               http://unidata.github.io/netcdf4-python for details.
 
 .. .. [#notebook] The Jupyter notebook is quite long. To aid navigation
                   it has been written so that it may optionally be used
@@ -3606,3 +3604,7 @@ The content of the new file is:
 .. _contiguous:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_contiguous_ragged_array_representation
 .. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_indexed_ragged_array_representation
 .. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
+
+.. The code examples in this tutorial are available in an **IPython
+   Jupyter notebook** (:download:`download
+   <notebooks/tutorial.ipynb>`, 80kB) [asdasds#files]_, [assadasdsa#notebook]_.

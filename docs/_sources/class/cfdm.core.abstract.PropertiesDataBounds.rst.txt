@@ -2,7 +2,7 @@
 .. default-role:: obj
 
 cfdm.core.abstract.PropertiesDataBounds
-======================================
+=======================================
 
 ----
 

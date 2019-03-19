@@ -112,7 +112,7 @@ x.__str__() <==> str(x)
                           
         string = []
         
-        axis_names = self._unique_domain_axis_names()
+        axis_names = self._unique_domain_axis_identities()
 
         constructs_data_axes = self.constructs.data_axes()
         
@@ -424,7 +424,7 @@ last values.
         indent0 = indent * _level
         indent1 = indent0 + indent
 
-        axis_to_name = self._unique_domain_axis_names()
+        axis_to_name = self._unique_domain_axis_identities()
 
         construct_name = self._unique_construct_names()
 

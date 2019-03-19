@@ -555,7 +555,7 @@ reference is replace with `None`.
         constructs.
 
         The axes may also be set afterwards with the
-        `set_construct_data_axes` method.
+        `_set_construct_data_axes` method.
 
         *Parameter example:*
           ``axes='domainaxis1'``
@@ -665,7 +665,7 @@ reference is replace with `None`.
 **Examples:**
 
 >>> key = f.set_construct(c)
->>> f.set_construct_data_axes(key, axes='domainaxis1')
+>>> f._set_construct_data_axes(key, axes='domainaxis1')
 
         '''
         if construct is None:
@@ -773,31 +773,31 @@ reference is replace with `None`.
         return out
     #--- End: def
 
-    def data_constructs(self, axes=None, copy=False):
-        '''TODO
-        '''
-        out = {}
-
-        if not self._ignore:
-            for construct_type in self._array_constructs:
-                out.update(self._constructs[construct_type])
-        else:
-            ignore = self._ignore
-            for construct_type in self._array_constructs:
-                if construct_type not in ignore:
-                    out.update(self._constructs[construct_type])
-
-        if axes:
-            spans_axes = set(axes)
-            constructs_data_axes = self.data_axes()
-            for key, construct in list(out.items()):
-                x = constructs_data_axes[key]
-                if not spans_axes.intersection(x):
-                    del out[key]
-        #--- End: def
-
-        return out
-    #--- End: def
+#    def data_constructs(self, axes=None, copy=False):
+#        '''TODO
+#        '''
+#        out = {}
+#
+#        if not self._ignore:
+#            for construct_type in self._array_constructs:
+#                out.update(self._constructs[construct_type])
+#        else:
+#            ignore = self._ignore
+#            for construct_type in self._array_constructs:
+#                if construct_type not in ignore:
+#                    out.update(self._constructs[construct_type])
+#
+#        if axes:
+#            spans_axes = set(axes)
+#            constructs_data_axes = self.data_axes()
+#            for key, construct in list(out.items()):
+#                x = constructs_data_axes[key]
+#                if not spans_axes.intersection(x):
+#                    del out[key]
+#        #--- End: def
+#
+#        return out
+#    #--- End: def
     
     def non_array_constructs(self):
         '''TODO

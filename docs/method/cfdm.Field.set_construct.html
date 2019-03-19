@@ -18,7 +18,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Field.has_data_axes" href="cfdm.Field.has_data_axes.html" />
+    <link rel="next" title="cfdm.Field.constructs" href="../attribute/cfdm.Field.constructs.html" />
     <link rel="prev" title="cfdm.Field.has_construct" href="cfdm.Field.has_construct.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -31,12 +31,12 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>API reference</strong></a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
@@ -51,11 +51,11 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Field.html">cfdm.Field</a><ul>
       <li>Previous: <a href="cfdm.Field.has_construct.html" title="previous chapter">cfdm.Field.has_construct</a></li>
-      <li>Next: <a href="cfdm.Field.has_data_axes.html" title="next chapter">cfdm.Field.has_data_axes</a></li>
+      <li>Next: <a href="../attribute/cfdm.Field.constructs.html" title="next chapter">cfdm.Field.constructs</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -91,15 +91,15 @@
 <h1>cfdm.Field.set_construct<a class="headerlink" href="#cfdm-field-set-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.set_construct">
-<code class="descclassname">Field.</code><code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct</em>, <em>key=None</em>, <em>axes=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/core/mixin/constructaccess.py#L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.set_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct</em>, <em>key=None</em>, <em>axes=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/core/mixin/constructaccess.py#L166"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.set_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a metadata construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a>, <a class="reference internal" href="cfdm.Field.del_construct.html#cfdm.Field.del_construct" title="cfdm.Field.del_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code></a>, <a class="reference internal" href="cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct_data_axes</span></code></p>
+<p class="last"><a class="reference internal" href="../attribute/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a>, <a class="reference internal" href="cfdm.Field.del_construct.html#cfdm.Field.del_construct" title="cfdm.Field.del_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code></a>, <a class="reference internal" href="cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>,
+<a class="reference internal" href="cfdm.Field.set_data_axes.html#cfdm.Field.set_data_axes" title="cfdm.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

@@ -18,7 +18,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="next" title="cfdm tutorial" href="tutorial.html" />
     <link rel="prev" title="Introduction" href="introduction.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -31,22 +31,22 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cfdm 1.7.0b17</a></b></h3>
+<h3><b><a href="index.html">cfdm 1.7.0b18</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Installation</strong></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#python"><strong>Python</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-versions"><strong>Python versions</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pip"><strong>pip</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#conda"><strong>conda</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#source"><strong>Source</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cfdump-command-line-utility"><strong>cfdump command line utility</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cfdump-utility"><strong>cfdump utility</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tests"><strong>Tests</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dependencies"><strong>Dependencies</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#code-repository"><strong>Code repository</strong></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="versioning.html"><strong>Versioning</strong></a></li>
@@ -57,7 +57,7 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="introduction.html" title="previous chapter"><strong>Introduction</strong></a></li>
-      <li>Next: <a href="tutorial.html" title="next chapter"><strong>Tutorial</strong></a></li>
+      <li>Next: <a href="tutorial.html" title="next chapter"><strong>cfdm tutorial</strong></a></li>
   </ul></li>
 </ul>
 </div>
@@ -89,9 +89,9 @@
   <div class="section" id="installation">
 <span id="id1"></span><h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.7.0b17 for version 1.7 of the CF conventions.</p>
-<div class="section" id="python">
-<span id="id2"></span><h2><strong>Python</strong><a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
+<p>Version 1.7.0b18 for version 1.7 of the CF conventions.</p>
+<div class="section" id="python-versions">
+<span id="id2"></span><h2><strong>Python versions</strong><a class="headerlink" href="#python-versions" title="Permalink to this headline">¶</a></h2>
 <p>cfdm works for Python 2.7 and Python 3.</p>
 </div>
 <div class="section" id="pip">
@@ -99,22 +99,22 @@
 <hr class="docutils" />
 <p>To install cfdm and all of its <a class="reference internal" href="#dependencies"><span class="std std-ref">dependencies</span></a> run,
 for example:</p>
-<div class="literal-block-wrapper docutils container" id="id11">
-<div class="code-block-caption"><span class="caption-text"><em>Install as root, with any missing dependencies.</em></span><a class="headerlink" href="#id11" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text"><em>Install as root, with any missing dependencies.</em></span><a class="headerlink" href="#id10" title="Permalink to this code">¶</a></div>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cfdm
 </pre></div>
 </div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id12">
-<div class="code-block-caption"><span class="caption-text"><em>Install as a user, with any missing dependencies.</em></span><a class="headerlink" href="#id12" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text"><em>Install as a user, with any missing dependencies.</em></span><a class="headerlink" href="#id11" title="Permalink to this code">¶</a></div>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cfdm --user
 </pre></div>
 </div>
 </div>
 <p>To install cfdm without any of its dependencies then run, for example:</p>
-<div class="literal-block-wrapper docutils container" id="id13">
+<div class="literal-block-wrapper docutils container" id="id12">
 <div class="code-block-caption"><span class="caption-text"><em>Install as root without installing any of the
-dependencies.</em></span><a class="headerlink" href="#id13" title="Permalink to this code">¶</a></div>
+dependencies.</em></span><a class="headerlink" href="#id12" title="Permalink to this code">¶</a></div>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cfdm --no-deps
 </pre></div>
 </div>
@@ -165,8 +165,8 @@ location:</p>
 </ul>
 </div></blockquote>
 </div>
-<div class="section" id="cfdump-command-line-utility">
-<span id="id6"></span><h2><strong>cfdump command line utility</strong><a class="headerlink" href="#cfdump-command-line-utility" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cfdump-utility">
+<span id="id6"></span><h2><strong>cfdump utility</strong><a class="headerlink" href="#cfdump-utility" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>During installation the <a class="reference internal" href="tutorial.html#cfdump"><span class="std std-ref">cfdump command line utility</span></a> is
 also installed, which generates text descriptions of the field
@@ -195,7 +195,7 @@ or newer, and</li>
 </ul>
 </div>
 <div class="section" id="code-repository">
-<span id="id10"></span><h2><strong>Code repository</strong><a class="headerlink" href="#code-repository" title="Permalink to this headline">¶</a></h2>
+<span id="id9"></span><h2><strong>Code repository</strong><a class="headerlink" href="#code-repository" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The complete source code is available at <a class="reference external" href="https://github.com/NCAS-CMS/cfdm">https://github.com/NCAS-CMS/cfdm</a></p>
 </div>

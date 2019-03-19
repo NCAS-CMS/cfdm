@@ -62,6 +62,7 @@ Data
    ~cfdm.core.Field.set_data
    ~cfdm.core.Field.del_data_axes
    ~cfdm.core.Field.get_data_axes
+   ~cfdm.core.Field.has_data_axes
    ~cfdm.core.Field.set_data_axes
    
 .. rubric:: Attributes
@@ -85,15 +86,23 @@ Metadata constructs
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.Field.constructs
    ~cfdm.core.Field.del_construct
    ~cfdm.core.Field.get_construct
    ~cfdm.core.Field.has_construct
    ~cfdm.core.Field.set_construct
-   ~cfdm.core.Field.get_construct_key
-   ~cfdm.core.Field.constructs_data_axes
-   ~cfdm.core.Field.get_construct_data_axes
-   ~cfdm.core.Field.set_construct_data_axes
+   ~cfdm.core.Field.del_data_axes
+   ~cfdm.core.Field.get_data_axes
+   ~cfdm.core.Field.has_data_axes
+   ~cfdm.core.Field.set_data_axes
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.Field.constructs
 
 .. _core-Field-Domain:
 

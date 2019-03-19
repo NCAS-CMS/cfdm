@@ -10,10 +10,10 @@
 
 Version |release| for version |version| of the CF conventions.
 
-.. _Python:
+.. _Python-versions:
 
-**Python**
-----------
+**Python versions**
+-------------------
 
 cfdm works for Python 2.7 and Python 3.
 

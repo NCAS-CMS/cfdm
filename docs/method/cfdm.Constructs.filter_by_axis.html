@@ -18,7 +18,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Constructs.filter_by_type" href="cfdm.Constructs.filter_by_type.html" />
+    <link rel="next" title="cfdm.Constructs.filter_by_data" href="cfdm.Constructs.filter_by_data.html" />
     <link rel="prev" title="cfdm.Constructs.filter_by_method" href="cfdm.Constructs.filter_by_method.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -31,12 +31,12 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>API reference</strong></a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
@@ -51,11 +51,11 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Constructs.html">cfdm.Constructs</a><ul>
       <li>Previous: <a href="cfdm.Constructs.filter_by_method.html" title="previous chapter">cfdm.Constructs.filter_by_method</a></li>
-      <li>Next: <a href="cfdm.Constructs.filter_by_type.html" title="next chapter">cfdm.Constructs.filter_by_type</a></li>
+      <li>Next: <a href="cfdm.Constructs.filter_by_data.html" title="next chapter">cfdm.Constructs.filter_by_data</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -91,15 +91,16 @@
 <h1>cfdm.Constructs.filter_by_axis<a class="headerlink" href="#cfdm-constructs-filter-by-axis" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Constructs.filter_by_axis">
-<code class="descclassname">Constructs.</code><code class="descname">filter_by_axis</code><span class="sig-paren">(</span><em>*and_or</em>, <em>**axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/constructs.py#L642"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.filter_by_axis" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Constructs.</code><code class="descname">filter_by_axis</code><span class="sig-paren">(</span><em>*mode</em>, <em>**axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/constructs.py#L641"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.filter_by_axis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select metadata constructs by axes spanned by their data.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cfdm.Constructs.filter_by_key.html#cfdm.Constructs.filter_by_key" title="cfdm.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_measure.html#cfdm.Constructs.filter_by_measure" title="cfdm.Constructs.filter_by_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_measure</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_method.html#cfdm.Constructs.filter_by_method" title="cfdm.Constructs.filter_by_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_method</span></code></a>,
-<a class="reference internal" href="cfdm.Constructs.filter_by_identity.html#cfdm.Constructs.filter_by_identity" title="cfdm.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_ncdim.html#cfdm.Constructs.filter_by_ncdim" title="cfdm.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_ncvar.html#cfdm.Constructs.filter_by_ncvar" title="cfdm.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a>,
+<p class="last"><a class="reference internal" href="cfdm.Constructs.filter_by_data.html#cfdm.Constructs.filter_by_data" title="cfdm.Constructs.filter_by_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_data</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_key.html#cfdm.Constructs.filter_by_key" title="cfdm.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_measure.html#cfdm.Constructs.filter_by_measure" title="cfdm.Constructs.filter_by_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_measure</span></code></a>,
+<a class="reference internal" href="cfdm.Constructs.filter_by_method.html#cfdm.Constructs.filter_by_method" title="cfdm.Constructs.filter_by_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_method</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_identity.html#cfdm.Constructs.filter_by_identity" title="cfdm.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>,
+<a class="reference internal" href="cfdm.Constructs.filter_by_ncdim.html#cfdm.Constructs.filter_by_ncdim" title="cfdm.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_ncvar.html#cfdm.Constructs.filter_by_ncvar" title="cfdm.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a>,
 <a class="reference internal" href="cfdm.Constructs.filter_by_property.html#cfdm.Constructs.filter_by_property" title="cfdm.Constructs.filter_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_property</span></code></a>, <a class="reference internal" href="cfdm.Constructs.filter_by_type.html#cfdm.Constructs.filter_by_type" title="cfdm.Constructs.filter_by_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_type</span></code></a>,
 <a class="reference internal" href="cfdm.Constructs.filters_applied.html#cfdm.Constructs.filters_applied" title="cfdm.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>, <a class="reference internal" href="cfdm.Constructs.inverse_filter.html#cfdm.Constructs.inverse_filter" title="cfdm.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a></p>
 </div>
@@ -108,27 +109,26 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>and_or: optional</dt>
+<dt>mode: optional</dt>
 <dd><p class="first">Define the behaviour when multiple axes are provided.</p>
-<p class="last">By default (or if the <em>and_or</em> parameter is <code class="docutils literal notranslate"><span class="pre">'and'</span></code>) a
+<p class="last">By default (or if the <em>modes</em> parameter is <code class="docutils literal notranslate"><span class="pre">'and'</span></code>) a
 construct is selected if it matches all of the given axis
-requirements, but if the <em>and_or</em> parameter is <code class="docutils literal notranslate"><span class="pre">'or'</span></code> then a
+requirements, but if the <em>mode</em> parameter is <code class="docutils literal notranslate"><span class="pre">'or'</span></code> then a
 construct will be selected when at least one of the axis
 requirements is met.</p>
 </dd>
-</dl>
-<p>axes: optional</p>
-<blockquote>
-<div><p>Select constructs whose data array does, or does not, span
+<dt>axes: optional</dt>
+<dd><p class="first">Select constructs whose data does, or does not, span
 particular domain axis constructs.</p>
 <p>A domain axis construct is identified by a keyword parameter
 of the domain axis construct key (e.g. <code class="docutils literal notranslate"><span class="pre">domainaxis1</span></code>). The
 value is a boolean indicating if a construct should be
 selected when its data does span the axis (<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>), or
 selected when its data does not span the axis (<a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>).</p>
-<p>If no axes are provided then all constructs that have data,
+<p class="last">If no axes are provided then all constructs that have data,
 spanning any domain axes constructs, are selected.</p>
-</div></blockquote>
+</dd>
+</dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">

@@ -18,7 +18,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.RaggedIndexedArray.get_array" href="../method/cfdm.RaggedIndexedArray.get_array.html" />
+    <link rel="next" title="cfdm.RaggedIndexedArray.get_compressed_axes" href="../method/cfdm.RaggedIndexedArray.get_compressed_axes.html" />
     <link rel="prev" title="cfdm.RaggedContiguousArray.__str__" href="../method/cfdm.RaggedContiguousArray.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -31,12 +31,12 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>API reference</strong></a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
@@ -51,10 +51,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.RaggedContiguousArray.__str__.html" title="previous chapter">cfdm.RaggedContiguousArray.__str__</a></li>
-      <li>Next: <a href="../method/cfdm.RaggedIndexedArray.get_array.html" title="next chapter">cfdm.RaggedIndexedArray.get_array</a></li>
+      <li>Next: <a href="../method/cfdm.RaggedIndexedArray.get_compressed_axes.html" title="next chapter">cfdm.RaggedIndexedArray.get_compressed_axes</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -90,7 +90,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.RaggedIndexedArray">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">RaggedIndexedArray</code><span class="sig-paren">(</span><em>compressed_array=None</em>, <em>shape=None</em>, <em>size=None</em>, <em>ndim=None</em>, <em>index_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/data/raggedindexedarray.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.RaggedIndexedArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">RaggedIndexedArray</code><span class="sig-paren">(</span><em>compressed_array=None</em>, <em>shape=None</em>, <em>size=None</em>, <em>ndim=None</em>, <em>index_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/data/raggedindexedarray.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.RaggedIndexedArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.mixin.ragged.RaggedIndexed</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.compressedarray.CompressedArray</span></code></p>
 <p>An underlying indexed ragged array.</p>
 <p>A collection of features stored using an indexed ragged array combines
@@ -140,12 +140,6 @@ corresponding to a CF-netCDF index variable.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RaggedIndexedArray.get_array</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RaggedIndexedArray.get_compressed_array</span></code></td>
-<td></td>
-</tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.get_compressed_axes.html#cfdm.RaggedIndexedArray.get_compressed_axes" title="cfdm.RaggedIndexedArray.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></td>
 <td>Return axes that are compressed in the underlying array.</td>
 </tr>
@@ -155,11 +149,8 @@ corresponding to a CF-netCDF index variable.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.get_compression_type.html#cfdm.RaggedIndexedArray.get_compression_type" title="cfdm.RaggedIndexedArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></td>
 <td>The type of compression that has been applied to the underlying array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.get_index_variable.html#cfdm.RaggedIndexedArray.get_index_variable" title="cfdm.RaggedIndexedArray.get_index_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index_variable</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.get_index.html#cfdm.RaggedIndexedArray.get_index" title="cfdm.RaggedIndexedArray.get_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index</span></code></a></td>
 <td>TODO</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.array.html#cfdm.RaggedIndexedArray.array" title="cfdm.RaggedIndexedArray.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></td>
-<td>Return an independent numpy array containing the uncompressed data.</td>
 </tr>
 </tbody>
 </table>
@@ -170,6 +161,12 @@ corresponding to a CF-netCDF index variable.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.RaggedIndexedArray.array.html#cfdm.RaggedIndexedArray.array" title="cfdm.RaggedIndexedArray.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></td>
+<td>Return an independent numpy array containing the uncompressed data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.RaggedIndexedArray.compressed_array.html#cfdm.RaggedIndexedArray.compressed_array" title="cfdm.RaggedIndexedArray.compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compressed_array</span></code></a></td>
+<td>Return an independent numpy array containing the compressed data.</td>
+</tr>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.RaggedIndexedArray.dtype.html#cfdm.RaggedIndexedArray.dtype" title="cfdm.RaggedIndexedArray.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
 <td>Data-type of the data elements.</td>
 </tr>

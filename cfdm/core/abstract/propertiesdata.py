@@ -190,8 +190,7 @@ into the data.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `Data.array`, `data`, `del_data`, `get_array`,
-             `has_data`, `set_data`
+.. seealso:: `Data.array`, `data`, `del_data`, `has_data`, `set_data`
 
 :Parameters:
 

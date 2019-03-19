@@ -392,7 +392,7 @@ type will be used.
 **Examples:**
 
 >>> d = Data([1, 2, 3.0], 'km')
->>> n = d.get_array()
+>>> n = d.array
 >>> isinstance(n, numpy.ndarray)
 True
 >>> print(n)

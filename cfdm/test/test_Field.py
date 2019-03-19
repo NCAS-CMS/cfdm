@@ -106,10 +106,10 @@ class FieldTest(unittest.TestCase):
 #        f = self.f.squeeze()
 #        
 #        f[...] = 0
-#        self.assertTrue((f.get_array() == 0).all())
+#        self.assertTrue((f.data.array == 0).all())
 #
 #        f[:, :] = 0
-#        self.assertTrue((f.get_array() == 0).all())
+#        self.assertTrue((f.data.array == 0).all())
 #
 #
 #        for indices in [
@@ -124,10 +124,10 @@ class FieldTest(unittest.TestCase):
 #        ]:
 #            f[...] = 0
 #            f[indices] = -1
-#            array = f[indices].get_array()
+#            array = f[indices].data.array
 #            self.assertTrue((array == -1).all())
 #            
-#            values, counts = numpy.unique(f.get_array(), return_counts=True)
+#            values, counts = numpy.unique(f.data.array, return_counts=True)
 #            self.assertTrue(counts[0] == array.size)
 #    #--- End: def
 #

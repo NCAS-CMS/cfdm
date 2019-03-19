@@ -247,8 +247,8 @@ class DSGTest(unittest.TestCase):
             if g.get_property('long_name') == 'temp3':
                 break
 
-#        print(g.get_array())
-#        print(repr(g.data.get_list().data.array())
+#        print(g.data.array)
+#        print(repr(g.data.get_list().data.array)
 #        print(g.data.get_list().data.array)
 #        print('compression_type=',g.data.get_compression_type())
 #        print(g.data.get_compressed_axes())
@@ -261,12 +261,12 @@ class DSGTest(unittest.TestCase):
 #        print ('\nf\n')
 #        for x in f:
 #            print(x)
-#            a = x.get_array()
+#            a = x.data.array
 #           
 #        print ('\ng\n')
 #        for x in g:
 #            print(x)
-#            a = x.get_array()
+#            a = x.data.array
 #
 #        for x in g:
 #            x.dump()

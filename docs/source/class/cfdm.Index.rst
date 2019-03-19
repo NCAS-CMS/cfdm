@@ -56,7 +56,7 @@ Data
    ~cfdm.Index.get_data
    ~cfdm.Index.has_data
    ~cfdm.Index.set_data
-   ~cfdm.Index.expand_dims   
+   ~cfdm.Index.insert_dimension
    ~cfdm.Index.squeeze
    ~cfdm.Index.transpose
 

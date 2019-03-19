@@ -569,7 +569,7 @@ masked
         '''
         ca = self._get_Array(None)
 
-        if not ca.get_compressed_axes():
+        if not ca.get_compression_type():
             raise ValueError("not compressed: can't get compressed array")
 
         return ca.compressed_array
@@ -590,7 +590,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get_array`
+.. seealso:: `array`
 
 **Examples:**
 

@@ -21,10 +21,9 @@ Inspection
    :template: method.rst
    
 
-   ~cfdm.NetCDFArray.get_compressed_array
-   ~cfdm.NetCDFArray.get_compressed_axes
+   ~cfdm.NetCDFArray.get_ncvar
+   ~cfdm.NetCDFArray.get_varid
    ~cfdm.NetCDFArray.get_compression_type
-   ~cfdm.NetCDFArray.get_sample_axis
    ~cfdm.NetCDFArray.get_subspace
    
 .. rubric:: Attributes
@@ -34,13 +33,11 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
    
+   ~cfdm.NetCDFArray.array
    ~cfdm.NetCDFArray.dtype
    ~cfdm.NetCDFArray.ndim
    ~cfdm.NetCDFArray.shape
    ~cfdm.NetCDFArray.size
-   ~cfdm.NetCDFArray.array
-   ~cfdm.NetCDFArray.ncvar
-   ~cfdm.NetCDFArray.varid
 
 File
 ----

@@ -11,5 +11,4 @@ Version |release| for version |version| of the CF conventions.
    functions
    class
    class_core
-   constant
 

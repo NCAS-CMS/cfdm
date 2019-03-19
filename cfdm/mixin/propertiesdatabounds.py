@@ -883,7 +883,7 @@ By default the identity is the first found of the following:
     def get_bounds(self, default=ValueError()):
         '''Return the bounds.
 
-.. versionadd:: 1.7.0
+.. versionadded:: 1.7.0
 
 .. seealso:: `bounds`, `get_data`, `del_bounds`, `has_bounds`,
              `set_bounds`
@@ -937,7 +937,7 @@ None
     def get_bounds_data(self, default=ValueError()):
         '''Return the bounds data.
 
-.. versionadd:: 1.7.0
+.. versionadded:: 1.7.0
 
 .. seealso:: `bounds`, `get_bounds`, `get_data`
 

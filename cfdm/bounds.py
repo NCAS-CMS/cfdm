@@ -125,12 +125,13 @@ of all data arrays.
     def get_data(self, default=ValueError()):
         '''Return the data.
 
-Note that the data are returned in a `Data` object. Use the
-`get_array` method to return the data as an independent `numpy` array.
+Note that the data are returned in a `Data` object. Use the `array`
+attribute of the `Data` instance to return the data as an independent
+`numpy` array.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `del_data`, `get_array`, `has_data`, `set_data`
+.. seealso:: `data`, `del_data`, `has_data`, `set_data`
 
 :Parameters:
 

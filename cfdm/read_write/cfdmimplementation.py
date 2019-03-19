@@ -1683,32 +1683,32 @@ also be provided.
         parent.nc_set_variable(ncvar)
     #--- End: def
 
-    def set_node_ncdim(self, parent, ncdim):
-        '''Set the netCDF name of the dimension of a node coordinate variable.
-
-:Parameters:
-
-:Returns:
-
-    `None`
-
-        '''
-        parent.set_node_ncdim(ncdim)
-    #--- End: def
-
-    def set_part_ncdim(self, parent, ncdim):
-        '''Set the netCDF name of the dimension of the part_node count
-variable.
-
-:Parameters:
-
-:Returns:
-
-    `None`
-
-        '''
-        parent.set_part_ncdim(ncdim)
-    #--- End: def
+#    def set_node_ncdim(self, parent, ncdim):
+#        '''Set the netCDF name of the dimension of a node coordinate variable.
+#
+#:Parameters:
+#
+#:Returns:
+#
+#    `None`
+#
+#        '''
+#        parent.set_node_ncdim(ncdim)
+#    #--- End: def
+#
+#    def set_part_ncdim(self, parent, ncdim):
+#        '''Set the netCDF name of the dimension of the part_node count
+#variable.
+#
+#:Parameters:
+#
+#:Returns:
+#
+#    `None`
+#
+#        '''
+#        parent.nc_set_part_ncdim(ncdim)
+#    #--- End: def
 
     def set_properties(self, construct, properties, copy=True):
         '''

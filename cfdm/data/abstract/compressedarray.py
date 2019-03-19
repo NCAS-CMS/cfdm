@@ -52,7 +52,7 @@ See `cfdm.GatheredArray` for an example implementation.
                          compressed_dimension=compressed_dimension,
                          compression_type=compression_type, **kwargs)
 
-        self._set_compressed_Array(compressed_array)
+        self._set_compressed_Array(compressed_array, copy=False)
     #--- End: def
 
     @abc.abstractmethod
@@ -106,8 +106,8 @@ rules, the only differences being:
 
         if array is None:
             return self._default(default,
-                                 "{!r} has no {!r} property".format(
-                                     self.__class__.__name__, prop))
+                                 "{!r} has no underlying compressed array".format(
+                                     self.__class__.__name__))
         return array   
     #--- End: def
 
@@ -269,9 +269,6 @@ dtype('float64')
         return self._get_component('size')
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
     @property
     def compressed_array(self):
         '''Return an independent numpy array containing the compressed data.
@@ -284,11 +281,16 @@ dtype('float64')
 **Examples:**
 
 >>> n = a.compressed_array
+>>> import numpy
 >>> isinstance(n, numpy.ndarray)
 True
 
         '''
-        return self._get_compressed_Array().array
+        ca = self._get_compressed_Array(None)
+        if ca is None:
+            raise ValueError("There is no underlying compressed array")
+        
+        return ca.array
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -316,6 +318,35 @@ True
         compressed_ndim = self._get_compressed_Array().ndim
         
         return list(range(compressed_dimension, self.ndim - (compressed_ndim - compressed_dimension - 1)))
+    #--- End: def
+
+    def get_compressed_dimension(self, *default):
+        '''Return the position of the compressed dimension in the compressed
+array.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `get_compressed_axearray`, `get_compressed_axes`,
+             `get_compressed_type`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the underlying array is not compressed.
+
+:Returns:
+
+    `int`
+        The position of the compressed dimension in the compressed
+        array. If the underlying is not compressed then *default* is
+        returned, if provided.
+
+**Examples:**
+
+>>> i = d.get_compressed_dimension()
+
+        '''
+        return self._get_component('compressed_dimension', *default)
     #--- End: def
 
     def underlying_array(self, default=ValueError()):

@@ -28,7 +28,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
            ``properties={'standard_name': 'altitude'}``
         
         Properties may also be set after initialisation with the
-        `replace_properties` and `set_property` methods.
+        `set_property` method.
 
     source: optional
         Initialize the properties from those of *source*.
