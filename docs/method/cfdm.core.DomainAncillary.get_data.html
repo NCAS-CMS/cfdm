@@ -31,12 +31,12 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>API reference</strong></a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
@@ -51,7 +51,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
   <li><a href="../class/cfdm.core.DomainAncillary.html">cfdm.core.DomainAncillary</a><ul>
       <li>Previous: <a href="cfdm.core.DomainAncillary.del_data.html" title="previous chapter">cfdm.core.DomainAncillary.del_data</a></li>
@@ -91,7 +91,7 @@
 <h1>cfdm.core.DomainAncillary.get_data<a class="headerlink" href="#cfdm-core-domainancillary-get-data" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.DomainAncillary.get_data">
-<code class="descclassname">DomainAncillary.</code><code class="descname">get_data</code><span class="sig-paren">(</span><em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/core/abstract/propertiesdata.py#L182"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAncillary.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DomainAncillary.</code><code class="descname">get_data</code><span class="sig-paren">(</span><em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/core/abstract/propertiesdata.py#L182"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAncillary.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.o</p>
 <p>Note that a <a class="reference internal" href="../class/cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance is returned. Use its <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute to
 return the data as an independent <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.16)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p>
@@ -102,8 +102,7 @@ into the data.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../attribute/cfdm.core.Data.array.html#cfdm.core.Data.array" title="cfdm.core.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data.array</span></code></a>, <a class="reference internal" href="../attribute/cfdm.core.DomainAncillary.data.html#cfdm.core.DomainAncillary.data" title="cfdm.core.DomainAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a>, <a class="reference internal" href="cfdm.core.DomainAncillary.del_data.html#cfdm.core.DomainAncillary.del_data" title="cfdm.core.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code>,
-<a class="reference internal" href="cfdm.core.DomainAncillary.has_data.html#cfdm.core.DomainAncillary.has_data" title="cfdm.core.DomainAncillary.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a>, <a class="reference internal" href="cfdm.core.DomainAncillary.set_data.html#cfdm.core.DomainAncillary.set_data" title="cfdm.core.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p>
+<p class="last"><a class="reference internal" href="../attribute/cfdm.core.Data.array.html#cfdm.core.Data.array" title="cfdm.core.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data.array</span></code></a>, <a class="reference internal" href="../attribute/cfdm.core.DomainAncillary.data.html#cfdm.core.DomainAncillary.data" title="cfdm.core.DomainAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a>, <a class="reference internal" href="cfdm.core.DomainAncillary.del_data.html#cfdm.core.DomainAncillary.del_data" title="cfdm.core.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a>, <a class="reference internal" href="cfdm.core.DomainAncillary.has_data.html#cfdm.core.DomainAncillary.has_data" title="cfdm.core.DomainAncillary.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a>, <a class="reference internal" href="cfdm.core.DomainAncillary.set_data.html#cfdm.core.DomainAncillary.set_data" title="cfdm.core.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
