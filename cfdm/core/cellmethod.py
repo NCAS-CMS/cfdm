@@ -89,27 +89,6 @@ or the fact that the method was applied only over El Nino years).
         initialization By default parameters are deep copied.
 
         '''
-#        super().__init__(properties=properties, source=source,
-#                         copy=copy)
-#
-#        if source:
-#            try:
-#                axes = source.get_axes(None)
-#            except AttributeErrror:
-#                axes = None              
-#
-#            try:
-#                method = source.get_method(None)
-#            except AttributeErrror:
-#                method = None              
-#        #--- End: if
-#
-#        if axes is not None:                
-#            axes = self.set_axes(axes)
-#
-#        if method is not None:                
-#            method = self.set_method(method)
-
         super().__init__()
 
         if source:
@@ -339,15 +318,18 @@ ValueError: 'CellMethod' has no 'where' qualifier
 
 **Examples:**
 
->>> c.set_axes('area')
->>> c.get_axes('area')
-'area'
->>> c.del_axes('axes')
-'area'
->>> c.get_axes('axes')
-ValueError: 'CellMethod' has no axes
->>> c.get_axes('where', 'no axes')
-'no axes'
+>>> c.set_axes('domainaxis1')
+>>> c.has_axes()
+True
+>>> c.get_axes()
+('domainaxis1',)
+>>> c.del_axes()
+>>> c.has_axes()
+False
+>>> c.get_axes('NO AXES')
+'NO AXES'
+>>> c.del_axes('NO AXES')
+'NO AXES'
 
         '''
         try:

@@ -1040,22 +1040,20 @@ TODO
         return OrderedDict(self._constructs[tuple(self._ordered_constructs)[0]])
     #--- End: def
     
-    def filter_by_type(self,*types):
-        '''Select metadata constructs by their type.
+    def filter_by_type(self, *types):
+        '''Select metadata constructs by type.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: TODO
-
 :Parameters:
 
-    types:
-        TODO
-        Select constructs of the given type, or types. Valid types
-        are:
+    types: optional 
+        Select constructs that have are of any of the given types.
+
+        A type is specified by one of the following strings:
 
           ==========================  ================================
-          *construct*                 Constructs
+          *type*                      Construct selected
           ==========================  ================================
           ``'domain_ancillary'``      Domain ancillary constructs
           ``'dimension_coordinate'``  Dimension coordinate constructs
@@ -1067,26 +1065,22 @@ TODO
           ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
-        *Parameter example:*
-          ``construct='dimension_coordinate'``
-
-        *Parameter example:*
-          ``construct=['auxiliary_coordinate']``
-
-        *Parameter example:*
-          ``construct=['domain_ancillary', 'cell_method']``
-
-        Note that a domain can never contain cell method nor field
-        ancillary constructs.
+        If no types are provided then all constructs are selected.
 
 :Returns:
 
-     `Constructs`
-         <TODO>
+    `Constructs`
+        The selected constructs and their construct keys.
 
 **Examples:**
 
-<TODO>
+Select dimension coordinate constructs:
+
+>>> d = c.filter_by_type('dimension_coordinate')
+
+Select dimension coordinate and field ancillary constructs:
+
+>>> d = c.filter_by_type('dimension_coordinate', 'field_ancillary')
 
         '''
         if types:

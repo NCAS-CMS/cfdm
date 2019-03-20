@@ -121,10 +121,6 @@ and institution).
      #--- End: def
     
     # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
-
-    # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
     @property
@@ -145,7 +141,7 @@ and institution).
 
         '''
         return 'field'
-    #--- End: def        
+    #--- End: def
 
     @property
     def constructs(self):
@@ -280,7 +276,7 @@ of the field or of a metadata construct.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `del_data_axes`, `get_data`, `set_data_axes`
+.. seealso:: `del_data_axes`, `get_data`, `set_data_axes`
 
 :Parameters:
 
@@ -330,7 +326,7 @@ or of a metadata construct have been set.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `del_data_axes`, `get_data_axes`, `set_data_axes`
+.. seealso:: `del_data_axes`, `get_data_axes`, `set_data_axes`
 
 :Parameters:
 
@@ -406,7 +402,7 @@ False
 
         '''
         if key in self.domain_axes and key in self.get_data_axes(default=()):
-                raise ValueError(
+            raise ValueError(
 "Can't remove domain axis {!r} that is spanned by the data of the field construct".format(
     key))
 
@@ -421,8 +417,7 @@ removed prior to insertion.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `del_data`, `get_data`, `has_data`,
-             `set_data_axes`
+.. seealso:: `del_data`, `get_data`, `has_data`, `set_data_axes`
 
 :Parameters:
 
@@ -478,7 +473,7 @@ of a metadata construct.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `del_data_axes`, `get_data`, `get_data_axes`,
+.. seealso:: `del_data_axes`, `get_data`, `get_data_axes`,
              `has_data_axes`
 
 :Parameters:
@@ -542,5 +537,41 @@ construct:
 
         self._set_component('data_axes', tuple(axes), copy=False)
     #--- End: def
-    
+
+    def qqq(self):
+        '''TODO
+
+.. versionadded:: 1.7.0
+
+:Returns:
+
+    `list`
+        TODO
+
+**Examples:**
+
+TODO
+
+        '''
+        out = []
+        
+        domain_axes = self.constructs.filter_by_type('domain_axes')
+        
+        for key, cm in self.constructs.filter_by_type('cell_method').ordered().items():
+            qualifiers = cm.qualifiers()
+            if not ('within' in qualifiers or 'over' in qualifiers):
+                continue
+
+            axes = cm.get_axes(default=())
+            if len(axes) != 1:
+                continue        
+
+            axis = axes[0]
+            if axis not in domain_axes:
+                continue
+
+            # Still here? Then this axis is a climatological time axis
+            out.append(axis)
+
+        return out
 #--- End: class

@@ -2663,6 +2663,7 @@ variable's netCDF dimensions.
         self.implementation.set_properties(c, properties)
 
         if attribute == 'climatology':
+            # Need to 
             self.implementation.set_geometry(coordinate=c, value='climatology')
 
         if has_coordinates and ncvar is not None:
