@@ -1,3 +1,12 @@
+Thank you for taking the time to consider making a contribution to the
+cfdm package.
+
+# General Guidelines
+
+All questions, reports of bugs, and suggestions for enahncements
+should be raised as GitHub issues
+(https://github.com/NCAS-CMS/cfdm/issues).
+
 # Versioning
 
 A version of the cfdm package will always be based on the version of
