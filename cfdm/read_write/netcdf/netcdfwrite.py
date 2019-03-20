@@ -526,8 +526,8 @@ a new netCDF dimension for the bounds.
             
             # If this dimension coordinate has bounds then write the
             # bounds to the netCDF file and add the 'bounds' or
-            # 'climatology' attribute to a dictionary of extra
-            # attributes
+            # 'climatology' attribute (as appropriate) to a dictionary
+            # of extra attributes
             extra = self._write_bounds(coord, ncdimensions, ncvar)
 
             # Create a new dimension coordinate variable
@@ -1497,8 +1497,9 @@ then the input coordinate is not written.
                                                       default='scalar')                        
 
             # If this scalar coordinate has bounds then create the
-            # bounds netCDF variable and add the bounds or climatology
-            # attribute to the dictionary of extra attributes
+            # bounds netCDF variable and add the 'bounds' or
+            # 'climatology' (as appropriate) attribute to the
+            # dictionary of extra attributes
             bounds_extra = self._write_bounds(scalar_coord, (), ncvar)
     
             # Create a new scalar coordinate variable
@@ -1578,9 +1579,9 @@ then the input coordinate is not written.
                 # TODO: move setting of bounds ncvar to here - why?
                 
                 # If this auxiliary coordinate has bounds then create
-                # the bounds netCDF variable and add the bounds,
-                # climatology or (CF>=1.8) nodes attribute to the
-                # dictionary of extra attributes
+                # the bounds netCDF variable and add the 'bounds',
+                # 'climatology' or 'nodes' attribute (as appropriate)
+                # to the dictionary of extra attributes.
                 extra = self._write_bounds(coord, ncdimensions, ncvar)
     
                 # Create a new auxiliary coordinate variable, if it has data

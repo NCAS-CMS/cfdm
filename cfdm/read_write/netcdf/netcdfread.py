@@ -2058,7 +2058,7 @@ variable should be pre-filled with missing values.
                     coord = self._create_auxiliary_coordinate(field_ncvar=field_ncvar,
                                                               ncvar=None,
                                                               f=f,
-                                                              bounds=node_ncvar)
+                                                              bounds_ncvar=node_ncvar)
 
                     geometry_type = geometry['geometry_type']
                     if geometry_type is not None:                        
@@ -2125,7 +2125,7 @@ variable should be pre-filled with missing values.
                         field_ncvar,
                         ncvar,
                         f,
-                        bounds=bounds)
+                        bounds_ncvar=bounds)
                 
                 if len(axes) == len(self._ncdimensions(ncvar)):
                     domain_ancillaries.append((ncvar, domain_anc, axes))
@@ -2404,6 +2404,7 @@ variable should be pre-filled with missing values.
 
 :Returns:
 
+    `dict` or `None`
         A `dict` containing geometry container information. If there
         is no geometry container for this data variable, or if the
         file version is pre-CF-1.8, then `None` is returned.
@@ -2528,8 +2529,8 @@ variable's netCDF dimensions.
         return axes
     #--- End: def
         
-    def _create_auxiliary_coordinate(self, field_ncvar, ncvar, 
-                                     f, bounds=None):
+    def _create_auxiliary_coordinate(self, field_ncvar, ncvar, f,
+                                     bounds_ncvar=None):
         '''
 
 :Returns:
@@ -2538,14 +2539,13 @@ variable's netCDF dimensions.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
-                                              ncvar=ncvar,
-                                              f=f,
+                                              ncvar=ncvar, f=f,
                                               auxiliary=True,
-                                              bounds=bounds)
+                                              bounds_ncvar=bounds_ncvar)
     #--- End: def
 
     def _create_dimension_coordinate(self, field_ncvar, ncvar, f,
-                                     bounds=None):
+                                     bounds_ncvar=None):
         '''
 :Returns:
 
@@ -2553,14 +2553,13 @@ variable's netCDF dimensions.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
-                                              ncvar=ncvar,
-                                              f=f,
+                                              ncvar=ncvar, f=f,
                                               dimension=True,
-                                              bounds=bounds)
+                                              bounds_ncvar=bounds_ncvar)
     #--- End: def
 
-    def _create_domain_ancillary(self, field_ncvar, ncvar, 
-                                 f, bounds=None):
+    def _create_domain_ancillary(self, field_ncvar, ncvar, f,
+                                 bounds_ncvar=None):
         '''
 :Returns:
 
@@ -2568,15 +2567,15 @@ variable's netCDF dimensions.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
-                                              ncvar=ncvar,
-                                              f=f,
+                                              ncvar=ncvar, f=f,
                                               domain_ancillary=True,
-                                              bounds=bounds)
+                                              bounds_ncvar=bounds_ncvar)
     #--- End: def
 
     def _create_bounded_construct(self, field_ncvar, ncvar, f,
                                   dimension=False, auxiliary=False,
-                                  domain_ancillary=False, bounds=None,
+                                  domain_ancillary=False,
+                                  bounds_ncvar=None,
                                   has_coordinates=True):
         '''Create a variable which might have bounds.
     
@@ -2615,9 +2614,13 @@ variable's netCDF dimensions.
         else:
             properties = {}
 
+        # ------------------------------------------------------------
+        # Look for a geometry container
+        # ------------------------------------------------------------
+        geometry = self._get_geometry(field_ncvar)
+
         has_bounds = False
         attribute = 'bounds' # TODO Bad default? consider if bounds != None
-        geometry = None
 
 #if len(axes) == len(ncdimensions):
 #                    domain_ancillaries.append((ncvar, domain_anc, axes))
@@ -2632,25 +2635,19 @@ variable's netCDF dimensions.
 #                    ok = False
 #                    break
 
-        # ------------------------------------------------------------
-        # Look for a geometry container
-        # ------------------------------------------------------------
-        geometry = self._get_geometry(field_ncvar)
-
         # If there are bounds then find the name of the attribute that
-        # names them, and the netCDF varibale name of the bounds.
-        if bounds is None:
-            ncbounds = properties.pop('bounds', None)
-            if ncbounds is None:
-                ncbounds = properties.pop('climatology', None)
-                if ncbounds is not None:
+        # names them, and the netCDF variable name of the bounds.
+        if bounds_ncvar is None:
+            bounds_ncvar = properties.pop('bounds', None)
+            if bounds_ncvar is None:
+                bounds_ncvar = properties.pop('climatology', None)
+                if bounds_ncvar is not None:
                     attribute = 'climatology'
                 elif geometry:
-                    ncbounds = properties.pop('nodes', None)
-                    if ncbounds is not None:
+                    bounds_ncvar = properties.pop('nodes', None)
+                    if bounds_ncvar is not None:
                         attribute = 'nodes'
-        else:
-            ncbounds = bounds
+        #--- End: if
             
         if dimension:
             properties.pop('compress', None)
@@ -2675,11 +2672,11 @@ variable's netCDF dimensions.
         # ------------------------------------------------------------
         # Add any bounds
         # ------------------------------------------------------------
-        if ncbounds:
+        if bounds_ncvar:
             if geometry is None:
                 # Check "normal" boounds
                 cf_compliant = self._check_bounds(field_ncvar, ncvar,
-                                                  attribute, ncbounds)
+                                                  attribute, bounds_ncvar)
                 if not cf_compliant:
                     pass
             else:
@@ -2687,18 +2684,18 @@ variable's netCDF dimensions.
 
             bounds = self.implementation.initialise_Bounds()
             
-            properties = g['variable_attributes'][ncbounds].copy()
+            properties = g['variable_attributes'][bounds_ncvar].copy()
             properties.pop('formula_terms', None)                
             self.implementation.set_properties(bounds, properties)
 
-            bounds_data = self._create_data(ncbounds, bounds)
+            bounds_data = self._create_data(bounds_ncvar, bounds)
     
 #                # Make sure that the bounds dimensions are in the same
 #                # order as its parent's dimensions. It is assumed that we
 #                # have already checked that the bounds netCDF variable has
 #                # appropriate dimensions.
 #                c_ncdims = nc.variables[ncvar].dimensions
-#                b_ncdims = nc.variables[ncbounds].dimensions
+#                b_ncdims = nc.variables[bounds_ncvar].dimensions
 #                c_ndim = len(c_ncdims)
 #                b_ndim = len(b_ncdims)
 #                if b_ncdims[:c_ndim] != c_ncdims:
@@ -2712,17 +2709,17 @@ variable's netCDF dimensions.
             self.implementation.set_data(bounds, bounds_data, copy=False)
             
             # Store the netCDF variable name
-            self.implementation.nc_set_variable(bounds, ncbounds)
+            self.implementation.nc_set_variable(bounds, bounds_ncvar)
             
             self.implementation.set_bounds(c, bounds, copy=False)
 
             if not domain_ancillary:
-                g['bounds'][field_ncvar][ncvar] = ncbounds
+                g['bounds'][field_ncvar][ncvar] = bounds_ncvar
 
             # --------------------------------------------------------
             # Geometries
             # --------------------------------------------------------
-            if geometry is not None and ncbounds in geometry['node_coordinates']:
+            if geometry is not None and bounds_ncvar in geometry['node_coordinates']:
                 # Record the netCDF node dimension name
                 count = self.implementation.get_count(bounds)
                 node_ncdim = self.implementation.nc_get_sample_dimension(count)
@@ -2732,7 +2729,7 @@ variable's netCDF dimensions.
                 if geometry_type is not None:                        
                     self.implementation.set_geometry(c, geometry_type)
 
-                g['node_coordinates_as_bounds'].add(ncbounds)
+                g['node_coordinates_as_bounds'].add(bounds_ncvar)
 
                 # Add a node count variable
                 nc = geometry.get('node_count')
