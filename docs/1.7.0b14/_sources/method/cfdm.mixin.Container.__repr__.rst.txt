@@ -1,7 +1,0 @@
-cfdm.mixin.Container.__repr__
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.Container.__repr__

@@ -1,7 +1,0 @@
-cfdm.DomainAxis.name
-====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DomainAxis.name

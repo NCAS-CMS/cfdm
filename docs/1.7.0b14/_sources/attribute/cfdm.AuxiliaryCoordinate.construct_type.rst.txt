@@ -1,7 +1,0 @@
-cfdm.AuxiliaryCoordinate.construct_type
-=======================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cfdm.AuxiliaryCoordinate.construct_type

@@ -1,7 +1,0 @@
-cfdm.AuxiliaryCoordinate.del_bounds
-===================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.AuxiliaryCoordinate.del_bounds

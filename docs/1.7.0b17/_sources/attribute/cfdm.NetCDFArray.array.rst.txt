@@ -1,7 +1,0 @@
-cfdm.NetCDFArray.array
-======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.NetCDFArray.array

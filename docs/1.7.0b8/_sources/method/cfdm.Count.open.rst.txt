@@ -1,7 +1,0 @@
-cfdm.Count.open
-===============
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Count.open

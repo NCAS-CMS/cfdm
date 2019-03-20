@@ -1,7 +1,0 @@
-cfdm.GatheredArray.get_compressed_array
-=======================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.GatheredArray.get_compressed_array

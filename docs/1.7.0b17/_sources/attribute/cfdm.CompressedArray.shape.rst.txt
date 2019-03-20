@@ -1,7 +1,0 @@
-cfdm.CompressedArray.shape
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cfdm.CompressedArray.shape

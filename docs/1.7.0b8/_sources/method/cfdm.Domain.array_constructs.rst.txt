@@ -1,7 +1,0 @@
-cfdm.Domain.array_constructs
-============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Domain.array_constructs

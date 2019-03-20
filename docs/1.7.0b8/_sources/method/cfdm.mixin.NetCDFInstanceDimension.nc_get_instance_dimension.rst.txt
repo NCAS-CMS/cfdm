@@ -1,7 +1,0 @@
-cfdm.mixin.NetCDFInstanceDimension.nc_get_instance_dimension
-============================================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.NetCDFInstanceDimension.nc_get_instance_dimension

@@ -1,7 +1,0 @@
-cfdm.mixin.ConstructAccess.domain_ancillaries
-=============================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.ConstructAccess.domain_ancillaries

@@ -1,7 +1,0 @@
-cfdm.List.set_property
-======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.List.set_property

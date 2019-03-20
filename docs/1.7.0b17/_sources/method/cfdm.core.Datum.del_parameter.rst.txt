@@ -1,7 +1,0 @@
-cfdm.core.Datum.del_parameter
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Datum.del_parameter

@@ -1,7 +1,0 @@
-cfdm.Bounds.nc_set_variable
-===========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Bounds.nc_set_variable

@@ -1,7 +1,0 @@
-cfdm.DomainAxis.set_size
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DomainAxis.set_size

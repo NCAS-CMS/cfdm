@@ -1,7 +1,0 @@
-cfdm.CellMeasure.name
-=====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMeasure.name

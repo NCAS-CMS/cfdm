@@ -1,7 +1,0 @@
-cfdm.CompressedArray.size
-=========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cfdm.CompressedArray.size

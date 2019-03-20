@@ -1,7 +1,0 @@
-cfdm.core.Bounds.get_array
-==========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Bounds.get_array

@@ -1,7 +1,0 @@
-cfdm.mixin.ParametersDomainAncillaries.equals
-=============================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.ParametersDomainAncillaries.equals

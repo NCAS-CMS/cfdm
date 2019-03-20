@@ -1,7 +1,0 @@
-cfdm.core.FieldAncillary.construct_type
-=======================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cfdm.core.FieldAncillary.construct_type

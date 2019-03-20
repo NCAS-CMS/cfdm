@@ -1,7 +1,0 @@
-cfdm.mixin.ConstructAccess.domain_axis_name
-===========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.ConstructAccess.domain_axis_name

@@ -1,7 +1,0 @@
-cfdm.Domain.equals
-==================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Domain.equals

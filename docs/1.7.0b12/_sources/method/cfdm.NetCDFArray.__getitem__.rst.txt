@@ -1,7 +1,0 @@
-cfdm.NetCDFArray.__getitem__
-============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.NetCDFArray.__getitem__

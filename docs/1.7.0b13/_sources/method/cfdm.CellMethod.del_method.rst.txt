@@ -1,7 +1,0 @@
-cfdm.CellMethod.del_method
-==========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMethod.del_method

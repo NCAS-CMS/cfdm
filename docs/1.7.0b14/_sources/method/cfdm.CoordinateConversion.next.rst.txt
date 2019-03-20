@@ -1,7 +1,0 @@
-cfdm.CoordinateConversion.next
-==============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CoordinateConversion.next

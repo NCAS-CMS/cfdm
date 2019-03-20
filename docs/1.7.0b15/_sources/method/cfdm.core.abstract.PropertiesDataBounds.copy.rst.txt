@@ -1,7 +1,0 @@
-cfdm.core.abstract.PropertiesDataBounds.copy
-============================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.abstract.PropertiesDataBounds.copy

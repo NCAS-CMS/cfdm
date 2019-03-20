@@ -1,7 +1,0 @@
-cfdm.CellMeasure.__getitem__
-============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMeasure.__getitem__
