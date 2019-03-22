@@ -27,6 +27,26 @@ class DataTest(unittest.TestCase):
 #    test_only = ['test_dumpd_loadd']
 #    test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
 
+    def test_Data__repr__str(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        for d in [cfdm.Data(9, units='km'),
+                  cfdm.Data([9], units='km'),
+                  cfdm.Data([[9]], units='km'),
+                  cfdm.Data([8, 9], units='km'),
+                  cfdm.Data([[8, 9]], units='km'),
+                  cfdm.Data([7, 8, 9], units='km'),
+                  cfdm.Data([[7, 8, 9]], units='km'),
+                  cfdm.Data([6, 7, 8, 9], units='km'),
+                  cfdm.Data([[6, 7, 8, 9]], units='km'),
+                  cfdm.Data([[6, 7], [8, 9]], units='km'),
+                  cfdm.Data([[6, 7, 8, 9], [6, 7, 8, 9]], units='km'),
+        ]:
+            _ = repr(d)
+            _ = str(d)
+    #--- End: def
+
     def test_Data___getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

@@ -29,6 +29,15 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_insert_dimension']
 #        self.test_only = ['test_Field_field']
 
+    def test_Field__repr__str__dump(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        _ = repr(self.f)
+        _ = str(self.f)
+        _ = self.f.dump(display=False)
+    #--- End: def
+
     def test_Field___getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

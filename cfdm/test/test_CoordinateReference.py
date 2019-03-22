@@ -8,11 +8,28 @@ import numpy
 import cfdm
 
 class CoordinateReferenceTest(unittest.TestCase):
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'test_file.nc')
+    def setUp(self):
+        filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'test_file.nc')
+        f = cfdm.read(self.filename)
+        self.assertTrue(len(f)==1, 'f={}'.format(f))
+        self.f = f[0]
+    #--- End: def
+
+    def test_CoordinateReference__repr__str__dump(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f
+
+        for cr in f.coordinate_references:
+            _ = repr(cr)
+            _ = str(cr)
+            _ = cr.dump(display=False)
+    #--- End: def
 
     def test_CoordinateReference_equals(self):
-        f = cfdm.read(self.filename)[0]
+        f = self.f.copy()
 
         # Create a vertical grid mapping coordinate reference
         t = cfdm.CoordinateReference(

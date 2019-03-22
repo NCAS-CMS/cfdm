@@ -3,6 +3,6 @@ set -x
 coverage erase
 coverage run --source=.. --omit="*/test/*" run_tests.py 
 coverage report
-coverage html -d coverage_html
+coverage html -d cfdm_coverage
 set +x
 echo "coverage docs: https://coverage.readthedocs.io"
