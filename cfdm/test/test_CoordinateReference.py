@@ -1,5 +1,7 @@
 from __future__ import print_function
+
 import datetime
+import inspect
 import os
 import unittest
 
@@ -9,11 +11,13 @@ import cfdm
 
 class CoordinateReferenceTest(unittest.TestCase):
     def setUp(self):
-        filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'test_file.nc')
+        self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                     'test_file.nc')
         f = cfdm.read(self.filename)
-        self.assertTrue(len(f)==1, 'f={}'.format(f))
+        self.assertTrue(len(f)==1, 'f={!r}'.format(f))
         self.f = f[0]
+
+        self.test_only = []
     #--- End: def
 
     def test_CoordinateReference__repr__str__dump(self):
@@ -22,13 +26,16 @@ class CoordinateReferenceTest(unittest.TestCase):
 
         f = self.f
 
-        for cr in f.coordinate_references:
+        for cr in f.coordinate_references.values():
             _ = repr(cr)
             _ = str(cr)
             _ = cr.dump(display=False)
     #--- End: def
 
     def test_CoordinateReference_equals(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
         f = self.f.copy()
 
         # Create a vertical grid mapping coordinate reference

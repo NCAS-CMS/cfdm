@@ -3,6 +3,7 @@ import collections
 import datetime
 import inspect
 import os
+import re
 import unittest
 
 import numpy
@@ -155,6 +156,56 @@ class FieldTest(unittest.TestCase):
 #            self.assertTrue(isinstance(value, cfdm.AuxiliaryCoordinate))
 #    #--- End: def
 
+    def test_Field_PROPERTIES(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+        for name, value in f.properties().items():
+            self.assertTrue(f.has_property(name))
+            _ = f.get_property(name)
+            _ = f.del_property(name)
+            self.assertTrue(f.del_property(name, default=None) == None)
+            self.assertTrue(f.get_property(name, default=None) == None)
+            self.assertFalse(f.has_property(name))
+            f.set_property(name, value)
+
+        _ = f.clear_properties()
+        f.set_properties(_)
+        f.set_properties(_, copy=False)
+    #--- End: def
+
+    def test_Field_DATA(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+
+        self.assertTrue(f.has_data())
+        data = f.get_data()
+        _ = f.del_data()
+        _ = f.get_data(default=None)
+        _ = f.del_data(default=None)
+        self.assertFalse(f.has_data())
+        _ = f.set_data(data, axes=None)
+        _ = f.set_data(data, axes=None, copy=False)
+        self.assertTrue(f.has_data())                
+
+        f = self.f.copy()
+        _ = f.del_data_axes()
+        self.assertFalse(f.has_data_axes())
+        self.assertTrue(f.del_data_axes(default=None) == None)
+
+        f = self.f.copy()
+        for key in f.constructs.filter_by_data():
+            self.assertTrue(f.has_data_axes(key))
+            _ = f.get_data_axes(key)
+            _ = f.del_data_axes(key)
+            self.assertTrue(f.del_data_axes(key, default=None) == None)
+            self.assertTrue(f.get_data_axes(key, default=None) == None)
+            self.assertFalse(f.has_data_axes(key))
+    #--- End: def
+
     def test_Field_constructs(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -262,6 +313,26 @@ class FieldTest(unittest.TestCase):
         # axes parameter
         # ------------------------------------------------------------
 
+    #--- End: def
+
+    def test_Field_construct(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+
+        _ = f.construct('latitude')
+        self.assertTrue(f.construct('NOT_latitude', default=None) == None)
+        self.assertTrue(f.construct(re.compile('^l'), default=None) == None)
+    #--- End: def
+
+    def test_Field_construct_type(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+
+        self.assertTrue(f.construct_type == 'field')
     #--- End: def
 
     def test_Field_cell_measures(self):
