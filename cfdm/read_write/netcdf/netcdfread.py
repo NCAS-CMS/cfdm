@@ -2662,9 +2662,9 @@ variable's netCDF dimensions.
 
         self.implementation.set_properties(c, properties)
 
-        if attribute == 'climatology':
-            # Need to 
-            self.implementation.set_geometry(coordinate=c, value='climatology')
+#        if attribute == 'climatology':
+#            # Need to 
+#            self.implementation.set_geometry(coordinate=c, value='climatology')
 
         if has_coordinates and ncvar is not None:
             data = self._create_data(ncvar, c)
@@ -3376,7 +3376,7 @@ variable's netCDF dimensions.
                 out.append(cm)
                 break
 
-            # Climatological statistics and statistics which apply to
+            # Climatological statistics, and statistics which apply to
             # portions of cells
             while cell_methods[0] in ('within', 'where', 'over'):
                 attr = cell_methods.pop(0)

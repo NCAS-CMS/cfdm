@@ -248,7 +248,7 @@ AttributeError: Field doesn't have property 'standard_name'
     def get_cell_methods(self, field):
         '''
         '''
-        return field.cell_methods
+        return field.cell_methods.ordered()
     #--- End: def
        
     def get_cell_method_axes(self, cell_method, default=None):

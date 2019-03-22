@@ -46,7 +46,7 @@ class create_fieldTest(unittest.TestCase):
 
         dim3.set_bounds(cfdm.Bounds(data=cfdm.Data([[0, 30.]])))
 
-        dim3.set_geometry('climatology')
+#        dim3.set_geometry('climatology')
         
         # Auxiliary coordinates
         ak = cfdm.DomainAncillary(data=cfdm.Data([10.]))
@@ -192,11 +192,18 @@ class create_fieldTest(unittest.TestCase):
                                method='maximum',
                                qualifiers={'where' : 'sea'})
         
+        cm2 =  cfdm.CellMethod(axes=[axisT],
+                               method='maximum',
+                               qualifiers={'within' : 'years'})
+        
+        cm3 =  cfdm.CellMethod(axes=[axisT],
+                               method='minimum',
+                               qualifiers={'over' : 'years'})
+        
         f.set_construct(cm0)
         f.set_construct(cm1)
-
-#        for cm in cfdm.CellMethod.parse(axisX+': mean (interval: 1 day comment:# ok) '+axisY+': max where sea'):
-#            f.set_cell_method(cm)
+        f.set_construct(cm2)
+        f.set_construct(cm3)
 
         if verbose:
             print(repr(f))
@@ -207,9 +214,8 @@ class create_fieldTest(unittest.TestCase):
             f.dump()
             
 #        sys.exit(0)
-        
+
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
-#        f.dump()
 
         g = cfdm.read(self.filename, verbose=verbose) #, squeeze=True)
 

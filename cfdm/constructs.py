@@ -2,6 +2,7 @@ from __future__ import print_function
 from builtins import (super, zip)
 from past.builtins import basestring
 
+import textwrap
 from copy import deepcopy
 
 from . import core
@@ -159,7 +160,6 @@ instances are equal.
             out[axes] = d
         #--- End: for
 
-#        for cid, construct in self.data_constructs().items():
         for cid, construct in self.filter_by_data().items():
             axes = data_axes.get(cid)
             construct_type = self._construct_type[cid]
@@ -174,8 +174,8 @@ instances are equal.
         '''
 
         '''
-        cell_methods0 = self.filter_by_type('cell_method')
-        cell_methods1 = other.filter_by_type('cell_method')
+        cell_methods0 = self.filter_by_type('cell_method').ordered()
+        cell_methods1 = other.filter_by_type('cell_method').ordered()
 
         if len(cell_methods0) != len(cell_methods1):
             if verbose:
@@ -186,18 +186,21 @@ instances are equal.
         
         axis0_to_axis1 = {axis0: axis1
                           for axis0, axis1 in axis1_to_axis0.items()}
-            
+
+#        print ('axis0_to_axis1=',axis0_to_axis1)
+
         for cm0, cm1 in zip(tuple(cell_methods0.values()),
                             tuple(cell_methods1.values())):
-            
+#            print ('\n', repr(cm0), repr(cm1))
             # Check that there are the same number of axes
             axes0 = cm0.get_axes(())
             axes1 = list(cm1.get_axes(()))
+#            print ('axes0, axes1=',axes0, axes1)
             if len(axes0) != len(axes1):
                 if verbose:
                     print(
-"{0}: Different cell methods (mismatched axes): {1!r}, {2!r}".format(
-    cm0.__class__.__name__, cell_methods0, cell_methods1))
+"{0}: Different cell methods (mismatched axes):\n  {1}\n  {2}".format(
+    cm0.__class__.__name__, ccell_methods0.ordered(), cell_methods1.ordered()))
                 return False
     
             indices = []
@@ -207,31 +210,39 @@ instances are equal.
                 for axis1 in axes1:
                     if axis0 in axis0_to_axis1 and axis1 in axis1_to_axis0:
                         if axis1 == axis0_to_axis1[axis0]:
+                            # axis0 and axis1 are domain axis
+                            # constructs that correspond to each other
                             axes1.remove(axis1)
                             indices.append(cm1.get_axes(()).index(axis1))
                             break
                     elif axis0 in axis0_to_axis1 or axis1 in axis1_to_axis0:
+                        # Only one of axis0 and axis1 is a domain axis
+                        # construct
                         if verbose:
                             print(
-"Verbose: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
-    cell_methods0, cell_methods1))
+"{0}: Different cell methods (mismatched axes):\n  {1}\n  {2}".format(
+    cm0.__class__.__name__, cell_methods0, cell_methods1))
+
                         return False
                     elif axis0 == axis1:
-                        # Assume that the axes are standard names
+                        # axes0 and axis 1 are identical standard
+                        # names
                         axes1.remove(axis1)
                         indices.append(cm1.get_axes(()).index(axis1))
                     elif axis1 is None:
+                        # axis1 
                         if verbose:
                             print(
-"Verbose: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
-    cell_methods0, cell_methods1))
+"{0}: Different cell methods (mismatched axes):\n  {1}\n  {2}".format(
+    cm0.__class__.__name__, cell_methods0, cell_methods1))
                         return False
             #--- End: for
 
             if len(cm1.get_axes(())) != len(indices):
                 if verbose:
-                    print("Field: Different cell methods: {0!r}, {1!r}".format(
-                        cell_methods0, cell_methods1))
+#                    print (cm1.get_axes(()), indices)
+                    print("{0}: Different cell methods:\n  {1}\n  {2}".format(
+                        cm0.__class__.__name__, cell_methods0, cell_methods1))
                 return False
 
             cm1 = cm1.sorted(indices=indices)
@@ -1644,8 +1655,6 @@ Constructs:
         prefiltered = getattr(self, '_prefiltered', self)
 
         out = prefiltered.shallow_copy()
-
-        out._prefiltered = prefiltered
 
         for key in self:
             out._pop(key)

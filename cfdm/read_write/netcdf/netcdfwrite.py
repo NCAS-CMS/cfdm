@@ -16,8 +16,6 @@ from .. import IOWrite
 
 from . import constants
 
-zzz = False
-
 
 class NetCDFWrite(IOWrite):
     '''
@@ -150,9 +148,6 @@ class NetCDFWrite(IOWrite):
             return
         
         self.write_vars['nc'][ncvar].setncatts(netcdf_attrs)
-
-        if zzz:
-            self.write_vars['zzz'].write('\n{}.setncatts({})\n'.format(ncvar, netcdf_attrs))            
     #--- End: def
     
     def _character_array(self, array):
@@ -313,9 +308,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
             # This string length dimension needs creating
             g['ncdim_to_size'][ncdim] = size
             g['netcdf'].createDimension(ncdim, size)
-            if zzz:
-                g['zzz'].write('\nnc.createDimension({ncdim!r}, {size!r})\n'.format(
-                    ncdim=ncdim, size=size))
+
         return ncdim
     #--- End: def
     
@@ -470,11 +463,6 @@ message+" In a {} file only one unlimited dimension is allowed. Consider using a
                     "Can't create dimension of size {} in {} file ({})".format(
                         size, g['netcdf'].file_format, error))
         #--- End: if
-        
-        if zzz:
-            g['zzz'].write('\nnc.createDimension({ncdim!r}, {size!r})\n'.format(
-                ncdim=ncdim, size=size))
-
     #--- End: def
     
     def _write_dimension_coordinate(self, f, key, coord):
@@ -528,7 +516,7 @@ a new netCDF dimension for the bounds.
             # bounds to the netCDF file and add the 'bounds' or
             # 'climatology' attribute (as appropriate) to a dictionary
             # of extra attributes
-            extra = self._write_bounds(coord, ncdimensions, ncvar)
+            extra = self._write_bounds(f, coord, key, ncdimensions, ncvar)
 
             # Create a new dimension coordinate variable
             self._write_netcdf_variable(ncvar, ncdimensions, coord, extra=extra)
@@ -948,7 +936,7 @@ dictionary.
         return ncvar
     #--- End: def
         
-    def _write_bounds(self, coord, coord_ncdimensions, coord_ncvar=None):
+    def _write_bounds(self, f, coord, coord_key, coord_ncdimensions, coord_ncvar=None): 
         '''Create a bounds netCDF variable, creating a new bounds netCDF
 dimension if required. Return the bounds variable's netCDF variable
 name.
@@ -957,7 +945,12 @@ name.
     
 :Parameters:
 
+    f: Field construct
+
     coord: 
+
+    coord_key: `str`
+        The coordinate construct key.
 
     coord_ncdimensions: `tuple` of `str`
         The ordered netCDF dimension names of the coordinate's
@@ -1051,11 +1044,19 @@ name.
             self._write_netcdf_variable(ncvar, ncdimensions, bounds,
                                         omit=omit)
         #--- End: if
-    
-        if self.implementation.is_climatology(coord):
-            extra['climatology'] = ncvar
-        else:
-            extra['bounds'] = ncvar
+
+        extra['bounds'] = ncvar
+#        if self.implementation.is_climatology(coord):
+        axes = self.implementation.get_construct_data_axes(f, coord_key)
+        for clim_axis in f.climatological_time_axes():
+            if clim_axis == axes:
+                if g['verbose']:
+                    print ('    Setting climatological bounds')
+                    
+                extra['climatology'] = extra.pop('bounds')
+                break
+        #--- End: for
+#        else:
     
         g['bounds'][coord_ncvar] = ncvar
             
@@ -1477,6 +1478,10 @@ then the input coordinate is not written.
 
     f: Field construct
    
+    key: `str`
+        The coordinate construct key
+
+    coordinate
     axis : str
         The field's axis identifier for the scalar coordinate.
 
@@ -1500,7 +1505,7 @@ then the input coordinate is not written.
             # bounds netCDF variable and add the 'bounds' or
             # 'climatology' (as appropriate) attribute to the
             # dictionary of extra attributes
-            bounds_extra = self._write_bounds(scalar_coord, (), ncvar)
+            bounds_extra = self._write_bounds(f, scalar_coord, key, (), ncvar)
     
             # Create a new scalar coordinate variable
             self._write_netcdf_variable(ncvar, (), scalar_coord,
@@ -1571,7 +1576,7 @@ then the input coordinate is not written.
             if (not self.implementation.get_properties(coord) and
                 self.implementation.get_data(coord, default=None) is None):
                 # No coordinates, but possibly bounds
-                self._write_bounds(coord, ncdimensions, None)
+                self._write_bounds(f, coord, key, ncdimensions, None)
             else:
                 ncvar = self._create_netcdf_variable_name(coord,
                                                           default='auxiliary')
@@ -1582,7 +1587,7 @@ then the input coordinate is not written.
                 # the bounds netCDF variable and add the 'bounds',
                 # 'climatology' or 'nodes' attribute (as appropriate)
                 # to the dictionary of extra attributes.
-                extra = self._write_bounds(coord, ncdimensions, ncvar)
+                extra = self._write_bounds(f, coord, key, ncdimensions, ncvar)
     
                 # Create a new auxiliary coordinate variable, if it has data
                 if self.implementation.get_data(coord, None) is not None:
@@ -1655,7 +1660,7 @@ it is not re-written.
     
             # If this domain ancillary has bounds then create the bounds
             # netCDF variable
-            self._write_bounds(anc, ncdimensions, ncvar)
+            self._write_bounds(f, anc, key, ncdimensions, ncvar)
     
             # Create a new domain ancillary variable
             self._write_netcdf_variable(ncvar, ncdimensions, anc)
@@ -1832,11 +1837,6 @@ measure will not be written.
         ncvar = kwargs['varname']
         
         g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs)
-        
-        if zzz:
-            g['zzz'].write('\n{} = nc.createVariable(\n    {})\n'.format(
-                ncvar,
-                ',\n    '.join("{}={!r}".format(k, v) for k, v in kwargs.items())))
     #--- End: def
     
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
@@ -1902,8 +1902,6 @@ measure will not be written.
                 parameters[term] = value
 
             g['nc'][ncvar].setncatts(parameters)
-            if zzz:
-                g['zzz'].write('{}.setncatts({})\n'.format(ncvar, parameters))
                 
             # Update the 'seen' dictionary
             g['seen'][id(ref)] = {'variable': ref, 
@@ -2129,21 +2127,6 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         '''
         '''
         g = self.write_vars
-        
-        if zzz:
-            masked = numpy.ma.isMA(array)
-            if masked:
-                array = array.toflex()
-
-            filename = ncvar+'_array.npy'
-            
-            numpy.save(filename, array)
-
-            g['zzz'].write('\n_ = numpy.load({filename!r})\n'.format(filename=filename))
-            if masked:
-                g['zzz'].write('_ = numpy.ma.array(_["_data"], mask=_["_mask"], copy=False)\n')
-                
-            g['zzz'].write('{ncvar}[...] = _\n'.format(ncvar=ncvar))
     #--- End: def
     
     def _convert_to_char(self, data):
@@ -2211,7 +2194,7 @@ extra trailing dimension.
         # Copy the field, as we are almost certainly about to do
         # terrible things to it (or are we? should review this)
         f = self.implementation.copy_construct(org_f)
-    
+
         data_axes = self.implementation.get_field_data_axes(f)
     
         # Mapping of domain axis identifiers to netCDF dimension
@@ -2641,12 +2624,10 @@ extra trailing dimension.
                 ncvar = g['key_to_ncvar'][owning_coord_key]
                 formula_terms = ' '.join(formula_terms)
                 g['nc'][ncvar].setncattr('formula_terms', formula_terms)
-                if zzz:
-                    g['zzz'].write('{ncvar}.setncattr("formula_terms", {formula_terms!r})\n'.format(
-                        ncvar=ncvar, formula_terms=formula_terms))
             
                 if g['verbose']:
-                    print('    Writing formula_terms attribute to netCDF variable', ncvar+':', repr(formula_terms))
+                    print('    Writing formula_terms attribute to netCDF variable',
+                          ncvar+':', repr(formula_terms))
     
                 # Add the formula_terms attribute to the parent
                 # coordinate bounds variable
@@ -2654,12 +2635,10 @@ extra trailing dimension.
                 if bounds_ncvar is not None:
                     bounds_formula_terms = ' '.join(bounds_formula_terms)
                     g['nc'][bounds_ncvar].setncattr('formula_terms', bounds_formula_terms)
-                    if zzz:
-                        g['zzz'].write('{ncvar}.setncattr("formula_terms", {formula_terms!r})\n'.format(
-                            ncvar=bounds_ncvar, formula_terms=bounds_formula_terms))
 
                     if g['verbose']:
-                        print('    Writing formula_terms to netCDF bounds variable', bounds_ncvar+':', repr(bounds_formula_terms))
+                        print('    Writing formula_terms to netCDF bounds variable',
+                              bounds_ncvar+':', repr(bounds_formula_terms))
             #--- End: if
                         
             # Deal with a vertical datum
@@ -2973,9 +2952,6 @@ write them to the netCDF4.Dataset.
 
         '''
         self.write_vars['netcdf'].close()
-
-        if zzz:
-            self.write_vars['zzz'].close()
     #--- End: def
 
     def file_open(self, filename, mode, fmt):
@@ -2990,17 +2966,6 @@ write them to the netCDF4.Dataset.
             nc = netCDF4.Dataset(filename, mode, format=fmt)
         except RuntimeError as error:
             raise RuntimeError("{}: {}".format(error, filename))        
-
-        if zzz:
-            creator = open('netcdf4_creator.py', 'w')
-            self.write_vars['zzz'] = creator
-            
-            creator.writelines(['import netCDF4\n',
-                                'import numpy\n',
-                                '\n',
-                                'nc = netCDF4.Dataset({!r}, {!r}, {format!r})\n'.format(
-                                    filename, mode, format=fmt),
-            ])
             
         return nc
     #--- End: def

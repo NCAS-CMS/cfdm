@@ -410,6 +410,44 @@ construct from a dataset.
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    def climatological_time_axes(self):
+        '''TODO
+
+.. versionadded:: 1.7.0
+
+:Returns:
+
+    `list`
+        TODO
+
+**Examples:**
+
+TODO
+
+        '''
+        out = []
+        
+        domain_axes = self.domain_axes
+        
+        for key, cm in self.cell_methods.ordered().items():
+            qualifiers = cm.qualifiers()
+            if not ('within' in qualifiers or 'over' in qualifiers):
+                continue
+
+            axes = cm.get_axes(default=())
+            if len(axes) != 1:
+                continue        
+
+            axis = axes[0]
+            if axis not in domain_axes:
+                continue
+
+            # Still here? Then this axis is a climatological time axis
+            out.append((axis,))
+
+        return out
+    #--- End: def
+
     def copy(self, data=True):
         '''Return a deep copy of the field construct.
 

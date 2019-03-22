@@ -37,8 +37,9 @@ and institution).
 .. versionadded:: 1.7.0
 
     '''
-
+    # ----------------------------------------------------------------
     # Define the base of the identity keys for each construct type
+    # ----------------------------------------------------------------
     _construct_key_base = {'auxiliary_coordinate': 'auxiliarycoordinate',
                            'cell_measure'        : 'cellmeasure',
                            'cell_method'         : 'cellmethod',
@@ -538,40 +539,4 @@ construct:
         self._set_component('data_axes', tuple(axes), copy=False)
     #--- End: def
 
-    def qqq(self):
-        '''TODO
-
-.. versionadded:: 1.7.0
-
-:Returns:
-
-    `list`
-        TODO
-
-**Examples:**
-
-TODO
-
-        '''
-        out = []
-        
-        domain_axes = self.constructs.filter_by_type('domain_axes')
-        
-        for key, cm in self.constructs.filter_by_type('cell_method').ordered().items():
-            qualifiers = cm.qualifiers()
-            if not ('within' in qualifiers or 'over' in qualifiers):
-                continue
-
-            axes = cm.get_axes(default=())
-            if len(axes) != 1:
-                continue        
-
-            axis = axes[0]
-            if axis not in domain_axes:
-                continue
-
-            # Still here? Then this axis is a climatological time axis
-            out.append(axis)
-
-        return out
 #--- End: class

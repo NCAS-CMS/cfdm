@@ -120,10 +120,16 @@ class Constructs(object):
                     for cid in source._constructs[construct_type]:
                         self._construct_axes.pop(cid, None)
                         self._construct_type.pop(cid, None)
+                    #--- End: for
+                    
                     continue
                 
                 if copy:
-                    new_v = {}
+                    if construct_type in source._ordered_constructs:
+                        new_v = OrderedDict()
+                    else:
+                        new_v = {}
+                        
                     for cid, construct in source._constructs[construct_type].items():
                         new_v[cid] = construct.copy(data=_use_data)
                 else:
@@ -139,9 +145,16 @@ class Constructs(object):
                     continue
                 
                 if copy:
-                    new_v = {
-                        cid: construct.copy()
-                        for cid, construct in source._constructs[construct_type].items()}
+                    if construct_type in source._ordered_constructs:
+                        new_v = OrderedDict()
+                    else:
+                        new_v = {}
+
+                    for cid, construct in source._constructs[construct_type].items():
+                        new_v[cid] = construct.copy()
+#                    new_v = {
+#                        cid: construct.copy()
+#                        for cid, construct in source._constructs[construct_type].items()}
                 else:
                     new_v = source._constructs[construct_type].copy()
 
@@ -154,7 +167,7 @@ class Constructs(object):
             
             return
         #--- End: if
-        
+                
         self._key_base = {}
 
         self._array_constructs     = set()
@@ -1017,27 +1030,35 @@ TODO
     #--- End: def
 
     def ordered(self):
-        '''<TODO>
+        '''TODO
 
 .. versionadded:: 1.7.0
 
 :Returns:
 
-     `Constructs`
-         <TODO>
+     `collections.OrderedDict`
+         The ordered constructs and their construct keys.
 
 **Examples:**
 
-<TODO>
+>>> print(c)
+onstructs:
+{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean>,
+ 'cellmethod1': <CellMethod: domainaxis3: maximum>}
+>>> c.ordered()
+OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean>),
+             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
         '''
-        if len(self._ordered_constructs) > 1:
-            raise ValueError(" can't get order multiple types .......")
-    
+        if len(self._constructs) > 1:
+            raise ValueError(
+                "Can't order multiple construct types: {!r}".format(self))
+        
         if self._ordered_constructs != set(self._constructs):
-            raise ValueError(" can't order un-orderable types .......")        
+            raise ValueError(
+                "Can't order un-orderable construct type: {!r}".format(self))
 
-        return OrderedDict(self._constructs[tuple(self._ordered_constructs)[0]])
+        return self._constructs[tuple(self._ordered_constructs)[0]].copy()
     #--- End: def
     
     def filter_by_type(self, *types):
