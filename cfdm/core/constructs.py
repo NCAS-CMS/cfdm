@@ -786,48 +786,6 @@ reference is replace with `None`.
         return out
     #--- End: def
 
-#    def data_constructs(self, axes=None, copy=False):
-#        '''TODO
-#        '''
-#        out = {}
-#
-#        if not self._ignore:
-#            for construct_type in self._array_constructs:
-#                out.update(self._constructs[construct_type])
-#        else:
-#            ignore = self._ignore
-#            for construct_type in self._array_constructs:
-#                if construct_type not in ignore:
-#                    out.update(self._constructs[construct_type])
-#
-#        if axes:
-#            spans_axes = set(axes)
-#            constructs_data_axes = self.data_axes()
-#            for key, construct in list(out.items()):
-#                x = constructs_data_axes[key]
-#                if not spans_axes.intersection(x):
-#                    del out[key]
-#        #--- End: def
-#
-#        return out
-#    #--- End: def
-    
-    def non_array_constructs(self):
-        '''TODO
-        '''
-        out = {}        
-        if not self._ignore:
-            for construct_type in self._non_array_constructs:
-                out.update(self._constructs[construct_type])
-        else:
-            ignore = self._ignore
-            for construct_type in self._non_array_constructs:
-                if construct_type not in ignore:
-                    out.update(self._constructs[construct_type])
-
-        return out
-    #--- End: def
-
     def value(self, default=ValueError()):
         '''TODO
 
@@ -1108,6 +1066,7 @@ Select dimension coordinate and field ancillary constructs:
             # Ignore the all but the requested construct types
             ignore = set(self._key_base)
             ignore.difference_update(set(types))
+            ignore.update(self._ignore)
         else:
             # Keep all construct types
             ignore = self._ignore

@@ -54,19 +54,6 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         self.parameters(parameters, copy=copy)
     #--- End: def
 
-#    def __str__(self):
-#        '''x.__str__() <==> str(x)
-#
-#        '''
-#        out = []
-#
-#        parameters = self.parameters()
-#        if parameters:
-#            out.append('Parameters: {0}'.format(', '.join(sorted(parameters))))
-#            
-#        return '; '.join(out)
-#    #--- End: def
-
     def copy(self):
         '''Return a deep copy.
 
@@ -111,6 +98,20 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
 
 **Examples:**
 
+>>> f.set_parameter('earth_radius', 6371007)
+>>> f.has_parameter('earth_radius')
+True      
+>>> f.get_parameter('earth_radius')
+6371007   
+>>> f.del_parameter('earth_radius')
+6371007   
+>>> f.has_parameter('earth_radius')
+False
+>>> print(f.del_property('earth_radius', None))
+None
+>>> print(f.get_property('earth_radius', None))
+None
+
         '''
         try:
             return self._get_component('parameters').pop(parameter)
@@ -141,14 +142,19 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
 
 **Examples:**
 
->>> c.get_parameter('grid_north_pole_latitude')
-70.0
-
->>> c.get_parameter('foo')
-ERROR
->>> c.get_parameter('foo', 'nonexistent term')
-'nonexistent term'
-
+>>> f.set_parameter('earth_radius', 6371007)
+>>> f.has_parameter('earth_radius')
+True      
+>>> f.get_parameter('earth_radius')
+6371007   
+>>> f.del_parameter('earth_radius')
+6371007   
+>>> f.has_parameter('earth_radius')
+False
+>>> print(f.del_property('earth_radius', None))
+None
+>>> print(f.get_property('earth_radius', None))
+None
 
         '''
         try:
@@ -159,6 +165,47 @@ ERROR
                                      self.__class__.__name__, parameter))
     #--- End: def
     
+    def has_parameter(self, parameter):
+        '''Whether a parameter has been set.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_parameter`, `get_parameter`, `parameters`,
+             `set_parameter`
+
+:Parameters:
+
+    parameter: `str`
+        The name of the parameter.
+
+        *Parameter example:*
+           ``parameter='geoid_name'``
+
+:Returns:
+
+     `bool`
+        True if the parameter has been set, otherwise False.
+
+**Examples:**
+
+>>> f.set_parameter('earth_radius', 6371007)
+>>> f.has_parameter('earth_radius')
+True      
+>>> f.get_parameter('earth_radius')
+6371007   
+>>> f.del_parameter('earth_radius')
+6371007   
+>>> f.has_parameter('earth_radius')
+False
+>>> print(f.del_property('earth_radius', None))
+None
+>>> print(f.get_property('earth_radius', None))
+None
+
+        '''
+        return parameter in self._get_component('parameters')
+    #--- End: def
+
     def parameters(self, parameters=None, copy=True):
         '''Return or replace all parameter-valued terms.
 
@@ -226,15 +273,21 @@ ERROR
 
 **Examples:**
 
->>> c.parameters()
-{'standard_parallel': 25.0;
- 'latitude_of_projection_origin': 25.0}
->>> c.set_parameter('longitude_of_central_meridian', 265.0)
->>> c.parameters()
-{'standard_parallel': 25.0;
- 'longitude_of_central_meridian': 265.0,
- 'latitude_of_projection_origin': 25.0}
-        '''
+>>> f.set_parameter('earth_radius', 6371007)
+>>> f.has_parameter('earth_radius')
+True      
+>>> f.get_parameter('earth_radius')
+6371007   
+>>> f.del_parameter('earth_radius')
+6371007   
+>>> f.has_parameter('earth_radius')
+False
+>>> print(f.del_property('earth_radius', None))
+None
+>>> print(f.get_property('earth_radius', None))
+None
+
+     '''
         if copy:
             value = deepcopy(value)
             

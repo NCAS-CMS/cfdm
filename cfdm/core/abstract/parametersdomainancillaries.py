@@ -123,15 +123,19 @@ domain ancillary constructs.
 
 **Examples:**
 
->>> c.domain_ancillaries()
-{'a': 'domainancillary0',
- 'b': 'domainancillary1',
- 'orog': 'domainancillary2'}
+>>> c.set_domain_ancillary('orog', 'domainancillary2')
+>>> c.has_domain_ancillary('orog')
+True
+>>> c.get_domain_ancillary('orog')
+domainancillary2'   
 >>> c.del_domain_ancillary('orog')
-'domainancillary2'
->>> c..domain_ancillaries()
-{'a': 'domainancillary0',
- 'b': 'domainancillary1'}
+domainancillary2'   
+>>> c.has_domain_ancillaryr('orog')
+False
+>>> print(c.del_domain_ancillaryy('orog', None))
+None
+>>> print(c.get_domain_ancillary('orog', None))
+None
 
         '''
         try:
@@ -139,8 +143,8 @@ domain ancillary constructs.
                 domain_ancillary)
         except KeyError:
             return self._default(default,
-                         "{!r} has no {!r} domain ancillary".format(
-                             self.__class__.__name__, parameter))
+                                 "{!r} has no {!r} domain ancillary".format(
+                                     self.__class__.__name__, domain_ancillary))
     #--- End: def
 
     def domain_ancillaries(self, domain_ancillaries=None, copy=True):
@@ -227,21 +231,69 @@ domain ancillary constructs.
 
 **Examples:**
 
->>> c.coordinate_conversion.domain_ancillaries()
-{'a': 'domainancillary0',
- 'b': 'domainancillary1',
- 'orog': 'domainancillary2'}
->>> c.coordinate_conversion.get_domain_ancillary('a')
-'domainancillary0'
+>>> c.set_domain_ancillary('orog', 'domainancillary2')
+>>> c.has_domain_ancillary('orog')
+True
+>>> c.get_domain_ancillary('orog')
+domainancillary2'   
+>>> c.del_domain_ancillary('orog')
+domainancillary2'   
+>>> c.has_domain_ancillaryr('orog')
+False
+>>> print(c.del_domain_ancillaryy('orog', None))
+None
+>>> print(c.get_domain_ancillary('orog', None))
+None
 
-        '''
-        
+        '''        
         try:
             return self._get_component('domain_ancillaries')[domain_ancillary]
         except KeyError:
             return self._default(default,
-                          "{!r} has no {!r} domain ancillary".format(
-                              self.__class__.__name__, parameter))
+                                 "{!r} has no {!r} domain ancillary".format(
+                                     self.__class__.__name__, domain_ancillary))
+    #--- End: def
+    
+    def has_domain_ancillary(self, domain_ancillary):
+        '''Whether a domain ancillary has been set.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
+             `has_domain_ancillary`, `set_domain_ancillary`
+
+:Parameters:
+
+    domain_ancillary: `str`
+        The name of the term.
+
+    default: optional
+        Return the value of the *default* parameter if the domain
+        ancillary term has not been set. If set to an `Exception`
+        instance then it will be raised instead.
+
+:Returns:
+
+        The domain ancillary construct key.
+
+**Examples:**
+
+>>> c.set_domain_ancillary('orog', 'domainancillary2')
+>>> c.has_domain_ancillary('orog')
+True
+>>> c.get_domain_ancillary('orog')
+domainancillary2'   
+>>> c.del_domain_ancillary('orog')
+domainancillary2'   
+>>> c.has_domain_ancillaryr('orog')
+False
+>>> print(c.del_domain_ancillaryy('orog', None))
+None
+>>> print(c.get_domain_ancillary('orog', None))
+None
+
+        '''
+        return domain_ancillary in self._get_component('domain_ancillaries')
     #--- End: def
     
     def set_domain_ancillary(self, term, value, copy=True):
@@ -269,14 +321,19 @@ domain ancillary constructs.
 
 **Examples:**
 
->>> c.coordinate_conversion.domain_ancillaries()
-{'a': 'domainancillary0',
- 'b': 'domainancillary1'}
->>> c.coordinate_conversion.set_domain_ancillary('orog', 'domainancillary2')
->>> c.coordinate_conversion.domain_ancillaries()
-{'a': 'domainancillary0',
- 'b': 'domainancillary1',
- 'orog': 'domainancillary2'}
+>>> c.set_domain_ancillary('orog', 'domainancillary2')
+>>> c.has_domain_ancillary('orog')
+True
+>>> c.get_domain_ancillary('orog')
+domainancillary2'   
+>>> c.del_domain_ancillary('orog')
+domainancillary2'   
+>>> c.has_domain_ancillaryr('orog')
+False
+>>> print(c.del_domain_ancillaryy('orog', None))
+None
+>>> print(c.get_domain_ancillary('orog', None))
+None
 
         '''
         if copy:

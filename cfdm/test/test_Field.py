@@ -431,12 +431,14 @@ class FieldTest(unittest.TestCase):
 
         f = self.f.copy()
         self.assertTrue(f.equals(f, verbose=True))
-
+ 
         g = f.copy()
         self.assertTrue(f.equals(g, verbose=True))
+        self.assertTrue(g.equals(f, verbose=True))
 
         g = f[...]
         self.assertTrue(f.equals(g, verbose=True))
+        self.assertTrue(g.equals(f, verbose=True))
 
         g = g.squeeze()
         self.assertFalse(f.equals(g))
@@ -495,32 +497,19 @@ class FieldTest(unittest.TestCase):
             self.assertIsInstance(value, cfdm.FieldAncillary)
     #--- End: def
 
-#    def test_Field_construct_data_axes(self):
-#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#            return
-#
-#        f = self.f.copy()
-#
-#    #--- End: def
-
-    def test_Field_squeeze(self):
+    def test_Field_squeeze_transpose(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = self.f
+
+        g = f.transpose()
+        self.assertTrue(g.data.shape == f.data.shape[::-1])
+        self.assertTrue(g.get_data_axes() == f.get_data_axes()[::-1])
+
         g = f.squeeze()
-    #--- End: def
-
-
-#    def test_Field_field(self):
-#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#            return
-#
-#        f = cfdm.read(self.filename)[0]
-#
-#        y = f.field('grid_lat')
-#        print y
-#    #--- End: def
+        self.assertTrue(g.data.shape == f.data.shape[1:])
+        self.assertTrue(g.get_data_axes() == f.get_data_axes()[1:], (g.get_data_axes(), f.get_data_axes()))
 
     def test_Field_nc_global_attributes(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

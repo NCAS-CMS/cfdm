@@ -408,6 +408,84 @@ construct from a dataset.
     #--- End: def    
 
     # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
+    @property
+    def field_ancillaries(self):
+        '''Return field ancillary constructs.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `constructs`, `get_construct`
+
+:Parameters:
+
+    copy: `bool`, optional
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
+
+:Returns:
+
+    `Constructs`
+        The field ancillary constructs and their construct keys.
+
+**Examples:**
+
+>>> f.field_ancillaries
+Constructs:
+{}
+
+>>> f.field_ancillaries
+Constructs:
+{'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+
+        '''
+        return self.constructs.filter_by_type('field_ancillary')
+    #--- End: def
+
+    @property
+    def cell_methods(self):
+        '''Return cell method constructs.
+
+The cell methods are not returned in the order in which they were
+applied. To achieve this use the `~Constructs.ordered` of the returned
+`Constructs` instance.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `constructs`, `get_construct`, `set_construct`
+
+:Parameters:
+
+    copy: `bool`, optional
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
+
+:Returns:
+
+    `Constructs`
+        The cell method constructs and their construct keys.
+
+**Examples:**
+
+>>> f.cell_methods
+Constructs:
+{}
+
+>>> f.cell_methods
+Constructs:
+{'cellmethod1': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+ 'cellmethod0': <CellMethod: domainaxis3: maximum>}
+
+>>> f.cell_methods.ordered()
+OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+
+        '''
+        return self.constructs.filter_by_type('cell_method')
+    #--- End: def
+
+    # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def climatological_time_axes(self):
@@ -708,6 +786,9 @@ Field: Different properties
 False
 
         '''
+        # ------------------------------------------------------------
+        # Check the properties and data
+        # ------------------------------------------------------------              
         ignore_properties = tuple(ignore_properties) + ('Conventions',)
             
         if not super().equals(
@@ -727,8 +808,8 @@ False
                             rtol=rtol, atol=atol, verbose=verbose,
                             ignore_data_type=ignore_data_type,
                             ignore_fill_value=ignore_fill_value,
-                            ignore_compression=ignore_compression,
-                            _ignore_type=ignore_type):
+                            ignore_compression=ignore_compression):
+#                            _ignore_type=ignore_type):
             if verbose:
                 print("{0}: Different metadata constructs".format(
                     self.__class__.__name__))
@@ -1135,6 +1216,9 @@ may be selected for removal.
         except ValueError as error:
             raise ValueError("Can't transpose data: {}".format(error))
 
+        if axes is None:
+            axes = tuple(range(self.data.ndim-1, -1, -1))
+        
         data_axes = self.get_data_axes(default=())
 
         new_data_axes = [data_axes[i] for i in axes]
@@ -1145,81 +1229,6 @@ may be selected for removal.
         f.set_data(new_data, new_data_axes)
 
         return f
-    #--- End: def
-
-    @property
-    def field_ancillaries(self):
-        '''Return field ancillary constructs.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs`, `get_construct`
-
-:Parameters:
-
-    copy: `bool`, optional
-        If True then return copies of the constructs. By default the
-        constructs are not copied.
-
-:Returns:
-
-    `Constructs`
-        The field ancillary constructs and their construct keys.
-
-**Examples:**
-
->>> f.field_ancillaries
-Constructs:
-{}
-
->>> f.field_ancillaries
-Constructs:
-{'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-
-        '''
-        return self.constructs.filter_by_type('field_ancillary')
-    #--- End: def
-
-    @property
-    def cell_methods(self):
-        '''Return cell method constructs.
-
-The cell methods are not returned in the order in which they were
-applied. To achieve this use the `~Constructs.ordered` of the returned
-`Constructs` instance.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs`, `get_construct`, `set_construct`
-
-:Parameters:
-
-    copy: `bool`, optional
-        If True then return copies of the constructs. By default the
-        constructs are not copied.
-
-:Returns:
-
-    `Constructs`
-        The cell method constructs and their construct keys.
-
-**Examples:**
-
->>> f.cell_methods
-Constructs:
-{}
-
->>> f.cell_methods
-Constructs:
-{'cellmethod1': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
- 'cellmethod0': <CellMethod: domainaxis3: maximum>}
-
->>> f.cell_methods.ordered()
-OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
-
-        '''
-        return self.constructs.filter_by_type('cell_method')
     #--- End: def
 
 #--- End: class

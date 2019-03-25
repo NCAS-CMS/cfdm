@@ -22,6 +22,7 @@ Parameter terms
 
    ~cfdm.CoordinateConversion.del_parameter
    ~cfdm.CoordinateConversion.get_parameter
+   ~cfdm.CoordinateConversion.has_parameter
    ~cfdm.CoordinateConversion.set_parameter
    ~cfdm.CoordinateConversion.parameters
     
@@ -37,6 +38,7 @@ Domain ancillary terms
 
    ~cfdm.CoordinateConversion.del_domain_ancillary
    ~cfdm.CoordinateConversion.get_domain_ancillary
+   ~cfdm.CoordinateConversion.has_domain_ancillary
    ~cfdm.CoordinateConversion.set_domain_ancillary
    ~cfdm.CoordinateConversion.domain_ancillaries
 

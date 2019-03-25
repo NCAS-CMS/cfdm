@@ -50,54 +50,32 @@ x.__repr__() <==> repr(x)
 x.__str__() <==> str(x)
 
         '''
-        def _print_item(self, cid, variable, axes, dimension_coord):
-            '''Private function called by __str__'''
-            
-            if dimension_coord:
-                # Dimension coordinate
-                name = variable.identity(default=cid)
-                if variable.has_data():
-                    name += '({0})'.format(variable.get_data().size)
-                elif hasattr(variable, 'nc_external'):
-                    if variable.nc_external():
-                        ncvar = variable.nc_get_variable(None)
-                        if ncvar is not None:
-                            x.append(' (external variable: ncvar%{})'.format(ncvar))
-                        else:
-                            x.append(' (external variable)')
-                            
-                if variable is None:
-                    return name
-                          
-                x = [name]
-                
-            else:
-                # Auxiliary coordinate
-                # Cell measure
-                # Field ancillary
-                # Domain ancillary
-                x = [variable.identity(default='key%{0}'.format(cid))]
+        def _print_item(self, cid, variable, axes):
+            '''Private function called by __str__
 
-                if variable.has_data():
-                    shape = [axis_names[axis] for axis in axes]
-                    shape = str(tuple(shape)).replace("'", "")
-                    shape = shape.replace(',)', ')')
-                    x.append(shape)
-                elif (variable.construct_type in ('auxiliary_coordinate', 'domain_ancillary') and
-                      variable.has_bounds() and variable.bounds.has_data()):                
-                    # Construct has no data but it does have bounds data
-                    shape = [axis_names[axis] for axis in axes]
-                    shape.extend([str(n) for n in variable.bounds.data.shape[len(axes):]])
-                    shape = str(tuple(shape)).replace("'", "")
-                    shape = shape.replace(',)', ')')
-                    x.append(shape)
-                elif hasattr(variable, 'nc_external'):
-                    if variable.nc_external():
-                        ncvar = variable.nc_get_variable(None)
-                        if ncvar is not None:
-                            x.append(' (external variable: ncvar%{})'.format(ncvar))
-                        else:
-                            x.append(' (external variable)')
+            '''            
+            x = [variable.identity(default='key%{0}'.format(cid))]
+
+            if variable.has_data():
+                shape = [axis_names[axis] for axis in axes]
+                shape = str(tuple(shape)).replace("'", "")
+                shape = shape.replace(',)', ')')
+                x.append(shape)
+            elif (variable.construct_type in ('auxiliary_coordinate', 'domain_ancillary') and
+                  variable.has_bounds() and variable.bounds.has_data()):                
+                # Construct has no data but it does have bounds data
+                shape = [axis_names[axis] for axis in axes]
+                shape.extend([str(n) for n in variable.bounds.data.shape[len(axes):]])
+                shape = str(tuple(shape)).replace("'", "")
+                shape = shape.replace(',)', ')')
+                x.append(shape)
+            elif hasattr(variable, 'nc_get_external'):
+                if variable.nc_get_external():
+                    ncvar = variable.nc_get_variable(None)
+                    if ncvar is not None:
+                        x.append(' (external variable: ncvar%{})'.format(ncvar))
+                    else:
+                        x.append(' (external variable)')
             #--- End: if
                 
             if variable.has_data():
@@ -133,14 +111,14 @@ x.__str__() <==> str(x)
             string.append('Dimension coords: {}'.format('\n                : '.join(x)))
 
         # Auxiliary coordinates
-        x = [_print_item(self, cid, v, constructs_data_axes[cid], False) 
+        x = [_print_item(self, cid, v, constructs_data_axes[cid]) 
              for cid, v in sorted(self.auxiliary_coordinates.items())]
         if x:
             string.append('Auxiliary coords: {}'.format(
                 '\n                : '.join(x)))
         
         # Cell measures
-        x = [_print_item(self, cid, v, constructs_data_axes[cid], False)
+        x = [_print_item(self, cid, v, constructs_data_axes[cid])
              for cid, v in sorted(self.cell_measures.items())]
         if x:
             string.append('Cell measures   : {}'.format(
@@ -153,7 +131,7 @@ x.__str__() <==> str(x)
                 '\n                : '.join(x)))
             
         # Domain ancillary variables
-        x = [_print_item(self, cid, anc, constructs_data_axes[cid], False)
+        x = [_print_item(self, cid, anc, constructs_data_axes[cid])
              for cid, anc in sorted(self.domain_ancillaries.items())]
         if x:
             string.append('Domain ancils   : {}'.format(
@@ -200,15 +178,6 @@ field.
             return string
     #--- End: def
     
-    # parameter: name
-    # parameter: properties
-    # parameter: measure
-    # parameter: ncvar
-    # parameter: ncdim
-    # parameter: key
-    # parameter: axis
-    # parameter: construct_type
-    # parameter: default
     def del_construct(self, name=None, properties=None, measure=None,
                       ncvar=None, ncdim=None, key=None, axis=None,
                       construct_type=None, default=ValueError()):
@@ -499,7 +468,7 @@ last values.
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_type=False):
+               ignore_compression=False, ignore_type=False):
         '''Whether two domains are the same.
 
 .. versionadded:: 1.7.0
@@ -513,28 +482,24 @@ True
 >>> d.equals('not a domain')
 False
         '''
-        ignore_properties = tuple(ignore_properties) + ('Conventions',)
-            
-        if not super().equals(other, rtol=rtol, atol=atol,
-                              verbose=verbose,
-                              ignore_data_type=ignore_data_type,
-                              ignore_fill_value=ignore_fill_value,
-                              ignore_properties=ignore_properties,
-                              ignore_type=ignore_type):
-            return False
+        pp = super()._equals_preprocess(other, verbose=verbose,
+                                        ignore_type=ignore_type)
+        if pp in (True, False):
+            return pp
+        
+        other = pp
 
         # ------------------------------------------------------------
         # Check the constructs
         # ------------------------------------------------------------              
         if not self._equals(self.constructs, other.constructs,
-                            rtol=rtol, atol=atol,
-                            verbose=verbose,
+                            rtol=rtol, atol=atol, verbose=verbose,
                             ignore_data_type=ignore_data_type,
-                            ignore_type=ignore_type,
-                            ignore_fill_value=ignore_fill_value):
+                            ignore_fill_value=ignore_fill_value,
+                            ignore_compression=ignore_compression):
             if verbose:
-                print(
-                    "{0}: Different {1}".format(self.__class__.__name__, 'constructs'))
+                print("{0}: Different metadata constructs".format(
+                    self.__class__.__name__))
             return False
 
         return True

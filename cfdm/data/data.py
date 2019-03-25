@@ -122,7 +122,7 @@ class Data(mixin.Container, core.Data):
 >>> print(b)
 [ 1.  2.  3.]
 
-       '''
+        '''
         array = self.array
         if not dtype:
             return array
@@ -431,6 +431,9 @@ masked
 **Examples:**
 
         '''
+        if axes is None:
+            return axes
+        
         ndim = self.ndim
 
         if isinstance(axes, int):
@@ -1076,12 +1079,10 @@ Missing data array elements are omitted from the calculation.
 
         '''
         # Parse the axes. By default flattened input is used.
-        if axes is not None:
-            try:
-                axes = self._parse_axes(axes)
-            except ValueError as error:
-                raise ValueError("Can't find maximum of data: {}".format(error))
-        #--- End: if
+        try:
+            axes = self._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError("Can't find maximum of data: {}".format(error))
         
         array = self.array
         array = numpy.amax(array, axis=axes, keepdims=True)
@@ -1119,12 +1120,10 @@ Missing data array elements are omitted from the calculation.
 
         '''            
         # Parse the axes. By default flattened input is used.
-        if axes is not None:
-            try:
-                axes = self._parse_axes(axes)
-            except ValueError as error:
-                raise ValueError("Can't find minimum of data: {}".format(error))
-        #--- End: if
+        try:
+            axes = self._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError("Can't find minimum of data: {}".format(error))
 
         array = self.array
         array = numpy.amin(array, axis=axes, keepdims=True)
@@ -1282,14 +1281,14 @@ selected with the keyword arguments.
 
         shape = d.shape
 
-        if axes is None:
-            axes = [i for i, n in enumerate(shape) if n == 1]
-        else:
-            try:
-                axes = self._parse_axes(axes)
-            except ValueError as error:
-                raise ValueError("Can't squeeze data: {}".format(error))
+        try:
+            axes = self._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError("Can't squeeze data: {}".format(error))
 
+        if axes is None:
+            axes = tuple([i for i, n in enumerate(shape) if n == 1])
+        else:
             # Check the squeeze axes
             for i in axes:
                 if shape[i] > 1:
@@ -1328,12 +1327,10 @@ Missing data array elements are omitted from the calculation.
 
         '''
         # Parse the axes. By default flattened input is used.
-        if axes is not None:
-            try:
-                axes = self._parse_axes(axes)
-            except ValueError as error:
-                raise ValueError("Can't sum data: {}".format(error))
-        #--- End: if
+        try:
+            axes = self._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError("Can't sum data: {}".format(error))
         
         array = self.array
         array = numpy.sum(array, axis=axes, keepdims=True)
@@ -1392,19 +1389,19 @@ Missing data array elements are omitted from the calculation.
         ndim = d.ndim    
         
         # Parse the axes. By default, reverse the order of the axes.
+        try:
+            axes = self._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError("Can't transpose data: {}".format(error))
+        
         if axes is None:
             if ndim <= 1:
                 return d
 
-            axes = list(range(ndim-1, -1, -1))
+            axes = tuple(range(ndim-1, -1, -1))
         else:
-            try:
-                axes = self._parse_axes(axes)
-            except ValueError as error:
-                raise ValueError("Can't transpose data: {}".format(error))
-
             # Return unchanged if axes are in the same order as the data
-            if axes == list(range(ndim)):
+            if axes == tuple(range(ndim)):
                 return d
 
             if len(axes) != ndim:

@@ -22,6 +22,7 @@ Parameter terms
 
    ~cfdm.Datum.del_parameter
    ~cfdm.Datum.get_parameter
+   ~cfdm.Datum.has_parameter
    ~cfdm.Datum.set_parameter
    ~cfdm.Datum.parameters
 

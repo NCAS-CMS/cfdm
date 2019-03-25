@@ -19,6 +19,32 @@ See `cfdm.NumpyArray` for an example implementation.
 .. versionadded:: 1.7.0
 
     '''
+#    def __array__(self, *dtype):
+#        '''The numpy array interface.
+#
+#.. versionadded:: 1.7.0
+#
+#:Returns: 
+#
+#    `numpy.ndarray`
+#        An independent numpy array of the data.
+#
+#**Examples:**
+#
+#>>> isinstance(a, Array)
+#True
+#>>> n = numpy.asanyarray(a)
+#>>> isinstance(n, numpy.ndarray)
+#True
+#
+#        '''
+#        array = self.array
+#        if not dtype:
+#            return array
+#        else:
+#            return array.astype(dtype[0], copy=False)
+#    #--- End: def
+
     @abc.abstractmethod
     def __getitem__(self, indices):
         '''Return a subspace as an independent numpy array.

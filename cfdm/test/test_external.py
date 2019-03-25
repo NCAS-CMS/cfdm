@@ -145,7 +145,7 @@ class ExternalVariableTest(unittest.TestCase):
 
         c = cfdm.read(self.combined_file, verbose=False)
 
-        for i in c:
+        for i in c + f:
             _ = repr(i)
             _ = str(i)
             _ = i.dump(display=False)

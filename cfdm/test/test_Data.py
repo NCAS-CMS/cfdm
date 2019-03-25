@@ -1,5 +1,7 @@
 from __future__ import print_function
 from builtins import range
+
+import copy
 import datetime
 import inspect
 import itertools
@@ -21,7 +23,7 @@ class DataTest(unittest.TestCase):
     test_only = []
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_Data__asdatetime__asreftime__isdatetime']
-#    test_only = ['test_Data___setitem__']
+#    test_only = ['test_Data__setitem__']
 #    test_only = ['test_Data_ceil', 'test_Data_floor', 'test_Data_trunc', 'test_Data_rint']
 #    test_only = ['test_Data_array', 'test_Data_datetime_array']
 #    test_only = ['test_dumpd_loadd']
@@ -47,11 +49,12 @@ class DataTest(unittest.TestCase):
             _ = str(d)
     #--- End: def
 
-    def test_Data___getitem__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-        
-    def test_Data___setitem__(self):        
+#    def test_Data__getitem__(self):
+#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+#            return
+                
+
+    def test_Data__setitem__(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -131,6 +134,26 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        # ------------------------------------------------------------
+        # Numpy array interface (__array__)
+        # ------------------------------------------------------------
+        a = numpy.arange(12, dtype='int32').reshape(3, 4)
+
+        d = cfdm.Data(a, units='km')
+
+        b = numpy.array(d)
+
+        self.assertTrue(b.dtype == numpy.dtype('int32'))
+        self.assertTrue(a.shape == b.shape)
+        self.assertTrue((a == b).all())        
+
+        b = numpy.array(d, dtype='float32')
+
+        self.assertTrue(b.dtype == numpy.dtype('float32'))
+        self.assertTrue(a.shape == b.shape)
+        self.assertTrue((a == b).all())
+
+        
         # Scalar numeric array
         d = cfdm.Data(9, units='km')
         a = d.array
@@ -195,6 +218,63 @@ class DataTest(unittest.TestCase):
         u = d.unique()
         self.assertTrue(u.shape == (3,))        
         self.assertTrue((u.array == cfdm.Data([1, 2, 4], 'metre').array).all())
+    #--- End: def
+
+    def test_Data_equals(self):        
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        a = numpy.ma.arange(10*15*19).reshape(10, 1, 15, 19)
+        a[0, 0, 2, 3] = numpy.ma.masked
+        
+        d = cfdm.Data(a, units='days since 2000-2-2', calendar='noleap')
+        e = copy.deepcopy(d)
+
+        self.assertTrue(d.equals(d, verbose=True))
+        self.assertTrue(d.equals(e, verbose=True))
+        self.assertTrue(e.equals(d, verbose=True))    
+    #--- End: def
+        
+    def test_Data_max_min_sum_squeeze(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        
+        a = numpy.ma.arange(10*15*19).reshape(10, 1, 15, 19)
+        a[0, 0, 0, 0] = numpy.ma.masked
+        a[-1, -1, -1, -1] = numpy.ma.masked
+        a[5, -1, 6, 10] = numpy.ma.masked
+        d = cfdm.Data(a)
+
+        b = a.max()
+        x = d.max().squeeze()
+        self.assertTrue(x.shape == b.shape)
+        self.assertTrue((x.array == b).all())
+
+        b = a.max(axis=(0, 3))
+        x = d.max(axes=[0, 3]).squeeze([0, 3])
+        self.assertTrue(x.shape == b.shape)
+        self.assertTrue((x.array == b).all())
+
+        b = a.min()
+        x = d.min().squeeze()
+        self.assertTrue(x.shape == b.shape)
+        self.assertTrue((x.array == b).all())
+
+        b = a.min(axis=(0, 3))
+        x = d.min(axes=[0, 3]).squeeze([0, 3])
+        self.assertTrue(x.shape == b.shape)
+        self.assertTrue((x.array == b).all(), (x.shape, b.shape))
+
+        b = a.sum()
+        x = d.sum().squeeze()
+        self.assertTrue(x.shape== b.shape)
+        self.assertTrue((x.array == b).all())
+
+        b = a.sum(axis=(0, 3))
+        x = d.sum(axes=[0, 3]).squeeze([0, 3])
+        self.assertTrue(x.shape == b.shape)
+        self.assertTrue((x.array == b).all(), (x.shape, b.shape))
     #--- End: def
 
 #--- End: class

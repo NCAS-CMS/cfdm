@@ -155,7 +155,8 @@ instances are equal.
         
         for axes in data_axes.values():
             d = {construct_type: {}
-                 for construct_type in self._array_constructs}
+                 for construct_type in self._array_constructs
+                 if construct_type not in self._ignore}
 
             out[axes] = d
         #--- End: for
@@ -174,8 +175,8 @@ instances are equal.
         '''
 
         '''
-        cell_methods0 = self.filter_by_type('cell_method').ordered()
-        cell_methods1 = other.filter_by_type('cell_method').ordered()
+        cell_methods0 = self.filter_by_type('cell_method') #.ordered()
+        cell_methods1 = other.filter_by_type('cell_method') #.ordered()
 
         if len(cell_methods0) != len(cell_methods1):
             if verbose:
@@ -183,19 +184,21 @@ instances are equal.
 "Verbose: Different numbers of cell methods: {0!r} != {1!r}".format(
     cell_methods0, cell_methods1))
             return False
-        
+
+        if not len(cell_methods0):
+            return True    
+
+        cell_methods0 = cell_methods0.ordered()
+        cell_methods1 = cell_methods1.ordered()
+
         axis0_to_axis1 = {axis0: axis1
                           for axis0, axis1 in axis1_to_axis0.items()}
 
-#        print ('axis0_to_axis1=',axis0_to_axis1)
-
         for cm0, cm1 in zip(tuple(cell_methods0.values()),
                             tuple(cell_methods1.values())):
-#            print ('\n', repr(cm0), repr(cm1))
             # Check that there are the same number of axes
             axes0 = cm0.get_axes(())
             axes1 = list(cm1.get_axes(()))
-#            print ('axes0, axes1=',axes0, axes1)
             if len(axes0) != len(axes1):
                 if verbose:
                     print(
@@ -240,7 +243,6 @@ instances are equal.
 
             if len(cm1.get_axes(())) != len(indices):
                 if verbose:
-#                    print (cm1.get_axes(()), indices)
                     print("{0}: Different cell methods:\n  {1}\n  {2}".format(
                         cm0.__class__.__name__, cell_methods0, cell_methods1))
                 return False
@@ -523,13 +525,11 @@ False
             matched_all_constructs_with_these_axes = False
 
             log = []
-            
+             
             len_axes0 = len(axes0) 
             for axes1, constructs1 in tuple(axes_to_constructs1.items()):
                 log = []
                 constructs1 = constructs1.copy()
-
-                matched_roles = False
 
                 if len_axes0 != len(axes1):
                     # axes1 and axes0 contain different number of
@@ -537,19 +537,23 @@ False
                     continue
 
                 for construct_type in self._array_constructs:
-                    matched_role = False
-                    role_constructs0 = constructs0[construct_type]
-                    role_constructs1 = constructs1[construct_type].copy()
-
+#                    role_constructs0 = constructs0[construct_type]
+#                    role_constructs1 = constructs1[construct_type].copy()
+                    role_constructs0 = constructs0.get(construct_type, {})
+                    role_constructs1 = constructs1.get(construct_type, {}).copy()
+                    
                     if len(role_constructs0) != len(role_constructs1):
                         # There are the different numbers of
                         # constructs of this type
                         matched_all_constructs_with_these_axes = False
                         log.append('Different numbers of '+construct_type)
                         break
+#                    elif not role_constructs0:
+#                        break
 
                     # Check that there are matching pairs of equal
                     # constructs
+                    matched_construct = True
                     for key0, item0 in role_constructs0.items():
                         matched_construct = False
                         for key1, item1 in tuple(role_constructs1.items()):
@@ -579,7 +583,8 @@ False
 
                     # Still here? Then all constructs of this type
                     # that spanning these axes match
-                    del constructs1[construct_type]
+#                    del constructs1[construct_type]
+                    constructs1.pop(construct_type, None)
                 #--- End: for
 
                 matched_all_constructs_with_these_axes = not constructs1
@@ -636,8 +641,7 @@ False
         for construct_type in self._non_array_constructs:
             if not getattr(self, '_equals_'+construct_type)(
                     other,
-                    rtol=rtol, atol=atol,
-                    verbose=verbose,
+                    rtol=rtol, atol=atol, verbose=verbose,
                     ignore_type=_ignore_type,
                     axis1_to_axis0=axis1_to_axis0,
                     key1_to_key0=key1_to_key0):
