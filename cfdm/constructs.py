@@ -87,7 +87,8 @@ x.__str__() <==> str(x)
                     first = False
                 else:
                     out.append('{!r}: {!r},'.format(key, value))
-                
+        #--- End: for
+        
         if first:
             out[0] = out[0] + '\n{}'
         else:

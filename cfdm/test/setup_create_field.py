@@ -79,6 +79,7 @@ class create_fieldTest(unittest.TestCase):
             data=cfdm.Data(1+numpy.arange(90.).reshape(9, 10)*1234))
         msr0.set_measure('area')
         msr0.set_property('units', 'km2')
+        msr0.nc_set_variable('areacella')
         
         # Data          
         data = cfdm.Data(numpy.arange(90.).reshape(10, 9))
@@ -88,7 +89,9 @@ class create_fieldTest(unittest.TestCase):
         f = cfdm.Field(properties=properties)
         f.set_property('standard_name', 'eastward_wind')
 
-        axisX = f.set_construct(cfdm.DomainAxis(9))
+        da = cfdm.DomainAxis(9)
+        da.nc_set_dimension('x')        
+        axisX = f.set_construct(da)
         axisY = f.set_construct(cfdm.DomainAxis(10))
         axisZ = f.set_construct(cfdm.DomainAxis(1))
 

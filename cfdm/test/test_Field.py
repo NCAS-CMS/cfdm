@@ -27,7 +27,6 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_axes','test_Field_data_axes']
 #        self.test_only = ['test_Field___getitem__']
 #        self.test_only = ['test_Field___setitem__']
-#        self.test_only = ['test_Field_insert_dimension']
 #        self.test_only = ['test_Field_field']
 
     def test_Field__repr__str__dump(self):
@@ -448,25 +447,6 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(f.equals(h))
     #--- End: def
 
-    def test_Field_insert_dimension(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        f = self.f.copy()
-        
-        g = f.copy()
-
-        key = g.set_construct(cfdm.DomainAxis(1))
-        h = g.insert_dimension(axis=key)
-        self.assertTrue(h.data.ndim == f.data.ndim + 1)
-        self.assertTrue(h.get_data_axes()[1:] == f.get_data_axes())
-
-        key = g.set_construct(cfdm.DomainAxis(1))
-        h = g.insert_dimension(position=g.data.ndim, axis=key)
-        self.assertTrue(h.data.ndim == f.data.ndim + 1)
-        self.assertTrue(h.get_data_axes()[:-1] == f.get_data_axes())
-    #--- End: def
-    
     def test_Field_del_construct(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -497,7 +477,7 @@ class FieldTest(unittest.TestCase):
             self.assertIsInstance(value, cfdm.FieldAncillary)
     #--- End: def
 
-    def test_Field_squeeze_transpose(self):
+    def test_Field_squeeze_transpose_insert_dimension(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -510,6 +490,21 @@ class FieldTest(unittest.TestCase):
         g = f.squeeze()
         self.assertTrue(g.data.shape == f.data.shape[1:])
         self.assertTrue(g.get_data_axes() == f.get_data_axes()[1:], (g.get_data_axes(), f.get_data_axes()))
+        
+        f = f.copy()
+        g = f.copy()
+
+        key = g.set_construct(cfdm.DomainAxis(1))
+        h = g.insert_dimension(axis=key)
+        self.assertTrue(h.data.ndim == f.data.ndim + 1)
+        self.assertTrue(h.get_data_axes()[1:] == f.get_data_axes())
+
+        key = g.set_construct(cfdm.DomainAxis(1))
+        h = g.insert_dimension(position=g.data.ndim, axis=key)
+        self.assertTrue(h.data.ndim == f.data.ndim + 1)
+        self.assertTrue(h.get_data_axes()[:-1] == f.get_data_axes())
+    #--- End: def
+
 
     def test_Field_nc_global_attributes(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
