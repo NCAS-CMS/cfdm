@@ -1,8 +1,13 @@
+#!/bin/bash
+
+# ------------------------------------------------------
+# Produce a coverage report of the test suite
+# ------------------------------------------------------
 echo "coverage docs: https://coverage.readthedocs.io"
 set -x
 coverage erase
-coverage run --source=.. --omit="*/test/*" run_tests.py 
+coverage run --source=.. --omit="*/test/*" --timid run_tests.py 
 coverage report
-coverage html -d cfdm_coverage
+coverage html --title "cfdm test suite coverage report" -d coverage_report
 set +x
 echo "coverage docs: https://coverage.readthedocs.io"

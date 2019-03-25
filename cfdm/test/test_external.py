@@ -123,6 +123,12 @@ class ExternalVariableTest(unittest.TestCase):
 
         # Read the parent file on its own, without the external file
         f = cfdm.read(self.parent_file)
+
+        for i in f:
+            _ = repr(i)
+            _ = str(i)
+            _ = i.dump(display=False)
+
         self.assertTrue(len(f) == 1)
         f = f[0]
 
@@ -139,16 +145,12 @@ class ExternalVariableTest(unittest.TestCase):
 
         c = cfdm.read(self.combined_file, verbose=False)
 
-        cell_measure = f[0].constructs.filter_by_identity('measure:area').value()
+        for i in c:
+            _ = repr(i)
+            _ = str(i)
+            _ = i.dump(display=False)
 
-#        print ('\nParent + External:\n')
-#        for x in f:
-#            print(x)
-#            print (x.get_read_report())
-#
-#        print ('\nCombined:\n')
-#        for x in c:
-#            print(x)
+        cell_measure = f[0].constructs.filter_by_identity('measure:area').value()
 
         self.assertTrue(len(f) == 1)
         self.assertTrue(len(c) == 1)
@@ -160,14 +162,11 @@ class ExternalVariableTest(unittest.TestCase):
         f = cfdm.read(self.parent_file, external=self.combined_file,
                       verbose=False)
 
-#        print ('\nParent + Combined:\n')
-#        for x in f:
-#            print(x)
-#
-#        print ('\nCombined:\n')
-#        for x in c:
-#            print(x)
-
+        for i in f:
+            _ = repr(i)
+            _ = str(i)
+            _ = i.dump(display=False)
+        
         self.assertTrue(len(f) == 1)
         self.assertTrue(len(c) == 1)
 
@@ -179,14 +178,11 @@ class ExternalVariableTest(unittest.TestCase):
                       external=[self.external_file, self.external_missing_file],
                       verbose=False)
 
-#        print ('\nParent + External + External Missing:\n')
-#        for x in f:
-#            print(x)
-#
-#        print ('\nCombined:\n')
-#        for x in c:
-#            print(x)
-
+        for i in f:
+            _ = repr(i)
+            _ = str(i)
+            _ = i.dump(display=False)
+            
         self.assertTrue(len(f) == 1)
         self.assertTrue(len(c) == 1)
 
