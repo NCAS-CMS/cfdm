@@ -9,11 +9,13 @@ import cfdm
 
 class CoordinateReferenceTest(unittest.TestCase):
     def setUp(self):
-        filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'test_file.nc')
+        self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                     'test_file.nc')
         f = cfdm.read(self.filename)
         self.assertTrue(len(f)==1, 'f={}'.format(f))
         self.f = f[0]
+
+        self.test_only = []
     #--- End: def
 
     def test_CoordinateReference__repr__str__dump(self):
@@ -22,7 +24,7 @@ class CoordinateReferenceTest(unittest.TestCase):
 
         f = self.f
 
-        for cr in f.coordinate_references:
+        for cr in f.coordinate_references.values():
             _ = repr(cr)
             _ = str(cr)
             _ = cr.dump(display=False)
@@ -87,6 +89,18 @@ class CoordinateReferenceTest(unittest.TestCase):
                                'false_northing': -30000})
         )
         self.assertTrue(t.equals(t.copy(), verbose=True))
+    #--- End: def
+
+    def test_CoordinateConversion(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f
+
+        cr = f.construct('standard_name:atmosphere_hybrid_height_coordinate')
+        cc = cr.coordinate_conversion
+        _ = repr(cc)
+        _ = str(cc)
     #--- End: def
 
 #--- End: class
