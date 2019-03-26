@@ -1193,41 +1193,53 @@ metadata construct:
 -----------------------------
 
 An individual metadata construct may be returned, without its
-construct key, by any of four techniques:
+construct key, by any of the following techniques:
 
 * with the `~Field.construct` method of a field construct,
+
+.. code-block:: python3
+   :caption: *Get the "latitude" metadata construct with its construct
+             identity.*
+	     
+   >>> t.construct('latitude')
+   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+
+* with the `~Field.construct_key` and `~Field.get_construct` methods of
+  a field construct:
+
+.. code-block:: python3
+   :caption: *Get the "latitude" metadata construct key with its construct
+             identity and use the key to get the construct itself*
+	     
+   >>> key = t.construct_key('latitude')
+   >>> t.get_construct(key)
+   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
 * with the `~Constructs.value` method of a `Constructs` instance
   that contains one construct,
 
 .. code-block:: python3
-   :caption: *Get the "latitude" metadata construct by its identity.*
+   :caption: *Get the "latitude" metadata construct via its identity
+             and the 'value' method.*
 	     
-   >>> print(t.constructs('latitude'))
-   Constructs:
-   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-   >>> t.construct('latitude')
-   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
    >>> t.constructs('latitude').value()
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
 * with the `~Constructs.get` method of a `Constructs` instance, or
 
+.. code-block:: python3
+   :caption: *Get the "latitude" metadata construct via its construct
+             key and the 'get' method.*
+	     
+   >>> c = t.constructs.get(key)
+   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+
 * by indexing a `Constructs` instance with  a construct key.
 
 .. code-block:: python3
-   :caption: *Get the "latitude" metadata construct with its construct
-             key.*
+   :caption: *Get the "latitude" metadata construct via its construct
+             key and indexing*
 	     
-   >>> c = t.constructs('latitude')
-   >>> print(c)
-   Constructs:
-   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-   >>> key = c.key()
-   >>> key
-   'auxiliarycoordinate0'
-   >>> t.constructs.get(key)
-   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
    >>> t.constructs[key]
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
@@ -1334,7 +1346,7 @@ of the field construct:
    :caption: *Find the construct keys of the domain axis constructs
              spanned by the data of each metadata construct.*
 
-   >>> key = t.constructs('latitude').key()
+   >>> key = t.construct_key('latitude')
    >>> key
    'auxiliarycoordinate0'
    >>> t.get_data_axes(key=key)
@@ -2282,7 +2294,7 @@ domain.
    :caption: *Create an independent field construct from the "surface
              altitude" metadata construct.*
 
-   >>> key = tas.constructs('surface_altitude').key()
+   >>> key = tas.construct_key('surface_altitude')
    >>> orog = tas.convert(key)
    >>> print(orog)
    Field: surface_altitude
@@ -2808,7 +2820,7 @@ of the field construct.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : time(1) = [2019-01-01 00:00:00]
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> key = q.constructs('time').key()
+   >>> key = q.construct_key('time')
    >>> axes = q.get_data_axes(key)
    >>> axes
    ('domainaxis2',)

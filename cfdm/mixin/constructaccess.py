@@ -327,7 +327,7 @@ Constructs:
 .. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `Constructs.filter_by_identity`,
-             `Constructs.value`
+             `Constructs.value` TODO
 
 :Parameters:
 
@@ -404,9 +404,102 @@ ValueError: Can't return 2 constructs
             return c.value()
 
         if not c:
-            return self._default(default, "Can't return zero constructs")
+            return self._default(default,
+                                 "Can't return zero constructs")
 
-        return self._default(default, "Can't return {0} constructs".format(len(c)))
+        return self._default(default,
+                             "Can't return {0} constructs".format(len(c)))
+    #--- End: def
+
+    def construct_key(self, identity, default=ValueError()):
+        '''Select the key of a metadata construct by its identity.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `construct`, `constructs`,
+             `Constructs.filter_by_identity`, `Constructs.key`
+
+:Parameters:
+
+    identity: optional
+
+        Select constructs that have the given identity. If exactly one
+        construct is selected then it is returned, otherwise an
+        exception is raised.
+
+        The identity is specified by a string (e.g. ``'latitude'``,
+        ``'long_name=time'``, etc.); or a compiled regular expression
+        (e.g. ``re.compile('^atmosphere')``), for which all constructs
+        whose identities match (via `re.search`) are selected.
+
+        Each construct has a number of identities, and is selected if
+        any of them match any of those provided. A construct's
+        identities are those returned by its `!identities` method. In
+        the following example, the construct ``c`` has four
+        identities:
+
+           >>> c.identities()
+           ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
+
+        In addition, each construct also has an identity based its
+        construct key (e.g. ``'key%dimensioncoordinate2'``)
+
+        Note that the identifiers of metadata constructs in the output
+        of a `print` or `!dump` call are always one of its identities,
+        and so may always be used as the *identity* argument.
+
+    default: optional
+        Return the value of the *default* parameter if the property
+        has not been set. If set to an `Exception` instance then it
+        will be raised instead.
+
+:Returns:
+
+    `str`
+        The key of the selected construct.
+
+**Examples:**
+
+>>> print(f.constructs)
+Constructs:
+{'cellmethod0': <CellMethod: area: mean>,
+ 'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+ 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+ 'dimensioncoordinate2': <DimensionCoordinate: long_name=time(1) days since 2018-12-01 >,
+ 'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
+
+Select the construct that has the "standard_name" property of 'latitude':
+
+>>> f.construct_key('latitude')
+ 'dimensioncoordinate0'
+
+Select the cell method construct that has a "method" of 'mean':
+
+>>> f.construct_key('method:mean')
+'cellmethod0'
+
+Attempt to select the construct whose "standard_name" start with the
+letter 'l':
+
+>>> import re
+>>> f.construct_key(re.compile('^l'))
+ValueError: Can't return the key of 2 constructs
+>>> f.construct_key(re.compile('^l'), default='no construct')
+'no construct'
+
+        '''
+        c = self.constructs.filter_by_identity(identity)
+        if len(c) == 1:
+            return c.key()
+
+        if not c:
+            return self._default(default,
+                                 "Can't return the key of zero constructs")
+
+        return self._default(default,
+                             "Can't return the key of {0} constructs".format(len(c)))
     #--- End: def
         
 #--- End: class

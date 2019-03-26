@@ -193,7 +193,7 @@ class FieldTest(unittest.TestCase):
             self.assertFalse(f.has_data_axes(key))
     #--- End: def
 
-    def test_Field_construct(self):
+    def test_Field_CONSTRUCT(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -202,6 +202,10 @@ class FieldTest(unittest.TestCase):
         _ = f.construct('latitude')
         self.assertTrue(f.construct('NOT_latitude', default=None) == None)
         self.assertTrue(f.construct(re.compile('^l'), default=None) == None)
+
+        key = f.construct_key('latitude')
+        _ = f.get_construct(key)
+        self.assertTrue(f.get_construct('qwerty', default=None) == None)
     #--- End: def
     
     def test_Field_constructs(self):
