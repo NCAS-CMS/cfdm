@@ -193,8 +193,7 @@ construct.
          Specify conventions to be recorded by the netCDF global
          "Conventions" attribute. By default the current conventions
          are always included, in addition to any specified, but if an
-         older CF conventions may is defined then this is used
-         instead.
+         older CF conventions is defined then this is used instead.
 
          *Parameter example:*
            ``Conventions='UGRID-1.0'``
