@@ -6,14 +6,23 @@
 echo "coverage docs: https://coverage.readthedocs.io"
 set -x
 
+option=''
 if [[ ! $1 ]] ; then 
-  file=run_tests.py
-else 
-  file=$1
+    file=run_tests.py
+elif [[ ! $2 ]] ; then 
+    if [[ $1 == --* ]] ; then
+	option=$1
+	file=run_tests.py
+    else
+	file=$1
+    fi
+else
+    option=$1
+    file=$2
 fi
 
 coverage erase
-coverage run --source=.. --omit="*/test/*" --timid $file
+coverage run --source=.. --omit="*/test/*" $option $file
 coverage report
 coverage html --title "cfdm test suite coverage report" -d cfdm_coverage_report
 set +x

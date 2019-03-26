@@ -24,11 +24,11 @@ class DomainTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f
+        d = self.f.domain
 
-        d = f.domain
         _ = repr(d)
         _ = str(d)
+        _ = d.dump(display=False)
     #--- End: def
 
     def test_Domain_equals(self):

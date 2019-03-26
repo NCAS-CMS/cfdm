@@ -96,7 +96,7 @@ dtype('float64')
 <type 'numpy.dtype'>
 
         '''
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
     #--- End: def
 
     @property
@@ -130,7 +130,7 @@ dtype('float64')
 1
 
         '''
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
     #--- End: def
     
     @property
@@ -164,7 +164,7 @@ dtype('float64')
 1
 
         '''
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
     #--- End: def
     
     @property
@@ -198,7 +198,7 @@ dtype('float64')
 1
 
         '''
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -249,7 +249,7 @@ original or the new copy.
 True
 
         '''
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
     #--- End: def
     
 #--- End: class

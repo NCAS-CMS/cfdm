@@ -11,40 +11,6 @@ class ConstructAccess(object):
 .. versionadded:: 1.7.0
 
     '''   
-#    def data_constructs(self, copy=False):
-#        '''Return metadata constructs that support data arrays.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `constructs`, `get_construct`
-#
-#:Parameters:
-#
-#    copy: `bool`, optional
-#        If True then return copies of the constructs. By default the
-#        constructs are not copied.
-#
-#:Returns:
-#
-#    `dict`
-#        Constructs are returned as values of a dictionary, keyed by
-#        their construct identifiers.
-#
-#**Examples:**
-#
-#>>> f.data_constructs()
-#{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-# 'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
-# 'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-# 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-# 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-# 'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
-# 'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-#
-#        '''
-#        return self.constructs.data_constructs(copy=copy)
-#    #-- End: def
-    
     def del_construct(self, key, default=ValueError()):
         '''Remove a metadata construct.
 

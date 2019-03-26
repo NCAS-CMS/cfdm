@@ -247,7 +247,7 @@ False
 >>> g = f.copy()
 
         '''
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
     #--- End: def
     
 #--- End: class

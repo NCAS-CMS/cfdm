@@ -542,173 +542,173 @@ None
 #--- End: class
 
 
-class NetCDFInstanceDimension(NetCDF):
-    '''Mixin class for accessing the netCDF instance dimension name.
-
-.. versionadded:: 1.7.0
-
-    '''
-    def nc_del_instance_dimension(self,default=ValueError()):
-        '''Return the netCDF instance dimension name.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `nc_del_instance_dimension`, `nc_has_instance_dimension`,
-             `nc_set_instance_dimension`
-
-:Parameters:
-
-    default: optional
-        Return the value of the *default* parameter if the netCDF
-        instance dimension name has not been set. If set to an
-        `Exception` instance then it will be raised instead.
-
-:Returns:
-
-    `str`
-        The netCDF instance dimension name.
-
-**Examples:**
-
->>> f.nc_set_instance_dimension('time')
->>> f.nc_has_instance_dimension()
-True
->>> f.nc_get_instance_dimension()
-'time'
->>> f.nc_del_instance_dimension()
-'time'
->>> f.nc_has_instance_dimension()
-False
->>> print(f.nc_get_instance_dimension(None))
-None
->>> print(f.nc_del_instance_dimension(None))
-None
- 
-        '''
-        try:
-            return self._get_component('netcdf').pop('instance_dimension')
-        except KeyError:
-            return self._default(default,
-                   "{!r} has no netCDF instance dimension name".format(
-                       self.__class__.__name__))
-    #--- End: def
-
-    def nc_get_instance_dimension(self, default=ValueError()):
-        '''Return the netCDF instance dimension name.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `nc_del_instance_dimension`, `nc_has_instance_dimension`,
-             `nc_set_instance_dimension`
-
-:Parameters:
-
-    default: optional
-        Return the value of the *default* parameter if the netCDF
-        instance dimension name has not been set. If set to an
-        `Exception` instance then it will be raised instead.
-
-:Returns:
-
-    `str`
-        The netCDF instance dimension name.
-
-**Examples:**
-
->>> f.nc_set_instance_dimension('time')
->>> f.nc_has_instance_dimension()
-True
->>> f.nc_get_instance_dimension()
-'time'
->>> f.nc_del_instance_dimension()
-'time'
->>> f.nc_has_instance_dimension()
-False
->>> print(f.nc_get_instance_dimension(None))
-None
->>> print(f.nc_del_instance_dimension(None))
-None
-
-        '''
-        try:
-            return self._get_component('netcdf')['instance_dimension']
-        except KeyError:
-            return self._default(default,
-                   "{!r} has no netCDF instance dimension name".format(
-                       self.__class__.__name__))
-    #--- End: def
-
-    def nc_has_instance_dimension(self):
-        '''Whether the netCDF instance dimension name has been set.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `nc_del_instance_dimension`, `nc_get_instance_dimension`,
-             `nc_set_instance_dimension`
-
-:Returns:
-     
-    `bool`
-        True if the netCDF instance dimension name has been set,
-        otherwise False.
-
-**Examples:**
-
->>> f.nc_set_instance_dimension('time')
->>> f.nc_has_instance_dimension()
-True
->>> f.nc_get_instance_dimension()
-'time'
->>> f.nc_del_instance_dimension()
-'time'
->>> f.nc_has_instance_dimension()
-False
->>> print(f.nc_get_instance_dimension(None))
-None
->>> print(f.nc_del_instance_dimension(None))
-None 
-        '''
-        return 'instance_dimension' in self._get_component('netcdf')
-    #--- End: def
-
-    def nc_set_instance_dimension(self, value):
-        '''Set the netCDF instance dimension name.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `nc_del_instance_dimension`, `nc_get_instance_dimension`,
-             `nc_has_instance_dimension`
-             
-:Parameters:
-
-    value: `str`
-        The value for the netCDF instance dimension name.
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> f.nc_set_instance_dimension('time')
->>> f.nc_has_instance_dimension()
-True
->>> f.nc_get_instance_dimension()
-'time'
->>> f.nc_del_instance_dimension()
-'time'
->>> f.nc_has_instance_dimension()
-False
->>> print(f.nc_get_instance_dimension(None))
-None
->>> print(f.nc_del_instance_dimension(None))
-None
- 
-        '''
-        self._get_component('netcdf')['instance_dimension'] = value
-    #--- End: def
-
-#--- End: class
+#class NetCDFInstanceDimension(NetCDF):
+#    '''Mixin class for accessing the netCDF instance dimension name.
+#
+#.. versionadded:: 1.7.0
+#
+#    '''
+#    def nc_del_instance_dimension(self,default=ValueError()):
+#        '''Return the netCDF instance dimension name.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `nc_del_instance_dimension`, `nc_has_instance_dimension`,
+#             `nc_set_instance_dimension`
+#
+#:Parameters:
+#
+#    default: optional
+#        Return the value of the *default* parameter if the netCDF
+#        instance dimension name has not been set. If set to an
+#        `Exception` instance then it will be raised instead.
+#
+#:Returns:
+#
+#    `str`
+#        The netCDF instance dimension name.
+#
+#**Examples:**
+#
+#>>> f.nc_set_instance_dimension('time')
+#>>> f.nc_has_instance_dimension()
+#True
+#>>> f.nc_get_instance_dimension()
+#'time'
+#>>> f.nc_del_instance_dimension()
+#'time'
+#>>> f.nc_has_instance_dimension()
+#False
+#>>> print(f.nc_get_instance_dimension(None))
+#None
+#>>> print(f.nc_del_instance_dimension(None))
+#None
+# 
+#        '''
+#        try:
+#            return self._get_component('netcdf').pop('instance_dimension')
+#        except KeyError:
+#            return self._default(default,
+#                   "{!r} has no netCDF instance dimension name".format(
+#                       self.__class__.__name__))
+#    #--- End: def
+#
+#    def nc_get_instance_dimension(self, default=ValueError()):
+#        '''Return the netCDF instance dimension name.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `nc_del_instance_dimension`, `nc_has_instance_dimension`,
+#             `nc_set_instance_dimension`
+#
+#:Parameters:
+#
+#    default: optional
+#        Return the value of the *default* parameter if the netCDF
+#        instance dimension name has not been set. If set to an
+#        `Exception` instance then it will be raised instead.
+#
+#:Returns:
+#
+#    `str`
+#        The netCDF instance dimension name.
+#
+#**Examples:**
+#
+#>>> f.nc_set_instance_dimension('time')
+#>>> f.nc_has_instance_dimension()
+#True
+#>>> f.nc_get_instance_dimension()
+#'time'
+#>>> f.nc_del_instance_dimension()
+#'time'
+#>>> f.nc_has_instance_dimension()
+#False
+#>>> print(f.nc_get_instance_dimension(None))
+#None
+#>>> print(f.nc_del_instance_dimension(None))
+#None
+#
+#        '''
+#        try:
+#            return self._get_component('netcdf')['instance_dimension']
+#        except KeyError:
+#            return self._default(default,
+#                   "{!r} has no netCDF instance dimension name".format(
+#                       self.__class__.__name__))
+#    #--- End: def
+#
+#    def nc_has_instance_dimension(self):
+#        '''Whether the netCDF instance dimension name has been set.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `nc_del_instance_dimension`, `nc_get_instance_dimension`,
+#             `nc_set_instance_dimension`
+#
+#:Returns:
+#     
+#    `bool`
+#        True if the netCDF instance dimension name has been set,
+#        otherwise False.
+#
+#**Examples:**
+#
+#>>> f.nc_set_instance_dimension('time')
+#>>> f.nc_has_instance_dimension()
+#True
+#>>> f.nc_get_instance_dimension()
+#'time'
+#>>> f.nc_del_instance_dimension()
+#'time'
+#>>> f.nc_has_instance_dimension()
+#False
+#>>> print(f.nc_get_instance_dimension(None))
+#None
+#>>> print(f.nc_del_instance_dimension(None))
+#None 
+#        '''
+#        return 'instance_dimension' in self._get_component('netcdf')
+#    #--- End: def
+#
+#    def nc_set_instance_dimension(self, value):
+#        '''Set the netCDF instance dimension name.
+#
+#.. versionadded:: 1.7.0
+#
+#.. seealso:: `nc_del_instance_dimension`, `nc_get_instance_dimension`,
+#             `nc_has_instance_dimension`
+#             
+#:Parameters:
+#
+#    value: `str`
+#        The value for the netCDF instance dimension name.
+#
+#:Returns:
+#
+#    `None`
+#
+#**Examples:**
+#
+#>>> f.nc_set_instance_dimension('time')
+#>>> f.nc_has_instance_dimension()
+#True
+#>>> f.nc_get_instance_dimension()
+#'time'
+#>>> f.nc_del_instance_dimension()
+#'time'
+#>>> f.nc_has_instance_dimension()
+#False
+#>>> print(f.nc_get_instance_dimension(None))
+#None
+#>>> print(f.nc_del_instance_dimension(None))
+#None
+# 
+#        '''
+#        self._get_component('netcdf')['instance_dimension'] = value
+#    #--- End: def
+#
+##--- End: class
 
 
 class NetCDFDataVariable(NetCDF):

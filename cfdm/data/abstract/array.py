@@ -67,7 +67,7 @@ rules, the only differences being:
 .. versionadded:: 1.7.0
 
         '''
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
     #--- End: def
 
     def __repr__(self):

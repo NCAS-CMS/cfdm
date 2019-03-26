@@ -407,7 +407,9 @@ False
 "Can't remove domain axis {!r} that is spanned by the data of the field construct".format(
     key))
 
-        return self.constructs._del_construct(key, default=default)
+        return super().del_construct(key, default=default)
+        
+#        return self.constructs._del_construct(key, default=default)
     #--- End: def
 
     def set_data(self, data, axes, copy=True):

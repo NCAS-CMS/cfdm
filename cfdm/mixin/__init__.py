@@ -11,7 +11,7 @@ from .netcdf                      import (NetCDFDataVariable,
                                           NetCDFDimension,
                                           NetCDFExternal,
                                           NetCDFGeometry,
-                                          NetCDFInstanceDimension,
+#                                          NetCDFInstanceDimension,
                                           NetCDFSampleDimension,
                                           NetCDFVariable)
 

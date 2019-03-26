@@ -80,7 +80,7 @@ rules, the only differences being:
 .. versionadded:: 1.7.0
 
         '''
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
     #--- End: def
 
     def _get_compressed_Array(self, default=ValueError()):
