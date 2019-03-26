@@ -49,6 +49,6 @@ class DomainTest(unittest.TestCase):
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
-    print(cfdm.environment())
+    print(cfdm.environment(display=False))
     print('')
     unittest.main(verbosity=2)
