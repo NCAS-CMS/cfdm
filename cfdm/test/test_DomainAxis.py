@@ -20,7 +20,7 @@ class DomainTest(unittest.TestCase):
         self.test_only = []
     #--- End: def
 
-    def test_DomainAxis__repr__str(self):
+    def test_DomainAxis__repr__str_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -29,6 +29,7 @@ class DomainTest(unittest.TestCase):
         for d in f.domain_axes.values():            
             _ = repr(d)
             _ = str(d)
+            self.assertTrue(d.construct_type == 'domain_axis')
     #--- End: def
 
     def test_DomainAxis_equals(self):

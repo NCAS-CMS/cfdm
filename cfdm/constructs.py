@@ -264,6 +264,66 @@ instances are equal.
         return True
     #--- End: def
 
+    def _equals_coordinate_reference(self, other, rtol=None,
+                                     atol=None, verbose=False,
+                                     ignore_type=False,
+                                     axis1_to_axis0=None,
+                                     key1_to_key0=None):
+        '''
+        '''
+        refs0 = dict(self.filter_by_type('coordinate_reference'))
+        refs1 = dict(other.filter_by_type('coordinate_reference'))
+
+        if len(refs0) != len(refs1):
+            if verbose:
+                print("{0}: Different numbers of {1} constructs: {2} != {3}".format(
+                    self.__class__.__name__, 'coordinate reference',
+                    len(refs0), len(refs1)))
+                return False
+
+        if refs0:
+            for ref0 in refs0.values():
+                found_match = False
+                for key1, ref1 in tuple(refs1.items()):
+                    if not ref0.equals(ref1, rtol=rtol, atol=atol,
+                                       verbose=False,
+                                       ignore_type=ignore_type):
+                        continue
+
+                    # Coordinates
+                    coordinates0 = ref0.coordinates()
+                    coordinates1 = set()
+                    for value in ref1.coordinates():
+                        coordinates1.add(key1_to_key0.get(value, value))
+                        
+                    if coordinates0 != coordinates1:
+                        continue
+    
+                    # Domain ancillary-valued coordinate conversion terms
+                    terms0 = ref0.coordinate_conversion.domain_ancillaries()
+
+                    terms1 = {term: key1_to_key0.get(key, key)
+                              for term, key in ref1.coordinate_conversion.domain_ancillaries().items()}
+
+                    if terms0 != terms1:
+                        continue
+    
+                    found_match = True
+                    del refs1[key1]                                       
+                    break
+                #--- End: for
+    
+                if not found_match:
+                    if verbose:
+                        print("{0}: No match for {1!r})".format(
+                            self.__class__.__name__, ref0))
+                    return False
+            #--- End: for
+        #--- End: if
+
+        return True
+    #--- End: def
+
     def _equals_domain_axis(self, other, rtol=None, atol=None,
                             verbose=False, ignore_type=False,
                             axis1_to_axis0=None, key1_to_key0=None):
@@ -368,10 +428,10 @@ The identity is the first found of the following:
 
         constructs_data_axes = self.data_axes()
 
+        # Try to get the identity from an dimension coordinate
         identity = ''
         for dkey, dim in self.filter_by_type('dimension_coordinate').items():
-            if constructs_data_axes[dkey] == (key,):
-                # Get the identity from a dimension coordinate
+            if constructs_data_axes.get(dkey) == (key,):
                 identity = dim.identity()
                 if identity.startswith('ncvar%'):
                     identity = ''
@@ -381,17 +441,16 @@ The identity is the first found of the following:
         if identity:
             return identity
 
+        # Try to get the identity from an auxiliary coordinate
         identities = []
         for akey, aux in self.filter_by_type('auxiliary_coordinate').items():
-            if constructs_data_axes[akey] == (key,):
+            if constructs_data_axes.get(akey) == (key,):
                 identity = aux.identity()
                 if not identity.startswith('ncvar%'):
                     identities.append(identity)
         #--- End: for
 
-        if not identities:
-            pass
-        elif len(identities) == 1:
+        if len(identities) == 1:
             return identities[0]
         elif len(identities) > 1:
             cf_role = []
@@ -410,9 +469,9 @@ The identity is the first found of the following:
                 return axis[0]
         #--- End: if
 
+        # Try to get the identity from an netCDF dimension name
         ncdim = domain_axes[key].nc_get_dimension(None)
         if ncdim is not None:
-            # Get the identity from a netCDF dimension
             return 'ncdim%{0}'.format(ncdim)
 
         # Get the identity from the domain axis construct key
@@ -520,16 +579,16 @@ False
         # ------------------------------------------------------------
         # Constructs with arrays
         # ------------------------------------------------------------
+        log = []
         axes_to_constructs0 = self._axes_to_constructs()
         axes_to_constructs1 = other._axes_to_constructs()
         for axes0, constructs0 in axes_to_constructs0.items():
             matched_all_constructs_with_these_axes = False
 
-            log = []
              
             len_axes0 = len(axes0) 
             for axes1, constructs1 in tuple(axes_to_constructs1.items()):
-                log = []
+
                 constructs1 = constructs1.copy()
 
                 if len_axes0 != len(axes1):
@@ -547,7 +606,9 @@ False
                         # There are the different numbers of
                         # constructs of this type
                         matched_all_constructs_with_these_axes = False
-                        log.append('Different numbers of '+construct_type)
+                        log.append("{0}: Different numbers of {1} constructs: {2} != {3}".format(
+                            self.__class__.__name__, construct_type,
+                            len(role_constructs0), len(role_constructs1)))
                         break
 #                    elif not role_constructs0:
 #                        break
@@ -589,7 +650,6 @@ False
                 #--- End: for
 
                 matched_all_constructs_with_these_axes = not constructs1
-
                 if matched_all_constructs_with_these_axes:
                     del axes_to_constructs1[axes1]
                     break
@@ -600,7 +660,8 @@ False
                     names = [self.domain_axis_identity(axis0) for axis0 in axes0]
                     print("{0}: Can't match constructs spanning axes {1}".format(
                         self.__class__.__name__, names))
-                    print('\n'.join(log))
+                    if log:
+                        print('\n'.join(log))
 #                    print()
 ##                    print(axes_to_constructs0)
 #                    print(self)
@@ -663,7 +724,7 @@ False
              `filter_by_method`, `filter_by_identity`,
              `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`
+             `filters_applied`, `inverse_filter`, `unfilter`
 
 :Parameters:
 
@@ -722,24 +783,33 @@ Select constructs whose data spans the "domainaxis1" or the
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() + ({'filter_by_axis': (mode, axes)},)
 
-        _or = False
+        # Parse the mode parameter
+        _and  = False
+        _or   = False
+#        _only = False
         if mode:
             if len(mode) > 1:
-                raise ValueError("Can provide at most one positional argument")
+                raise ValueError("Can provide at most one mode value")
             
-            x = mode[0]
-            if x == 'or':
+            mode = mode[0]
+            if mode == 'or':
                 _or = True
-            elif x != 'and':
-                raise ValueError("Positional argument, if provided, must 'or' or 'and'")
-        #--- End: if
+#            elif mode == 'only':
+#                _only = True
+            elif mode == 'and':
+                _and = True
+            else:
+                raise ValueError(
+                    "mode value, if provided, must be one of 'and', 'or'") #, 'only'")
+        else:
+            _and = True
             
         constructs_data_axes = self.data_axes()
         
         for cid in tuple(out):
             x = constructs_data_axes.get(cid)
             if x is None:
-                # This construct does not have data
+                # This construct does not have data axes
                 out._pop(cid)
                 continue
 
@@ -758,8 +828,7 @@ Select constructs whose data spans the "domainaxis1" or the
             #--- End: for
 
             if not ok:
-                # This construct does not match any of the sets of
-                # properties
+                # This construct ..
                 out._pop(cid)
         #--- End: for
         
@@ -779,7 +848,7 @@ constructs selected by this method will all have `!get_data` method.
              `filter_by_method`, `filter_by_identity`,
              `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`
+             `filters_applied`, `inverse_filter`, `unfilter`
 
 :Returns:
 
@@ -816,7 +885,7 @@ Select constructs that could contain data:
              `filter_by_measure`, `filter_by_method`,
              `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`
+             `filters_applied`, `inverse_filter`, `unfilter`
 
 :Parameters:
 
@@ -911,7 +980,7 @@ Select constructs that have a netCDF variable name of 'time':
              `filter_by_method`, `filter_by_identity`,
              `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`
+             `filters_applied`, `inverse_filter`, `unfilter`
 
 :Parameters:
 
@@ -964,7 +1033,7 @@ Select the constructs with keys 'dimensioncoordinate1' or
              `filter_by_method`, `filter_by_identity`,
              `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`
+             `filters_applied`, `inverse_filter`, `unfilter`
 
 :Parameters:
 
@@ -1067,7 +1136,7 @@ Constructs:
              `filter_by_measure`, `filter_by_identity`,
              `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`
+             `filters_applied`, `inverse_filter`, `unfilter`
 
 :Parameters:
 
@@ -1168,7 +1237,7 @@ Constructs:
              `filter_by_measure`, `filter_by_method`,
              `filter_by_identity`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`
+             `filters_applied`, `inverse_filter`, `unfilter`
 
 :Parameters:
 
@@ -1248,7 +1317,7 @@ Select the domain axis constructs with netCDF dimension name 'time' or
              `filter_by_measure`, `filter_by_method`,
              `filter_by_identity`, `filter_by_ncdim`,
              `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`
+             `filters_applied`, `inverse_filter`, `unfilter`
 
 :Parameters:
 
@@ -1340,7 +1409,7 @@ Select the constructs with netCDF variable name 'time' or 'lat':
              `filter_by_measure`, `filter_by_method`,
              `filter_by_identity`, `filter_by_ncdim`,
              `filter_by_ncvar`, `filter_by_type`, `filters_applied`,
-             `inverse_filter`
+             `inverse_filter`, `unfilter`
 
 :Parameters:
         
@@ -1461,7 +1530,7 @@ with the string 'air':
              `filter_by_measure`, `filter_by_method`,
              `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_identity`, `filter_by_property`,
-             `filters_applied`, `inverse_filter`
+             `filters_applied`, `inverse_filter`, `unfilter`
 
 :Parameters:
 
@@ -1512,13 +1581,11 @@ Select dimension coordinate and field ancillary constructs:
     def filters_applied(self):
         '''A history of filters that have been applied.
 
-The history is returned in a `tuple` by the `filters_applied`
-method. The last element of the tuple describes the last filter
-applied. Each element is a single-entry dictionary whose key is the
-name of the filter method that was used, with a value that gives the
-arguments that were passed to the call of that method.
-
-If no filters have been applied then the tuple is empty.
+The history is returned in a tuple. The last element of the tuple
+describes the last filter applied. Each element is a single-entry
+dictionary whose key is the name of the filter method that was used,
+with a value that gives the arguments that were passed to the call of
+that method. If no filters have been applied then the tuple is empty.
 
 .. versionadded:: 1.7.0
 
@@ -1526,7 +1593,7 @@ If no filters have been applied then the tuple is empty.
              `filter_by_measure`, `filter_by_method`,
              `filter_by_identity`, `filter_by_ncdim`,
              `filter_by_ncvar`, `filter_by_property`,
-             `filter_by_type`, `inverse_filter`
+             `filter_by_type`, `inverse_filter`, `unfilter`
 
 :Returns:
 
@@ -1576,11 +1643,14 @@ Constructs:
         '''Return the inverse of the previous filter.
 
 The inverse comprises all of the constructs that were *not* selected
-by the last filter applied.
+by the last filter applied. If no filters have been applied, or the
+last filter was an inverse filter, then an empty `Constructs` instance
+is returned.
 
 A history of the filters that have been applied is returned in a
 `tuple` by the `filters_applied` method. The last element of the tuple
-describes the last filter applied.
+describes the last filter applied. If no filters have been applied
+then the tuple is empty.
 
 .. versionadded:: 1.7.0
 
@@ -1588,14 +1658,15 @@ describes the last filter applied.
              `filter_by_measure`, `filter_by_method`,
              `filter_by_identity`, `filter_by_ncdim`,
              `filter_by_ncvar`, `filter_by_property`,
-             `filter_by_type`, `filters_applied`
+             `filter_by_type`, `filters_applied`, `unfilter`
 
 :Returns:
 
     `Constructs`
         The constructs, and their construct keys, that were not
         selected by the last filter applied. If no filtering has been
-        applied then an empty `Constructs` instance is returned.
+        applied, or the last filter was an inverse filter, then an
+        empty `Constructs` instance is returned.
 
 **Examples:**
 
@@ -1611,59 +1682,41 @@ Constructs:
 >>> print(c.inverse_filter())
 Constructs:
 {}
->>> c = c.filter_by_type('dimension_coordinate', 'cell_method')
->>> print c
+>>> d = c.filter_by_type('dimension_coordinate', 'cell_method')
+>>> print(d)
 Constructs:
 {'cellmethod0': <CellMethod: area: mean>,
  'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
  'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
  'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
->>> print(c.inverse_filter())
+>>> print(d.inverse_filter())
 Constructs:
 {'domainaxis0': <DomainAxis: size(5)>,
  'domainaxis1': <DomainAxis: size(8)>,
  'domainaxis2': <DomainAxis: size(1)>}
->>> c.filter_by_method('mean')
->>> print c
+>>> e = d.filter_by_method('mean')
+>>> print(e)
 Constructs:
 {'cellmethod0': <CellMethod: area: mean>}
->>> print(c.inverse_filter())
+>>> print(e.inverse_filter())
 Constructs:
 {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
  'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
  'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
 
-The inverse filter of the inverse filter is null operation:
+The inverse filter of the inverse filter always returns no constructs:
 
->>> print(c)
-Constructs:
-{'cellmethod0': <CellMethod: area: mean>,
- 'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
- 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
- 'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
- 'domainaxis0': <DomainAxis: size(5)>,
- 'domainaxis1': <DomainAxis: size(8)>,
- 'domainaxis2': <DomainAxis: size(1)>}
->>> c = c.filter_by_type('domain_axis')
->>> print(c)
-Constructs:
-{'domainaxis0': <DomainAxis: size(5)>,
- 'domainaxis1': <DomainAxis: size(8)>,
- 'domainaxis2': <DomainAxis: size(1)>}
->>> print(c.inverse_filter().inverse_filter())
-Constructs:
-{'domainaxis0': <DomainAxis: size(5)>,
- 'domainaxis1': <DomainAxis: size(8)>,
- 'domainaxis2': <DomainAxis: size(1)>}
+>>> d.inverse_filter().inverse_filter()
+<Constructs: >
 
         '''
-        prefiltered = getattr(self, '_prefiltered', self)
-
-        out = prefiltered.shallow_copy()
+        out = self.unfilter()
 
         for key in self:
             out._pop(key)
-        
+
+        out._filters_applied = self.filters_applied() + ({'inverse_filter': ()},)
+            
         return out
     #--- End: def
     
@@ -1693,64 +1746,75 @@ Constructs:
         return out
     #--- End: def
 
-    def _equals_coordinate_reference(self, other, rtol=None,
-                                     atol=None, verbose=False,
-                                     ignore_type=False,
-                                     axis1_to_axis0=None,
-                                     key1_to_key0=None):
+    def unfilter(self):
+        '''Return the constructs from before the previous filter.
+
+The unfiltered constructs are all of those that existed before the
+last filter was applied. If no filters have been applied then all of
+the constructs are returned.
+
+A history of the filters that have been applied is returned in a
+`tuple` by the `filters_applied` method. The last element of the tuple
+describes the last filter applied. If no filters have been applied
+then the tuple is empty.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_method`,
+             `filter_by_identity`, `filter_by_ncdim`,
+             `filter_by_ncvar`, `filter_by_property`,
+             `filter_by_type`, `filters_applied`, `inverse_filter`
+
+:Returns:
+
+    `Constructs`
+        The constructs, and their construct keys, that existed before
+        the last filter was applied. If no filters have been applied
+        then all of the constructs are returned.
+
+**Examples:**
+
+>>> print(c)
+Constructs:
+{'cellmethod0': <CellMethod: area: mean>,
+ 'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+ 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+ 'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+ 'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
+>>> d = c.filter_by_type('dimension_coordinate', 'cell_method')
+>>> print(d)
+Constructs:
+{'cellmethod0': <CellMethod: area: mean>,
+ 'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+ 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+ 'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+>>> d.unfilter().equals(c)
+True
+>>> e = d.filter_by_method('mean')
+>>> print(e)
+Constructs:
+{'cellmethod0': <CellMethod: area: mean>}
+>>> e.unfilter().equals(d)
+True
+>>> e.unfilter().unfilter().equals(c)
+True
+
+If no filters have been applied then the unfiltered constructs are unchanged:
+
+>>> c.filters_applied()
+()
+>>> c.unfilter().equals(c)
+True
+
         '''
-        '''
-        refs0 = dict(self.filter_by_type('coordinate_reference'))
-        refs1 = dict(other.filter_by_type('coordinate_reference'))
-
-        if len(refs0) != len(refs1):
-            if verbose:
-                print(
-"Verbose: Different coordinate references: {0!r}, {1!r}".format(
-    list(refs0.values()), list(refs1.values())))
-            return False
-
-        if refs0:
-            for ref0 in refs0.values():
-                found_match = False
-                for key1, ref1 in tuple(refs1.items()):
-                    if not ref0.equals(ref1, rtol=rtol, atol=atol,
-                                       verbose=False,
-                                       ignore_type=ignore_type):
-                        continue
-
-                    # Coordinates
-                    coordinates0 = ref0.coordinates()
-                    coordinates1 = set()
-                    for value in ref1.coordinates():
-                        coordinates1.add(key1_to_key0.get(value, value))
-                        
-                    if coordinates0 != coordinates1:
-                        continue
-    
-                    # Domain ancillary-valued coordinate conversion terms
-                    terms0 = ref0.coordinate_conversion.domain_ancillaries()
-
-                    terms1 = {term: key1_to_key0.get(key, key)
-                              for term, key in ref1.coordinate_conversion.domain_ancillaries().items()}
-
-                    if terms0 != terms1:
-                        continue
-    
-                    found_match = True
-                    del refs1[key1]                                       
-                    break
-                #--- End: for
-    
-                if not found_match:
-                    if verbose:
-                        print(
-"Verbose: No match for {0!r})".format(ref0))
-                    return False
-            #--- End: for
-        #--- End: if
-
-        return True
+        prefiltered = getattr(self, '_prefiltered', self)
+        if prefiltered is None:
+            prefiltered = self
+                
+        return prefiltered.shallow_copy()
     #--- End: def
-
+    
 #--- End: class

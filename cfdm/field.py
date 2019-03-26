@@ -149,47 +149,25 @@ x.__str__() <==> str(x)
             string.append('Cell methods    : {0}'.format(c))
         #--- End: if
         
-        def _print_item(self, key, variable, axes, dimension_coord):
-            '''Private function called by __str__'''
-            
-            if dimension_coord:
-                # Dimension coordinate
-                axis = self.construct.data_axes()[key][0]
-                name = variable.identity(default=key)
-                if variable.has_data():
-                    name += '({0})'.format(variable.get_data().size)
-                elif hasattr(variable, 'nc_get_external'):
-                    if variable.nc_get_external():
-                        ncvar = variable.nc_get_variable(None)
-                        if ncvar is not None:
-                            x.append(' (external variable: ncvar%{})'.format(ncvar))
-                        else:
-                            x.append(' (external variable)')
-                            
-                if variable is None:
-                    return name
-                          
-                x = [name]
-                
-            else:
-                # Auxiliary coordinate
-                # Cell measure
-                # Field ancillary
-                # Domain ancillary
-                x = [variable.identity(default=key)]
+        def _print_item(self, key, variable, axes):
+            '''Private function called by __str__
 
-                if variable.has_data():
-                    shape = [axis_names[axis] for axis in axes]
-                    shape = str(tuple(shape)).replace("'", "")
-                    shape = shape.replace(',)', ')')
-                    x.append(shape)
-                elif hasattr(variable, 'nc_get_external'):
-                    if variable.nc_get_external():
-                        ncvar = variable.nc_get_variable(None)
-                        if ncvar is not None:
-                            x.append(' (external variable: ncvar%{})'.format(ncvar))
-                        else:
-                            x.append(' (external variable)')
+            '''
+            # Field ancillary
+            x = [variable.identity(default=key)]
+
+            if variable.has_data():
+                shape = [axis_names[axis] for axis in axes]
+                shape = str(tuple(shape)).replace("'", "")
+                shape = shape.replace(',)', ')')
+                x.append(shape)
+            elif hasattr(variable, 'nc_get_external'):
+                if variable.nc_get_external():
+                    ncvar = variable.nc_get_variable(None)
+                    if ncvar is not None:
+                        x.append(' (external variable: ncvar%{})'.format(ncvar))
+                    else:
+                        x.append(' (external variable)')
             #--- End: if
                 
             if variable.has_data():
@@ -199,7 +177,7 @@ x.__str__() <==> str(x)
         #--- End: def
                           
         # Field ancillary variables
-        x = [_print_item(self, key, anc, self.constructs.data_axes()[key], False)
+        x = [_print_item(self, key, anc, self.constructs.data_axes()[key])
              for key, anc in sorted(self.field_ancillaries.items())]
         if x:
             string.append('Field ancils    : {}'.format(
@@ -340,48 +318,6 @@ rules, the only differences being:
             units += ' {0}'.format(calendar)
             
         return "{0}{1}{2}".format(self.identity(''), axis_names, units)
-    #--- End: def
-
-    def _dump_axes(self, axis_names, display=True, _level=0):
-        '''Return a string containing a description of the domain axes of the
-field.
-    
-:Parameters:
-    
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed.
-    
-    _level: `int`, optional
-
-:Returns:
-    
-    `str`
-        A string containing the description.
-    
-**Examples:**
-
-        '''
-        indent1 = '    ' * _level
-        indent2 = '    ' * (_level+1)
-
-        data_axes = self.get_data_axes(default=())
-
-        axes = self.domain_axes
-
-        w = sorted(["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
-                    for axis in axes
-                    if axis not in data_axes])
-
-        x = ["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
-             for axis in data_axes]
-
-        string = '\n'.join(w+x)
-
-        if display:
-            print(string)
-        else:
-            return string
     #--- End: def
 
     def _set_dataset_compliance(self, value):

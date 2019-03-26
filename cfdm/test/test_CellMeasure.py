@@ -20,16 +20,17 @@ class CellMeasureTest(unittest.TestCase):
         self.test_only = []
     #--- End: def
 
-    def test_CellMeasure__repr__str__dump(self):
+    def test_CellMeasure__repr__str__dump_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         f = self.f
 
-        for cr in f.cell_measures.values():
-            _ = repr(cr)
-            _ = str(cr)
-            _ = cr.dump(display=False)
+        for cm in f.cell_measures.values():
+            _ = repr(cm)
+            _ = str(cm)
+            _ = cm.dump(display=False)
+            self.assertTrue(cm.construct_type == 'cell_measure')
     #--- End: def
 
     def test_CellMeasure(self):
@@ -39,9 +40,6 @@ class CellMeasureTest(unittest.TestCase):
         f = self.f.copy()
 
         cm = f.construct('measure:area')
-        _ = repr(cm)
-        _ = str(cm)
-        _ = cm.dump(display=False)
 
         self.assertTrue(cm.has_measure())
         self.assertTrue(cm.get_measure() == 'area')

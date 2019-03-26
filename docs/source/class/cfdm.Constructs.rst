@@ -32,6 +32,7 @@ Filtering
    ~cfdm.Constructs.filter_by_ncvar
    ~cfdm.Constructs.filters_applied
    ~cfdm.Constructs.inverse_filter
+   ~cfdm.Constructs.unfilter
 
 Constructs and keys
 -------------------

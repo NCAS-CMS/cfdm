@@ -108,22 +108,25 @@ class Constructs(object):
             self._construct_type       = source._construct_type.copy()
             self._constructs           = source._constructs.copy()
 
-            for construct_type in self._ignore:
-                self._key_base.pop(construct_type, None)
-                self._array_constructs.discard(construct_type)
-                self._non_array_constructs.discard(construct_type)
-                self._ordered_constructs.discard(construct_type)
+            #for construct_type in self._ignore:
+            #    self._key_base.pop(construct_type, None)
+            #    self._array_constructs.discard(construct_type)
+            #    self._non_array_constructs.discard(construct_type)
+            #    self._ordered_constructs.discard(construct_type)
             
             d = {}            
             for construct_type in source._array_constructs:
                 if construct_type in self._ignore:
-                    for cid in source._constructs[construct_type]:
+                    for cid in source._constructs.get(construct_type, ()):
                         self._construct_axes.pop(cid, None)
                         self._construct_type.pop(cid, None)
                     #--- End: for
                     
                     continue
-                
+
+                if construct_type not in source._constructs:
+                    continue
+                    
                 if copy:
                     if construct_type in source._ordered_constructs:
                         new_v = OrderedDict()
@@ -140,10 +143,13 @@ class Constructs(object):
             
             for construct_type in source._non_array_constructs:
                 if construct_type in self._ignore:
-                    for cid in source._constructs[construct_type]:
+                    for cid in source._constructs.get(construct_type, ()):
                         self._construct_type.pop(cid, None)
                     continue
                 
+                if construct_type not in source._constructs:
+                    continue
+                    
                 if copy:
                     if construct_type in source._ordered_constructs:
                         new_v = OrderedDict()
@@ -616,13 +622,14 @@ reference is replace with `None`.
             #---------------------------------------------------------
             # The construct could have a data array
             #---------------------------------------------------------
-            if axes is None:
-                raise ValueError(
-"Can't set {} construct: Must specify the domain axes for the data array".format(
-    self._construct_type_description(construct_type)))
+#            if axes is None:
+#                raise ValueError(
+#"Can't set {} construct: Must specify the domain axes for the data array".format(
+#    self._construct_type_description(construct_type)))
 
-            self._set_construct_data_axes(key=key, axes=axes,
-                                          construct=construct)
+            if axes is not None:
+                self._set_construct_data_axes(key=key, axes=axes,
+                                              construct=construct)
         elif axes is not None:
             raise ValueError(
 "Can't set {!r}: Can't provide domain axis constructs for {} construct".format(
@@ -692,7 +699,7 @@ reference is replace with `None`.
             axes = (axes,)
             
         domain_axes = self.filter_by_type('domain_axis')
-        
+
         axes_shape = []
         for axis in axes:
             if axis not in domain_axes:

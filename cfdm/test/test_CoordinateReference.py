@@ -20,7 +20,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.test_only = []
     #--- End: def
 
-    def test_CoordinateReference__repr__str__dump(self):
+    def test_CoordinateReference__repr__str__dump_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -30,6 +30,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             _ = repr(cr)
             _ = str(cr)
             _ = cr.dump(display=False)
+            self.assertTrue(cr.construct_type == 'coordinate_reference')
     #--- End: def
 
     def test_CoordinateReference_equals(self):
