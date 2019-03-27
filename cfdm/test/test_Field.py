@@ -365,18 +365,18 @@ class FieldTest(unittest.TestCase):
 
         f = cfdm.Field()
 
-        f.nc_set_global_attributes(['Conventions', 'project'])
-        self.assertTrue(f.nc_global_attributes() == set(['Conventions', 'project']))
+        f.nc_set_global_attributes({'Conventions': None, 'project': None})
+        self.assertTrue(f.nc_global_attributes() == {'Conventions': None, 'project': None}) #set(['Conventions', 'project']))
         
-        f.nc_set_global_attributes(['project', 'comment'])
-        self.assertTrue(f.nc_global_attributes() == set(['Conventions', 'project', 'comment']), f.nc_global_attributes())
+        f.nc_set_global_attributes({'project': None, 'comment': None})
+        self.assertTrue(f.nc_global_attributes() == {'Conventions': None, 'project': None, 'comment': None}) #set(['Conventions', 'project', 'comment']), f.nc_global_attributes())
         
         x = f.nc_clear_global_attributes()
-        self.assertTrue(x == set(['Conventions', 'project', 'comment']), repr(x))
-        self.assertTrue(f.nc_global_attributes() == set())
+        self.assertTrue(x == {'Conventions': None, 'project': None, 'comment': None}) #set(['Conventions', 'project', 'comment']), repr(x))
+        self.assertTrue(f.nc_global_attributes() == {}) #set())
         
-        f.nc_set_global_attributes(['Conventions', 'project'])
-        self.assertTrue(f.nc_global_attributes() == set(['Conventions', 'project']))
+        f.nc_set_global_attributes({'Conventions': None, 'project': None}) #['Conventions', 'project'])
+        self.assertTrue(f.nc_global_attributes() == {'Conventions': None, 'project': None}) #set(['Conventions', 'project']))
     #--- End: def
 
     def test_Field_nc_unlimited_dimensions(self):

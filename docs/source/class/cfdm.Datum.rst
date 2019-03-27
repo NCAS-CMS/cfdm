@@ -25,6 +25,8 @@ Parameter terms
    ~cfdm.Datum.has_parameter
    ~cfdm.Datum.set_parameter
    ~cfdm.Datum.parameters
+   ~cfdm.Datum.set_parameters
+   ~cfdm.Datum.clear_parameters
 
 Miscellaneous
 -------------

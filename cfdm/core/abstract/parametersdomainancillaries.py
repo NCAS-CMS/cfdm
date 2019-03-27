@@ -31,7 +31,7 @@ domain ancillary constructs.
          ``parameters={'earth_radius': 6371007.}``
 
        Parameters may also be set after initialisation with the
-       `parameters` and `set_parameter` methods.
+       `set_parameters` and `set_parameter` methods.
 
     domain_ancillaries: `dict`, optional
        Set references to domain ancillary constructs. The dictionary
@@ -42,7 +42,8 @@ domain ancillary constructs.
          ``domain_ancillaries={'orog': 'domainancillary2'}``
 
        Domain ancillaries may also be set after initialisation with
-       the `domain_ancillaries` and `set_domain_ancillary` methods.
+       the `set_domain_ancillaries` and `set_domain_ancillary`
+       methods.
 
     source: optional
         Initialize the parameters and domain ancillary terms from
@@ -73,9 +74,41 @@ domain ancillary constructs.
                 domain_ancillaries[key] = deepcopy(value)
         #--- End: if
             
-        self.domain_ancillaries(domain_ancillaries, copy=False)
+        self.set_domain_ancillaries(domain_ancillaries, copy=False)
     #--- End: def
 
+    def clear_domain_ancillaries(self):
+        '''Remove all domain_ancillaries.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
+             `set_domain_ancillaries`
+
+:Returns:
+
+    `dict`
+        The domain ancillaries that have been removed.
+
+**Examples:**
+
+>>> old = f.clear_domain_ancillaries()
+>>> old
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1',
+ 'orog': 'domainancillary2'}
+>>> f.set_domain_ancillaries(old)
+>>> f.domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1',
+ 'orog': 'domainancillary2'}
+
+        '''
+        out = self._get_component('domain_ancillaries')
+        self._set_component('domain_ancillaries', {})
+        return out.copy()
+    #--- End: def
+    
     def copy(self):
         '''Return a deep copy.
 
@@ -147,65 +180,36 @@ None
                                      self.__class__.__name__, domain_ancillary))
     #--- End: def
 
-    def domain_ancillaries(self, domain_ancillaries=None, copy=True):
-        '''Return or replace all domain ancillary-valued terms.
+    def domain_ancillaries(self):
+        '''Return all domain_ancillaries.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_domain_ancillary`, `get_domain_ancillary`,
-             `parameters`, `set_domain_ancillary`
-
-:Parameters:
-
-    domain_ancillaries: `dict`, optional
-        Delete all existing named domain ancillary, and instead store
-        those from the dictionary supplied.
-
-        *Parameter example:*
-          ``domain_ancillaries={'orog': 'domainancillary1'}``
-
-        *Parameter example:*
-          ``domain_ancillaries={}``
-
-    copy: `bool`, optional
-        If False then any terms provided by the *domain_ancillaries*
-        parameter are not copied before insertion. By default they are
-        deep copied.
+.. seealso:: `clear_domain_ancillaries`, `get_domain_ancillary`,
+             `has_domain_ancillaryr` `set_domain_ancillaries`
 
 :Returns:
 
     `dict`
-        The domain ancillary terms or, if the *domain_ancillaries*
-        parameter was set, the original terms.
+        The domain ancillaries.
 
 **Examples:**
 
->>> c.coordinate_conversion.domain_ancillaries()
+>>> old = f.clear_domain_ancillaries()
+>>> old
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1',
+ 'orog': 'domainancillary2'}
+>>> f.set_domain_ancillaries(old)
+>>> f.domain_ancillaries()
 {'a': 'domainancillary0',
  'b': 'domainancillary1',
  'orog': 'domainancillary2'}
 
->>> c.coordinate_conversion.domain_ancillaries()
-{'a': 'domainancillary0',
- 'b': 'domainancillary1',
- 'orog': None}
-
-
         '''
-        out = self._get_component('domain_ancillaries').copy()
-
-        if domain_ancillaries is not None:
-            if copy:
-                properties = deepcopy(domain_ancillaries)
-            else:
-                properties = domain_ancillaries.copy()
-                
-            self._set_component('domain_ancillaries', domain_ancillaries,
-                                copy=False)
-
-        return out
+        return self._get_component('domain_ancillaries').copy()
     #--- End: def
-    
+
     def get_domain_ancillary(self, domain_ancillary,
                              default=ValueError()):
         '''Return a domain ancillary term.
@@ -296,6 +300,53 @@ None
         return domain_ancillary in self._get_component('domain_ancillaries')
     #--- End: def
     
+    def set_domain_ancillaries(self, domain_ancillaries, copy=True):
+        '''Set domain_ancillaries.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `clear_domain_ancillaries`, `domain_ancillaries`,
+             `set_domain_ancillary`
+
+:Parameters:
+
+    domain_ancillaries: `dict` 
+        Store the domain ancillaries from the dictionary supplied.
+
+        *Parameter example:*
+          ``domain_ancillaries={'earth_radius': 6371007}``
+
+    copy: `bool`, optional
+        If False then any parameter values provided by the
+        *domain_ancillaries* parameter are not copied before
+        insertion. By default they are deep copied.
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+>>> old = f.clear_domain_ancillaries()
+>>> old
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1',
+ 'orog': 'domainancillary2'}
+>>> f.set_domain_ancillaries(old)
+>>> f.domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary1',
+ 'orog': 'domainancillary2'}
+
+        '''
+        if copy:
+            domain_ancillaries = deepcopy(domain_ancillaries)                
+        else:
+            domain_ancillaries = domain_ancillaries.copy()
+        
+        self._get_component('domain_ancillaries').update(domain_ancillaries)
+    #--- End: def
+
     def set_domain_ancillary(self, term, value, copy=True):
         '''Set an domain ancillary-valued term.
 

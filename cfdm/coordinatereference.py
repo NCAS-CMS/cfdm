@@ -92,7 +92,7 @@ construct may be accessed with the `nc_set_variable`,
           ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1')``
 
         The coordinates may also be set after initialisation with the
-        `coordinates` and `set_coordinate` methods.
+        `set_coordinates` and `set_coordinate` methods.
 
     datum: `Datum`, optional
         Set the datum component of the coordinate reference

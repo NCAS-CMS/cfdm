@@ -74,7 +74,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         '''
         out = self._get_component('properties')
         self._set_component('properties', {})
-        return out
+        return out.copy()
     #--- End: def
 
     def copy(self):

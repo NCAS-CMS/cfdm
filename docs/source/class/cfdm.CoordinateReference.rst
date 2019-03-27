@@ -44,8 +44,11 @@ Coordinates
    :template: method.rst
 
    ~cfdm.CoordinateReference.del_coordinate
+   ~cfdm.CoordinateReference.has_coordinate
    ~cfdm.CoordinateReference.set_coordinate
    ~cfdm.CoordinateReference.coordinates
+   ~cfdm.CoordinateReference.clear_coordinates
+   ~cfdm.CoordinateReference.set_coordinates
 
 Datum
 -----

@@ -7,10 +7,11 @@ _implementation = implementation()
 
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           global_attributes=None, variable_attributes=None,
-          external=None, Conventions=None, datatype=None,
-          least_significant_digit=None, endian='native', compress=0,
-          fletcher32=False, shuffle=True, HDF_chunksizes=None,
-          verbose=False, _implementation=_implementation):
+          file_descriptors=None, external=None, Conventions=None,
+          datatype=None, least_significant_digit=None,
+          endian='native', compress=0, fletcher32=False, shuffle=True,
+          HDF_chunksizes=None, verbose=False,
+          _implementation=_implementation):
     '''Write field constructs to a netCDF file.
 
 **File format**
@@ -129,17 +130,62 @@ construct.
         If False then raise an error if the output file pre-exists. By
         default a pre-existing output file is overwritten.
 
+    Conventions: (sequence of) `str`, optional
+         Specify conventions to be recorded by the netCDF global
+         "Conventions" attribute. By default the current conventions
+         are always included, but if an older CF conventions is
+         defined then this is used instead.
+
+         *Parameter example:*
+           ``Conventions='UGRID-1.0'``
+
+         *Parameter example:*
+           ``Conventions=['UGRID-1.0']``
+
+         *Parameter example:*
+           ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
+
+         *Parameter example:*
+           ``Conventions='CF-1.7'``
+
+         *Parameter example:*
+           ``Conventions=['CF-1.7', 'UGRID-1.0']``
+
+         Note that if the "Conventions" property is set on a field
+         construct then it is ignored.
+
+    file_descriptors: `dict`, optional
+         Create description of file contents netCDF global attributes
+         from the specified attributes and their values.
+
+         If any field construct has a property with the same name then
+         it will be written as a netCDF data variable attribute, even
+         if it has been specified by the *global_attributes*
+         parameter, or has been flagged as global on any of the field
+         constructs (see `cfdm.Field.nc_global_attributes` for
+         details).
+
+         Identification of the conventions being adhered to by the
+         file are not specified as a file descriptor, but by the
+         *Conventions* parameter instead.
+
+         *Parameter example:*
+           ``file_attributes={'title': 'my data'}``
+
+         *Parameter example:*
+           ``file_attributes={'history': 'created 2019-01-01', 'foo': 'bar'}``
+
     global_attributes: (sequence of) `str`, optional
          Create netCDF global attributes from the specified field
          construct properties, rather than netCDF data variable
          attributes.
 
-         These attributes are in addition to the following properties,
-         which are created as netCDF global attributes by default:
+         These attributes are in addition to the following field
+         construct properties, which are created as netCDF global
+         attributes by default:
          
-           * the `description of file contents
-             <http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents>`_
-             properties, and
+           * the description of file contents properties (as defined
+             by the CF conventions), and
 
            * properties flagged as global on any of the field
              constructs being written (see
@@ -155,6 +201,10 @@ construct.
          corresponding to each field construct that contains the
          property.
 
+         Any global attributes that are also specified as file
+         descriptors will not be written as netCDF global variables,
+         but as netCDF data variable attributes instead.
+
          *Parameter example:*
            ``global_attributes='project'``
 
@@ -168,12 +218,14 @@ construct.
          Create netCDF data variable attributes from the specified
          field construct properties.
 
-         By default, all properties that are not created as netCDF
-         global properties are created as attributes netCDF data
-         variables. See the *global_attributes* parameter for details.
+         By default, all field construct properties that are not
+         created as netCDF global properties are created as attributes
+         netCDF data variables. See the *global_attributes* parameter
+         for details.
 
-         Any property named by the *variable_attributes* parameter
-         will always be created as a netCDF data variable attribute
+         Any field construct property named by the
+         *variable_attributes* parameter will always be created as a
+         netCDF data variable attribute
 
          *Parameter example:*
            ``variable_attributes='project'``
@@ -188,30 +240,6 @@ construct.
         Write metadata constructs that have data and are marked as
         external to the named external file. Ignored if there are no
         such constructs.
-
-    Conventions: (sequence of) `str`, optional
-         Specify conventions to be recorded by the netCDF global
-         "Conventions" attribute. By default the current conventions
-         are always included, in addition to any specified, but if an
-         older CF conventions is defined then this is used instead.
-
-         *Parameter example:*
-           ``Conventions='UGRID-1.0'``
-
-         *Parameter example:*
-           ``Conventions=['UGRID-1.0']``
-
-         *Parameter example:*
-           ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
-
-         *Parameter example:*
-           ``Conventions='1.7'``
-
-         *Parameter example:*
-           ``Conventions=['1.7', 'UGRID-1.0']``
-
-         Note that if the "Conventions" property is set on a field
-         construct then it is ignored.
 
     datatype: `dict`, optional
         Specify data type conversions to be applied prior to writing
@@ -325,8 +353,8 @@ construct.
         netCDF dimensions, variables and attributes.
 
     _implementation: (subclass of) `CFDMImplementation`, optional
-        Define the CF data model implementation that defines the field
-        constructs.
+        Define the CF data model implementation that defines field and
+        metadata constructs and their components.
 
 :Returns:
 
@@ -340,7 +368,7 @@ construct.
 
 >>> cfdm.write(f, 'file.nc', external='cell_measures.nc')
 
->>> cfdm.write(f, 'file.nc', conventions='CMIP-6.2')
+>>> cfdm.write(f, 'file.nc', Conventions='CMIP-6.2')
 
     '''
     # ----------------------------------------------------------------
@@ -352,6 +380,7 @@ construct.
         netcdf.write(fields, filename, fmt=fmt, overwrite=overwrite,
                      global_attributes=global_attributes,
                      variable_attributes=variable_attributes,
+                     file_descriptors=file_descriptors,
                      external=external, Conventions=Conventions,
                      datatype=datatype,
                      least_significant_digit=least_significant_digit,

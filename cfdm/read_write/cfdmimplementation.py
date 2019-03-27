@@ -1430,7 +1430,7 @@ netCDF unlimited dimensions.
 
     `None`
         '''
-        coordinate_reference.coordinates(coordinates)
+        coordinate_reference.set_coordinates(coordinates)
     #--- End: def
 
     def set_coordinate_reference_coordinate(self,

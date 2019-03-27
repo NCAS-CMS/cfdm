@@ -2574,11 +2574,11 @@ Method                            Description
 `~Field.nc_has_variable`          Whether the netCDF variable name has
                                   been set
 
-`~Field.nc_global_attributes`     Return or replace the selection of
+`~Field.nc_global_attributes`     Return or replace the selection of TODO
                                   properties to be written as netCDF
                                   global attributes
 
-`~Field.nc_unlimited_dimensions`  Return or replace the selection of
+`~Field.nc_unlimited_dimensions`  Return or replace the selection of TODO
                                   domain axis constructs to be written
                                   as netCDF unlimited dimensions
 ================================  ====================================
@@ -2590,7 +2590,7 @@ Method                            Description
    >>> q.nc_get_variable()
    'q'
    >>> q.nc_global_attributes()
-   {'project', 'Conventions'}
+   {'project': None, 'Conventions': None}
    >>> q.nc_unlimited_dimensions()
    set()
    >>> q.nc_set_variable('humidity')
@@ -2642,31 +2642,23 @@ Method                            Classes                                  NetCD
 			          
 `!nc_clear_global_attributes`     `Field`                                  Global attributes
 			          
-`!nc_unlimited_dimensions`        `Field`                                  Unlimited dimensions
+`!nc_unlimited_dimensions`        `Field`                                  Unlimited dimension names
 			     
-`!nc_set_unlimited_dimensions`    `Field`                                  Unlimited dimensions
+`!nc_set_unlimited_dimensions`    `Field`                                  Unlimited dimension names
 			     
-`!nc_clear_unlimited_dimensions`  `Field`                                  Unlimited dimensions
+`!nc_clear_unlimited_dimensions`  `Field`                                  Unlimited dimension names
 			     
 `!nc_get_external`                `CellMeasure`                            External variable status
 
 `!nc_set_external`                `CellMeasure`                            External variable status
 			          
-`!nc_del_instance_dimension`      `Index`                                  Instance dimension
+`!nc_del_sample_dimension`        `Count`, `Index`                         Sample dimension name
 			          
-`!nc_get_instance_dimension`      `Index`                                  Instance dimension
-			          
-`!nc_has_instance_dimension`      `Index`                                  Instance dimension
-			          
-`!nc_set_instance_dimension`      `Index`                                  Instance dimension
-  			          
-`!nc_del_sample_dimension`        `Count`, `Index`                         Sample dimension
-			          
-`!nc_get_sample_dimension`        `Count`, `Index`                         Sample dimension
+`!nc_get_sample_dimension`        `Count`, `Index`                         Sample dimension name
     			          
-`!nc_has_sample_dimension`        `Count`, `Index`                         Sample dimension
+`!nc_has_sample_dimension`        `Count`, `Index`                         Sample dimension name
 			          
-`!nc_set_sample_dimension`        `Count`, `Index`                         Sample dimension
+`!nc_set_sample_dimension`        `Count`, `Index`                         Sample dimension name
 ================================  =======================================  =====================================
    
 .. _Writing-to-disk:
@@ -2747,6 +2739,8 @@ The `cfdm.write` function has optional parameters to
 * set the output netCDF format (all netCDF3 and netCDF4 formats are
   possible);
 
+* set netCDF global attributes;
+  
 * specify which field construct properties should become netCDF data
   variable attributes and which should, if possible, become netCDF
   global attributes;
@@ -2786,6 +2780,9 @@ on disk and subsequently read back from that file.
    >>> q.equals(f)
    True
 
+It is possible for an attribute name to be both a netCDF global
+attribute and a netCDF data variable attribute, with different values. This is either done with the *file_descri TODO
+   
 .. _Scalar-coordinate-variables:
 
 **Scalar coordinate variables**

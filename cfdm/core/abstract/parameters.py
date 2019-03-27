@@ -26,7 +26,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
          ``parameters={'earth_radius': 6371007.}``
 
        Parameters may also be set after initialisation with the
-       `parameters` and `set_parameter` methods.
+       `set_parameters` and `set_parameter` methods.
 
     source: optional
         Initialize the parameters from those of *source*.
@@ -51,9 +51,42 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
             parameters = {}
             copy = False
 
-        self.parameters(parameters, copy=copy)
+        self.set_parameters(parameters, copy=copy)
     #--- End: def
 
+    def clear_parameters(self):
+        '''Remove all parameters.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_parameter`, `parameters`, `set_parameters`
+
+:Returns:
+
+    `dict`
+        The parameters that have been removed.
+
+**Examples:**
+
+>>> old = f.clear_parameters()
+>>> old
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
+>>> f.parameters()
+{}
+>>> f.set_parameters(old)
+>>> f.parameters()
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
+
+        '''
+        out = self._get_component('parameters')
+        self._set_component('parameters', {})
+        return out.copy()
+    #--- End: def
+    
     def copy(self):
         '''Return a deep copy.
 
@@ -107,9 +140,9 @@ True
 6371007   
 >>> f.has_parameter('earth_radius')
 False
->>> print(f.del_property('earth_radius', None))
+>>> print(f.del_parameter('earth_radius', None))
 None
->>> print(f.get_property('earth_radius', None))
+>>> print(f.get_paramete('earth_radius', None))
 None
 
         '''
@@ -151,9 +184,9 @@ True
 6371007   
 >>> f.has_parameter('earth_radius')
 False
->>> print(f.del_property('earth_radius', None))
+>>> print(f.del_parameter('earth_radius', None))
 None
->>> print(f.get_property('earth_radius', None))
+>>> print(f.get_parameter('earth_radius', None))
 None
 
         '''
@@ -197,67 +230,93 @@ True
 6371007   
 >>> f.has_parameter('earth_radius')
 False
->>> print(f.del_property('earth_radius', None))
+>>> print(f.del_parameter('earth_radius', None))
 None
->>> print(f.get_property('earth_radius', None))
+>>> print(f.get_parameter('earth_radius', None))
 None
 
         '''
         return parameter in self._get_component('parameters')
     #--- End: def
 
-    def parameters(self, parameters=None, copy=True):
-        '''Return or replace all parameter-valued terms.
+    def parameters(self):
+        '''Return all parameters.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `ancillaries`
-
-:Parameters:
-
-    parameters: `dict`, optional
-        Delete all existing named parameters, and instead store those
-        from the dictionary supplied.
-
-        *Parameter example:*
-          ``parameters={'earth_radius': 6371007}``
-
-        *Parameter example:*
-          ``parameters={}``
-
-    copy: `bool`, optional
-        If False then any parameters provided by the *parameters*
-        parameter are not copied before insertion. By default they are
-        deep copied.
+.. seealso:: `clear_parameters`, `get_parameter`, `has_parameter`
+             `set_parameters`
 
 :Returns:
 
     `dict`
-        The parameters or, if the *parameters* parameter was set, the
-        original parmaeters.
+        The parameters.
 
 **Examples:**
 
->>> c.parameters()
+>>> old = f.clear_parameters()
+>>> old
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
+>>> f.parameters()
+{}
+>>> f.set_parameters(old)
+>>> f.parameters()
 {'standard_parallel': 25.0;
  'longitude_of_central_meridian': 265.0,
  'latitude_of_projection_origin': 25.0}
 
->>> c.parameters()
+        '''
+        return self._get_component('parameters').copy()
+    #--- End: def
+
+    def set_parameters(self, parameters, copy=True):
+        '''Set parameters.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `clear_parameters`, `parameters`, `set_parameter`
+
+:Parameters:
+
+    parameters: `dict` 
+        Store the parameters from the dictionary supplied.
+
+        *Parameter example:*
+          ``parameters={'earth_radius': 6371007}``
+
+    copy: `bool`, optional
+        If False then any parameter values provided by the
+        *parameters* parameter are not copied before insertion. By
+        default they are deep copied.
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+>>> old = f.clear_parameters()
+>>> old
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
+>>> f.parameters()
 {}
+>>> f.set_parameters(old)
+>>> f.parameters()
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
 
         '''
-        out = self._get_component('parameters').copy()
-
-        if parameters is not None:
-            if copy:
-                parameters = deepcopy(parameters)
-            else:
-                parameters = parameters.copy()
-                
-            self._set_component('parameters', parameters, copy=False)
-
-        return out
+        if copy:
+            parameters = deepcopy(parameters)                
+        else:
+            parameters = parameters.copy()
+        
+        self._get_component('parameters').update(parameters)
     #--- End: def
 
     def set_parameter(self, term, value, copy=True):
@@ -282,9 +341,9 @@ True
 6371007   
 >>> f.has_parameter('earth_radius')
 False
->>> print(f.del_property('earth_radius', None))
+>>> print(f.del_parameter('earth_radius', None))
 None
->>> print(f.get_property('earth_radius', None))
+>>> print(f.get_parameter('earth_radius', None))
 None
 
      '''

@@ -730,10 +730,8 @@ even if it has been selected as such by this method, but will appear
 instead as an attribute on the netCDF data variable corresponding to
 the field construct.
 
-The `description of file contents
-<http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents>`_
-properties are always written as netCDF global attributes, if
-possible, so selecting them is optional.
+The description of file contents properties are always written as
+netCDF global attributes, if possible, so selecting them is optional.
 
 .. versionadded:: 1.7.0
 
@@ -763,9 +761,9 @@ set()
         out = self._get_component('netcdf').get('global_attributes')
         
         if out is None:
-            return set()
+            return {} #set()
 
-        return set(out)
+        return out.copy() #set(out)
     #--- End: def
     
     def nc_clear_global_attributes(self):
@@ -799,11 +797,11 @@ set()
         out = self._get_component('netcdf').get('global_attributes')
         
         if out is None:
-            out = set()
-        else:
-            out = set(out)
+            out = {} #set()
+#        else:
+#            out = set(out)
 
-        self._get_component('netcdf')['global_attributes'] = ()
+        self._get_component('netcdf')['global_attributes'] = {} #()
 
         return out
     #--- End: def
@@ -861,13 +859,15 @@ set()
         out = self._get_component('netcdf').get('global_attributes')
         
         if out is None:
-            out = set()
-        else:
-            out = set(out)
+            out = {} #set()
+#        else:
+#            out = set(out)
 
+#        for attr in attributes:
+#           out[attr] = None
         out.update(attributes)
             
-        self._get_component('netcdf')['global_attributes'] = tuple(out)
+        self._get_component('netcdf')['global_attributes'] = out #tuple(out)
     #--- End: def
     
     def nc_unlimited_dimensions(self):

@@ -1817,7 +1817,13 @@ variable should be pre-filled with missing values.
         # Store the field's netCDF variable name
         self.implementation.nc_set_variable(f, field_ncvar)
 
-        self.implementation.nc_set_global_attributes(f, g['global_attributes'])
+        x = g['global_attributes'].copy()
+        for k, v in g['global_attributes'].items():
+            if k not in g['variable_attributes'][field_ncvar]:
+                x[k] = None
+        #-- End: for
+                        
+        self.implementation.nc_set_global_attributes(f, x) #g['global_attributes'])
 
         # ----------------------------------------------------------------
         # Remove the field's "geometry" property, saving its value

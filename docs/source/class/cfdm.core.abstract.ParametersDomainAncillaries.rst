@@ -24,7 +24,9 @@ Parameter terms
    ~cfdm.core.abstract.ParametersDomainAncillaries.get_parameter
    ~cfdm.core.abstract.ParametersDomainAncillaries.set_parameter
    ~cfdm.core.abstract.ParametersDomainAncillaries.parameters
-   
+   ~cfdm.core.abstract.ParametersDomainAncillaries.clearparameters
+   ~cfdm.core.abstract.ParametersDomainAncillaries.set_parameters
+
 Domain ancillary terms
 ----------------------
 
@@ -39,6 +41,8 @@ Domain ancillary terms
    ~cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary
    ~cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary
    ~cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries
+   ~cfdm.core.abstract.ParametersDomainAncillaries.clear_domain_ancillaries
+   ~cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillaries
    
 Miscellaneous
 -------------

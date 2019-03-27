@@ -24,6 +24,8 @@ Parameter terms
    ~cfdm.core.abstract.Parameters.get_parameter
    ~cfdm.core.abstract.Parameters.set_parameter
    ~cfdm.core.abstract.Parameters.parameters
+   ~cfdm.core.abstract.Parameters.clear_parameters
+   ~cfdm.core.abstract.Parameters.set_parameters
    
 Miscellaneous
 -------------

@@ -2835,7 +2835,7 @@ write them to the netCDF4.Dataset.
         
         '''
         g = self.write_vars
-
+       
         # ------------------------------------------------------------
         # Initialize the global attributes with those requested to be
         # such
@@ -2851,14 +2851,24 @@ write them to the netCDF4.Dataset.
         # ------------------------------------------------------------
         # Add properties that have been marked as global on each field
         # ------------------------------------------------------------
+        x = {}
         for f in fields:
-            f_global = self.implementation.nc_get_global_attributes(f)
-            global_attributes.update(f_global)
-
+#            f_global = self.implementation.nc_get_global_attributes(f)
+#            global_attributes.update(f_global)
+            for attr, v in self.implementation.nc_get_global_attributes(f).items():
+                if v is None:
+                    global_attributes.add(attr)
+                else:
+                    x.setdefault(attr, []).append(v)
+        #--- End: for
+        x = {k: v[0] for k, v in x.items() if len(v) == 1}
+       
         # ------------------------------------------------------------
         # Remove attributes that have been specifically requested to
-        # not be global attributes
+        # not be global attributes. These include all properties
+        # listed as file descriptors.
         # ------------------------------------------------------------
+        g['variable_attributes'].update(g['file_descriptors'])
         global_attributes.difference(g['variable_attributes'])
             
         # ------------------------------------------------------------
@@ -2930,16 +2940,31 @@ write them to the netCDF4.Dataset.
                 # One of the conventions contains blanks space, so
                 # join them with commas.
                 delimiter = ','
-        #--- End: if
-
-        g['netcdf'].setncattr('Conventions', delimiter.join(g['Conventions']))
-        
+        #--- End: if        
+                                        
         # ------------------------------------------------------------
-        # Write the other global attributes to the file
+        # Write Conventions to the file
+        # ------------------------------------------------------------
+        g['netcdf'].setncattr('Conventions', delimiter.join(g['Conventions']))
+
+        # ------------------------------------------------------------
+        # Write file descriptors to the file
+        # ------------------------------------------------------------
+        for attr, value in g['file_descriptors'].items():
+            g['netcdf'].setncattr(attr, value)
+      
+        # ------------------------------------------------------------
+        # Write other global attributes to the file
         # ------------------------------------------------------------
         for attr in global_attributes - set(('Conventions',)):
             g['netcdf'].setncattr(attr, self.implementation.get_property(f0, attr)) 
-            
+
+        # ------------------------------------------------------------
+        # Write global attributes in addition to variable ones
+        # ------------------------------------------------------------
+        for attr, v in x.items():
+            g['netcdf'].setncattr(attr,v)
+
         g['global_attributes'] = global_attributes
     #--- End: def
 
@@ -2972,10 +2997,11 @@ write them to the netCDF4.Dataset.
 
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
               global_attributes=None, variable_attributes=None,
-              external=None, Conventions=None, datatype=None,
-              least_significant_digit=None, endian='native',
-              compress=0, fletcher32=False, shuffle=True, scalar=True,
-              HDF_chunks=None, extra_write_vars=None, verbose=False):
+              file_descriptors=None, external=None, Conventions=None,
+              datatype=None, least_significant_digit=None,
+              endian='native', compress=0, fletcher32=False,
+              shuffle=True, scalar=True, HDF_chunks=None,
+              extra_write_vars=None, verbose=False):
         '''Write fields to a netCDF file.
         
 NetCDF dimension and variable names will be taken from variables'
@@ -3127,8 +3153,10 @@ and auxiliary coordinate roles for different data variables.
             'ncvar_names': set(()),
             # Set of global or non-standard CF properties which have
             # identical values across all input fields.
-            'variable_attributes': set(()),
-            'global_attributes': set(()),
+            'variable_attributes': set(),
+            'global_attributes'  : set(),
+            'file_descriptors'   : {},
+            
             'bounds': {},
             # NetCDF compression/endian
             'netcdf_compression': {},
@@ -3156,7 +3184,7 @@ and auxiliary coordinate roles for different data variables.
             'external_fields'   : [],
 
             'geometry_containers': {},
-            'geometry_encoding':  {},
+            'geometry_encoding'  : {},
             
             'dimensions_with_role': {},
 
@@ -3185,7 +3213,7 @@ and auxiliary coordinate roles for different data variables.
             raise ValueError("Can't compress {} format file".format(fmt))
         
         # ------------------------------------------------------------
-        # Set up non-global attributes
+        # Set up global/non-global attributes
         # ------------------------------------------------------------
         if variable_attributes:
             if isinstance(variable_attributes, basestring):
@@ -3202,6 +3230,13 @@ and auxiliary coordinate roles for different data variables.
                 global_attributes = set(global_attributes)
 
             g['global_attributes'] = global_attributes
+    
+        if file_descriptors:
+            if 'Conventions' in file_descriptors:
+                raise ValueError(
+                    "Use the Conventions parameter to specify conventions, rather than a file descriptor.")
+            
+            g['file_descriptors'] = file_descriptors
     
         # ------------------------------------------------------------
         # Set up data type conversions. By default, booleans are

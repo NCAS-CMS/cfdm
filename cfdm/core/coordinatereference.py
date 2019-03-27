@@ -82,7 +82,7 @@ frame and consists of the following:
           ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1')``
 
         The coordinates may also be set after initialisation with the
-        `coordinates` and `set_coordinate` methods.
+        `set_coordinates` and `set_coordinate` methods.
 
     datum: `Datum`, optional
         Set the datum component of the coordinate reference
@@ -127,10 +127,15 @@ frame and consists of the following:
             except AttributeError:
                 datum = None
         #--- End: if
-              
-        self.coordinates(coordinates)
-        self.set_coordinate_conversion(coordinate_conversion, copy=copy)
-        self.set_datum(datum, copy=copy)
+            
+        if coordinates is not None:
+            self.set_coordinates(coordinates)
+            
+        if coordinate_conversion is not None:
+            self.set_coordinate_conversion(coordinate_conversion, copy=copy)
+
+        if datum is not None:
+            self.set_datum(datum, copy=copy)
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -200,65 +205,58 @@ frame and consists of the following:
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def coordinates(self, coordinates=None, copy=True):
-        '''Return or replace all references to coordinate constructs.
+    def clear_coordinates(self):
+        '''Remove all references to coordinate constructs.
 
-.. seealso:: `del_coordinate`, `set_coordinate`
+.. versionadded:: 1.7.0
 
-:Parameters:
-
-    coordinates: (sequence of) `str`
-        Delete all existing coordinate construct keys, and instead
-        store those supplied.
-
-        *Parameter example:*
-          ``coordinates=['dimensioncoordinate0']``
-
-        *Parameter example:*
-          ``coordinates='dimensioncoordinate0'``
-
-        *Parameter example:*
-          ``coordinates=set(['dimensioncoordinate0',
-          'auxiliarycoordinate1'])``
-
-        *Parameter example:*
-          ``coordinates=[]``
-
-    copy: `bool`, optional
-        If False then any coordinates provided by the *coordinates*
-        parameter are not copied before insertion. By default they are
-        deep copied.
+.. seealso:: `del_coordinate`, `coordinates`, `set_coordinates`
 
 :Returns:
 
     `set`
-        The coordinate construct keys or, if the *coordinates*
-        parameter was set, the original references.
+        The removed coordinate construct keys.
 
 **Examples:**
 
->>> x = c.coordinates(['dimensioncoordinate0',
-...                    'dimensioncoordinate1',
-...                    'auxiliarycoordinate0',
-...                    'auxiliarycoordinate1'])
->>> c.coordinates()
-{'dimensioncoordinate0',
- 'dimensioncoordinate1',
- 'auxiliarycoordinate0',
- 'auxiliarycoordinate1'}
+>>> old = c.clear_coordinates()
+{'dimensioncoordinate0', 'dimensioncoordinate1'}
 >>> c.coordinates()
 set()
+>>> c.set_coordinates(old)
+>>> c.coordinates()
+{'dimensioncoordinate0', 'dimensioncoordinate1'}
 
         '''
-        out = self._get_component('coordinates').copy()
+        out = self._get_component('coordinates')
+        out = self._set_component('coordinates', set())
+        return out.copy()
+    #--- End: def
+    
+    def coordinates(self):
+        '''Return all references to coordinate constructs.
 
-        if coordinates is not None:
-            if isinstance(coordinates, basestring):
-                coordinates = (coordinates,)
-                
-            self._set_component('coordinates', set(coordinates), copy=False)
+.. versionadded:: 1.7.0
 
-        return out
+.. seealso:: `clear_coordinates`, `set_coordinates`
+
+:Returns:
+
+    `set`
+        The coordinate construct keys.
+
+**Examples:**
+
+>>> old = c.clear_coordinates()
+{'dimensioncoordinate0', 'dimensioncoordinate1'}
+>>> c.coordinates()
+set()
+>>> c.set_coordinates(old)
+>>> c.coordinates()
+{'dimensioncoordinate0', 'dimensioncoordinate1'}
+
+        '''
+        return self._get_component('coordinates').copy()
     #--- End: def
             
     def copy(self):
@@ -285,7 +283,7 @@ set()
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `coordinates`, `set_coordinate`
+.. seealso:: `coordinates`, `has_coordinate`, `set_coordinate`
 
 :Parameters:
 
@@ -340,6 +338,7 @@ set()
 
 :Returns:
 
+    `CoordinateConversion`
         The removed coordinate conversion component.
 
 **Examples:**
@@ -365,6 +364,7 @@ set()
 
 :Returns:
 
+    `Datum`
         The removed datum component.
 
 **Examples:**
@@ -434,12 +434,50 @@ set()
         return out
     #--- End: def
     
+    def has_coordinate(self, key):
+        '''Whether a reference to a coordinate construct has been set.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `coordinates`, `del_coordinate`, `set_coordinate`
+
+:Parameters:
+
+    key: `str`
+        The construct key of the coordinate construct.
+
+          *Parameter example:*
+             ``key='dimensioncoordinate1'``
+
+          *Parameter example:*
+             ``key='auxiliarycoordinate0'``
+
+:Returns:
+
+      `bool`
+          True if the coordinate construct key has been set, otherwise
+          False.
+
+**Examples:**
+
+>>> c.coordinates()
+{'dimensioncoordinate0',
+ 'dimensioncoordinate1'}
+>>> c.has_coordinate('dimensioncoordinate0')
+True
+>>> c.has_coordinate('auxiliarycoordinate1')
+False
+
+        '''
+        return key in self._get_component('coordinates')
+    #--- End: def
+    
     def set_coordinate(self, key):
         '''Set a reference to a coordinate construct.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `coordinates`, `del_coordinate`
+.. seealso:: `coordinates`, `del_coordinate`, `has_coordinate`
 
 :Parameters:
 
@@ -461,7 +499,7 @@ set()
 >>> c.coordinates()
 {'dimensioncoordinate0',
  'dimensioncoordinate1'}
->>> c.set_coordinates('auxiliarycoordinate0')
+>>> c.set_coordinate('auxiliarycoordinate0')
 >>> c.coordinates()
 {'dimensioncoordinate0',
  'dimensioncoordinate1',
@@ -472,6 +510,52 @@ set()
         c.add(key)
     #--- End: def
 
+    def set_coordinates(self, coordinates):
+        '''Set references to coordinate constructs.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `coordinates`, `clear_coordinates`, `set_coordinate`
+
+:Parameters:
+
+    coordinates: (sequence of) `str`
+        The coordinate construct keys to be set.
+
+        *Parameter example:*
+          ``coordinates=['dimensioncoordinate0']``
+
+        *Parameter example:*
+          ``coordinates='dimensioncoordinate0'``
+
+        *Parameter example:*
+          ``coordinates=set(['dimensioncoordinate0', 'auxiliarycoordinate1'])``
+
+        *Parameter example:*
+          ``coordinates=[]``
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+>>> old = c.clear_coordinates()
+{'dimensioncoordinate0', 'dimensioncoordinate1'}
+>>> c.coordinates()
+set()
+>>> c.set_coordinates(old)
+>>> c.coordinates()
+{'dimensioncoordinate0', 'dimensioncoordinate1'}
+
+
+        '''
+        if isinstance(coordinates, basestring):
+            coordinates = (coordinates,)
+            
+        self._get_component('coordinates').update(coordinates)
+    #--- End: def
+            
     def set_coordinate_conversion(self, coordinate_conversion, copy=True):
         '''Set the coordinate conversion component.
 
@@ -500,7 +584,7 @@ set()
 >>> c.set_coordinate_conversion(cc, copy=False)
 
         '''
-        if copy and coordinate_conversion is not None:
+        if copy:
             coordinate_conversion = coordinate_conversion.copy()
             
         self._set_component('coordinate_conversion',
@@ -534,7 +618,7 @@ set()
 >>> c.set_datum(d, copy=False)
 
         '''
-        if copy and datum is not None:
+        if copy:
             datum = datum.copy()
             
         self._set_component('datum', datum, copy=False)
