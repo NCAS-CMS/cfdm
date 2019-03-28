@@ -115,28 +115,46 @@ class NetCDFTest(unittest.TestCase):
 
         f = cfdm.Field()
         f.set_properties({'foo': 'bar', 'comment': 'variable comment'})
+        f.nc_set_variable('tas')
         d = f.set_construct(cfdm.DomainAxis(2))
         f.set_data(cfdm.Data([8, 9]), axes=[d])
 
-        cfdm.write(f, self.tempfilename, file_descriptors={'comment': 'global comment',
-                                                           'qwerty': 'asdf'})
-        g = cfdm.read(self.tempfilename)[0]
+        f2 = f.copy()
+        f2.nc_set_variable('ua')
+        
+        cfdm.write([f, f2], 'tempfilename.nc', file_descriptors={'comment': 'global comment',
+                                                                 'qwerty': 'asdf'})
+        g = cfdm.read('tempfilename.nc')
+        self.assertTrue(len(g) == 2)
+        
+        for x in g:
+            self.assertTrue(x.properties() == {'comment': 'variable comment',
+                                               'foo': 'bar',
+                                               'qwerty': 'asdf',
+                                               'Conventions': 'CF-1.7'})
+            self.assertTrue(x.nc_global_attributes() == {'comment': 'global comment',
+                                                         'qwerty': None,
+                                                         'Conventions': None})
 
-        self.assertTrue(g.properties() == {'foo': 'bar',
-                                           'comment': 'variable comment',
-                                           'qwerty': 'asdf',
-                                           'Conventions': 'CF-1.7'})
-        self.assertTrue(g.nc_global_attributes() == {'comment': 'global comment',
-                                                     'qwerty': None,
-                                                     'Conventions': None})
+        cfdm.write(g, 'tempfilename2.nc')
+        h = cfdm.read('tempfilename2.nc')
+        for x, y in zip(h, g):
+            self.assertTrue(x.properties()           == y.properties())
+            self.assertTrue(x.nc_global_attributes() == y.nc_global_attributes())
+            self.assertTrue(x.equals(y, verbose=True))
+            self.assertTrue(y.equals(x, verbose=True))
 
-        cfdm.write(g, 'tempfilename.nc')
-        h = cfdm.read('tempfilename.nc')[0]
-        self.assertTrue(h.properties()           == g.properties())
-        self.assertTrue(h.nc_global_attributes() == g.nc_global_attributes())
-        self.assertTrue(h.equals(g, verbose=True))
-        self.assertTrue(g.equals(h, verbose=True))
-        os.remove('tempfilename.nc')
+        g[1].nc_set_global_attributes(comment='different comment')
+        cfdm.write(g, 'tempfilename3.nc')
+        h = cfdm.read('tempfilename3.nc')
+        for x, y in zip(h, g):
+            self.assertTrue(x.properties() == y.properties())
+            self.assertTrue(x.nc_global_attributes() == {'comment': None,
+                                                         'qwerty': None,
+                                                         'Conventions': None})
+            self.assertTrue(x.equals(y, verbose=True))
+            self.assertTrue(y.equals(x, verbose=True))
+#        os.remove('tempfilename.nc')
    #--- End: def
 
 #--- End: class

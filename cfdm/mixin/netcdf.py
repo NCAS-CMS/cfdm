@@ -739,12 +739,13 @@ netCDF global attributes, if possible, so selecting them is optional.
 
 :Returns:
 
-    `set`
-        The selection of properties to be written as netCDF global
+    `dict`
+        TODO The selection of properties to be written as netCDF global
         attributes.
 
 **Examples:**
 
+TODO
 >>> f.nc_set_global_attributes(['Conventions', 'project'])
 >>> f.nc_global_attributes()
 {'Conventions', 'project'}
@@ -760,9 +761,9 @@ set()
         out = self._get_component('netcdf').get('global_attributes')
         
         if out is None:
-            return {} #set()
-
-        return out.copy() #set(out)
+            return {}
+        
+        return out.copy()
     #--- End: def
     
     def nc_clear_global_attributes(self):
@@ -777,10 +778,11 @@ attributes.
 :Returns:
 
     `set`
-        The selection of properties that has been removed.
+        TODO 
 
 **Examples:**
 
+TODO
 >>> f.nc_set_global_attributes(['Conventions', 'project'])
 >>> f.nc_global_attributes()
 {'Conventions', 'project'}
@@ -826,8 +828,8 @@ possible, so selecting them is optional.
 
 :Parameters:
 
-    attributes: sequence of `str`, optional
-        Select the properties from the sequence provided.
+    attributes: sequence of `str`, optional TODO
+        TODO Select the properties from the sequence provided.
 
         *Parameter example:*
           ``attributes=['project']``
@@ -844,6 +846,7 @@ possible, so selecting them is optional.
 
 **Examples:**
 
+TODO
 >>> f.nc_set_global_attributes(['Conventions', 'project'])
 >>> f.nc_global_attributes()
 {'Conventions', 'project'}

@@ -2564,24 +2564,38 @@ filters to a `Constructs` instance:
 Each construct has methods to access the netCDF elements which it
 requires. For example, the field construct has the following methods:
 
-================================  ====================================
-Method                            Description
-================================  ====================================
-`~Field.nc_get_variable`          Return the netCDF variable name
-`~Field.nc_set_variable`          Set the netCDF variable name
-`~Field.nc_del_variable`          Remove the netCDF variable name
+======================================  ======================================
+Method                                  Description
+======================================  ======================================
+`~Field.nc_get_variable`                Return the netCDF variable name
+`~Field.nc_set_variable`                Set the netCDF variable name
+`~Field.nc_del_variable`                Remove the netCDF variable name
+				        
+`~Field.nc_has_variable`                Whether the netCDF variable name has
+                                        been set
+				        
+`~Field.nc_global_attributes`           Return the selection of properties to 
+                                        be written as netCDF global attributes
+				        
+`~Field.nc_set_global_attributes`       Set the selection of properties to
+                                        be written as netCDF global attributes
 
-`~Field.nc_has_variable`          Whether the netCDF variable name has
-                                  been set
+`~Field.nc_clear_global_attributes`     Clear the selection of properties
+                                        to be written as netCDF global
+                                        attributes
+				        
+`~Field.nc_unlimited_dimensions`        Return the selection of domain axis
+                                        constructs to be written as
+                                        netCDF unlimited dimensions
 
-`~Field.nc_global_attributes`     Return or replace the selection of TODO
-                                  properties to be written as netCDF
-                                  global attributes
+`~Field.nc_set_unlimited_dimensions`    Set the selection of domain axis
+                                        constructs to be written as
+                                        netCDF unlimited dimensions
 
-`~Field.nc_unlimited_dimensions`  Return or replace the selection of TODO
-                                  domain axis constructs to be written
-                                  as netCDF unlimited dimensions
-================================  ====================================
+`~Field.nc_clear_unlimited_dimensions`  Clear the selection of domain
+                                        axis constructs to be written
+                                        as netCDF unlimited dimensions
+======================================  ======================================
 
 .. code-block:: python3
    :caption: *Access netCDF elements associated with the field and
@@ -2764,9 +2778,8 @@ manually with the `!nc_set_variable` and `nc_set_dimension`
 methods. If a name has not been set then one will be generated
 internally (usually based on the standard_name if it exists).
 
-It is possible to create netCDF unlimited dimensions and set the HDF5
-chunk size using the `nc_unlimited_dimensions` and
-`~Field.nc_chunksize` methods of the field construct.
+It is possible to create netCDF unlimited dimensions using the
+`nc_unlimited_dimensions` method of the field construct.
 
 A field construct is not transformed through being written to a file
 on disk and subsequently read back from that file.
