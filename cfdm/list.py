@@ -34,7 +34,7 @@ variable that gives the indices of the required points.
           ``properties={'long_name': 'uncompression indices'}``
 
         Properties may also be set after initialisation with the
-        `properties` and `set_property` methods.
+        `set_properties` and `set_property` methods.
 
     data: `Data`, optional
         Set the data array. Ignored if the *source* parameter is set.

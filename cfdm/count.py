@@ -52,7 +52,7 @@ the `nc_set_sample_dimension`, `nc_get_sample_dimension`,
           ``properties={'long_name': 'number of obs for this station'}``
 
         Properties may also be set after initialisation with the
-        `properties` and `set_property` methods.
+        `set_properties` and `set_property` methods.
 
     data: `Data`, optional
         Set the data array. Ignored if the *source* parameter is set.

@@ -71,7 +71,7 @@ and institution).
            ``properties={'standard_name': 'air_temperature'}``
         
         Properties may also be set after initialisation with the
-        `properties` and `set_property` methods.
+        `set_properties` and `set_property` methods.
 
     source: optional
         Initialize the properties, data and metadata constructs from
@@ -94,12 +94,12 @@ and institution).
                 constructs = None
                 
             try:
-                data = source.get_data(None) 
+                data = source.get_data(default=None) 
             except AttributeError:
                 data = None
 
             try:
-                data_axes = source.get_data_axes(None)
+                data_axes = source.get_data_axes(default=None)
             except AttributeError:
                 data_axes = None
                                 

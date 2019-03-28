@@ -102,6 +102,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         ncvar = self.get_ncvar()
         if ncvar is not None:
             # Get the variable by name
+#            print ('XXX', ncvar, indices)
             array = netcdf.variables[ncvar][indices]
         else:
             # Get the variable by netCDF ID

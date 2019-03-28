@@ -62,7 +62,7 @@ corresponding domain axis construct.
           ``properties={'long_name': 'which station this obs is for'}``
 
         Properties may also be set after initialisation with the
-        `properties` and `set_property` methods.
+        `set_properties` and `set_property` methods.
 
     data: `Data`, optional
         Set the data array. Ignored if the *source* parameter is set.

@@ -633,8 +633,13 @@ netCDF unlimited dimensions.
     
     def nc_set_global_attributes(self, field, attributes):
         '''TODO
+
+.. versionadded:: 1.7.0
+
+attributes: `dict`
+
         '''
-        return field.nc_set_global_attributes(attributes)
+        return field.nc_set_global_attributes(**attributes)
     #--- End: def
     
     def equal_constructs(self, construct0, construct1,

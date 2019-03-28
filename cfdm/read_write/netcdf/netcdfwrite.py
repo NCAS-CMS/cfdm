@@ -2851,7 +2851,7 @@ write them to the netCDF4.Dataset.
         # ------------------------------------------------------------
         # Add properties that have been marked as global on each field
         # ------------------------------------------------------------
-        x = {}
+        xx = {}
         for f in fields:
 #            f_global = self.implementation.nc_get_global_attributes(f)
 #            global_attributes.update(f_global)
@@ -2859,18 +2859,19 @@ write them to the netCDF4.Dataset.
                 if v is None:
                     global_attributes.add(attr)
                 else:
-                    x.setdefault(attr, []).append(v)
+                    xx.setdefault(attr, []).append(v)
         #--- End: for
-        x = {k: v[0] for k, v in x.items() if len(v) == 1}
-       
+        xx = {k: v[0] for k, v in xx.items() if len(v) == 1}
+
         # ------------------------------------------------------------
         # Remove attributes that have been specifically requested to
         # not be global attributes. These include all properties
         # listed as file descriptors.
         # ------------------------------------------------------------
         g['variable_attributes'].update(g['file_descriptors'])
-        global_attributes.difference(g['variable_attributes'])
-            
+        global_attributes.difference_update(g['variable_attributes'])
+        global_attributes.difference_update(xx)
+        
         # ------------------------------------------------------------
         # Remove global attributes that have different values for
         # different fields
@@ -2891,6 +2892,8 @@ write them to the netCDF4.Dataset.
                         break
         #--- End: for
 
+        
+        
         # -----------------------------------------------------------
         # Write the Conventions global attribute to the file
         # ------------------------------------------------------------
@@ -2926,7 +2929,7 @@ write them to the netCDF4.Dataset.
                     found_cf_version = True
             #--- End: for
                             
-            if [x for x in g['Conventions'] if ',' in x]:
+            if [c for x in g['Conventions'] if ',' in c]:
                 raise ValueError("Conventions can not contain commas: {0}".format(
                     g['Conventions']))
 
@@ -2936,7 +2939,7 @@ write them to the netCDF4.Dataset.
                 g['output_version'] = g['latest_version']
                 g['Conventions'] = ['CF-'+str(g['output_version'])] + list(g['Conventions'])
                 
-            if [x for x in g['Conventions'] if ' ' in x]:
+            if [c for x in g['Conventions'] if ' ' in c]:
                 # One of the conventions contains blanks space, so
                 # join them with commas.
                 delimiter = ','
@@ -2962,7 +2965,7 @@ write them to the netCDF4.Dataset.
         # ------------------------------------------------------------
         # Write global attributes in addition to variable ones
         # ------------------------------------------------------------
-        for attr, v in x.items():
+        for attr, v in xx.items():
             g['netcdf'].setncattr(attr,v)
 
         g['global_attributes'] = global_attributes

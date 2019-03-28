@@ -51,7 +51,7 @@ cell measure variables correspond to cell measure constructs.
              ``properties={'units': 'metres 2'}``
         
         Properties may also be set after initialisation with the
-        `properties` and `set_property` methods.
+        `set_properties` and `set_property` methods.
 
     data: `Data`, optional
         Set the data array. Ignored if the *source* parameter is set.

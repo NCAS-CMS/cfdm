@@ -711,9 +711,8 @@ None
 ##--- End: class
 
 
-class NetCDFDataVariable(NetCDF):
-    '''Mixin class for accessing netCDF elements relating to a data
-variable.
+class NetCDFGlobalAttributes(NetCDF):
+    '''Mixin class for accessing netCDF global attributes.
 
 .. versionadded:: 1.7.0
 
@@ -797,16 +796,14 @@ set()
         out = self._get_component('netcdf').get('global_attributes')
         
         if out is None:
-            out = {} #set()
-#        else:
-#            out = set(out)
+            out = {}
 
-        self._get_component('netcdf')['global_attributes'] = {} #()
+        self._get_component('netcdf')['global_attributes'] = {}
 
         return out
     #--- End: def
     
-    def nc_set_global_attributes(self, attributes):
+    def nc_set_global_attributes(self, attributes=(), **kwargs):
         '''Select properties to be written as netCDF global attributes.
 
 When multiple field constructs are being written to the same file, it
@@ -829,12 +826,15 @@ possible, so selecting them is optional.
 
 :Parameters:
 
-    attributes: sequence of `str`
+    attributes: sequence of `str`, optional
         Select the properties from the sequence provided.
 
         *Parameter example:*
           ``attributes=['project']``
-        
+
+        *Parameter example:*
+          ``attributes=['project', 'source']``
+                
         *Parameter example:*
           ``attributes=()``        
 
@@ -851,7 +851,7 @@ possible, so selecting them is optional.
 >>> f.nc_global_attributes()
 {'Conventions', 'project', 'comment'}
 >>> f.nc_clear_global_attributes()
-{'Conventions', 'project', 'comment'}
+{'Conventions': None, 'project': None, 'comment': None}
 >>> f.nc_global_attributes()
 set()
 
@@ -859,17 +859,25 @@ set()
         out = self._get_component('netcdf').get('global_attributes')
         
         if out is None:
-            out = {} #set()
-#        else:
-#            out = set(out)
+            out = {}        
 
-#        for attr in attributes:
-#           out[attr] = None
-        out.update(attributes)
-            
-        self._get_component('netcdf')['global_attributes'] = out #tuple(out)
+        out.update(kwargs)
+        
+        for attr in attributes:
+            out.setdefault(attr, None)
+
+        self._get_component('netcdf')['global_attributes'] = out
     #--- End: def
     
+#--- End: class
+
+
+class NetCDFUnlimitedDimensions(NetCDF):
+    '''Mixin class for accessing netCDF unlimited dimensions.
+
+.. versionadded:: 1.7.0
+
+    '''
     def nc_unlimited_dimensions(self):
         '''Return the selection of domain axis constructs to be written as
 netCDF unlimited dimensions.

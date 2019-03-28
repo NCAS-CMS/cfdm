@@ -39,7 +39,7 @@ variable's data may be accessed with the `nc_set_dimension`,
           ``properties={'long_name': 'number of obs for this station'}``
 
         Properties may also be set after initialisation with the
-        `properties` and `set_property` methods.
+        `set_properties` and `set_property` methods.
 
     source: optional
         Initialize the properties from those of *source*.

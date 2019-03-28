@@ -7,9 +7,10 @@ from . import Constructs
 from . import Domain
 
 
-class Field(mixin.NetCDFDataVariable,
-            mixin.NetCDFVariable,
+class Field(mixin.NetCDFVariable,
             mixin.NetCDFGeometry,
+            mixin.NetCDFGlobalAttributes,
+            mixin.NetCDFUnlimitedDimensions,
             mixin.ConstructAccess,
             mixin.PropertiesData,
             core.Field):
@@ -71,7 +72,7 @@ The netCDF variable name of the construct may be accessed with the
            ``properties={'standard_name': 'air_temperature'}``
         
         Properties may also be set after initialisation with the
-        `properties` and `set_property` methods.
+        `set_properties` and `set_property` methods.
 
     source: optional
         Initialize the properties, data and metadata constructs from

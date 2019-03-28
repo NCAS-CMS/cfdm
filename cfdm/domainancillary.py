@@ -49,7 +49,7 @@ The netCDF variable name of the construct may be accessed with the
           ``properties={'standard_name': 'altitude'}``
 
        Properties may also be set after initialisation with the
-       `properties` and `set_property` methods.
+       `set_properties` and `set_property` methods.
 
     data: `Data`, optional
         Set the data array. Ignored if the *source* parameter is set.

@@ -1822,7 +1822,7 @@ variable should be pre-filled with missing values.
             if k not in g['variable_attributes'][field_ncvar]:
                 x[k] = None
         #-- End: for
-                        
+
         self.implementation.nc_set_global_attributes(f, x) #g['global_attributes'])
 
         # ----------------------------------------------------------------

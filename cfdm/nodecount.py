@@ -34,7 +34,7 @@ The netCDF node count variable name may be accessed with the
           ``properties={'long_name': 'number of nodes for each geometry'}``
 
         Properties may also be set after initialisation with the
-        `properties` and `set_property` methods.
+        `set_properties` and `set_property` methods.
 
     source: optional
         Initialize the properties from those of *source*.
