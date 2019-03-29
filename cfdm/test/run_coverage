@@ -3,7 +3,6 @@
 # ------------------------------------------------------
 # Produce a coverage report of the test suite
 # ------------------------------------------------------
-echo "coverage docs: https://coverage.readthedocs.io"
 set -x
 
 option=''

@@ -1816,7 +1816,7 @@ if required. For example, an auxiliary coordinate construct is related
 to an ordered list of the domain axis constructs which correspond to
 its data array dimensions.
 
-There are two equivalent approaches to stages **1** and **2**.
+There are two equivalent approaches to **stages 1** and **2**.
 
 Either as much of the content as possible is specified during object
 instantiation:
@@ -1867,7 +1867,7 @@ methods:
    >>> fa
    <FieldAncillary: precipitation_flux status_flag(3) >
 
-For stage **3**, the `~cfdm.Field.set_construct` method of the field
+For **stage 3**, the `~cfdm.Field.set_construct` method of the field
 construct is used for setting metadata constructs and mapping data
 array dimensions to domain axis constructs. This method returns the
 construct key for the metadata construct which can be used when other
@@ -2019,10 +2019,11 @@ the field construct.
 The "Conventions" property does not need to be set because it is
 automatically included in output files as a netCDF global
 "Conventions" attribute, either as the CF version of the cfdm package
-(as returned by the `cfdm.CF` function), or else specified via a
-parameter to the `cfdm.write` function (when additional conventions
-can be also added). If the "Conventions" property is set on a field
-construct then it is ignored during the write process.
+(as returned by the `cfdm.CF` function), or else specified via the
+*Conventions* keyword the `cfdm.write` function (when additional
+conventions can be also added, see the :ref:`Writing-to-disk` section
+for details). If the "Conventions" property were to be set on a field
+construct, then it is ignored during the write process.
 
 If this field were to be written to a netCDF dataset then, in the
 absence of pre-defined names, default netCDF variable and dimension
@@ -2577,8 +2578,8 @@ Method                                  Description
 `~Field.nc_global_attributes`           Return the selection of properties to 
                                         be written as netCDF global attributes
 				        
-`~Field.nc_set_global_attribute`        Set a property to be written as a
-                                        netCDF global attribute
+`~Field.nc_set_global_attributes`       Set properties to be written as
+                                        netCDF global attributes
 
 `~Field.nc_clear_global_attributes`     Clear the selection of properties
                                         to be written as netCDF global
@@ -2652,7 +2653,7 @@ Method                            Classes                                  NetCD
 			          
 `!nc_global_attributes`	          `Field`                                  Global attributes
 			          
-`!nc_set_global_attribute`        `Field`                                  Global attributes
+`!nc_set_global_attributes`       `Field`                                  Global attributes
 			          
 `!nc_clear_global_attributes`     `Field`                                  Global attributes
 			          
@@ -2804,7 +2805,7 @@ The field construct properties that correspond to the standardised
 description-of-file-contents attributes are automatically written as
 netCDF global attributes. Other attributes may also be written as
 netCDF global attributes if they have been identified as such with the
-*global_attributes* keyword, or via `~Field.nc_set_global_attribute`
+*global_attributes* keyword, or via `~Field.nc_set_global_attributes`
 method all field constructs. In any case, the creation of a netCDF
 global attribute depends on the corresponding property values being
 identical across all of the field contructs being written to the
@@ -2823,11 +2824,12 @@ netCDF data variable.
 
 .. code-block:: python3
    :caption: *Request that the "model" property is written as a netCDF
-             global attribute, using the "nc_set_global_attribute" method.*
+             global attribute, using the "nc_set_global_attributes"
+             method.*
 	     
    >>> f.nc_global_attributes()
    {'Conventions': None, 'project': None}
-   >>> f.nc_set_global_attribute('model')
+   >>> f.nc_set_global_attributes('model')
    >>> f.nc_global_attributes()
    {'Conventions': None, 'model': None, 'project': None}
    >>> cfdm.write(f, 'f_file.nc')
@@ -2835,7 +2837,7 @@ netCDF data variable.
 It is possible to create both a netCDF global attribute and a netCDF
 data variable attribute with the same name, but with different
 values. This may be done by assigning the global value to the property
-name with the `~Field.nc_set_global_attribute` method. Any
+name with the `~Field.nc_set_global_attributes` method. Any
 inconsistencies arising from multiple field constructs being to the
 same file will be resolved by omitting the netCDF global attribute
 from the file.
@@ -2852,7 +2854,7 @@ from the file.
     'project': 'research',
     'standard_name': 'specific_humidity',
     'units': '1'}
-   >>> f.nc_set_global_attribute(information='global information')
+   >>> f.nc_set_global_attributes(information='global information')
    >>> f.nc_global_attributes()
    {'Conventions': None,
     'information': 'global information',
@@ -2887,7 +2889,14 @@ indvidual field constructs.
     'history': None,
     'information': 'global information',
     'project': None}
- 
+
+.. _Conventions:
+
+Conventions
+^^^^^^^^^^^
+
+
+
 
 .. _Scalar-coordinate-variables:
 

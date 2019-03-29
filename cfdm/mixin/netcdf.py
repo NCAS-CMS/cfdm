@@ -24,7 +24,7 @@ from this mixin class.
              netcdf = {}
         else:        
             try:
-                netcdf = source._get_component('netcdf', None).copy()
+                netcdf = source._get_component('netcdf', {}).copy()
             except AttributeError:
                 netcdf = {}
         #--- End: if
@@ -729,7 +729,7 @@ even if it has been selected as such by this method, but will appear
 instead as an attribute on the netCDF data variable corresponding to
 the field construct.
 
-The description of file contents properties are always written as
+The description-of-file-contents properties are always written as
 netCDF global attributes, if possible, so selecting them is optional.
 
 .. versionadded:: 1.7.0
@@ -805,7 +805,7 @@ set()
         return out
     #--- End: def
     
-    def nc_set_global_attributes(self, attributes=(), **kwargs): # TODO drop s
+    def nc_set_global_attributes(self, *attributes, **kwargs):
         '''Select properties to be written as netCDF global attributes.
 
 When multiple field constructs are being written to the same file, it
@@ -816,10 +816,8 @@ even if it has been selected as such by this method, but will appear
 instead as an attribute on the netCDF data variable corresponding to
 the field construct.
 
-The `description of file contents
-<http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents>`_
-properties are always written as netCDF global attributes, if
-possible, so selecting them is optional.
+The description-of-file-contents properties are always written as
+netCDF global attributes, if possible, so selecting them is optional.
 
 .. versionadded:: 1.7.0
 
@@ -828,18 +826,18 @@ possible, so selecting them is optional.
 
 :Parameters:
 
-    attributes: sequence of `str`, optional TODO
-        TODO Select the properties from the sequence provided.
+    attributes: optional
+        Select properties from to be written as netCDF global
+        attributes, if possible
+
+    kwargs: optional
+        Define properties with values to be written as netCDF global
+        attributes, possibly in addition to attributes of netCDF data
+        variables.
 
         *Parameter example:*
-          ``attributes=['project']``
-
-        *Parameter example:*
-          ``attributes=['project', 'source']``
-                
-        *Parameter example:*
-          ``attributes=()``        
-
+          ``comment='created by model A'``
+        
 :Returns:
 
     `None`

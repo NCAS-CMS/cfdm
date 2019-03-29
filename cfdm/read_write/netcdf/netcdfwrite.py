@@ -3181,7 +3181,7 @@ and auxiliary coordinate roles for different data variables.
             # Print statements
             'verbose': False,
 
-            # Extra Conventions
+            # Conventions
             'Conventions': Conventions,
             
             'xxx': [],
@@ -3232,6 +3232,11 @@ and auxiliary coordinate roles for different data variables.
 
             g['variable_attributes'] = variable_attributes
     
+            if 'Conventions' in  variable_attributes:
+                raise ValueError(
+"Can't prevent the 'Conventions' property from being a netCDF global variable: {0}".format(
+    variable_attributes))
+
         if global_attributes:
             if isinstance(global_attributes, basestring):
                 global_attributes = set((global_attributes,))

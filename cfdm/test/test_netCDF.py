@@ -100,16 +100,16 @@ class NetCDFTest(unittest.TestCase):
         f.nc_set_global_attributes()
         
         f = cfdm.Field()
-        f.nc_set_global_attributes({'Conventions': None, 'project': None})
+        f.nc_set_global_attributes(**{'Conventions': None, 'project': None})
         self.assertTrue(f.nc_global_attributes() == {'Conventions': None, 'project': None})
         
-        f.nc_set_global_attributes({'project': None, 'comment': None})
+        f.nc_set_global_attributes(project=None, comment=None)
         self.assertTrue(f.nc_global_attributes() == {'Conventions': None, 'project': None, 'comment': None})
         
         self.assertTrue(f.nc_clear_global_attributes() == {'Conventions': None, 'project': None, 'comment': None})
         self.assertTrue(f.nc_global_attributes() == {})
         
-        f.nc_set_global_attributes(['Conventions', 'project'])
+        f.nc_set_global_attributes('Conventions', 'project')
         self.assertTrue(f.nc_global_attributes() == {'Conventions': None, 'project': None})
 
 
