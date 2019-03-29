@@ -57,12 +57,12 @@ disk.
 
 The `cfdm.read` function reads a `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
-from an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, and
-returns the contents as a list of zero or more `Field` class
-instances, each of which represents a field construct. (Henceforth,
-the phrase "field construct" will be assumed to mean "`Field`
-instance".) The list contains a field construct to represent each of
-the CF-netCDF data variables in the file.
+from an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, and returns
+the contents as a list of zero or more `Field` class instances, each
+of which represents a field construct. (Henceforth, the phrase "field
+construct" will be assumed to mean "`Field` instance".) The list
+contains a field construct to represent each of the CF-netCDF data
+variables in the file.
 
 Datasets of any version of CF up to and including CF-|version| can be
 read.
@@ -687,12 +687,12 @@ the field construct. For example, the data of the field construct
    >>> t.get_data_axes()
    ('domainaxis0', 'domainaxis1', 'domainaxis2')
 
-The data may be set with the `~Field.set_data` method of the `Field`
+The data may be set with the `~Field.set_data` method of the field
 construct. The domain axis constructs spanned by the data must be
 considered, either by explicitly providing them via their construct
 keys, or by using those that may have already been set. In any case,
 the data axes may be set at any time with the `~Field.set_data_axes`
-method of the `Field` construct.
+method of the field construct.
 
 .. code-block:: python3
    :caption: *Delete the data and then reinstate it, using the
@@ -2577,8 +2577,8 @@ Method                                  Description
 `~Field.nc_global_attributes`           Return the selection of properties to 
                                         be written as netCDF global attributes
 				        
-`~Field.nc_set_global_attributes`       Set the selection of properties to
-                                        be written as netCDF global attributes
+`~Field.nc_set_global_attribute`        Set a property to be written as a
+                                        netCDF global attribute
 
 `~Field.nc_clear_global_attributes`     Clear the selection of properties
                                         to be written as netCDF global
@@ -2652,7 +2652,7 @@ Method                            Classes                                  NetCD
 			          
 `!nc_global_attributes`	          `Field`                                  Global attributes
 			          
-`!nc_set_global_attributes`       `Field`                                  Global attributes
+`!nc_set_global_attribute`        `Field`                                  Global attributes
 			          
 `!nc_clear_global_attributes`     `Field`                                  Global attributes
 			          
@@ -2753,11 +2753,11 @@ The `cfdm.write` function has optional parameters to
 * set the output netCDF format (all netCDF3 and netCDF4 formats are
   possible);
 
-* set netCDF global attributes;
-  
 * specify which field construct properties should become netCDF data
-  variable attributes and which should, if possible, become netCDF
-  global attributes;
+  variable attributes and which should become netCDF global
+  attributes;
+  
+* set extra netCDF global attributes;
   
 * create :ref:`external variables <External-variables>` in an external
   file;
@@ -2774,9 +2774,10 @@ The `cfdm.write` function has optional parameters to
 
 Output netCDF variable and dimension names read from a netCDF dataset
 are stored in the resulting field constructs, and may also be set
-manually with the `!nc_set_variable` and `nc_set_dimension`
-methods. If a name has not been set then one will be generated
-internally (usually based on the standard_name if it exists).
+manually with the `!nc_set_variable`, `nc_set_dimension` and
+`nc_set_sample_dimension` methods. If a name has not been set then one
+will be generated internally (usually based on the standard name if it
+exists).
 
 It is possible to create netCDF unlimited dimensions using the
 `nc_unlimited_dimensions` method of the field construct.
@@ -2793,9 +2794,101 @@ on disk and subsequently read back from that file.
    >>> q.equals(f)
    True
 
-It is possible for an attribute name to be both a netCDF global
-attribute and a netCDF data variable attribute, with different values. This is either done with the *file_descri TODO
-   
+
+.. _Global-attributes:
+
+**Global attributes**
+^^^^^^^^^^^^^^^^^^^^^
+
+The field construct properties that correspond to the standardised
+description-of-file-contents attributes are automatically written as
+netCDF global attributes. Other attributes may also be written as
+netCDF global attributes if they have been identified as such with the
+*global_attributes* keyword, or via `~Field.nc_set_global_attribute`
+method all field constructs. In any case, the creation of a netCDF
+global attribute depends on the corresponding property values being
+identical across all of the field contructs being written to the
+file. If they all equal then the propoerty will be written as netCDF
+global attribute and not an attribute of a netCDF data variable
+attributes; if any differ then the property is written only to each
+netCDF data variable.
+
+.. code-block:: python3
+   :caption: *Request that the "model" property is written as a netCDF
+             global attribute, using the "global_attributes" keyword.*
+	     
+   {'Conventions': None, 'project': None}
+   >>> f.set_property('model', 'A')
+   >>> cfdm.write(f, 'f_file.nc', global_attributes='model')
+
+.. code-block:: python3
+   :caption: *Request that the "model" property is written as a netCDF
+             global attribute, using the "nc_set_global_attribute" method.*
+	     
+   >>> f.nc_global_attributes()
+   {'Conventions': None, 'project': None}
+   >>> f.nc_set_global_attribute('model')
+   >>> f.nc_global_attributes()
+   {'Conventions': None, 'model': None, 'project': None}
+   >>> cfdm.write(f, 'f_file.nc')
+
+It is possible to create both a netCDF global attribute and a netCDF
+data variable attribute with the same name, but with different
+values. This may be done by assigning the global value to the property
+name with the `~Field.nc_set_global_attribute` method. Any
+inconsistencies arising from multiple field constructs being to the
+same file will be resolved by omitting the netCDF global attribute
+from the file.
+
+.. code-block:: python3
+   :caption: *Request that the "information" property is written as
+             netCDF global and fdata variable attributes, with
+             different values.*
+	     
+   >>> f.set_property('information', 'variable information')
+   >>> f.properties()
+   {'Conventions': 'CF-1.7',
+    'information': 'variable information',
+    'project': 'research',
+    'standard_name': 'specific_humidity',
+    'units': '1'}
+   >>> f.nc_set_global_attribute(information='global information')
+   >>> f.nc_global_attributes()
+   {'Conventions': None,
+    'information': 'global information',
+    'model': None,
+    'project': None}
+   >>> cfdm.write(f, 'f_file.nc')
+
+Alternatively, netCDF global attributes may also be defined with the
+*file_descriptors* keyword of the `cfdm.write` function. These will
+always be written as requested, independently of the netCDF data
+variable attributes, and superceding any global attributes that may
+have been defined with the *global_attributes* keyword or on the
+indvidual field constructs.
+
+.. code-block:: python3
+   :caption: *Insist that the "history" property is written as netCDF
+             global attributes.*
+	     
+   >>> cfdm.write(f, file_descriptors={'history': 'created in 2019'})
+   >>> f_file = cfdm.read('f_file')[0]
+   >>> f_file.nc_global_attributes()
+   >>> f_file.properties()
+   {'Conventions': 'CF-1.7',
+    'history': 'created in 2019',
+    'information': 'variable information',
+    'model': 'A',
+    'project': 'research',
+    'standard_name': 'specific_humidity',
+    'units': '1'}
+   >>> f_file.nc_global_attributes()
+   {'Conventions': None,
+    'history': None,
+    'information': 'global information',
+    'project': None}
+ 
+
 .. _Scalar-coordinate-variables:
 
 **Scalar coordinate variables**

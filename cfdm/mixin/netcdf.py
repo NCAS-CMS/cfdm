@@ -805,7 +805,7 @@ set()
         return out
     #--- End: def
     
-    def nc_set_global_attributes(self, attributes=(), **kwargs):
+    def nc_set_global_attributes(self, attributes=(), **kwargs): # TODO drop s
         '''Select properties to be written as netCDF global attributes.
 
 When multiple field constructs are being written to the same file, it

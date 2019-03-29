@@ -3243,8 +3243,8 @@ and auxiliary coordinate roles for different data variables.
         if file_descriptors:
             if 'Conventions' in file_descriptors:
                 raise ValueError(
-                    "Use the Conventions parameter to specify conventions, rather than a file descriptor.")
-            
+"Use the Conventions parameter to specify conventions, rather than a file descriptor.")
+
             g['file_descriptors'] = file_descriptors
     
         # ------------------------------------------------------------
