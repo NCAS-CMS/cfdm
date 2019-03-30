@@ -187,7 +187,7 @@ NetCDF
    ~cfdm.Field.nc_set_variable 
    ~cfdm.Field.nc_global_attributes
    ~cfdm.Field.nc_clear_global_attributes
-   ~cfdm.Field.nc_set_global_attributes
+   ~cfdm.Field.nc_set_global_attribute
    ~cfdm.Field.nc_unlimited_dimensions
    ~cfdm.Field.nc_clear_unlimited_dimensions
    ~cfdm.Field.nc_set_unlimited_dimensions

@@ -735,7 +735,7 @@ netCDF global attributes, if possible, so selecting them is optional.
 .. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.write`, `nc_clear_global_attributes`,
-             `nc_set_global_attributes`
+             `nc_set_global_attribute`
 
 :Returns:
 
@@ -746,16 +746,6 @@ netCDF global attributes, if possible, so selecting them is optional.
 **Examples:**
 
 TODO
->>> f.nc_set_global_attributes(['Conventions', 'project'])
->>> f.nc_global_attributes()
-{'Conventions', 'project'}
->>> f.nc_set_global_attributes(['project', 'comment'])
->>> f.nc_global_attributes()
-{'Conventions', 'project', 'comment'}
->>> f.nc_clear_global_attributes()
-{'Conventions', 'project', 'comment'}
->>> f.nc_global_attributes()
-set()
 
         '''
         out = self._get_component('netcdf').get('global_attributes')
@@ -773,7 +763,7 @@ attributes.
 .. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.write`, `nc_global_attributes`,
-             `nc_set_global_attributes`
+             `nc_set_global_attribute`
 
 :Returns:
 
@@ -783,16 +773,6 @@ attributes.
 **Examples:**
 
 TODO
->>> f.nc_set_global_attributes(['Conventions', 'project'])
->>> f.nc_global_attributes()
-{'Conventions', 'project'}
->>> f.nc_set_global_attributes(['project', 'comment'])
->>> f.nc_global_attributes()
-{'Conventions', 'project', 'comment'}
->>> f.nc_clear_global_attributes()
-{'Conventions', 'project', 'comment'}
->>> f.nc_global_attributes()
-set()
 
         '''
         out = self._get_component('netcdf').get('global_attributes')
@@ -805,8 +785,8 @@ set()
         return out
     #--- End: def
     
-    def nc_set_global_attributes(self, *attributes, **kwargs):
-        '''Select properties to be written as netCDF global attributes.
+    def nc_set_global_attribute(self, prop, value=None):
+        '''Select a property to be written as a netCDF global attribute.
 
 When multiple field constructs are being written to the same file, it
 is not possible to create a netCDF global attribute from a property
@@ -826,17 +806,16 @@ netCDF global attributes, if possible, so selecting them is optional.
 
 :Parameters:
 
-    attributes: optional
-        Select properties from to be written as netCDF global
-        attributes, if possible
+    prop: `str`
+        Select the property to be written (if possible) as a netCDF
+        global attribute.
 
-    kwargs: optional
-        Define properties with values to be written as netCDF global
-        attributes, possibly in addition to attributes of netCDF data
-        variables.
-
-        *Parameter example:*
-          ``comment='created by model A'``
+    value: optional
+        The value of the netCDF global attribute, which will be
+        created (if possible) in addition to the property as written
+        to a netCDF data variable. If unset (or `None`) then this acts
+        as an instruction to write the property (if possible) to a
+        netCDF global attribute instead of to a netCDF data variable.
         
 :Returns:
 
@@ -845,16 +824,6 @@ netCDF global attributes, if possible, so selecting them is optional.
 **Examples:**
 
 TODO
->>> f.nc_set_global_attributes(['Conventions', 'project'])
->>> f.nc_global_attributes()
-{'Conventions', 'project'}
->>> f.nc_set_global_attributes(['project', 'comment'])
->>> f.nc_global_attributes()
-{'Conventions', 'project', 'comment'}
->>> f.nc_clear_global_attributes()
-{'Conventions': None, 'project': None, 'comment': None}
->>> f.nc_global_attributes()
-set()
 
         '''
         out = self._get_component('netcdf').get('global_attributes')
@@ -862,11 +831,8 @@ set()
         if out is None:
             out = {}        
 
-        out.update(kwargs)
+        out[prop] = value
         
-        for attr in attributes:
-            out.setdefault(attr, None)
-
         self._get_component('netcdf')['global_attributes'] = out
     #--- End: def
     

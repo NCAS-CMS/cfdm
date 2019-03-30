@@ -93,24 +93,26 @@ class NetCDFTest(unittest.TestCase):
         f = cfdm.Field()
         self.assertTrue(f.nc_clear_global_attributes() == {})
         
-        f = cfdm.Field()
-        f.nc_set_global_attributes(())
-
-        f = cfdm.Field()
-        f.nc_set_global_attributes()
+        f.nc_set_global_attribute('Conventions')
+        f.nc_set_global_attribute('project', 'X')
+        self.assertTrue(f.nc_global_attributes() == {'Conventions': None,
+                                                     'project': 'X'})
         
-        f = cfdm.Field()
-        f.nc_set_global_attributes(**{'Conventions': None, 'project': None})
-        self.assertTrue(f.nc_global_attributes() == {'Conventions': None, 'project': None})
+        f.nc_set_global_attribute('project')
+        f.nc_set_global_attribute('comment', None)
+        self.assertTrue(f.nc_global_attributes() == {'Conventions': None,
+                                                     'project': None,
+                                                     'comment': None})
         
-        f.nc_set_global_attributes(project=None, comment=None)
-        self.assertTrue(f.nc_global_attributes() == {'Conventions': None, 'project': None, 'comment': None})
-        
-        self.assertTrue(f.nc_clear_global_attributes() == {'Conventions': None, 'project': None, 'comment': None})
+        self.assertTrue(f.nc_clear_global_attributes() == {'Conventions': None,
+                                                           'project': None,
+                                                           'comment': None})
         self.assertTrue(f.nc_global_attributes() == {})
         
-        f.nc_set_global_attributes('Conventions', 'project')
-        self.assertTrue(f.nc_global_attributes() == {'Conventions': None, 'project': None})
+        f.nc_set_global_attribute('Conventions')
+        f.nc_set_global_attribute('project')
+        self.assertTrue(f.nc_global_attributes() == {'Conventions': None,
+                                                     'project': None})
 
 
         f = cfdm.Field()
@@ -124,7 +126,8 @@ class NetCDFTest(unittest.TestCase):
         
         cfdm.write([f, f2], 'tempfilename.nc', file_descriptors={'comment': 'global comment',
                                                                  'qwerty': 'asdf'})
-        g = cfdm.read('tempfilename.nc')
+
+        g = cfdm.read('tempfilename.nc', verbose=False)
         self.assertTrue(len(g) == 2)
         
         for x in g:
@@ -134,7 +137,8 @@ class NetCDFTest(unittest.TestCase):
                                                'Conventions': 'CF-1.7'})
             self.assertTrue(x.nc_global_attributes() == {'comment': 'global comment',
                                                          'qwerty': None,
-                                                         'Conventions': None})
+                                                         'Conventions': None},
+                            x.nc_global_attributes())
 
         cfdm.write(g, 'tempfilename2.nc')
         h = cfdm.read('tempfilename2.nc')
@@ -144,7 +148,7 @@ class NetCDFTest(unittest.TestCase):
             self.assertTrue(x.equals(y, verbose=True))
             self.assertTrue(y.equals(x, verbose=True))
 
-        g[1].nc_set_global_attributes(comment='different comment')
+        g[1].nc_set_global_attribute('comment', 'different comment')
         cfdm.write(g, 'tempfilename3.nc')
         h = cfdm.read('tempfilename3.nc')
         for x, y in zip(h, g):
