@@ -3408,7 +3408,7 @@ field construct with an underlying contiguous ragged array:
    # Create the contiguous ragged array object, specifying the
    # uncompressed shape
    array = cfdm.RaggedContiguousArray(
-                    compressed_array=cfdm.NumpyArray(ragged_array),
+                    compressed_array=ragged_array,
                     shape=(2, 4), size=8, ndim=2,
                     count_variable=count_variable)
 
@@ -3616,7 +3616,7 @@ simple field construct with an underlying gathered array:
    # Create the gathered array object, specifying the uncompressed
    # shape
    array = cfdm.GatheredArray(
-                    compressed_array=cfdm.NumpyArray(gathered_array),
+                    compressed_array=gathered_array,
 		    compressed_dimension=1,
                     shape=(2, 3, 2), size=12, ndim=3,
                     list_variable=list_variable)

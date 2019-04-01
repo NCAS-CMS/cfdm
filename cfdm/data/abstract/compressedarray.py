@@ -24,7 +24,7 @@ See `cfdm.GatheredArray` for an example implementation.
 
 :Parameters:
 
-    compressed_array: numpy array or subclass of `Array`
+    compressed_array: subclass of `Array`
         The compressed array.
 
     shape: `tuple`
@@ -118,7 +118,7 @@ rules, the only differences being:
 
 :Parameters:
 
-    array: `numpy` array_like or subclass of `cfdm.data.Array`
+    array: subclass of `cfdm.data.Array`
         The compressed data to be inserted.
 
 :Returns:

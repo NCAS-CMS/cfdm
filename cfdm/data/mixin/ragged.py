@@ -2,13 +2,13 @@ from builtins import object
 
 
 class RaggedContiguous(object):
-    '''TODO
+    '''Mixin class for an underlying compressed ragged array.
 
 .. versionadded:: 1.7.0
 
     '''
     def get_count(self, default=ValueError()):
-        '''TODO
+        '''Return the countcount_va variable for a compressed array.
 
 .. versionadded:: 1.7.0
 
@@ -25,7 +25,7 @@ class RaggedContiguous(object):
 
 **Examples:**
 
-TODO
+>>> c = d.get_count()
 
         '''
         try:
@@ -40,11 +40,11 @@ TODO
 
 
 class RaggedIndexed(object):
-    '''TODO
+    '''Mixin class for an underlying indexed ragged array.
 
     '''
     def get_index(self, default=ValueError()):
-        '''TODO
+        '''Return the index variable for a compressed array.
 
 .. versionadded:: 1.7.0
 
@@ -61,7 +61,7 @@ class RaggedIndexed(object):
 
 **Examples:**
 
-TODO
+>>> i = d.get_index()
 
         '''
         try:

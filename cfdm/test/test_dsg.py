@@ -444,7 +444,7 @@ class DSGTest(unittest.TestCase):
         q = [g for g in f
              if g.get_property('standard_name') == 'specific_humidity'][0]
 
-        self.assertTrue(cfdm.functions._numpy_allclose(q.data.array, self.a))
+        self.assertTrue(q._equals(self.a, q.data.array))
 
 #        print ('\nf\n')
 #        for x in f:
@@ -514,7 +514,7 @@ class DSGTest(unittest.TestCase):
         q = [g for g in f
              if g.get_property('standard_name') == 'specific_humidity'][0]
 
-        self.assertTrue(cfdm.functions._numpy_allclose(q.data.array, self.a))
+        self.assertTrue(q._equals(q.data.array, self.a))
         
 #        print ('\nf\n')
 #        for x in f:
@@ -545,11 +545,10 @@ class DSGTest(unittest.TestCase):
         q = [g for g in f
              if g.get_property('standard_name') == 'specific_humidity'][0]
 
-        q = q.data.array
+        qa = q.data.array
         
-        message= repr(q-self.b) +'\n'+repr(q[2,0])+'\n'+repr(self.b[2, 0])
-        self.assertTrue(cfdm.functions._numpy_allclose(q, self.b),
-                        message)        
+        message= repr(qa-self.b) +'\n'+repr(qa[2,0])+'\n'+repr(self.b[2, 0])
+        self.assertTrue(q._equals(qa, self.b), message)        
 
 #        print ('\nf\n')
 #        for x in f:

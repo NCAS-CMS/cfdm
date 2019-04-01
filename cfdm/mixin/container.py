@@ -139,7 +139,6 @@ casts them as numpy arrays and carried aout numericlly tolerant equality checks.
                 else:
                     return bool(out)
     #--- End: def
-    
 
     def _equals_preprocess(self, other, verbose=False,
                            ignore_type=False):

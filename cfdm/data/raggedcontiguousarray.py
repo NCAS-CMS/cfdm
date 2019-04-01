@@ -4,10 +4,11 @@ import numpy
 
 from . import abstract
 from . import mixin
+from . import NumpyArray
 
 
-class RaggedContiguousArray(mixin.RaggedContiguous,
-                            abstract.CompressedArray):
+class RaggedContiguousArray(abstract.CompressedArray,
+                            mixin.RaggedContiguous):
     '''An underlying contiguous ragged array.
 
 A collection of features stored using a contiguous ragged array
@@ -27,7 +28,7 @@ variable" that gives the size of each block.
 
 :Parameters:
 
-    compressed_array: subclass of `Array`
+    compressed_array: numpy array-like or subclass of Array
         The compressed data.
 
     shape: `tuple`
@@ -44,6 +45,12 @@ variable" that gives the size of each block.
         corresponding to a CF-netCDF count variable.
 
         '''
+        if not isinstance(compressed_array, abstract.Array):
+            if not isinstance(compressed_array, numpy.ndarray):
+                compressed_array = numpy.asanyarray(compressed_array)
+                
+            compressed_array = NumpyArray(compressed_array)
+
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
                          count_variable=count_variable,

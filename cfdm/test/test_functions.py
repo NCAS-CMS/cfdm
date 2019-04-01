@@ -10,11 +10,25 @@ class FunctionsTest(unittest.TestCase):
         self.test_only = []
     #--- End: def
         
-    def test_CF(self):
+    def test_CF_ATOL_RTOL_environment(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         self.assertTrue(cfdm.CF() == '1.7')
+
+        org = cfdm.RTOL()
+        self.assertTrue(cfdm.RTOL(1e-5) == org)
+        self.assertTrue(cfdm.RTOL() == 1e-5)
+        self.assertTrue(cfdm.RTOL(org) == 1e-5)
+        self.assertTrue(cfdm.RTOL() == org)
+        
+        org = cfdm.ATOL()
+        self.assertTrue(cfdm.ATOL(1e-5) == org)
+        self.assertTrue(cfdm.ATOL() == 1e-5)
+        self.assertTrue(cfdm.ATOL(org) == 1e-5)
+        self.assertTrue(cfdm.ATOL() == org)
+
+        out = cfdm.environment(display=False)
     #--- End: def
     
 #--- End: class
