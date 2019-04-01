@@ -144,12 +144,17 @@ Constructs:
     def fromconstructs(cls, constructs, copy=False):
         '''Create a domain from existing metadata constructs.
 
+The new domain act as a view to the given constructs, i.e. changes to
+the domain, such as the addition or removal of a construct, will also
+affect the input `Constructs` instance.
+
 .. versionadded:: 1.7.0
 
 :Parameters:
 
     constructs: `Constructs`
-        TODO
+        The constructs from which to create the new domain. Cell
+        method and field ancillary constucts are ignored.
 
     copy: bool, optional
         If True then deep copy the metadata constructs prior to
@@ -159,7 +164,7 @@ Constructs:
 :Returns:
 
     `Domain`
-        TODO
+        The domain created from a view of the constructs.
 
 **Examples:**
 

@@ -739,7 +739,7 @@ reference is replace with `None`.
     # Dictionary-like methods    
     # ----------------------------------------------------------------
     def get(self, key, *default):
-        '''Return the construct for key if key exists, else default.
+        '''Return the construct for construct key, if it exists, else default.
 
 .. versionadded:: 1.7.0
 
@@ -750,7 +750,7 @@ reference is replace with `None`.
     #--- End: def
 
     def items(self):
-        '''Return the items ((construct key, construct) pairs).
+        '''Return the items as (construct key, construct) pairs.
 
 .. versionadded:: 1.7.0
 
@@ -761,7 +761,7 @@ reference is replace with `None`.
     #--- End: def
     
     def keys(self):
-        '''Returns all of the construct keys, in arbitrary order.
+        '''Return all of the construct keys, in arbitrary order.
 
 .. versionadded:: 1.7.0
 
@@ -794,7 +794,7 @@ reference is replace with `None`.
     #--- End: def
 
     def value(self, default=ValueError()):
-        '''TODO
+        '''Return the sole metadata construct.
 
 .. versionadded:: 1.7.0
 
@@ -809,11 +809,18 @@ reference is replace with `None`.
 
 :Returns:
 
-        TODO
+        The metadata construct.
 
 **Examples:**
 
-TODO
+>>> print(c)
+Constructs:
+{'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+>>> c.key(
+'dimensioncoordinate0'
+>>> c.value()
+<DimensionCoordinate: latitude(5) degrees_north>
+
         '''
         if not self:
             return self._default(default, "Can't return zero constructs")
@@ -828,7 +835,7 @@ TODO
     #--- End: def
     
     def key(self, default=ValueError()):
-        '''TODO
+        '''Return the construct key of the sole metadata construct.
 
 .. versionadded:: 1.7.0
 
@@ -844,12 +851,17 @@ TODO
 :Returns:
 
     `str`
-        TODO
+        The construct key.
 
 **Examples:**
 
-TODO
-    
+>>> print(c)
+Constructs:
+{'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+>>> c.key(
+'dimensioncoordinate0'
+>>> c.value()
+<DimensionCoordinate: latitude(5) degrees_north>
 
         '''
         if not self:
@@ -865,22 +877,33 @@ TODO
     #--- End: def
         
     def data_axes(self):
-        '''Return the domain axes spanned by all construct data arrays.
+        '''Return the domain axis constructs spanned by metadata construct
+data.
 
 .. versionadded:: 1.7.0
 
 :Returns:
 
     `dict`
-        <TODO>
-        The identifiers of the domain axes constructs spanned by
-        metadata construct data arrays. If a metadata construct does
-        not have a data array then `None` is returned.
+
+        The keys of the domain axes constructs spanned by metadata
+        construct data.
 
 **Examples:**
 
+>>> print(c)
+Constructs:
+{'cellmethod0': <CellMethod: area: mean>,
+ 'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+ 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+ 'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+ 'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
 >>> c.data_axes()
-<TODO>
+{'dimensioncoordinate0': ('domainaxis0',),
+ 'dimensioncoordinate1': ('domainaxis1',),
+ 'dimensioncoordinate2': ('domainaxis2',)}
 
         '''
         if not self._ignore:
@@ -995,14 +1018,18 @@ TODO
     #--- End: def
 
     def ordered(self):
-        '''TODO
+        '''Return the contructs in their predetermined order.
+
+For cell method constructs, the predetermined order is that in which
+they where added.
 
 .. versionadded:: 1.7.0
 
 :Returns:
 
      `collections.OrderedDict`
-         The ordered constructs and their construct keys.
+         The constructs and their construct keys, in their
+         predetermined order.
 
 **Examples:**
 

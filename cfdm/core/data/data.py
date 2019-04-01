@@ -45,9 +45,10 @@ class Data(abstract.Container):
         `set_calendar` method.
 
     fill_value: optional 
-        The fill value of the data. By default, or if None, the numpy
-        fill value appropriate to the array's data type will be used.
-        TODO. Ignored if the *source* parameter is set.
+        The fill value of the data. By default, or if set to `None`,
+        the `numpy` fill value appropriate to the array's data type
+        will be used (see `numpy.ma.default_fill_value`). Ignored if
+        the *source* parameter is set.
 
         *Parameter example:*
           ``fill_value=-999.``

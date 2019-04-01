@@ -326,8 +326,8 @@ Constructs:
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `constructs`, `Constructs.filter_by_identity`,
-             `Constructs.value` TODO
+.. seealso:: `construct_key`, `constructs`,
+             `Constructs.filter_by_identity`, `Constructs.value`
 
 :Parameters:
 

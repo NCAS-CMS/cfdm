@@ -290,7 +290,7 @@ x.__str__() <==> str(x)
     def del_node_count(self, default=ValueError()):
         '''Remove the node count variable for geometry bounds.
 
-.. versionadded:: 1.7.0
+.. versionadded:: 1.8.0
 
 .. seealso:: `get_node_count`, `has_node_count`, `set_node_count`
 
@@ -329,7 +329,7 @@ False
     def del_part_node_count(self, default=ValueError()):
         '''Remove the part node count variable for geometry bounds.
 
-.. versionadded:: 1.7.0
+.. versionadded:: 1.8.0
 
 .. seealso:: `get_part_node_count`, `has_part_node_count`,
              `set_part_node_count`
@@ -944,8 +944,8 @@ None
 :Parameters:
 
     default: optional
-        Return the value of the *default* parameter if bounds have not
-        been set. If set to an `Exception` instance then it will be
+        Return the value of the *default* parameter if there are no
+        bounds data. If set to an `Exception` instance then it will be
         raised instead.
 
 :Returns:
@@ -954,7 +954,8 @@ None
 
 **Examples:**
 
-TODO
+>>> c.get_bounds_data()
+<Data(96, 2): [[0, ..., 360.0]] degrees_east>
 
         '''
         bounds = self.get_bounds(default=None)
@@ -1031,7 +1032,7 @@ also inserted into the bounds data array, if present.
     def set_node_count(self, node_count, copy=True):
         '''Set the node count variable for geometry bounds.
 
-.. versionadded:: 1.7.0
+.. versionadded:: 1.8.0
 
 .. seealso: `del_node_count`, `get_node_count`, `has_node_count`
 
@@ -1062,7 +1063,7 @@ TODO
     def set_part_node_count(self, part_node_count, copy=True):
         '''Set the part node count variable for geometry bounds.
 
-.. versionadded:: 1.7.0
+.. versionadded:: 1.8.0
 
 .. seealso: `del_part_node_count`, `get_part_node_count`,
             `has_part_node_count`

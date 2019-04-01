@@ -132,4 +132,3 @@ package:
 .. [#devel] The `cf-python <https://cfpython.bitbucket.io/>`_ package
             does not yet import the cfdm package, but it will soon.
 
-.. TODO

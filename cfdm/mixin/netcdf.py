@@ -1,5 +1,7 @@
 from builtins import object
 
+from copy import deepcopy
+
 
 class NetCDF(object):
     '''Mixin class for storing simple netCDF elements.
@@ -14,17 +16,22 @@ from this mixin class.
 :Parameters:
 
     source: optional
+        Initialise the netCDF components from those of *source*.
 
 :Returns:
 
     `None`
+
+**Examples:**
+
+>>> f._initialise_netcdf(source)
 
         '''
         if source is None:
              netcdf = {}
         else:        
             try:
-                netcdf = source._get_component('netcdf', {}).copy()
+                netcdf = deepcopy(source._get_component('netcdf', {}))
             except AttributeError:
                 netcdf = {}
         #--- End: if
@@ -722,15 +729,16 @@ class NetCDFGlobalAttributes(NetCDF):
 attributes.
 
 When multiple field constructs are being written to the same file, it
-is not possible to create a netCDF global attribute from a property
-that has different values for different fields being written. In this
-case the property will not be written as a netCDF global attribute,
-even if it has been selected as such by this method, but will appear
-instead as an attribute on the netCDF data variable corresponding to
-the field construct.
+is only possible to create a netCDF global attribute from a property
+that has identical values for each field construct. If any field
+construct's property has a different value then the property will not
+be written as a netCDF global attribute, even if it has been selected
+as such, but will appear instead as attributes on the netCDF data
+variables corresponding to each field construct.
 
-The description-of-file-contents properties are always written as
-netCDF global attributes, if possible, so selecting them is optional.
+The standard description-of-file-contents properties are always
+written as netCDF global attributes, if possible, so selecting them is
+optional.
 
 .. versionadded:: 1.7.0
 
@@ -740,12 +748,23 @@ netCDF global attributes, if possible, so selecting them is optional.
 :Returns:
 
     `dict`
-        TODO The selection of properties to be written as netCDF global
-        attributes.
+        The selection of properties requested for writting to netCDF
+        global attributes.
 
 **Examples:**
 
-TODO
+>>> f.nc_global_attributes()
+{'Conventions': None, 'comment': None}
+>>> f.nc_set_global_attribute('foo')
+>>> f.nc_global_attributes()
+{'Conventions': None, 'comment': None, 'foo'}
+>>> f.nc_set_global_attribute('comment', 'global comment')
+>>> f.nc_global_attributes()
+{'Conventions': None, 'comment': 'global_comment', 'foo'}
+>>> f.nc_clear_global_attributes()
+{'Conventions': None, 'comment': 'global_comment', 'foo'}
+>>> f.nc_global_attributes()
+{}
 
         '''
         out = self._get_component('netcdf').get('global_attributes')
@@ -760,6 +779,18 @@ TODO
         '''Remove the selection of properties to be written as netCDF global
 attributes.
 
+When multiple field constructs are being written to the same file, it
+is only possible to create a netCDF global attribute from a property
+that has identical values for each field construct. If any field
+construct's property has a different value then the property will not
+be written as a netCDF global attribute, even if it has been selected
+as such, but will appear instead as attributes on the netCDF data
+variables corresponding to each field construct.
+
+The standard description-of-file-contents properties are always
+written as netCDF global attributes, if possible, so selecting them is
+optional.
+
 .. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.write`, `nc_global_attributes`,
@@ -767,12 +798,24 @@ attributes.
 
 :Returns:
 
-    `set`
-        TODO 
+    `dict`
+        The removed selection of properties requested for writting to
+        netCDF global attributes.
 
 **Examples:**
 
-TODO
+>>> f.nc_global_attributes()
+{'Conventions': None, 'comment': None}
+>>> f.nc_set_global_attribute('foo')
+>>> f.nc_global_attributes()
+{'Conventions': None, 'comment': None, 'foo'}
+>>> f.nc_set_global_attribute('comment', 'global comment')
+>>> f.nc_global_attributes()
+{'Conventions': None, 'comment': 'global_comment', 'foo'}
+>>> f.nc_clear_global_attributes()
+{'Conventions': None, 'comment': 'global_comment', 'foo'}
+>>> f.nc_global_attributes()
+{}
 
         '''
         out = self._get_component('netcdf').get('global_attributes')
@@ -789,15 +832,16 @@ TODO
         '''Select a property to be written as a netCDF global attribute.
 
 When multiple field constructs are being written to the same file, it
-is not possible to create a netCDF global attribute from a property
-that has different values for different fields being written. In this
-case the property will not be written as a netCDF global attribute,
-even if it has been selected as such by this method, but will appear
-instead as an attribute on the netCDF data variable corresponding to
-the field construct.
+is only possible to create a netCDF global attribute from a property
+that has identical values for each field construct. If any field
+construct's property has a different value then the property will not
+be written as a netCDF global attribute, even if it has been selected
+as such, but will appear instead as attributes on the netCDF data
+variables corresponding to each field construct.
 
-The description-of-file-contents properties are always written as
-netCDF global attributes, if possible, so selecting them is optional.
+The standard description-of-file-contents properties are always
+written as netCDF global attributes, if possible, so selecting them is
+optional.
 
 .. versionadded:: 1.7.0
 
@@ -823,7 +867,18 @@ netCDF global attributes, if possible, so selecting them is optional.
 
 **Examples:**
 
-TODO
+>>> f.nc_global_attributes()
+{'Conventions': None, 'comment': None}
+>>> f.nc_set_global_attribute('foo')
+>>> f.nc_global_attributes()
+{'Conventions': None, 'comment': None, 'foo'}
+>>> f.nc_set_global_attribute('comment', 'global comment')
+>>> f.nc_global_attributes()
+{'Conventions': None, 'comment': 'global_comment', 'foo'}
+>>> f.nc_clear_global_attributes()
+{'Conventions': None, 'comment': 'global_comment', 'foo'}
+>>> f.nc_global_attributes()
+{}
 
         '''
         out = self._get_component('netcdf').get('global_attributes')
@@ -990,7 +1045,7 @@ class NetCDFExternal(NetCDF):
 
     '''
     def nc_get_external(self):
-        '''Whether the construct correponds to an external netCDF variable.
+        '''Whether the construct corresponds to an external netCDF variable.
 
 .. versionadded:: 1.7.0
 

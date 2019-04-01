@@ -126,25 +126,31 @@ indexing (given the restrictions on the type of indices allowed) is:
         return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
 
-    def get_list(self, *default):
-        '''TODO
+    def get_list(self, default=ValueError()):
+        '''Return the list variable for a compressed array.
 
 .. versionadded:: 1.7.0
 
 :Parameters:
 
     default: optional
-        Return *default* if the list variable has not been set.
+        Return the value of the *default* parameter if the list
+        variable has not been set. If set to an `Exception` instance
+        then it will be raised instead.
 
 :Returns:
 
-        TODO
+    `List`
+        The list variable.
 
 **Examples:**
 
-TODO
+>>> l = g.get_list()
+
+>>> l = g.get_list(default=None)
+
         '''
-        return self._get_component('list_variable', *default)
+        return self._get_component('list_variable', default=default)
     #--- End: def
 
 #--- End: class

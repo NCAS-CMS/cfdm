@@ -2853,14 +2853,20 @@ write them to the netCDF4.Dataset.
         # ------------------------------------------------------------
         force_global = {}
         for f in fields:
-#            f_global = self.implementation.nc_get_global_attributes(f)
-#            global_attributes.update(f_global)
             for attr, v in self.implementation.nc_get_global_attributes(f).items():
                 if v is None:
                     global_attributes.add(attr)
                 else:
                     force_global.setdefault(attr, []).append(v)
         #--- End: for
+
+        if 'Conventions' not in force_global:
+            for f in fields:
+                v = self.implementation.nc_get_global_attributes(f).get('Conventions')
+                if v is not None:
+                    force_global.setdefault('Conventions', []).append(v)
+        #--- End: if
+                
         force_global = {attr: v[0] for attr, v in force_global.items()
                         if len(v) == len(fields) and len(set(v)) == 1}
 
@@ -2870,11 +2876,14 @@ write them to the netCDF4.Dataset.
         
         # ------------------------------------------------------------
         # Remove attributes that have been specifically requested to
-        # not be global attributes. These include all properties
-        # listed as file descriptors.
+        # not be global attributes.
         # ------------------------------------------------------------
-        g['variable_attributes'].update(g['file_descriptors'])
         global_attributes.difference_update(g['variable_attributes'])
+        
+        # ------------------------------------------------------------
+        # Remove properties listed as file descriptors.
+        # ------------------------------------------------------------
+        global_attributes.difference_update(g['file_descriptors'])
         
         # ------------------------------------------------------------
         # Remove attributes that are "forced" global attributes. These
@@ -2889,13 +2898,14 @@ write them to the netCDF4.Dataset.
         # ------------------------------------------------------------
         f0 = fields[0]
         for prop in tuple(global_attributes):
-            if not self.implementation.has_property(f0, prop):
-                global_attributes.remove(prop)
-                continue
-                
             prop0 = self.implementation.get_property(f0, prop, None)
 
+            if prop0 is None: #not self.implementation.has_property(f0, prop):
+                global_attributes.remove(prop)
+                continue            
+
             if len(fields) > 1:
+#                prop0 = self.implementation.get_property(f0, prop, None)
                 for f in fields[1:]:
                     prop1 = self.implementation.get_property(f, prop, None)
                     if not self.implementation.equal_properties(prop0, prop1):
@@ -2907,52 +2917,39 @@ write them to the netCDF4.Dataset.
         # Write the Conventions global attribute to the file
         # ------------------------------------------------------------
         delimiter = ' '
-        if not g['Conventions']:
-            g['output_version'] = g['latest_version']
-            g['Conventions'] = ['CF-'+str(g['output_version'])]
-        else:            
+        set_Conventions = force_global.pop('Conventions', None)
+        if g['Conventions']:
             if isinstance(g['Conventions'], basestring):
                 g['Conventions'] = [g['Conventions']]
-
-            found_cf_version = False
-            for c in g['Conventions']:
-                x = re.search('CF-(\d.*)', c)
-                if x:
-                    if found_cf_version:
-                        raise ValueError(
-                            "Can't set more than one version of CF: {}".format(
-                                g['Conventions']))
-                                         
-                    version = x.groups()[0]
-
-                    # Check for valid versions
-                    if LooseVersion(version) < g['CF-1.7']:
-                        raise ValueError(
-                            "Can't create a CF-{0} file: Version too old".format(
-                                version))
-                    elif LooseVersion(version) > g['latest_version']:
-                        raise ValueError(
-                            "Can't create a CF-{0} file: Version too new".format(
-                                version))
-
-                    found_cf_version = True
-            #--- End: for
-                            
-            if [c for x in g['Conventions'] if ',' in c]:
-                raise ValueError("Conventions names can not contain commas: {0}".format(
-                    g['Conventions']))
-
-            if found_cf_version:
-                g['output_version'] = LooseVersion(version)
             else:
-                g['output_version'] = g['latest_version']
-                g['Conventions'] = ['CF-'+str(g['output_version'])] + list(g['Conventions'])
-                
-            if [c for x in g['Conventions'] if ' ' in c]:
-                # At least one of the conventions contains blanks
-                # space, so join them with commas.
-                delimiter = ','
-        #--- End: if        
+                g['Conventions'] = list(g['Conventions'])
+        else:
+            if set_Conventions is None:
+                g['Conventions'] = []
+            else:
+                if ',' in set_Conventions:                    
+                    g['Conventions'] = split.set_Conventions.split(',')
+                else:
+                    g['Conventions'] = split.set_Conventions.split()
+        #--- End: if
+
+        for i, c in enumerate(g['Conventions'][:]):
+            x = re.search('CF-(\d.*)', c)
+            if x:
+                g['Conventions'].pop(i)
+        #--- End: for
+           
+        if [x for x in g['Conventions'] if ',' in x]:
+            raise ValueError("Conventions names can not contain commas: {0}".format(
+                g['Conventions']))
+        
+        g['output_version'] = g['latest_version']
+        g['Conventions'] = ['CF-'+str(g['output_version'])] + list(g['Conventions'])
+            
+        if [x for x in g['Conventions'] if ' ' in x]:
+            # At least one of the conventions contains blanks
+            # space, so join them with commas.
+            delimiter = ','
 
         g['netcdf'].setncattr('Conventions', delimiter.join(g['Conventions']))
 

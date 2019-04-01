@@ -1,4 +1,4 @@
-.. currentmodule:: cfdm
+.. Currentmodule:: cfdm
 .. default-role:: obj
 
 .. _Tutorial:
@@ -2020,10 +2020,9 @@ The "Conventions" property does not need to be set because it is
 automatically included in output files as a netCDF global
 "Conventions" attribute, either as the CF version of the cfdm package
 (as returned by the `cfdm.CF` function), or else specified via the
-*Conventions* keyword the `cfdm.write` function (when additional
-conventions can be also added, see the :ref:`Writing-to-disk` section
-for details). If the "Conventions" property were to be set on a field
-construct, then it is ignored during the write process.
+*Conventions* keyword of the `cfdm.write` function. See the section on
+:ref:`Writing-to-disk` for details on how to specify additional
+conventions.
 
 If this field were to be written to a netCDF dataset then, in the
 absence of predefined names, default netCDF variable and dimension
@@ -2807,10 +2806,10 @@ netCDF global attributes. Other attributes may also be written as
 netCDF global attributes if they have been identified as such with the
 *global_attributes* keyword, or via the
 `~Field.nc_set_global_attribute` method of the field constructs. In
-any case, the creation of a netCDF global attribute depends on the
+either case, the creation of a netCDF global attribute depends on the
 corresponding property values being identical across all of the field
 constructs being written to the file. If they are all equal then the
-property will be written as a netCDF global attribute and not an
+property will be written as a netCDF global attribute and not as an
 attribute of any netCDF data variable; if any differ then the property
 is written only to each netCDF data variable.
 
@@ -2838,9 +2837,9 @@ data variable attribute with the same name, but with different
 values. This may be done by assigning the global value to the property
 name with the `~Field.nc_set_global_attribute` method, or by via the
 *file_descriptors* keyword. For the former technique, any
-inconsistencies arising from multiple field constructs being to the
-same file will be resolved by omitting the netCDF global attribute
-from the file.
+inconsistencies arising from multiple field constructs being written
+to the same file will be resolved by omitting the netCDF global
+attribute from the file.
 
 .. code-block:: python3
    :caption: *Request that the "information" property is written as
@@ -2867,7 +2866,8 @@ Netcdf global attributes defined with the *file_descriptors* keyword
 of the `cfdm.write` function will always be written as requested,
 independently of the netCDF data variable attributes, and superceding
 any global attributes that may have been defined with the
-*global_attributes* keyword, or on the individual field constructs.
+*global_attributes* keyword, or set on the individual field
+constructs.
 
 .. code-block:: python3
    :caption: *Insist that the "history" property is written as netCDF
@@ -2892,12 +2892,24 @@ any global attributes that may have been defined with the
 
 .. _Conventions:
 
-Conventions
-^^^^^^^^^^^
+**Conventions**
+^^^^^^^^^^^^^^^
 
-TODO
+The "Conventions" netCDF global attribute containing the version of
+the CF conventions is always automatically created. If the version of
+the CF conventions has been set as a field property, or with the
+*Conventions* keyword of the `cfdm.write` function, then it is
+ignored. However, other conventions that may apply can be set with
+either technique.
 
+.. code-block:: python3
+   :caption: *Two ways to add additional conventions to the
+             "Conventions" netCDF global attribute.*
+	     
+   >>> f_file.set_property('Conventions', 'UGRID1.0')
+   >>> cfdm.write(f, 'f_file.nc', Conventions='UGRID1.0')   
 
+   
 .. _Scalar-coordinate-variables:
 
 **Scalar coordinate variables**

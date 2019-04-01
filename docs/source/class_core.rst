@@ -36,6 +36,15 @@ Version |release| for version |version| of the CF conventions.
    cfdm.core.DomainAxis
    cfdm.core.FieldAncillary
 
+**Constructs class**
+--------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.core.Constructs
+
 **Coordinate component classes**
 --------------------------------
 
