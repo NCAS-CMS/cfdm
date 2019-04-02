@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cfdm 1.7.0</a></b></h3>
+<h3><b><a href="index.html">cfdm 1.7.1</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
@@ -105,7 +105,7 @@
   <div class="section" id="cfdm-tutorial">
 <span id="tutorial"></span><h1><strong>cfdm tutorial</strong><a class="headerlink" href="#cfdm-tutorial" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.7.0 for version 1.7 of the CF conventions.</p>
+<p>Version 1.7.1 for version 1.7 of the CF conventions.</p>
 <div class="section" id="import">
 <span id="id1"></span><h2><strong>Import</strong><a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -1041,22 +1041,25 @@ that meet various criteria:</p>
 <tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_axis.html#cfdm.Constructs.filter_by_axis" title="cfdm.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_axis</span></code></a></td>
 <td>The domain axis constructs spanned by the data</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_measure.html#cfdm.Constructs.filter_by_measure" title="cfdm.Constructs.filter_by_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_measure</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_naxes.html#cfdm.Constructs.filter_by_naxes" title="cfdm.Constructs.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></a></td>
+<td>The number of domain axis constructs spanned by the data</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_measure.html#cfdm.Constructs.filter_by_measure" title="cfdm.Constructs.filter_by_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_measure</span></code></a></td>
 <td>Measure value (for cell measure constructs)</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_method.html#cfdm.Constructs.filter_by_method" title="cfdm.Constructs.filter_by_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_method</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_method.html#cfdm.Constructs.filter_by_method" title="cfdm.Constructs.filter_by_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_method</span></code></a></td>
 <td>Method value (for cell method constructs)</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_data.html#cfdm.Constructs.filter_by_data" title="cfdm.Constructs.filter_by_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_data.html#cfdm.Constructs.filter_by_data" title="cfdm.Constructs.filter_by_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_data</span></code></a></td>
 <td>Whether or not there could be be data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_key.html#cfdm.Constructs.filter_by_key" title="cfdm.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_key.html#cfdm.Constructs.filter_by_key" title="cfdm.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a></td>
 <td>Construct key</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_ncvar.html#cfdm.Constructs.filter_by_ncvar" title="cfdm.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_ncvar.html#cfdm.Constructs.filter_by_ncvar" title="cfdm.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a></td>
 <td>Netcdf variable name (see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>)</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_ncdim.html#cfdm.Constructs.filter_by_ncdim" title="cfdm.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Constructs.filter_by_ncdim.html#cfdm.Constructs.filter_by_ncdim" title="cfdm.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a></td>
 <td>Netcdf dimension name (see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>)</td>
 </tr>
 </tbody>
@@ -1270,8 +1273,8 @@ means:</p>
 </div>
 </div>
 <p>The constructs that were <em>not</em> selected by a filter may be returned by
-the <a class="reference internal" href="method/cfdm.Constructs.inverse_filter.html#cfdm.Constructs.inverse_filter" title="cfdm.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a> method applied to the result of the
-filter:</p>
+the <a class="reference internal" href="method/cfdm.Constructs.inverse_filter.html#cfdm.Constructs.inverse_filter" title="cfdm.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a> method applied to the results of
+filters:</p>
 <div class="literal-block-wrapper docutils container" id="id91">
 <div class="code-block-caption"><span class="caption-text"><em>Get the constructs that were not selected by a filter.</em></span><a class="headerlink" href="#id91" title="Permalink to this code">¶</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;auxiliary_coordinate&#39;</span><span class="p">)</span>

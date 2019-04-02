@@ -221,15 +221,15 @@ class ConstructsTest(unittest.TestCase):
         
         e = d.filter_by_property(units='degrees')
         self.assertTrue(len(e.filters_applied()) == 2)
-        ei = e.inverse_filter()
+        ei = e.inverse_filter(1)
         self.assertTrue(len(e.filters_applied()) == 2)
         self.assertTrue(len(ei) == len(d) - len(e))
 
         # Unfilter
-        self.assertTrue(e.unfilter().equals(d, verbose=True))        
-        self.assertTrue(e.unfilter().unfilter().equals(c, verbose=True))
-        self.assertTrue(d.unfilter().equals(c, verbose=True))        
-        self.assertTrue(c.unfilter().equals(c, verbose=True))
+        self.assertTrue(e.unfilter(1).equals(d, verbose=True))        
+        self.assertTrue(e.unfilter(1).unfilter().equals(c, verbose=True))
+        self.assertTrue(d.unfilter(1).equals(c, verbose=True))        
+        self.assertTrue(c.unfilter(1).equals(c, verbose=True))
     #--- End: def
 
 #--- End: class

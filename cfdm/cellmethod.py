@@ -383,10 +383,10 @@ False
         self_qualifiers  = self.qualifiers()
         other_qualifiers = other.qualifiers()
 
-        if ignore_qualifiers:
-            for prop in tuple(ignore_qualifiers) + ('interval',):
-                self_qualifiers.pop(prop, None)
-                other_qualifiers.pop(prop, None)
+#        if ignore_qualifiers:
+        for prop in tuple(ignore_qualifiers) + ('interval',):
+            self_qualifiers.pop(prop, None)
+            other_qualifiers.pop(prop, None)
         #--- End: if
                 
         if set(self_qualifiers) != set(other_qualifiers):

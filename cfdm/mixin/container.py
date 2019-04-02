@@ -94,7 +94,11 @@ casts them as numpy arrays and carried aout numericlly tolerant equality checks.
                 # Python 2
                 pass
             return eq(x, **kwargs)
-        
+
+#        print (type(x), type(y))
+#        print (repr(x), repr(y))
+#        print (numpy.shape(x))
+#        print (numpy.shape(y))
         if numpy.shape(x) != numpy.shape(y):
             return False
 

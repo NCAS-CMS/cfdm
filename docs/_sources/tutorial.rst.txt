@@ -933,16 +933,17 @@ that meet various criteria:
 ================================  ==========================================================================  
 Method                            Filter criteria                                                             
 ================================  ==========================================================================  
-`~Constructs.filter_by_identity`  Metadata construct identity                                                 
-`~Constructs.filter_by_type`      Metadata construct type                                                     
-`~Constructs.filter_by_property`  Property values                                                              
-`~Constructs.filter_by_axis`      The domain axis constructs spanned by the data        		            
-`~Constructs.filter_by_measure`   Measure value (for cell measure constructs)				    
-`~Constructs.filter_by_method`    Method value (for cell method constructs)				    
+`~Constructs.filter_by_identity`  Metadata construct identity                
+`~Constructs.filter_by_type`      Metadata construct type                       
+`~Constructs.filter_by_property`  Property values                                     
+`~Constructs.filter_by_axis`      The domain axis constructs spanned by the data
+`~Constructs.filter_by_naxes`     The number of domain axis constructs spanned by the data
+`~Constructs.filter_by_measure`   Measure value (for cell measure constructs)
+`~Constructs.filter_by_method`    Method value (for cell method constructs)	
 `~Constructs.filter_by_data`      Whether or not there could be be data.
-`~Constructs.filter_by_key`       Construct key								    
-`~Constructs.filter_by_ncvar`     Netcdf variable name (see the :ref:`netCDF interface <NetCDF-interface>`)   
-`~Constructs.filter_by_ncdim`     Netcdf dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)  
+`~Constructs.filter_by_key`       Construct key			
+`~Constructs.filter_by_ncvar`     Netcdf variable name (see the :ref:`netCDF interface <NetCDF-interface>`)
+`~Constructs.filter_by_ncdim`     Netcdf dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)
 ================================  ==========================================================================  
 
 Each of these methods returns a new `Constructs` instance that
@@ -1159,8 +1160,8 @@ If no constructs match the given criteria, then an "empty"
    0
 
 The constructs that were *not* selected by a filter may be returned by
-the `~Constructs.inverse_filter` method applied to the result of the
-filter:
+the `~Constructs.inverse_filter` method applied to the results of
+filters:
 
 .. code-block:: python3
    :caption: *Get the constructs that were not selected by a filter.*

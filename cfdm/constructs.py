@@ -722,7 +722,7 @@ False
 
 .. seealso:: `filter_by_data`, `filter_by_key`, `filter_by_measure`,
              `filter_by_method`, `filter_by_identity`,
-             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`, `unfilter`
 
@@ -846,7 +846,7 @@ constructs selected by this method will all have `!get_data` method.
 
 .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
              `filter_by_method`, `filter_by_identity`,
-             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`, `unfilter`
 
@@ -883,7 +883,7 @@ Select constructs that could contain data:
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
              `filter_by_measure`, `filter_by_method`,
-             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`, `unfilter`
 
@@ -978,7 +978,7 @@ Select constructs that have a netCDF variable name of 'time':
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_measure`,
              `filter_by_method`, `filter_by_identity`,
-             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`, `unfilter`
 
@@ -1031,7 +1031,7 @@ Select the constructs with keys 'dimensioncoordinate1' or
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
              `filter_by_method`, `filter_by_identity`,
-             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`, `unfilter`
 
@@ -1134,7 +1134,7 @@ Constructs:
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
              `filter_by_measure`, `filter_by_identity`,
-             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`, `unfilter`
 
@@ -1228,6 +1228,78 @@ Constructs:
         return out
     #--- End: def
 
+    def filter_by_naxes(self, *naxes):
+        '''Select metadata constructs by the number of domain axis contructs
+spanned by their data.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_method`,
+             `filter_by_identity`, `filter_by_ncdim`,
+             `filter_by_ncvar`, `filter_by_property`,
+             `filter_by_type`, `filters_applied`, `inverse_filter`,
+             `unfilter`
+
+:Parameters:
+
+    naxes: optional
+        Select constructs whose data spans a particular number of
+        domain axis constructs.
+
+        A number of domain axis constructs is given by an `int`.
+
+        If no numbers are provided then all constructs that have data,
+        spanning any domain axes constructs, are selected.
+
+:Returns:
+
+    `Constructs`
+        The selected domain axis constructs and their construct keys.
+
+**Examples:**
+
+Select constructs that contain data that spans two domain axis
+constructs:
+
+>>> d = c.filter_by_naxes(2)
+
+Select constructs that contain data that spans one or two domain axis
+constructs:
+
+>>> d = c.filter_by_ncdim(1, 2)
+
+        '''
+        out = self.shallow_copy()
+        
+        out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_naxes': naxes},)
+            
+        constructs_data_axes = self.data_axes()
+        
+        for key in tuple(out):
+            x = constructs_data_axes.get(key)
+            if x is None:
+                # This construct does not have data axes
+                out._pop(key)
+                continue
+
+            ok = True
+            for n in naxes:
+                if n == len(x):
+                    ok = True
+                    break
+
+                ok = False
+
+            if not ok:
+                # This construct does not have the right number of axes
+                out._pop(key)
+        #--- End: for
+        
+        return out
+    #--- End: def
+
     def filter_by_ncdim(self, *ncdims):
         '''Select domain axis constructs by netCDF dimension name.
 
@@ -1235,9 +1307,10 @@ Constructs:
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
              `filter_by_measure`, `filter_by_method`,
-             `filter_by_identity`, `filter_by_ncvar`,
-             `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`, `unfilter`
+             `filter_by_naxes`, `filter_by_identity`,
+             `filter_by_ncvar`, `filter_by_property`,
+             `filter_by_type`, `filters_applied`, `inverse_filter`,
+             `unfilter`
 
 :Parameters:
 
@@ -1315,9 +1388,10 @@ Select the domain axis constructs with netCDF dimension name 'time' or
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
              `filter_by_measure`, `filter_by_method`,
-             `filter_by_identity`, `filter_by_ncdim`,
-             `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`, `unfilter`
+             `filter_by_naxes`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_property`,
+             `filter_by_type`, `filters_applied`, `inverse_filter`,
+             `unfilter`
 
 :Parameters:
 
@@ -1407,9 +1481,9 @@ Select the constructs with netCDF variable name 'time' or 'lat':
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
              `filter_by_measure`, `filter_by_method`,
-             `filter_by_identity`, `filter_by_ncdim`,
-             `filter_by_ncvar`, `filter_by_type`, `filters_applied`,
-             `inverse_filter`, `unfilter`
+             `filter_by_naxes`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`, `unfilter`
 
 :Parameters:
         
@@ -1528,7 +1602,7 @@ with the string 'air':
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
              `filter_by_measure`, `filter_by_method`,
-             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_identity`, `filter_by_property`,
              `filters_applied`, `inverse_filter`, `unfilter`
 
@@ -1591,9 +1665,10 @@ that method. If no filters have been applied then the tuple is empty.
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
              `filter_by_measure`, `filter_by_method`,
-             `filter_by_identity`, `filter_by_ncdim`,
-             `filter_by_ncvar`, `filter_by_property`,
-             `filter_by_type`, `inverse_filter`, `unfilter`
+             `filter_by_naxes`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`, `inverse_filter`,
+             `unfilter`
 
 :Returns:
 
@@ -1639,7 +1714,52 @@ Constructs:
         return deepcopy(filters)
     #--- End: def
 
-    def inverse_filter(self):
+    def clear_filters_applied(self):
+        '''Remove the history of filters that have been applied.
+
+The removed history is returned in a tuple. The last element of the
+tuple describes the last filter applied. Each element is a
+single-entry dictionary whose key is the name of the filter method
+that was used, with a value that gives the arguments that were passed
+to the call of that method. If no filters have been applied then the
+tuple is empty.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_method`,
+             `filter_by_naxes`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`, `inverse_filter`,
+             `unfilter`
+
+:Returns:
+
+    `tuple`
+        The removed history of filters that have been applied, ordered
+        from first to last. If no filters have been applied then the
+        tuple is empty.
+
+
+**Examples:**
+
+>>> c.filters_applied()
+({'filter_by_naxes': (3, 1)},
+ {'filter_by_identity': ('grid_longitude',)})
+>>> c.clear_filters_applied()
+({'filter_by_naxes': (3, 1)},
+ {'filter_by_identity': ('grid_longitude',)})
+>>> c.filters_applied()
+()
+
+        '''
+        out = self.filters_applied()
+        self._filters_applied = None
+        self._prefiltered = None
+        return out
+    #--- End: def
+
+    def inverse_filter(self, depth=None):
         '''Return the inverse of the previous filter.
 
 The inverse comprises all of the constructs that were *not* selected
@@ -1656,9 +1776,15 @@ then the tuple is empty.
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
              `filter_by_measure`, `filter_by_method`,
-             `filter_by_identity`, `filter_by_ncdim`,
-             `filter_by_ncvar`, `filter_by_property`,
-             `filter_by_type`, `filters_applied`, `unfilter`
+             `filter_by_naxes`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `unfilter`
+
+:Parameters:
+
+     depth: `int`, optional
+        
 
 :Returns:
 
@@ -1710,7 +1836,7 @@ The inverse filter of the inverse filter always returns no constructs:
 <Constructs: >
 
         '''
-        out = self.unfilter()
+        out = self.unfilter(depth=depth)
 
         for key in self:
             out._pop(key)
@@ -1746,7 +1872,7 @@ The inverse filter of the inverse filter always returns no constructs:
         return out
     #--- End: def
 
-    def unfilter(self):
+    def unfilter(self, depth=None):
         '''Return the constructs from before the previous filter.
 
 The unfiltered constructs are all of those that existed before the
@@ -1762,9 +1888,10 @@ then the tuple is empty.
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
              `filter_by_measure`, `filter_by_method`,
-             `filter_by_identity`, `filter_by_ncdim`,
-             `filter_by_ncvar`, `filter_by_property`,
-             `filter_by_type`, `filters_applied`, `inverse_filter`
+             `filter_by_naxes`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`
 
 :Returns:
 
@@ -1810,11 +1937,25 @@ If no filters have been applied then the unfiltered constructs are unchanged:
 True
 
         '''
-        prefiltered = getattr(self, '_prefiltered', self)
-        if prefiltered is None:
-            prefiltered = self
-                
-        return prefiltered.shallow_copy()
+        out = self
+        
+        if depth is None:
+            while True:
+                prefiltered = getattr(out, '_prefiltered', None)
+                if prefiltered is None:
+                    break
+                else:
+                    out = prefiltered
+        else:
+            for i in range(depth):
+                prefiltered = getattr(out, '_prefiltered', None)
+                if prefiltered is not None:
+                    out = prefiltered
+                else:
+                    break
+        #--- End: if
+        
+        return out.shallow_copy()
     #--- End: def
     
 #--- End: class
