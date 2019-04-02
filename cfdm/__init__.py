@@ -33,7 +33,7 @@ up to the user to use them in a CF-compliant way.
 
 '''
 
-import core
+from . import core
 
 __author__       = core.__author__
 __date__         = core.__date__

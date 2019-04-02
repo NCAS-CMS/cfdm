@@ -14,8 +14,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
    
@@ -29,12 +30,12 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b17</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../versioning.html"><strong>Versioning</strong></a></li>
@@ -76,7 +77,7 @@
 <h1>cfdm.RaggedContiguousArray.get_subspace<a class="headerlink" href="#cfdm-raggedcontiguousarray-get-subspace" title="Permalink to this headline">¶</a></h1>
 <dl class="classmethod">
 <dt id="cfdm.RaggedContiguousArray.get_subspace">
-<em class="property">classmethod </em><code class="descclassname">RaggedContiguousArray.</code><code class="descname">get_subspace</code><span class="sig-paren">(</span><em>array</em>, <em>indices</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b17/cfdm/data/abstract/array.py#L167"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.RaggedContiguousArray.get_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descclassname">RaggedContiguousArray.</code><code class="descname">get_subspace</code><span class="sig-paren">(</span><em>array</em>, <em>indices</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0/cfdm/data/abstract/array.py#L122"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.RaggedContiguousArray.get_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subspace, defined by indices, of a numpy array.</p>
 <p>Only certain type of indices are allowed. See the <em>indices</em> parameter
 for details.</p>
@@ -102,8 +103,29 @@ then these indices work independently along each dimension
 <dd><p class="first last">The array to be subspaced.</p>
 </dd>
 <dt>indices: </dt>
-<dd><blockquote class="first last">
-<div><p>The indices that define the subspace.</p>
+<dd><p class="first">The indices that define the subspace.</p>
+<p>Must be either <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a> or a sequence that contains an index
+for each dimension. In the latter case, each dimension’s index
+must either be a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object or a sequence of two or more
+integers.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">indices=Ellipsis</p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">indices=[[5, 7, 8]]</p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">indices=[slice(4, 7)]</p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">indices=[slice(None), [5, 7, 8]]</p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">indices=[[2, 5, 6], slice(15, 4, -2), [8, 7, 5]]</p>
+</dd>
+</dl>
 </div></blockquote>
 </dd>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
@@ -133,8 +155,8 @@ subspace is independent of the input <em>array</em>.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.RaggedContiguousArray.get_subspace.rst.txt"

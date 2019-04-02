@@ -14,8 +14,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.CoordinateConversion.del_parameter" href="../method/cfdm.CoordinateConversion.del_parameter.html" />
@@ -31,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -90,7 +91,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CoordinateConversion">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/coordinateconversion.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0/cfdm/coordinateconversion.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.parametersdomainancillaries.ParametersDomainAncillaries</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.coordinateconversion.CoordinateConversion</span></code></p>
 <p>A coordinate conversion component of a coordinate reference
 construct of the CF data model.</p>
@@ -122,7 +123,7 @@ parameter is set.</p>
 </dd>
 </dl>
 <p class="last">Parameters may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.CoordinateConversion.parameters.html#cfdm.CoordinateConversion.parameters" title="cfdm.CoordinateConversion.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateConversion.set_parameter.html#cfdm.CoordinateConversion.set_parameter" title="cfdm.CoordinateConversion.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
+<a class="reference internal" href="../method/cfdm.CoordinateConversion.set_parameters.html#cfdm.CoordinateConversion.set_parameters" title="cfdm.CoordinateConversion.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateConversion.set_parameter.html#cfdm.CoordinateConversion.set_parameter" title="cfdm.CoordinateConversion.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
 </dd>
 <dt>domain_ancillaries: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Set references to domain ancillary constructs. The dictionary
@@ -134,7 +135,8 @@ construct keys. Ignored if the <em>source</em> parameter is set.</p>
 </dd>
 </dl>
 <p class="last">Domain ancillaries may also be set after initialisation with
-the <a class="reference internal" href="../method/cfdm.CoordinateConversion.domain_ancillaries.html#cfdm.CoordinateConversion.domain_ancillaries" title="cfdm.CoordinateConversion.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateConversion.set_domain_ancillary.html#cfdm.CoordinateConversion.set_domain_ancillary" title="cfdm.CoordinateConversion.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a> methods.</p>
+the <a class="reference internal" href="../method/cfdm.CoordinateConversion.set_domain_ancillaries.html#cfdm.CoordinateConversion.set_domain_ancillaries" title="cfdm.CoordinateConversion.set_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillaries</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateConversion.set_domain_ancillary.html#cfdm.CoordinateConversion.set_domain_ancillary" title="cfdm.CoordinateConversion.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a>
+methods.</p>
 </dd>
 <dt>source: optional</dt>
 <dd><p class="first last">Initialize the parameters and domain ancillary terms from
@@ -166,11 +168,20 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.get_parameter.html#cfdm.CoordinateConversion.get_parameter" title="cfdm.CoordinateConversion.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></td>
 <td>Get a parameter value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.set_parameter.html#cfdm.CoordinateConversion.set_parameter" title="cfdm.CoordinateConversion.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.has_parameter.html#cfdm.CoordinateConversion.has_parameter" title="cfdm.CoordinateConversion.has_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_parameter</span></code></a></td>
+<td>Whether a parameter has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.set_parameter.html#cfdm.CoordinateConversion.set_parameter" title="cfdm.CoordinateConversion.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></td>
 <td>Set a parameter-valued term.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.parameters.html#cfdm.CoordinateConversion.parameters" title="cfdm.CoordinateConversion.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></td>
-<td>Return or replace all parameter-valued terms.</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.parameters.html#cfdm.CoordinateConversion.parameters" title="cfdm.CoordinateConversion.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></td>
+<td>Return all parameters.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.clear_parameters.html#cfdm.CoordinateConversion.clear_parameters" title="cfdm.CoordinateConversion.clear_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_parameters</span></code></a></td>
+<td>Remove all parameters.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.set_parameters.html#cfdm.CoordinateConversion.set_parameters" title="cfdm.CoordinateConversion.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a></td>
+<td>Set parameters.</td>
 </tr>
 </tbody>
 </table>
@@ -190,11 +201,20 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.get_domain_ancillary.html#cfdm.CoordinateConversion.get_domain_ancillary" title="cfdm.CoordinateConversion.get_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_ancillary</span></code></a></td>
 <td>Return a domain ancillary term.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.set_domain_ancillary.html#cfdm.CoordinateConversion.set_domain_ancillary" title="cfdm.CoordinateConversion.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.has_domain_ancillary.html#cfdm.CoordinateConversion.has_domain_ancillary" title="cfdm.CoordinateConversion.has_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_domain_ancillary</span></code></a></td>
+<td>Whether a domain ancillary has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.set_domain_ancillary.html#cfdm.CoordinateConversion.set_domain_ancillary" title="cfdm.CoordinateConversion.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a></td>
 <td>Set an domain ancillary-valued term.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.domain_ancillaries.html#cfdm.CoordinateConversion.domain_ancillaries" title="cfdm.CoordinateConversion.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></td>
-<td>Return or replace all domain ancillary-valued terms.</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.domain_ancillaries.html#cfdm.CoordinateConversion.domain_ancillaries" title="cfdm.CoordinateConversion.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></td>
+<td>Return all domain_ancillaries.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.clear_domain_ancillaries.html#cfdm.CoordinateConversion.clear_domain_ancillaries" title="cfdm.CoordinateConversion.clear_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_domain_ancillaries</span></code></a></td>
+<td>Remove all domain_ancillaries.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.set_domain_ancillaries.html#cfdm.CoordinateConversion.set_domain_ancillaries" title="cfdm.CoordinateConversion.set_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillaries</span></code></a></td>
+<td>Set domain_ancillaries.</td>
 </tr>
 </tbody>
 </table>
@@ -256,8 +276,8 @@ initialization. By default arguments are deep copied.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.CoordinateConversion.rst.txt"

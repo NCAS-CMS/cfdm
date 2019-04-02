@@ -14,8 +14,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Constructs.filter_by_identity" href="../method/cfdm.Constructs.filter_by_identity.html" />
@@ -31,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -90,7 +91,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Constructs">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Constructs</code><span class="sig-paren">(</span><em>auxiliary_coordinate=None</em>, <em>dimension_coordinate=None</em>, <em>domain_ancillary=None</em>, <em>field_ancillary=None</em>, <em>cell_measure=None</em>, <em>coordinate_reference=None</em>, <em>domain_axis=None</em>, <em>cell_method=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em>, <em>_view=False</em>, <em>_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/constructs.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Constructs</code><span class="sig-paren">(</span><em>auxiliary_coordinate=None</em>, <em>dimension_coordinate=None</em>, <em>domain_ancillary=None</em>, <em>field_ancillary=None</em>, <em>cell_measure=None</em>, <em>coordinate_reference=None</em>, <em>domain_axis=None</em>, <em>cell_method=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em>, <em>_view=False</em>, <em>_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0/cfdm/constructs.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.constructs.Constructs</span></code></p>
 <p>A container for metadata constructs.</p>
 <div class="versionadded">
@@ -227,6 +228,9 @@ constructs deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.inverse_filter.html#cfdm.Constructs.inverse_filter" title="cfdm.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a></td>
 <td>Return the inverse of the previous filter.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.unfilter.html#cfdm.Constructs.unfilter" title="cfdm.Constructs.unfilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unfilter</span></code></a></td>
+<td>Return the constructs from before the previous filter.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -240,10 +244,10 @@ constructs deep copied.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.key.html#cfdm.Constructs.key" title="cfdm.Constructs.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a></td>
-<td>TODO</td>
+<td>Return the construct key of the sole metadata construct.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.value.html#cfdm.Constructs.value" title="cfdm.Constructs.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></td>
-<td>TODO</td>
+<td>Return the sole metadata construct.</td>
 </tr>
 </tbody>
 </table>
@@ -258,7 +262,7 @@ constructs deep copied.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.data_axes.html#cfdm.Constructs.data_axes" title="cfdm.Constructs.data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_axes</span></code></a></td>
-<td>Return the domain axes spanned by all construct data arrays.</td>
+<td>Return the domain axis constructs spanned by metadata construct data.</td>
 </tr>
 </tbody>
 </table>
@@ -282,7 +286,7 @@ constructs deep copied.</p>
 <td>Whether two <a class="reference internal" href="#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instances are the same.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.ordered.html#cfdm.Constructs.ordered" title="cfdm.Constructs.ordered"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ordered</span></code></a></td>
-<td>&lt;TODO&gt;</td>
+<td>Return the contructs in their predetermined order.</td>
 </tr>
 </tbody>
 </table>
@@ -297,13 +301,13 @@ constructs deep copied.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.get.html#cfdm.Constructs.get" title="cfdm.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a></td>
-<td>Return the construct for key if key exists, else default.</td>
+<td>Return the construct for construct key, if it exists, else default.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.items.html#cfdm.Constructs.items" title="cfdm.Constructs.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a></td>
-<td>Return the items ((construct key, construct) pairs).</td>
+<td>Return the items as (construct key, construct) pairs.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Constructs.keys.html#cfdm.Constructs.keys" title="cfdm.Constructs.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a></td>
-<td>Returns all of the construct keys, in arbitrary order.</td>
+<td>Return all of the construct keys, in arbitrary order.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Constructs.values.html#cfdm.Constructs.values" title="cfdm.Constructs.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a></td>
 <td>Returns all of the metadata constructs, in arbitrary order.</td>
@@ -365,8 +369,8 @@ constructs deep copied.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.Constructs.rst.txt"

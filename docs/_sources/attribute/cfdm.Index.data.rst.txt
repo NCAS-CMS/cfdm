@@ -1,7 +1,7 @@
 cfdm.Index.data
 ===============
 
-.. currentmodule:: cfdm
+.. currentmodule:: cf
 .. default-role:: obj
 
 .. autoattribute:: cfdm.Index.data

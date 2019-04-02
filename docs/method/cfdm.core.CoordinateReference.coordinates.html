@@ -14,11 +14,12 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.CoordinateReference.del_datum" href="cfdm.core.CoordinateReference.del_datum.html" />
+    <link rel="next" title="cfdm.core.CoordinateReference.clear_coordinates" href="cfdm.core.CoordinateReference.clear_coordinates.html" />
     <link rel="prev" title="cfdm.core.CoordinateReference.set_coordinate" href="cfdm.core.CoordinateReference.set_coordinate.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -31,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -55,7 +56,7 @@
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
   <li><a href="../class/cfdm.core.CoordinateReference.html">cfdm.core.CoordinateReference</a><ul>
       <li>Previous: <a href="cfdm.core.CoordinateReference.set_coordinate.html" title="previous chapter">cfdm.core.CoordinateReference.set_coordinate</a></li>
-      <li>Next: <a href="cfdm.core.CoordinateReference.del_datum.html" title="next chapter">cfdm.core.CoordinateReference.del_datum</a></li>
+      <li>Next: <a href="cfdm.core.CoordinateReference.clear_coordinates.html" title="next chapter">cfdm.core.CoordinateReference.clear_coordinates</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -91,48 +92,22 @@
 <h1>cfdm.core.CoordinateReference.coordinates<a class="headerlink" href="#cfdm-core-coordinatereference-coordinates" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.coordinates">
-<code class="descclassname">CoordinateReference.</code><code class="descname">coordinates</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/core/coordinatereference.py#L203"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.coordinates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return or replace all references to coordinate constructs.</p>
+<code class="descclassname">CoordinateReference.</code><code class="descname">coordinates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0/cfdm/core/coordinatereference.py#L236"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all references to coordinate constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cfdm.core.CoordinateReference.del_coordinate.html#cfdm.core.CoordinateReference.del_coordinate" title="cfdm.core.CoordinateReference.del_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_coordinate</span></code></a>, <a class="reference internal" href="cfdm.core.CoordinateReference.set_coordinate.html#cfdm.core.CoordinateReference.set_coordinate" title="cfdm.core.CoordinateReference.set_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.core.CoordinateReference.clear_coordinates.html#cfdm.core.CoordinateReference.clear_coordinates" title="cfdm.core.CoordinateReference.clear_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_coordinates</span></code></a>, <a class="reference internal" href="cfdm.core.CoordinateReference.set_coordinates.html#cfdm.core.CoordinateReference.set_coordinates" title="cfdm.core.CoordinateReference.set_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinates</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>coordinates: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
-<dd><p class="first">Delete all existing coordinate construct keys, and instead
-store those supplied.</p>
-<dl class="last docutils">
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates=['dimensioncoordinate0']</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates='dimensioncoordinate0'</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates=set(['dimensioncoordinate0',</span>
-<span class="pre">'auxiliarycoordinate1'])</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates=[]</span></code></p>
-</dd>
-</dl>
-</dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If False then any coordinates provided by the <em>coordinates</em>
-parameter are not copied before insertion. By default they are
-deep copied.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a></dt>
-<dd><p class="first last">The coordinate construct keys or, if the <em>coordinates</em>
-parameter was set, the original references.</p>
+<dd><p class="first last">The coordinate construct keys.</p>
 </dd>
 </dl>
 </td>
@@ -140,17 +115,13 @@ parameter was set, the original references.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">coordinates</span><span class="p">([</span><span class="s1">&#39;dimensioncoordinate0&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                   <span class="s1">&#39;dimensioncoordinate1&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                   <span class="s1">&#39;auxiliarycoordinate0&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                   <span class="s1">&#39;auxiliarycoordinate1&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>
-<span class="go">{&#39;dimensioncoordinate0&#39;,</span>
-<span class="go"> &#39;dimensioncoordinate1&#39;,</span>
-<span class="go"> &#39;auxiliarycoordinate0&#39;,</span>
-<span class="go"> &#39;auxiliarycoordinate1&#39;}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">clear_coordinates</span><span class="p">()</span>
+<span class="go">{&#39;dimensioncoordinate0&#39;, &#39;dimensioncoordinate1&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>
 <span class="go">set()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_coordinates</span><span class="p">(</span><span class="n">old</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>
+<span class="go">{&#39;dimensioncoordinate0&#39;, &#39;dimensioncoordinate1&#39;}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -167,8 +138,8 @@ parameter was set, the original references.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.core.CoordinateReference.coordinates.rst.txt"

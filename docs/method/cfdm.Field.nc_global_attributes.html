@@ -14,8 +14,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Field.nc_clear_global_attributes" href="cfdm.Field.nc_clear_global_attributes.html" />
@@ -31,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -91,35 +92,35 @@
 <h1>cfdm.Field.nc_global_attributes<a class="headerlink" href="#cfdm-field-nc-global-attributes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.nc_global_attributes">
-<code class="descclassname">Field.</code><code class="descname">nc_global_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/mixin/netcdf.py#L721"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.nc_global_attributes" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">nc_global_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0/cfdm/mixin/netcdf.py#L727"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.nc_global_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the selection of properties to be written as netCDF global
 attributes.</p>
 <p>When multiple field constructs are being written to the same file, it
-is not possible to create a netCDF global attribute from a property
-that has different values for different fields being written. In this
-case the property will not be written as a netCDF global attribute,
-even if it has been selected as such by this method, but will appear
-instead as an attribute on the netCDF data variable corresponding to
-the field construct.</p>
-<p>The <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents">description of file contents</a>
-properties are always written as netCDF global attributes, if
-possible, so selecting them is optional.</p>
+is only possible to create a netCDF global attribute from a property
+that has identical values for each field construct. If any field
+construct’s property has a different value then the property will not
+be written as a netCDF global attribute, even if it has been selected
+as such, but will appear instead as attributes on the netCDF data
+variables corresponding to each field construct.</p>
+<p>The standard description-of-file-contents properties are always
+written as netCDF global attributes, if possible, so selecting them is
+optional.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>, <a class="reference internal" href="cfdm.Field.nc_clear_global_attributes.html#cfdm.Field.nc_clear_global_attributes" title="cfdm.Field.nc_clear_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code></a>,
-<a class="reference internal" href="cfdm.Field.nc_set_global_attributes.html#cfdm.Field.nc_set_global_attributes" title="cfdm.Field.nc_set_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attributes</span></code></a></p>
+<a class="reference internal" href="cfdm.Field.nc_set_global_attribute.html#cfdm.Field.nc_set_global_attribute" title="cfdm.Field.nc_set_global_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a></dt>
-<dd><p class="first last">The selection of properties to be written as netCDF global
-attributes.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
+<dd><p class="first last">The selection of properties requested for writting to netCDF
+global attributes.</p>
 </dd>
 </dl>
 </td>
@@ -127,16 +128,18 @@ attributes.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_global_attributes</span><span class="p">([</span><span class="s1">&#39;Conventions&#39;</span><span class="p">,</span> <span class="s1">&#39;project&#39;</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
+<span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: None}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_global_attribute</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
-<span class="go">{&#39;Conventions&#39;, &#39;project&#39;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_global_attributes</span><span class="p">([</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;comment&#39;</span><span class="p">])</span>
+<span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: None, &#39;foo&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_global_attribute</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">,</span> <span class="s1">&#39;global comment&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
-<span class="go">{&#39;Conventions&#39;, &#39;project&#39;, &#39;comment&#39;}</span>
+<span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: &#39;global_comment&#39;, &#39;foo&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_clear_global_attributes</span><span class="p">()</span>
-<span class="go">{&#39;Conventions&#39;, &#39;project&#39;, &#39;comment&#39;}</span>
+<span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: &#39;global_comment&#39;, &#39;foo&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
-<span class="go">set()</span>
+<span class="go">{}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -153,8 +156,8 @@ attributes.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.Field.nc_global_attributes.rst.txt"

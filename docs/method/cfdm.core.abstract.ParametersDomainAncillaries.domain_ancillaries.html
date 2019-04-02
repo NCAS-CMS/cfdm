@@ -14,11 +14,12 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.abstract.ParametersDomainAncillaries.copy" href="cfdm.core.abstract.ParametersDomainAncillaries.copy.html" />
+    <link rel="next" title="cfdm.core.abstract.ParametersDomainAncillaries.clear_domain_ancillaries" href="cfdm.core.abstract.ParametersDomainAncillaries.clear_domain_ancillaries.html" />
     <link rel="prev" title="cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary" href="cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -31,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -55,7 +56,7 @@
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
   <li><a href="../class/cfdm.core.abstract.ParametersDomainAncillaries.html">cfdm.core.abstract.ParametersDomainAncillaries</a><ul>
       <li>Previous: <a href="cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary.html" title="previous chapter">cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary</a></li>
-      <li>Next: <a href="cfdm.core.abstract.ParametersDomainAncillaries.copy.html" title="next chapter">cfdm.core.abstract.ParametersDomainAncillaries.copy</a></li>
+      <li>Next: <a href="cfdm.core.abstract.ParametersDomainAncillaries.clear_domain_ancillaries.html" title="next chapter">cfdm.core.abstract.ParametersDomainAncillaries.clear_domain_ancillaries</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -91,45 +92,23 @@
 <h1>cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries<a class="headerlink" href="#cfdm-core-abstract-parametersdomainancillaries-domain-ancillaries" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries">
-<code class="descclassname">ParametersDomainAncillaries.</code><code class="descname">domain_ancillaries</code><span class="sig-paren">(</span><em>domain_ancillaries=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/core/abstract/parametersdomainancillaries.py#L146"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return or replace all domain ancillary-valued terms.</p>
+<code class="descclassname">ParametersDomainAncillaries.</code><code class="descname">domain_ancillaries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0/cfdm/core/abstract/parametersdomainancillaries.py#L183"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all domain_ancillaries.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cfdm.core.abstract.ParametersDomainAncillaries.del_domain_ancillary.html#cfdm.core.abstract.ParametersDomainAncillaries.del_domain_ancillary" title="cfdm.core.abstract.ParametersDomainAncillaries.del_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_domain_ancillary</span></code></a>, <a class="reference internal" href="cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary.html#cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary" title="cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_ancillary</span></code></a>,
-<a class="reference internal" href="cfdm.core.abstract.ParametersDomainAncillaries.parameters.html#cfdm.core.abstract.ParametersDomainAncillaries.parameters" title="cfdm.core.abstract.ParametersDomainAncillaries.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a>, <a class="reference internal" href="cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary.html#cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary" title="cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.core.abstract.ParametersDomainAncillaries.clear_domain_ancillaries.html#cfdm.core.abstract.ParametersDomainAncillaries.clear_domain_ancillaries" title="cfdm.core.abstract.ParametersDomainAncillaries.clear_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_domain_ancillaries</span></code></a>, <a class="reference internal" href="cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary.html#cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary" title="cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_ancillary</span></code></a>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">has_domain_ancillaryr</span></code> <a class="reference internal" href="cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillaries.html#cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillaries" title="cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillaries</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>domain_ancillaries: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
-<dd><p class="first">Delete all existing named domain ancillary, and instead store
-those from the dictionary supplied.</p>
-<dl class="last docutils">
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">domain_ancillaries={'orog':</span> <span class="pre">'domainancillary1'}</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">domain_ancillaries={}</span></code></p>
-</dd>
-</dl>
-</dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If False then any terms provided by the <em>domain_ancillaries</em>
-parameter are not copied before insertion. By default they are
-deep copied.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
-<dd><p class="first last">The domain ancillary terms or, if the <em>domain_ancillaries</em>
-parameter was set, the original terms.</p>
+<dd><p class="first last">The domain ancillaries.</p>
 </dd>
 </dl>
 </td>
@@ -137,16 +116,16 @@ parameter was set, the original terms.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">coordinate_conversion</span><span class="o">.</span><span class="n">domain_ancillaries</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">clear_domain_ancillaries</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">old</span>
 <span class="go">{&#39;a&#39;: &#39;domainancillary0&#39;,</span>
 <span class="go"> &#39;b&#39;: &#39;domainancillary1&#39;,</span>
 <span class="go"> &#39;orog&#39;: &#39;domainancillary2&#39;}</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">coordinate_conversion</span><span class="o">.</span><span class="n">domain_ancillaries</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_domain_ancillaries</span><span class="p">(</span><span class="n">old</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">domain_ancillaries</span><span class="p">()</span>
 <span class="go">{&#39;a&#39;: &#39;domainancillary0&#39;,</span>
 <span class="go"> &#39;b&#39;: &#39;domainancillary1&#39;,</span>
-<span class="go"> &#39;orog&#39;: None}</span>
+<span class="go"> &#39;orog&#39;: &#39;domainancillary2&#39;}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -163,8 +142,8 @@ parameter was set, the original terms.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries.rst.txt"

@@ -101,6 +101,7 @@ Metadata constructs
    :template: method.rst
 
    ~cfdm.Field.construct
+   ~cfdm.Field.construct_key
    ~cfdm.Field.del_construct
    ~cfdm.Field.get_construct
    ~cfdm.Field.has_construct
@@ -186,7 +187,7 @@ NetCDF
    ~cfdm.Field.nc_set_variable 
    ~cfdm.Field.nc_global_attributes
    ~cfdm.Field.nc_clear_global_attributes
-   ~cfdm.Field.nc_set_global_attributes
+   ~cfdm.Field.nc_set_global_attribute
    ~cfdm.Field.nc_unlimited_dimensions
    ~cfdm.Field.nc_clear_unlimited_dimensions
    ~cfdm.Field.nc_set_unlimited_dimensions

@@ -14,8 +14,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.CF" href="cfdm.CF.html" />
@@ -31,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -89,7 +90,7 @@
 <h1>cfdm.write<a class="headerlink" href="#cfdm-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.write">
-<code class="descclassname">cfdm.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>variable_attributes=None</em>, <em>external=None</em>, <em>Conventions=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>HDF_chunksizes=None</em>, <em>verbose=False</em>, <em>_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/read_write/write.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cfdm.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>variable_attributes=None</em>, <em>file_descriptors=None</em>, <em>external=None</em>, <em>Conventions=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>HDF_chunksizes=None</em>, <em>verbose=False</em>, <em>_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0/cfdm/read_write/write.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -214,16 +215,63 @@ use the new features of the version 4 API.</p>
 <dd><p class="first last">If False then raise an error if the output file pre-exists. By
 default a pre-existing output file is overwritten.</p>
 </dd>
+<dt>Conventions: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Specify conventions to be recorded by the netCDF global
+“Conventions” attribute. By default the current conventions
+are always included, but if an older CF conventions is
+defined then this is used instead.</p>
+<dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions='UGRID-1.0'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions=['UGRID-1.0']</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions=['CMIP-6.2',</span> <span class="pre">'UGRID-1.0']</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions='CF-1.7'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions=['CF-1.7',</span> <span class="pre">'UGRID-1.0']</span></code></p>
+</dd>
+</dl>
+<p class="last">Note that if the “Conventions” property is set on a field
+construct then it is ignored.</p>
+</dd>
+<dt>file_descriptors: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dd><p class="first">Create description of file contents netCDF global attributes
+from the specified attributes and their values.</p>
+<p>If any field construct has a property with the same name then
+it will be written as a netCDF data variable attribute, even
+if it has been specified by the <em>global_attributes</em>
+parameter, or has been flagged as global on any of the field
+constructs (see <a class="reference internal" href="../method/cfdm.Field.nc_global_attributes.html#cfdm.Field.nc_global_attributes" title="cfdm.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_global_attributes</span></code></a> for
+details).</p>
+<p>Identification of the conventions being adhered to by the
+file are not specified as a file descriptor, but by the
+<em>Conventions</em> parameter instead.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">file_attributes={'title':</span> <span class="pre">'my</span> <span class="pre">data'}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">file_attributes={'history':</span> <span class="pre">'created</span> <span class="pre">2019-01-01',</span> <span class="pre">'foo':</span> <span class="pre">'bar'}</span></code></p>
+</dd>
+</dl>
+</dd>
 <dt>global_attributes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Create netCDF global attributes from the specified field
 construct properties, rather than netCDF data variable
 attributes.</p>
-<p>These attributes are in addition to the following properties,
-which are created as netCDF global attributes by default:</p>
+<p>These attributes are in addition to the following field
+construct properties, which are created as netCDF global
+attributes by default:</p>
 <blockquote>
 <div><ul class="simple">
-<li>the <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents">description of file contents</a>
-properties, and</li>
+<li>the description of file contents properties (as defined
+by the CF conventions), and</li>
 <li>properties flagged as global on any of the field
 constructs being written (see
 <a class="reference internal" href="../method/cfdm.Field.nc_global_attributes.html#cfdm.Field.nc_global_attributes" title="cfdm.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_global_attributes</span></code></a> for details).</li>
@@ -238,6 +286,9 @@ parameter or is one of the default properties, but will
 appear as an attribute on the netCDF data variable
 corresponding to each field construct that contains the
 property.</p>
+<p>Any global attributes that are also specified as file
+descriptors will not be written as netCDF global variables,
+but as netCDF data variable attributes instead.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">global_attributes='project'</span></code></p>
@@ -253,11 +304,13 @@ property.</p>
 <dt>variable_attributes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Create netCDF data variable attributes from the specified
 field construct properties.</p>
-<p>By default, all properties that are not created as netCDF
-global properties are created as attributes netCDF data
-variables. See the <em>global_attributes</em> parameter for details.</p>
-<p>Any property named by the <em>variable_attributes</em> parameter
-will always be created as a netCDF data variable attribute</p>
+<p>By default, all field construct properties that are not
+created as netCDF global properties are created as attributes
+netCDF data variables. See the <em>global_attributes</em> parameter
+for details.</p>
+<p>Any field construct property named by the
+<em>variable_attributes</em> parameter will always be created as a
+netCDF data variable attribute</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">variable_attributes='project'</span></code></p>
@@ -274,32 +327,6 @@ will always be created as a netCDF data variable attribute</p>
 <dd><p class="first last">Write metadata constructs that have data and are marked as
 external to the named external file. Ignored if there are no
 such constructs.</p>
-</dd>
-<dt>Conventions: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Specify conventions to be recorded by the netCDF global
-“Conventions” attribute. By default the current conventions
-are always included, in addition to any specified, but if an
-older CF conventions may is defined then this is used
-instead.</p>
-<dl class="docutils">
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions='UGRID-1.0'</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions=['UGRID-1.0']</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions=['CMIP-6.2',</span> <span class="pre">'UGRID-1.0']</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions='1.7'</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">Conventions=['1.7',</span> <span class="pre">'UGRID-1.0']</span></code></p>
-</dd>
-</dl>
-<p class="last">Note that if the “Conventions” property is set on a field
-construct then it is ignored.</p>
 </dd>
 <dt>datatype: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Specify data type conversions to be applied prior to writing
@@ -408,8 +435,8 @@ users will read from the file.</p>
 netCDF dimensions, variables and attributes.</p>
 </dd>
 <dt>_implementation: (subclass of) <code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code>, optional</dt>
-<dd><p class="first last">Define the CF data model implementation that defines the field
-constructs.</p>
+<dd><p class="first last">Define the CF data model implementation that defines field and
+metadata constructs and their components.</p>
 </dd>
 </dl>
 </td>
@@ -429,7 +456,7 @@ constructs.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">external</span><span class="o">=</span><span class="s1">&#39;cell_measures.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">conventions</span><span class="o">=</span><span class="s1">&#39;CMIP-6.2&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">Conventions</span><span class="o">=</span><span class="s1">&#39;CMIP-6.2&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -446,8 +473,8 @@ constructs.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/function/cfdm.write.rst.txt"

@@ -48,5 +48,4 @@ Special
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.Array.__array__
    ~cfdm.core.Array.__deepcopy__

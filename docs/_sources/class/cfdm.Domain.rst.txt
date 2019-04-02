@@ -35,6 +35,7 @@ Metadata constructs
    :template: method.rst
 
    ~cfdm.Domain.construct
+   ~cfdm.Domain.construct_key
    ~cfdm.Domain.del_construct
    ~cfdm.Domain.get_construct
    ~cfdm.Domain.has_construct

@@ -1488,7 +1488,7 @@ All of the methods and attributes related to the domain are listed
 A domain axis metadata construct specifies the number of points along
 an independent axis of the field construct's domain and is stored in a
 `~cfdm.DomainAxis` instance. The size of the axis is retrieved with
-the `~cfdm.DomainAxis.get_size()` method of the domain axis construct.
+the `~cfdm.DomainAxis.get_size` method of the domain axis construct.
 
 .. code-block:: python3
    :caption: *Get the size of a domain axis construct.*

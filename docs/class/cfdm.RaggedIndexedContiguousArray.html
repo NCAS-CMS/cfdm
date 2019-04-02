@@ -14,8 +14,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.RaggedIndexedContiguousArray.get_compressed_axes" href="../method/cfdm.RaggedIndexedContiguousArray.get_compressed_axes.html" />
@@ -31,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.0b18</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -90,7 +91,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.RaggedIndexedContiguousArray">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">RaggedIndexedContiguousArray</code><span class="sig-paren">(</span><em>compressed_array=None</em>, <em>shape=None</em>, <em>size=None</em>, <em>ndim=None</em>, <em>count_variable=None</em>, <em>index_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b18/cfdm/data/raggedindexedcontiguousarray.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.RaggedIndexedContiguousArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">RaggedIndexedContiguousArray</code><span class="sig-paren">(</span><em>compressed_array=None</em>, <em>shape=None</em>, <em>size=None</em>, <em>ndim=None</em>, <em>count_variable=None</em>, <em>index_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0/cfdm/data/raggedindexedcontiguousarray.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.RaggedIndexedContiguousArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.mixin.ragged.RaggedContiguous</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.mixin.ragged.RaggedIndexed</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.compressedarray.CompressedArray</span></code></p>
 <p>An underlying indexed contiguous ragged array.</p>
 <p>A collection of features, each of which is sequence of (vertical)
@@ -111,7 +112,7 @@ variable” that specifies the feature that each profile belongs to.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>compressed_array: subclass of <a class="reference internal" href="cfdm.Array.html#cfdm.Array" title="cfdm.Array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Array</span></code></a></dt>
+<dt>compressed_array: numpy array-like or subclass of Array</dt>
 <dd><p class="first last">The compressed array.</p>
 </dd>
 <dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
@@ -157,10 +158,10 @@ corresponding to a CF-netCDF CF-netCDF index variable.</p>
 <td>The type of compression that has been applied to the underlying array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.RaggedIndexedContiguousArray.get_count.html#cfdm.RaggedIndexedContiguousArray.get_count" title="cfdm.RaggedIndexedContiguousArray.get_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count</span></code></a></td>
-<td>TODO</td>
+<td>Return the countcount_va variable for a compressed array.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.RaggedIndexedContiguousArray.get_index.html#cfdm.RaggedIndexedContiguousArray.get_index" title="cfdm.RaggedIndexedContiguousArray.get_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index</span></code></a></td>
-<td>TODO</td>
+<td>Return the index variable for a compressed array.</td>
 </tr>
 </tbody>
 </table>
@@ -246,8 +247,8 @@ corresponding to a CF-netCDF CF-netCDF index variable.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.RaggedIndexedContiguousArray.rst.txt"

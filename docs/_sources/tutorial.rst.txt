@@ -1,4 +1,4 @@
-.. currentmodule:: cfdm
+.. Currentmodule:: cfdm
 .. default-role:: obj
 
 .. _Tutorial:
@@ -57,12 +57,12 @@ disk.
 
 The `cfdm.read` function reads a `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
-from an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, and
-returns the contents as a list of zero or more `Field` class
-instances, each of which represents a field construct. (Henceforth,
-the phrase "field construct" will be assumed to mean "`Field`
-instance".) The list contains a field construct to represent each of
-the CF-netCDF data variables in the file.
+from an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, and returns
+the contents as a list of zero or more `Field` class instances, each
+of which represents a field construct. (Henceforth, the phrase "field
+construct" will be assumed to mean "`Field` instance".) The list
+contains a field construct to represent each of the CF-netCDF data
+variables in the file.
 
 Datasets of any version of CF up to and including CF-|version| can be
 read.
@@ -687,12 +687,12 @@ the field construct. For example, the data of the field construct
    >>> t.get_data_axes()
    ('domainaxis0', 'domainaxis1', 'domainaxis2')
 
-The data may be set with the `~Field.set_data` method of the `Field`
+The data may be set with the `~Field.set_data` method of the field
 construct. The domain axis constructs spanned by the data must be
 considered, either by explicitly providing them via their construct
 keys, or by using those that may have already been set. In any case,
 the data axes may be set at any time with the `~Field.set_data_axes`
-method of the `Field` construct.
+method of the field construct.
 
 .. code-block:: python3
    :caption: *Delete the data and then reinstate it, using the
@@ -1193,41 +1193,53 @@ metadata construct:
 -----------------------------
 
 An individual metadata construct may be returned, without its
-construct key, by any of four techniques:
+construct key, by any of the following techniques:
 
 * with the `~Field.construct` method of a field construct,
+
+.. code-block:: python3
+   :caption: *Get the "latitude" metadata construct with its construct
+             identity.*
+	     
+   >>> t.construct('latitude')
+   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+
+* with the `~Field.construct_key` and `~Field.get_construct` methods of
+  a field construct:
+
+.. code-block:: python3
+   :caption: *Get the "latitude" metadata construct key with its construct
+             identity and use the key to get the construct itself*
+	     
+   >>> key = t.construct_key('latitude')
+   >>> t.get_construct(key)
+   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
 * with the `~Constructs.value` method of a `Constructs` instance
   that contains one construct,
 
 .. code-block:: python3
-   :caption: *Get the "latitude" metadata construct by its identity.*
+   :caption: *Get the "latitude" metadata construct via its identity
+             and the 'value' method.*
 	     
-   >>> print(t.constructs('latitude'))
-   Constructs:
-   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-   >>> t.construct('latitude')
-   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
    >>> t.constructs('latitude').value()
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
 * with the `~Constructs.get` method of a `Constructs` instance, or
 
+.. code-block:: python3
+   :caption: *Get the "latitude" metadata construct via its construct
+             key and the 'get' method.*
+	     
+   >>> c = t.constructs.get(key)
+   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+
 * by indexing a `Constructs` instance with  a construct key.
 
 .. code-block:: python3
-   :caption: *Get the "latitude" metadata construct with its construct
-             key.*
+   :caption: *Get the "latitude" metadata construct via its construct
+             key and indexing*
 	     
-   >>> c = t.constructs('latitude')
-   >>> print(c)
-   Constructs:
-   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-   >>> key = c.key()
-   >>> key
-   'auxiliarycoordinate0'
-   >>> t.constructs.get(key)
-   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
    >>> t.constructs[key]
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
@@ -1334,7 +1346,7 @@ of the field construct:
    :caption: *Find the construct keys of the domain axis constructs
              spanned by the data of each metadata construct.*
 
-   >>> key = t.constructs('latitude').key()
+   >>> key = t.construct_key('latitude')
    >>> key
    'auxiliarycoordinate0'
    >>> t.get_data_axes(key=key)
@@ -1476,7 +1488,7 @@ All of the methods and attributes related to the domain are listed
 A domain axis metadata construct specifies the number of points along
 an independent axis of the field construct's domain and is stored in a
 `~cfdm.DomainAxis` instance. The size of the axis is retrieved with
-the `~cfdm.DomainAxis.get_size()` method of the domain axis construct.
+the `~cfdm.DomainAxis.get_size` method of the domain axis construct.
 
 .. code-block:: python3
    :caption: *Get the size of a domain axis construct.*
@@ -1804,7 +1816,7 @@ if required. For example, an auxiliary coordinate construct is related
 to an ordered list of the domain axis constructs which correspond to
 its data array dimensions.
 
-There are two equivalent approaches to stages **1** and **2**.
+There are two equivalent approaches to **stages 1** and **2**.
 
 Either as much of the content as possible is specified during object
 instantiation:
@@ -1855,7 +1867,7 @@ methods:
    >>> fa
    <FieldAncillary: precipitation_flux status_flag(3) >
 
-For stage **3**, the `~cfdm.Field.set_construct` method of the field
+For **stage 3**, the `~cfdm.Field.set_construct` method of the field
 construct is used for setting metadata constructs and mapping data
 array dimensions to domain axis constructs. This method returns the
 construct key for the metadata construct which can be used when other
@@ -2007,13 +2019,13 @@ the field construct.
 The "Conventions" property does not need to be set because it is
 automatically included in output files as a netCDF global
 "Conventions" attribute, either as the CF version of the cfdm package
-(as returned by the `cfdm.CF` function), or else specified via a
-parameter to the `cfdm.write` function (when additional conventions
-can be also added). If the "Conventions" property is set on a field
-construct then it is ignored during the write process.
+(as returned by the `cfdm.CF` function), or else specified via the
+*Conventions* keyword of the `cfdm.write` function. See the section on
+:ref:`Writing-to-disk` for details on how to specify additional
+conventions.
 
 If this field were to be written to a netCDF dataset then, in the
-absence of pre-defined names, default netCDF variable and dimension
+absence of predefined names, default netCDF variable and dimension
 names would be automatically generated (based on standard names where
 they exist). The setting of bespoke netCDF names is, however, easily
 done with the :ref:`netCDF interface <NetCDF-interface>`.
@@ -2282,7 +2294,7 @@ domain.
    :caption: *Create an independent field construct from the "surface
              altitude" metadata construct.*
 
-   >>> key = tas.constructs('surface_altitude').key()
+   >>> key = tas.construct_key('surface_altitude')
    >>> orog = tas.convert(key)
    >>> print(orog)
    Field: surface_altitude
@@ -2552,24 +2564,38 @@ filters to a `Constructs` instance:
 Each construct has methods to access the netCDF elements which it
 requires. For example, the field construct has the following methods:
 
-================================  ====================================
-Method                            Description
-================================  ====================================
-`~Field.nc_get_variable`          Return the netCDF variable name
-`~Field.nc_set_variable`          Set the netCDF variable name
-`~Field.nc_del_variable`          Remove the netCDF variable name
+======================================  ======================================
+Method                                  Description
+======================================  ======================================
+`~Field.nc_get_variable`                Return the netCDF variable name
+`~Field.nc_set_variable`                Set the netCDF variable name
+`~Field.nc_del_variable`                Remove the netCDF variable name
+				        
+`~Field.nc_has_variable`                Whether the netCDF variable name has
+                                        been set
+				        
+`~Field.nc_global_attributes`           Return the selection of properties to 
+                                        be written as netCDF global attributes
+				        
+`~Field.nc_set_global_attribute`        Set a property to be written as a
+                                        netCDF global attribute
 
-`~Field.nc_has_variable`          Whether the netCDF variable name has
-                                  been set
+`~Field.nc_clear_global_attributes`     Clear the selection of properties
+                                        to be written as netCDF global
+                                        attributes
+				        
+`~Field.nc_unlimited_dimensions`        Return the selection of domain axis
+                                        constructs to be written as
+                                        netCDF unlimited dimensions
 
-`~Field.nc_global_attributes`     Return or replace the selection of
-                                  properties to be written as netCDF
-                                  global attributes
+`~Field.nc_set_unlimited_dimensions`    Set the selection of domain axis
+                                        constructs to be written as
+                                        netCDF unlimited dimensions
 
-`~Field.nc_unlimited_dimensions`  Return or replace the selection of
-                                  domain axis constructs to be written
-                                  as netCDF unlimited dimensions
-================================  ====================================
+`~Field.nc_clear_unlimited_dimensions`  Clear the selection of domain
+                                        axis constructs to be written
+                                        as netCDF unlimited dimensions
+======================================  ======================================
 
 .. code-block:: python3
    :caption: *Access netCDF elements associated with the field and
@@ -2578,7 +2604,7 @@ Method                            Description
    >>> q.nc_get_variable()
    'q'
    >>> q.nc_global_attributes()
-   {'project', 'Conventions'}
+   {'project': None, 'Conventions': None}
    >>> q.nc_unlimited_dimensions()
    set()
    >>> q.nc_set_variable('humidity')
@@ -2626,35 +2652,27 @@ Method                            Classes                                  NetCD
 			          
 `!nc_global_attributes`	          `Field`                                  Global attributes
 			          
-`!nc_set_global_attributes`       `Field`                                  Global attributes
+`!nc_set_global_attribute`        `Field`                                  Global attributes
 			          
 `!nc_clear_global_attributes`     `Field`                                  Global attributes
 			          
-`!nc_unlimited_dimensions`        `Field`                                  Unlimited dimensions
+`!nc_unlimited_dimensions`        `Field`                                  Unlimited dimension names
 			     
-`!nc_set_unlimited_dimensions`    `Field`                                  Unlimited dimensions
+`!nc_set_unlimited_dimensions`    `Field`                                  Unlimited dimension names
 			     
-`!nc_clear_unlimited_dimensions`  `Field`                                  Unlimited dimensions
+`!nc_clear_unlimited_dimensions`  `Field`                                  Unlimited dimension names
 			     
 `!nc_get_external`                `CellMeasure`                            External variable status
 
 `!nc_set_external`                `CellMeasure`                            External variable status
 			          
-`!nc_del_instance_dimension`      `Index`                                  Instance dimension
+`!nc_del_sample_dimension`        `Count`, `Index`                         Sample dimension name
 			          
-`!nc_get_instance_dimension`      `Index`                                  Instance dimension
-			          
-`!nc_has_instance_dimension`      `Index`                                  Instance dimension
-			          
-`!nc_set_instance_dimension`      `Index`                                  Instance dimension
-  			          
-`!nc_del_sample_dimension`        `Count`, `Index`                         Sample dimension
-			          
-`!nc_get_sample_dimension`        `Count`, `Index`                         Sample dimension
+`!nc_get_sample_dimension`        `Count`, `Index`                         Sample dimension name
     			          
-`!nc_has_sample_dimension`        `Count`, `Index`                         Sample dimension
+`!nc_has_sample_dimension`        `Count`, `Index`                         Sample dimension name
 			          
-`!nc_set_sample_dimension`        `Count`, `Index`                         Sample dimension
+`!nc_set_sample_dimension`        `Count`, `Index`                         Sample dimension name
 ================================  =======================================  =====================================
    
 .. _Writing-to-disk:
@@ -2736,8 +2754,10 @@ The `cfdm.write` function has optional parameters to
   possible);
 
 * specify which field construct properties should become netCDF data
-  variable attributes and which should, if possible, become netCDF
-  global attributes;
+  variable attributes and which should become netCDF global
+  attributes;
+  
+* set extra netCDF global attributes;
   
 * create :ref:`external variables <External-variables>` in an external
   file;
@@ -2754,13 +2774,13 @@ The `cfdm.write` function has optional parameters to
 
 Output netCDF variable and dimension names read from a netCDF dataset
 are stored in the resulting field constructs, and may also be set
-manually with the `!nc_set_variable` and `nc_set_dimension`
-methods. If a name has not been set then one will be generated
-internally (usually based on the standard_name if it exists).
+manually with the `!nc_set_variable`, `nc_set_dimension` and
+`nc_set_sample_dimension` methods. If a name has not been set then one
+will be generated internally (usually based on the standard name if it
+exists).
 
-It is possible to create netCDF unlimited dimensions and set the HDF5
-chunk size using the `nc_unlimited_dimensions` and
-`~Field.nc_chunksize` methods of the field construct.
+It is possible to create netCDF unlimited dimensions using the
+`nc_unlimited_dimensions` method of the field construct.
 
 A field construct is not transformed through being written to a file
 on disk and subsequently read back from that file.
@@ -2774,6 +2794,122 @@ on disk and subsequently read back from that file.
    >>> q.equals(f)
    True
 
+
+.. _Global-attributes:
+
+**Global attributes**
+^^^^^^^^^^^^^^^^^^^^^
+
+The field construct properties that correspond to the standardised
+description-of-file-contents attributes are automatically written as
+netCDF global attributes. Other attributes may also be written as
+netCDF global attributes if they have been identified as such with the
+*global_attributes* keyword, or via the
+`~Field.nc_set_global_attribute` method of the field constructs. In
+either case, the creation of a netCDF global attribute depends on the
+corresponding property values being identical across all of the field
+constructs being written to the file. If they are all equal then the
+property will be written as a netCDF global attribute and not as an
+attribute of any netCDF data variable; if any differ then the property
+is written only to each netCDF data variable.
+
+.. code-block:: python3
+   :caption: *Request that the "model" property is written as a netCDF
+             global attribute, using the "global_attributes" keyword.*
+	     
+   >>> f.set_property('model', 'model_A')
+   >>> cfdm.write(f, 'f_file.nc', global_attributes='model')
+
+.. code-block:: python3
+   :caption: *Request that the "model" property is written as a netCDF
+             global attribute, using the "nc_set_global_attribute"
+             method.*
+	     
+   >>> f.nc_global_attributes()
+   {'Conventions': None, 'project': None}
+   >>> f.nc_set_global_attribute('model')
+   >>> f.nc_global_attributes()
+   {'Conventions': None, 'model': None, 'project': None}
+   >>> cfdm.write(f, 'f_file.nc')
+
+It is possible to create both a netCDF global attribute and a netCDF
+data variable attribute with the same name, but with different
+values. This may be done by assigning the global value to the property
+name with the `~Field.nc_set_global_attribute` method, or by via the
+*file_descriptors* keyword. For the former technique, any
+inconsistencies arising from multiple field constructs being written
+to the same file will be resolved by omitting the netCDF global
+attribute from the file.
+
+.. code-block:: python3
+   :caption: *Request that the "information" property is written as
+             netCDF global and data variable attributes, with
+             different values, using the "nc_set_global_attribute"
+             method.*
+	     
+   >>> f.set_property('information', 'variable information')
+   >>> f.properties()
+   {'Conventions': 'CF-1.7',
+    'information': 'variable information',
+    'project': 'research',
+    'standard_name': 'specific_humidity',
+    'units': '1'}
+   >>> f.nc_set_global_attribute('information', 'global information')
+   >>> f.nc_global_attributes()
+   {'Conventions': None,
+   'information': 'global information',
+    'model': None,
+    'project': None}
+   >>> cfdm.write(f, 'f_file.nc')
+
+Netcdf global attributes defined with the *file_descriptors* keyword
+of the `cfdm.write` function will always be written as requested,
+independently of the netCDF data variable attributes, and superceding
+any global attributes that may have been defined with the
+*global_attributes* keyword, or set on the individual field
+constructs.
+
+.. code-block:: python3
+   :caption: *Insist that the "history" property is written as netCDF
+             a global attribute, with the "file_descriptors" keyword.*
+	     
+   >>> cfdm.write(f, file_descriptors={'history': 'created in 2019'})
+   >>> f_file = cfdm.read('f_file')[0]
+   >>> f_file.nc_global_attributes()
+   >>> f_file.properties()
+   {'Conventions': 'CF-1.7',
+    'history': 'created in 2019',
+    'information': 'variable information',
+    'model': 'model_A',
+    'project': 'research',
+    'standard_name': 'specific_humidity',
+    'units': '1'}
+   >>> f_file.nc_global_attributes()
+   {'Conventions': None,
+    'history': None,
+    'information': 'global information',
+    'project': None}
+
+.. _Conventions:
+
+**Conventions**
+^^^^^^^^^^^^^^^
+
+The "Conventions" netCDF global attribute containing the version of
+the CF conventions is always automatically created. If the version of
+the CF conventions has been set as a field property, or with the
+*Conventions* keyword of the `cfdm.write` function, then it is
+ignored. However, other conventions that may apply can be set with
+either technique.
+
+.. code-block:: python3
+   :caption: *Two ways to add additional conventions to the
+             "Conventions" netCDF global attribute.*
+	     
+   >>> f_file.set_property('Conventions', 'UGRID1.0')
+   >>> cfdm.write(f, 'f_file.nc', Conventions='UGRID1.0')   
+
+   
 .. _Scalar-coordinate-variables:
 
 **Scalar coordinate variables**
@@ -2808,7 +2944,7 @@ of the field construct.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : time(1) = [2019-01-01 00:00:00]
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> key = q.constructs('time').key()
+   >>> key = q.construct_key('time')
    >>> axes = q.get_data_axes(key)
    >>> axes
    ('domainaxis2',)
@@ -3272,7 +3408,7 @@ field construct with an underlying contiguous ragged array:
    # Create the contiguous ragged array object, specifying the
    # uncompressed shape
    array = cfdm.RaggedContiguousArray(
-                    compressed_array=cfdm.NumpyArray(ragged_array),
+                    compressed_array=ragged_array,
                     shape=(2, 4), size=8, ndim=2,
                     count_variable=count_variable)
 
@@ -3480,7 +3616,7 @@ simple field construct with an underlying gathered array:
    # Create the gathered array object, specifying the uncompressed
    # shape
    array = cfdm.GatheredArray(
-                    compressed_array=cfdm.NumpyArray(gathered_array),
+                    compressed_array=gathered_array,
 		    compressed_dimension=1,
                     shape=(2, 3, 2), size=12, ndim=3,
                     list_variable=list_variable)

@@ -1,4 +1,9 @@
-version 1.7.0b18 - 2019-03-??
+version 1.7.0 - 2019-04-02
+==========================
+
+* Better handling of netCDF global attributes
+	
+version 1.7.0b18 - 2019-03-18
 =============================
 
 * New filter_by_* methods	

@@ -1,7 +1,7 @@
 cfdm.FieldAncillary.data
 ========================
 
-.. currentmodule:: cfdm
+.. currentmodule:: cf
 .. default-role:: obj
 
 .. autoattribute:: cfdm.FieldAncillary.data
