@@ -1,0 +1,7 @@
+cfdm.mixin.ConstructAccess.cell_measures
+========================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.mixin.ConstructAccess.cell_measures

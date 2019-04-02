@@ -1,0 +1,7 @@
+cfdm.Data.expand_dims
+=====================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Data.expand_dims

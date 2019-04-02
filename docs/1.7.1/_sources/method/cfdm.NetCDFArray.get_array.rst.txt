@@ -1,0 +1,7 @@
+cfdm.NetCDFArray.get_array
+==========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.NetCDFArray.get_array

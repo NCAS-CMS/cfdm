@@ -1,0 +1,7 @@
+cfdm.Data.dump
+==============
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Data.dump

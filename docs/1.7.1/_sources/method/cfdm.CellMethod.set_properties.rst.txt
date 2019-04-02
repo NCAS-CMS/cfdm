@@ -1,0 +1,7 @@
+cfdm.CellMethod.set_properties
+==============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CellMethod.set_properties
