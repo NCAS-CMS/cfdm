@@ -40,7 +40,7 @@ echo "Existing Tags:"
 git tag
 echo
 
-x=`git tag | grep v$version`
+x=`git tag | grep "^v$version$"`
 if [[ $? -eq 0 ]] ; then 
   echo "ERROR: Tag v$version already exists"
   exit 1
