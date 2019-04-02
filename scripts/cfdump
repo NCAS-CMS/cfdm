@@ -19,11 +19,9 @@ if __name__ == '__main__':
         manpage = '''\
 .TH "CFDUMP" "1" "{0}" "{1}" "cfdump"
 .
-.
-.
 .SH NAME
 .
-cfdump \- view the contents of a CF-netCDF dataset
+cfdump \- view the contents of a CF-netCDF dataset according to the CF data model.
 .
 .
 .
@@ -34,8 +32,6 @@ cfdump [\-s] [\-c] [\-e file [\-e file] ...] [\-h] file
 .
 .
 .SH DESCRIPTION
-.
-.
 .
 The cfdump tool generates text descriptions on standard output of the
 CF field constructs contained in a netCDF dataset. By default a
@@ -49,9 +45,13 @@ enabled.
 .
 .
 .
+.SH CF CONVENTIONS
+.
+For versions of the CF conventions up to and including CF-{3}.
+.
+.
+.
 .SH OPTIONS
-.
-.
 .
 .TP
 .B \-c, \-\-complete
@@ -88,25 +88,21 @@ data array; and the units of the data.
 .SH SEE ALSO
 ncdump
 .
-.
-.
 .SH LIBRARY
 cfdm version {0} of {2}
 .
-.
-.
 .SH ISSUES
 Reports of issues are welcome at https://github.com/NCAS-CMS/cfdm
-.
-.
 .
 .SH LICENSE
 Open Source Initiative MIT License
 .
 .
+.
 .SH AUTHOR
+.
 David Hassell
-'''.format(version, date, cfdm.__date__)
+'''.format(version, date, cfdm.__date__, cfdm.CF())
 
         p = subprocess.Popen(['man', '-r',
                               ' Manual page cfdump(1)\ ?ltline\ %lt?L/%L.:',
@@ -181,6 +177,7 @@ cfdm package version {1} of {2}'''.format(
     # ----------------------------------------------------------------
     for g in f:            
         if short_output:
+            # Omit the angled brackets
             print(repr(g)[1:-1])
         elif not complete_output:
             print(g)

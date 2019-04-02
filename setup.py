@@ -22,11 +22,11 @@ def _read(fname):
         return file_.read()
 
 def _get_version():
-    """Returns library version by inspecting __init__.py file.
+    """Returns library version by inspecting core/__init__.py file.
 
     """
     return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                     _read("cfdm/__init__.py"),
+                     _read("cfdm/core/__init__.py"),
                      re.MULTILINE).group(1)
 
 

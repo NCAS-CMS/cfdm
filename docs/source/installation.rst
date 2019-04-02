@@ -49,23 +49,6 @@ See the `documentation for pip install
 <https://pip.pypa.io/en/stable/reference/pip_install/>`_ for further
 options.
 
-.. _conda:
-
-**conda**
----------
-
-----
-
-*Coming soon*
-
-.. To install cfdm using `conda <https://conda.io/docs/>`_, first install
-   `Anaconda <https://www.anaconda.com/download>`_ for Python 2 or Python
-   3, then on type on the command line:
-   
-   .. code:: bash
-   
-      conda install -c ncas cfdm
-
 .. _Source:
 
 **Source**

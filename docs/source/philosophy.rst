@@ -118,13 +118,6 @@ package:
    Data            : altitude(key%domainaxis0(1))
 
 
-**Optimisation**
-----------------
-
-----
-
-*Coming soon ...*
-
 .. rubric:: Footnotes
 
 ----
