@@ -1,0 +1,7 @@
+cfdm.DomainAncillary.get_array
+==============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.DomainAncillary.get_array

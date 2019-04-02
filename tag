@@ -6,33 +6,20 @@
 #
 # For example:
 #
-#>> ./tag 1.1.2
+#>> ./tag 1.7.2
 # ++ git log --pretty=format:%H -n 1
 # + latest_checksum=2cfa6a85c6d3bcfde3863f3e7417d0099782e198
-# + git tag -a v1.1.2 -m 'version 1.1.2' 2cfa6a85c6d3bcfde3863f3e7417d0099782e198
+# + git tag -a v1.7.2 -m 'version 1.7.2' 2cfa6a85c6d3bcfde3863f3e7417d0099782e198
 # + git tag
-# v0.9.7
-# v0.9.7.1
-# v0.9.8
-# v0.9.8.1
-# v0.9.8.3
-# v0.9.9
-# v0.9.9.1
-# v1.0
-# v1.0.1
-# v1.0.2
-# v1.0.3
-# v1.0.4
-# v1.1
-# v1.1.1
-# v1.1.2
-# + git push origin v1.1.2
+# v1.7.0
+# v1.7.1
+# + git push origin v1.7.2
 # Password for 'https://cfpython@bitbucket.org': 
 # Counting objects: 1, done.
 # Writing objects: 100% (1/1), 164 bytes | 0 bytes/s, done.
 # Total 1 (delta 0), reused 0 (delta 0)
 # To https://cfpython@bitbucket.org/cfpython/cf-python.git
-#  * [new tag]         v1.1.2 -> v1.1.2
+#  * [new tag]         v1.7.2 -> v1.7.2
 # + set +x
 # --------------------------------------------------------------------
 
