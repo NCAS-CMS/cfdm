@@ -1,0 +1,25 @@
+* Change the version and date in cfdm/__init__.py (__version__ and
+  __date__ variables)
+
+* If required, change the CF conventions version in cfdm/__init__.py
+  (__cf_version__ variable)
+
+* Make sure that README.md is up to date.
+
+* Make sure that Changelog is up to date.
+
+* Create a source tarball using `python setup.py sdist`
+
+* Test the tarball release using `test_release <vn>`
+  (e.g. ./test_release 1.7.0). Do this for python2.7 and python3.
+
+* Update the latest documentation using `./release_latest_docs <vn>`
+  (e.g. ./release_latest_docs 1.7.0)
+
+* Create an archived copy of the documentation using
+  `./release_archive_docs <vn>` (e.g. ./release_archive_docs 1.7.0)
+
+* Tag the release using `./tag <vn>` (e.g. ./tag 1.7.0)
+
+* Upload the source tarball to PyPi
+

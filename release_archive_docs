@@ -9,26 +9,32 @@ fi
 
 version=$1
 
+
+
 # --------------------------------------------------------------------
 # Make the archive docs    
 # --------------------------------------------------------------------
-rm -fr .doctrees
+cd docs
 
-make html .
+make html $version
 
 # --------------------------------------------------------------------
-# Add, commit and push
+# Add and commit the archive
 # --------------------------------------------------------------------
 git add \
-    *.html \
-    class/*.html \
-    function/*.html \
-    method/*.html \
-    attribute/*.html \
-    _downloads/*.nc \
-    _sources
+    $version/*.html \
+    $version/class/*.html \
+    $version/function/*.html \
+    $version/method/*.html \
+    $version/attribute/*.html \
+    $version/_downloads/*.nc \
+    $version/_sources
 
-git commit -a -m "v$version master documentation"
+git commit -a -m "v$version archive documentation"
+
+# --------------------------------------------------------------------
+# Push
+# --------------------------------------------------------------------
 git push origin master
 
 set +x
