@@ -33,10 +33,12 @@ up to the user to use them in a CF-compliant way.
 
 '''
 
-__author__       = 'David Hassell'
-__date__         = '2019-03-18'
-__cf_version__   = '1.7'
-__version__      = '1.7.0b18'
+import core
+
+__author__       = core.__author__
+__date__         = core.__date__
+__cf_version__   = core.__cf_version__
+__version__      = core.__version__
 
 requires = ('numpy',
             'netCDF4',
@@ -49,11 +51,11 @@ from distutils.version import LooseVersion
 import platform
 
 # Check the version of python
-min_vn = '2.7.0'
-if LooseVersion(platform.python_version()) < LooseVersion(min_vn):
+minimum_vn = '2.7.0'
+if LooseVersion(platform.python_version()) < LooseVersion(minimum_vn):
     raise ValueError(
         "Bad python version: cfdm requires python version {} or later. Got {}".format(
-            min_vn,  platform.python_version()))
+            minimum_vn,  platform.python_version()))
 
 try:
     import netCDF4
@@ -76,18 +78,18 @@ except ImportError as error1:
     raise ImportError(error0+str(error1))
 
 # Check the version of netCDF4
-min_vn = '1.4.0'
-if LooseVersion(netCDF4.__version__) < LooseVersion(min_vn):
+minimum_vn = '1.4.0'
+if LooseVersion(netCDF4.__version__) < LooseVersion(minimum_vn):
     raise ValueError(
         "Bad netCDF4 version: cfdm requires netCDF4 version {} or later. Got {} at {}".format(
-            min_vn, netCDF4.__version__, netCDF4.__file__))
+            minimum_vn, netCDF4.__version__, netCDF4.__file__))
 
 # Check the version of numpy
-min_vn = '1.15'
-if LooseVersion(numpy.__version__) < LooseVersion(min_vn):
+minimum_vn = '1.15'
+if LooseVersion(numpy.__version__) < LooseVersion(minimum_vn):
     raise ValueError(
         "Bad numpy version: cfdm requires numpy version {} or later. Got {} at {}".format(
-            min_vn, numpy.__version__, numpy.__file__))
+            minimum_vn, numpy.__version__, numpy.__file__))
 
 from .constants  import *
 
