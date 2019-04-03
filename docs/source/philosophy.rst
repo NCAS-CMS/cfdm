@@ -25,7 +25,7 @@ In order to satisfy both needs there is a stand-alone core
 implementation, the :ref:`cfdm.core <class_core>` package, that
 includes no functionality beyond that mandated by the CF data model,
 including any information about the netCDF encoding of field
-constucts. This core implementation provides the basis for an extended
+constructs. This core implementation provides the basis for an extended
 implementation, the :ref:`cfdm <class_extended>` package, that allows
 the reading and writing of netCDF datasets, as well as having
 comprehensive inspection capabilities.
@@ -67,10 +67,10 @@ arithmetically, etc. It has, however, been designed to be
 packages that build on this cfdm implementation whilst also adding
 extra, higher level functionality.
 
-The `cf-python <https://cfpython.bitbucket.io/>`_ [#devel]_ and
-`cf-plot <http://ajheaps.github.io/cf-plot/>`_ packages, that will
-soon be built on top of the cfdm package, incude much more higher
-level functionality.
+The `cf-python <https://cfpython.bitbucket.io/>`_ and `cf-plot
+<http://ajheaps.github.io/cf-plot/>`_ packages, that will soon be
+built on top of the cfdm package, include much more higher level
+functionality.
 
 **API**
 -------
@@ -117,12 +117,4 @@ package:
    Field: altitude
    ---------------
    Data            : altitude(key%domainaxis0(1))
-
-
-.. rubric:: Footnotes
-
-----
-
-.. [#devel] The `cf-python <https://cfpython.bitbucket.io/>`_ package
-            does not yet import the cfdm package, but it will soon.
 
