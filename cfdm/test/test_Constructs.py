@@ -195,7 +195,7 @@ class ConstructsTest(unittest.TestCase):
                 self.assertTrue(len(e) == len(c) - len(d))
         
         # Axis
-        for mode in ([], ['and'], ['or']):
+        for mode in ([], ['and'], ['or'], ['exact'], ['subset'], ['superset']):
             for kwargs in ({'qwerty': True},
                            {'domainaxis0': True},
                            {'domainaxis0': True, 'domainaxis1': True},

@@ -803,10 +803,14 @@ Select constructs whose data spans the "domainaxis1" or the
             mode = mode[0]
             if mode == 'or':
                 _or = True
-            elif mode == 'exact':
-                _exact = True
             elif mode == 'and':
                 _and = True
+            elif mode == 'exact':
+                _exact = True
+            elif mode == 'subset':
+                _subset = True
+            elif mode == 'superset':
+                _superset = True
             else:
                 raise ValueError(
                     "mode, if provided, must be one of 'and', 'or', 'exact', subset', 'superset'")
