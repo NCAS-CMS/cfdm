@@ -1,7 +1,7 @@
-version 1.7.1 - Not yet released
+version 1.7.2 - Not yet released
 ==========================
 
-* New mode parameter options to filter_by-axis: 'exact', 'subset',
+* New mode parameter options to filter_by_axis: 'exact', 'subset',
   'superset'
 
 version 1.7.1 - 2019-04-02
