@@ -1,3 +1,9 @@
+version 1.7.1 - Not yet released
+==========================
+
+* New mode parameter options to filter_by-axis: 'exact', 'subset',
+  'superset'
+
 version 1.7.1 - 2019-04-02
 ==========================
 
@@ -10,12 +16,12 @@ version 1.7.0 - 2019-04-02
 ==========================
 
 * Better handling of netCDF global attributes
-	
+
 version 1.7.0b18 - 2019-03-18
 =============================
 
-* New filter_by_* methods	
-	
+* New filter_by_* methods
+
 version 1.7.0b12 - 2019-01-18
 =============================
 

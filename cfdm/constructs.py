@@ -733,9 +733,16 @@ False
 
         By default (or if the *modes* parameter is ``'and'``) a
         construct is selected if it matches all of the given axis
-        requirements, but if the *mode* parameter is ``'or'`` then a
+        requirements. If the *mode* parameter is ``'or'`` then a
         construct will be selected when at least one of the axis
-        requirements is met.
+        requirements is met. If the *mode* parameter is ``'exact'``
+        then a construct will be selected when its data axes are
+        exactly those defined by the axis requirements. If the mode
+        parameters is ``'subset'`` then a construct will be selected
+        when its data axes are a subset of those defined by the axis
+        requirements.  If the mode parameters is ``'superset'`` then a
+        construct will be selected when its data axes are a superset
+        of those defined by the axis requirements.
 
     axes: optional
         Select constructs whose data does, or does not, span
@@ -784,9 +791,11 @@ Select constructs whose data spans the "domainaxis1" or the
         out._filters_applied = self.filters_applied() + ({'filter_by_axis': (mode, axes)},)
 
         # Parse the mode parameter
-        _and  = False
-        _or   = False
-#        _only = False
+        _and      = False
+        _or       = False
+        _exact    = False
+        _subset   = False
+        _superset = False
         if mode:
             if len(mode) > 1:
                 raise ValueError("Can provide at most one mode value")
@@ -794,17 +803,25 @@ Select constructs whose data spans the "domainaxis1" or the
             mode = mode[0]
             if mode == 'or':
                 _or = True
-#            elif mode == 'only':
-#                _only = True
+            elif mode == 'exact':
+                _exact = True
             elif mode == 'and':
                 _and = True
             else:
                 raise ValueError(
-                    "mode value, if provided, must be one of 'and', 'or'") #, 'only'")
+                    "mode, if provided, must be one of 'and', 'or', 'exact', subset', 'superset'")
         else:
+            # By default, mode is 'and'
             _and = True
             
         constructs_data_axes = self.data_axes()
+
+        if _exact or _subset or _superset:
+            axes_True = {axis: value for axis, value in axes.items() if value}
+            if _exact and not axes_True:
+                _exact = False
+                _and   = True
+        #--- End: if
         
         for cid in tuple(out):
             x = constructs_data_axes.get(cid)
@@ -814,18 +831,28 @@ Select constructs whose data spans the "domainaxis1" or the
                 continue
 
             ok = True
-            for axis_key, value in axes.items():
-                if value:
-                    ok = axis_key in x
-                else:
-                    ok = axis_key not in x
-
-                if _or:
-                    if ok:
+            if _exact:
+                if set(x) != set(axes_True):
+                    ok = False
+            elif _subset:
+                if not set(axes_True).issubset(x):
+                    ok = False
+            elif _superset:
+                if not set(axes_True).issuperset(x):
+                    ok = False
+            else:
+                for axis_key, value in axes.items():
+                    if value:
+                        ok = axis_key in x
+                    else:
+                        ok = axis_key not in x
+                
+                    if _or:
+                        if ok:
+                            break
+                    elif not ok:
                         break
-                elif not ok:
-                    break
-            #--- End: for
+            #--- End: if
 
             if not ok:
                 # This construct ..
