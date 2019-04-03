@@ -56,8 +56,8 @@ data model construct.
 ----
 
 The cfdm package has, with few exceptions, only the functionality
-required to read and write datasets, and to create and inspect field
-constructs in memory.
+required to read and write datasets, and to create, modify and inspect
+field constructs in memory.
 
 The cfdm package is not, and is not meant to be, a general analysis
 package. Therefore it can't, for example, regrid field constructs to
@@ -68,8 +68,9 @@ packages that build on this cfdm implementation whilst also adding
 extra, higher level functionality.
 
 The `cf-python <https://cfpython.bitbucket.io/>`_ [#devel]_ and
-`cf-plot <http://ajheaps.github.io/cf-plot/>`_ packages are built on
-the CF data model and incude much more higher level functionality.
+`cf-plot <http://ajheaps.github.io/cf-plot/>`_ packages, that will
+soon be built on top of the cfdm package, incude much more higher
+level functionality.
 
 **API**
 -------

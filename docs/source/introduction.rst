@@ -130,3 +130,12 @@ The cfdm package can
 Note that cfdm enables the creation of CF field constructs, but it's
 :ref:`up to the user to use them in a CF-compliant way
 <CF-conventions>`.
+
+The cfdm package has, with few exceptions, only the functionality
+required to read and write datasets, and to create, modify and inspect
+field constructs in memory.
+
+The `cf-python <https://cfpython.bitbucket.io/>`_ [#devel]_ and
+`cf-plot <http://ajheaps.github.io/cf-plot/>`_ packages, that will
+soon be built on top of the cfdm package, incude much more higher
+level functionality.
