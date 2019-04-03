@@ -8,7 +8,6 @@ version 1.7.1 - 2019-04-02
 ==========================
 
 * New methods clear_filters_applied, fliter_by_naxes
-
 * Changed behaviour of unfilter and invers_filters: added depth
   keyword and changed default
 
