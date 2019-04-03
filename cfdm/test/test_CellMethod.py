@@ -26,25 +26,63 @@ class CellMethodTest(unittest.TestCase):
 
         f = self.f
 
-        for cm in f.cell_methods.values():
-            print (repr(cm))
-            _ = repr(cm)
-            _ = str(cm)
-            _ = cm.dump(display=False)
-            self.assertTrue(cm.construct_type == 'cell_method')
+        for c in f.cell_methods.values():
+            _ = repr(c)
+            _ = str(c)
+            _ = c.dump(display=False)
+            self.assertTrue(c.construct_type == 'cell_method')
     #--- End: def
 
     def test_CellMethod(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        f = self.f
 
-        for cm in f.cell_methods.values():
-            self.assertTrue(cm.equals(cm, verbose=True))
-            self.assertTrue(cm.equals(cm.copy(), verbose=True))
-    #--- End: def
+        # ------------------------------------------------------------
+        # Equals and idenities
+        # ------------------------------------------------------------
+        for c in f.cell_methods.values():
+            d = c.copy()
+            self.assertTrue(c.equals(c, verbose=True))
+            self.assertTrue(c.equals(d, verbose=True))
+            self.assertTrue(d.equals(c, verbose=True))
+            self.assertTrue(c.identity() == 'method:'+c.get_method())
+            self.assertTrue(c.identities() == ['method:'+c.get_method()])
 
+        # ------------------------------------------------------------
+        # Sorted
+        # ------------------------------------------------------------
+        c = cfdm.CellMethod(method='minimum',
+                            axes=['B', 'A'],
+                            qualifiers={'interval': [1, 2]})
+        
+        d = cfdm.CellMethod(method='minimum',
+                            axes=['A', 'B'],
+                            qualifiers={'interval': [2, 1]})
+        
+        self.assertTrue(d.equals(c.sorted(), verbose=True))
+
+        c = cfdm.CellMethod(method='minimum',
+                            axes=['B', 'A'],
+                            qualifiers={'interval': [3]})
+        
+        d = cfdm.CellMethod(method='minimum',
+                            axes=['A', 'B'],
+                            qualifiers={'interval': [3]})
+        
+        self.assertTrue(d.equals(c.sorted(), verbose=True))
+
+        c = cfdm.CellMethod(method='minimum',
+                            axes=['area'],
+                            qualifiers={'interval': [3]})
+        
+        d = cfdm.CellMethod(method='minimum',
+                            axes=['area'],
+                            qualifiers={'interval': [3]})
+        
+        self.assertTrue(d.equals(c.sorted(), verbose=True))
+   #--- End: def
 #--- End: class
 
 if __name__ == '__main__':

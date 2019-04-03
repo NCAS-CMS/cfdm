@@ -676,7 +676,9 @@ name, and any intervals are sorted accordingly.
         if indices is None:
             indices = numpy.argsort(axes)
         elif len(indices) != len(axes):
-            raise ValueError(".sjdn ;siljdf vlkjndf jk")
+            raise ValueError(
+"Can't sort cell method axes. The given indices ({}) do not correspond to the number of axes ({})".format(
+    indices, axes))
 
         axes2 = []
         for i in indices:
