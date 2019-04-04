@@ -1793,10 +1793,10 @@ tuple is empty.
     def inverse_filter(self, depth=None):
         '''Return the inverse of the previous filter.
 
-The inverse comprises all of the constructs that were *not* selected
-by the last filter applied. If no filters have been applied, or the
-last filter was an inverse filter, then an empty `Constructs` instance
-is returned.
+TODO The inverse comprises all of the constructs that were *not* selected
+by previous filters. If no filters have been applied, or the last
+filter was an inverse filter, then an empty `Constructs` instance is
+returned.
 
 A history of the filters that have been applied is returned in a
 `tuple` by the `filters_applied` method. The last element of the tuple
@@ -1815,7 +1815,7 @@ then the tuple is empty.
 :Parameters:
 
      depth: `int`, optional
-        
+        TODO
 
 :Returns:
 
@@ -1906,7 +1906,7 @@ The inverse filter of the inverse filter always returns no constructs:
     def unfilter(self, depth=None):
         '''Return the constructs from before the previous filter.
 
-The unfiltered constructs are all of those that existed before the
+TODO The unfiltered constructs are all of those that existed before the
 last filter was applied. If no filters have been applied then all of
 the constructs are returned.
 
@@ -1923,6 +1923,8 @@ then the tuple is empty.
              `filter_by_ncdim`, `filter_by_ncvar`,
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
+
+depth TODO
 
 :Returns:
 
