@@ -1791,12 +1791,15 @@ tuple is empty.
     #--- End: def
 
     def inverse_filter(self, depth=None):
-        '''Return the inverse of the previous filter.
+        '''Return the inverse of previous filters.
 
-TODO The inverse comprises all of the constructs that were *not* selected
-by previous filters. If no filters have been applied, or the last
-filter was an inverse filter, then an empty `Constructs` instance is
-returned.
+By default, the inverse comprises all of the constructs that were
+*not* selected by all previously applied filters. If no filters have
+been applied, then this will result in empty `Constructs` instance
+being returned.
+
+If the *depth* parameter is set to *N* then the inverse is relative to
+the constructs selected by the *N*\ -th most recently applied filter.
 
 A history of the filters that have been applied is returned in a
 `tuple` by the `filters_applied` method. The last element of the tuple
@@ -1815,7 +1818,12 @@ then the tuple is empty.
 :Parameters:
 
      depth: `int`, optional
-        TODO
+        If set to ``N`` then the inverse is relative to the constructs
+        selected by the ``N``-th most recently applied filter. By
+        default the inverse is relative to the constructs selected by
+        all previously applied filters. ``N`` may be larger than the
+        total number of filters applied, which results in the default
+        bahaviour.
 
 :Returns:
 
@@ -1855,25 +1863,52 @@ Constructs:
 >>> print(e)
 Constructs:
 {'cellmethod0': <CellMethod: area: mean>}
->>> print(e.inverse_filter())
+>>> print(e.inverse_filter(1))
 Constructs:
 {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
  'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
  'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-
-The inverse filter of the inverse filter always returns no constructs:
-
->>> d.inverse_filter().inverse_filter()
-<Constructs: >
+>>> print(e.inverse_filter())
+Constructs:
+{'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+ 'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+ 'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+ 'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
+>>> print(e.inverse_filter(1).inverse_filter())
+Constructs:
+{'cellmethod0': <CellMethod: area: mean>,
+ 'domainaxis0': <DomainAxis: size(5)>,
+ 'domainaxis1': <DomainAxis: size(8)>,
+ 'domainaxis2': <DomainAxis: size(1)>}
 
         '''
-        out = self.unfilter(depth=depth)
+        out = self.unfilter(depth=depth) 
 
+        if depth:
+            if 'inverse_filter' in self.filters_applied()[-1] :
+                filters = out.filters_applied()
+                d = 1
+                while True:
+                    if d > len(filters) or 'inverse_filter' not in filters[-d]:
+                        break
+
+                    d += 1
+
+                if d > 1:
+                    out = self.unfilter(depth=depth + d - 1)
+
+                return out
+        #--- End: if
+        
         for key in self:
             out._pop(key)
 
         out._filters_applied = self.filters_applied() + ({'inverse_filter': ()},)
-            
+
+        out._prefiltered = self.shallow_copy()
+        
         return out
     #--- End: def
     
@@ -1904,11 +1939,14 @@ The inverse filter of the inverse filter always returns no constructs:
     #--- End: def
 
     def unfilter(self, depth=None):
-        '''Return the constructs from before the previous filter.
+        '''Return the constructs that existed prior to previous filters.
 
-TODO The unfiltered constructs are all of those that existed before the
-last filter was applied. If no filters have been applied then all of
-the constructs are returned.
+By default, the unfiltered constructs are those that existed before
+all previously applied filters.
+
+If the *depth* parameter is set to *N* then the unfiltered constructs
+are those that existed before the *N*\ -th most recently applied
+filter.
 
 A history of the filters that have been applied is returned in a
 `tuple` by the `filters_applied` method. The last element of the tuple
@@ -1924,7 +1962,14 @@ then the tuple is empty.
              `filter_by_property`, `filter_by_type`,
              `filters_applied`, `inverse_filter`
 
-depth TODO
+:Parameters:
+
+     depth: `int`, optional
+        If set to ``N`` then return the constructs selected by the
+        ``N``-th most recently applied filter. By default the
+        constructs from before all previously applied filters are
+        returned. ``N`` may be larger than the total number of filters
+        applied, which results in the default bahaviour.
 
 :Returns:
 
@@ -1957,9 +2002,15 @@ True
 >>> print(e)
 Constructs:
 {'cellmethod0': <CellMethod: area: mean>}
->>> e.unfilter().equals(d)
+>>> c.unfilter().equals(c)
 True
->>> e.unfilter().unfilter().equals(c)
+>>> c.unfilter(0).equals(c)
+True
+>>> e.unfilter().equals(c)
+True
+>>> e.unfilter(1).equals(d)
+True
+>>> e.unfilter(2).equals(c)
 True
 
 If no filters have been applied then the unfiltered constructs are unchanged:
@@ -1980,7 +2031,7 @@ True
                 else:
                     out = prefiltered
         else:
-            for i in range(depth):
+            for _ in range(depth):
                 prefiltered = getattr(out, '_prefiltered', None)
                 if prefiltered is not None:
                     out = prefiltered

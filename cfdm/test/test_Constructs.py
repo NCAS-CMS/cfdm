@@ -225,6 +225,14 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(len(e.filters_applied()) == 2)
         self.assertTrue(len(ei) == len(d) - len(e))
 
+        d2 = c.filter_by_type('auxiliary_coordinate')
+        e2 = d2.filter_by_naxes(1)
+        f2 = e2.inverse_filter(1)
+        g2 = f2.inverse_filter(1)
+        h2 = g2.inverse_filter(1)
+        self.assertTrue(g2.equals(e2, verbose=True))
+        self.assertTrue(h2.equals(f2, verbose=True))
+
         # Unfilter
         self.assertTrue(e.unfilter(1).equals(d, verbose=True))        
         self.assertTrue(e.unfilter(1).unfilter().equals(c, verbose=True))
