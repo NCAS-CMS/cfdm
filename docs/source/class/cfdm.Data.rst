@@ -134,6 +134,20 @@ Compression
 
    ~cfdm.Data.compressed_array
 
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.nc_hdf5_chunksizes
+   ~cfdm.Data.nc_clear_hdf5_chunksizes
+   ~cfdm.Data.nc_set_hdf5_chunksizes
+
 Special
 -------
 

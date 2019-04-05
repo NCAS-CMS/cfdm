@@ -571,6 +571,28 @@ axes, and possibly other axes, are returned.
         return field.nc_get_geometry(default)
     #--- End: def
 
+    def nc_get_hdf5_chunksizes(self, data):
+        '''Return the HDF5 chunksizes for the data. 
+
+..versionadded:: 1.7.2
+
+:Parameters:
+
+    data: Data instance
+
+:Returns: 
+
+    `tuple` or `None`
+        The HDF5 chunksizes, or `None` if they haven't been set.
+
+        '''
+        out = data.nc_hdf5_chunksizes()
+        if not out:
+            out = None
+
+        return out
+    #--- End: def
+
     def nc_get_sample_dimension(self, count, default=None):
         '''Return the name of the netCDF sample dimension.
 

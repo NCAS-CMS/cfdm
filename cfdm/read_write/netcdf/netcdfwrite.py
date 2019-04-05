@@ -2006,13 +2006,12 @@ created. The ``seen`` dictionary is updated for *cfvar*.
     
         # Set HDF chunk sizes
         chunksizes = None
-    #    chunksizes = [size for i, size in sorted(cfvar.HDF_chunks().items())]
-    #    if chunksizes == [None] * cfvar.get_data().ndim:
-    #        chunksizes = None
-    #
-    #    if verbose:
-    #        print '  chunksizes:', chunksizes
-
+        if data is not None:
+            chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
+            if chunksizes and verbose:
+                print('      HDF5 chunksizes:', chunksizes)
+        #--- End: if
+        
         # ------------------------------------------------------------
         # Create a new netCDF variable
         # ------------------------------------------------------------
@@ -3006,8 +3005,8 @@ write them to the netCDF4.Dataset.
               file_descriptors=None, external=None, Conventions=None,
               datatype=None, least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
-              shuffle=True, scalar=True, #HDF_chunks=None,
-              extra_write_vars=None, verbose=False):
+              shuffle=True, scalar=True, extra_write_vars=None,
+              verbose=False):
         '''Write fields to a netCDF file.
         
 NetCDF dimension and variable names will be taken from variables'
@@ -3343,37 +3342,10 @@ and auxiliary coordinate roles for different data variables.
         g['external_file'] = external
 
         # ---------------------------------------------------------------
-        #
+        # Write each field construct
         # ---------------------------------------------------------------
         for f in fields:
-    
-    #        # Set HDF chunking
-    #        chunks = f.HDF_chunks()
-    #        if chunks
-    #        
-    #        org_chunks = f.HDF_chunks(HDF_chunks)
-    #        default_chunks = f.HDF_chunks()
-    #        chunks = org_chunks.copy()
-    #        shape = f.shape
-    #        for i, size in org_chunks.iteritems():
-    #            if size is None:
-    #                size = default_chunks[i]
-    #            dim_size = shape[i]
-    #            if size is None or size > dim_size:
-    #                size = dim_size
-    #            chunks[i] = size
-    #
-    #        f.HDF_chunks(chunks)
-    
-            if g['verbose']:            
-                print('  HDF chunks :', 'PASS FOR NOW') #f.HDF_chunks()
-            
-            # Write the field
             self._write_field(f)
-    
-    #        # Reset HDF chunking
-    #        f.HDF_chunks(org_chunks)
-        #-- End: for
         
         # ---------------------------------------------------------------
         # Write all of the buffered data to disk
@@ -3393,7 +3365,6 @@ and auxiliary coordinate roles for different data variables.
                        compress=compress,
                        fletcher32=fletcher32,
                        shuffle=shuffle,
-#                       HDF_chunks=HDF_chunks,
                        verbose=verbose)            
     #--- End: def
    

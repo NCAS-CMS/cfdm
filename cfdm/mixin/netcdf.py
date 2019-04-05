@@ -1277,16 +1277,33 @@ class NetCDFHDF5(NetCDF):
     def nc_hdf5_chunksizes(self):
         '''TODO
 
-.. note:: Chunksizes are ignored for netCDF3 files that do not use
-          HDF5.
+   .. note:: Chunksizes are cleared from the output of methods that
+             change the data shape.
+   
+   .. note:: Chunksizes are ignored for netCDF3 files that do not use
+             HDF5.
 
 .. versionadded:: 1.7.2
+
+.. seealso:: `nc_clear_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`
 
 :Returns:
 
     `tuple`
         TODO The chunk sizes prior to the new setting, or the current
         current sizes if no new values are specified.
+
+**Examples:**
+
+>>> d.shape
+(1, 96, 73)
+>>> d.nc_set_hdf5_chunksizes([1, 48, 73])
+>>> d.nc_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_clear_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_hdf5_chunksizes()
+()
 
         '''
         return self._get_component('netcdf').get('hdf5_chunksizes', ())
@@ -1295,18 +1312,32 @@ class NetCDFHDF5(NetCDF):
     def nc_clear_hdf5_chunksizes(self):
         '''TODO
 
-.. note:: Chunksizes are ignored for netCDF3 files that do not use
-          HDF5.
+   .. note:: Chunksizes are cleared from the output of methods that
+             change the data shape.
+   
+   .. note:: Chunksizes are ignored for netCDF3 files that do not use
+             HDF5.
 
 .. versionadded:: 1.7.2
 
-:Parameters:
-
-    chunksizes: sequence of `int`
+.. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`
 
 :Returns:
 
-    `None`
+    `tuple`
+        TODO
+
+**Examples:**
+
+>>> d.shape
+(1, 96, 73)
+>>> d.nc_set_hdf5_chunksizes([1, 48, 73])
+>>> d.nc_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_clear_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_hdf5_chunksizes()
+()
 
         '''
         return self._get_component('netcdf').pop('hdf5_chunksizes', ())
@@ -1315,20 +1346,55 @@ class NetCDFHDF5(NetCDF):
     def nc_set_hdf5_chunksizes(self, chunksizes):
         '''TODO
 
-.. note:: Chunksizes are ignored for netCDF3 files that do not use
-          HDF5.
+   .. note:: Chunksizes are cleared from the output of methods that
+             change the data shape.
+   
+   .. note:: Chunksizes are ignored for netCDF3 files that do not use
+             HDF5.
 
 .. versionadded:: 1.7.2
+
+.. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`
 
 :Parameters:
 
     chunksizes: sequence of `int`
+        The chunksizes for each dimension. Can be integers from 0 to
+        the dimension size.
 
 :Returns:
 
     `None`
 
+**Examples:**
+
+>>> d.shape
+(1, 96, 73)
+>>> d.nc_set_hdf5_chunksizes([1, 48, 73])
+>>> d.nc_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_clear_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_hdf5_chunksizes()
+()
+
         '''
+        try:
+            shape = self.shape
+        except AttributeError:
+            pass
+        else:
+            if len(chunksizes) != len(shape):
+                raise ValueError(
+"chunksizes must be a sequence with the same length as dimensions")
+
+            for i, j in zip(chunksizes, shape):
+                if i < 0:
+                    raise ValueError("chunksize cannot be negative")
+                if i > j:
+                    raise ValueError("chunksize cannot exceed dimension size")
+        #--- End: try
+        
         self._get_component('netcdf')['hdf5_chunksizes'] = tuple(chunksizes)
     #--- End: def
 

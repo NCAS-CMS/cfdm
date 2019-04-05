@@ -10,7 +10,6 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           file_descriptors=None, external=None, Conventions=None,
           datatype=None, least_significant_digit=None,
           endian='native', compress=0, fletcher32=False, shuffle=True,
-#          HDF_chunksizes=None,
           verbose=False,
           _implementation=_implementation):
     '''Write field constructs to a netCDF file.
@@ -61,7 +60,9 @@ construct.
 
 **NetCDF4 HDF chunk sizes**
 
-TODO
+HDF5 chunksizes may be set on contruct's data. See the
+`~cfdm.Data.nc_hdf5_chunksizes`, `~cfdm.Data.nc_clear_hdf5_chunksizes`
+and `~cfdm.Data.nc_set_hdf5_chunksizes` metods of a `Data` instance.
 
 .. versionadded:: 1.7.0
 
@@ -353,6 +354,5 @@ TODO
                      least_significant_digit=least_significant_digit,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
-#                     HDF_chunks=HDF_chunksizes,
                      verbose=verbose)
 #--- End: def
