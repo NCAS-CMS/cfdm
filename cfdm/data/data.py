@@ -15,7 +15,9 @@ from . import abstract
 from . import NumpyArray
 
 
-class Data(mixin.Container, core.Data):
+class Data(mixin.Container,
+           mixin.NetCDFHDF5,
+           core.Data):
     '''An orthogonal multidimensional array with masked values and units.
 
 .. versionadded:: 1.7.0
@@ -87,10 +89,8 @@ class Data(mixin.Container, core.Data):
         super().__init__(array=array, units=units, calendar=calendar,
                          fill_value=fill_value, source=source,
                          copy=copy, _use_array=_use_array)
-                                   
-        # The _HDF_chunks attribute is.... Is either None or a
-        # dictionary. DO NOT CHANGE IN PLACE.
-#        self._HDF_chunks = {}
+
+        self._initialise_netcdf(source)
     #--- End: def
                  
     def __array__(self, *dtype):
@@ -201,6 +201,10 @@ rules, the only differences being:
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
+        if out.shape != self.shape:
+            # Delete hdf5 chunksizes
+            out.nc_clear_hdf5_chunksizes()
+        
         return out
     #--- End: def
 
@@ -668,9 +672,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
 >>> e = d.copy(array=False)
 
         '''
-        new = super().copy(array=array)
-#        new.HDF_chunks(self.HDF_chunks())
-        return new
+        return super().copy(array=array)
     #--- End: def
 
     def insert_dimension(self, position=0):
@@ -725,17 +727,13 @@ data array shape.
         array = self.array
         array = numpy.expand_dims(array, position)
 
-        d = self.copy(array=False)
-        d._set_Array(array, copy=False)
+        out = self.copy(array=False)
+        out._set_Array(array, copy=False)
 
-#        if d._HDF_chunks:            
-#            HDF = {}
-#            for axis in axes:
-#                HDF[axis] = None
-#
-#            d.HDF_chunks(HDF)
-
-        return d
+        # Delete hdf5 chunksizes
+        out.nc_clear_hdf5_chunksizes()
+        
+        return out
     #--- End: def
 
 #    def compress_by_gathering(self, list_data, compressed_axes, replace_list_data=False
@@ -758,71 +756,6 @@ data array shape.
 #                                      size=self.size, ndim=self.ndim,
 #                                      sample_axis=compressed_axes[0],
 #                                      list_array=list_data))
-#    #--- End: def
-
-#    def get_dtarray(self):
-#        '''Return an independent numpy array containing the date-time objects
-#corresponding to time since a reference date.
-#
-#Only applicable for reference time units.
-#
-#If the calendar has not been set then the CF default calendar of
-#"standard" (i.e. the mixed Gregorian/Julian calendar as defined by
-#Udunits) will be used.
-#
-#Conversions are carried out with the `netCDF4.num2date` function.
-#
-#.. versionadded:: 1.7.0
-#
-#.. seealso:: `get_array`
-#
-#**Examples:**
-#
-#>>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
-#>>> a = d.get_dtarray()
-#>>> print(a)
-#[cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0, 1, 1)
-# cftime.DatetimeGregorian(2019, 2, 1, 0, 0, 0, 0, 4, 32)
-# cftime.DatetimeGregorian(2019, 3, 1, 0, 0, 0, 0, 4, 60)]
-#>>> print(a[1])
-#2019-02-01 00:00:00
-#
-#>>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01',
-#...               calendar='360_day')
-#>>> a = d.get_dtarray()
-#>>> print(a)
-#[cftime.Datetime360Day(2019, 1, 2, 0, 0, 0, 0, 3, 2)
-# cftime.Datetime360Day(2019, 2, 3, 0, 0, 0, 0, 6, 33)
-# cftime.Datetime360Day(2019, 3, 1, 0, 0, 0, 0, 6, 61)]
-#>>> print(a[1])
-#2019-02-03 00:00:00
-#
-#        '''
-#        array = self.get_array()
-#
-#        mask = None
-#        if numpy.ma.isMA(array):
-#            # num2date has issues if the mask is nomask
-#            mask = array.mask
-#            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
-#                mask = None
-#                array = array.view(numpy.ndarray)
-#        #--- End: if
-#        
-#        array = netCDF4.num2date(array, units=self.get_units(None),
-#                                 calendar=self.get_calendar('standard'),
-#                                 only_use_cftime_datetimes=True)
-#
-#        if mask is None:
-#            # There is no missing data
-#            array = numpy.array(array, dtype=object)
-#        else:
-#            # There is missing data
-#            array = numpy.ma.masked_where(mask, array)
-#            if not numpy.ndim(array):
-#                array = numpy.ma.masked_all((), dtype=object)
-#
-#        return array
 #    #--- End: def
 
     def get_count(self, default=ValueError()):
@@ -1087,17 +1020,14 @@ Missing data array elements are omitted from the calculation.
         array = self.array
         array = numpy.amax(array, axis=axes, keepdims=True)
 
-        d = self.copy(array=False)
-        d._set_Array(array, copy=False)
-        
-#        if d._HDF_chunks:            
-#            HDF = {}
-#            for axis in axes:
-#                HDF[axis] = None
-#
-#            d.HDF_chunks(HDF)
+        out = self.copy(array=False)
+        out._set_Array(array, copy=False)
 
-        return d
+        if out.shape != self.shape:
+            # Delete hdf5 chunksizes
+            out.nc_clear_hdf5_chunksizes()
+        
+        return out
     #--- End: def
 
     def min(self, axes=None):
@@ -1128,17 +1058,14 @@ Missing data array elements are omitted from the calculation.
         array = self.array
         array = numpy.amin(array, axis=axes, keepdims=True)
 
-        d = self.copy(array=False)
-        d._set_Array(array, copy=False)
+        out = self.copy(array=False)
+        out._set_Array(array, copy=False)
 
-#        if d._HDF_chunks:            
-#            HDF = {}
-#            for axis in axes:
-#                HDF[axis] = None
-#
-#            d.HDF_chunks(HDF)
+        if out.shape != self.shape:
+            # Delete hdf5 chunksizes
+            out.nc_clear_hdf5_chunksizes()
 
-        return d
+        return out
     #--- End: def
 
 #    def get_HDF_chunks(self, dddd):
@@ -1175,55 +1102,6 @@ Missing data array elements are omitted from the calculation.
 #file.
 #
 #        '''
-#        self._HDF_chunks = tuplchunks.copy()
-#
-#        
-#    def HDF_chunks(self, *chunks):
-#        '''
-#        '''
-#        _HDF_chunks = self._HDF_chunks
-#
-#        org_HDF_chunks = dict([(i, _HDF_chunks.get(i))
-#                               for i in range(self.ndim)])
-#
-#        org_HDF_chunks = _HDF_chunks.copy()
-#        
-#        if not chunks:
-#            return org_HDF_chunks
-#
-##        if _HDF_chunks is None:
-##            _HDF_chunks = {}
-##        else:
-##        _HDF_chunks = _HDF_chunks.copy()
-#
-##        org_HDF_chunks = _HDF_chunks.copy()
-#            
-# 
-#        if not chunks:
-#            return org_HDF_chunks
-#
-#        chunks = chunks[0]
-#        
-#        if chunks is None:
-#            # Clear all chunking
-#            self._HDF_chunks = {}
-#            return org_HDF_chunks
-#
-##        for i in range(self.ndim):
-#            
-#
-#        for axis, size in chunks.iteritems():
-#            if size is not None:
-#                _HDF_chunks[axis] = size
-#            else:
-#                _HDF_chunks.pop(axis, None)
-#                
-##        if _HDF_chunks.values() == [None] * len(_HDF_chunks):
-##            _HDF_chunks = None
-#
-##        self._HDF_chunks = _HDF_chunks
-#            
-#        return org_HDF_chunks
 #    #--- End: def
 
     def squeeze(self, axes=None):
@@ -1270,16 +1148,17 @@ selected with the keyword arguments.
 (73, 96)
 
         '''
-        d = self.copy()
+        out = self.copy()
 
-        if not d.ndim:
+        if not out.ndim:
             if axes:
                 raise ValueError(
-"Can't squeeze data: axes {} is not allowed data with shape {}".format(axes, d.shape))
+"Can't squeeze data: axes {} is not allowed data with shape {}".format(
+    axes, out.shape))
 
-            return d
+            return out
 
-        shape = d.shape
+        shape = out.shape
 
         try:
             axes = self._parse_axes(axes)
@@ -1297,14 +1176,17 @@ selected with the keyword arguments.
         #--- End: if
 
         if not axes:
-            return d
+            return out
 
         array = self.array
         array = numpy.squeeze(array, axes)
 
-        d._set_Array(array, copy=False)
+        out._set_Array(array, copy=False)
 
-        return d
+        # Delete hdf5 chunksizes
+        out.nc_clear_hdf5_chunksizes()
+        
+        return out
     #--- End: def
 
     def sum(self, axes=None):
@@ -1335,17 +1217,14 @@ Missing data array elements are omitted from the calculation.
         array = self.array
         array = numpy.sum(array, axis=axes, keepdims=True)
             
-        d = self.copy()
-        d._set_Array(array, copy=False)
+        out = self.copy()
+        out._set_Array(array, copy=False)
 
-#        if d._HDF_chunks:            
-#            HDF = {}
-#            for axis in axes:
-#                HDF[axis] = None
-#
-#            d.HDF_chunks(HDF)
+        if out.shape != self.shape:
+            # Delete hdf5 chunksizes
+            out.nc_clear_hdf5_chunksizes()
         
-        return d
+        return out
     #--- End: def
 
     def transpose(self, axes=None):
@@ -1384,9 +1263,9 @@ Missing data array elements are omitted from the calculation.
 (73, 19, 96)
 
         '''
-        d = self.copy()
+        out = self.copy()
         
-        ndim = d.ndim    
+        ndim = out.ndim    
         
         # Parse the axes. By default, reverse the order of the axes.
         try:
@@ -1396,25 +1275,29 @@ Missing data array elements are omitted from the calculation.
         
         if axes is None:
             if ndim <= 1:
-                return d
+                return out
 
             axes = tuple(range(ndim-1, -1, -1))
         else:
-            # Return unchanged if axes are in the same order as the data
-            if axes == tuple(range(ndim)):
-                return d
-
             if len(axes) != ndim:
                 raise ValueError(
-                    "Can't transpose data: Axes don't match array: {}".format(axes))
+                    "Can't transpose data: Axes don't match array: {}".format(
+                        axes))
         #--- End: if
 
+        # Return unchanged if axes are in the same order as the data
+        if axes == tuple(range(ndim)):
+            return out
+        
         array = self.array
         array = numpy.transpose(array, axes=axes)
 
-        d._set_Array(array, copy=False)
+        out._set_Array(array, copy=False)
 
-        return d
+        # Delete hdf5 chunksizes
+        out.nc_clear_hdf5_chunksizes()
+        
+        return out
     #--- End: def
 
     def get_compressed_axes(self):
@@ -1891,6 +1774,10 @@ missing values.
 
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
+
+        if out.shape != self.shape:
+            # Delete hdf5 chunksizes
+            out.nc_clear_hdf5_chunksizes()
 
         return out
     #--- End: def
