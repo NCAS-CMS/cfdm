@@ -57,19 +57,19 @@ class FieldTest(unittest.TestCase):
         self.assertTrue((g.data.array == d).all())
         
         g = f[slice(None), :]
-        self.assertTrue((g.data.array== d).all())
+        self.assertTrue((g.data.array == d).all())
         
         g = f[slice(None), slice(None)]
-        self.assertTrue((g.data.array== d).all())
+        self.assertTrue((g.data.array == d).all())
         
         g = f[slice(None), ...]
-        self.assertTrue((g.data.array== d).all())
+        self.assertTrue((g.data.array == d).all())
         
         g = f[..., slice(None)]
-        self.assertTrue((g.data.array== d).all())
+        self.assertTrue((g.data.array == d).all())
         
         g = f[:, slice(0, f.data.shape[1], 1)]
-        self.assertTrue((g.data.array== d).all())
+        self.assertTrue((g.data.array == d).all())
         
         for indices, shape, multiple_list_indices in (
                 [(slice(0, None, 1), slice(0, None)) , (10, 9), False],
@@ -109,7 +109,15 @@ class FieldTest(unittest.TestCase):
                             'Bad values for {}: {} != {}'.format(indices,
                                                                  g.data.array,
                                                                  e))
-    #--- End: def
+        #--- End: for
+
+        # Check slicing of bounds
+        g = f[..., 0:4]
+        c = g.construct('grid_longitude')
+        b = c.bounds
+        self.assertTrue(c.data.shape == (4,))
+        self.assertTrue(b.data.shape == (4, 2))
+        #--- End: def
 
 #    def test_Field___setitem__(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:

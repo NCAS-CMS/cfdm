@@ -158,7 +158,6 @@ rules, the only differences being:
         if indices is Ellipsis:
             return self.copy()
 
-#        # Parse the index
         if not isinstance(indices, tuple):
             indices = (indices,)
 
@@ -166,10 +165,10 @@ rules, the only differences being:
 
         new = super().__getitem__(indices)
         
-        data = self.get_data(None)
-
-        if data is not None:
-            new.set_data(data[indices], copy=False)
+#        data = self.get_data(None)
+#
+#        if data is not None:
+#            new.set_data(data[indices], copy=False)
 
         # Subspace the bounds, if there are any.
         self_bounds = self.get_bounds(None)
@@ -193,22 +192,20 @@ rules, the only differences being:
                         # conventions)
                         bounds_indices.append(slice(None, None, -1))
                 #--- End: if
-#                    else:
-#                        bounds_indices.append(slice(None))
-#                else:
-#                    bounds_indices.append(Ellipsis)
-    
-                new_bounds = new.get_bounds()
-                new_bounds.set_data(data[tuple(bounds_indices)], copy=False)
+
+                new.set_bounds(self_bounds[tuple(bounds_indices)], copy=False)
+#                new_bounds = new.get_bounds()
+#                new_bounds.set_data(data[tuple(bounds_indices)], copy=False)
         #--- End: if
 
         # Subspace the interior ring array, if there are one.
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            data = interior_ring.get_data(None)
-            if data is not None:
-                new_interior_ring = new.get_interior_ring()
-                new_interior_ring.set_data(data[indices], copy=False)
+            new.set_interior_ring(interior_ring[indices], copy=False)
+#            data = interior_ring.get_data(None)
+#            if data is not None:
+#                new_interior_ring = new.get_interior_ring()
+#                new_interior_ring.set_data(data[indices], copy=False)
         #--- End: if
 
         # Return the new bounded variable

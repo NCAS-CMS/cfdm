@@ -38,7 +38,7 @@ object.
             name_to_keys = {}
         
             for key, construct in d.items():
-                name = construct.identity(default='key%'+key)                    
+                name = construct.identity(default='key%'+key)
                 name_to_keys.setdefault(name, []).append(key)
                 key_to_name[key] = name
     
@@ -72,7 +72,8 @@ object.
         name_to_keys = {}
 
         for key, value in self.domain_axes.items():
-            name_size = (self.constructs.domain_axis_identity(key), value.get_size(''))
+            name_size = (self.constructs.domain_axis_identity(key),
+                         value.get_size(''))
             name_to_keys.setdefault(name_size, []).append(key)
             key_to_name[key] = name_size
 
@@ -498,8 +499,14 @@ ValueError: Can't return the key of 2 constructs
             return self._default(default,
                                  "Can't return the key of zero constructs")
 
-        return self._default(default,
-                             "Can't return the key of {0} constructs".format(len(c)))
+        return self._default(
+            default,
+            "Can't return the key of {0} constructs".format(len(c)))
     #--- End: def
+
+    def domain_axis(self, x):
+        '''
+        
+        '''
         
 #--- End: class

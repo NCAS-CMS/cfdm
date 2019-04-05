@@ -2,11 +2,13 @@ version 1.7.2
 -------------
 ----
 
-**Not yet released**
+**2019-04-05**
 
 * New "mode" parameter options to filter_by_axis: 'exact', 'subset',
   'superset'
 * Enabled setting of HDF5 chunksizes
+* Fixed bug that caused coordinate bounds to be not sliced during
+  subspacing.
 
 version 1.7.1
 -------------

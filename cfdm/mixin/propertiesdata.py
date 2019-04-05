@@ -49,7 +49,7 @@ rules, the only differences being:
 (1, 10, 1)
 
         '''
-        new = self.copy(data=False)
+        new = self.copy() #data=False)
         
         data = self.get_data(None)
         if data is not None:

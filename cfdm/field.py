@@ -236,7 +236,7 @@ rules, the only differences being:
         indices = data._parse_indices(indices)
         indices = tuple(indices)
         
-        new = self.copy(data=False)
+        new = self.copy() #data=False)
 
         data_axes = new.get_data_axes()
         
@@ -255,11 +255,6 @@ rules, the only differences being:
         new_constructs_data_axes = new.constructs.data_axes()
         
         for key, construct in new.constructs.filter_by_data().items():
-            data = self.constructs[key].get_data(default=None)
-            if data is None:
-                # This construct has no data
-                continue
-
             needs_slicing = False
             dice = []
             for axis in new_constructs_data_axes[key]:
@@ -271,20 +266,19 @@ rules, the only differences being:
             #--- End: for
 
             if needs_slicing:
-                new_data = data[tuple(dice)]
+                new_construct = construct[tuple(dice)]
             else:
-                new_data = data.copy()
-
-            construct.set_data(new_data, copy=False)
+                new_construct = construct.copy()
+                
+            new.set_construct(new_construct, key=key, copy=False)
         #--- End: for
 
         # Replace domain axes
         domain_axes = new.domain_axes
-        new_constructs = new.constructs
         for key, size in zip(data_axes, new.get_data().shape):
             domain_axis = domain_axes[key].copy()
             domain_axis.set_size(size)
-            new_constructs.replace(key, domain_axis)
+            new.set_construct(domain_axis, key)
 
         new.set_data_axes(axes=data_axes)
 
