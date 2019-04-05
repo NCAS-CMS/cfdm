@@ -34,7 +34,7 @@ class read_writeTest(unittest.TestCase):
     test_only = []
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_write_HDF_chunks']
-#    test_only = ['test_read_write_unlimited']
+    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_read_field']
 #    test_only = ['test_write_datatype']
     
@@ -136,101 +136,16 @@ class read_writeTest(unittest.TestCase):
 #        #--- End: for
 #    #--- End: def
 
-#    def test_read_write_unlimited(self):
-#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#            return
-#        f = cfdm.read(self.filename)[0]
-#
-#        fmt = 'NETCDF4'
-#        for axis in ('atmosphere_hybrid_height_coordinate', 'X', 'Y'):
-#            org = f.unlimited({axis: True})
-#            cfdm.write(f, tmpfile, fmt=fmt)
-#            f.unlimited(org)
-#            
-#            g = cfdm.read(tmpfile)[0]
-#            self.assertTrue(g.unlimited()[g.axis(axis, key=True)] is True,
-#                            'Failed with axis={}, fmt={}'.format(axis, fmt))
-#
-#        fmt = 'NETCDF3_CLASSIC'
-#        for axis in ('atmosphere_hybrid_height_coordinate',):
-#            org = f.unlimited({axis: True})
-#            cfdm.write(f, tmpfile, fmt=fmt)
-#            f.unlimited(org)
-#            
-#            g = cfdm.read(tmpfile)[0]
-#            self.assertTrue(g.unlimited()[g.axis(axis, key=True)] is True,
-#                            'Failed with axis={}, fmt={}'.format(axis, fmt))
-#
-#        fmt = 'NETCDF4'
-#        org = f.unlimited({'Y': True, 'X': True})
-#        cfdm.write(f, tmpfile, fmt=fmt)
-#        f.unlimited(org)
-#
-#        g = cfdm.read(tmpfile)[0]
-#        self.assertTrue(g.unlimited()[g.axis('X', key=True)] is True,
-#                        'Failed with axis={}, fmt={}'.format('X', fmt))
-#        self.assertTrue(g.unlimited()[g.axis('Y', key=True)] is True,
-#                        'Failed with axis={}, fmt={}'.format('Y', fmt))
-#
-#
-#        fmt = 'NETCDF4'
-#        org = f.unlimited({'X': False})
-#        cfdm.write(f, tmpfile, fmt=fmt, unlimited=['X'])
-#        f.unlimited(org)
-#
-#        g = cfdm.read(tmpfile)[0]
-#        self.assertTrue(not g.unlimited()[g.axis('X', key=True)],
-#                        'Failed with axis={}, fmt={}'.format('X', fmt))
-#
-#
-#        fmt = 'NETCDF4'
-#        org = f.unlimited({'X': True})
-#        cfdm.write(f, tmpfile, fmt=fmt, unlimited=['X'])
-#        f.unlimited(org)
-#
-#        g = cfdm.read(tmpfile)[0]
-#        self.assertTrue(g.unlimited()[g.axis('X', key=True)] is True,
-#                        'Failed with axis={}, fmt={}'.format('X', fmt))
-#
-#
-#        fmt = 'NETCDF4'
-#        org = f.unlimited({'Y': True})
-#        cfdm.write(f, tmpfile, fmt=fmt, unlimited=['X'])
-#        f.unlimited(org)
-#
-#        g = cfdm.read(tmpfile)[0]
-#        self.assertTrue(g.unlimited()[g.axis('X', key=True)] is True,
-#                        'Failed with axis={}, fmt={}'.format('X', fmt))
-#        self.assertTrue(g.unlimited()[g.axis('Y', key=True)] is True,
-#                        'Failed with axis={}, fmt={}'.format('Y', fmt))
-#
-# 
-#
-#        fmt = 'NETCDF4'
-#        org = f.unlimited({('X', 'Y'): True})
-#        cfdm.write(f, tmpfile, fmt=fmt)
-#        f.unlimited(org)
-#
-#        g = cfdm.read(tmpfile)[0]
-#        self.assertTrue(g.unlimited()[g.axis('X', key=True)] is True,
-#                        'Failed with axis={}, fmt={}'.format('X', fmt))
-#        self.assertTrue(g.unlimited()[g.axis('Y', key=True)] is True,
-#                        'Failed with axis={}, fmt={}'.format('Y', fmt))
-#
-# 
-#
-#        fmt = 'NETCDF4'
-#        org = f.unlimited({('X', 'Y'): True})
-#        f.unlimited(None)
-#        cfdm.write(f, tmpfile, fmt=fmt)
-#        f.unlimited(org)
-#
-#        g = cfdm.read(tmpfile)[0]
-#        self.assertTrue(not g.unlimited()[g.axis('X', key=True)],
-#                        'Failed with axis={}, fmt={}'.format('X', fmt))
-#        self.assertTrue(not g.unlimited()[g.axis('Y', key=True)],
-#                        'Failed with axis={}, fmt={}'.format('Y', fmt))
-#    #--- End: def
+    def test_read_write_unlimited(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.read(self.filename)[0]
+        f.nc_set_unlimited_dimensions(['domainaxis0'])
+        cfdm.write(f, tmpfile)
+        f = cfdm.read(tmpfile)[0]
+        self.assertTrue(f.nc_unlimited_dimensions() == set(['domainaxis0']))
+    #--- End: def
 
 #--- End: class
 
