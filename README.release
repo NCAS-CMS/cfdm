@@ -6,7 +6,9 @@
 
 * Make sure that README.md is up to date.
 
-* Make sure that Changelog is up to date.
+* Make sure that Changelog.rst is up to date.
+
+* Create a link to the new documentation in docs/source/releases.rst
 
 * Create a source tarball using `python setup.py sdist`
 

@@ -6,6 +6,7 @@ version 1.7.2
 
 * New "mode" parameter options to filter_by_axis: 'exact', 'subset',
   'superset'
+* Enabled setting of HDF5 chunksizes
 
 version 1.7.1
 -------------
