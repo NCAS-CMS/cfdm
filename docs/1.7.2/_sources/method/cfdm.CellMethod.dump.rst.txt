@@ -1,0 +1,7 @@
+cfdm.CellMethod.dump
+====================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CellMethod.dump

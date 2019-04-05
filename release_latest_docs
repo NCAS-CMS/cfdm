@@ -26,7 +26,10 @@ git add \
     method/*.html \
     attribute/*.html \
     _downloads/*.nc \
-    _sources
+    *.inv \
+    *.js \
+    _sources \
+    _static
 
 git commit -a -m "v$version latest documentation"
 

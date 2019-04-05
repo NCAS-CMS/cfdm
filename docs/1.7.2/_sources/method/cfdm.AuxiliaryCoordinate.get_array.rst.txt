@@ -1,0 +1,7 @@
+cfdm.AuxiliaryCoordinate.get_array
+==================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.AuxiliaryCoordinate.get_array

@@ -20,14 +20,7 @@ make html $version
 # --------------------------------------------------------------------
 # Add and commit the archive
 # --------------------------------------------------------------------
-git add \
-    $version/*.html \
-    $version/class/*.html \
-    $version/function/*.html \
-    $version/method/*.html \
-    $version/attribute/*.html \
-    $version/_downloads/*.nc \
-    $version/_sources
+git add $version
 
 git commit -a -m "v$version archive documentation"
 

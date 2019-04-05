@@ -1,0 +1,7 @@
+cfdm.mixin.NetCDFInstanceDimension.nc_del_instance_dimension
+============================================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.mixin.NetCDFInstanceDimension.nc_del_instance_dimension
