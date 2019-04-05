@@ -25,7 +25,7 @@
    philosophy
    versioning
    releases
-   inc_Changelog
+   Changelog
    
 **Index and search**
 ====================
