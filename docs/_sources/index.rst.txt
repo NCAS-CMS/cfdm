@@ -25,7 +25,8 @@
    philosophy
    versioning
    releases
-
+   Changelog
+   
 **Index and search**
 ====================
 

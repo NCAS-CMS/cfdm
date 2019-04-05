@@ -812,14 +812,14 @@ the shape defined by the indices, using the `numpy broadcasting rules
      [276.4  -2.0 276.3 266.1  -4.0 268.1 277.0 273.4  -5.0]]]
 
 Data array elements may be set to missing values by assigning them to
-`numpy.ma.masked`. Missing values may be unmasked by assigning them to
-any other value.
+`cfdm.masked` [#masked]_. Missing values may be unmasked by assigning
+them to any other value.
 
 .. code-block:: python3
    :caption: *Set a column of elements to missing values, and then
              change one of them back to a non-missing value.*
 	     
-   >>> t.data[0, :, -2] = numpy.ma.masked
+   >>> t.data[0, :, -2] = cfdm.masked
    >>> t.data[0, 5, -2] = -6
    >>> print(t.data.array)
    [[[ -1.0  -2.0 279.8 269.5 260.9 265.0 263.5    -- 269.2]
@@ -3712,6 +3712,8 @@ The content of the new file is:
             <https://github.com/NCAS-CMS/cfdm/tree/master/docs/_downloads>`_
             of the on-line code repository.
 
+.. [#masked] `cfdm.masked` is an alias of `numpy.ma.masked`.
+	     
 .. .. [#notebook] The Jupyter notebook is quite long. To aid navigation
                   it has been written so that it may optionally be used
                   with the "Collapsible Headings" Jupyter notebook

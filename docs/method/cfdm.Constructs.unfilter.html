@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.1</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.2</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -47,6 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../versioning.html"><strong>Versioning</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>What’s new</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -92,11 +93,13 @@
 <h1>cfdm.Constructs.unfilter<a class="headerlink" href="#cfdm-constructs-unfilter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Constructs.unfilter">
-<code class="descclassname">Constructs.</code><code class="descname">unfilter</code><span class="sig-paren">(</span><em>depth=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.1/cfdm/constructs.py#L1875"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.unfilter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the constructs from before the previous filter.</p>
-<p>The unfiltered constructs are all of those that existed before the
-last filter was applied. If no filters have been applied then all of
-the constructs are returned.</p>
+<code class="descclassname">Constructs.</code><code class="descname">unfilter</code><span class="sig-paren">(</span><em>depth=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.2/cfdm/constructs.py#L2033"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.unfilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the constructs that existed prior to previous filters.</p>
+<p>By default, the unfiltered constructs are those that existed before
+all previously applied filters.</p>
+<p>If the <em>depth</em> parameter is set to <em>N</em> then the unfiltered constructs
+are those that existed before the <em>N</em>-th most recently applied
+filter.</p>
 <p>A history of the filters that have been applied is returned in a
 <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> by the <a class="reference internal" href="cfdm.Constructs.filters_applied.html#cfdm.Constructs.filters_applied" title="cfdm.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a> method. The last element of the tuple
 describes the last filter applied. If no filters have been applied
@@ -117,7 +120,18 @@ then the tuple is empty.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>depth: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dd><p class="first last">If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then return the constructs selected by the
+<code class="docutils literal notranslate"><span class="pre">N</span></code>-th most recently applied filter. By default the
+constructs from before all previously applied filters are
+returned. <code class="docutils literal notranslate"><span class="pre">N</span></code> may be larger than the total number of filters
+applied, which results in the default bahaviour.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference internal" href="../class/cfdm.Constructs.html#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a></dt>
 <dd><p class="first last">The constructs, and their construct keys, that existed before
 the last filter was applied. If no filters have been applied
@@ -151,9 +165,15 @@ then all of the constructs are returned.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 <span class="go">Constructs:</span>
 <span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">unfilter</span><span class="p">()</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">unfilter</span><span class="p">()</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">unfilter</span><span class="p">()</span><span class="o">.</span><span class="n">unfilter</span><span class="p">()</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">unfilter</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">unfilter</span><span class="p">()</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">unfilter</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">unfilter</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
 </div>

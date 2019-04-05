@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.1</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.2</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -47,6 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../versioning.html"><strong>Versioning</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>What’s new</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -90,7 +91,7 @@
 <h1>cfdm.write<a class="headerlink" href="#cfdm-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.write">
-<code class="descclassname">cfdm.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>variable_attributes=None</em>, <em>file_descriptors=None</em>, <em>external=None</em>, <em>Conventions=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>HDF_chunksizes=None</em>, <em>verbose=False</em>, <em>_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.1/cfdm/read_write/write.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cfdm.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>variable_attributes=None</em>, <em>file_descriptors=None</em>, <em>external=None</em>, <em>Conventions=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>verbose=False</em>, <em>_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.2/cfdm/read_write/write.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -111,8 +112,8 @@ remove a netCDF dimension name: <a class="reference internal" href="../method/cf
 <a class="reference internal" href="../method/cfdm.DomainAxis.nc_del_dimension.html#cfdm.DomainAxis.nc_del_dimension" title="cfdm.DomainAxis.nc_del_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_dimension</span></code></a>.</p>
 <p><strong>NetCDF attributes</strong></p>
 <p>Field construct properties may be written as netCDF global attributes
-or netCDF data variable attributes. See the <em>global_attributes</em> and
-<em>variable_attributes</em> parameters for details.</p>
+and/or netCDF data variable attributes. See the <em>file_descriptors</em>,
+<em>global_attributes</em> and <em>variable_attributes</em> parameters for details.</p>
 <p><strong>External variables</strong></p>
 <p>Metadata constructs marked as external are omitted from the file and
 referred to via the netCDF “external_variables” global
@@ -124,6 +125,10 @@ may be accessed with the <a class="reference internal" href="../method/cfdm.Fiel
 <a class="reference internal" href="../method/cfdm.Field.nc_set_unlimited_dimensions.html#cfdm.Field.nc_set_unlimited_dimensions" title="cfdm.Field.nc_set_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited_dimensions</span></code></a> and
 <a class="reference internal" href="../method/cfdm.Field.nc_clear_unlimited_dimensions.html#cfdm.Field.nc_clear_unlimited_dimensions" title="cfdm.Field.nc_clear_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_unlimited_dimensions</span></code></a> methods of a field
 construct.</p>
+<p><strong>NetCDF4 HDF chunk sizes</strong></p>
+<p>HDF5 chunksizes may be set on contruct’s data. See the
+<a class="reference internal" href="../method/cfdm.Data.nc_hdf5_chunksizes.html#cfdm.Data.nc_hdf5_chunksizes" title="cfdm.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>, <a class="reference internal" href="../method/cfdm.Data.nc_clear_hdf5_chunksizes.html#cfdm.Data.nc_clear_hdf5_chunksizes" title="cfdm.Data.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a>
+and <a class="reference internal" href="../method/cfdm.Data.nc_set_hdf5_chunksizes.html#cfdm.Data.nc_set_hdf5_chunksizes" title="cfdm.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a> metods of a <a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -398,37 +403,6 @@ applied because if the data array values are not all wildly
 different, using the filter can make the data more easily
 compressible.  Ignored if the <em>compress</em> parameter is <code class="docutils literal notranslate"><span class="pre">0</span></code>
 (which is its default value). See the <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for more details.</p>
-</dd>
-<dt>HDF_chunksizes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
-<dd><p class="first">Manually specify HDF5 chunks for the field construct data
-arrays.</p>
-<p>Chunking refers to a storage layout where a data array is
-partitioned into fixed-size multi-dimensional chunks when
-written to a netCDF4 file on disk. Chunking is ignored if the
-field construct is written to a netCDF3 format file.</p>
-<p>A chunk has the same rank as the data array, but with fewer
-(or no more) elements along each axes. The chunk is defined by
-a dictionary whose keys identify axes with values of the
-chunks size for those axes.</p>
-<p>If a given chunk size for an axis is larger than the axis size
-for any field, then the size of the axis at the time of
-writing to disk will be used instead.</p>
-<p>If chunk sizes have been specified for some but not all axes,
-then the each unset chunk size is assumed to be the full size
-of the axis for each field.</p>
-<p>If no chunk sizes have been set for any axes then the netCDF
-default chunk is used
-(<a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf/docs/netcdf_perf_chunking.html">http://www.unidata.ucar.edu/software/netcdf/docs/netcdf_perf_chunking.html</a>).</p>
-<p>If any chunk sizes have already been set on a field construct
-with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.HDF_chunks</span></code> method then these are used in
-instead.</p>
-<p class="last">A detailed discussion of HDF chunking and I/O performance is
-available at
-<a class="reference external" href="https://www.hdfgroup.org/HDF5/doc/H5.user/Chunking.html">https://www.hdfgroup.org/HDF5/doc/H5.user/Chunking.html</a> and
-<a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf/workshops/2011/nc4chunking">http://www.unidata.ucar.edu/software/netcdf/workshops/2011/nc4chunking</a>.
-Basically, you want the chunks for each dimension to match as
-closely as possible the size and shape of the data block that
-users will read from the file.</p>
 </dd>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then print a summary of how constructs map to output

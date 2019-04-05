@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.1</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.2</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -47,6 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../versioning.html"><strong>Versioning</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>What’s new</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -92,7 +93,7 @@
 <h1>cfdm.Constructs.filter_by_axis<a class="headerlink" href="#cfdm-constructs-filter-by-axis" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Constructs.filter_by_axis">
-<code class="descclassname">Constructs.</code><code class="descname">filter_by_axis</code><span class="sig-paren">(</span><em>*mode</em>, <em>**axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.1/cfdm/constructs.py#L718"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.filter_by_axis" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Constructs.</code><code class="descname">filter_by_axis</code><span class="sig-paren">(</span><em>*mode</em>, <em>**axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.2/cfdm/constructs.py#L809"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.filter_by_axis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select metadata constructs by axes spanned by their data.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -114,9 +115,16 @@
 <dd><p class="first">Define the behaviour when multiple axes are provided.</p>
 <p class="last">By default (or if the <em>modes</em> parameter is <code class="docutils literal notranslate"><span class="pre">'and'</span></code>) a
 construct is selected if it matches all of the given axis
-requirements, but if the <em>mode</em> parameter is <code class="docutils literal notranslate"><span class="pre">'or'</span></code> then a
+requirements. If the <em>mode</em> parameter is <code class="docutils literal notranslate"><span class="pre">'or'</span></code> then a
 construct will be selected when at least one of the axis
-requirements is met.</p>
+requirements is met. If the <em>mode</em> parameter is <code class="docutils literal notranslate"><span class="pre">'exact'</span></code>
+then a construct will be selected when its data axes are
+exactly those defined by the axis requirements. If the mode
+parameters is <code class="docutils literal notranslate"><span class="pre">'subset'</span></code> then a construct will be selected
+when its data axes are a subset of those defined by the axis
+requirements.  If the mode parameters is <code class="docutils literal notranslate"><span class="pre">'superset'</span></code> then a
+construct will be selected when its data axes are a superset
+of those defined by the axis requirements.</p>
 </dd>
 <dt>axes: optional</dt>
 <dd><p class="first">Select constructs whose data does, or does not, span
