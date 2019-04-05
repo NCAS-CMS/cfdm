@@ -170,6 +170,10 @@ class create_fieldTest(unittest.TestCase):
         f.set_construct(cm1)
     #--- End: def
 
+    def test_core_FUNCTIONS(self):
+        self.assertTrue(cfdm.core.CF() == cfdm.core.__cf_version__)
+        _ = cfdm.core.environment(display=False)
+    #--- End: def
 #--- End: class
 
 if __name__ == "__main__":

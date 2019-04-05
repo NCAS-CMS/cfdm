@@ -10,7 +10,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           file_descriptors=None, external=None, Conventions=None,
           datatype=None, least_significant_digit=None,
           endian='native', compress=0, fletcher32=False, shuffle=True,
-          HDF_chunksizes=None, verbose=False,
+#          HDF_chunksizes=None,
+          verbose=False,
           _implementation=_implementation):
     '''Write field constructs to a netCDF file.
 
@@ -40,8 +41,8 @@ remove a netCDF dimension name: `~cfdm.DomainAxis.nc_get_dimension`,
 **NetCDF attributes**
 
 Field construct properties may be written as netCDF global attributes
-or netCDF data variable attributes. See the *global_attributes* and
-*variable_attributes* parameters for details.
+and/or netCDF data variable attributes. See the *file_descriptors*,
+*global_attributes* and *variable_attributes* parameters for details.
 
 **External variables**
 
@@ -57,6 +58,10 @@ may be accessed with the `~cfdm.Field.nc_unlimited_dimensions`
 `~cfdm.Field.nc_set_unlimited_dimensions` and
 `~cfdm.Field.nc_clear_unlimited_dimensions` methods of a field
 construct.
+
+**NetCDF4 HDF chunk sizes**
+
+TODO
 
 .. versionadded:: 1.7.0
 
@@ -310,44 +315,6 @@ construct.
         (which is its default value). See the `netCDF4 package
         <http://unidata.github.io/netcdf4-python>`_ for more details.
 
-    HDF_chunksizes: `dict`, optional
-        Manually specify HDF5 chunks for the field construct data
-        arrays.
-
-        Chunking refers to a storage layout where a data array is
-        partitioned into fixed-size multi-dimensional chunks when
-        written to a netCDF4 file on disk. Chunking is ignored if the
-        field construct is written to a netCDF3 format file.
-
-        A chunk has the same rank as the data array, but with fewer
-        (or no more) elements along each axes. The chunk is defined by
-        a dictionary whose keys identify axes with values of the
-        chunks size for those axes.
-
-        If a given chunk size for an axis is larger than the axis size
-        for any field, then the size of the axis at the time of
-        writing to disk will be used instead.
-
-        If chunk sizes have been specified for some but not all axes,
-        then the each unset chunk size is assumed to be the full size
-        of the axis for each field.
-
-        If no chunk sizes have been set for any axes then the netCDF
-        default chunk is used
-        (http://www.unidata.ucar.edu/software/netcdf/docs/netcdf_perf_chunking.html).
-
-        If any chunk sizes have already been set on a field construct
-        with the `cf.Field.HDF_chunks` method then these are used in
-        instead.
-
-        A detailed discussion of HDF chunking and I/O performance is
-        available at
-        https://www.hdfgroup.org/HDF5/doc/H5.user/Chunking.html and
-        http://www.unidata.ucar.edu/software/netcdf/workshops/2011/nc4chunking.
-        Basically, you want the chunks for each dimension to match as
-        closely as possible the size and shape of the data block that
-        users will read from the file.
-
     verbose: `bool`, optional
         If True then print a summary of how constructs map to output
         netCDF dimensions, variables and attributes.
@@ -386,5 +353,6 @@ construct.
                      least_significant_digit=least_significant_digit,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
-                     HDF_chunks=HDF_chunksizes, verbose=verbose)
+#                     HDF_chunks=HDF_chunksizes,
+                     verbose=verbose)
 #--- End: def

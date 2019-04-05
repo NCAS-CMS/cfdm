@@ -12,7 +12,7 @@ from .netcdf                      import (NetCDFGlobalAttributes,
                                           NetCDFDimension,
                                           NetCDFExternal,
                                           NetCDFGeometry,
-#                                          NetCDFInstanceDimension,
+                                          NetCDFHDF5,
                                           NetCDFSampleDimension,
                                           NetCDFVariable)
 

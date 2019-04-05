@@ -69,32 +69,32 @@ class NetCDFRead(IORead):
     'that does not span the vertical dimension is inconsistent with the formula_terms of the parametric coordinate variable': 8,
     }
 
-    def _dereference(self, ncvar):
-        '''Decrement by one the reference count to a netCDF variable.
-        
-:Examples 1:
-
->>> r._dereference('longitude')
-
-:Parameters:
-
-    ncvar: `str`
-        The netCDF variable name.
-
-:Returns:
-
-    out: `int`
-        The new reference count.
-
-        '''
-        r = self.read_vars['references'].get(ncvar, 0)
-        r -= 1
-        if r < 0:
-            r = 0
-
-        self.read_vars['references'][ncvar] = r
-        return r
-    #--- End: def 
+#    def _dereference(self, ncvar):
+#        '''Decrement by one the reference count to a netCDF variable.
+#        
+#:Examples 1:
+#
+#>>> r._dereference('longitude')
+#
+#:Parameters:
+#
+#    ncvar: `str`
+#        The netCDF variable name.
+#
+#:Returns:
+#
+#    out: `int`
+#        The new reference count.
+#
+#        '''
+#        r = self.read_vars['references'].get(ncvar, 0)
+#        r -= 1
+#        if r < 0:
+#            r = 0
+#
+#        self.read_vars['references'][ncvar] = r
+#        return r
+#    #--- End: def 
 
     def _is_unreferenced(self, ncvar):
         '''Return True if the netCDF variable is not referenced by any other

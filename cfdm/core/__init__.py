@@ -18,6 +18,9 @@ if LooseVersion(platform.python_version()) < LooseVersion('2.7.0'):
 
 from .constructs import Constructs
 
+from .functions import (CF,
+                        environment)
+
 from .data import (Data,
                    Array,
                    NumpyArray)

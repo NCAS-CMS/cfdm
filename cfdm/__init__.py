@@ -91,7 +91,12 @@ if LooseVersion(numpy.__version__) < LooseVersion(minimum_vn):
         "Bad numpy version: cfdm requires numpy version {} or later. Got {} at {}".format(
             minimum_vn, numpy.__version__, numpy.__file__))
 
-from .constants  import *
+from .constants  import masked
+
+from .functions import (CF,
+                        environment,
+                        ATOL,
+                        RTOL)
 
 from .constructs import Constructs
 
@@ -104,11 +109,6 @@ from .data import (Data,
                    RaggedContiguousArray,
                    RaggedIndexedArray,
                    RaggedIndexedContiguousArray)
-
-from .functions import (CF,
-                        environment,
-                        ATOL,
-                        RTOL)
 
 from .count         import Count
 from .index         import Index

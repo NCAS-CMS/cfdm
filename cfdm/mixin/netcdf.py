@@ -1267,3 +1267,69 @@ None
     #--- End: def
 
 #--- End: class
+
+class NetCDFHDF5(NetCDF):
+    '''Mixin class for TODO
+
+.. versionadded:: 1.7.2
+
+    '''
+    def nc_hdf5_chunksizes(self):
+        '''TODO
+
+.. note:: Chunksizes are ignored for netCDF3 files that do not use
+          HDF5.
+
+.. versionadded:: 1.7.2
+
+:Returns:
+
+    `tuple`
+        TODO The chunk sizes prior to the new setting, or the current
+        current sizes if no new values are specified.
+
+        '''
+        return self._get_component('netcdf').get('hdf5_chunksizes', ())
+    #--- End: def
+
+    def nc_clear_hdf5_chunksizes(self):
+        '''TODO
+
+.. note:: Chunksizes are ignored for netCDF3 files that do not use
+          HDF5.
+
+.. versionadded:: 1.7.2
+
+:Parameters:
+
+    chunksizes: sequence of `int`
+
+:Returns:
+
+    `None`
+
+        '''
+        return self._get_component('netcdf').pop('hdf5_chunksizes', ())
+    #--- End: def
+
+    def nc_set_hdf5_chunksizes(self, chunksizes):
+        '''TODO
+
+.. note:: Chunksizes are ignored for netCDF3 files that do not use
+          HDF5.
+
+.. versionadded:: 1.7.2
+
+:Parameters:
+
+    chunksizes: sequence of `int`
+
+:Returns:
+
+    `None`
+
+        '''
+        self._get_component('netcdf')['hdf5_chunksizes'] = tuple(chunksizes)
+    #--- End: def
+
+#--- End: class

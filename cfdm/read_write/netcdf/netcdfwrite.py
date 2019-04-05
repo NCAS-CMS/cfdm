@@ -3006,7 +3006,7 @@ write them to the netCDF4.Dataset.
               file_descriptors=None, external=None, Conventions=None,
               datatype=None, least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
-              shuffle=True, scalar=True, HDF_chunks=None,
+              shuffle=True, scalar=True, #HDF_chunks=None,
               extra_write_vars=None, verbose=False):
         '''Write fields to a netCDF file.
         
@@ -3393,7 +3393,7 @@ and auxiliary coordinate roles for different data variables.
                        compress=compress,
                        fletcher32=fletcher32,
                        shuffle=shuffle,
-                       HDF_chunks=HDF_chunks,
+#                       HDF_chunks=HDF_chunks,
                        verbose=verbose)            
     #--- End: def
    

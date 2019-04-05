@@ -89,8 +89,6 @@ The netCDF variable name of the construct may be accessed with the
                             _use_data=_use_data)
         
         self._initialise_netcdf(source)
-    
-        self._set_component('HDFgubbins', 'TO DO', copy=False)
     #--- End: def
 
     def __repr__(self):
@@ -133,7 +131,8 @@ x.__str__() <==> str(x)
         
         # Data
         string.append(
-            'Data            : {0}'.format(self._one_line_description(axis_names)))
+            'Data            : {0}'.format(
+                self._one_line_description(axis_names)))
 
         # Cell methods
         cell_methods = self.cell_methods
@@ -142,7 +141,7 @@ x.__str__() <==> str(x)
             for cm in cell_methods.values():
                 cm = cm.copy()
                 cm.set_axes(tuple([axis_names.get(axis, axis)
-                                   for axis in cm.get_axes(())]))                
+                                   for axis in cm.get_axes(())]))
                 x.append(str(cm))
                 
             c = ' '.join(x)
@@ -256,7 +255,6 @@ rules, the only differences being:
         new_constructs_data_axes = new.constructs.data_axes()
         
         for key, construct in new.constructs.filter_by_data().items():
-#        for key, construct in new.data_constructs().items():
             data = self.constructs[key].get_data(default=None)
             if data is None:
                 # This construct has no data
@@ -725,7 +723,7 @@ False
         '''
         # ------------------------------------------------------------
         # Check the properties and data
-        # ------------------------------------------------------------              
+        # ------------------------------------------------------------
         ignore_properties = tuple(ignore_properties) + ('Conventions',)
             
         if not super().equals(
@@ -740,7 +738,7 @@ False
 
         # ------------------------------------------------------------
         # Check the constructs
-        # ------------------------------------------------------------              
+        # ------------------------------------------------------------
         if not self._equals(self.constructs, other.constructs,
                             rtol=rtol, atol=atol, verbose=verbose,
                             ignore_data_type=ignore_data_type,
@@ -807,7 +805,8 @@ construct, into the data array.
         
         domain_axis = self.domain_axes.get(axis, None)
         if domain_axis is None:
-            raise ValueError("Can't insert non-existent domain axis: {}".format(axis))
+            raise ValueError("Can't insert non-existent domain axis: {}".format(
+                axis))
         
         if domain_axis.get_size() != 1:
             raise ValueError(
@@ -950,8 +949,9 @@ Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
             # axes
             for rcid, ref in self.coordinate_references.items():
 
-                new_coordinates = [ccid for ccid in ref.coordinates()
-                                   if set(constructs_data_axes[ccid]).issubset(data_axes)]
+                new_coordinates = [
+                    ccid for ccid in ref.coordinates()
+                    if set(constructs_data_axes[ccid]).issubset(data_axes)]
 
                 if not new_coordinates:
                     continue
@@ -968,7 +968,7 @@ Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
                 if ok:
                     ref = ref.copy()
                     ref.coordinates(new_coordinates)
-                    f.set_construct(ref, key=rcid, copy=False)                    
+                    f.set_construct(ref, key=rcid, copy=False)
             #--- End: for
         #--- End: if
               
