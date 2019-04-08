@@ -162,15 +162,15 @@ rules, the only differences being:
             indices = (indices,) 
  
         new = super().__getitem__(indices) 
- 
+
         # Subspace the bounds, if there are any. 
         self_bounds = self.get_bounds(None) 
         if self_bounds is not None: 
             data = self_bounds.get_data(None) 
             if data is not None: 
                 # There is a bounds array 
-                bounds_indices = list(data._parse_indices(indices)) 
-                bounds_indices.append(Ellipsis) 
+                bounds_indices = list(data._parse_indices(indices))
+                bounds_indices[-1] = Ellipsis
                 if data.ndim <= 1 and not self.has_geometry(): 
                     index = bounds_indices[0] 
                     if isinstance(index, slice): 
@@ -178,13 +178,13 @@ rules, the only differences being:
                             # This scalar or 1-d variable has been 
                             # reversed so reverse its bounds (as per 
                             # 7.1 of the conventions) 
-                            bounds_indices.append(slice(None, None, -1)) 
+                            bounds_indices[-1] = slice(None, None, -1)
                     elif data.size > 1 and index[-1] < index[0]: 
                         # This 1-d variable has been reversed so 
                         # reverse its bounds (as per 7.1 of the 
                         # conventions) 
-                        bounds_indices.append(slice(None, None, -1)) 
-                #--- End: if 
+                        bounds_indices[-1] = slice(None, None, -1)
+                #--- End: if
  
                 new.set_bounds(self_bounds[tuple(bounds_indices)], copy=False) 
         #--- End: if 
