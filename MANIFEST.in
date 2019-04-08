@@ -1,2 +1,2 @@
-include Changelog
+include Changelog.rst
 include README.md
