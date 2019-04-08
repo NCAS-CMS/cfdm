@@ -9,7 +9,7 @@ should be raised as GitHub issues
 
 # Versioning
 
-A version of the cfdm package will always be based on the version of
+A version of the cfdm package will always be based on the latest version of
 the CF conventions to which it applies, with the addition of an extra
 integer value that is incremented each time the package is
 updated. For example, the first release for version 1.7 of the CF
