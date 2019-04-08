@@ -3,7 +3,7 @@ cfdm package.
 
 # General Guidelines
 
-All questions, reports of bugs, and suggestions for enahncements
+All questions, reports of bugs, and suggestions for enhancements
 should be raised as GitHub issues
 (https://github.com/NCAS-CMS/cfdm/issues).
 
