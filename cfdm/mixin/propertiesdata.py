@@ -146,9 +146,11 @@ x.__str__() <==> str(x)
                               _prefix=_prefix, _title=_title,
                               _create_title=_create_title,
                               _level=_level)
-
-        string = [string]
-
+        if string:
+            string = [string]
+        else:
+            string = []
+            
         indent0 = '    ' * _level
         indent1 = '    ' * (_level+1)
 
