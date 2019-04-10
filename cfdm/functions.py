@@ -9,7 +9,7 @@ import sys
 from platform import platform, python_version
 
 import netCDF4
-import cftime
+#import cftime
 import numpy
 import future
 
@@ -137,7 +137,6 @@ python: 3.6.5 /home/david/anaconda3/bin/python
 HDF5 library: 1.10.2
 netcdf library: 4.6.1
 netCDF4: 1.4.0 /home/user/anaconda3/lib/python3.6/site-packages/netCDF4/__init__.py
-cftime: 1.0.0b1 /home/user/anaconda3/lib/python3.6/site-packages/cftime/__init__.py
 numpy: 1.14.3 /home/user/anaconda3/lib/python3.6/site-packages/numpy/__init__.py
 future: 0.16.0 /home/user/anaconda3/lib/python3.6/site-packages/future/__init__.py
 cfdm: 1.7.0 /home/user/cfdm/cfdm/__init__.py
@@ -151,7 +150,7 @@ cfdm: 1.7.0 /home/user/cfdm/cfdm/__init__.py
     out.append('netcdf library: ' + str(netCDF4.__netcdf4libversion__))
 
     out.append('netCDF4: ' + str(netCDF4.__version__) + ' ' + str(os.path.abspath(netCDF4.__file__)))
-    out.append('cftime: ' + str(cftime.__version__) + ' ' + str(os.path.abspath(cftime.__file__)))
+#    out.append('cftime: ' + str(cftime.__version__) + ' ' + str(os.path.abspath(cftime.__file__)))
     out.append('numpy: ' + str(numpy.__version__) + ' ' + str(os.path.abspath(numpy.__file__)))
     out.append('future: ' + str(future.__version__) + ' ' + str(os.path.abspath(future.__file__)))
 

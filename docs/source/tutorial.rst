@@ -202,7 +202,7 @@ arrays:
                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
 
-Note that :ref:`time values <Time>` are converted to date-times via
+Note that :ref:`time values <Time>` are converted to date-times with
 the `cftime package <https://unidata.github.io/cftime/>`_.
 		   
 .. _Full-detail:
