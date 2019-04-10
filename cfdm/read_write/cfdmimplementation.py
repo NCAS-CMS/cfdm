@@ -14,14 +14,11 @@ from .. import (AuxiliaryCoordinate,
                 Field,
                 FieldAncillary,
                 Bounds,
-                InteriorRing,
                 CoordinateConversion,
                 Datum,
                 Count,
                 List,
                 Index,
-                NodeCount,
-                PartNodeCount,
 )
 
 from ..data import (Data,
@@ -48,7 +45,6 @@ class CFDMImplementation(Implementation):
                  FieldAncillary=None,
                  
                  Bounds=None,
-                 InteriorRing=None,
                  CoordinateConversion=None,
                  Datum=None,
                  Data=None,
@@ -62,8 +58,6 @@ class CFDMImplementation(Implementation):
                  List=None,
                  Count=None,
                  Index=None,
-                 NodeCount=None,
-                 PartNodeCount=None,
     ):
         '''**Initialisation**
 
@@ -116,7 +110,6 @@ class CFDMImplementation(Implementation):
             FieldAncillary=FieldAncillary,
 
             Bounds=Bounds,
-            InteriorRing=InteriorRing,
             CoordinateConversion=CoordinateConversion,
             Datum=Datum,
             Data=Data,
@@ -130,8 +123,6 @@ class CFDMImplementation(Implementation):
             List=List,
             Count=Count,
             Index=Index,        
-            NodeCount=NodeCount,
-            PartNodeCount=PartNodeCount,
         )
     #--- End: def
 
@@ -835,21 +826,21 @@ attributes: `dict`
         return construct.get_data().get_index(default=None)
     #--- End: def
     
-    def get_interior_ring(self, construct):
-        '''
-
-:Parameters:
-
-  
-:Returns:
-
-    out: 
-
-:Examples:
-
-        '''
-        return construct.get_interior_ring(default=None)
-    #--- End: def
+#    def get_interior_ring(self, construct):
+#        '''
+#
+#:Parameters:
+#
+#  
+#:Returns:
+#
+#    out: 
+#
+#:Examples:
+#
+#        '''
+#        return construct.get_interior_ring(default=None)
+#    #--- End: def
     
     def get_list(self, construct):
         '''Return the measure property of a cell measure contruct.
@@ -941,40 +932,40 @@ attributes: `dict`
        return construct.nc_get_variable(default=default)
     #--- End: def
 
-    def get_node_count(self, construct):
-        '''TODO
-
-.. versionadded:: 1.8.0
-
-:Parameters:
-
-    construct: 
-  
-:Returns:
-
-    out: Node count variable
-
-        '''
-        return construct.get_node_count(default=None)
-    #--- End: def
-    
-    def get_part_node_count(self, construct):
-        '''
-
-.. versionadded:: 1.8.0
-
-:Parameters:
-
-  
-:Returns:
-
-    out: 
-
-:Examples:
-
-        '''
-        return construct.get_part_node_count(default=None)
-    #--- End: def
+#    def get_node_count(self, construct):
+#        '''TODO
+#
+#.. versionadded:: 1.8.0
+#
+#:Parameters:
+#
+#    construct: 
+#  
+#:Returns:
+#
+#    out: Node count variable
+#
+#        '''
+#        return construct.get_node_count(default=None)
+#    #--- End: def
+#    
+#    def get_part_node_count(self, construct):
+#        '''
+#
+#.. versionadded:: 1.8.0
+#
+#:Parameters:
+#
+#  
+#:Returns:
+#
+#    out: 
+#
+#:Examples:
+#
+#        '''
+#        return construct.get_part_node_count(default=None)
+#    #--- End: def
     
     def get_properties(self, parent):
         '''Return all properties.
@@ -1148,12 +1139,12 @@ attributes: `dict`
 
     def initialise_DimensionCoordinate(self, properties=None,
                                        data=None, bounds=None,
-                                       interior_ring=None, copy=True):
+                                       copy=True):
         '''
         '''
         cls = self.get_class('DimensionCoordinate')
         return cls(properties=properties, data=data, bounds=bounds,
-                   interior_ring=interior_ring, copy=copy)
+                   copy=copy)
     #--- End: def
 
     def initialise_DimensionCoordinate_from_AuxiliaryCoordinate(
@@ -1215,13 +1206,13 @@ attributes: `dict`
         return cls()
     #--- End: def
 
-    def initialise_InteriorRing(self):
-        '''
-
-        '''
-        cls = self.get_class('InteriorRing')
-        return cls()
-    #--- End: def
+#    def initialise_InteriorRing(self):
+#        '''
+#
+#        '''
+#        cls = self.get_class('InteriorRing')
+#        return cls()
+#    #--- End: def
 
     def initialise_List(self):
         '''
@@ -1241,21 +1232,21 @@ attributes: `dict`
                    ndim=ndim, shape=shape, size=size)
     #--- End: def
 
-    def initialise_NodeCount(self):
-        '''
-
-        '''
-        cls = self.get_class('NodeCount')
-        return cls()
-    #--- End: def
-
-    def initialise_PartNodeCount(self):
-        '''
-
-        '''
-        cls = self.get_class('PartNodeCount')
-        return cls()
-    #--- End: def
+#    def initialise_NodeCount(self):
+#        '''
+#
+#        '''
+#        cls = self.get_class('NodeCount')
+#        return cls()
+#    #--- End: def
+#
+#    def initialise_PartNodeCount(self):
+#        '''
+#
+#        '''
+#        cls = self.get_class('PartNodeCount')
+#        return cls()
+#    #--- End: def
 
     def initialise_RaggedContiguousArray(self, compressed_array=None,
                                          ndim=None, shape=None,
@@ -1593,77 +1584,77 @@ also be provided.
         return field.set_construct(construct, axes=axes, copy=copy)
     #--- End: def
 
-    def set_geometry(self, coordinate, value):
-        '''
-
-.. versionadded:: 1.8.0
-
-        '''
-        coordinate.set_geometry(value)
-    #--- End: def
-
-    def set_node_count(self, parent, node_count, copy=True):
-        '''Insert TODO
-
-:Parameters:
-
-    copy: `bool`, optional
-
-:Returns:
-
-    `None`
-        '''
-        parent.set_node_count(node_count, copy=copy)
-    #--- End: def
-
-    def set_part_node_count(self, parent, part_node_count, copy=True):
-        '''Insert TODO
-
-.. versionadded:: 1.8.0
-
-:Parameters:
-
-    copy: `bool`, optional
-
-:Returns:
-
-    `None`
-        '''
-        parent.set_part_node_count(part_node_count, copy=copy)
-    #--- End: def
-
-    def set_interior_ring(self, parent, interior_ring, copy=True):
-        '''Insert an interior ring array into a coordiante.
-
-.. versionadded:: 1.8.0
-
-:Parameters:
-
-    copy: `bool`, optional
-
-:Returns:
-
-    `None`
-
-        '''
-        parent.set_interior_ring(interior_ring, copy=copy)
-    #--- End: def
-
-    def set_interior_ring(self, parent, interior_ring, copy=True):
-        '''Insert an interior ring array into a coordiante.
-
-.. versionadded:: 1.8.0
-
-:Parameters:
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        return parent.set_interior_ring(interior_ring, copy=copy)
-    #--- End: def
+#    def set_geometry(self, coordinate, value):
+#        '''
+#
+#.. versionadded:: 1.8.0
+#
+#        '''
+#        coordinate.set_geometry(value)
+#    #--- End: def
+#
+#    def set_node_count(self, parent, node_count, copy=True):
+#        '''Insert TODO
+#
+#:Parameters:
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    `None`
+#        '''
+#        parent.set_node_count(node_count, copy=copy)
+#    #--- End: def
+#
+#    def set_part_node_count(self, parent, part_node_count, copy=True):
+#        '''Insert TODO
+#
+#.. versionadded:: 1.8.0
+#
+#:Parameters:
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    `None`
+#        '''
+#        parent.set_part_node_count(part_node_count, copy=copy)
+#    #--- End: def
+#
+#    def set_interior_ring(self, parent, interior_ring, copy=True):
+#        '''Insert an interior ring array into a coordiante.
+#
+#.. versionadded:: 1.8.0
+#
+#:Parameters:
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    `None`
+#
+#        '''
+#        parent.set_interior_ring(interior_ring, copy=copy)
+#    #--- End: def
+#
+#    def set_interior_ring(self, parent, interior_ring, copy=True):
+#        '''Insert an interior ring array into a coordiante.
+#
+#.. versionadded:: 1.8.0
+#
+#:Parameters:
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    out: `str`
+#        '''
+#        return parent.set_interior_ring(interior_ring, copy=copy)
+#    #--- End: def
 
     def set_dataset_compliance(self, field, report):
         '''TODO
@@ -1855,7 +1846,6 @@ _implementation = CFDMImplementation(
     FieldAncillary      = FieldAncillary,
     
     Bounds = Bounds,
-    InteriorRing = InteriorRing,
     
     CoordinateConversion = CoordinateConversion,
     Datum                = Datum,
@@ -1863,8 +1853,6 @@ _implementation = CFDMImplementation(
     List          = List,
     Index         = Index,
     Count         = Count,
-    NodeCount     = NodeCount,
-    PartNodeCount = PartNodeCount,
     
     Data                         = Data,
     GatheredArray                = GatheredArray,
@@ -1908,11 +1896,8 @@ def implementation():
  'FieldAncillary': cfdm.fieldancillary.FieldAncillary,
  'GatheredArray': cfdm.data.gatheredarray.GatheredArray,
  'Index': cfdm.index.Index,
- 'InteriorRing': cfdm.interiorring.InteriorRing,
  'List': cfdm.list.List,
  'NetCDFArray': cfdm.data.netcdfarray.NetCDFArray,
- 'NodeCount': cfdm.nodecount.NodeCount,
- 'PartNodeCount': cfdm.partnodecount.PartNodeCount,
  'RaggedContiguousArray': cfdm.data.raggedcontiguousarray.RaggedContiguousArray,
  'RaggedIndexedArray': cfdm.data.raggedindexedarray.RaggedIndexedArray,
  'RaggedIndexedContiguousArray': cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray}

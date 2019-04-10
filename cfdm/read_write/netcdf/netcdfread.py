@@ -641,23 +641,23 @@ TODO
                                                                instance_dimension)
         #--- End: if
 
-        # ------------------------------------------------------------
-        # Geometry container variables (CF>=1.8)
-        #
-        # Identify and parse all geometry container variables
-        # ------------------------------------------------------------
-        if g['CF>=1.8']:
-            for ncvar, attributes in variable_attributes.items():
-                if 'geometry' not in attributes:
-                    continue
-            
-                geometry_ncvar = attributes['geometry']
-                self._parse_geometry(ncvar, geometry_ncvar, variable_attributes)
-                
-                # Do not attempt to create a field from a geometry
-                # container variable
-                g['do_not_create_field'].add(geometry_ncvar)
-        #--- End: if
+#        # ------------------------------------------------------------
+#        # Geometry container variables (CF>=1.8)
+#        #
+#        # Identify and parse all geometry container variables
+#        # ------------------------------------------------------------
+#        if g['CF>=1.8']:
+#            for ncvar, attributes in variable_attributes.items():
+#                if 'geometry' not in attributes:
+#                    continue
+#            
+#                geometry_ncvar = attributes['geometry']
+#                self._parse_geometry(ncvar, geometry_ncvar, variable_attributes)
+#                
+#                # Do not attempt to create a field from a geometry
+#                # container variable
+#                g['do_not_create_field'].add(geometry_ncvar)
+#        #--- End: if
         
         # ------------------------------------------------------------
         # Parse external variables (CF>=1.7)
@@ -1804,8 +1804,8 @@ variable should be pre-filled with missing values.
     
             unpacked_dtype = numpy.result_type(*values)
 
-        # Initialise node_coordinates_as_bounds
-        g['node_coordinates_as_bounds'] = set()
+#        # Initialise node_coordinates_as_bounds
+#        g['node_coordinates_as_bounds'] = set()
         
         # ----------------------------------------------------------------
         # Initialize the field with properties
@@ -2623,7 +2623,7 @@ variable's netCDF dimensions.
         # ------------------------------------------------------------
         # Look for a geometry container
         # ------------------------------------------------------------
-        geometry = self._get_geometry(field_ncvar)
+        geometry = None
 
         has_bounds = False
         attribute = 'bounds' # TODO Bad default? consider if bounds != None
