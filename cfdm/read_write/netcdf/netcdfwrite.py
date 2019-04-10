@@ -985,15 +985,15 @@ name.
         if data is None:
             return {}
 
-        if (g['output_version'] >= g['CF-1.8'] and
-            self.implementation.is_geometry(coord)):
-            # --------------------------------------------------------
-            # CF>=1.8 and we have geometry bounds, which are dealt
-            # with separately
-            # --------------------------------------------------------
-            extra = self._write_node_coordinates(coord, coord_ncvar,
-                                                 coord_ncdimensions)
-            return extra
+#        if (g['output_version'] >= g['CF-1.8'] and
+#            self.implementation.is_geometry(coord)):
+#            # --------------------------------------------------------
+#            # CF>=1.8 and we have geometry bounds, which are dealt
+#            # with separately
+#            # --------------------------------------------------------
+#            extra = self._write_node_coordinates(coord, coord_ncvar,
+#                                                 coord_ncdimensions)
+#            return extra
         
         # Still here? Then this coordinate has non-geometry bounds
         # with data
@@ -2734,15 +2734,15 @@ extra trailing dimension.
 
             extra['cell_methods'] = cell_methods
 
-        # ------------------------------------------------------------
-        # Geometry container (CF>=1.8)
-        # ------------------------------------------------------------
-        if g['output_version'] >= g['CF-1.8']:
-            geometry_container = self._create_geometry_container(f)
-            if geometry_container:
-                gc_ncvar = self._write_geometry_container(f, geometry_container)
-                extra['geometry'] = gc_ncvar
-        #--- End: if
+#        # ------------------------------------------------------------
+#        # Geometry container (CF>=1.8)
+#        # ------------------------------------------------------------
+#        if g['output_version'] >= g['CF-1.8']:
+#            geometry_container = self._create_geometry_container(f)
+#            if geometry_container:
+#                gc_ncvar = self._write_geometry_container(f, geometry_container)
+#                extra['geometry'] = gc_ncvar
+#        #--- End: if
                 
         # Create a new data variable
         self._write_netcdf_variable(ncvar, ncdimensions, f,
