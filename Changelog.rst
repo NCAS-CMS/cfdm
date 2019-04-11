@@ -1,3 +1,11 @@
+version 1.7.3
+-------------
+----
+
+**Not yet released**
+
+* Renamed the "underlying_array" methods to "underlying"
+  
 version 1.7.2
 -------------
 ----

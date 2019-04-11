@@ -180,9 +180,23 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        d = cfdm.Data([11292.5, 11293], units='days since 1970-1-1')
+        dt = d.datetime_array
+        self.assertTrue(dt[0] == datetime.datetime(2000, 12, 1, 12, 0))
+        self.assertTrue(dt[1] == datetime.datetime(2000, 12, 2,  0, 0))
+
+        d[0] = cfdm.masked
+        dt = d.datetime_array
+        self.assertTrue(dt[0] is numpy.ma.masked)
+        self.assertTrue(dt[1] == datetime.datetime(2000, 12, 2,  0, 0))
+        
         d = cfdm.Data(11292.5, units='days since 1970-1-1')
-        dt = d.datetime_array[()]
-        self.assertTrue(dt == datetime.datetime(2000, 12, 1, 12, 0))
+        dt = d.datetime_array
+        self.assertTrue(dt[()] == datetime.datetime(2000, 12, 1, 12, 0))
+
+        d[()] = cfdm.masked
+        dt = d.datetime_array
+        self.assertTrue(dt[()] is numpy.ma.masked)
     #--- End: def
 
     def test_Data_transpose(self):        
@@ -248,6 +262,11 @@ class DataTest(unittest.TestCase):
 
         b = a.max()
         x = d.max().squeeze()
+        self.assertTrue(x.shape == b.shape)
+        self.assertTrue((x.array == b).all())
+
+        b = a.max(axis=0)
+        x = d.max(axes=0).squeeze(0)
         self.assertTrue(x.shape == b.shape)
         self.assertTrue((x.array == b).all())
 

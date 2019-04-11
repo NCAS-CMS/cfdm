@@ -151,7 +151,7 @@ False
             return self._components[component]
         except KeyError:
             return self._default(default,
-                                 "{!r} object has no {!r} component".format(
+                                 "{!r} has no {!r} component".format(
                                      self.__class__.__name__, component))
     #--- End: def
 

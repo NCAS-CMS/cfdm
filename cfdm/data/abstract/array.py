@@ -78,7 +78,7 @@ x.__repr__() <==> repr(x)
 .. versionadded:: 1.7.0
 
         '''      
-        return "<{0}: {1}>".format(self.__class__.__name__, str(self))
+        return "<{0}{1}: >".format(self.__class__.__name__, self.shape)
     #--- End: def
         
     def __str__(self):

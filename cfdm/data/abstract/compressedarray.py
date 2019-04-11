@@ -102,13 +102,7 @@ rules, the only differences being:
 >>> a = d.get_data(None)
 
         '''
-        array = self._get_component('compressed_Array', None)
-
-        if array is None:
-            return self._default(default,
-                                 "{!r} has no underlying compressed array".format(
-                                     self.__class__.__name__))
-        return array   
+        return self._get_component('compressed_Array', default)
     #--- End: def
 
     def _set_compressed_Array(self, array, copy=True):
@@ -349,8 +343,8 @@ array.
         return self._get_component('compressed_dimension', *default)
     #--- End: def
 
-    def underlying_array(self, default=ValueError()):
-        '''Return the array object.
+    def underlying(self, default=ValueError()):
+        '''Return the underlying array object.
 
 :Parameters:
 
@@ -361,7 +355,8 @@ array.
 
 :Returns:
 
-        The underlying array.
+    subclass of `Array`
+        The underlying array object.
 
 **Examples:**
 

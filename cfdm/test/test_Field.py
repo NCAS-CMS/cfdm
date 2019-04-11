@@ -201,10 +201,10 @@ class FieldTest(unittest.TestCase):
             self.assertFalse(f.has_data_axes(key))
     #--- End: def
 
-    def test_Field_CONSTRUCT(self):
+    def test_Field_CONSTRUCTS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-
+        
         f = self.f.copy()
 
         _ = f.construct('latitude')
@@ -214,12 +214,7 @@ class FieldTest(unittest.TestCase):
         key = f.construct_key('latitude')
         _ = f.get_construct(key)
         self.assertTrue(f.get_construct('qwerty', default=None) == None)
-    #--- End: def
-    
-    def test_Field_constructs(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-        
+
         constructs = self.f.auxiliary_coordinates
         n = 3
         self.assertTrue(len(constructs) == n,
@@ -278,6 +273,14 @@ class FieldTest(unittest.TestCase):
                         'Got {} field ancillary constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.FieldAncillary)
+
+        # Domain axis key
+        f = self.f
+        ckey = f.construct_key('grid_latitude')
+        dakey = f.get_data_axes(ckey)[0]
+        self.assertTrue(f.domain_axis_key('grid_latitude') == dakey)        
+        self.assertTrue(f.domain_axis_key('XXXX_latitude', default=None) == None)
+        self.assertTrue(f.domain_axis_key(re.compile('^grid_'), default=None) == None)
     #--- End: def
 
     def test_Field_data_axes(self):

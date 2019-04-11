@@ -110,6 +110,41 @@ class Data(abstract.Container):
     # Attributes
     # ----------------------------------------------------------------
     @property
+    def array(self):
+        '''Return an independent numpy array containing the data.
+
+If a fill value has been set (see `set_fill_value`) then it will be
+used, otherwise the default numpy fill value appropriate to the data
+type will be used.
+
+:Returns:
+
+    `numpy.ndarray`
+        An independent numpy array of the data.
+
+**Examples:**
+
+>>> d = Data([1, 2, 3.0], 'km')
+>>> n = d.array
+>>> isinstance(n, numpy.ndarray)
+True
+>>> print(n)
+[ 1.,   2.,   3.]
+>>> n[0] = 88
+>>> print(repr(d))
+<Data: [1.0, 2.0, 3.0] km>
+
+        '''
+        array = self._get_Array().array
+
+        # Set the numpy array fill value
+        if numpy.ma.isMA(array):
+            array.set_fill_value(self.get_fill_value(None))
+
+        return array
+    #--- End: def
+
+    @property
     def dtype(self):
         '''Data-type of the data elements.
 
@@ -377,41 +412,6 @@ None
                                      self.__class__.__name__))
     #--- End: def
 
-    @property
-    def array(self):
-        '''Return an independent numpy array containing the data.
-
-If a fill value has been set (see `set_fill_value`) then it will be
-used, otherwise the default numpy fill value appropriate to the data
-type will be used.
-
-:Returns:
-
-    `numpy.ndarray`
-        An independent numpy array of the data.
-
-**Examples:**
-
->>> d = Data([1, 2, 3.0], 'km')
->>> n = d.array
->>> isinstance(n, numpy.ndarray)
-True
->>> print(n)
-[ 1.,   2.,   3.]
->>> n[0] = 88
->>> print(repr(d))
-<Data: [1.0, 2.0, 3.0] km>
-
-        '''
-        array = self._get_Array().array
-
-        # Set the numpy array fill value
-        if numpy.ma.isMA(array):
-            array.set_fill_value(self.get_fill_value(None))
-
-        return array
-    #--- End: def
-
     def get_calendar(self, default=ValueError()):
         '''Return the calendar.
 
@@ -670,8 +670,8 @@ None
         self._set_component('units', value, copy=False)
     #--- End: def
 
-    def underlying_array(self, default=ValueError()):
-        '''Return the array object.
+    def underlying(self, default=ValueError()):
+        '''Return the underlying array object.
 
 :Parameters:
 
@@ -682,19 +682,15 @@ None
 
 :Returns:
 
-        The array object.
+    subclass of `Array`
+        The underlying array object.
 
 **Examples:**
 
 >>> TODO
 
         '''
-        try:
-            return  self._get_component('array')
-        except ValueError:
-            return self._default(default,
-                                 "{!r} has no underlying array".format(
-                                     self.__class__.__name__))
+        return  self._get_component('array', default=default)
     #--- End: def
         
 #--- End: class

@@ -566,7 +566,7 @@ masked
 
 :Returns:
 
-     `numpy.ndarray`
+    `numpy.ndarray`
         An independent numpy array of the compressed data.
 
 **Examples:**
@@ -1716,32 +1716,32 @@ False
 #            self._set_Array(array, copy=False)
 #    #--- End: def
 
-    def underlying_array(self, default=ValueError()):
-        '''Return the array object.
-
-:Parameters:
-
-    default: optional
-        Return the value of the *default* parameter if the array
-        has not been set. If set to an `Exception` instance then it
-        will be raised instead.
-
-:Returns:
-
-        The array object.
-
-**Examples:**
-
->>> TODO
-
-        '''
-        underlying_array = super().underlying_array(default=default)
-
-        if self.get_compression_type():
-            return underlying_array.underlying_array(default=default)
-
-        return underlying_array        
-    #--- End: def
+#    def underlying(self, default=ValueError()):
+#        '''Return the array object.
+#
+#:Parameters:
+#
+#    default: optional
+#        Return the value of the *default* parameter if the array
+#        has not been set. If set to an `Exception` instance then it
+#        will be raised instead.
+#
+#:Returns:
+#
+#        The array object.
+#
+#**Examples:**
+#
+#>>> TODO
+#
+#        '''
+#        underlying_array = super().underlying_array(default=default)
+#
+#        if self.get_compression_type():
+#            return underlying_array.underlying_array(default=default)
+#
+#        return underlying_array        
+#    #--- End: def
         
     def unique(self):
         '''The unique elements of the data.

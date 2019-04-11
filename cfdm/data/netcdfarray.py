@@ -37,16 +37,16 @@ class NetCDFArray(abstract.Array):
         set.
 
     dtype: `numpy.dtype`
-        The data type of the array.
+        The data type of the array in the netCDF file.
 
     shape: `tuple`
-        The array dimension sizes.
+        The array dimension sizes in the netCDF file.
 
     size: `int`
-        Number of elements in the array.
+        Number of elements in the array in the netCDF file.
 
     ndim: `int`
-        The number of array dimensions.
+        The number of array dimensions in the netCDF file.
 
 **Examples:**
 
@@ -102,7 +102,6 @@ indexing (given the restrictions on the type of indices allowed) is:
         ncvar = self.get_ncvar()
         if ncvar is not None:
             # Get the variable by name
-#            print ('XXX', ncvar, indices)
             array = netcdf.variables[ncvar][indices]
         else:
             # Get the variable by netCDF ID
@@ -165,8 +164,9 @@ indexing (given the restrictions on the type of indices allowed) is:
 
 x.__repr__() <==> repr(x)
 
-'''      
-        return "<{0}: {1}>".format(self.__class__.__name__, str(self))
+'''
+        return "<{0}{1}: {2}>".format(
+            self.__class__.__name__, self.shape, str(self))
     #--- End: def
      
     def __str__(self):
@@ -181,8 +181,7 @@ x.__str__() <==> str(x)
         else:
             name = "variable={0}".format(name)
 
-        return "file={0} {1} shape={2}".format(self.get_filename(),
-                                               name, self.shape)
+        return "file={0} {1}".format(self.get_filename(), name)
     #--- End: def
 
     # ----------------------------------------------------------------
