@@ -675,7 +675,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
         return super().copy(array=array)
     #--- End: def
 
-    def insert_dimension(self, position=0):
+    def insert_dimension(self, position=0, copy=True):
         '''Expand the shape of the data array.
 
 Inserts a new size 1 axis, corresponding to a given position in the
@@ -716,24 +716,27 @@ data array shape.
 (19, 73, 1, 96)
 
         '''
+        if copy:
+            d = self.copy()
+        else:
+            d = self
+            
         # Parse position
-        ndim = self.ndim 
+        ndim = d.ndim 
         if -ndim-1 <= position < 0:
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
                 "Can't insert dimension: Invalid position: {!r}".format(position))
 
-        array = self.array
-        array = numpy.expand_dims(array, position)
+        array = numpy.expand_dims(self.array, position)
 
-        out = self.copy(array=False)
-        out._set_Array(array, copy=False)
+        d._set_Array(array, copy=False)
 
         # Delete hdf5 chunksizes
-        out.nc_clear_hdf5_chunksizes()
+        d.nc_clear_hdf5_chunksizes()
         
-        return out
+        return d
     #--- End: def
 
 #    def compress_by_gathering(self, list_data, compressed_axes, replace_list_data=False
@@ -1104,7 +1107,7 @@ Missing data array elements are omitted from the calculation.
 #        '''
 #    #--- End: def
 
-    def squeeze(self, axes=None):
+    def squeeze(self, axes=None, copy=True):
         '''Remove size 1 axes from the data.
 
 By default all size 1 axes are removed, but particular axes may be
@@ -1148,17 +1151,20 @@ selected with the keyword arguments.
 (73, 96)
 
         '''
-        out = self.copy()
-
-        if not out.ndim:
+        if copy:
+            d = self.copy()
+        else:
+            d = self
+            
+        if not d.ndim:
             if axes:
                 raise ValueError(
 "Can't squeeze data: axes {} is not allowed data with shape {}".format(
-    axes, out.shape))
+    axes, d.shape))
 
-            return out
+            return d
 
-        shape = out.shape
+        shape = d.shape
 
         try:
             axes = self._parse_axes(axes)
@@ -1176,17 +1182,17 @@ selected with the keyword arguments.
         #--- End: if
 
         if not axes:
-            return out
+            return d
 
         array = self.array
         array = numpy.squeeze(array, axes)
 
-        out._set_Array(array, copy=False)
+        d._set_Array(array, copy=False)
 
         # Delete hdf5 chunksizes
-        out.nc_clear_hdf5_chunksizes()
+        d.nc_clear_hdf5_chunksizes()
         
-        return out
+        return d
     #--- End: def
 
     def sum(self, axes=None):
@@ -1217,17 +1223,17 @@ Missing data array elements are omitted from the calculation.
         array = self.array
         array = numpy.sum(array, axis=axes, keepdims=True)
             
-        out = self.copy()
-        out._set_Array(array, copy=False)
+        d = self.copy(array=False)
+        d._set_Array(array, copy=False)
 
-        if out.shape != self.shape:
+        if d.shape != self.shape:
             # Delete hdf5 chunksizes
-            out.nc_clear_hdf5_chunksizes()
+            d.nc_clear_hdf5_chunksizes()
         
-        return out
+        return d
     #--- End: def
 
-    def transpose(self, axes=None):
+    def transpose(self, axes=None, copy=True):
         '''Permute the axes of the data array.
 
 .. versionadded:: 1.7.0
@@ -1263,19 +1269,22 @@ Missing data array elements are omitted from the calculation.
 (73, 19, 96)
 
         '''
-        out = self.copy()
-        
-        ndim = out.ndim    
+        if copy:
+            d = self.copy()
+        else:
+            d = self
+            
+        ndim = d.ndim    
         
         # Parse the axes. By default, reverse the order of the axes.
         try:
-            axes = self._parse_axes(axes)
+            axes = d._parse_axes(axes)
         except ValueError as error:
             raise ValueError("Can't transpose data: {}".format(error))
         
         if axes is None:
             if ndim <= 1:
-                return out
+                return d
 
             axes = tuple(range(ndim-1, -1, -1))
         else:
@@ -1287,17 +1296,17 @@ Missing data array elements are omitted from the calculation.
 
         # Return unchanged if axes are in the same order as the data
         if axes == tuple(range(ndim)):
-            return out
+            return d
         
         array = self.array
         array = numpy.transpose(array, axes=axes)
 
-        out._set_Array(array, copy=False)
+        d._set_Array(array, copy=False)
 
         # Delete hdf5 chunksizes
-        out.nc_clear_hdf5_chunksizes()
+        d.nc_clear_hdf5_chunksizes()
         
-        return out
+        return d
     #--- End: def
 
     def get_compressed_axes(self):
@@ -1772,14 +1781,14 @@ missing values.
         if numpy.ma.is_masked(array):
             array = array.compressed()
 
-        out = self.copy(array=False)
-        out._set_Array(array, copy=False)
+        d = self.copy(array=False)
+        d._set_Array(array, copy=False)
 
-        if out.shape != self.shape:
+        if d.shape != self.shape:
             # Delete hdf5 chunksizes
-            out.nc_clear_hdf5_chunksizes()
+            d.nc_clear_hdf5_chunksizes()
 
-        return out
+        return d
     #--- End: def
 
 #--- End: class

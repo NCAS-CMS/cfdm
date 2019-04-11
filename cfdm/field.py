@@ -747,7 +747,7 @@ False
         return True
     #--- End: def
         
-    def insert_dimension(self, axis, position=0):
+    def insert_dimension(self, axis, position=0, copy=True):
         '''Expand the shape of the data array.
 
 Inserts a new size 1 axis, corresponding to an existing domain axis
@@ -778,6 +778,11 @@ construct, into the data array.
         *Parameter example:*
           ``position=-1``
 
+    copy: `bool`, optional
+        If False then unsqueeze the axes of the data in place. By
+        default the axes of a copy of the field construct are
+        unsqueezed.
+
 :Returns:
 
     `Field`
@@ -791,13 +796,18 @@ construct, into the data array.
 (1, 96, 73, 19)
 >>> f.insert_dimension('domainaxis3', position=3).data.shape
 (19, 73, 96, 1)
->>> f.insert_dimension('domainaxis3', position=-1).data.shape
+>>> f.insert_dimension('domainaxis3', position=-1, copy=False)
+(19, 73, 1, 96)
+>>> f.data.shape
 (19, 73, 1, 96)
 
         '''
-        f = self.copy()
-        
-        domain_axis = self.domain_axes.get(axis, None)
+        if copy:
+            f = self.copy()
+        else:
+            f = self
+            
+        domain_axis = f.domain_axes.get(axis, None)
         if domain_axis is None:
             raise ValueError("Can't insert non-existent domain axis: {}".format(
                 axis))
@@ -806,7 +816,7 @@ construct, into the data array.
             raise ValueError(
 "Can't insert an axis of size {}: {!r}".format(domain_axis.get_size(), axis))
 
-        data_axes = list(self.get_data_axes(default=()))        
+        data_axes = list(f.get_data_axes(default=()))        
         if axis in data_axes:
             raise ValueError(
                 "Can't insert a duplicate data array axis: {!r}".format(axis))
@@ -814,7 +824,7 @@ construct, into the data array.
         data_axes.insert(position, axis)
 
         # Expand the dims in the field's data array
-        new_data = self.data.insert_dimension(position)
+        new_data = f.data.insert_dimension(position, copy=False)
         
         f.set_data(new_data, data_axes)
 
@@ -1038,7 +1048,7 @@ If no problems were encountered, an empty dictionary is returned:
             print('}\n')
     #--- End: def
      
-    def squeeze(self, axes=None):
+    def squeeze(self, axes=None, copy=True):
         '''Remove size one axes from the data array.
 
 By default all size one axes are removed, but particular size one axes
@@ -1065,10 +1075,15 @@ may be selected for removal.
         *Parameter example:*
           ``axes=[2, 0]``
 
+    copy: `bool`, optional
+        If False then squeeze the axes of the data in place. By
+        default the axes of a copy of the field construct are
+        squeezed.
+
 :Returns:
 
     `Field`
-        The new field construct with removed data axes.
+        The field construct with removed data axes.
 
 **Examples:**
 
@@ -1078,34 +1093,38 @@ may be selected for removal.
 (73, 96)
 >>> f.squeeze(0).data.shape
 (73, 1, 96)
->>> f.squeeze([-3, 2]).data.shape
+>>> f.squeeze([-3, 2], copy=False)
+>>> f.data.shape
 (73, 96)
 
         '''
-        f = self.copy()
-
+        if copy:            
+            f = self.copy()
+        else:
+            f = self
+            
         if axes is None:
             axes = [i for i, n in enumerate(f.data.shape) if n == 1]
         else:
             try:
-                axes = self.data._parse_axes(axes)
+                axes = f.data._parse_axes(axes)
             except ValueError as error:
                 raise ValueError("Can't squeeze data: {}".format(error))
 
-        data_axes = self.get_data_axes(default=())
+        data_axes = f.get_data_axes(default=())
 
         new_data_axes = [data_axes[i]
-                         for i in range(self.data.ndim) if i not in axes]
+                         for i in range(f.data.ndim) if i not in axes]
         
         # Squeeze the field's data array
-        new_data = self.data.squeeze(axes)
+        new_data = f.data.squeeze(axes, copy=False)
 
         f.set_data(new_data, new_data_axes)
 
         return f
     #--- End: def
 
-    def transpose(self, axes=None):
+    def transpose(self, axes=None, copy=True):
         '''Permute the axes of the data array.
 
 .. versionadded:: 1.7.0
@@ -1126,10 +1145,15 @@ may be selected for removal.
         *Parameter example:*
           ``axes=[-1, 0, 1]``
 
+    copy: `bool`, optional
+        If False then permute the axes of the data in place. By
+        default the axes of a copy of the field construct are
+        permuted.
+
 :Returns:
 
     `Field`
-         The new field construct with permuted data axes.
+        The field construct with permuted data axes.
 
 **Examples:**
 
@@ -1139,25 +1163,33 @@ may be selected for removal.
 (96, 73, 19)
 >>> f.transpose([1, 0, 2]).data.shape
 (73, 19, 96)
+>>> f.transpose(copy=False)
+>>> f.data.shape
+(96, 19, 73)
 
         '''
-        f = self.copy()
+        if copy:
+            f = self.copy()
+        else:
+            f = self
+            
         try:
-            axes = self.data._parse_axes(axes)
+            iaxes = f.data._parse_axes(axes)
         except ValueError as error:
             raise ValueError("Can't transpose data: {}".format(error))
 
-        if axes is None:
-            axes = tuple(range(self.data.ndim-1, -1, -1))
+        if iaxes is None:
+            iaxes = tuple(range(f.data.ndim-1, -1, -1))
         
-        data_axes = self.get_data_axes(default=())
+        data_axes = f.get_data_axes(default=None)
 
-        new_data_axes = [data_axes[i] for i in axes]
+        if data_axes is not None:
+            new_data_axes = [data_axes[i] for i in iaxes]
         
         # Transpose the field's data array
-        new_data = self.data.transpose(axes)
+        new_data = f.data.transpose(iaxes, copy=False)
 
-        f.set_data(new_data, new_data_axes)
+        f.set_data(new_data, axes=new_data_axes)
 
         return f
     #--- End: def
