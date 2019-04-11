@@ -504,9 +504,98 @@ ValueError: Can't return the key of 2 constructs
             "Can't return the key of {0} constructs".format(len(c)))
     #--- End: def
 
-    def domain_axis(self, x):
+    def domain_axis_key(self, identity, default=ValueError()):
+        '''Return the key of the domain axis construct that is spanned by 1-d
+coordinate constructs.
+
+:Parameters:
+
+    identity:
+
+        Select the 1-d coordinate constructs that have the given
+        identity.
+
+        An identity is specified by a string (e.g. ``'latitude'``,
+        ``'long_name=time'``, etc.); or a compiled regular expression
+        (e.g. ``re.compile('^atmosphere')``), for which all constructs
+        whose identities match (via `re.search`) are selected.
+
+        Each coordinate construct has a number of identities, and is
+        selected if any of them match any of those provided. A
+        construct's identities are those returned by its `!identities`
+        method. In the following example, the construct ``x`` has four
+        identities:
+
+           >>> x.identities()
+           ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
+
+        In addition, each construct also has an identity based its
+        construct key (e.g. ``'key%dimensioncoordinate2'``)
+
+        Note that the identifiers of a metadata construct in the
+        output of a `print` or `!dump` call are always one of its
+        identities, and so may always be used as an *identities*
+        argument.
+
+    default: optional
+        Return the value of the *default* parameter if a domain axis
+        construct can not be found. If set to an `Exception` instance
+        then it will be raised instead.
+
+:Returns:
+
+    `str`
+        The key of the domain axis construct that is spanned by the
+        data of the selected 1-d coordinate constructs.
+
+**Examples:**
+
+TODO
+
         '''
+        constructs = self.constructs
+
+        # Select 1-d coordinate constructs with the given identity
+        c = constructs.filter_by_type('dimension_coordinate',
+                                      'auxiliary_coordinates')
+        c = c.filter_by_naxes(1)
+        c = c.filter_by_identity(identity)
         
-        '''
+        if not len(c) :
+            return self._default(
+                default,
+                "No 1-d coordinate constructs have identity {!r}".format(identity))
+
+        data_axes = constructs.data_axes()
+        domain_axes = constructs.filter_by_type('domain_axis')
+        
+        keys = []
+        for ckey, coord in c.items():
+            axes = data_axes.get(ckey)
+            if not axes:
+                continue
+            
+            key = axes[0]
+            if domain_axes.get(key):
+                keys.append(key)
+        #--- End: for
+        
+        keys = set(keys)
+            
+        if not keys:
+            return self._default(
+                default,
+                "1-d coordinate constructs selected with identity {!r} have not been assigned a domain axis contructs".format(
+                    coord))                       
+        
+        if len(keys) > 1:
+            return self._default(
+                default,
+                "Multiple 1-d coordinate constructs selected with identity {!r} span multiple domain axes: {!r}".format(
+                    identity, keys))
+
+        return keys.pop()
+    #--- End: def
+
         
 #--- End: class
