@@ -747,7 +747,7 @@ False
         return True
     #--- End: def
         
-    def insert_dimension(self, axis, position=0, copy=True):
+    def insert_dimension(self, axis, position=0, inplace=False):
         '''Expand the shape of the data array.
 
 Inserts a new size 1 axis, corresponding to an existing domain axis
@@ -778,8 +778,8 @@ construct, into the data array.
         *Parameter example:*
           ``position=-1``
 
-    copy: `bool`, optional
-        If False then unsqueeze the axes of the data in place. By
+    inplace: `bool`, optional
+        If True then unsqueeze the axes of the data in place. By
         default the axes of a copy of the field construct are
         unsqueezed.
 
@@ -796,16 +796,16 @@ construct, into the data array.
 (1, 96, 73, 19)
 >>> f.insert_dimension('domainaxis3', position=3).data.shape
 (19, 73, 96, 1)
->>> f.insert_dimension('domainaxis3', position=-1, copy=False)
+>>> f.insert_dimension('domainaxis3', position=-1, inplace=True)
 (19, 73, 1, 96)
 >>> f.data.shape
 (19, 73, 1, 96)
 
         '''
-        if copy:
-            f = self.copy()
-        else:
+        if inplace:
             f = self
+        else:
+            f = self.copy()
             
         domain_axis = f.domain_axes.get(axis, None)
         if domain_axis is None:
@@ -824,7 +824,7 @@ construct, into the data array.
         data_axes.insert(position, axis)
 
         # Expand the dims in the field's data array
-        new_data = f.data.insert_dimension(position, copy=False)
+        new_data = f.data.insert_dimension(position, inplace=True)
         
         f.set_data(new_data, data_axes)
 
@@ -1048,7 +1048,7 @@ If no problems were encountered, an empty dictionary is returned:
             print('}\n')
     #--- End: def
      
-    def squeeze(self, axes=None, copy=True):
+    def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
 By default all size one axes are removed, but particular size one axes
@@ -1075,10 +1075,9 @@ may be selected for removal.
         *Parameter example:*
           ``axes=[2, 0]``
 
-    copy: `bool`, optional
-        If False then squeeze the axes of the data in place. By
-        default the axes of a copy of the field construct are
-        squeezed.
+    inplace: `bool`, optional
+        If True then squeeze the axes of the data in place. By default
+        the axes of a copy of the field construct are squeezed.
 
 :Returns:
 
@@ -1093,15 +1092,15 @@ may be selected for removal.
 (73, 96)
 >>> f.squeeze(0).data.shape
 (73, 1, 96)
->>> f.squeeze([-3, 2], copy=False)
+>>> f.squeeze([-3, 2], inplace=True)
 >>> f.data.shape
 (73, 96)
 
         '''
-        if copy:            
-            f = self.copy()
-        else:
+        if inplace:            
             f = self
+        else:
+            f = self.copy()
             
         if axes is None:
             axes = [i for i, n in enumerate(f.data.shape) if n == 1]
@@ -1117,14 +1116,14 @@ may be selected for removal.
                          for i in range(f.data.ndim) if i not in axes]
         
         # Squeeze the field's data array
-        new_data = f.data.squeeze(axes, copy=False)
+        new_data = f.data.squeeze(axes, inplace=True)
 
         f.set_data(new_data, new_data_axes)
 
         return f
     #--- End: def
 
-    def transpose(self, axes=None, copy=True):
+    def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
 .. versionadded:: 1.7.0
@@ -1145,10 +1144,9 @@ may be selected for removal.
         *Parameter example:*
           ``axes=[-1, 0, 1]``
 
-    copy: `bool`, optional
-        If False then permute the axes of the data in place. By
-        default the axes of a copy of the field construct are
-        permuted.
+    inplace: `bool`, optional
+        If True then permute the axes of the data in place. By default
+        the axes of a copy of the field construct are permuted.
 
 :Returns:
 
@@ -1163,15 +1161,15 @@ may be selected for removal.
 (96, 73, 19)
 >>> f.transpose([1, 0, 2]).data.shape
 (73, 19, 96)
->>> f.transpose(copy=False)
+>>> f.transpose(inplace=True)
 >>> f.data.shape
 (96, 19, 73)
 
         '''
-        if copy:
-            f = self.copy()
-        else:
+        if inplace:
             f = self
+        else:
+            f = self.copy()
             
         try:
             iaxes = f.data._parse_axes(axes)
@@ -1187,7 +1185,7 @@ may be selected for removal.
             new_data_axes = [data_axes[i] for i in iaxes]
         
         # Transpose the field's data array
-        new_data = f.data.transpose(iaxes, copy=False)
+        new_data = f.data.transpose(iaxes, inplace=True)
 
         f.set_data(new_data, axes=new_data_axes)
 

@@ -675,7 +675,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
         return super().copy(array=array)
     #--- End: def
 
-    def insert_dimension(self, position=0, copy=True):
+    def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
 
 Inserts a new size 1 axis, corresponding to a given position in the
@@ -716,10 +716,10 @@ data array shape.
 (19, 73, 1, 96)
 
         '''
-        if copy:
-            d = self.copy()
-        else:
+        if inplace:
             d = self
+        else:
+            d = self.copy()
             
         # Parse position
         ndim = d.ndim 
@@ -1107,7 +1107,7 @@ Missing data array elements are omitted from the calculation.
 #        '''
 #    #--- End: def
 
-    def squeeze(self, axes=None, copy=True):
+    def squeeze(self, axes=None, inplace=False):
         '''Remove size 1 axes from the data.
 
 By default all size 1 axes are removed, but particular axes may be
@@ -1151,10 +1151,10 @@ selected with the keyword arguments.
 (73, 96)
 
         '''
-        if copy:
-            d = self.copy()
-        else:
+        if inplace:
             d = self
+        else:
+            d = self.copy()
             
         if not d.ndim:
             if axes:
@@ -1233,7 +1233,7 @@ Missing data array elements are omitted from the calculation.
         return d
     #--- End: def
 
-    def transpose(self, axes=None, copy=True):
+    def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
 .. versionadded:: 1.7.0
@@ -1269,10 +1269,10 @@ Missing data array elements are omitted from the calculation.
 (73, 19, 96)
 
         '''
-        if copy:
-            d = self.copy()
-        else:
+        if inplace:
             d = self
+        else:
+            d = self.copy()
             
         ndim = d.ndim    
         
