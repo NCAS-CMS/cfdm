@@ -26,6 +26,7 @@ Filtering
    ~cfdm.Constructs.filter_by_method
    ~cfdm.Constructs.filter_by_axis
    ~cfdm.Constructs.filter_by_naxes
+   ~cfdm.Constructs.filter_by_size
    ~cfdm.Constructs.filter_by_data
    ~cfdm.Constructs.filter_by_type
    ~cfdm.Constructs.filter_by_key

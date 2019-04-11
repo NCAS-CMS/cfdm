@@ -86,6 +86,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(len(c.filter_by_measure('qwerty'))  == 0)
         self.assertTrue(len(c.filter_by_ncvar('qwerty'))    == 0)
         self.assertTrue(len(c.filter_by_ncdim('qwerty'))    == 0)
+        self.assertTrue(len(c.filter_by_size(-1))           == 0)
 
         self.assertTrue(len(c.filter_by_identity('latitude'))        == 1)
         self.assertTrue(len(c.filter_by_key('dimensioncoordinate1')) == 1)
@@ -94,7 +95,8 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(len(c.filter_by_measure('area'))             == 1)
         self.assertTrue(len(c.filter_by_ncvar('areacella'))          == 1)
         self.assertTrue(len(c.filter_by_ncdim('grid_longitude'))     == 1)
-
+        self.assertTrue(len(c.filter_by_size(9))                     == 1)
+                        
         constructs = c.filter_by_type('auxiliary_coordinate',
                                       'cell_measure',
                                       'cell_method',
@@ -117,9 +119,16 @@ class ConstructsTest(unittest.TestCase):
         constructs = c.filter_by_type('cell_measure')
         n = 1
         self.assertTrue(len(constructs) == n,
-                        'Got {} constructs, expected {}'.format(len(constructs), n))               
+                        'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMeasure)
+                        
+        constructs = c.filter_by_size(9, 10)
+        n = 2
+        self.assertTrue(len(constructs) == n,
+                        'Got {} constructs, expected {}'.format(len(constructs), n))
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.DomainAxis)
 
         constructs = c.filter_by_type('cell_method')
         n = 2

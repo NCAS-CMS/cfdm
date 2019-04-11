@@ -938,6 +938,7 @@ Method                            Filter criteria
 `~Constructs.filter_by_property`  Property values                                     
 `~Constructs.filter_by_axis`      The domain axis constructs spanned by the data
 `~Constructs.filter_by_naxes`     The number of domain axis constructs spanned by the data
+`~Constructs.filter_by_size`      The size domain axis constructs
 `~Constructs.filter_by_measure`   Measure value (for cell measure constructs)
 `~Constructs.filter_by_method`    Method value (for cell method constructs)	
 `~Constructs.filter_by_data`      Whether or not there could be be data.

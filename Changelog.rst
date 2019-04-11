@@ -5,6 +5,7 @@ version 1.7.3
 **Not yet released**
 
 * Renamed the "underlying_array" methods to "underlying"
+* New method: Constructs.filter_by_size
   
 version 1.7.2
 -------------
@@ -12,8 +13,8 @@ version 1.7.2
 
 **2019-04-05**
 
-* New "mode" parameter options to filter_by_axis: 'exact', 'subset',
-  'superset'
+* New "mode" parameter options to Constructs.filter_by_axis: 'exact',
+  'subset', 'superset'
 * Enabled setting of HDF5 chunksizes
 * Fixed bug that caused coordinate bounds to be not sliced during
   subspacing.
@@ -24,9 +25,10 @@ version 1.7.1
 
 **2019-04-02**
 
-* New methods clear_filters_applied, fliter_by_naxes
-* Changed behaviour of unfilter and inverse_filters: added depth
-  keyword and changed default
+* New methods Constructs.clear_filters_applied,
+  Constructs.filter_by_naxes
+* Changed behaviour of Constructs.unfilter and
+  Constructs.inverse_filters: added depth keyword and changed default
 
 version 1.7.0
 -------------

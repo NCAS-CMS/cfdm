@@ -1555,7 +1555,7 @@ Select the constructs with netCDF variable name 'time' or 'lat':
         The selected constructs and their construct keys.
 
 **Examples:**
-g
+
 Select constructs that have a "standard_name" of 'latitude':
 
 >>> d = c.filter_by_property(standard_name='latitude')
@@ -1626,6 +1626,80 @@ with the string 'air':
                 out._pop(cid)
         #--- End: for
 
+        return out
+    #--- End: def
+    
+    def filter_by_size(self, *sizes):
+        '''Select domain axis constructs by size.
+
+.. versionadded:: 1.7.3
+
+.. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
+             `filter_by_measure`, `filter_by_method`,
+             `filter_by_naxes`, `filter_by_identity`,
+             `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`, `unfilter`
+
+:Parameters:
+        
+    sizes: optional
+        Select domain axis constructs that have any of the given
+        sizes.
+
+        A size is specified by an `int`.
+
+        If no sizes are provided then all domain axis constructs that
+        have a size, with any value, are selected.
+
+:Returns:
+
+    `Constructs`
+        The selected domain axis constructs and their construct keys.
+        
+**Examples:**
+
+Select domain axis constructs that have a size of 1:
+
+>>> d = c.filter_by_size(1)
+
+Select domain axis constructs that have a size of 1 or 96:
+
+>>> d = c.filter_by_size(1, 96)
+
+        '''
+        out = self.shallow_copy()
+        
+        out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_size': sizes},)
+        
+        for cid, construct in tuple(out.items()):            
+            try:
+                get_size = construct.get_size
+            except AttributeError:
+                # This construct doesn't have a "get_size" method
+                out._pop(cid)
+                continue
+
+            if not sizes:
+                if not construct.has_size():
+                    out._pop(cid)
+                    
+                continue
+
+            ok = False
+            value0 = construct.get_size(None)
+            for value1 in sizes:
+                ok = self._matching_values(value1, construct, value0)
+                if ok:
+                    break
+            #--- End: for
+            
+            if not ok:
+                # This construct does not match any of the sizes
+                out._pop(cid)
+        #--- End: for
+        
         return out
     #--- End: def
 
