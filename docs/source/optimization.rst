@@ -6,32 +6,62 @@
 
 **Optimization**
 ================
-
 ----
 
 Version |release| for version |version| of the CF conventions.
 
+Memory
+------
+----
 
-* In-place operations
+When a dataset is read using `cfdm.read` but `lazy loading
+<https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all
+data arrays, which means that no data is read into memory until the
+data is required for inspection or to modify the array contents. This
+maximises the number of field constructs that may be read within a
+session, and makes the read operation fast. If a :ref:`subspace
+<Subspacing>` of the data in the file is requested then only that
+subspace is read into memory. These behaviours are inherited from the
+`netCDF4 python package
+<http://unidata.github.io/netcdf4-python/netCDF4/index.html>`_.
 
-  Some methods that, by default, create new a field construct (such as
-  `~Field.squeeze`, `~Field.transpose` and `~Field.insert_dimension`)
-  have an option to perform the operation in-place, rather than
-  creating a new, independent object. The in-place operation can be
-  considerably faster.
+When an instance is copied with its `!copy` method, any data are
+copied with a `copy-on-write
+<https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This means
+that a copy takes up very little memory, even when the original data
+comprises a very large array in memory, and the copy operation is
+fast.
+
+
+
+In-place operations
+-------------------
+----
+
+Some methods that create new a instance by default have an option to
+perform the operation in-place, rather than creating a new,
+independent object. The in-place operation can be considerably
+faster. These methods have the ``inplace`` keyword parameter, such as
+the `~Field.squeeze`, `~Field.transpose` and `~Field.insert_dimension`
+methods of a field construct.
   
-  For example, in one test using a file from the :ref:`Tutorial`,
-  removing the size 1 dimensions from the field construct's data is 45
-  times faster if done in-place, compared with creating a new,
-  indpendent field construct:
+For example, in one test using a file from the :ref:`Tutorial`,
+transposing the data dimensions of the field construct was ~10 times
+faster when done in-place, compared with creating a new indpendent
+field construct:
 
-  .. code:: python
-  
-     >>> import timeit
-     >>> setup = "import cfdm; q, t = cfdm.read('file.nc')"
-     >>> timeit.timeit('t.squeeze()', setup=setup, number=1000)
-     16.33798599243164
-     >>> timeit.timeit('t.squeeze(inplace=True)', setup=setup, number=1000)
-     0.3618600368499756
-
-   
+.. code-block:: python
+   :caption: *Calculate the speed-up of performing the "transpose"
+             operation in-place. Setting the data to zero prior to the
+             tests ensures that the data are in memory, and so removes
+             the time taken to read the dataset from disk from the
+             results.*
+      
+   >>> import timeit
+   >>> import cfdm
+   >>> q, t = cfdm.read('file.nc')
+   >>> t.data[...] = 0
+   >>> min(timeit.repeat('t.transpose()', globals=globals(), number=1000))
+   1.3255651500003296
+   >>> min(timeit.repeat('t.transpose(inplace=True)', globals=globals(), number=1000))
+   0.10816403700118826

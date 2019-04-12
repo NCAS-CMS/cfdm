@@ -779,14 +779,13 @@ construct, into the data array.
           ``position=-1``
 
     inplace: `bool`, optional
-        If True then unsqueeze the axes of the data in place. By
-        default the axes of a copy of the field construct are
-        unsqueezed.
+        If True then do the operation in-place and return `None`.
 
 :Returns:
 
-    `Field`
-        The new field construct with expanded data axes.
+    `Field` or `None`
+        The new field construct with expanded data axes. If the
+        operation was in-place then `None` is returned.
 
 **Examples:**
 
@@ -816,17 +815,23 @@ construct, into the data array.
             raise ValueError(
 "Can't insert an axis of size {}: {!r}".format(domain_axis.get_size(), axis))
 
-        data_axes = list(f.get_data_axes(default=()))        
-        if axis in data_axes:
-            raise ValueError(
-                "Can't insert a duplicate data array axis: {!r}".format(axis))
-       
-        data_axes.insert(position, axis)
+        data_axes = f.get_data_axes(default=None)
+        if data_axes is not None:
+            if axis in data_axes:
+                raise ValueError(
+                    "Can't insert a duplicate data array axis: {!r}".format(axis))
+
+            data_axes = list(data_axes)
+            data_axes.insert(position, axis)
 
         # Expand the dims in the field's data array
-        new_data = f.data.insert_dimension(position, inplace=True)
-        
-        f.set_data(new_data, data_axes)
+        f.data.insert_dimension(position, inplace=True)
+
+        if data_axes is not None:
+            f.set_data_axes(data_axes)
+
+        if inplace:
+            return
 
         return f
     #--- End: def
@@ -1076,13 +1081,13 @@ may be selected for removal.
           ``axes=[2, 0]``
 
     inplace: `bool`, optional
-        If True then squeeze the axes of the data in place. By default
-        the axes of a copy of the field construct are squeezed.
+        If True then do the operation in-place and return `None`.
 
 :Returns:
 
-    `Field`
-        The field construct with removed data axes.
+    `Field` or `None`
+        The field construct with removed data axes. If the operation
+        was in-place then `None` is returned.
 
 **Examples:**
 
@@ -1103,22 +1108,26 @@ may be selected for removal.
             f = self.copy()
             
         if axes is None:
-            axes = [i for i, n in enumerate(f.data.shape) if n == 1]
+            iaxes = [i for i, n in enumerate(f.data.shape) if n == 1]
         else:
             try:
-                axes = f.data._parse_axes(axes)
+                iaxes = f.data._parse_axes(axes)
             except ValueError as error:
                 raise ValueError("Can't squeeze data: {}".format(error))
 
-        data_axes = f.get_data_axes(default=())
-
-        new_data_axes = [data_axes[i]
-                         for i in range(f.data.ndim) if i not in axes]
-        
+        data_axes = f.get_data_axes(default=None)
+        if data_axes is  not None:
+            new_data_axes = [data_axes[i]
+                             for i in range(f.data.ndim) if i not in iaxes]
+            
         # Squeeze the field's data array
-        new_data = f.data.squeeze(axes, inplace=True)
+        f.data.squeeze(iaxes, inplace=True)
 
-        f.set_data(new_data, new_data_axes)
+        if data_axes is not None:
+            f.set_data_axes(new_data_axes)
+
+        if inplace:
+            return
 
         return f
     #--- End: def
@@ -1145,13 +1154,13 @@ may be selected for removal.
           ``axes=[-1, 0, 1]``
 
     inplace: `bool`, optional
-        If True then permute the axes of the data in place. By default
-        the axes of a copy of the field construct are permuted.
+        If True then do the operation in-place and return `None`.
 
 :Returns:
 
-    `Field`
-        The field construct with permuted data axes.
+    `Field` or `None`
+        The field construct with permuted data axes. If the operation
+        was in-place then `None` is returned.
 
 **Examples:**
 
@@ -1179,16 +1188,17 @@ may be selected for removal.
         if iaxes is None:
             iaxes = tuple(range(f.data.ndim-1, -1, -1))
         
-        data_axes = f.get_data_axes(default=None)
+        # Transpose the field's data array
+        f.data.transpose(iaxes, inplace=True)
 
+        data_axes = f.get_data_axes(default=None)
         if data_axes is not None:
             new_data_axes = [data_axes[i] for i in iaxes]
+            f.set_data_axes(new_data_axes)
+
+        if inplace:
+            return
         
-        # Transpose the field's data array
-        new_data = f.data.transpose(iaxes, inplace=True)
-
-        f.set_data(new_data, axes=new_data_axes)
-
         return f
     #--- End: def
 

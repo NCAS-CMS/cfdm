@@ -699,10 +699,14 @@ data array shape.
         *Parameter example:*
           ``position=-1``
 
+    inplace: `bool`, optional
+        If True then do the operation in-place and return `None`.
+
 :Returns:
 
-    `Data`
-        The new data array with expanded data axes.
+    `Data` or `None`
+        The data with expanded axes. If the operation was in-place
+        then `None` is returned.
 
 **Examples:**
 
@@ -712,7 +716,8 @@ data array shape.
 (1, 96, 73, 19)
 >>> d.insert_dimension('domainaxis3', position=3).shape
 (19, 73, 96, 1)
->>> d.insert_dimension('domainaxis3', position=-1).shape
+>>> d.insert_dimension('domainaxis3', position=-1, inplace=True)
+>>> d.shape
 (19, 73, 1, 96)
 
         '''
@@ -735,31 +740,14 @@ data array shape.
 
         # Delete hdf5 chunksizes
         d.nc_clear_hdf5_chunksizes()
+
+        if inplace:
+            return
         
         return d
     #--- End: def
 
 #    def compress_by_gathering(self, list_data, compressed_axes, replace_list_data=False
-
-#    def set_list_data(self, list_data, compressed_axes=None,
-#                      copy=True):
-#        '''
-#        '''
-#        compression_type = self.compression_type
-#        if compression_type == 'gathered':
-#            self._set_Array().set_list_data(list_data)
-##            raise ValueError("eqweqweweqw 1")
-#        elif compression_type:
-#            raise ValueError("eqweqweweqw 2")
-#
-#        compressed_array = self._compress_by_gathering(list_data, compressed_axes)
-#
-#        self._set_Array(GatheredArray(compressed_array=compressed_array,
-#                                      shape=self.shape,
-#                                      size=self.size, ndim=self.ndim,
-#                                      sample_axis=compressed_axes[0],
-#                                      list_array=list_data))
-#    #--- End: def
 
     def get_count(self, default=ValueError()):
         '''Return the countcount_va variable for a compressed array.
@@ -1134,10 +1122,14 @@ selected with the keyword arguments.
         *Parameter example:*
           ``axes=[2, 0]``
 
+    inplace: `bool`, optional
+        If True then do the operation in-place and return `None`.
+
 :Returns:
 
-    `Data`
-        The new data array with removed data axes.
+    `Data` or `None`
+        The data with removed data axes. If the operation was in-place
+        then `None` is returned.
 
 **Examples:**
 
@@ -1149,6 +1141,9 @@ selected with the keyword arguments.
 (73, 1, 96)
 >>> d.squeeze([-3, 2]).shape
 (73, 96)
+>>> d.squeeze(2, inplace=True)
+>>> d.shape
+(1, 73, 96)
 
         '''
         if inplace:
@@ -1162,6 +1157,9 @@ selected with the keyword arguments.
 "Can't squeeze data: axes {} is not allowed data with shape {}".format(
     axes, d.shape))
 
+            if inplace:
+                return
+            
             return d
 
         shape = d.shape
@@ -1182,6 +1180,9 @@ selected with the keyword arguments.
         #--- End: if
 
         if not axes:
+            if inplace:
+                return
+            
             return d
 
         array = self.array
@@ -1191,6 +1192,9 @@ selected with the keyword arguments.
 
         # Delete hdf5 chunksizes
         d.nc_clear_hdf5_chunksizes()
+
+        if inplace:
+            return
         
         return d
     #--- End: def
@@ -1251,13 +1255,17 @@ Missing data array elements are omitted from the calculation.
         *Parameter example:*
           ``axes=[2, 0, 1]``
 
-        **Parameter example:**
+        *Parameter example:*
           ``axes=[-1, 0, 1]``
+
+    inplace: `bool`, optional
+        If True then do the operation in-place and return `None`.
 
 :Returns:
 
-    `Data`
-        The new data array with permuted data axes.
+    `Data` or `None`
+        The data with permuted data axes. If the operation was
+        in-place then `None` is returned.
 
 **Examples:**
 
@@ -1267,6 +1275,9 @@ Missing data array elements are omitted from the calculation.
 (96, 73, 19)
 >>> d.transpose([1, 0, 2]).shape
 (73, 19, 96)
+>>> d.transpose([-1, 0, 1], inplace=True)
+>>> d.shape
+(96, 19, 73)
 
         '''
         if inplace:
@@ -1284,8 +1295,11 @@ Missing data array elements are omitted from the calculation.
         
         if axes is None:
             if ndim <= 1:
-                return d
+                if inplace:
+                    return
 
+                return d
+            
             axes = tuple(range(ndim-1, -1, -1))
         else:
             if len(axes) != ndim:
@@ -1295,17 +1309,21 @@ Missing data array elements are omitted from the calculation.
         #--- End: if
 
         # Return unchanged if axes are in the same order as the data
-        if axes == tuple(range(ndim)):
+        if axes == tuple(range(ndim)):            
+            if inplace:
+                return
+
             return d
-        
+            
         array = self.array
         array = numpy.transpose(array, axes=axes)
 
         d._set_Array(array, copy=False)
 
         # Delete hdf5 chunksizes
-        d.nc_clear_hdf5_chunksizes()
-        
+        if inplace:
+            return
+
         return d
     #--- End: def
 
