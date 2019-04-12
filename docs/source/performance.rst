@@ -2,10 +2,10 @@
 .. default-role:: obj
 
 
-.. _Optimization:
+.. _Performance:
 
-**Optimization**
-================
+**Performance**
+===============
 ----
 
 Version |release| for version |version| of the CF conventions.
@@ -18,7 +18,7 @@ When a dataset is read using `cfdm.read` but `lazy loading
 <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all
 data arrays, which means that no data is read into memory until the
 data is required for inspection or to modify the array contents. This
-maximises the number of field constructs that may be read within a
+maximizes the number of field constructs that may be read within a
 session, and makes the read operation fast. If a :ref:`subspace
 <Subspacing>` of the data in the file is requested then only that
 subspace is read into memory. These behaviours are inherited from the
@@ -47,20 +47,19 @@ methods of a field construct.
   
 For example, in one test using a file from the :ref:`Tutorial`,
 transposing the data dimensions of the field construct was ~10 times
-faster when done in-place, compared with creating a new indpendent
+faster when done in-place, compared with creating a new independent
 field construct:
 
 .. code-block:: python
    :caption: *Calculate the speed-up of performing the "transpose"
-             operation in-place. Setting the data to zero prior to the
-             tests ensures that the data are in memory, and so removes
-             the time taken to read the dataset from disk from the
-             results.*
+             operation in-place. The data are brought into memory
+             prior to the to remove the time taken to read the dataset
+             from disk from the results.*
       
    >>> import timeit
    >>> import cfdm
    >>> q, t = cfdm.read('file.nc')
-   >>> t.data[...] = 0
+   >>> t.data.to_memory()
    >>> min(timeit.repeat('t.transpose()', globals=globals(), number=1000))
    1.3255651500003296
    >>> min(timeit.repeat('t.transpose(inplace=True)', globals=globals(), number=1000))

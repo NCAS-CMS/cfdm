@@ -343,6 +343,20 @@ array.
         return self._get_component('compressed_dimension', *default)
     #--- End: def
 
+    @abc.abstractmethod
+    def to_memory(self):
+        '''TODO
+
+:Returns:
+        TODO
+  
+**Examples:**
+     TODO
+ '''
+        self._set_compressed_Array(self._get_compressed_Array().to_memory())
+        return self
+    #--- End def
+    
     def underlying(self, default=ValueError()):
         '''Return the underlying array object.
 

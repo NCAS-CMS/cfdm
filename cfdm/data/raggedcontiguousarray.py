@@ -111,4 +111,11 @@ indexing (given the restrictions on the type of indices allowed) is:
         return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
 
+    def to_memory(self):
+        '''
+        '''
+        super().to_memory()
+        self.get_count().data.to_memory()
+        return self
+    #--- End def
 #--- End: class

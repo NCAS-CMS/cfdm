@@ -1682,6 +1682,12 @@ False
         return self._item((slice(0, 1),)*(self.ndim-1) + (slice(1, 2),))
     #--- End: def
 
+    def to_memory(self):
+        '''
+        '''
+        self._set_Array(self.underlying().to_memory())
+    #--- End: def
+
 #    def astype(self, dtype, casting='unsafe'):
 #        '''Cast the data to a specified type.
 #

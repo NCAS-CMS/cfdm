@@ -107,6 +107,7 @@ Miscellaneous
 
    ~cfdm.Data.copy
    ~cfdm.Data.equals
+   ~cfdm.Data.to_memory
    
 Compression
 -----------

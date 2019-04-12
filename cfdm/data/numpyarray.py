@@ -31,4 +31,10 @@ indexing (given the restrictions on the type of indices allowed) is:
                                  copy=True)
     #--- End: def
 
+    def to_memory(self):
+        '''
+        '''
+        return self
+    #--- End def
+    
 #--- End: class

@@ -23,7 +23,7 @@
    api_reference
    subclassing
    philosophy
-   optimization
+   performance
    versioning
    releases
    Changelog

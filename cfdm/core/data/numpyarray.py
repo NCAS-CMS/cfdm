@@ -151,7 +151,7 @@ dtype('float64')
 
 **Examples:**
 
->>> n = numpy.asanyarray(a)
+>>> n = a.array
 >>> isinstance(n, numpy.ndarray)
 True
 

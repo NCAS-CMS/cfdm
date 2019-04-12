@@ -153,4 +153,21 @@ indexing (given the restrictions on the type of indices allowed) is:
         return self._get_component('list_variable', default=default)
     #--- End: def
 
+    def to_memory(self):
+        '''TODO
+
+:Returns:
+
+    `GatheredArray`
+
+**Examples:**
+
+TODO
+
+        '''
+        super().to_memory()
+        self.get_list().data.to_memory()
+        return self
+    #--- End def
+    
 #--- End: class

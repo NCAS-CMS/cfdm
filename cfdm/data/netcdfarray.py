@@ -10,6 +10,7 @@ import numpy
 import netCDF4
 
 from . import abstract
+from .numpyarray import NumpyArray
 
 
 class NetCDFArray(abstract.Array):
@@ -413,4 +414,10 @@ True
         return netcdf
     #--- End: def
 
+    def to_memory(self):
+        '''
+        '''
+        return NumpyArray(self[...])
+    #--- End def
+    
 #--- End: class
