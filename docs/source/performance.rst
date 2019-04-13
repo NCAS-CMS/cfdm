@@ -10,8 +10,10 @@
 
 Version |release| for version |version| of the CF conventions.
 
-Memory
-------
+.. _Memory:
+
+**Memory**
+----------
 ----
 
 When a dataset is read using `cfdm.read` but `lazy loading
@@ -32,17 +34,17 @@ that a copy takes up very little memory, even when the original data
 comprises a very large array in memory, and the copy operation is
 fast.
 
+.. _In-place-operations:
 
-
-In-place operations
--------------------
+**In-place operations**
+-----------------------
 ----
 
 Some methods that create new a instance by default have an option to
-perform the operation in-place, rather than creating a new,
-independent object. The in-place operation can be considerably
-faster. These methods have the ``inplace`` keyword parameter, such as
-the `~Field.squeeze`, `~Field.transpose` and `~Field.insert_dimension`
+perform the operation in-place, rather than creating a new independent
+object. The in-place operation can be considerably faster. These
+methods have the ``inplace`` keyword parameter, such as the
+`~Field.squeeze`, `~Field.transpose` and `~Field.insert_dimension`
 methods of a field construct.
   
 For example, in one test using a file from the :ref:`Tutorial`,
@@ -53,8 +55,8 @@ field construct:
 .. code-block:: python
    :caption: *Calculate the speed-up of performing the "transpose"
              operation in-place. The data are brought into memory
-             prior to the to remove the time taken to read the dataset
-             from disk from the results.*
+             prior to the tests to remove the time taken to read the
+             dataset from disk from the results.*
       
    >>> import timeit
    >>> import cfdm
