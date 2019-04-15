@@ -957,9 +957,9 @@ Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
             # Add coordinate references which span a subset of the item's
             # axes
             for rcid, ref in self.coordinate_references.items():
-
                 new_coordinates = [
-                    ccid for ccid in ref.coordinates()
+                    ccid
+                    for ccid in ref.coordinates()
                     if set(constructs_data_axes[ccid]).issubset(data_axes)]
 
                 if not new_coordinates:
@@ -976,8 +976,16 @@ Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
 
                 if ok:
                     ref = ref.copy()
-                    ref.coordinates(new_coordinates)
+                    ref.clear_coordinates()
+                    ref.set_coordinates(new_coordinates)
                     f.set_construct(ref, key=rcid, copy=False)
+
+                    # Copy domain ancillary constructs
+                    for dakey in ref.coordinate_conversion.domain_ancillaries().values():
+                        construct = self.constructs.get(dakey)
+                        if construct is not None:
+                            axes = constructs_data_axes.get(dakey)                        
+                            f.set_construct(construct, key=dakey, axes=axes, copy=True)
             #--- End: for
         #--- End: if
               

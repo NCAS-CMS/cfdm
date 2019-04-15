@@ -229,7 +229,7 @@ set()
 
         '''
         out = self._get_component('coordinates')
-        out = self._set_component('coordinates', set())
+        self._set_component('coordinates', set())
         return out.copy()
     #--- End: def
     

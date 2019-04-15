@@ -7,7 +7,9 @@ version 1.7.3
 * Renamed the "underlying_array" methods to "source"
 * New method: Constructs.filter_by_size
 * New method: Data.uncompress
-  
+* Fixed bug in Coordinatereference.clear_coordinates
+* Fixed bug in Field.convert (which omited domain ancillaries in the result)
+
 version 1.7.2
 -------------
 ----

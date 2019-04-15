@@ -402,7 +402,7 @@ raised
     # ----------------------------------------------------------------
     # Private methods    
     # ----------------------------------------------------------------
-    def _check_construct_type(self, construct_type):
+    def _check_construct_type(self, construct_type, default=ValueError()):
         '''<TODO>
 
 .. versionadded:: 1.7.0
@@ -428,8 +428,9 @@ TODO
             x = set(x).difference(self._ignore)
         
         if construct_type not in x:
-            raise ValueError(
-                "Invalid construct type {!r}. Must be one of {}".format(
+            return self._default(
+                default,
+                "Invalid construct type {0!r}. Must be one of {1}".format(
                     construct_type, sorted(x)))
 
         return construct_type    
@@ -950,44 +951,44 @@ Constructs:
     #--- End: def
 
     def new_identifier(self, construct_type):
-        '''Return a new, unique identifier for a construct.
+        '''Return a new, unsed construct key.
 
 .. versionadded:: 1.7.0
 
 :Parameters:
 
     construct_type: `str`
+        TODO
 
 :Returns:
 
     `str`
-        The new identifier.
+        The new construct key.
 
 **Examples:**
 
->>> d.items().keys()
-['aux2', 'aux0', 'dim1', 'ref2']
->>> d.new_identifier('aux')
-'aux3'
->>> d.new_identifier('ref')
-'ref1'
-
->>> d.items().keys()
-[]
->>> d.new_identifier('dim')
-'dim0'
-
->>> d.axes()
-{'dim0', 'dim4'}
->>> d.new_identifier('axis')
-'dim2'
-
->>> d.axes()
-{}
->>> d.new_identifier('axis')
-'dim0'
+>>> c.keys()
+['domainaxis0',
+ 'domainaxis1',
+ 'domainaxis2',
+ 'dimensioncoordinate2',
+ 'dimensioncoordinate0',
+ 'dimensioncoordinate1',
+ 'cellmethod0']
+>>> c.new_identifier('domain_axis')
+'domainaxis3'
+>>> c.keys()
+['domainaxis0',
+ 'domainaxis1',
+ 'domainaxis2',
+ 'dimensioncoordinate2',
+ 'dimensioncoordinate0',
+ 'dimensioncoordinate1',
+ 'cellmethod0']
 
         '''
+        construct_type = self._check_construct_type(construct_type)
+        
         keys = self._constructs[construct_type]
 
         key_base = self._key_base[construct_type]
@@ -1000,7 +1001,7 @@ Constructs:
     #--- End: def
 
     def replace(self, key, construct, axes=None, copy=True):
-        '''<TODO>
+        '''TODO
 
 .. note:: No checks on the axes are done!!!!!
 '''
