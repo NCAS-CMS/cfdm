@@ -32,32 +32,6 @@ See `cfdm.core.NumpyArray` for an example implementation.
             self._set_component(key, value, copy=False)
     #--- End: def
 
-#    def __array__(self, *dtype):
-#        '''The numpy array interface.
-#
-#.. versionadded:: 1.7.0
-#
-#:Returns: 
-#
-#    `numpy.ndarray`
-#        An independent numpy array of the data.
-#
-#**Examples:**
-#
-#>>> isinstance(a, Array)
-#True
-#>>> n = numpy.asanyarray(a)
-#>>> isinstance(n, numpy.ndarray)
-#True
-#
-#        '''
-#        array = self.array
-#        if not dtype:
-#            return array
-#        else:
-#            return array.astype(dtype[0], copy=False)
-#    #--- End: def
-
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` function.
 
@@ -201,6 +175,28 @@ dtype('float64')
         raise NotImplementedError() # pragma: no cover
     #--- End: def
 
+    @property
+    @abc.abstractmethod
+    def array(self):
+        '''Return an independent numpy array containing the data.
+
+.. versionadded:: 1.7.0
+
+:Returns:
+
+    `numpy.ndarray`
+        An independent numpy array of the data.
+
+**Examples:**
+
+>>> n = a.array
+>>> isinstance(n, numpy.ndarray)
+True
+
+        '''
+        raise NotImplementedError() # pragma: no cover
+    #--- End: def
+    
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -230,26 +226,4 @@ original or the new copy.
         return new
     #--- End: def
 
-    @property
-    @abc.abstractmethod
-    def array(self):
-        '''Return an independent numpy array containing the data.
-
-.. versionadded:: 1.7.0
-
-:Returns:
-
-    `numpy.ndarray`
-        An independent numpy array of the data.
-
-**Examples:**
-
->>> n = a.array
->>> isinstance(n, numpy.ndarray)
-True
-
-        '''
-        raise NotImplementedError() # pragma: no cover
-    #--- End: def
-    
 #--- End: class

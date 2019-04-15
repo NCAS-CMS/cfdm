@@ -108,6 +108,7 @@ Miscellaneous
    ~cfdm.Data.copy
    ~cfdm.Data.equals
    ~cfdm.Data.to_memory
+   ~cfdm.Data.source
    
 Compression
 -----------
@@ -122,6 +123,7 @@ Compression
    ~cfdm.Data.get_compression_type
    ~cfdm.Data.get_compressed_axes
    ~cfdm.Data.get_compressed_dimension
+   ~cfdm.Data.uncompress
    ~cfdm.Data.get_count
    ~cfdm.Data.get_index
    ~cfdm.Data.get_list

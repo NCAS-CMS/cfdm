@@ -670,7 +670,7 @@ None
         self._set_component('units', value, copy=False)
     #--- End: def
 
-    def underlying(self, default=ValueError()):
+    def source(self, default=ValueError()):
         '''Return the underlying array object.
 
 :Parameters:

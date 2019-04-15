@@ -4,8 +4,9 @@ version 1.7.3
 
 **Not yet released**
 
-* Renamed the "underlying_array" methods to "underlying"
+* Renamed the "underlying_array" methods to "source"
 * New method: Constructs.filter_by_size
+* New method: Data.uncompress
   
 version 1.7.2
 -------------

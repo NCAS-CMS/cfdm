@@ -357,8 +357,8 @@ array.
         return self
     #--- End def
     
-    def underlying(self, default=ValueError()):
-        '''Return the underlying array object.
+    def source(self, default=ValueError()):
+        '''TODO Return the underlying array object.
 
 :Parameters:
 
@@ -370,7 +370,7 @@ array.
 :Returns:
 
     subclass of `Array`
-        The underlying array object.
+        TODO The underlying array object.
 
 **Examples:**
 

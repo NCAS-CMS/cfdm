@@ -1685,7 +1685,7 @@ False
     def to_memory(self):
         '''
         '''
-        self._set_Array(self.underlying().to_memory())
+        self._set_Array(self.source().to_memory())
     #--- End: def
 
 #    def astype(self, dtype, casting='unsafe'):
@@ -1775,7 +1775,37 @@ False
 #
 #        return underlying_array        
 #    #--- End: def
-        
+
+    def uncompress(self):
+        '''Uncompress the underlying array in-place.
+
+If the array is not compressed, then no change is made.
+
+.. versionadded:: 1.7.3
+
+.. seealso:: `array`, `compressed_array`, `source`
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+>>> d.get_compression_type()
+'ragged contiguous'
+>>> d.source()
+<RaggedContiguousArray(4, 9): >
+>>> d.uncompress()
+>>> d.get_compression_type()
+''
+>>> d.source()
+<NumpyArray(4, 9): >
+
+        '''
+        if self.get_compression_type():
+            self._set_Array(self.array, copy=False)
+    #--- End: def
+    
     def unique(self):
         '''The unique elements of the data.
 
