@@ -69,14 +69,14 @@ class ConstructsTest(unittest.TestCase):
 
         self.assertTrue(len(c) == 20)
         self.assertTrue(len(c.filter_by_identity()) == 20)
-        self.assertTrue(len(c.filter_by_axis())     == 13)
+        self.assertTrue(len(c.filter_by_axis())     == 13, str(c.filter_by_axis()))
         self.assertTrue(len(c.filter_by_key())      == 20)
         self.assertTrue(len(c.filter_by_data())     == 13)
-        self.assertTrue(len(c.filter_by_property()) ==  9)
+        self.assertTrue(len(c.filter_by_property()) == 13, str(c.filter_by_property()))
         self.assertTrue(len(c.filter_by_type())     == 20)
         self.assertTrue(len(c.filter_by_method())   ==  2)
         self.assertTrue(len(c.filter_by_measure())  ==  1)
-        self.assertTrue(len(c.filter_by_ncvar())    == 14)
+        self.assertTrue(len(c.filter_by_ncvar())    == 15, str(c.filter_by_ncvar()))
         self.assertTrue(len(c.filter_by_ncdim())    ==  3)
 
         self.assertTrue(len(c.filter_by_identity('qwerty')) == 0)

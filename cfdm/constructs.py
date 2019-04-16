@@ -756,8 +756,8 @@ False
         selected when its data does span the axis (`True`), or
         selected when its data does not span the axis (`False`).
 
-        If no axes are provided then all constructs that have data,
-        spanning any domain axes constructs, are selected.
+        If no axes are provided then all constructs that do or could
+        have data, spanning any domain axes constructs, are selected.
 
 :Returns:
 
@@ -792,6 +792,8 @@ Select constructs whose data spans the "domainaxis1" or the
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() + ({'filter_by_axis': (mode, axes)},)
 
+        
+        
         # Parse the mode parameter
         _and      = False
         _or       = False
@@ -820,8 +822,9 @@ Select constructs whose data spans the "domainaxis1" or the
             # By default, mode is 'and'
             _and = True
             
+        data_contructs = self.filter_by_data()
         constructs_data_axes = self.data_axes()
-
+        
         if _exact or _subset or _superset:
             axes_True = {axis: value for axis, value in axes.items() if value}
             if _exact and not axes_True:
@@ -830,10 +833,14 @@ Select constructs whose data spans the "domainaxis1" or the
         #--- End: if
         
         for cid in tuple(out):
+            if cid not in data_contructs:
+                out._pop(cid)
+                continue
+                
             x = constructs_data_axes.get(cid)
             if x is None:
                 # This construct does not have data axes
-                out._pop(cid)
+#                out._pop(cid)
                 continue
 
             ok = True
@@ -1081,7 +1088,7 @@ Select the constructs with keys 'dimensioncoordinate1' or
         are selected.
 
         If no measures are provided then all cell measure constructs
-        that have a measure property, with any value, are selected.
+        are selected.
 
 :Returns:
 
@@ -1140,9 +1147,8 @@ Constructs:
                 continue
 
             if not measures:
-                if not construct.has_measure():
-                    out._pop(cid)
-                    
+#                if not construct.has_measure():
+#                    out._pop(cid)
                 continue
 
             ok = False
@@ -1183,8 +1189,8 @@ Constructs:
         which all constructs whose methods match (via `re.search`) are
         selected.
 
-        If no methods are provided then all cell method constructs
-        that have a method, with any value, are selected.
+        If no methods are provided then all cell method constructs are
+        selected.
 
 :Returns:
 
@@ -1241,9 +1247,8 @@ Constructs:
                 continue
 
             if not methods:
-                if not construct.has_method():
-                    out._pop(cid)
-                    
+#                if not construct.has_method():
+#                    out._pop(cid)
                 continue
             
             ok = False
@@ -1283,8 +1288,9 @@ spanned by their data.
 
         A number of domain axis constructs is given by an `int`.
 
-        If no numbers are provided then all constructs that have data,
-        spanning any domain axes constructs, are selected.
+        If no numbers are provided then all constructs that do or
+        could have data, spanning any domain axes constructs, are
+        selected.
 
 :Returns:
 
@@ -1309,13 +1315,18 @@ constructs:
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() + ({'filter_by_naxes': naxes},)
             
+        data_contructs = self.filter_by_data()
         constructs_data_axes = self.data_axes()
         
         for key in tuple(out):
+            if key not in data_contructs:
+                out._pop(key)
+                continue
+
             x = constructs_data_axes.get(key)
             if x is None:
                 # This construct does not have data axes
-                out._pop(key)
+#                out._pop(key)
                 continue
 
             ok = True
@@ -1358,8 +1369,7 @@ constructs:
         netCDF dimension names match (via `re.search`) are selected.
 
         If no netCDF dimension names are provided then all domain axis
-        constructs that have a netCDF dimension name, with any value,
-        are selected.
+        constructs are selected.
 
 :Returns:
 
@@ -1393,8 +1403,8 @@ Select the domain axis constructs with netCDF dimension name 'time' or
                 continue
             
             if not ncdims:
-                if not construct.nc_has_dimension():
-                    out._pop(cid)
+#                if not construct.nc_has_dimension():
+#                    out._pop(cid)
                     
                 continue
             
@@ -1438,8 +1448,8 @@ Select the domain axis constructs with netCDF dimension name 'time' or
         (e.g. ``re.compile('^lat')``), for which all constructs whose
         netCDF variable names match (via `re.search`) are selected.
 
-        If no netCDF variable names are provided then all domain axis
-        constructs that have a netCDF variable name, with any value,
+        If no netCDF variable names are provided then all constructs
+        that do or could have a netCDF variable name, with any value,
         are selected.
 
 :Returns:
@@ -1473,9 +1483,8 @@ Select the constructs with netCDF variable name 'time' or 'lat':
                 continue
 
             if not ncvars:
-                if not construct.nc_has_variable():
-                    out._pop(cid)
-                    
+#                if not construct.nc_has_variable():
+#                    out._pop(cid)                   
                 continue
 
             ok = False
@@ -1546,8 +1555,8 @@ Select the constructs with netCDF variable name 'time' or 'lat':
         for which all constructs whose methods match (via `re.search`)
         are selected.
 
-        If no properties are provided then all constructs that have
-        properties, with any values, are selected.
+        If no properties are provided then all constructs that do or
+        could have properties, with any values, are selected.
 
 :Returns:
 
@@ -1603,9 +1612,8 @@ with the string 'air':
                 continue
 
             if not properties:
-                if not construct.properties():
-                    out._pop(cid)
-                    
+#                if not construct.properties():
+#                    out._pop(cid)                    
                 continue
 
             ok = True
@@ -1649,8 +1657,8 @@ with the string 'air':
 
         A size is specified by an `int`.
 
-        If no sizes are provided then all domain axis constructs that
-        have a size, with any value, are selected.
+        If no sizes are provided then all domain axis constructs are
+        selected.
 
 :Returns:
 
@@ -1682,9 +1690,8 @@ Select domain axis constructs that have a size of 1 or 96:
                 continue
 
             if not sizes:
-                if not construct.has_size():
-                    out._pop(cid)
-                    
+#                if not construct.has_size():
+#                    out._pop(cid)
                 continue
 
             ok = False

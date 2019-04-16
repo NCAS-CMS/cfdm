@@ -9,6 +9,13 @@ version 1.7.3
 * New method: Data.uncompress
 * Fixed bug in Coordinatereference.clear_coordinates
 * Fixed bug in Field.convert (which omited domain ancillaries in the result)
+* Changed the default behviours of the Construct.filter_by_axis,
+  Construct.filter_by_size, Construct.filter_by_naxes,
+  Construct.filter_by_property, Construct.filter_by_ncvar,
+  Construct.filter_by_ncdim, Construct.filter_by_method,
+  Construct.filter_by_measure methods in the case when no arguments
+  are provided: Now returns all possible constructs that *could* have
+  the feature, with any values.
 
 version 1.7.2
 -------------
