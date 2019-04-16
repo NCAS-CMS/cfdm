@@ -111,7 +111,7 @@ class Data(mixin.Container,
 **Examples:**
 
 >>> import numpy
->>> d = cfdm.Data([1, 2, 3])
+>>> d = Data([1, 2, 3])
 >>> a = numpy.array(d)
 >>> print(type(a))
 <type 'numpy.ndarray'>
