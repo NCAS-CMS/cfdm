@@ -16,7 +16,8 @@ version 1.7.3
   Construct.filter_by_measure methods in the case when no arguments
   are provided: Now returns all possible constructs that *could* have
   the feature, with any values.
-
+* Added _field_data_axes attribute to Constructs instances.
+  
 version 1.7.2
 -------------
 ----

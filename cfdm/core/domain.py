@@ -176,6 +176,9 @@ affect the input `Constructs` instance.
                               constructs._view(ignore=('cell_method',
                                                        'field_ancillary')),
                               copy=copy)
+
+        domain.constructs._field_data_axes = None
+        
         return domain
     #--- End: def
             

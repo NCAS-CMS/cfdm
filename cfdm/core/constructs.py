@@ -87,8 +87,11 @@ class Constructs(object):
 
         '''
         self._ignore = tuple(set(_ignore))
-    
+        
         if source is not None:
+
+            self._field_data_axes = source._field_data_axes
+            
             if _view:
                 self._key_base             = source._key_base
                 self._array_constructs     = source._array_constructs
@@ -173,6 +176,8 @@ class Constructs(object):
             return
         #--- End: if
                 
+        self._field_data_axes = None
+        
         self._key_base = {}
 
         self._array_constructs     = set()

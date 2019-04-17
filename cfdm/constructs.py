@@ -994,7 +994,7 @@ Select constructs that have a netCDF variable name of 'time':
         for cid, construct in tuple(out.items()):
             ok = False
             for value0 in identities:          
-                for value1 in construct.identities() + ['key%'+cid]:
+                for value1 in ['key%'+cid] + construct.identities():
                     ok = self._matching_values(value0, construct, value1)
                     if ok:
                         break

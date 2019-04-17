@@ -538,7 +538,10 @@ construct:
 "Can't set field construct data axes: Data array shape of {!r} does not match the shape of the given domain axes {}: {}".format(
     self.data.shape, tuple(axes), tuple(axes_shape)))
 
-        self._set_component('data_axes', tuple(axes), copy=False)
+        axes = tuple(axes)
+        self._set_component('data_axes', axes, copy=False)
+
+        self.constructs._field_data_axes = axes
     #--- End: def
 
 #--- End: class
