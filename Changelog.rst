@@ -17,6 +17,7 @@ version 1.7.3
   are provided: Now returns all possible constructs that *could* have
   the feature, with any values.
 * Added _field_data_axes attribute to Constructs instances.
+* Added _units and _fill_value arguments to get_data method.
   
 version 1.7.2
 -------------

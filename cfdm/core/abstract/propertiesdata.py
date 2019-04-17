@@ -179,7 +179,8 @@ None
                       "{!r} has no data".format(self.__class__.__name__))
     #--- End: def
 
-    def get_data(self, default=ValueError()):
+    def get_data(self, default=ValueError(), _units=True,
+                 _fill_value=True):
         '''Return the data.o
 
 Note that a `Data` instance is returned. Use its `array` attribute to
@@ -228,18 +229,24 @@ None
                                  message="{!r} has no data".format(
                                      self.__class__.__name__))
 
-        units = self.get_property('units', None)
-        if units is not None:
-            data.set_units(units)
-
-        calendar = self.get_property('calendar', None)
-        if calendar is not None:
-            data.set_calendar(calendar)
-
-        fill_value = self.get_property('fill_value', None)
-        if fill_value is not None:
-            data.set_fill_value(fill_value)
-
+        if _units:
+            # Copy the parent units and calendar to the data
+            units = self.get_property('units', None)
+            if units is not None:
+                data.set_units(units)
+                
+            calendar = self.get_property('calendar', None)
+            if calendar is not None:
+                data.set_calendar(calendar)
+        #--- End: if
+        
+        if _fill_value:
+            # Copy the fill_value to the data
+            fill_value = self.get_property('fill_value', None)
+            if fill_value is not None:
+                data.set_fill_value(fill_value)
+        #--- End: if
+        
         return data        
     #--- End: def
 
