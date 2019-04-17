@@ -10,7 +10,6 @@ class Constructs(object):
 .. versionadded:: 1.7.0
 
     '''
-    
     def __init__(self, 
                  auxiliary_coordinate=None,                
                  dimension_coordinate=None,         
