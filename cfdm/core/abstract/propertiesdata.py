@@ -172,11 +172,9 @@ None
 None
 
         '''
-        try:
-            return self._del_component('data')
-        except ValueError:
-            return self._default(default,
-                      "{!r} has no data".format(self.__class__.__name__))
+        data = self.get_data('data', None)
+        self._del_component('data', default=default)
+        return data
     #--- End: def
 
     def get_data(self, default=ValueError(), _units=True,
