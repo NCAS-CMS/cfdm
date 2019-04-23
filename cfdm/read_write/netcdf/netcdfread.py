@@ -69,6 +69,109 @@ class NetCDFRead(IORead):
     'that does not span the vertical dimension is inconsistent with the formula_terms of the parametric coordinate variable': 8,
     }
 
+    def cf_datum_parameters(self):
+        '''Datum-defining parameters names
+        '''
+        return ('earth_radius',
+                'geographic_crs_name',
+                'geoid_name',
+                'geopotential_datum_name',
+                'horizontal_datum_name',
+                'inverse_flattening',
+                'longitude_of_prime_meridian',
+                'prime_meridian_name',
+                'reference_ellipsoid_name',
+                'semi_major_axis',
+                'semi_minor_axis',
+                'towgs84',
+        )
+
+    #--- End: def
+
+    def cf_coordinate_reference_coordinates(self):
+        '''Mapping of each coordinate reference canonical name to the
+coordinates to which it applies. The coordinates are defined by their
+standard names.
+        
+A coordinate reference canonical name is either the value of the
+grid_mapping_name attribute of a grid mapping variable
+(e.g. 'lambert_azimuthal_equal_area'), or the standard name of a
+vertical coordinate variable with a formula_terms attribute
+(e.g. ocean_sigma_coordinate').
+
+        '''
+        return {
+            'albers_conical_equal_area'                  : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'azimuthal_equidistant'                      : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'geostationary'                              : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'lambert_azimuthal_equal_area'               : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            
+                                                            'latitude',
+                                                            'longitude',),
+            'lambert_conformal_conic'                    : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'lambert_cylindrical_equal_area'             : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'latitude_longitude'                         : ('latitude',
+                                                            'longitude',),
+            'mercator'                                   : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'orthographic'                               : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'polar_stereographic'                        : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'rotated_latitude_longitude'                 : ('grid_latitude',
+                                                            'grid_longitude',
+                                                            'latitude',
+                                                            'longitude',),
+            'sinusoidal'                                 : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'stereographic'                              : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'transverse_mercator'                        : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'vertical_perspective'                       : ('projection_x_coordinate',
+                                                            'projection_y_coordinate',
+                                                            'latitude',
+                                                            'longitude',),
+            'atmosphere_ln_pressure_coordinate'          : ('atmosphere_ln_pressure_coordinate',),
+            'atmosphere_sigma_coordinate'                : ('atmosphere_sigma_coordinate',),
+            'atmosphere_hybrid_sigma_pressure_coordinate': ('atmosphere_hybrid_sigma_pressure_coordinate',),
+            'atmosphere_hybrid_height_coordinate'        : ('atmosphere_hybrid_height_coordinate',),
+            'atmosphere_sleve_coordinate'                : ('atmosphere_sleve_coordinate',),
+            'ocean_sigma_coordinate'                     : ('ocean_sigma_coordinate',),
+            'ocean_s_coordinate'                         : ('ocean_s_coordinate',),
+            'ocean_sigma_z_coordinate'                   : ('ocean_sigma_z_coordinate',),
+            'ocean_double_sigma_coordinate'              : ('ocean_double_sigma_coordinate',),
+        }
+    #--- End: def
+    
 #    def _dereference(self, ncvar):
 #        '''Decrement by one the reference count to a netCDF variable.
 #        
@@ -223,7 +326,8 @@ contents and any file suffix is not not considered.
 
     def read(self, filename, extra=None, default_version=None,
              external=None, _extra_read_vars=None, _scan_only=False,
-             verbose=False, warnings=True):
+             verbose=False, warnings=True,
+             supplementary_read_vars=None):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
 location.
         
@@ -346,7 +450,7 @@ TODO
             # Coordinate references
             # --------------------------------------------------------
             # Grid mapping attributes that describe horizontal datum
-            'datum_parameters': constants.datum_parameters,
+            'datum_parameters': self.cf_datum_parameters(),
             
             # Vertical coordinate reference constructs, keyed by the
             # netCDF variable name of their parent parametric vertical
@@ -550,7 +654,7 @@ TODO
 
         if verbose:
             print('    netCDF dimensions:', internal_dimension_sizes)
-    
+            
         # ------------------------------------------------------------
         # List variables
         #
@@ -670,6 +774,9 @@ TODO
                 netcdf_external_variables, parsed_external_variables)
             g['external_variables'] = set(parsed_external_variables)
 
+        # Now that all of the variables have been scanned, 
+        self._customize_read_vars()
+            
         if _scan_only:
             return self.read_vars
 
@@ -767,6 +874,15 @@ TODO
         return out
     #--- End: def
 
+    def _customize_read_vars(self):
+        '''TODO
+
+.. versionadded:: 1.7.3
+
+        '''
+        pass
+    #--- End: def
+    
     def _get_variables_from_external_files(self,
                                            netcdf_external_variables):
         '''Get external variables from external files.
@@ -2232,7 +2348,7 @@ variable should be pre-filled with missing values.
                     if not coordinates:
                         # DCH ALERT -  what to do about duplicate standard names? TODO
                         name = parameters.get('grid_mapping_name', None)
-                        for n in constants.coordinate_reference_coordinates.get(name, ()):
+                        for n in self.cf_coordinate_reference_coordinates().get(name, ()):
                             for key, coord in self.implementation.get_coordinates(field=f).items():
                                 if n == self.implementation.get_property(coord, 'standard_name', None):
                                     coordinates.append(key)
@@ -3723,7 +3839,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             index_variable=index_variable)
     #--- End: def
     
-    def _create_Data(self, array=None, ncvar=None):
+    def _create_Data(self, array=None, ncvar=None, **kwargs):
         '''
         '''
         g = self.read_vars
@@ -3736,8 +3852,10 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             calendar = None
 
         return self.implementation.initialise_Data(array=array,
-                                                   units=units, calendar=calendar,
-                                                   copy=False)
+                                                   units=units,
+                                                   calendar=calendar,
+                                                   copy=False,
+                                                   **kwargs)
     #--- End: def
 
     def _copy_construct(self, construct_type, field_ncvar, ncvar):

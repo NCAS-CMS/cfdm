@@ -1106,7 +1106,7 @@ attributes: `dict`
     #--- End: def
 
     def initialise_Data(self, array=None, units=None, calendar=None,
-                        copy=True):
+                        copy=True, **kwargs):
         '''<TODO>
 
 :Patameters:
@@ -1119,6 +1119,9 @@ attributes: `dict`
 
     copy: `bool`, optional
 
+    kwargs: optional
+        Not used in this imlementation
+
 :Returns;
 
     `Data`
@@ -1127,7 +1130,7 @@ attributes: `dict`
         '''
         cls = self.get_class('Data')
         return cls(array=array, units=units, calendar=calendar,
-                   copy=copy)
+                   copy=copy, **kwargs)
     #--- End: def
 
     def initialise_Datum(self, parameters=None):

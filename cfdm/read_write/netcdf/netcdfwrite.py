@@ -20,7 +20,42 @@ from . import constants
 class NetCDFWrite(IOWrite):
     '''
     '''
+    def cf_description_of_file_contents_attributes(self):
+        '''Description of file contents properties
+'''
+        return ('comment',
+                'Conventions',
+                'featureType',
+                'history',
+                'institution',
+                'references',
+                'source',
+                'title',
+        )
+    #--- End: def
 
+    def cf_geometry_types(self):
+        '''Geometry types
+'''
+        return set((
+            'point',
+            'line',
+            'polygon',
+        ))
+    #--- End: def
+
+    def cf_cell_method_qualifiers(self):
+        '''Cell method qualifiers
+        '''
+        return set((
+            'within',
+            'where',
+            'over',
+            'interval',
+            'comment',
+        ))
+    #--- End: def
+    
     def _create_netcdf_variable_name(self, parent, default):
 #                                     force_use_existing=False):
         '''
@@ -716,7 +751,7 @@ a new netCDF bounds dimension.
         gc = {}        
         for key, coord in self.implementation.get_auxiliary_coordinates(field).items():
             geometry_type = self.implementation.get_geometry(coord, None)
-            if geometry_type not in constants.geometry_types:
+            if geometry_type not in self.cf_geometry_types():
                 # No geometry bounds for this auxiliary coordinate
                 continue
             
@@ -2113,7 +2148,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 
             if numpy.intersect1d(unset_values, temp_array):
                 raise ValueError(
-"ERROR: Can't write data that has _FillValue or missing_value at unmasked point: {!r}".format(cfvar))
+"ERROR: Can't write data that has _FillValue or missing_value at unmasked point: {!r}".format(ncvar))
         #--- End: if
 
         # Copy the array into the netCDF variable
@@ -2717,7 +2752,7 @@ extra trailing dimension.
 
             cell_methods_strings = []
             for cm in list(cell_methods.values()):
-                if not constants.cell_method_qualifiers.issuperset(
+                if not self.cf_cell_method_qualifiers().issuperset(
                         self.implementation.get_cell_method_qualifiers(cm)):
                     raise ValueError(
 "Can't write {!r}: Unknown cell method property: {!r}".format(
@@ -2845,7 +2880,7 @@ write them to the netCDF4.Dataset.
         # Add in the standard "description of file contents"
         # attributes
         # ------------------------------------------------------------
-        global_attributes.update(constants.description_of_file_contents_attributes)
+        global_attributes.update(self.cf_description_of_file_contents_attributes())
 
         # ------------------------------------------------------------
         # Add properties that have been marked as global on each field

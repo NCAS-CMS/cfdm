@@ -25,7 +25,7 @@ class Data(mixin.Container,
     '''
     def __init__(self, array=None, units=None, calendar=None,
                  fill_value=None, source=None, copy=True,
-                 _use_array=True):
+                 _use_array=True, **kwargs):
         '''**Initialization**
 
 :Parameters:
@@ -85,6 +85,9 @@ class Data(mixin.Container,
         If False then do not deep copy input parameters prior to
         initialization. By default arguments are deep copied.
 
+    kwargs: ignored
+        Not used. Present to facilitate subclassing.
+        
         '''
         super().__init__(array=array, units=units, calendar=calendar,
                          fill_value=fill_value, source=source,

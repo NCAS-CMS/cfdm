@@ -190,26 +190,7 @@ Read a file that contains external variables:
     # ----------------------------------------------------------------
     # Read the fields in the file
     # ----------------------------------------------------------------
-    return _read_a_file(filename, external=external, extra=extra,
-                        verbose=verbose, warnings=warnings,
-                        _implementation=_implementation)
-#--- End: def
 
-def _read_a_file(filename, external=(), extra=(), verbose=False,
-                 warnings=False, _implementation=None):
-    '''Read the contents of a single file into a field list.
-
-:Parameters:
-
-    filename: `str`
-        The file name.
-    
-:Returns:
-
-    `list`
-        The fields in the file.
-
-    '''
     # ----------------------------------------------------------------
     # Initialise a netCDF read object
     # ----------------------------------------------------------------
@@ -220,7 +201,8 @@ def _read_a_file(filename, external=(), extra=(), verbose=False,
     # ----------------------------------------------------------------
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external=external, extra=extra,
-                             verbose=verbose, warnings=warnings)
+                             verbose=verbose, warnings=warnings,
+                             _extra_read_vars=None)
     else:
         raise IOError("Can't determine format of file {}".format(filename))
 
@@ -228,4 +210,43 @@ def _read_a_file(filename, external=(), extra=(), verbose=False,
     # Return the fields
     # ----------------------------------------------------------------
     return fields
+#
+#    return _read_a_file(filename, external=external, extra=extra,
+#                        verbose=verbose, warnings=warnings,
+#                        _implementation=_implementation)
 #--- End: def
+
+#def _read_a_file(filename, external=(), extra=(), verbose=False,
+#                 warnings=False, _implementation=None):
+#    '''Read the contents of a single file into a field list.
+#
+#:Parameters:
+#
+#    filename: `str`
+#        The file name.
+#    
+#:Returns:
+#
+#    `list`
+#        The fields in the file.
+#
+#    '''
+#    # ----------------------------------------------------------------
+#    # Initialise a netCDF read object
+#    # ----------------------------------------------------------------
+#    netcdf = NetCDFRead(_implementation)
+#
+#    # ----------------------------------------------------------------
+#    # Read the file into fields.
+#    # ----------------------------------------------------------------
+#    if netcdf.is_netcdf_file(filename):
+#        fields = netcdf.read(filename, external=external, extra=extra,
+#                             verbose=verbose, warnings=warnings)
+#    else:
+#        raise IOError("Can't determine format of file {}".format(filename))
+#
+#    # ----------------------------------------------------------------
+#    # Return the fields
+#    # ----------------------------------------------------------------
+#    return fields
+##--- End: def

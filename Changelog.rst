@@ -4,7 +4,6 @@ version 1.7.3
 
 **Not yet released**
 
-* Renamed the "underlying_array" methods to "source"
 * New method: Constructs.filter_by_size
 * New method: Data.uncompress
 * Fixed bug in Coordinatereference.clear_coordinates
@@ -16,8 +15,14 @@ version 1.7.3
   Construct.filter_by_measure methods in the case when no arguments
   are provided: Now returns all possible constructs that *could* have
   the feature, with any values.
+* Renamed the "underlying_array" methods to "source"
 * Added _field_data_axes attribute to Constructs instances.
 * Added _units and _fill_value arguments to get_data method.
+* Moved contents of cfdm/read_write/constants.py to NetCDFRead and
+  NetCDFWrite.
+* Added **kwargs parameter to CFDMImplementation.initialise_Data, to
+  facilitate sublcassing.
+* Added NetCDFRead._customize_read_vars to facilitate sublcassing.
   
 version 1.7.2
 -------------
