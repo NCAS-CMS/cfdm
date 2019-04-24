@@ -325,7 +325,7 @@ contents and any file suffix is not not considered.
     #--- End: def
 
     def read(self, filename, extra=None, default_version=None,
-             external=None, _extra_read_vars=None, _scan_only=False,
+             external=None, extra_read_vars=None, _scan_only=False,
              verbose=False, warnings=True,
              supplementary_read_vars=None):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
@@ -472,8 +472,8 @@ TODO
         # ------------------------------------------------------------
         # Add custom read vars
         # ------------------------------------------------------------
-        if _extra_read_vars:
-            g.update(deepcopy(_extra_read_vars))
+        if extra_read_vars:
+            g.update(deepcopy(extra_read_vars))
         
         compression = {}
         

@@ -354,5 +354,5 @@ and `~cfdm.Data.nc_set_hdf5_chunksizes` metods of a `Data` instance.
                      least_significant_digit=least_significant_digit,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
-                     verbose=verbose)
+                     verbose=verbose, extra_write_vars=None)
 #--- End: def

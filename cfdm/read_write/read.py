@@ -202,7 +202,7 @@ Read a file that contains external variables:
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
-                             _extra_read_vars=None)
+                             extra_read_vars=None)
     else:
         raise IOError("Can't determine format of file {}".format(filename))
 
