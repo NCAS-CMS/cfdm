@@ -3263,7 +3263,7 @@ and auxiliary coordinate roles for different data variables.
 
         compress = int(compress)
         zlib = bool(compress) 
-    
+
         if fmt not in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT',
                        'NETCDF4', 'NETCDF4_CLASSIC'):
             raise ValueError("Unknown output file format: {}".format(fmt))
