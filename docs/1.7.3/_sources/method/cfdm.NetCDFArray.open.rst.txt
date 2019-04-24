@@ -1,0 +1,7 @@
+cfdm.NetCDFArray.open
+=====================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.NetCDFArray.open

@@ -1,0 +1,7 @@
+cfdm.Count.set_property
+=======================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Count.set_property

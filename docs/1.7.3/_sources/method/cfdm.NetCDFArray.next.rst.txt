@@ -1,0 +1,7 @@
+cfdm.NetCDFArray.next
+=====================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.NetCDFArray.next

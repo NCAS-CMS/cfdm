@@ -1,0 +1,7 @@
+cfdm.FieldAncillary.HDF_chunks
+==============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.FieldAncillary.HDF_chunks

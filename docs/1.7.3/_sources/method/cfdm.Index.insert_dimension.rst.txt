@@ -1,0 +1,7 @@
+cfdm.Index.insert_dimension
+===========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Index.insert_dimension

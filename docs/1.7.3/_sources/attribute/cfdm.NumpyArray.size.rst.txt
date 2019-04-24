@@ -1,0 +1,7 @@
+cfdm.NumpyArray.size
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cfdm.NumpyArray.size
