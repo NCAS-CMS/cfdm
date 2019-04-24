@@ -1,3 +1,9 @@
+version 1.7.4
+-------------
+----
+
+**Not yet released**
+
 version 1.7.3
 -------------
 ----
@@ -6,9 +12,9 @@ version 1.7.3
 
 * New method: Constructs.filter_by_size
 * New method: Data.uncompress
-* Fixed bug in Coordinatereference.clear_coordinates
-* Fixed bug in Field.convert (which omited domain ancillaries in the result)
-* Changed the default behviours of the Construct.filter_by_axis,
+* Fixed bug in CoordinateReference.clear_coordinates
+* Fixed bug in Field.convert (which omitted domain ancillaries in the result)
+* Changed the default behaviours of the Construct.filter_by_axis,
   Construct.filter_by_size, Construct.filter_by_naxes,
   Construct.filter_by_property, Construct.filter_by_ncvar,
   Construct.filter_by_ncdim, Construct.filter_by_method,
@@ -21,7 +27,7 @@ version 1.7.3
 * Moved contents of cfdm/read_write/constants.py to NetCDFRead and
   NetCDFWrite.
 * Added **kwargs parameter to CFDMImplementation.initialise_Data, to
-  facilitate sublcassing.
+  facilitate subclassing.
 * Added NetCDFRead._customize_read_vars to facilitate sublcassing.
 * Added NetCDFWrite._transform_strings to facilitate sublcassing.
 
