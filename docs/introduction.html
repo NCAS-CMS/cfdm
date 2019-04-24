@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cfdm 1.7.2</a></b></h3>
+<h3><b><a href="index.html">cfdm 1.7.3</a></b></h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Introduction</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#cf-conventions"><strong>CF conventions</strong></a></li>
@@ -45,6 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="versioning.html"><strong>Versioning</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>What’s new</strong></a></li>
@@ -86,7 +87,7 @@
   <div class="section" id="introduction">
 <h1><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.7.2 for version 1.7 of the CF conventions.</p>
+<p>Version 1.7.3 for version 1.7 of the CF conventions.</p>
 <p>The Python cfdm package is a complete implementation of the CF data
 model.</p>
 <div class="section" id="cf-conventions">
@@ -103,9 +104,9 @@ and forecasting data using netCDF files and libraries
 <span id="id1"></span><h2><strong>CF data model</strong><a class="headerlink" href="#cf-data-model" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">CF data model</a>
-<a class="footnote-reference" href="#cfdm" id="id3">[1]</a> identifies the fundamental elements (“constructs”) of CF and
-shows how they relate to each other, independently of the netCDF
-encoding.</p>
+<a class="footnote-reference" href="#cfdm" id="id3">[1]</a> <a class="footnote-reference" href="#issue" id="id4">[2]</a> identifies the fundamental elements (“constructs”)
+of CF and shows how they relate to each other, independently of the
+netCDF encoding.</p>
 <p>The <strong>field</strong> construct defined by the CF data model, which
 corresponds to a CF-netCDF data variable with all of its metadata, is
 the central construct that includes all of the other constructs. It
@@ -148,15 +149,23 @@ cell_methods attribute of data variable).</li>
 </ul>
 <p>A complete description of the CF data model, including UML diagrams,
 is available to download at <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a>
-<a class="footnote-reference" href="#cfdm" id="id4">[1]</a>.</p>
+<a class="footnote-reference" href="#cfdm" id="id5">[1]</a>.</p>
 <table class="docutils footnote" frame="void" id="cfdm" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id5">2</a>)</em> Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
 Taylor, K. E.: A data model of the Climate and Forecast
 metadata conventions (CF-1.6) with a software
 implementation (cf-python v2.1), Geosci. Model Dev., 10,
 4619-4646, <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a>, 2017.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="issue" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td>There is a proposal to formally incorporate the CF data
+model into the CF conventions:
+<a class="reference external" href="https://github.com/cf-convention/cf-conventions/issues/159">https://github.com/cf-convention/cf-conventions/issues/159</a></td></tr>
 </tbody>
 </table>
 </div>

@@ -2,7 +2,7 @@ version 1.7.3
 -------------
 ----
 
-**Not yet released**
+**2019-04-24**
 
 * New method: Constructs.filter_by_size
 * New method: Data.uncompress
@@ -23,7 +23,8 @@ version 1.7.3
 * Added **kwargs parameter to CFDMImplementation.initialise_Data, to
   facilitate sublcassing.
 * Added NetCDFRead._customize_read_vars to facilitate sublcassing.
-  
+* Added NetCDFWrite._transform_strings to facilitate sublcassing.
+
 version 1.7.2
 -------------
 ----

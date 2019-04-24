@@ -44,6 +44,7 @@ Metadata constructs
    ~cfdm.Domain.get_data_axes
    ~cfdm.Domain.has_data_axes
    ~cfdm.Domain.set_data_axes
+   ~cfdm.Domain.domain_axis_key
 
 .. rubric:: Attributes
    

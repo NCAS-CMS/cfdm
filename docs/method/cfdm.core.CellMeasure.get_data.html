@@ -32,19 +32,21 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.2</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.3</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constant.html"><strong>cfdm constants</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../versioning.html"><strong>Versioning</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>What’s new</strong></a></li>
@@ -93,7 +95,7 @@
 <h1>cfdm.core.CellMeasure.get_data<a class="headerlink" href="#cfdm-core-cellmeasure-get-data" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.CellMeasure.get_data">
-<code class="descclassname">CellMeasure.</code><code class="descname">get_data</code><span class="sig-paren">(</span><em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.2/cfdm/core/abstract/propertiesdata.py#L182"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMeasure.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CellMeasure.</code><code class="descname">get_data</code><span class="sig-paren">(</span><em>default=ValueError()</em>, <em>_units=True</em>, <em>_fill_value=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.3/cfdm/core/abstract/propertiesdata.py#L180"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMeasure.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.o</p>
 <p>Note that a <a class="reference internal" href="../class/cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance is returned. Use its <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute to
 return the data as an independent <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.16)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p>

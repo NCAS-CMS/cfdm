@@ -32,19 +32,21 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.2</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.3</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constant.html"><strong>cfdm constants</strong></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../versioning.html"><strong>Versioning</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>What’s new</strong></a></li>
@@ -92,7 +94,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Data">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.2/cfdm/data/data.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.3/cfdm/data/data.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFHDF5</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.data.Data</span></code></p>
 <p>An orthogonal multidimensional array with masked values and units.</p>
 <div class="versionadded">
@@ -163,6 +165,9 @@ those of <em>source</em>.</p>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
+</dd>
+<dt>kwargs: ignored</dt>
+<dd><p class="first last">Not used. Present to facilitate subclassing.</p>
 </dd>
 </dl>
 </td>
@@ -321,6 +326,12 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.equals.html#cfdm.Data.equals" title="cfdm.Data.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
 <td>Whether two data arrays are the same.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.to_memory.html#cfdm.Data.to_memory" title="cfdm.Data.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.source.html#cfdm.Data.source" title="cfdm.Data.source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code></a></td>
+<td>Return the underlying array object.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -342,13 +353,16 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_compressed_dimension.html#cfdm.Data.get_compressed_dimension" title="cfdm.Data.get_compressed_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_dimension</span></code></a></td>
 <td>Return the position of the compressed dimension in the compressed array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.get_count.html#cfdm.Data.get_count" title="cfdm.Data.get_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.uncompress.html#cfdm.Data.uncompress" title="cfdm.Data.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></td>
+<td>Uncompress the underlying array in-place.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_count.html#cfdm.Data.get_count" title="cfdm.Data.get_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count</span></code></a></td>
 <td>Return the countcount_va variable for a compressed array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_index.html#cfdm.Data.get_index" title="cfdm.Data.get_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.get_index.html#cfdm.Data.get_index" title="cfdm.Data.get_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index</span></code></a></td>
 <td>Return the index variable for a compressed array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.get_list.html#cfdm.Data.get_list" title="cfdm.Data.get_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_list.html#cfdm.Data.get_list" title="cfdm.Data.get_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list</span></code></a></td>
 <td>Return the list variable for a compressed array.</td>
 </tr>
 </tbody>

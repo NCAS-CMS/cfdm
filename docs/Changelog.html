@@ -31,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cfdm 1.7.2</a></b></h3>
+<h3><b><a href="index.html">cfdm 1.7.3</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
@@ -39,9 +39,11 @@
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="versioning.html"><strong>Versioning</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>What’s new</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-3">version 1.7.3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-2">version 1.7.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-1">version 1.7.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">version 1.7.0</a></li>
@@ -83,13 +85,40 @@
             
   <div class="section" id="what-s-new">
 <h1><strong>What’s new</strong><a class="headerlink" href="#what-s-new" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-1-7-3">
+<h2>version 1.7.3<a class="headerlink" href="#version-1-7-3" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2019-04-24</strong></p>
+<ul class="simple">
+<li>New method: Constructs.filter_by_size</li>
+<li>New method: Data.uncompress</li>
+<li>Fixed bug in Coordinatereference.clear_coordinates</li>
+<li>Fixed bug in Field.convert (which omited domain ancillaries in the result)</li>
+<li>Changed the default behviours of the Construct.filter_by_axis,
+Construct.filter_by_size, Construct.filter_by_naxes,
+Construct.filter_by_property, Construct.filter_by_ncvar,
+Construct.filter_by_ncdim, Construct.filter_by_method,
+Construct.filter_by_measure methods in the case when no arguments
+are provided: Now returns all possible constructs that <em>could</em> have
+the feature, with any values.</li>
+<li>Renamed the “underlying_array” methods to “source”</li>
+<li>Added _field_data_axes attribute to Constructs instances.</li>
+<li>Added _units and _fill_value arguments to get_data method.</li>
+<li>Moved contents of cfdm/read_write/constants.py to NetCDFRead and
+NetCDFWrite.</li>
+<li>Added <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs parameter to CFDMImplementation.initialise_Data, to
+facilitate sublcassing.</li>
+<li>Added NetCDFRead._customize_read_vars to facilitate sublcassing.</li>
+<li>Added NetCDFWrite._transform_strings to facilitate sublcassing.</li>
+</ul>
+</div>
 <div class="section" id="version-1-7-2">
 <h2>version 1.7.2<a class="headerlink" href="#version-1-7-2" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-04-05</strong></p>
 <ul class="simple">
-<li>New “mode” parameter options to filter_by_axis: ‘exact’, ‘subset’,
-‘superset’</li>
+<li>New “mode” parameter options to Constructs.filter_by_axis: ‘exact’,
+‘subset’, ‘superset’</li>
 <li>Enabled setting of HDF5 chunksizes</li>
 <li>Fixed bug that caused coordinate bounds to be not sliced during
 subspacing.</li>
@@ -100,9 +129,10 @@ subspacing.</li>
 <hr class="docutils" />
 <p><strong>2019-04-02</strong></p>
 <ul class="simple">
-<li>New methods clear_filters_applied, fliter_by_naxes</li>
-<li>Changed behaviour of unfilter and inverse_filters: added depth
-keyword and changed default</li>
+<li>New methods Constructs.clear_filters_applied,
+Constructs.filter_by_naxes</li>
+<li>Changed behaviour of Constructs.unfilter and
+Constructs.inverse_filters: added depth keyword and changed default</li>
 </ul>
 </div>
 <div class="section" id="version-1-7-0">

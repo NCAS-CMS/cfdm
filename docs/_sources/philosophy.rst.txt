@@ -117,4 +117,3 @@ package:
    Field: altitude
    ---------------
    Data            : altitude(key%domainaxis0(1))
-

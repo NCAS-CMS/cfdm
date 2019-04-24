@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Constructs.filter_by_type" href="cfdm.Constructs.filter_by_type.html" />
-    <link rel="prev" title="cfdm.Constructs.filter_by_naxes" href="cfdm.Constructs.filter_by_naxes.html" />
+    <link rel="prev" title="cfdm.Constructs.filter_by_size" href="cfdm.Constructs.filter_by_size.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -32,19 +32,21 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.2</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.3</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constant.html"><strong>cfdm constants</strong></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../versioning.html"><strong>Versioning</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>What’s new</strong></a></li>
@@ -56,7 +58,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Constructs.html">cfdm.Constructs</a><ul>
-      <li>Previous: <a href="cfdm.Constructs.filter_by_naxes.html" title="previous chapter">cfdm.Constructs.filter_by_naxes</a></li>
+      <li>Previous: <a href="cfdm.Constructs.filter_by_size.html" title="previous chapter">cfdm.Constructs.filter_by_size</a></li>
       <li>Next: <a href="cfdm.Constructs.filter_by_type.html" title="next chapter">cfdm.Constructs.filter_by_type</a></li>
   </ul></li>
   </ul></li>
@@ -93,7 +95,7 @@
 <h1>cfdm.Constructs.filter_by_data<a class="headerlink" href="#cfdm-constructs-filter-by-data" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Constructs.filter_by_data">
-<code class="descclassname">Constructs.</code><code class="descname">filter_by_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.2/cfdm/constructs.py#L960"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.filter_by_data" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Constructs.</code><code class="descname">filter_by_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.3/cfdm/constructs.py#L878"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.filter_by_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select metadata constructs by whether they could contain data.</p>
 <p>Selection is not based on whether they thay actually have data, rather
 by whether the construct supports the inclusion of data. For example,

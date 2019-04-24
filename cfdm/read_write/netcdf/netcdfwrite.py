@@ -2000,26 +2000,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
 
         original_ncdimensions = ncdimensions 
 
-        if data is not None and datatype == 'S1':
-            # --------------------------------------------------------
-            # Convert a string data type numpy array into a
-            # character data type ('S1') numpy array with an extra
-            # trailing dimension.
-            # --------------------------------------------------------
-
-            strlen = data.dtype.itemsize
-            array = data.array
-            if numpy.ma.is_masked(array):
-                array = array.compressed()
-            strlen = len(max(array, key=len))
-
-#            strlen = len(max(data.array, key=len))
-#            if strlen > 1:
-            data = self._convert_to_char(data)
-            ncdim = self._string_length_dimension(strlen)            
-
-            ncdimensions = original_ncdimensions + (ncdim,)
-        #--- End: if
+        data, ncdimensions = self._transform_strings(cfvar, data, ncdimensions)
         
         if verbose:
             print(' to netCDF variable: {}({})'.format(ncvar, ', '.join(ncdimensions)))
@@ -2108,6 +2089,44 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         g['seen'][id(cfvar)] = {'variable': cfvar,
                                 'ncvar'   : ncvar,
                                 'ncdims'  : original_ncdimensions}
+    #--- End: def
+
+    def _transform_strings(self, construct, data, ncdimensions):
+        '''TODO
+
+.. versionadded:: 1.7.3
+
+:Parameters:
+
+    construct: 
+
+    data: Data instance or `None`
+
+    ncdimensions: `tuple`
+        
+        '''
+        datatype = self._datatype(construct)                
+    
+        if data is not None and datatype == 'S1':
+            # --------------------------------------------------------
+            # Convert a string data type numpy array into a
+            # character data type ('S1') numpy array with an extra
+            # trailing dimension.
+            # --------------------------------------------------------
+            array = self.implementation.get_array(data)
+            if numpy.ma.is_masked(array):
+                array = array.compressed()
+            else:
+                array = array.flatten()
+                
+            strlen = len(max(array, key=len))
+
+            data = self._convert_to_char(data)
+            ncdim = self._string_length_dimension(strlen)            
+
+            ncdimensions = ncdimensions + (ncdim,)
+
+        return data, ncdimensions
     #--- End: def
     
     def _write_data(self, data, ncvar, ncdimensions, unset_values=()):

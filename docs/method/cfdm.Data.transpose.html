@@ -32,19 +32,21 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.2</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.3</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>cfdm tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constant.html"><strong>cfdm constants</strong></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../versioning.html"><strong>Versioning</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>What’s new</strong></a></li>
@@ -93,7 +95,7 @@
 <h1>cfdm.Data.transpose<a class="headerlink" href="#cfdm-data-transpose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.transpose">
-<code class="descclassname">Data.</code><code class="descname">transpose</code><span class="sig-paren">(</span><em>axes=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.2/cfdm/data/data.py#L1230"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.transpose" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">transpose</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.3/cfdm/data/data.py#L1243"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permute the axes of the data array.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -116,17 +118,21 @@ are allowed.</p>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=[2,</span> <span class="pre">0,</span> <span class="pre">1]</span></code></p>
 </dd>
-<dt><strong>Parameter example:</strong></dt>
+<dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=[-1,</span> <span class="pre">0,</span> <span class="pre">1]</span></code></p>
 </dd>
 </dl>
+</dd>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></dt>
-<dd><p class="first last">The new data array with permuted data axes.</p>
+<dt><a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt>
+<dd><p class="first last">The data with permuted data axes. If the operation was
+in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
 </dd>
 </dl>
 </td>
@@ -140,6 +146,9 @@ are allowed.</p>
 <span class="go">(96, 73, 19)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(73, 19, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(96, 19, 73)</span>
 </pre></div>
 </div>
 </dd></dl>
