@@ -991,7 +991,7 @@ contains the selected constructs.
              axis construct; and those which also do not span the
              'domainaxis2' domain axis construct.*
 
-   >>> print(t.constructs.filter_by_axis(domainaxis1=True))
+   >>> print(t.constructs.filter_by_axis('and', 'domainaxis1'))
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
@@ -1000,11 +1000,6 @@ contains the selected constructs.
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-   >>> print(t.constructs.filter_by_axis(domainaxis1=True,
-   ...                                   domainaxis2=False))
-   Constructs:
-   {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
-    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
 
 .. code-block:: python3
    :caption: *Get cell measure constructs by their "measure".*
@@ -1026,7 +1021,7 @@ to perform further filters on their results:
 .. code-block:: python3
    :caption: *Make selections from previous selections.*
 	     
-   >>> print(t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis(domainaxis2=True))
+   >>> print(t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis('and', 'domainaxis2'))
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
