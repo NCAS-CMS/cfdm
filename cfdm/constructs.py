@@ -740,9 +740,9 @@ False
         requirements is met. If the *mode* parameter is ``'exact'``
         then a construct will be selected when its data axes are
         exactly those defined by the axis requirements. If the mode
-        parameters is ``'subset'`` then a construct will be selected
+        parameter is ``'subset'`` then a construct will be selected
         when its data axes are a subset of those defined by the axis
-        requirements.  If the mode parameters is ``'superset'`` then a
+        requirements.  If the mode parameter is ``'superset'`` then a
         construct will be selected when its data axes are a superset
         of those defined by the axis requirements.
 
@@ -826,12 +826,21 @@ Select constructs whose data spans the "domainaxis1" or the
         constructs_data_axes = self.data_axes()
         
         if _exact or _subset or _superset:
-            axes_True = {axis: value for axis, value in axes.items() if value}
+            axes_True = set([axis for axis, value in axes.items() if value])
             if _exact and not axes_True:
                 _exact = False
                 _and   = True
         #--- End: if
+
+        if not axes:            
+            for cid in tuple(out):
+                if cid not in data_contructs:
+                    out._pop(cid)
+            #--- End: for
+            
+            return out
         
+        # Still here?
         for cid in tuple(out):
             if cid not in data_contructs:
                 out._pop(cid)
@@ -840,18 +849,18 @@ Select constructs whose data spans the "domainaxis1" or the
             x = constructs_data_axes.get(cid)
             if x is None:
                 # This construct does not have data axes
-#                out._pop(cid)
+                out._pop(cid)
                 continue
-
+            
             ok = True
             if _exact:
-                if set(x) != set(axes_True):
+                if set(x) != axes_True:
                     ok = False
             elif _subset:
-                if not set(axes_True).issubset(x):
+                if not axes_True.issubset(x):
                     ok = False
             elif _superset:
-                if not set(axes_True).issuperset(x):
+                if not set(x).issuperset(axes_True):
                     ok = False
             else:
                 for axis_key, value in axes.items():

@@ -4,6 +4,8 @@ version 1.7.4
 
 **Not yet released**
 
+* Fixed bug in 'superset' mode of Constructs.filter_by_axis.
+  
 version 1.7.3
 -------------
 ----
