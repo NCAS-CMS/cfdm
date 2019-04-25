@@ -230,12 +230,12 @@ None
         if _units:
             # Copy the parent units and calendar to the data
             units = self.get_property('units', None)
-            if units is not None:
-                data.set_units(units)
+#            if units is not None:
+            data.set_units(units)
                 
             calendar = self.get_property('calendar', None)
-            if calendar is not None:
-                data.set_calendar(calendar)
+#            if calendar is not None:
+            data.set_calendar(calendar)
         #--- End: if
         
         if _fill_value:
@@ -325,8 +325,8 @@ None
         if copy:
             data = data.copy()
 
-        data.set_units(None) # TODO
-        data.set_calendar(None) # TODO
+#        data.set_units(None) # TODO
+#        data.set_calendar(None) # TODO
         
         self._set_component('data', data, copy=False)
     #--- End: def

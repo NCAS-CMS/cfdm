@@ -109,24 +109,24 @@ domain ancillary constructs.
         return out.copy()
     #--- End: def
     
-    def copy(self):
-        '''Return a deep copy.
-
-``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-.. versionadded:: 1.7.0
-
-:Returns:
-
-        The deep copy.
-
-**Examples:**
-
->>> g = f.copy()
-
-        '''
-        return type(self)(source=self, copy=True) #, _use_data=data)
-    #--- End: def
+#    def copy(self):
+#        '''Return a deep copy.
+#
+#``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+#
+#.. versionadded:: 1.7.0
+#
+#:Returns:
+#
+#        The deep copy.
+#
+#**Examples:**
+#
+#>>> g = f.copy()
+#
+#        '''
+#        return type(self)(source=self, copy=True) #, _use_data=data)
+#    #--- End: def
 
     def del_domain_ancillary(self, domain_ancillary,
                              default=ValueError()):

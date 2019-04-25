@@ -8,7 +8,7 @@ import numpy
 
 import cfdm
 
-verbose  = False
+verbose  =  False
 warnings = False
 
 class create_fieldTest(unittest.TestCase):
@@ -49,10 +49,10 @@ class create_fieldTest(unittest.TestCase):
         dim2.set_property('computed_standard_name', 'altitude')
                       
         # Auxiliary coordinates
-        ak = cfdm.DomainAncillary(data=cfdm.Data([10.])) #, 'm'))
+        ak = cfdm.DomainAncillary(data=cfdm.Data([10.]))
         ak.set_property('units', 'm')
         ak.id = 'atmosphere_hybrid_height_coordinate_ak'
-        ak.set_bounds(cfdm.Bounds(data=cfdm.Data([[5, 15.]]))) # , ak.Units)
+        ak.set_bounds(cfdm.Bounds(data=cfdm.Data([[5, 15.]])))
         
         bk = cfdm.DomainAncillary(data=cfdm.Data([20.]))
         bk.id = 'atmosphere_hybrid_height_coordinate_bk'
@@ -141,33 +141,26 @@ class create_fieldTest(unittest.TestCase):
         ref1 = cfdm.CoordinateReference(
             coordinates=[z],
             datum=datum,
-            coordinate_conversion=coordinate_conversion
-        #            parameters={'standard_name': 'atmosphere_hybrid_height_coordinate',
-#                        'computed_standard_name': 'altitude',
- #                       'earth_radius' : 6371007,},
- #           domain_ancillaries={'orog': orog,
- #                               'a'   : ak,
-#                                'b'   : bk},
-        )
+            coordinate_conversion=coordinate_conversion)
         
         ref1 = f.set_construct(ref1)
 
         # Field ancillary variables
         g = f.copy()
         anc = cfdm.FieldAncillary(data=g.get_data())
-        anc.standard_name = 'ancillaryA'
+        anc.set_property('standard_name', 'ancillaryA')
         f.set_construct(anc, axes=[axisY, axisX])
         
         g = f[0]
         g = g.squeeze()
         anc = cfdm.FieldAncillary(data=g.get_data())
-        anc.standard_name = 'ancillaryB'
+        anc.set_property('long_name', 'ancillaryB')
         f.set_construct(anc, axes=axisX)
 
         g = f[..., 0]
         g = g.squeeze()
         anc = cfdm.FieldAncillary(data=g.get_data())
-        anc.standard_name = 'ancillaryC'
+        anc.set_property('foo', 'bar')
         f.set_construct(anc, axes=[axisY])
 
         
@@ -191,9 +184,7 @@ class create_fieldTest(unittest.TestCase):
             print(repr(f))
             print(f)
             print(f.constructs())
-            print(f.construct_data_axes())
-        
-            f.dump()
+            print(f.constructs.data_axes())
 
         self.assertTrue(f.equals(f, verbose=True),
                         "Field f not equal to itself")
@@ -204,17 +195,19 @@ class create_fieldTest(unittest.TestCase):
         if verbose:
             print("####################################################")
             
-        cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=False)
-#        sys.exit(0)
+        cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
 
-        g = cfdm.read(self.filename, verbose=False)
-#        for x in g:
-#            x.print_read_report()
+        g = cfdm.read(self.filename, verbose=verbose)
 
         if verbose:
             print(g)
             g[0].dump()
 
+#        units = g[0].construct('ncvar%ancillary_data_1').get_property('units', None)
+#        self.assertTrue(units =='m s-1', 'units: '+str(units))
+
+            
+#        sys.exit(1)
         array = g[0].constructs.filter_by_identity('long_name=greek_letters').value().data.array
         self.assertTrue(array[1] == b'beta', 'greek_letters = {!r}'.format(array))
 
@@ -222,8 +215,6 @@ class create_fieldTest(unittest.TestCase):
 
         g = g[0].squeeze()
         
-#        g.dump()
-#        print g
         self.assertTrue(sorted(f.constructs) == sorted(g.constructs),
                         '\n\nf (created in memory)\n{}\n\n{}\n\ng (read from disk)\n{}\n\n{}'.format(
                             sorted(f.constructs),
@@ -241,12 +232,6 @@ class create_fieldTest(unittest.TestCase):
                         "Field g not equal to a copy of itself")
 
         if verbose:                    
-#        print'f'
-#        print f
-#        print 'g'
-#        print g
-#        f.dump()
-#        g.dump()
             print('g')
             g.dump()
             print('f')

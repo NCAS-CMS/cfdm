@@ -12,7 +12,7 @@ class Container(with_metaclass(abc.ABCMeta, object)):
 .. versionadded:: 1.7.0
 
     '''
-    def __init__(self):
+    def __init__(self, source=None, copy=True):
         '''**Initialisation**
 
 A container is initialised with no parameters. Components are set
@@ -20,6 +20,21 @@ after initialisation with the `_set_component` method.
 
         '''
         self._components = {}
+
+        if source is not None:
+            try:
+                custom = source._get_component('custom')
+            except AttributeError:
+                custom = {}
+            else:
+                if custom:
+                    custom = deepcopy(custom)
+                else:
+                    custom = {}
+        else:
+            custom = {}
+
+        self._set_component('custom', custom, copy=False)
     #--- End: def
         
     def __deepcopy__(self, memo):
@@ -114,6 +129,33 @@ False
                                       self.__class__.__name__, component))
     #--- End: def
 
+    @property
+    def _custom(self):
+        '''TODO
+
+.. versionadded:: 1.7.4
+
+**Examples:**
+
+>>> f._custom
+{}
+>>> f._custom['feature'] = ['f']
+>>> g = f.copy()
+>>> g._custom['feature'][0] = 'g'
+>>> f._custom
+{'feature': ['f']}
+>>> g._custom
+{'feature': ['g']}
+>>> del g._custom
+>>> f._custom
+{'feature': ['f']}
+>>> g._custom
+{}
+
+'''
+        return self._get_component('custom')
+    #--- End: def
+    
     def _get_component(self, component, default=ValueError()):
         '''Return a component
 
@@ -230,7 +272,6 @@ False
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @abc.abstractmethod
     def copy(self):
         '''Return a deep copy.
 
@@ -247,7 +288,7 @@ False
 >>> g = f.copy()
 
         '''
-        raise NotImplementedError() # pragma: no cover
+        return type(self)(source=self, copy=True)
     #--- End: def
     
 #--- End: class

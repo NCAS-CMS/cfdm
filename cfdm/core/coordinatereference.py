@@ -107,7 +107,7 @@ frame and consists of the following:
         initialization. By default arguments are deep copied.
 
         '''
-        super().__init__()
+        super().__init__(source=source, copy=copy)
 
         self._set_component('coordinates', set(), copy=False)
         

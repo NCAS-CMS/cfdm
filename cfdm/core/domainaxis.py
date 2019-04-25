@@ -40,7 +40,7 @@ to the order of the elements.
         initialization. By default arguments are deep copied.
 
         '''
-        super().__init__()
+        super().__init__(source=source, copy=copy)
         
         if source is not None:
             try:

@@ -5,6 +5,7 @@ version 1.7.4
 **Not yet released**
 
 * Changed behaviour of Constructs.filter_by_axis.
+* Added the '_custom' attribute to facilitate subclassing.
   
 version 1.7.3
 -------------

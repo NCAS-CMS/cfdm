@@ -36,7 +36,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         initialization. By default arguments are deep copied.
 
         '''
-        super().__init__()
+        super().__init__(source=source, copy=copy)
 
         self._set_component('parameters', {}, copy=False)
 
@@ -87,24 +87,24 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         return out.copy()
     #--- End: def
     
-    def copy(self):
-        '''Return a deep copy.
-
-``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-.. versionadded:: 1.7.0
-
-:Returns:
-
-        The deep copy.
-
-**Examples:**
-
->>> g = f.copy()
-
-        '''
-        return type(self)(source=self, copy=True)
-    #--- End: def
+#    def copy(self):
+#        '''Return a deep copy.
+#
+#``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+#
+#.. versionadded:: 1.7.0
+#
+#:Returns:
+#
+#        The deep copy.
+#
+#**Examples:**
+#
+#>>> g = f.copy()
+#
+#        '''
+#        return type(self)(source=self, copy=True)
+#    #--- End: def
     
     def del_parameter(self, parameter, default=ValueError()):
         '''Delete a parameter.
