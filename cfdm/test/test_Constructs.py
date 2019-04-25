@@ -69,6 +69,7 @@ class ConstructsTest(unittest.TestCase):
 
         self.assertTrue(len(c) == 20)
         self.assertTrue(len(c.filter_by_identity()) == 20)
+#        self.assertTrue(len(c.filter_by_axis())     == 13, str(c.filter_by_axis())) #x
         self.assertTrue(len(c.filter_by_axis())     == 13, str(c.filter_by_axis()))
         self.assertTrue(len(c.filter_by_key())      == 20)
         self.assertTrue(len(c.filter_by_data())     == 13)
@@ -204,19 +205,21 @@ class ConstructsTest(unittest.TestCase):
                 self.assertTrue(len(e) == len(c) - len(d))
         
         # Axis
-        for mode in ([], ['and'], ['or'], ['exact'], ['subset'], ['superset']):
-            for kwargs in ({'qwerty': True},
-                           {'domainaxis0': True},
-                           {'domainaxis0': True, 'domainaxis1': True},
-                           {'domainaxis0': True, 'domainaxis1': True, 'domainaxis2': True},
-                           {'domainaxis0': False},
-                           {'domainaxis0': False, 'domainaxis1': True},
-                           {'domainaxis0': False, 'domainaxis1': True, 'domainaxis2': True},
-            ):
-                d = c.filter_by_axis(*mode, **kwargs)
+#        for mode in ([], ['and'], ['or'], ['exact'], ['subset'], ['superset']):
+        for mode in ('and', 'or', 'exact', 'subset'):
+            for args in (['qwerty'],
+                         ['domainaxis0'],
+                         ['domainaxis0', 'domainaxis1'],
+                         ['domainaxis0', 'domainaxis1', 'domainaxis2']):
+#                           {'domainaxis0': False},
+#                           {'domainaxis0': False, 'domainaxis1': True},
+#                           {'domainaxis0': False, 'domainaxis1': True, 'domainaxis2': True},
+#                d = c.filter_by_axis(*mode, **kwargs) #x
+                d = c.filter_by_axis(mode, *args)
                 e = d.inverse_filter()
                 self.assertTrue(len(e) == len(c) - len(d))
-
+        #--- End: for
+        
         # Inverse filter, filters applied
         self.assertTrue(len(c.filters_applied()) == 0)
         ci = c.inverse_filter()

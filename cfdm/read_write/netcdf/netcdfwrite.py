@@ -2367,7 +2367,7 @@ extra trailing dimension.
                     # therefore the dimension coordinate must have
                     # size 1).
                     if (not g['scalar'] or
-                        len(self.implementation.get_constructs(f, axes={axis: True})) >= 2):
+                        len(self.implementation.get_constructs(f, axes=[axis])) >= 2):
                         # Either A) it has been requested to not write
                         # scalar coordinate variables; or B) there ARE
                         # auxiliary coordinates, cell measures, domain
@@ -2402,7 +2402,7 @@ extra trailing dimension.
                 # There is no dimension coordinate for this axis
                 # --------------------------------------------------------
 
-                spanning_constructs = self.implementation.get_constructs(f, axes={axis: True})
+                spanning_constructs = self.implementation.get_constructs(f, axes=[axis])
 
                 if axis not in data_axes and spanning_constructs:
                     # The data array doesn't span the domain axis but

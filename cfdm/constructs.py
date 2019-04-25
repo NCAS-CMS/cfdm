@@ -717,7 +717,7 @@ False
         return True
     #--- End: def
 
-    def filter_by_axis(self, *mode, **axes):
+    def filter_by_axisX(self, *mode, **axes):
         '''Select metadata constructs by axes spanned by their data.
 
 .. versionadded:: 1.7.0
@@ -869,6 +869,163 @@ Select constructs whose data spans the "domainaxis1" or the
                     else:
                         ok = axis_key not in x
                 
+                    if _or:
+                        if ok:
+                            break
+                    elif not ok:
+                        break
+            #--- End: if
+
+            if not ok:
+                # This construct ..
+                out._pop(cid)
+        #--- End: for
+        
+        return out
+    #--- End: def
+
+    def filter_by_axis(self, mode=None, *axes):
+        '''Select metadata constructs by axes spanned by their data.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `filter_by_data`, `filter_by_key`, `filter_by_measure`,
+             `filter_by_method`, `filter_by_identity`,
+             `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
+             `filter_by_property`, `filter_by_type`,
+             `filters_applied`, `inverse_filter`, `unfilter`
+
+:Parameters:
+
+    mode: `str`
+        Define the relationship between the given domain axes and the
+        constructs' data.
+
+        ==========  ==================================================
+        *mode*      Description
+        ==========  ==================================================
+        ``'and'``   A construct is selected if it spans *all* of the 
+                    given domain axes, *and possibly others*.
+
+        ``'or'``    A construct is selected if it spans *any* of the
+                    domain axes, *and possibly others*.
+       
+        ``exact``   A construct is selected if it spans *all* of the 
+                    given domain axes, *and no others*.
+       
+        ``subset``  A construct is selected if it spans *a subset* of
+                    the given domain axes, *and no others*.
+        ==========  ==================================================
+
+    axes: optional
+        Select the constructs whose data spans particular domain axis
+        constructs.
+
+        A domain axis construct is identified by its construct key
+        (e.g. ``'domainaxis1'``).
+
+        If no axes are provided then all constructs that do or could
+        have data, spanning any domain axes constructs, are selected.
+
+:Returns:
+
+    `Constructs`
+        The selected constructs and their construct keys.
+
+**Examples:**
+
+Select constructs whose data spans the "domainaxis1" domain axis
+construct:
+
+>>> d = c.filter_by_axis('and', 'domainaxis1')
+
+Select constructs whose data does not span the "domainaxis2" domain
+axis construct:
+
+>>> d = c.filter_by_axis('and', 'domainaxis2').inverse_filter()
+
+Select constructs whose data spans the "domainaxis1", but not the
+"domainaxis2" domain axis constructs:
+
+>>> d = c.filter_by_axis('and', 'domainaxis1')
+>>> d = d.filter_by_axis('and', 'domainaxis2')
+>>> d  = d.inverse_filter(1)
+
+Select constructs whose data spans the "domainaxis1" or the
+"domainaxis2" domain axis constructs:
+
+>>> d = c.filter_by_axis('or', 'domainaxis1', 'domainaxis2')
+
+        '''       
+        out = self.shallow_copy()
+
+        out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + ({'filter_by_axis': (mode, axes)},)
+        
+        # Parse the mode parameter
+        _and      = False
+        _or       = False
+        _exact    = False
+        _subset   = False
+#        _superset = False
+
+        if not axes and mode is None:
+            mode = 'and'
+        
+        if mode == 'and':
+            _and = True
+        elif mode == 'or':
+            _or = True
+        elif mode == 'and':
+            _and = True
+        elif mode == 'exact':
+            _exact = True
+        elif mode == 'subset':
+            _subset = True
+ #       elif mode == 'superset':
+ #           _superset = True
+        else:    
+            raise ValueError(
+                "mode parameter must be one of 'and', 'or', 'exact', subset'")
+        
+        data_contructs = self.filter_by_data()
+        constructs_data_axes = self.data_axes()
+
+        axes = set(axes)
+                    
+        if not axes:            
+            for cid in tuple(out):
+                if cid not in data_contructs:
+                    out._pop(cid)
+            #--- End: for
+            
+            return out
+        
+        # Still here?
+        for cid in tuple(out):
+            if cid not in data_contructs:
+                out._pop(cid)
+                continue
+                
+            x = constructs_data_axes.get(cid)
+            if x is None:
+                # This construct does not have data axes
+                out._pop(cid)
+                continue
+            
+            ok = True
+            if _exact:
+                if set(x) != axes:
+                    ok = False
+            elif _subset:
+                if not set(x).issubset(axes):
+                    ok = False
+#            elif _superset:
+#                if not set(x).issuperset(axes):
+#                    ok = False
+            else:
+                for axis_key in axes:
+                    ok = axis_key in x
                     if _or:
                         if ok:
                             break
