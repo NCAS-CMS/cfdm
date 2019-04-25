@@ -325,8 +325,8 @@ None
         if copy:
             data = data.copy()
 
-        data.set_units(None)
-        data.set_calendar(None)
+        data.set_units(None) # TODO
+        data.set_calendar(None) # TODO
         
         self._set_component('data', data, copy=False)
     #--- End: def

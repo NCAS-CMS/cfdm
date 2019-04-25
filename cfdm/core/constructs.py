@@ -481,7 +481,7 @@ reference is replace with `None`.
 
 :Parameters:
 
-   key: `str`
+    key: `str`
         The key of the construct to be removed.
 
         *Parameter example:*
