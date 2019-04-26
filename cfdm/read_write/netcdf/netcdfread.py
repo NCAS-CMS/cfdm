@@ -2447,7 +2447,7 @@ variable should be pre-filled with missing values.
             name_to_axis = ncdim_to_axis.copy()
             name_to_axis.update(ncscalar_to_axis)
 
-            cell_methods = self._parse_cell_methods(field_ncvar, cell_methods_string)
+            cell_methods = self._parse_cell_methods(cell_methods_string, field_ncvar)
             
             for properties in cell_methods:
                 axes = [name_to_axis.get(axis, axis)
@@ -3425,7 +3425,7 @@ variable's netCDF dimensions.
         return field_ancillary
     #--- End: def
 
-    def _parse_cell_methods(self, field_ncvar, cell_methods_string):
+    def _parse_cell_methods(self, cell_methods_string, field_ncvar=None):
         '''Parse a CF cell_methods string.
 
 :Examples 1:
@@ -3447,7 +3447,8 @@ variable's netCDF dimensions.
 >>> print c
 
         '''
-        attribute = {field_ncvar+':cell_methods': cell_methods_string}
+        if field_ncvar:
+            attribute = {field_ncvar+':cell_methods': cell_methods_string}
 
         incorrect_interval = ('Cell method interval', 'is incorrectly formatted')
 
@@ -3531,6 +3532,9 @@ variable's netCDF dimensions.
                         try:
                             parsed_interval = literal_eval(interval)
                         except (SyntaxError, ValueError):
+                            if not field_ncvar:
+                                raise ValueError(incorrect_interval)
+
                             self._add_message(
                                 field_ncvar, field_ncvar,
                                 message=incorrect_interval)
@@ -3542,10 +3546,13 @@ variable's netCDF dimensions.
                                 units=units,
                                 copy=False)
                         except:
+                            if not field_ncvar:
+                                raise ValueError(incorrect_interval)
+
                             self._add_message(
-                                field_ncvar, field_ncvar,
-                                message=incorrect_interval,
-                                attribute=attribute)
+                                    field_ncvar, field_ncvar,
+                                    message=incorrect_interval,
+                                    attribute=attribute)
                             return []
 
                         intervals.append(data)
@@ -3570,6 +3577,9 @@ variable's netCDF dimensions.
 
             n_intervals = len(intervals)          
             if n_intervals > 1 and n_intervals != len(axes):
+                if not field_ncvar:
+                    raise ValueError(incorrect_interval)
+
                 self._add_message(
                     field_ncvar, field_ncvar,
                     message=incorrect_interval,
