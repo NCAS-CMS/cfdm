@@ -230,19 +230,25 @@ None
         if _units:
             # Copy the parent units and calendar to the data
             units = self.get_property('units', None)
-#            if units is not None:
-            data.set_units(units)
+            if units is not None:
+                data.set_units(units)
+            else:
+                data.del_units(default=None)
                 
             calendar = self.get_property('calendar', None)
-#            if calendar is not None:
-            data.set_calendar(calendar)
+            if calendar is not None:                
+                data.set_calendar(calendar)
+            else:
+                data.del_calendar(default=None)
         #--- End: if
         
         if _fill_value:
             # Copy the fill_value to the data
-            fill_value = self.get_property('fill_value', None)
+            fill_value = self.get_property('fill_value', None) # TODO
             if fill_value is not None:
                 data.set_fill_value(fill_value)
+            else:
+                data.del_fill_value(default=None)
         #--- End: if
         
         return data        

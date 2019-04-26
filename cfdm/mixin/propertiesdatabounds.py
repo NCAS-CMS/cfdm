@@ -906,11 +906,11 @@ None
         if bounds is None:
             return super().get_bounds(default=default)
         
-        properties = self.properties()
-        bounds_properties = bounds.properties()
-
-        inherited_properties = {prop: value
-                                for prop, value in properties.items()}
+        inherited_properties = self.properties()
+#        bounds_properties = bounds.properties()
+#
+#        inherited_properties = {prop: value
+#                                for prop, value in properties.items()}
 
         bounds._set_component('inherited_properties', inherited_properties)
         

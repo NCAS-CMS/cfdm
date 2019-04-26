@@ -553,6 +553,99 @@ None
                                      self.__class__.__name__))
     #--- End: def
 
+    def has_units(self):
+        '''TODO Return the units.
+
+.. seealso:: `del_units`, `set_units`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if the units has
+        not been set. If set to an `Exception` instance then it will
+        be raised instead.
+
+:Returns:
+
+        The units.
+
+**Examples:**
+
+>>> d.set_units('metres')
+>>> d.get_units()
+'metres'
+>>> d.del_units()
+>>> d.get_units()
+ValueError: Can't get non-existent units
+>>> print(d.get_units(None))
+None
+
+        '''
+        return self._has_component('units')
+    #--- End: def
+
+    def has_calendar(self):
+        '''TODO Return the units.
+
+.. seealso:: `del_units`, `set_units`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if the units has
+        not been set. If set to an `Exception` instance then it will
+        be raised instead.
+
+:Returns:
+
+        The units.
+
+**Examples:**
+
+>>> d.set_units('metres')
+>>> d.get_units()
+'metres'
+>>> d.del_units()
+>>> d.get_units()
+ValueError: Can't get non-existent units
+>>> print(d.get_units(None))
+None
+
+        '''
+        return self._has_component('calendar')
+    #--- End: def
+
+    def has_fill_value(self):
+        '''TODO Return the units.
+
+.. seealso:: `del_units`, `set_units`
+
+:Parameters:
+
+    default: optional
+        Return the value of the *default* parameter if the units has
+        not been set. If set to an `Exception` instance then it will
+        be raised instead.
+
+:Returns:
+
+        The units.
+
+**Examples:**
+
+>>> d.set_units('metres')
+>>> d.get_units()
+'metres'
+>>> d.del_units()
+>>> d.get_units()
+ValueError: Can't get non-existent units
+>>> print(d.get_units(None))
+None
+
+        '''
+        return self._has_component('fill_value')
+    #--- End: def
+
     def set_calendar(self, calendar):
         '''Set the calendar.
 

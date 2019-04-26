@@ -122,7 +122,8 @@ of all data arrays.
                             _axis_names=_axis_names)
     #--- End: def
     
-    def get_data(self, default=ValueError()):
+    def get_data(self, default=ValueError(), _units=True,
+                 _fill_value=True):
         '''Return the data.
 
 Note that the data are returned in a `Data` object. Use the `array`
@@ -162,22 +163,32 @@ None
 None
 
         '''
-        data = super().get_data(default=None)
+        data = super().get_data(default=None, _units=_units,
+                                _fill_value=_fill_value)
 
         if data is None:
             return super().get_data(default=default)
 
-        if data.get_units(None) is None:
-            units = self.inherited_properties().get('units')
-            if units is not None:
-                data.set_units(units)
+        if _units:
+            if not data.has_units():
+                units = self.inherited_properties().get('units')
+                if units is not None:
+                    data.set_units(units)
+            #--- End: if
+            
+            if not data.has_calendar():
+                calendar = self.inherited_properties().get('calendar')
+                if calendar is not None:
+                    data.set_calendar(calendar)
         #--- End: if
-    
-        if data.get_calendar(None) is None:
-            calendar = self.inherited_properties().get('calendar')
-            if calendar is not None:
-                data.set_calendar(calendar)
+
+        if _fill_value:
+            if not data.has_fill_value():
+                _ = self.inherited_properties().get('fill_value') # TODO
+                if _ is not None:
+                    data.set_fill_value(_)
         #--- End: if
+        
 
         return data
     #--- End: def
