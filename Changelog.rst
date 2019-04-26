@@ -7,6 +7,7 @@ version 1.7.4
 * Changed behaviour of Constructs.filter_by_axis.
 * Added the '_custom' attribute to facilitate subclassing.
 * New methods: Data.has_units, Data.has_calendar, Data.has_fill_value.
+* Fixed bug in del_data method.
   
 version 1.7.3
 -------------

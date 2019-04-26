@@ -172,7 +172,7 @@ None
 None
 
         '''
-        data = self.get_data('data', None)
+        data = self.get_data(None)
         self._del_component('data', default=default)
         return data
     #--- End: def
