@@ -1743,6 +1743,30 @@ also be provided.
         construct.set_properties(properties, copy=copy)
     #--- End: def
  
+#    def set_data_units(self, data, units):
+#        '''
+#:Parameters:
+#
+#:Returns:
+#
+#    `None`
+#        '''
+#        if units is not None:
+#            data.set_units(units)
+#    #--- End: def
+# 
+#    def set_data_calendar(self, data, calendar):
+#        '''
+#:Parameters:
+#
+#:Returns:
+#
+#    `None`
+#        '''
+#        if calendar is not None:
+#            data.set_calendar(calendar)
+#    #--- End: def
+# 
 #    def set_size(self, domain_axis, size):
 #        '''
 #:Parameters:

@@ -254,24 +254,27 @@ rules, the only differences being:
         self_constructs = self.constructs
         new_constructs_data_axes = new.constructs.data_axes()
         
-        for key, construct in new.constructs.filter_by_data().items():
-            needs_slicing = False
-            dice = []
-            for axis in new_constructs_data_axes[key]:
-                if axis in data_axes:
-                    needs_slicing = True
-                    dice.append(indices[data_axes.index(axis)])
-                else:
-                    dice.append(slice(None))
-            #--- End: for
-
-            if needs_slicing:
-                new_construct = construct[tuple(dice)]
-            else:
-                new_construct = construct.copy()
-                
-            new.set_construct(new_construct, key=key, copy=False)
-        #--- End: for
+        if data_axes:
+#            for key, construct in new.constructs.filter_by_data().items():
+            for key, construct in new.constructs.filter_by_axis('or', *data_axes).items():
+                needs_slicing = False
+                dice = []
+                for axis in new_constructs_data_axes[key]:
+                    if axis in data_axes:
+                        needs_slicing = True
+                        dice.append(indices[data_axes.index(axis)])
+                    else:
+                        dice.append(slice(None))
+                #--- End: for
+    
+                if needs_slicing:
+#                    new_construct = construct[tuple(dice)]
+                    new.set_construct(construct[tuple(dice)], key=key, copy=False)
+#                else:
+#                    new_construct = construct.copy()
+#                    
+#                new.set_construct(new_construct, key=key, copy=False)
+        #--- End: if
 
         # Replace domain axes
         domain_axes = new.domain_axes

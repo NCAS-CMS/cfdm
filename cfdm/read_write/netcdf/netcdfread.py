@@ -2807,12 +2807,29 @@ variable's netCDF dimensions.
 
             bounds = self.implementation.initialise_Bounds()
             
-            properties = g['variable_attributes'][bounds_ncvar].copy()
-            properties.pop('formula_terms', None)                
-            self.implementation.set_properties(bounds, properties)
+            bounds_properties = g['variable_attributes'][bounds_ncvar].copy()
+            bounds_properties.pop('formula_terms', None)                
+            self.implementation.set_properties(bounds, bounds_properties)
 
-            bounds_data = self._create_data(bounds_ncvar, bounds)
-    
+#            if bounds_properties.get('units') is not None:
+            bounds_data = self._create_data(bounds_ncvar, bounds,
+                                            parent_ncvar=ncvar)
+#            else:
+#                bounds_data = self._create_data(ncvar, bounds)
+#                self.implementation.set_data_units(bounds_data, properties.get('units'))
+ #           
+ #           if bounds_properties.get('calendar') is None:
+ #               self.implementation.set_data_calendar(bounds_data, properties.get('calendar'))
+ #               ##
+#
+#            bounds_data = self._create_data(bounds_ncvar, bounds)
+#
+#            if bounds_properties.get('units') is None:
+#                self.implementation.set_data_units(bounds_data, properties.get('units'))
+#            
+#            if bounds_properties.get('calendar') is None:
+#                self.implementation.set_data_calendar(bounds_data, properties.get('calendar'))
+                
 #                # Make sure that the bounds dimensions are in the same
 #                # order as its parent's dimensions. It is assumed that we
 #                # have already checked that the bounds netCDF variable has
@@ -3252,7 +3269,8 @@ variable's netCDF dimensions.
     #--- End: def 
     
     def _create_data(self, ncvar, construct=None,
-                     unpacked_dtype=False, uncompress_override=None): 
+                     unpacked_dtype=False, uncompress_override=None,
+                     parent_ncvar=None): 
         '''TODO ppp
 
 :Parameters:
@@ -3280,7 +3298,14 @@ variable's netCDF dimensions.
 
         if array is None:
             return None
-                
+
+        units    = g['variable_attributes'][ncvar].get('units', None)
+        calendar = g['variable_attributes'][ncvar].get('calendar', None)
+
+        if parent_ncvar is not None and units is None:
+            units    = g['variable_attributes'][parent_ncvar].get('units', None)
+            calendar = g['variable_attributes'][parent_ncvar].get('calendar', None)
+
         compression = g['compression']
 
         dimensions = g['variable_dimensions'][ncvar]
@@ -3373,7 +3398,7 @@ variable's netCDF dimensions.
                         raise ValueError("Bad compression vibes. c.keys()={}".format(list(c.keys())))
         #--- End: if
 
-        return self._create_Data(array, ncvar=ncvar)
+        return self._create_Data(array, units=units, calendar=calendar) #, ncvar=ncvar)
     #--- End: def
 
     def _create_domain_axis(self, size, ncdim=None):
@@ -3849,17 +3874,24 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             index_variable=index_variable)
     #--- End: def
     
-    def _create_Data(self, array=None, ncvar=None, **kwargs):
-        '''
+    def _create_Data(self, array=None, units=None, calendar=None,
+                     ncvar=None, **kwargs):
+        '''TODO
+
+:Parameters:
+
+    ncvar: `str`
+        The netCDF variable from which to get units and calendar
+
         '''
         g = self.read_vars
-        
-        if ncvar is not None:
-            units    = g['variable_attributes'][ncvar].get('units', None)
-            calendar = g['variable_attributes'][ncvar].get('calendar', None)
-        else:
-            units    = None
-            calendar = None
+
+#        if ncvar is not None:
+#            units    = g['variable_attributes'][ncvar].get('units', None)
+#            calendar = g['variable_attributes'][ncvar].get('calendar', None)
+#        else:
+#            units    = None
+#            calendar = None
 
         return self.implementation.initialise_Data(array=array,
                                                    units=units,

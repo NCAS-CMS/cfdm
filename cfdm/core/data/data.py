@@ -731,6 +731,9 @@ None
 None
 
         '''
+        if value is None:
+            self.del_fill_value(None)
+
         self._set_component('fill_value', value, copy=False)
     #--- End: def
 
