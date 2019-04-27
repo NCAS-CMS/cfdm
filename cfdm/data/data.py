@@ -1496,7 +1496,7 @@ False
         '''
         pp = super()._equals_preprocess(other, verbose=verbose,
                                         ignore_type=ignore_type)
-        if pp in (True, False):
+        if pp is True or pp is False:
             return pp
         
         other = pp
@@ -1508,17 +1508,6 @@ False
                     self.__class__.__name__, self.shape, other.shape))
             return False
 
-        # Check that each instance has the same units
-        for attr in ('units', 'calendar'):
-            x = getattr(self, 'get_'+attr)(None)
-            y = getattr(other, 'get_'+attr)(None)
-            if x != y:
-                if verbose:
-                    print("{0}: Different {1}: {2!r} != {3!r}".format(
-                        self.__class__.__name__, attr, x, y))
-                return False
-        #--- End: for
-           
         # Check that each instance has the same fill value
         if (not ignore_fill_value and
             self.get_fill_value(None) != other.get_fill_value(None)):
@@ -1540,6 +1529,17 @@ False
         if not _check_values:
             return True
 
+        # Check that each instance has the same units
+        for attr in ('units', 'calendar'):
+            x = getattr(self, 'get_'+attr)(None)
+            y = getattr(other, 'get_'+attr)(None)
+            if x != y:
+                if verbose:
+                    print("{0}: Different {1}: {2!r} != {3!r}".format(
+                        self.__class__.__name__, attr, x, y))
+                return False
+        #--- End: for
+           
         if not ignore_compression:
             # --------------------------------------------------------
             # Check for equal compression types

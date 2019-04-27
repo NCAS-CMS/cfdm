@@ -292,7 +292,7 @@ False
         '''
         pp = super()._equals_preprocess(other, verbose=verbose,
                                         ignore_type=ignore_type)
-        if pp in (True, False):
+        if pp is True or pp is False:
             return pp
         
         other = pp
