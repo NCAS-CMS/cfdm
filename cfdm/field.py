@@ -740,8 +740,8 @@ False
                             rtol=rtol, atol=atol, verbose=verbose,
                             ignore_data_type=ignore_data_type,
                             ignore_fill_value=ignore_fill_value,
-                            ignore_compression=ignore_compression):
-#                            _ignore_type=ignore_type):
+                            ignore_compression=ignore_compression,
+                            _ignore_type=False):
             if verbose:
                 print("{0}: Different metadata constructs".format(
                     self.__class__.__name__))

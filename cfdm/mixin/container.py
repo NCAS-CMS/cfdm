@@ -75,7 +75,8 @@ casts them as numpy arrays and carried aout numericlly tolerant equality checks.
             # Check that the kwargs are OK
             try:
                 # Python 3
-                parameters = inspect.signature(eq).bind_partial(**kwargs)
+                pass
+#                parameters = inspect.signature(eq).bind_partial(**kwargs)
             except AttributeError:
                 # Python 2
                 pass
@@ -89,7 +90,8 @@ casts them as numpy arrays and carried aout numericlly tolerant equality checks.
             # Check that the kwargs are OK
             try:
                 # Python 3
-                parameters = inspect.signature(eq).bind_partial(**kwargs)
+                pass
+#                parameters = inspect.signature(eq).bind_partial(**kwargs)
             except AttributeError:
                 # Python 2
                 pass
