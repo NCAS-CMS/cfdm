@@ -8,6 +8,7 @@ version 1.7.4
 * Added the '_custom' attribute to facilitate subclassing.
 * New methods: Data.has_units, Data.has_calendar, Data.has_fill_value.
 * Fixed bug in del_data method.
+* Fixed bug with in-place operations.
   
 version 1.7.3
 -------------

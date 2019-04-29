@@ -948,7 +948,7 @@ None
         return bounds.get_data(default=default)
     #--- End: def
 
-    def insert_dimension(self, position):
+    def insert_dimension(self, position, inplace=False):
         '''Expand the shape of the data array.
 
 Inserts a new size 1 axis into the data array. A corresponding axis is
@@ -972,9 +972,13 @@ also inserted into the bounds data array, if present.
         *Parameter example:*
           ``position=-1``
 
+    inplace: `bool`, optional
+        If True then do the operation in-place and return `None`.
+
 :Returns:
 
-        The new construct with expanded data axes.
+        The new construct with expanded data axes. If the operation
+        was in-place then `None` is returned.
 
 **Examples:**
 
@@ -990,25 +994,33 @@ also inserted into the bounds data array, if present.
 >>> g.bounds.data.shape
 (19, 73, 1, 96, 4)
 
-        '''
+        '''    
+        if inplace:
+            c = self
+        else:
+            c = self.copy()
+       
         position = self._parse_axes([position])[0]
         
-        c = super().insert_dimension(position)
+        super(PropertiesDataBounds, c).insert_dimension(position, inplace=True)
         
         # ------------------------------------------------------------
         # Expand the dims of the bounds
         # ------------------------------------------------------------
         bounds = c.get_bounds(None)
         if bounds is not None:
-            c.set_bounds(bounds.insert_dimension(position), copy=False)
+            bounds.insert_dimension(position, inplace=True)
 
         # ------------------------------------------------------------
         # Expand the dims of the interior_ring
         # ------------------------------------------------------------
         interior_ring = c.get_interior_ring(None)
         if interior_ring is not None:
-            c.set_interior_ring(interior_ring.insert_dimension(position), copy=False)
+            interior_ring.insert_dimension(position, inplace=True)
 
+        if inplace:
+            c = None
+            
         return c
     #--- End: def
 
@@ -1075,7 +1087,7 @@ TODO
         self._set_component('part_node_count', part_node_count, copy=False)
     #--- End: def
 
-    def squeeze(self, axes=None):
+    def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
 By default all size one axes are removed, but particular size one axes
@@ -1103,9 +1115,13 @@ the bounds data array, if present.
         *Parameter example:*
           ``axes=[2, 0]``
 
+    inplace: `bool`, optional
+        If True then do the operation in-place and return `None`.
+
 :Returns:
 
-        The new construct with removed data axes.
+        The new construct with removed data axes. If the operation was
+        in-place then `None` is returned.
 
 **Examples:**
 
@@ -1123,29 +1139,37 @@ the bounds data array, if present.
 >>> g.data.shape
 (73, 96, 4)
 
-        '''
+        '''     
+        if inplace:
+            c = self
+        else:
+            c = self.copy()
+       
         axes = self._parse_axes(axes)
 
-        c = super().squeeze(axes)
+        super(PropertiesDataBounds, c).squeeze(axes, inplace=True)
 
         # ------------------------------------------------------------
         # Squeeze the bounds
         # ------------------------------------------------------------
         bounds = c.get_bounds(None)
         if bounds is not None:
-            c.set_bounds(bounds.squeeze(axes), copy=False)
+            bounds.squeeze(axes, inplace=True)
 
         # ------------------------------------------------------------
         # Squeeze the interior_ring
         # ------------------------------------------------------------
         interior_ring = c.get_interior_ring(None)
         if interior_ring is not None:
-            c.set_interior_ring(interior_ring.squeeze(axes), copy=False)
+            interior_ring.squeeze(axes, inplace=True)
 
+        if inplace:
+            c = None
+                
         return c
     #--- End: def
     
-    def transpose(self, axes=None):
+    def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
 Corresponding axes of the bounds data array, if present, are also
@@ -1173,9 +1197,13 @@ Boundaries" of the CF conventions for details.
         *Parameter example:*
           ``axes=[-1, 0, 1]``
 
+    inplace: `bool`, optional
+        If True then do the operation in-place and return `None`.
+
 :Returns:
 
-         The new construct with permuted data axes.
+        The new construct with permuted data axes. If the operation
+        was in-place then `None` is returned.
 
 **Examples:**
 
@@ -1192,6 +1220,11 @@ Boundaries" of the CF conventions for details.
 (73, 19, 96, 4)
 
         '''
+        if inplace:
+            c = self
+        else:
+            c = self.copy()
+       
         ndim = self.data.ndim 
         if axes is None: 
             axes = list(range(ndim-1, -1, -1)) 
@@ -1201,27 +1234,28 @@ Boundaries" of the CF conventions for details.
         # ------------------------------------------------------------ 
         # Transpose the coordinates 
         # ------------------------------------------------------------         
-        c = super().transpose(axes) 
+        super(PropertiesDataBounds, c).transpose(axes, inplace=True)
  
         # ------------------------------------------------------------ 
         # Transpose the bounds 
         # ------------------------------------------------------------         
+        bounds = c.get_bounds(None) 
         data = c.get_bounds_data(None) 
-        if data is not None: 
+        if bounds is not None: 
             b_axes = axes[:] 
             b_axes.extend(list(range(ndim, data.ndim))) 
  
-            bounds = c.get_bounds() 
-            bounds = bounds.transpose(b_axes) 
-            c.set_bounds(bounds, copy=False) 
- 
-            if (ndim == 2 and data.ndim == 3 and data.shape[-1] == 4 and 
-                b_axes[0:2] == [1, 0]): 
-                # Swap elements 1 and 3 of the trailing dimension so 
-                # that the values are still contiguous (if they ever 
-                # were). See section 7.1 of the CF conventions. 
-                data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)] 
-                bounds.set_data(data, copy=False) 
+            bounds.transpose(b_axes, inplace=True) 
+
+            data = bounds.get_data(None)
+            if data is not None:
+                if (ndim == 2 and data.ndim == 3 and data.shape[-1] == 4 and 
+                    b_axes[0:2] == [1, 0]): 
+                    # Swap elements 1 and 3 of the trailing dimension so 
+                    # that the values are still contiguous (if they ever 
+                    # were). See section 7.1 of the CF conventions. 
+                    data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)] 
+                    bounds.set_data(data, copy=False) 
         #--- End: if 
  
         # ------------------------------------------------------------ 
@@ -1229,8 +1263,11 @@ Boundaries" of the CF conventions for details.
         # ------------------------------------------------------------ 
         interior_ring = c.get_interior_ring(None) 
         if interior_ring is not None: 
-            c.set_interior_ring(interior_ring.transpose(axes + [-1]), copy=False) 
- 
+            interior_ring.transpose(axes + [-1], inplace=True)
+
+        if inplace:
+            c = None
+            
         return c
     #--- End: def
     

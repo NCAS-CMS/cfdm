@@ -828,13 +828,14 @@ construct, into the data array.
             data_axes.insert(position, axis)
 
         # Expand the dims in the field's data array
-        f.data.insert_dimension(position, inplace=True)
+#        f.data.insert_dimension(position, inplace=True)
+        super(Field, f).insert_dimension(position, inplace=True)
 
         if data_axes is not None:
             f.set_data_axes(data_axes)
 
         if inplace:
-            return
+            f = None
 
         return f
     #--- End: def
@@ -1132,13 +1133,14 @@ may be selected for removal.
                              for i in range(f.data.ndim) if i not in iaxes]
             
         # Squeeze the field's data array
-        f.data.squeeze(iaxes, inplace=True)
+#        f.data.squeeze(iaxes, inplace=True)
+        super(Field, f).squeeze(iaxes, inplace=True)
 
         if data_axes is not None:
             f.set_data_axes(new_data_axes)
 
         if inplace:
-            return
+            f = None
 
         return f
     #--- End: def
@@ -1200,7 +1202,8 @@ may be selected for removal.
             iaxes = tuple(range(f.data.ndim-1, -1, -1))
         
         # Transpose the field's data array
-        f.data.transpose(iaxes, inplace=True)
+#        f.data.transpose(iaxes, inplace=True)
+        super(Field, f).transpose(iaxes, inplace=True)
 
         data_axes = f.get_data_axes(default=None)
         if data_axes is not None:
@@ -1208,7 +1211,7 @@ may be selected for removal.
             f.set_data_axes(new_data_axes)
 
         if inplace:
-            return
+            f = None
         
         return f
     #--- End: def

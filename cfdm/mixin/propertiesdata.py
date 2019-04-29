@@ -347,7 +347,7 @@ False
         return True
     #--- End: def
 
-    def insert_dimension(self, position=0):
+    def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
 
 Inserts a new size 1 axis into the data array.
@@ -370,9 +370,13 @@ Inserts a new size 1 axis into the data array.
         *Parameter example:*
           ``position=-1``
 
+    inplace: `bool`, optional
+        If True then do the operation in-place and return `None`.
+
 :Returns:
 
-        A new instance with expanded data axes.
+        A new instance with expanded data axes. If the operation was
+        in-place then `None` is returned.
 
 **Examples:**
 
@@ -384,17 +388,22 @@ Inserts a new size 1 axis into the data array.
 (19, 73, 1, 96)
 
         '''       
-        v = self.copy()
-
+        if inplace:
+            v = self
+        else:
+            v = self.copy()
+       
         data = v.get_data(None)
         if data is not None:
-            v.set_data(data.insert_dimension(position))
-        
+            data.insert_dimension(position, inplace=True)
+
+        if inplace:
+            v = None
+            
         return v
     #--- End: def
     
-
-    def squeeze(self, axes=None):
+    def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
 By default all size one axes are removed, but particular size one axes
@@ -421,9 +430,13 @@ may be selected for removal.
         *Parameter example:*
           ``axes=[2, 0]``
 
+    inplace: `bool`, optional
+        If True then do the operation in-place and return `None`.
+
 :Returns:
 
-        A new instance with removed data axes.
+        A new instance with removed data axes. If the operation was
+        in-place then `None` is returned.
 
 **Examples:**
 
@@ -437,16 +450,22 @@ may be selected for removal.
 (73, 96)
 
         '''
-        v = self.copy()
+        if inplace:
+            v = self
+        else:
+            v = self.copy()
 
         data = v.get_data(None)
         if data is not None:
-            v.set_data(data.squeeze(axes))
+            data.squeeze(axes, inplace=True)
+
+        if inplace:
+            v = None
 
         return v
     #--- End: def
 
-    def transpose(self, axes=None):
+    def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
 .. versionadded:: 1.7.0
@@ -467,9 +486,13 @@ may be selected for removal.
         *Parameter example:*
           ``axes=[-1, 0, 1]``
 
+    inplace: `bool`, optional
+        If True then do the operation in-place and return `None`.
+
 :Returns:
 
-         A new instance with permuted data axes.
+        A new instance with permuted data axes. If the operation was
+        in-place then `None` is returned.
 
 **Examples:**
 
@@ -481,12 +504,18 @@ may be selected for removal.
 (73, 19, 96)
 
         '''       
-        v = self.copy()
-
+        if inplace:
+            v = self
+        else:
+            v = self.copy()
+ 
         data = v.get_data(None)
         if data is not None:
-            v.set_data(data.transpose(axes))
+            data.transpose(axes, inplace=True)
         
+        if inplace:
+            v = None
+
         return v
     #--- End: def
     
