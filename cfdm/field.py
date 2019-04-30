@@ -1145,7 +1145,7 @@ may be selected for removal.
         return f
     #--- End: def
 
-    def transpose(self, axes=None, inplace=False):
+    def transpose(self, axes=None, constructs=False, inplace=False):
         '''Permute the axes of the data array.
 
 .. versionadded:: 1.7.0
@@ -1165,6 +1165,11 @@ may be selected for removal.
 
         *Parameter example:*
           ``axes=[-1, 0, 1]``
+
+    constructs: `bool`
+        If True then tranpose the metadata constructs to have the same
+        relative domain axis order as the data of tranposed field
+        constuct. By default, metadata constructs are not changed.
 
     inplace: `bool`, optional
         If True then do the operation in-place and return `None`.
@@ -1198,17 +1203,47 @@ may be selected for removal.
         except ValueError as error:
             raise ValueError("Can't transpose data: {}".format(error))
 
+        ndim = f.data.ndim        
         if iaxes is None:
-            iaxes = tuple(range(f.data.ndim-1, -1, -1))
-        
-        # Transpose the field's data array
-#        f.data.transpose(iaxes, inplace=True)
-        super(Field, f).transpose(iaxes, inplace=True)
+            iaxes = tuple(range(ndim-1, -1, -1))
 
         data_axes = f.get_data_axes(default=None)
+
+        # Transpose the field's data array
+        super(Field, f).transpose(iaxes, inplace=True)
+
         if data_axes is not None:
             new_data_axes = [data_axes[i] for i in iaxes]
             f.set_data_axes(new_data_axes)
+
+        if constructs:
+            for key, construct in f.constructs.filter_by_data().items():
+                data = construct.get_data(None)
+                if data is None:
+                    continue
+                
+                if data.ndim < 2:
+                    # No need to transpose 1-d constructs
+                    continue
+                    
+                construct_axes = f.get_data_axes(key=key)
+
+                new_construct_axes = [axis for axis in new_data_axes
+                                      if axis in construct_axes]
+
+                for i, axis in enumerate(construct_axes):
+                    if axis not in new_construct_axes:
+                        new_construct_axes.insert(i, axis)
+                #--- End: for
+                
+                iaxes = [construct_axes.index(axis) for axis in new_construct_axes]
+    
+                # Transpose the construct
+                construct.transpose(iaxes, inplace=True)
+    
+                f.set_data_axes(axes=new_construct_axes, key=key)
+            #--- End: for
+        #--- End: if
 
         if inplace:
             f = None

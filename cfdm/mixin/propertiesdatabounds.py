@@ -995,14 +995,11 @@ also inserted into the bounds data array, if present.
 (19, 73, 1, 96, 4)
 
         '''    
-        if inplace:
-            c = self
-        else:
-            c = self.copy()
-       
         position = self._parse_axes([position])[0]
         
-        super(PropertiesDataBounds, c).insert_dimension(position, inplace=True)
+        c = super().insert_dimension(position, inplace=inplace)
+        if inplace:
+            c = self
         
         # ------------------------------------------------------------
         # Expand the dims of the bounds
@@ -1140,15 +1137,12 @@ the bounds data array, if present.
 (73, 96, 4)
 
         '''     
-        if inplace:
-            c = self
-        else:
-            c = self.copy()
-       
         axes = self._parse_axes(axes)
 
-        super(PropertiesDataBounds, c).squeeze(axes, inplace=True)
-
+        c = super().squeeze(axes, inplace=inplace)
+        if inplace:
+            c = self
+        
         # ------------------------------------------------------------
         # Squeeze the bounds
         # ------------------------------------------------------------
@@ -1220,11 +1214,6 @@ Boundaries" of the CF conventions for details.
 (73, 19, 96, 4)
 
         '''
-        if inplace:
-            c = self
-        else:
-            c = self.copy()
-       
         ndim = self.data.ndim 
         if axes is None: 
             axes = list(range(ndim-1, -1, -1)) 
@@ -1234,7 +1223,9 @@ Boundaries" of the CF conventions for details.
         # ------------------------------------------------------------ 
         # Transpose the coordinates 
         # ------------------------------------------------------------         
-        super(PropertiesDataBounds, c).transpose(axes, inplace=True)
+        c = super().transpose(axes, inplace=inplace)
+        if inplace:
+            c = self
  
         # ------------------------------------------------------------ 
         # Transpose the bounds 
