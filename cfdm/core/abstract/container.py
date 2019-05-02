@@ -57,25 +57,25 @@ x.__deepcopy__() <==> copy.deepcopy(x)
     # Private methods
     # ----------------------------------------------------------------
     def _default(self, default, message=None):
-        '''<TODO>
+        '''TODO
 
 .. versionadded:: 1.7.0
 
 :Parameters:
 
     default: 
-        <TODO>
+        TODO
         
     message: `str`, optional 
-        <TODO>
+        TODO
         
 :Returns:
 
-    <TODO>
+    TODO
 
 **Examples:**
 
-<TODO>
+TODO
 
         '''
         if isinstance(default, Exception):
@@ -131,7 +131,7 @@ False
 
     @property
     def _custom(self):
-        '''TODO
+        '''Storage for additional attributes.
 
 .. versionadded:: 1.7.4
 
@@ -146,7 +146,7 @@ False
 {'feature': ['f']}
 >>> g._custom
 {'feature': ['g']}
->>> del g._custom
+>>> del g._custom['feature']
 >>> f._custom
 {'feature': ['f']}
 >>> g._custom

@@ -5,11 +5,14 @@ version 1.7.4
 **Not yet released**
 
 * Changed behaviour of Constructs.filter_by_axis.
-* Added the '_custom' attribute to facilitate subclassing.
 * New methods: Data.has_units, Data.has_calendar, Data.has_fill_value.
 * New keyword 'constructs' to Field.transpose.
+* Keyword 'axes' to Field.set_data is now optional.
 * Fixed bug in del_data method.
 * Fixed bug with in-place operations.
+* Added _shape keyword to Field.set_data_axes to allow the data shape
+  to be checked prior to insertion.
+* Added the '_custom' attribute to facilitate subclassing.
   
 version 1.7.3
 -------------
@@ -19,8 +22,6 @@ version 1.7.3
 
 * New method: Constructs.filter_by_size
 * New method: Data.uncompress
-* Fixed bug in CoordinateReference.clear_coordinates
-* Fixed bug in Field.convert (which omitted domain ancillaries in the result)
 * Changed the default behaviours of the Construct.filter_by_axis,
   Construct.filter_by_size, Construct.filter_by_naxes,
   Construct.filter_by_property, Construct.filter_by_ncvar,
@@ -33,6 +34,8 @@ version 1.7.3
 * Added _units and _fill_value arguments to get_data method.
 * Moved contents of cfdm/read_write/constants.py to NetCDFRead and
   NetCDFWrite.
+* Fixed bug in CoordinateReference.clear_coordinates
+* Fixed bug in Field.convert (which omitted domain ancillaries in the result)
 * Added **kwargs parameter to CFDMImplementation.initialise_Data, to
   facilitate subclassing.
 * Added NetCDFRead._customize_read_vars to facilitate sublcassing.

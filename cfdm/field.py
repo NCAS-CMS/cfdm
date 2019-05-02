@@ -238,7 +238,7 @@ rules, the only differences being:
         
         new = self.copy() #data=False)
 
-        data_axes = new.get_data_axes()
+        data_axes = self.get_data_axes()
         
         # Open any files that contained the original data (this not
         # necessary, is an optimisation)
@@ -246,8 +246,16 @@ rules, the only differences being:
         # ------------------------------------------------------------
         # Subspace the field's data
         # ------------------------------------------------------------
-        new.set_data(data[tuple(indices)], axes=None) #, data_axes)
+#        new.set_data(data[tuple(indices)], axes=None) #, data_axes)
+        new_data = data[tuple(indices)]
 
+        # Replace domain axes
+        domain_axes = new.domain_axes
+        for key, size in zip(data_axes, new_data.shape):
+            domain_axis = domain_axes[key]
+            domain_axis.set_size(size)
+            new.set_construct(domain_axis, key=key)
+        
         # ------------------------------------------------------------
         # Subspace other constructs that contain arrays
         # ------------------------------------------------------------
@@ -276,15 +284,9 @@ rules, the only differences being:
 #                new.set_construct(new_construct, key=key, copy=False)
         #--- End: if
 
-        # Replace domain axes
-        domain_axes = new.domain_axes
-        for key, size in zip(data_axes, new.get_data().shape):
-            domain_axis = domain_axes[key].copy()
-            domain_axis.set_size(size)
-            new.set_construct(domain_axis, key)
-
-        new.set_data_axes(axes=data_axes)
-
+#        new.set_data_axes(axes=data_axes)
+        new.set_data(new_data, copy=False)
+        
         return new
     #--- End: def
 

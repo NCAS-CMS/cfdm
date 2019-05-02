@@ -404,15 +404,13 @@ False
         '''
         if key in self.domain_axes and key in self.get_data_axes(default=()):
             raise ValueError(
-"Can't remove domain axis {!r} that is spanned by the data of the field construct".format(
-    key))
+                "Can't remove domain axis {!r} that is spanned by the data of the field construct".format(
+                    key))
 
         return super().del_construct(key, default=default)
-        
-#        return self.constructs._del_construct(key, default=default)
     #--- End: def
 
-    def set_data(self, data, axes, copy=True):
+    def set_data(self, data, axes=None, copy=True):
         '''Set the data of the field construct.
 
 The units, calendar and fill value properties of the data object are
@@ -462,15 +460,20 @@ construct:
 >>> d
 <Data(10, 9): [[23.6, ..., 76.8]]>
 >>> f.set_data(d, axes=['domainaxis0', 'domainaxis1'])
+>>> f.set_data(d)
 
         '''
-        super().set_data(data, copy=copy)
+        if axes is None:
+            existing_axes = self.get_data_axes(default=None)
+            if existing_axes is not None:                
+                self.set_data_axes(axes=existing_axes, _shape=data.shape)
+        else:
+            self.set_data_axes(axes=axes, _shape=data.shape)
 
-        if axes is not None:
-            self.set_data_axes(axes=axes)
+        super().set_data(data, copy=copy)
     #--- End: def
 
-    def set_data_axes(self, axes, key=None):
+    def set_data_axes(self, axes, key=None, _shape=None):
         '''Set the domain axis constructs spanned by the data of the field or
 of a metadata construct.
 
@@ -518,26 +521,34 @@ construct:
 
         '''
         if isinstance(axes, basestring):
-            axes = (axes,)
+            axes = (axes,)            
             
         if key is not None:
             return super().set_data_axes(axes=axes, key=key)
-        
-        domain_axes = self.constructs.filter_by_type('domain_axis')
 
-        axes_shape = []
-        for axis in axes:
-            if axis not in domain_axes:
+        if _shape is None:
+            data = self.get_data(None)
+            if data is not None:
+                _shape = data.shape
+        #--- End: if
+            
+        if _shape is not None:
+            domain_axes = self.constructs.filter_by_type('domain_axis')
+            axes_shape = []
+            for axis in axes:
+                if axis not in domain_axes:
+                    raise ValueError(
+                        "Can't set field construct data axes: Domain axis {!r} doesn't exist".format(
+                            axis))
+    
+                axes_shape.append(domain_axes[axis].get_size())
+    
+            if _shape != tuple(axes_shape):
                 raise ValueError(
-"Can't set field construct data axes: Domain axis {!r} doesn't exist".format(axis))
-
-            axes_shape.append(domain_axes[axis].get_size())
-
-        if (self.has_data() and self.data.shape != tuple(axes_shape)):
-            raise ValueError(
-"Can't set field construct data axes: Data array shape of {!r} does not match the shape of the given domain axes {}: {}".format(
-    self.data.shape, tuple(axes), tuple(axes_shape)))
-
+                    "Can't set field construct data axes: Data array shape of {!r} does not match the shape of the given domain axes {}: {}".format(
+                        _shape, tuple(axes), tuple(axes_shape)))
+        #--- End: if
+        
         axes = tuple(axes)
         self._set_component('data_axes', axes, copy=False)
 
