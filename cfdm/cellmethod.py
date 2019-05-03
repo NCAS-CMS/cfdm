@@ -372,9 +372,8 @@ False
         # ------------------------------------------------------------
         if self.get_method(None) != other.get_method(None):
             if verbose:
-                print(
-"{0}: Different methods: {1!r} != {2!r}".format(
-    cm0.__class__.__name__, self.get_method(None), other.get_method(None)))
+                print("{0}: Different methods: {1!r} != {2!r}".format(
+                    cm0.__class__.__name__, self.get_method(None), other.get_method(None)))
             return False
 
         # ------------------------------------------------------------
@@ -387,7 +386,6 @@ False
         for prop in tuple(ignore_qualifiers) + ('interval',):
             self_qualifiers.pop(prop, None)
             other_qualifiers.pop(prop, None)
-        #--- End: if
                 
         if set(self_qualifiers) != set(other_qualifiers):
             if verbose:

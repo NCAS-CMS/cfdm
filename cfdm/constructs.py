@@ -176,14 +176,13 @@ instances are equal.
         '''
 
         '''
-        cell_methods0 = self.filter_by_type('cell_method') #.ordered()
-        cell_methods1 = other.filter_by_type('cell_method') #.ordered()
+        cell_methods0 = self.filter_by_type('cell_method')
+        cell_methods1 = other.filter_by_type('cell_method')
 
         if len(cell_methods0) != len(cell_methods1):
             if verbose:
-                print(
-"Verbose: Different numbers of cell methods: {0!r} != {1!r}".format(
-    cell_methods0, cell_methods1))
+                print("Verbose: Different numbers of cell methods: {0!r} != {1!r}".format(
+                    cell_methods0, cell_methods1))
             return False
 
         if not len(cell_methods0):
@@ -202,9 +201,8 @@ instances are equal.
             axes1 = list(cm1.get_axes(()))
             if len(axes0) != len(axes1):
                 if verbose:
-                    print(
-"{0}: Different cell methods (mismatched axes):\n  {1}\n  {2}".format(
-    cm0.__class__.__name__, ccell_methods0.ordered(), cell_methods1.ordered()))
+                    print("{0}: Different cell methods (mismatched axes):\n  {1}\n  {2}".format(
+                        cm0.__class__.__name__, cell_methods0.ordered(), cell_methods1.ordered()))
                 return False
     
             indices = []
@@ -223,10 +221,8 @@ instances are equal.
                         # Only one of axis0 and axis1 is a domain axis
                         # construct
                         if verbose:
-                            print(
-"{0}: Different cell methods (mismatched axes):\n  {1}\n  {2}".format(
-    cm0.__class__.__name__, cell_methods0, cell_methods1))
-
+                            print("{0}: Different cell methods (mismatched axes):\n  {1}\n  {2}".format(
+                                cm0.__class__.__name__, cell_methods0, cell_methods1))
                         return False
                     elif axis0 == axis1:
                         # axes0 and axis 1 are identical standard
@@ -236,9 +232,8 @@ instances are equal.
                     elif axis1 is None:
                         # axis1 
                         if verbose:
-                            print(
-"{0}: Different cell methods (mismatched axes):\n  {1}\n  {2}".format(
-    cm0.__class__.__name__, cell_methods0, cell_methods1))
+                            print("{0}: Different cell methods (mismatched axes):\n  {1}\n  {2}".format(
+                                cm0.__class__.__name__, cell_methods0, cell_methods1))
                         return False
             #--- End: for
 
@@ -255,9 +250,8 @@ instances are equal.
                               verbose=verbose,
                               ignore_type=ignore_type):
                 if verbose:
-                    print(
-"Verbose: Different cell methods: {0!r}, {1!r}".format(
-    cell_methods0, cell_methods1))
+                    print("Verbose: Different cell methods: {0!r}, {1!r}".format(
+                        cell_methods0, cell_methods1))
                 return False                
         #--- End: for
 
