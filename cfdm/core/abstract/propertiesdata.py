@@ -312,7 +312,7 @@ removed prior to insertion.
 
 **Examples:**
 
->>> d = cfdm.Data(range(10))
+>>> d = Data(range(10))
 >>> f.set_data(d)
 >>> f.has_data()
 True
