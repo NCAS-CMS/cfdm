@@ -254,6 +254,29 @@ None
         return data        
     #--- End: def
 
+    def has_bounds(self):
+        '''Whether or not there are cell bounds.
+
+This is always False.
+        
+.. versionadded:: 1.7.4
+
+.. seealso:: `has_data`
+
+:Returns:
+
+    `bool`
+        Always False. 
+
+**Examples:**
+
+>>> f.has_bounds()
+False
+
+        '''
+        return False
+    #--- End: def
+
     def has_data(self):
         '''Whether a data has been set.
         

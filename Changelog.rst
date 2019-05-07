@@ -8,6 +8,8 @@ version 1.7.4
 * New methods: Data.has_units, Data.has_calendar, Data.has_fill_value.
 * New keyword 'constructs' to Field.transpose.
 * Keyword 'axes' to Field.set_data is now optional.
+* Added the 'has_bounds' method to constructs that have data but can't
+  have bounds.
 * Fixed bug in del_data method.
 * Fixed bug with in-place operations.
 * Added _shape keyword to Field.set_data_axes to allow the data shape
