@@ -12,6 +12,7 @@ version 1.7.4
   have bounds.
 * Fixed bug in del_data method.
 * Fixed bug with in-place operations.
+* Fixed bug with position in some insert_dimension methods.
 * Added _shape keyword to Field.set_data_axes to allow the data shape
   to be checked prior to insertion.
 * Added the '_custom' attribute to facilitate subclassing.

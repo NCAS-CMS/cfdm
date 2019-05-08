@@ -531,8 +531,6 @@ False
                               ignore_properties=ignore_properties,
                               ignore_type=ignore_type,
                               ignore_compression=ignore_compression):
-            if verbose:
-                print("???????/")
             return False
     
         # ------------------------------------------------------------
@@ -551,7 +549,7 @@ False
         self_has_bounds = self.has_bounds()
         if self_has_bounds != other.has_bounds():
             if verbose:
-                print("{0}: Different {1}".format(self.__class__.__name__, attr))
+                print("{0}: Different bounds".format(self.__class__.__name__))
             return False
                 
         if self_has_bounds:            
@@ -563,7 +561,7 @@ False
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
                 if verbose:
-                    print("{0}: Different {1}".format(self.__class__.__name__, attr))
+                    print("{0}: Different bounds".format(self.__class__.__name__))
                 return False
         #--- End: if
 
@@ -573,7 +571,7 @@ False
         self_has_interior_ring = self.has_interior_ring()
         if self_has_interior_ring != other.has_interior_ring():
             if verbose:
-                print("{0}: Different {1}".format(self.__class__.__name__, attr))
+                print("{0}: Different interior ring".format(self.__class__.__name__))
             return False
                 
         if self_has_interior_ring:            
@@ -585,7 +583,7 @@ False
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
                 if verbose:
-                    print("{0}: Different {1}".format(self.__class__.__name__, attr))
+                    print("{0}: Different interior ring".format(self.__class__.__name__))
                 return False
         #--- End: if
 
@@ -995,8 +993,16 @@ also inserted into the bounds data array, if present.
 (19, 73, 1, 96, 4)
 
         '''    
-        position = self._parse_axes([position])[0]
-        
+        # Parse position
+        ndim = self.data.ndim 
+        if -ndim-1 <= position < 0:
+            position += ndim + 1
+        elif not 0 <= position <= ndim:
+            raise ValueError(
+                "Can't insert dimension: Invalid position: {!r}".format(position))
+
+#        position = self._parse_axes([position])[0]
+
         c = super().insert_dimension(position, inplace=inplace)
         if inplace:
             c = self
@@ -1235,7 +1241,6 @@ Boundaries" of the CF conventions for details.
         if bounds is not None: 
             b_axes = axes[:] 
             b_axes.extend(list(range(ndim, data.ndim))) 
- 
             bounds.transpose(b_axes, inplace=True) 
 
             data = bounds.get_data(None)

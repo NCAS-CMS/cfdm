@@ -259,11 +259,11 @@ instances are equal.
     #--- End: def
 
     def _equals_coordinate_reference(self, other, rtol=None,
-                                     atol=None, verbose=False,
+                                     atol=None, verbose=0,
                                      ignore_type=False,
                                      axis1_to_axis0=None,
                                      key1_to_key0=None):
-        '''
+        '''TODO
         '''
         refs0 = dict(self.filter_by_type('coordinate_reference'))
         refs1 = dict(other.filter_by_type('coordinate_reference'))
@@ -273,14 +273,21 @@ instances are equal.
                 print("{0}: Different numbers of {1} constructs: {2} != {3}".format(
                     self.__class__.__name__, 'coordinate reference',
                     len(refs0), len(refs1)))
-                return False
 
+            return False
+        
         if refs0:
+            construct_verbose = (verbose > 1)
+        
             for ref0 in refs0.values():
                 found_match = False
                 for key1, ref1 in tuple(refs1.items()):
+                    if construct_verbose:
+                        print ("{0}: Comparing {1!r}, {2!r}".format(
+                            self.__class__.__name__, item0, item1), end=": ")                                
+ 
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
-                                       verbose=False,
+                                       verbose=construct_verbose,
                                        ignore_type=ignore_type):
                         continue
 
@@ -291,6 +298,9 @@ instances are equal.
                         coordinates1.add(key1_to_key0.get(value, value))
                         
                     if coordinates0 != coordinates1:
+                        if construct_verbose:
+                            print("Coordinates don't match")
+                            
                         continue
     
                     # Domain ancillary-valued coordinate conversion terms
@@ -300,8 +310,14 @@ instances are equal.
                               for term, key in ref1.coordinate_conversion.domain_ancillaries().items()}
 
                     if terms0 != terms1:
+                        if construct_verbose:
+                            print("Coordinate conversion domain ancillaries don't match")
+ 
                         continue
-    
+
+                    if construct_verbose:
+                        print("OK")
+                        
                     found_match = True
                     del refs1[key1]                                       
                     break
@@ -544,9 +560,11 @@ True
 >>> x.equals('something else')
 False
 
-        '''
+        '''        
         if self is other:
             return True
+
+        construct_verbose = (verbose > 1)
         
         # Check that each instance is the same type
         if  not isinstance(other, self.__class__):
@@ -613,13 +631,19 @@ False
                     for key0, item0 in role_constructs0.items():
                         matched_construct = False
                         for key1, item1 in tuple(role_constructs1.items()):
+                            if construct_verbose:
+                                print ("{}: Comparing {!r}, {!r}".format(
+                                    self.__class__.__name__, item0, item1), end=": ")
+                                
                             if item0.equals(item1,
                                             rtol=rtol, atol=atol,
-                                            verbose=False,
+                                            verbose=construct_verbose,
                                             ignore_data_type=ignore_data_type,
                                             ignore_fill_value=ignore_fill_value,
                                             ignore_compression=ignore_compression,
                                             ignore_type=_ignore_type):
+                                if construct_verbose:
+                                    print("OK")
                                 del role_constructs1[key1]
                                 key1_to_key0[key1] = key0
                                 matched_construct = True

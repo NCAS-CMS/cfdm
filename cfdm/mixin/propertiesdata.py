@@ -107,6 +107,9 @@ x.__str__() <==> str(x)
         if axes is None:
             return axes
 
+        if isinstance(axes, int):
+            axes = (axes,)
+        
         ndim = self.data.ndim
         
         if isinstance(axes, (int, int)):
@@ -317,10 +320,7 @@ False
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
                 ignore_properties=ignore_properties,
-                ignore_type=ignore_type):
-            if verbose:
-                print(
-"{0}: Different properties".format(self.__class__.__name__))
+                ignore_type=ignore_type): 
             return False
 
         # ------------------------------------------------------------
@@ -398,8 +398,7 @@ Inserts a new size 1 axis into the data array.
             data.insert_dimension(position, inplace=True)
 
         if inplace:
-            v = None
-            
+            v = None            
         return v
     #--- End: def
     

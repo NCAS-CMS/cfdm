@@ -174,7 +174,7 @@ casts them as numpy arrays and carried aout numericlly tolerant equality checks.
         elif not isinstance(other, self.__class__):
             if verbose:
                 print("{0}: Incompatible type: {1}".format(
-		    self.__class__.__name__, other.__class__.__name__))
+		    self.__class__.__name__, type(other)))
             return False
 
         return other
