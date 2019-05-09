@@ -10,7 +10,7 @@ from . import Domain
 class Field(mixin.NetCDFVariable,
             mixin.NetCDFGeometry,
             mixin.NetCDFGlobalAttributes,
-            mixin.NetCDFUnlimitedDimensions,
+#            mixin.NetCDFUnlimitedDimensions,
             mixin.ConstructAccess,
             mixin.PropertiesData,
             core.Field):
@@ -286,7 +286,7 @@ rules, the only differences being:
 
 #        new.set_data_axes(axes=data_axes)
         new.set_data(new_data, copy=False)
-        
+       
         return new
     #--- End: def
 

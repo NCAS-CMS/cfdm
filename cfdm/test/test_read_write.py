@@ -34,7 +34,7 @@ class read_writeTest(unittest.TestCase):
     test_only = []
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_write_HDF_chunks']
-    test_only = ['test_read_write_unlimited']
+#    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_read_field']
 #    test_only = ['test_write_datatype']
     
@@ -140,11 +140,24 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        for fmt in ('NETCDF4', 'NETCDF3_CLASSIC'):
+            f = cfdm.read(self.filename)[0]
+            
+            f.domain_axes['domainaxis0'].nc_set_unlimited(True)
+            cfdm.write(f, tmpfile, fmt=fmt)
+            
+            f = cfdm.read(tmpfile)[0]
+            self.assertTrue(f.domain_axes['domainaxis0'].nc_is_unlimited())
+
+        fmt = 'NETCDF4'
         f = cfdm.read(self.filename)[0]
-        f.nc_set_unlimited_dimensions(['domainaxis0'])
-        cfdm.write(f, tmpfile)
+        f.domain_axes['domainaxis0'].nc_set_unlimited(True)
+        f.domain_axes['domainaxis2'].nc_set_unlimited(True)
+        cfdm.write(f, tmpfile, fmt=fmt)
+        
         f = cfdm.read(tmpfile)[0]
-        self.assertTrue(f.nc_unlimited_dimensions() == set(['domainaxis0']))
+        self.assertTrue(f.domain_axes['domainaxis0'].nc_is_unlimited())
+        self.assertTrue(f.domain_axes['domainaxis2'].nc_is_unlimited())
     #--- End: def
 
 #--- End: class

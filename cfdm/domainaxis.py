@@ -6,6 +6,7 @@ from . import core
 
 
 class DomainAxis(mixin.NetCDFDimension,
+                 mixin.NetCDFUnlimitedDimension,
                  mixin.Container,
                  core.DomainAxis):
     '''A domain axis construct of the CF data model. 
@@ -219,5 +220,5 @@ The identities comprise:
             
         return out
     #--- End: def
-
+    
 #--- End: class

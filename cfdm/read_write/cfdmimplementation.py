@@ -596,9 +596,28 @@ axes, and possibly other axes, are returned.
         return count.nc_get_sample_dimension(default=default)
     #--- End: def
 
-    def nc_get_unlimited_axes(self, field):
-        '''Return the selection of domain axis constructs that are to written
-as netCDF unlimited dimensions.
+#    def nc_get_unlimited_axes(self, field):
+#        '''Return the selection of domain axis constructs that are to written
+#as netCDF unlimited dimensions.
+#
+#.. versionadded:: 1.7.0
+#
+#:Parameters:
+#  
+#    field: `Field`
+#
+#:Returns:
+#
+#    out: `set`
+#        The selection of domain axis construct identifiers that are
+#        unlimited.
+#
+#        '''
+#        return field.nc_unlimited_dimensions()
+#    #--- End: def
+    
+    def nc_is_unlimited_axis(self, field, axis):
+        '''Whether a domain axis corresponds to a netCDF unlimited dimension.
 
 .. versionadded:: 1.7.0
 
@@ -613,30 +632,58 @@ as netCDF unlimited dimensions.
         unlimited.
 
         '''
-        return field.nc_unlimited_dimensions()
+        domain_axis = field.constructs.get(axis)
+        if domain_axis is None:
+            return False
+
+        return domain_axis.nc_is_unlimited()
     #--- End: def
     
-    def nc_set_unlimited_dimensions(self, field, unlimited):
-        '''Set the selection of domain axis constructs that were read in as
-netCDF unlimited dimensions.
+    def nc_set_unlimited_axis(self, field, axis):
+        '''Set a domain axis to correspond to a netCDF unlimited dimension.
 
-.. versionadded:: 1.7.0
+.. versionadded:: 1.7.4
 
 :Parameters:
   
     field: `Field`
 
-    unlimited: sequence of `str`
+    axis: `str`
+        Domain axis construct key.
 
 :Returns:
 
-    out: `set`
-        The selection of domain axis construct identifiers that are
-        unlimited.
+    `None`
 
         '''
-        return field.nc_set_unlimited_dimensions(unlimited)
+        domain_axis = field.constructs.get(axis)
+        if domain_axis is None:
+            return
+
+        domain_axis.nc_set_unlimited(True)
     #--- End: def
+    
+#    def nc_set_unlimited_dimensions(self, field, unlimited):
+#        '''Set the selection of domain axis constructs that were read in as
+#netCDF unlimited dimensions.
+#
+#.. versionadded:: 1.7.0
+#
+#:Parameters:
+#  
+#    field: `Field`
+#
+#    unlimited: sequence of `str`
+#
+#:Returns:
+#
+#    out: `set`
+#        The selection of domain axis construct identifiers that are
+#        unlimited.
+#
+#        '''
+#        return field.nc_set_unlimited_dimensions(unlimited)
+#    #--- End: def
     
     def nc_get_global_attributes(self, field):
         '''TODO

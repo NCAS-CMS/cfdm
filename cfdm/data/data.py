@@ -1323,10 +1323,8 @@ Missing data array elements are omitted from the calculation.
 
         d._set_Array(array, copy=False)
 
-        # Delete hdf5 chunksizes
         if inplace:
-            return
-
+            d = None
         return d
     #--- End: def
 
@@ -1849,3 +1847,10 @@ missing values.
     #--- End: def
 
 #--- End: class
+
+# --------------------------------------------------------------------
+# Register the Data class as a "virtual subclass" of abstract.Array
+#
+# https://docs.python.org/3/library/abc.html
+# --------------------------------------------------------------------
+abstract.Array.register(Data)

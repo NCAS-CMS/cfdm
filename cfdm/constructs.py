@@ -284,7 +284,7 @@ instances are equal.
                 for key1, ref1 in tuple(refs1.items()):
                     if construct_verbose:
                         print ("{0}: Comparing {1!r}, {2!r}".format(
-                            self.__class__.__name__, item0, item1), end=": ")                                
+                            self.__class__.__name__, ref0, ref1), end=": ")
  
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
                                        verbose=construct_verbose,

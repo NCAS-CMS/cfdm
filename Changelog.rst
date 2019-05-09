@@ -10,12 +10,23 @@ version 1.7.4
 * Keyword 'axes' to Field.set_data is now optional.
 * Added the 'has_bounds' method to constructs that have data but can't
   have bounds.
+* New methods: DomainAxis.nc_is_unlimited,
+  DomainAxis.nc_set_unlimited.
+* Made Data a virtual subclass of Array.   
+* Deprecated methods: Field.nc_unlimited, Field.nc_clear_unlimited,
+  Field.nc_clear_unlimited.
 * Fixed bug in del_data method.
 * Fixed bug with in-place operations.
 * Fixed bug with position in some insert_dimension methods.
 * Added _shape keyword to Field.set_data_axes to allow the data shape
   to be checked prior to insertion.
 * Added the '_custom' attribute to facilitate subclassing.
+* New class mixin.NetCDFUnlimitedDimension replaces
+  mixin.NetCDFUnlimitedDimensions, which is deprecated.
+* New method CFDMImplementation.nc_is_unlimited_axis replaces
+  CFDMImplementation.nc_get_unlimited_axes, which is deprecated.
+* New method CFDMImplementation.nc_set_unlimited_axis replaces
+  CFDMImplementation.nc_set_unlimited_dimensions, which is deprecated.
   
 version 1.7.3
 -------------

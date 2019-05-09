@@ -3,6 +3,10 @@ from builtins import object
 from copy import deepcopy
 
 
+class DeprecationError(Exception):
+    pass
+
+
 class NetCDF(object):
     '''Mixin class for storing simple netCDF elements.
 
@@ -899,6 +903,8 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
 .. versionadded:: 1.7.0
 
+Deprecated at version 1.7.4
+
     '''
     def nc_unlimited_dimensions(self):
         '''Return the selection of domain axis constructs to be written as
@@ -907,6 +913,8 @@ netCDF unlimited dimensions.
 By default output netCDF dimensions are not unlimited.
 
 .. versionadded:: 1.7.0
+
+Deprecated at version 1.7.4
 
 .. seealso:: `cfdm.write`, `nc_clear_unlimited_dimensions`,
              `nc_set_unlimited_dimensions`
@@ -931,6 +939,8 @@ By default output netCDF dimensions are not unlimited.
 set()
 
         '''
+        raise DeprecationError("Field.nc_unlimited_dimensions was deprecated at v1.7.4 and is no longer available. Use DomainAxis.nc_is_unlimited instead")
+    
         out = self._get_component('netcdf').get('unlimited_dimensions')
         
         if out is None:
@@ -946,6 +956,8 @@ dimensions.
 By default output netCDF dimensions are not unlimited.
 
 .. versionadded:: 1.7.0
+
+Deprecated at version 1.7.4
 
 .. seealso:: `cfdm.write`, `nc_unlimited_dimensions`,
              `nc_clear_unlimited_dimensions`
@@ -981,6 +993,8 @@ By default output netCDF dimensions are not unlimited.
 set()
 
         '''
+        raise DeprecationError("Field.nc_set_unlimited_dimensions was deprecated at v1.7.4  and is no longer available. Use DomainAxis.nc_set_unlimited instead")
+                
         out = self._get_component('netcdf').get('unlimited_dimensions')
         
         if out is None:
@@ -1000,6 +1014,8 @@ netCDF unlimited dimensions.
 By default output netCDF dimensions are not unlimited.
 
 .. versionadded:: 1.7.0
+
+Deprecated at version 1.7.4
 
 .. seealso:: `cfdm.write`, `nc_unlimited_dimensions`,
              `nc_set_unlimited_dimensions`
@@ -1023,6 +1039,8 @@ By default output netCDF dimensions are not unlimited.
 set()
 
         '''
+        raise DeprecationError("Field.nc_clear_unlimited_dimensions was deprecated at v1.7.4 and is no longer available. Use DomainAxis.nc_set_unlimited instead")                
+
         out = self._get_component('netcdf').get('unlimited_dimensions')
         
         if out is None:
@@ -1399,3 +1417,237 @@ class NetCDFHDF5(NetCDF):
     #--- End: def
 
 #--- End: class
+
+class NetCDFHDF5_exp(NetCDF):
+    '''Mixin class for TODO
+
+.. versionadded:: 1.7.2
+
+    '''
+    def nc_del_hdf5_chunksize(self, default=ValueError()):
+        '''TODO
+
+   .. note:: Chunksizes are cleared from the output of methods that
+             change the data shape, and chunksizes are ignored for
+             netCDF3 files that do not use HDF5.
+
+.. versionadded:: 1.7.4
+
+.. seealso:: `nc_get_hdf5_chunksize`, `nc_has_hdf5_chunksize`,
+             `nc_set_hdf5_chunksize`
+
+:Returns:
+
+        TODO
+
+**Examples:**
+
+TODO
+
+>>> d.shape
+(1, 96, 73)
+>>> d.nc_set_hdf5_chunksizes([1, 48, 73])
+>>> d.nc_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_clear_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_hdf5_chunksizes()
+()
+
+        '''
+        return 'hdf5_chunksize' in self._get_component('netcdf')
+    #--- End: def
+
+    def nc_get_hdf5_chunksize(self, default=ValueError()):
+        '''TODO
+
+   .. note:: Chunksizes are cleared from the output of methods that
+             change the data shape, and chunksizes are ignored for
+             netCDF3 files that do not use HDF5.
+
+.. versionadded:: 1.7.4
+
+.. seealso:: `nc_del_hdf5_chunksize`, `nc_has_hdf5_chunksize`,
+             `nc_set_hdf5_chunksize`
+
+:Returns:
+
+        TODO The chunk sizes prior to the new setting, or the current
+        current sizes if no new values are specified.
+
+**Examples:**
+
+TODO
+
+>>> d.shape
+(1, 96, 73)
+>>> d.nc_set_hdf5_chunksizes([1, 48, 73])
+>>> d.nc_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_clear_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_hdf5_chunksizes()
+()
+
+        '''
+        try:
+            return self._get_component('netcdf')['hdf5_chunksize']
+        except KeyError:
+            return self._default(default,
+                   "{!r} has no HDF5 chunksize".format(self.__class__.__name__))
+    #--- End: def
+
+    def nc_has_hdf5_chunksize(self):
+        '''TODO
+
+   .. note:: Chunksizes are cleared from the output of methods that
+             change the data shape, and chunksizes are ignored for
+             netCDF3 files that do not use HDF5.
+
+.. versionadded:: 1.7.4
+
+.. seealso:: `nc_del_hdf5_chunksize`, `nc_get_hdf5_chunksize`,
+             `nc_set_hdf5_chunksize`
+
+:Returns:
+
+    `bool`
+        TODO The chunk sizes prior to the new setting, or the current
+        current sizes if no new values are specified.
+
+**Examples:**
+
+TODO
+
+>>> d.shape
+(1, 96, 73)
+>>> d.nc_set_hdf5_chunksizes([1, 48, 73])
+>>> d.nc_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_clear_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_hdf5_chunksizes()
+()
+
+        '''
+        return 'hdf5_chunksize' in self._get_component('netcdf')
+    #--- End: def
+
+    def nc_set_hdf5_chunksize(self, value):
+        '''TODO
+
+   .. note:: Chunksizes are cleared from the output of methods that
+             change the data shape, and chunksizes are ignored for
+             netCDF3 files that do not use HDF5.
+
+.. versionadded:: 1.7.4
+
+.. seealso:: `nc_del_hdf5_chunksize`, `nc_get_hdf5_chunksize`,
+             `nc_has_hdf5_chunksize`
+
+:Parameters:
+
+    value: `int`
+        TODO
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+TODO
+
+>>> d.shape
+(1, 96, 73)
+>>> d.nc_set_hdf5_chunksizes([1, 48, 73])
+>>> d.nc_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_clear_hdf5_chunksizes()
+(1, 48, 73)
+>>> d.nc_hdf5_chunksizes()
+()
+
+        '''
+        self._get_component('netcdf')['hdf5_chunksize'] = int(value)
+    #--- End: def
+
+#--- End: class
+
+class NetCDFUnlimitedDimension(NetCDF):
+    '''Mixin class for accessing a netCDF unlimited dimension.
+
+.. versionadded:: 1.7.4
+
+    '''
+    def nc_is_unlimited(self):
+        '''TODO
+
+By default output netCDF dimensions are not unlimited.
+
+.. versionadded:: 1.7.4
+
+.. seealso:: `cfdm.write`, `nc_set_unlimited`
+
+:Returns:
+
+    `bool`
+        TODO The selection of domain axis constructs to be written as
+        netCDF unlimited dimensions.
+
+**Examples:**
+
+TODO 
+>>> f.nc_set_unlimited_dimensions(['domainaxis0'])
+>>> f.nc_unlimited_dimensions()
+{'domainaxis0'}
+>>> f.nc_set_unlimited_dimensions(['domainaxis1'])
+>>> f.nc_unlimited_dimensions()
+{'domainaxis0', 'domainaxis1'}
+>>> f.nc_clear_unlimited_dimensions()
+{'domainaxis0', 'domainaxis1'}
+>>> f.nc_unlimited_dimensions()
+set()
+
+        '''
+        return self._get_component('netcdf').get('unlimited', False)
+    #--- End: def
+
+    def nc_set_unlimited(self, value):
+        '''TODO Select domain axis constructs to be written as netCDF unlimited
+dimensions.
+
+By default output netCDF dimensions are not unlimited.
+
+.. versionadded:: 1.7.4
+
+.. seealso:: `cfdm.write`, `nc_is_unlimited`
+
+:Parameters:
+
+    value: `bool`
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+TODO
+>>> f.nc_set_unlimited_dimensions(['domainaxis0'])
+>>> f.nc_unlimited_dimensions()
+{'domainaxis0'}
+>>> f.nc_set_unlimited_dimensions(['domainaxis1'])
+>>> f.nc_unlimited_dimensions()
+{'domainaxis0', 'domainaxis1'}
+>>> f.nc_clear_unlimited_dimensions()
+{'domainaxis0', 'domainaxis1'}
+>>> f.nc_unlimited_dimensions()
+set()
+
+        '''
+        self._get_component('netcdf')['unlimited'] = bool(value)
+    #--- End: def
+
+#--- End: class
+

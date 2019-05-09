@@ -111,7 +111,12 @@ components, and provides selected values of all data arrays.
             else:
                 ncvar = ''
 
-            _title = 'Domain Ancillary: ' + self.identity(default=_key) + ncvar
+            if _key is None:
+                default = ''
+            else:
+                default = _key
+                
+            _title = 'Domain Ancillary: ' + self.identity(default=default) + ncvar
             
 
         return super().dump(display=display,

@@ -65,27 +65,27 @@ class NetCDFTest(unittest.TestCase):
     #--- End: def
 
 
-    def test_netCDF_global_unlimited(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        # ------------------------------------------------------------
-        # Unlimited dimensions
-        # ------------------------------------------------------------
-        f = cfdm.Field()
-        self.assertTrue(f.nc_clear_unlimited_dimensions() == set())
-
-        f = cfdm.Field()
-        f.nc_set_unlimited_dimensions(())
-        
-        f = cfdm.Field()
-        self.assertTrue(f.nc_unlimited_dimensions() == set())
-        f.nc_set_unlimited_dimensions(['qwerty', 'asdf'])
-        self.assertTrue(f.nc_unlimited_dimensions() == set(['qwerty', 'asdf']))
-        f.nc_set_unlimited_dimensions(['zxc'])
-        self.assertTrue(f.nc_unlimited_dimensions() == set(['qwerty', 'asdf', 'zxc']))
-        self.assertTrue(f.nc_clear_unlimited_dimensions() == set(['qwerty', 'asdf', 'zxc']))
-        self.assertTrue(f.nc_unlimited_dimensions() == set())
+#    def test_netCDF_global_unlimited(self):
+#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+#            return
+#
+#        # ------------------------------------------------------------
+#        # Unlimited dimensions
+#        # ------------------------------------------------------------
+#        f = cfdm.Field()
+#        self.assertTrue(f.nc_clear_unlimited_dimensions() == set())
+#
+#        f = cfdm.Field()
+#        f.nc_set_unlimited_dimensions(())
+#        
+#        f = cfdm.Field()
+#        self.assertTrue(f.nc_unlimited_dimensions() == set())
+#        f.nc_set_unlimited_dimensions(['qwerty', 'asdf'])
+#        self.assertTrue(f.nc_unlimited_dimensions() == set(['qwerty', 'asdf']))
+#        f.nc_set_unlimited_dimensions(['zxc'])
+#        self.assertTrue(f.nc_unlimited_dimensions() == set(['qwerty', 'asdf', 'zxc']))
+#        self.assertTrue(f.nc_clear_unlimited_dimensions() == set(['qwerty', 'asdf', 'zxc']))
+#        self.assertTrue(f.nc_unlimited_dimensions() == set())
        
         # ------------------------------------------------------------
         # Global attributes

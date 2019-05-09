@@ -524,7 +524,8 @@ a new netCDF dimension for the bounds.
 
         seen = g['seen']
     
-        axis = self.implementation.get_construct_data_axes(f, key)[0]
+        data_axes = self.implementation.get_construct_data_axes(f, key)
+        axis = data_axes[0]
 
         create = False
         if not self._already_in_file(coord):
@@ -542,7 +543,8 @@ a new netCDF dimension for the bounds.
                                                       default='coordinate')
             
             # Create a new dimension
-            unlimited = self._unlimited(f, axis)
+#            unlimited = self._unlimited(f, axis)
+            unlimited = self.implementation.nc_is_unlimited_axis(f, axis)
             self._write_dimension(ncvar, f, axis, unlimited=unlimited)
     
             ncdimensions = self._netcdf_dimensions(f, key, coord)
@@ -554,7 +556,8 @@ a new netCDF dimension for the bounds.
             extra = self._write_bounds(f, coord, key, ncdimensions, ncvar)
 
             # Create a new dimension coordinate variable
-            self._write_netcdf_variable(ncvar, ncdimensions, coord, extra=extra)
+            self._write_netcdf_variable(ncvar, ncdimensions, coord,
+                                        extra=extra)
         else:
             ncvar        = seen[id(coord)]['ncvar']
             ncdimensions = seen[id(coord)]['ncdims']
@@ -2024,9 +2027,9 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         chunksizes = None
         if data is not None:
             chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
-            if chunksizes and verbose:
-                print('      HDF5 chunksizes:', chunksizes)
-        #--- End: if
+
+        if verbose:
+            print('      HDF5 chunksizes:', chunksizes)
         
         # ------------------------------------------------------------
         # Create a new netCDF variable
@@ -2479,7 +2482,8 @@ extra trailing dimension.
                         domain_axis = self.implementation.get_domain_axes(f)[axis] 
                         ncdim = self.implementation.nc_get_dimension(domain_axis, 'dim')
                         ncdim = self._netcdf_name(ncdim)
-                        unlimited = self._unlimited(f, axis)
+#                        unlimited = self._unlimited(f, axis)
+                        unlimited = self.implementation.nc_is_unlimited_axis(f, axis)
                         self._write_dimension(ncdim, f, axis, unlimited=unlimited)
                         
                         xxx.append({(ncdim, axis_size0): spanning_constructs})
@@ -2868,10 +2872,11 @@ extra trailing dimension.
    
 :Returns:
 
-    out: `bool`
+    `bool`
 
         '''
-        return axis in self.implementation.nc_get_unlimited_axes(field)
+#        return axis in self.implementation.nc_get_unlimited_axes(field)
+        return self.implementation.nc_is_unlimited_axis(field, axis)
     #--- End: def
     
     def _write_global_attributes(self, fields):

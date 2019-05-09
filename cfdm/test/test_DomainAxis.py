@@ -46,10 +46,26 @@ class DomainTest(unittest.TestCase):
         self.assertTrue(e.equals(d, verbose=True))
     #--- End: def
 
+    def test_DomainAxis_unlimited(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+
+        for d in f.domain_axes.values():            
+            self.assertFalse(d.nc_is_unlimited())
+            d.nc_set_unlimited(False)
+            self.assertFalse(d.nc_is_unlimited())
+            d.nc_set_unlimited(True)
+            self.assertTrue(d.nc_is_unlimited())
+            d.nc_set_unlimited(False)
+            self.assertFalse(d.nc_is_unlimited())            
+    #--- End: def
+
 #--- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
     print(cfdm.environment(display=False))
-    print('')
+    print()
     unittest.main(verbosity=2)
