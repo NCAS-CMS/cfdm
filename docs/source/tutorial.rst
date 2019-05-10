@@ -3392,8 +3392,7 @@ field construct with an underlying contiguous ragged array:
    import cfdm
    
    # Define the ragged array values
-   ragged_array = numpy.array([280, 281, 279, 278, 279.5],
-                              dtype='float32')
+   ragged_array = cfdm.Data([280, 281, 279, 278, 279.5])
 
    # Define the count array values
    count_array = [1, 4]
@@ -3601,8 +3600,7 @@ simple field construct with an underlying gathered array:
    import cfdm
 
    # Define the gathered values
-   gathered_array = numpy.array([[2, 1, 3], [4, 0, 5]],
-                                dtype='float32')
+   gathered_array = cfdm.Data([[2, 1, 3], [4, 0, 5]])
 
    # Define the list array values
    list_array = [1, 4, 5]

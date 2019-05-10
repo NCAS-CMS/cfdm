@@ -3354,7 +3354,7 @@ variable's netCDF dimensions.
                              for dim in self._ncdimensions(ncvar)])
                         compressed_dimension = g['variable_dimensions'][ncvar].index(c['sample_dimension'])
                         array = self._create_gathered_array(
-                            gathered_array=array,
+                            gathered_array=self._create_Data(array), #array,
                             uncompressed_shape=uncompressed_shape,
                             compressed_dimension=compressed_dimension,
                             list_variable=c['list_variable'])
@@ -3370,7 +3370,8 @@ variable's netCDF dimensions.
                                               c['element_dimension_1_size'],
                                               c['element_dimension_2_size'])
                         array = self._create_ragged_indexed_contiguous_array(
-                            ragged_indexed_contiguous_array=array,
+#                            ragged_indexed_contiguous_array=array,
+                            ragged_indexed_contiguous_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
                             count_variable=c['count_variable'],
                             index_variable=c['index_variable'])
@@ -3383,7 +3384,7 @@ variable's netCDF dimensions.
                                             c['element_dimension_size'])
                         array = self._create_ragged_contiguous_array(
 #                            ragged_contiguous_array=array,
-                            ragged_contiguous_array=self._create_Data(array), # dch
+                            ragged_contiguous_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
                             count_variable=c['count_variable'])
                     elif 'ragged_indexed' in c:
@@ -3394,7 +3395,7 @@ variable's netCDF dimensions.
                         uncompressed_shape = (c['instance_dimension_size'],
                                               c['element_dimension_size'])
                         array = self._create_ragged_indexed_array(
-                            ragged_indexed_array=array,
+                            ragged_indexed_array=self._create_Data(array), #array,
                             uncompressed_shape=uncompressed_shape,
                             index_variable=c['index_variable'])
                     else:

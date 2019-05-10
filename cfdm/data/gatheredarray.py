@@ -27,7 +27,7 @@ variable" that gives the indices of the required points.
 
 :Parameters:
 
-    compressed_array: subclass of `Array`
+    compressed_array: `Data`
         The compressed array.
 
     shape: `tuple`
@@ -78,7 +78,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
         
-        compressed_array = self._get_compressed_Array()
+        compressed_array = self._get_compressed_Array().array
 
         # Initialise the un-sliced uncompressed array
         uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)

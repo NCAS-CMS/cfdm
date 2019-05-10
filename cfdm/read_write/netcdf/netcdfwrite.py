@@ -2088,7 +2088,11 @@ created. The ``seen`` dictionary is updated for *cfvar*.
             missing_value = self.implementation.get_property(cfvar, 'missing_value', None)
             unset_values = [value for value in (_FillValue, missing_value)
                             if value is not None]
-            self._write_data(data, ncvar, ncdimensions, unset_values)
+
+            compressed = bool(set(ncdimensions).intersection(g['sample_ncdim'].values()))
+            
+            self._write_data(data, ncvar, ncdimensions,
+                             unset_values=unset_values, compressed=compressed)
     
         # Update the 'seen' dictionary
         g['seen'][id(cfvar)] = {'variable': cfvar,
@@ -2134,7 +2138,8 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         return data, ncdimensions
     #--- End: def
     
-    def _write_data(self, data, ncvar, ncdimensions, unset_values=()):
+    def _write_data(self, data, ncvar, ncdimensions, unset_values=(),
+                    compressed=False):
         '''
 
 :Parameters:
@@ -2150,7 +2155,8 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         '''
         g = self.write_vars
 
-        if set(ncdimensions).intersection(g['sample_ncdim'].values()):
+        if compressed:
+#        if set(ncdimensions).intersection(g['sample_ncdim'].values()):
             # Get the data as a compressed numpy array
             array = self.implementation.get_compressed_array(data)
         else:
@@ -2857,10 +2863,17 @@ extra trailing dimension.
             # the vertical datum
             if g['verbose']:
                 print('WHAT??')
-            new_grid_mapping = self.implementation.initialise_CoordinateReference(
-                coordinates=[coord_key],
-                datum=self.implementation.get_datum(ref))
-            
+            new_grid_mapping = self.implementation.initialise_CoordinateReference()
+#                coordinates=[coord_key],
+#                datum=self.implementation.get_datum(ref))
+
+            self.implementation.set_coordinate_reference_coordinates(
+                coordinate_reference=new_grid_mapping,
+                coordinates=[key])
+        
+            self.implementation.set_datum(coordinate_reference=new_grid_mapping,
+                                          datum=datum)
+        
             g['grid_mapping_refs'].append(new_grid_mapping)
     #--- End: def
                             

@@ -290,7 +290,7 @@ class DSGTest(unittest.TestCase):
         
         # Initialise the gathered array object
         array = cfdm.GatheredArray(
-            compressed_array=cfdm.NumpyArray(gathered_array),
+            compressed_array=cfdm.Data(gathered_array),
 	    compressed_dimension=1,
             shape=(2, 3, 2), size=12, ndim=3,
             list_variable=list_variable)

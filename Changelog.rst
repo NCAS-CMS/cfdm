@@ -15,6 +15,8 @@ version 1.7.4
 * Made Data a virtual subclass of Array.   
 * Deprecated methods: Field.nc_unlimited, Field.nc_clear_unlimited,
   Field.nc_clear_unlimited.
+* Fixed bug when writing new horizontal coordinate reference for the
+  vertical datum.
 * Fixed bug in del_data method.
 * Fixed bug with in-place operations.
 * Fixed bug with position in some insert_dimension methods.

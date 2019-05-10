@@ -28,7 +28,7 @@ variable" that gives the size of each block.
 
 :Parameters:
 
-    compressed_array: numpy array-like or subclass of Array
+    compressed_array: `Data`
         The compressed data.
 
     shape: `tuple`
@@ -103,8 +103,8 @@ indexing (given the restrictions on the type of indices allowed) is:
             u_indices = (i,
                          slice(0, sample_indices.stop - sample_indices.start))
             
-            uarray[u_indices] = compressed_array[(sample_indices,)].array # dch
-            
+            uarray[u_indices] = compressed_array[(sample_indices,)]
+
             start += n
         #--- End: for
 
