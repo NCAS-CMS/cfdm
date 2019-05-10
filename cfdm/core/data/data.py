@@ -283,7 +283,7 @@ attribute.
         return type(self)(source=self, copy=True, _use_array=array)
     #--- End: def
     
-    def _del_Array(self):
+    def _del_Array(self, default=ValueError()):
         '''Delete the data.
 
 :Returns:
@@ -295,7 +295,7 @@ attribute.
 >>> old = d.del_data()
 
         '''
-        return self._del_component('data')
+        return self._del_component('array', default=default)
     #--- End: def
 
     def del_calendar(self, default=ValueError()):
