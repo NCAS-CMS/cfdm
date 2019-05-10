@@ -2869,10 +2869,11 @@ extra trailing dimension.
 
             self.implementation.set_coordinate_reference_coordinates(
                 coordinate_reference=new_grid_mapping,
-                coordinates=[key])
+                coordinates=[coord_key])
         
-            self.implementation.set_datum(coordinate_reference=new_grid_mapping,
-                                          datum=datum)
+            self.implementation.set_datum(
+                coordinate_reference=new_grid_mapping,
+                datum=self.implementation.get_datum(ref))
         
             g['grid_mapping_refs'].append(new_grid_mapping)
     #--- End: def
