@@ -13,7 +13,7 @@ class Data(abstract.Container):
     '''
     def __init__(self, array=None, units=None, calendar=None,
                  fill_value=None, source=None, copy=True,
-                 _use_array=True):
+                 _use_array=True, _custom_deep_copy=False):
         '''**Initialization**
 
 :Parameters:
@@ -69,7 +69,7 @@ class Data(abstract.Container):
         initialization. By default arguments are deep copied.
 
         '''
-        super().__init__()
+        super().__init__(source=source)
         
         if source is not None:
             try:                

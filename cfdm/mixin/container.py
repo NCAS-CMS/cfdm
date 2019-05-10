@@ -179,5 +179,5 @@ casts them as numpy arrays and carried aout numericlly tolerant equality checks.
 
         return other
     #--- End: def
-    
+   
 #--- End: class

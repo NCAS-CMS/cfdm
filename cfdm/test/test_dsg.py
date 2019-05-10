@@ -582,7 +582,8 @@ class DSGTest(unittest.TestCase):
         
         # Initialise the contiguous ragged array object
         array = cfdm.RaggedContiguousArray(
-            compressed_array=cfdm.NumpyArray(ragged_array),
+#            compressed_array=cfdm.NumpyArray(ragged_array),
+            compressed_array=cfdm.Data(ragged_array),
             shape=(2, 3), size=6, ndim=2,
             count_variable=count_variable)
         

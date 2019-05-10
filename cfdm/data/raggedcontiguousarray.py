@@ -45,11 +45,11 @@ variable" that gives the size of each block.
         corresponding to a CF-netCDF count variable.
 
         '''
-        if not isinstance(compressed_array, abstract.Array):
-            if not isinstance(compressed_array, numpy.ndarray):
-                compressed_array = numpy.asanyarray(compressed_array)
-                
-            compressed_array = NumpyArray(compressed_array)
+#        if not isinstance(compressed_array, abstract.Array):
+#            if not isinstance(compressed_array, numpy.ndarray):
+#                compressed_array = numpy.asanyarray(compressed_array)
+#                
+#            compressed_array = NumpyArray(compressed_array)
 
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
@@ -103,7 +103,7 @@ indexing (given the restrictions on the type of indices allowed) is:
             u_indices = (i,
                          slice(0, sample_indices.stop - sample_indices.start))
             
-            uarray[u_indices] = compressed_array[(sample_indices,)]
+            uarray[u_indices] = compressed_array[(sample_indices,)].array # dch
             
             start += n
         #--- End: for

@@ -23,14 +23,17 @@ after initialisation with the `_set_component` method.
 
         if source is not None:
             try:
-                custom = source._get_component('custom')
+                custom = source._get_component('custom', {})
             except AttributeError:
                 custom = {}
             else:
-                if custom:
-                    custom = deepcopy(custom)
-                else:
-                    custom = {}
+                custom = custom.copy()
+#                if custom:                  
+#                        custom = deepcopy(custom)
+#                    else:
+#                        custom = custom.copy()
+#                else:
+#                    custom = {}
         else:
             custom = {}
 

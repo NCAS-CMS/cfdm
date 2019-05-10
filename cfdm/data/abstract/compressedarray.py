@@ -124,8 +124,8 @@ rules, the only differences being:
 >>> d._set_compressed_Array(a)
 
         '''
-        if not isinstance(array, Array):
-            raise TypeError("asdads  0000000000000000000 TODO")
+#        if not isinstance(array, Array):
+#            raise TypeError("asdads  0000000000000000000 TODO")
 
         if copy:
             array = array.copy()

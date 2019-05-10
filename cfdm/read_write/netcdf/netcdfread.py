@@ -1132,7 +1132,7 @@ variable should be pre-filled with missing values.
     
     def _parse_indexed_contiguous_compression(self, sample_dimension,
                                               instance_dimension):
-        '''
+        '''TODO
 
 :Parameters:
     
@@ -3382,7 +3382,8 @@ variable's netCDF dimensions.
                         uncompressed_shape=(c['instance_dimension_size'],
                                             c['element_dimension_size'])
                         array = self._create_ragged_contiguous_array(
-                            ragged_contiguous_array=array,
+#                            ragged_contiguous_array=array,
+                            ragged_contiguous_array=self._create_Data(array), # dch
                             uncompressed_shape=uncompressed_shape,
                             count_variable=c['count_variable'])
                     elif 'ragged_indexed' in c:
@@ -3812,6 +3813,14 @@ variable.
                                         count_variable=None):
         '''Create a `Data` object for a compressed-by-contiguous-ragged-array
 netCDF variable.
+
+:Parameters:
+
+    ragged_contiguous_array: `Data`
+
+    uncompressed_shape; `tuple`
+
+    count_variable: `Count`
 
 :Returns:
 

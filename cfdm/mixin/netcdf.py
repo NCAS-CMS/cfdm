@@ -35,9 +35,14 @@ from this mixin class.
              netcdf = {}
         else:        
             try:
-                netcdf = deepcopy(source._get_component('netcdf', {}))
+                netcdf = source._get_component('netcdf', {})
             except AttributeError:
                 netcdf = {}
+            else:
+                if netcdf:
+                    netcdf = deepcopy(netcdf)
+                else:
+                    netcdf = {}
         #--- End: if
         
         self._set_component('netcdf', netcdf, copy=False)

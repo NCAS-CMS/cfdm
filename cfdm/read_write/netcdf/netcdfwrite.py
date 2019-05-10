@@ -382,6 +382,7 @@ If the construct has no data, then return `None`
             sample_dimension_position = self.implementation.get_sample_dimension_position(construct)
             compressed_axes = tuple(self.implementation.get_compressed_axes(field, key, construct))
             compressed_ncdims = tuple([g['axis_to_ncdim'][axis] for axis in compressed_axes])
+#            print ('compressed_ncdims=', compressed_ncdims, end=""  )
 
             sample_ncdim = g['sample_ncdim'].get(compressed_ncdims)
             
@@ -430,6 +431,7 @@ If the construct has no data, then return `None`
             n = len(compressed_ncdims)
             ncdims[sample_dimension_position:sample_dimension_position+n] = [sample_ncdim]
         #--- End: if
+#        print (tuple(ncdims)  )
 
         return tuple(ncdims)
     #--- End: def
@@ -768,9 +770,6 @@ a new netCDF bounds dimension.
             geometry_id = (geometry_dimension, geometry_type)
             gc.setdefault(geometry_id, {'geometry_type'     : geometry_type,
                                         'geometry_dimension': geometry_dimension})
-
-#            print ('coord=', repr(coord))
-#            print ('nodes=', repr(nodes))
 
             # Nodes
             nodes_ncvar = g['seen'][id(nodes)]['ncvar']
@@ -1597,6 +1596,8 @@ then the input coordinate is not written.
         # The netCDF dimensions for the auxiliary coordinate variable
         ncdimensions = self._netcdf_dimensions(f, key, coord)
 
+#        print ('write_aux ncdimensions=', ncdimensions)
+        
         if self._already_in_file(coord, ncdimensions):
             ncvar = g['seen'][id(coord)]['ncvar']
 
@@ -1866,14 +1867,15 @@ measure will not be written.
     #--- End: def
     
     def _createVariable(self, **kwargs):
-        '''
+        '''TODO
+
 .. versionadded:: 1.7.0
 
         '''
         g = self.write_vars
 
         ncvar = kwargs['varname']
-        
+
         g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs)
     #--- End: def
     
@@ -2401,6 +2403,7 @@ extra trailing dimension.
             #--- End: for
 
             if not found_dimension_coordinate:
+#                print ('axis=', axis)
                 # --------------------------------------------------------
                 # There is no dimension coordinate for this axis
                 # --------------------------------------------------------
@@ -2460,24 +2463,24 @@ extra trailing dimension.
                         g['axis_to_ncdim'][axis] = ncdim1
                     elif (g['compression_type'] == 'ragged contiguous' and 
                           len(data_axes) == 2 and axis == data_axes[1]):
-                        # Do not create the a netCDF dimension for the
+                        # Do not create a netCDF dimension for the
                         # element dimension
-                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('contiuous_element')
+                        g['axis_to_ncdim'][axis] = 'ragged_{}'.format('contiguous_element')
                     elif (g['compression_type'] == 'ragged indexed' and 
                           len(data_axes) == 2 and axis == data_axes[1]):
-                        # Do not create the a netCDF dimension for the
+                        # Do not create a netCDF dimension for the
                         # element dimension
-                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('indexed_element')
+                        g['axis_to_ncdim'][axis] = 'ragged_{}'.format('indexed_element')
                     elif (g['compression_type'] == 'ragged indexed contiguous' and 
                           len(data_axes) == 3 and axis == data_axes[1]):
-                        # Do not create the a netCDF dimension for the
+                        # Do not create a netCDF dimension for the
                         # element dimension
-                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('indexed_contiguous_element1')
+                        g['axis_to_ncdim'][axis] = 'ragged_{}'.format('indexed_contiguous_element1')
                     elif (g['compression_type'] == 'ragged indexed contiguous' and 
                           len(data_axes) == 3 and axis == data_axes[2]):
-                        # Do not create the a netCDF dimension for the
+                        # Do not create a netCDF dimension for the
                         # element dimension
-                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('indexed_contiguous_element2')
+                        g['axis_to_ncdim'][axis] = 'ragged_{}'.format('indexed_contiguous_element2')
                     else:
                         domain_axis = self.implementation.get_domain_axes(f)[axis] 
                         ncdim = self.implementation.nc_get_dimension(domain_axis, 'dim')
@@ -2492,12 +2495,13 @@ extra trailing dimension.
 
         field_data_axes = tuple(self.implementation.get_field_data_axes(f))
         data_ncdimensions = [g['axis_to_ncdim'][axis] for axis in field_data_axes]
-   
+#        print ('data_ncdimensions=', data_ncdimensions)
         # ------------------------------------------------------------
         # Now that we've dealt with all of the axes, deal with
         # compression
         # ------------------------------------------------------------
         if compression_type:
+#            print ( 'compression_type=',compression_type)
             compressed_axes = tuple(self.implementation.get_compressed_axes(f))
             g['compressed_axes'] = compressed_axes
             compressed_ncdims = tuple([g['axis_to_ncdim'][axis]
@@ -2582,7 +2586,8 @@ extra trailing dimension.
         #--- End: if
         
         data_ncdimensions = tuple(data_ncdimensions)
-
+#        print ('data_ncdimensions=', data_ncdimensions)
+     
        
         # ----------------------------------------------------------------
         # Create auxiliary coordinate variables, except those which might
