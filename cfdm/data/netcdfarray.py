@@ -107,6 +107,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         else:
             # Get the variable by netCDF ID
             varid = self.get_varid()
+            
             for value in netcdf.variables.values():
                 if value._varid == varid:
                     array = value[indices]
