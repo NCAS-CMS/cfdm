@@ -1,0 +1,7 @@
+cfdm.RaggedContiguousArray.__array__
+====================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.RaggedContiguousArray.__array__
