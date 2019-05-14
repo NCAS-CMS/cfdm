@@ -96,6 +96,8 @@ The netCDF variable name of the construct may be accessed with the
 
 x.__repr__() <==> repr(x)
 
+.. versionadded:: 1.7.0
+
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__,
                                    self._one_line_description())
@@ -105,6 +107,8 @@ x.__repr__() <==> repr(x)
         '''Called by the `str` built-in function.
 
 x.__str__() <==> str(x)
+
+.. versionadded:: 1.7.0
 
         '''
         title = "Field: {0}".format(self.identity(''))
@@ -208,6 +212,8 @@ rules, the only differences being:
   these indices work independently along each dimension (similar to
   the way vector subscripts work in Fortran). This is the same
   behaviour as indexing on a Variable object of the netCDF4 package.
+
+.. versionadded:: 1.7.0
 
 :Returns:
 

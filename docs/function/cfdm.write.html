@@ -14,9 +14,8 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.CF" href="cfdm.CF.html" />
@@ -32,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.3</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.4</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -93,7 +92,7 @@
 <h1>cfdm.write<a class="headerlink" href="#cfdm-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.write">
-<code class="descclassname">cfdm.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>variable_attributes=None</em>, <em>file_descriptors=None</em>, <em>external=None</em>, <em>Conventions=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>verbose=False</em>, <em>_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.3/cfdm/read_write/write.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cfdm.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>variable_attributes=None</em>, <em>file_descriptors=None</em>, <em>external=None</em>, <em>Conventions=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>verbose=False</em>, <em>_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.4/cfdm/read_write/write.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -123,9 +122,9 @@ attribute. However, omitted constructs may be written to an external
 file (see the <em>external</em> parameter for details).</p>
 <p><strong>NetCDF unlimited dimensions</strong></p>
 <p>Domain axis constructs will be written as netCDF unlimited dimensions
-may be accessed with the <a class="reference internal" href="../method/cfdm.Field.nc_unlimited_dimensions.html#cfdm.Field.nc_unlimited_dimensions" title="cfdm.Field.nc_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></a>
-<a class="reference internal" href="../method/cfdm.Field.nc_set_unlimited_dimensions.html#cfdm.Field.nc_set_unlimited_dimensions" title="cfdm.Field.nc_set_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited_dimensions</span></code></a> and
-<a class="reference internal" href="../method/cfdm.Field.nc_clear_unlimited_dimensions.html#cfdm.Field.nc_clear_unlimited_dimensions" title="cfdm.Field.nc_clear_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_unlimited_dimensions</span></code></a> methods of a field
+may be accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited_dimensions</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_unlimited_dimensions</span></code> methods of a field
 construct.</p>
 <p><strong>NetCDF4 HDF chunk sizes</strong></p>
 <p>HDF5 chunksizes may be set on contruct’s data. See the
@@ -449,8 +448,8 @@ metadata constructs and their components.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/function/cfdm.write.rst.txt"

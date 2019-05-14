@@ -1,7 +1,7 @@
 cfdm.Array.shape
 ================
 
-.. currentmodule:: cf
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. autoattribute:: cfdm.Array.shape

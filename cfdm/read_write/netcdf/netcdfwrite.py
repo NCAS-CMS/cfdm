@@ -2834,8 +2834,8 @@ extra trailing dimension.
         if not self.implementation.has_datum(ref):
             return
 
-        if g['verbose']:
-            print('    Datum =', self.implementation.get_datum(ref))
+#        if g['verbose']:
+#            print('      Datum =', self.implementation.get_datum(ref))
             
         count = [0, None]
         for grid_mapping in g['grid_mapping_refs']:
@@ -2849,7 +2849,7 @@ extra trailing dimension.
             # Add the vertical coordinate to an existing
             # horizontal coordinate reference
             if g['verbose']:
-                print('    Adding', coord_key, 'to', grid_mapping)
+                print('      Adding', coord_key, 'to', grid_mapping)
 
 
                 
@@ -2857,21 +2857,28 @@ extra trailing dimension.
             self.implementation.set_coordinate_reference_coordinate(grid_mapping,
                                                                     coord_key)
         else:
-            # Create a new horizontal coordinate reference for
-            # the vertical datum
+            # Create a new horizontal coordinate reference for the
+            # vertical datum
             if g['verbose']:
-                print('WHAT??')
+                print('    Creating a new horizontal coordinate reference for the vertical datum')
+                
             new_grid_mapping = self.implementation.initialise_CoordinateReference()
-#                coordinates=[coord_key],
-#                datum=self.implementation.get_datum(ref))
 
+            
             self.implementation.set_coordinate_reference_coordinates(
                 coordinate_reference=new_grid_mapping,
                 coordinates=[coord_key])
+
+            coordinate_conversion = self.implementation.initialise_CoordinateConversion(
+                        parameters={'grid_mapping_name': 'latitude_longitude'})
+            self.implementation.set_coordinate_conversion(
+                coordinate_reference=new_grid_mapping,
+                coordinate_conversion=coordinate_conversion)
         
+            datum = self.implementation.get_datum(ref)  
             self.implementation.set_datum(
                 coordinate_reference=new_grid_mapping,
-                datum=self.implementation.get_datum(ref))
+                datum=datum)
         
             g['grid_mapping_refs'].append(new_grid_mapping)
     #--- End: def

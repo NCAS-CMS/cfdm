@@ -14,9 +14,8 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Field.dump" href="../method/cfdm.Field.dump.html" />
@@ -32,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.3</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.4</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -94,8 +93,8 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Field">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.3/cfdm/field.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFUnlimitedDimensions</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.field.Field</span></code></p>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.4/cfdm/field.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes all
 the other constructs. A field corresponds to a CF-netCDF data variable
@@ -331,34 +330,34 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a></td>
 <td>Return the metdata constructs.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.auxiliary_coordinates.html#cfdm.Field.auxiliary_coordinates" title="cfdm.Field.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Field.auxiliary_coordinates.html#cfdm.Field.auxiliary_coordinates" title="cfdm.Field.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a></td>
 <td>Return auxiliary coordinate constructs.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.cell_measures.html#cfdm.Field.cell_measures" title="cfdm.Field.cell_measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measures</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Field.cell_measures.html#cfdm.Field.cell_measures" title="cfdm.Field.cell_measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measures</span></code></a></td>
 <td>Return cell measure constructs.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.cell_methods.html#cfdm.Field.cell_methods" title="cfdm.Field.cell_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_methods</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Field.cell_methods.html#cfdm.Field.cell_methods" title="cfdm.Field.cell_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_methods</span></code></a></td>
 <td>Return cell method constructs.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.coordinates.html#cfdm.Field.coordinates" title="cfdm.Field.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Field.coordinates.html#cfdm.Field.coordinates" title="cfdm.Field.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a></td>
 <td>Return dimension and auxiliary coordinate constructs.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.coordinate_references.html#cfdm.Field.coordinate_references" title="cfdm.Field.coordinate_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_references</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Field.coordinate_references.html#cfdm.Field.coordinate_references" title="cfdm.Field.coordinate_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_references</span></code></a></td>
 <td>Return coordinate reference constructs.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.dimension_coordinates.html#cfdm.Field.dimension_coordinates" title="cfdm.Field.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Field.dimension_coordinates.html#cfdm.Field.dimension_coordinates" title="cfdm.Field.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a></td>
 <td>Return dimension coordinate constructs.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.domain_ancillaries.html#cfdm.Field.domain_ancillaries" title="cfdm.Field.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Field.domain_ancillaries.html#cfdm.Field.domain_ancillaries" title="cfdm.Field.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></td>
 <td>Return domain ancillary constructs.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.domain_axes.html#cfdm.Field.domain_axes" title="cfdm.Field.domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Field.domain_axes.html#cfdm.Field.domain_axes" title="cfdm.Field.domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code></a></td>
 <td>Return domain axis constructs.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.field_ancillaries.html#cfdm.Field.field_ancillaries" title="cfdm.Field.field_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">field_ancillaries</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Field.field_ancillaries.html#cfdm.Field.field_ancillaries" title="cfdm.Field.field_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">field_ancillaries</span></code></a></td>
 <td>Return field ancillary constructs.</td>
 </tr>
 </tbody>
@@ -442,16 +441,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.nc_set_global_attribute.html#cfdm.Field.nc_set_global_attribute" title="cfdm.Field.nc_set_global_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code></a></td>
 <td>Select a property to be written as a netCDF global attribute.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.nc_unlimited_dimensions.html#cfdm.Field.nc_unlimited_dimensions" title="cfdm.Field.nc_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></a></td>
-<td>Return the selection of domain axis constructs to be written as netCDF unlimited dimensions.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.nc_clear_unlimited_dimensions.html#cfdm.Field.nc_clear_unlimited_dimensions" title="cfdm.Field.nc_clear_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_unlimited_dimensions</span></code></a></td>
-<td>Remove the selection of domain axis constructs to be written as netCDF unlimited dimensions.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.nc_set_unlimited_dimensions.html#cfdm.Field.nc_set_unlimited_dimensions" title="cfdm.Field.nc_set_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited_dimensions</span></code></a></td>
-<td>Select domain axis constructs to be written as netCDF unlimited dimensions.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.dataset_compliance.html#cfdm.Field.dataset_compliance" title="cfdm.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.dataset_compliance.html#cfdm.Field.dataset_compliance" title="cfdm.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code></a></td>
 <td>A report of problems encountered whilst reading the field construct from a dataset.</td>
 </tr>
 </tbody>
@@ -493,8 +483,8 @@ initialization. By default arguments are deep copied.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.Field.rst.txt"

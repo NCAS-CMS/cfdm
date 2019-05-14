@@ -74,6 +74,8 @@ NetCDF
    ~cfdm.DomainAxis.nc_get_dimension
    ~cfdm.DomainAxis.nc_has_dimension
    ~cfdm.DomainAxis.nc_set_dimension 
+   ~cfdm.DomainAxis.nc_is_unlimited
+   ~cfdm.DomainAxis.nc_set_unlimited
    
 Special
 -------

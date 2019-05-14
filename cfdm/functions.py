@@ -110,7 +110,6 @@ than 1 that is representable as a float).
     return old
 #--- End: def
 
-
 def environment(display=True):
     '''Return the names, versions and paths of all dependencies.
 
@@ -187,3 +186,4 @@ changed.
     '''
     return __cf_version__
 #--- End: def
+
