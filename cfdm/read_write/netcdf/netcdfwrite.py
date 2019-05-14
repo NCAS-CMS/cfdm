@@ -471,9 +471,7 @@ If the construct has no data, then return `None`
                 print('    Writing', repr(domain_axis), 'to netCDF dimension:', ncdim)
 
             size = self.implementation.get_domain_axis_size(f, axis)
-        
             g['axis_to_ncdim'][axis] = ncdim
-        #--- End: if
         
         g['ncdim_to_size'][ncdim] = size
         
@@ -2030,7 +2028,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         if data is not None:
             chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
 
-        if verbose:
+        if verbose and chunksizes is not None:
             print('      HDF5 chunksizes:', chunksizes)
         
         # ------------------------------------------------------------
@@ -2409,11 +2407,9 @@ extra trailing dimension.
             #--- End: for
 
             if not found_dimension_coordinate:
-#                print ('axis=', axis)
                 # --------------------------------------------------------
-                # There is no dimension coordinate for this axis
+                # There is NO dimension coordinate for this axis
                 # --------------------------------------------------------
-
                 spanning_constructs = self.implementation.get_constructs(f, axes=[axis])
 
                 if axis not in data_axes and spanning_constructs:
@@ -2436,7 +2432,7 @@ extra trailing dimension.
                         for key, construct in list(spanning_constructs.items()):
                             axes = self.implementation.get_construct_data_axes(f, key)
                             spanning_constructs[key] = (construct, axes.index(axis))
-                        
+
                         for b1 in g['xxx']:
                             (ncdim1,  axis_size1),  constructs1 = list(b1.items())[0]
 
@@ -2444,9 +2440,11 @@ extra trailing dimension.
                                 continue
     
                             constructs1 = constructs1.copy()
-                            
+
+                            matched_construct = False
+                                                            
                             for key0, (construct0, index0) in spanning_constructs.items():
-                                matched_construct = False
+#                                matched_construct = False
                                 for key1, (construct1, index1) in constructs1.items():
                                     if (index0 == index1 and
                                         self.implementation.equal_constructs(construct0, construct1)):
@@ -2455,11 +2453,12 @@ extra trailing dimension.
                                         break
                                 #--- End: for        
         
-                                if not matched_construct:
+                                if  matched_construct:
                                     break
                             #--- End: for
                             
-                            if not constructs1:
+#                            if not constructs1:
+                            if matched_construct:
                                 use_existing_dimension = True
                                 break
                         #--- End: for
@@ -2491,7 +2490,6 @@ extra trailing dimension.
                         domain_axis = self.implementation.get_domain_axes(f)[axis] 
                         ncdim = self.implementation.nc_get_dimension(domain_axis, 'dim')
                         ncdim = self._netcdf_name(ncdim)
-#                        unlimited = self._unlimited(f, axis)
                         unlimited = self.implementation.nc_is_unlimited_axis(f, axis)
                         self._write_dimension(ncdim, f, axis, unlimited=unlimited)
                         
