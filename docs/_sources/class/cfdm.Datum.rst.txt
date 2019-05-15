@@ -41,6 +41,21 @@ Miscellaneous
    ~cfdm.Datum.copy
    ~cfdm.Datum.equals
 
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Datum.nc_del_variable
+   ~cfdm.Datum.nc_get_variable
+   ~cfdm.Datum.nc_has_variable
+   ~cfdm.Datum.nc_set_variable
+      
 Special
 -------
 
