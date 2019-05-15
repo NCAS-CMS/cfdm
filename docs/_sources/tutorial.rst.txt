@@ -2619,25 +2619,25 @@ Method                            Classes                                  NetCD
                                   `AuxiliaryCoordinate`, `CellMeasure`,
                                   `DomainAncillary`, `FieldAncillary`,
                                   `CoordinateReference`,  `Bounds`,
-			          `Count`, `Index`, `List`
+			          `Datum`, `Count`, `Index`, `List`
 			          				
 `!nc_get_variable`                `Field`, `DimensionCoordinate`,          Variable name
                                   `AuxiliaryCoordinate`, `CellMeasure`,
                                   `DomainAncillary`, `FieldAncillary`,
                                   `CoordinateReference`, `Bounds`,
-			          `Count`, `Index`, `List`
+			          `Datum`, `Count`, `Index`, `List`
 			          
 `!nc_has_variable`                `Field`, `DimensionCoordinate`,          Variable name
                                   `AuxiliaryCoordinate`, `CellMeasure`,
                                   `DomainAncillary`, `FieldAncillary`,
                                   `CoordinateReference`, `Bounds`,
-			          `Count`, `Index`, `List`
+			          `Datum`, `Count`, `Index`, `List`
 			          
 `!nc_set_variable`                `Field`, `DimensionCoordinate`,          Variable name
                                   `AuxiliaryCoordinate`, `CellMeasure`,
                                   `DomainAncillary`, `FieldAncillary`,
                                   `CoordinateReference`, `Bounds`,
-			          `Count`, `Index`, `List`
+			          `Datum`, `Count`, `Index`, `List`
 			          
 `!nc_del_dimension`               `DomainAxis`, `Count`, `Index`           Dimension name
 			          
