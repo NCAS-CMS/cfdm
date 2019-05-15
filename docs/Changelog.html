@@ -92,7 +92,7 @@
 <p><strong>2019-05-15</strong></p>
 <ul class="simple">
 <li>New methods: <a class="reference internal" href="method/cfdm.Datum.nc_has_variable.html#cfdm.Datum.nc_has_variable" title="cfdm.Datum.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_has_variable</span></code></a>, <a class="reference internal" href="method/cfdm.Datum.nc_get_variable.html#cfdm.Datum.nc_get_variable" title="cfdm.Datum.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_get_variable</span></code></a>,
-<a class="reference internal" href="method/cfdm.Datum.nc_has_variable.html#cfdm.Datum.nc_has_variable" title="cfdm.Datum.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_has_variable</span></code></a>, <a class="reference internal" href="method/cfdm.Datum.nc_set_variable.html#cfdm.Datum.nc_set_variable" title="cfdm.Datum.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_set_variable</span></code></a>.</li>
+<a class="reference internal" href="method/cfdm.Datum.nc_has_variable.html#cfdm.Datum.nc_has_variable" title="cfdm.Datum.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_has_variable</span></code></a>, <a class="reference internal" href="method/cfdm.Datum.nc_set_variable.html#cfdm.Datum.nc_set_variable" title="cfdm.Datum.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_set_variable</span></code></a>. [issue #3]</li>
 </ul>
 </div>
 <div class="section" id="version-1-7-4">
@@ -134,26 +134,27 @@ to be checked prior to insertion.</li>
 <hr class="docutils" />
 <p><strong>2019-04-24</strong></p>
 <ul class="simple">
-<li>New method: Constructs.filter_by_size</li>
-<li>New method: Data.uncompress</li>
-<li>Changed the default behaviours of the Construct.filter_by_axis,
-Construct.filter_by_size, Construct.filter_by_naxes,
-Construct.filter_by_property, Construct.filter_by_ncvar,
-Construct.filter_by_ncdim, Construct.filter_by_method,
-Construct.filter_by_measure methods in the case when no arguments
+<li>New method: <a class="reference internal" href="method/cfdm.Constructs.filter_by_size.html#cfdm.Constructs.filter_by_size" title="cfdm.Constructs.filter_by_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter_by_size</span></code></a>.</li>
+<li>New method: <a class="reference internal" href="method/cfdm.Data.uncompress.html#cfdm.Data.uncompress" title="cfdm.Data.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data.uncompress</span></code></a>.</li>
+<li>Changed the default behaviours of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Construct.filter_by_axis</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Construct.filter_by_size</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Construct.filter_by_naxes</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Construct.filter_by_property</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Construct.filter_by_ncvar</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Construct.filter_by_ncdim</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Construct.filter_by_method</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Construct.filter_by_measure</span></code> methods in the case when no arguments
 are provided: Now returns all possible constructs that <em>could</em> have
 the feature, with any values.</li>
 <li>Renamed the “underlying_array” methods to “source”</li>
-<li>Added _field_data_axes attribute to Constructs instances.</li>
+<li>Added _field_data_axes attribute to <a class="reference internal" href="class/cfdm.Constructs.html#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instances.</li>
 <li>Added _units and _fill_value arguments to get_data method.</li>
-<li>Moved contents of cfdm/read_write/constants.py to NetCDFRead and
-NetCDFWrite.</li>
-<li>Fixed bug in CoordinateReference.clear_coordinates</li>
-<li>Fixed bug in Field.convert (which omitted domain ancillaries in the result)</li>
-<li>Added <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs parameter to CFDMImplementation.initialise_Data, to
+<li>Moved contents of cfdm/read_write/constants.py to <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFRead</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFWrite</span></code>.</li>
+<li>Fixed bug in <a class="reference internal" href="method/cfdm.CoordinateReference.clear_coordinates.html#cfdm.CoordinateReference.clear_coordinates" title="cfdm.CoordinateReference.clear_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference.clear_coordinates</span></code></a>.</li>
+<li>Fixed bug in <a class="reference internal" href="method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field.convert</span></code></a> (which omitted domain ancillaries in
+the result).</li>
+<li>Added <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs parameter to <code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation.initialise_Data</span></code>, to
 facilitate subclassing.</li>
-<li>Added NetCDFRead._customize_read_vars to facilitate sublcassing.</li>
-<li>Added NetCDFWrite._transform_strings to facilitate sublcassing.</li>
+<li>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFRead._customize_read_vars</span></code> to facilitate sublcassing.</li>
+<li>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFWrite._transform_strings</span></code> to facilitate sublcassing.</li>
 </ul>
 </div>
 <div class="section" id="version-1-7-2">
@@ -173,10 +174,11 @@ subspacing.</li>
 <hr class="docutils" />
 <p><strong>2019-04-02</strong></p>
 <ul class="simple">
-<li>New methods Constructs.clear_filters_applied,
-Constructs.filter_by_naxes</li>
+<li>New methods <a class="reference internal" href="method/cfdm.Constructs.clear_filters_applied.html#cfdm.Constructs.clear_filters_applied" title="cfdm.Constructs.clear_filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.clear_filters_applied</span></code></a>,
+<a class="reference internal" href="method/cfdm.Constructs.filter_by_naxes.html#cfdm.Constructs.filter_by_naxes" title="cfdm.Constructs.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter_by_naxes</span></code></a>.</li>
 <li>Changed behaviour of Constructs.unfilter and
-Constructs.inverse_filters: added depth keyword and changed default</li>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.inverse_filters</span></code>: added depth keyword and changed
+default.</li>
 </ul>
 </div>
 <div class="section" id="version-1-7-0">

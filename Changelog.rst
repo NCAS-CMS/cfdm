@@ -5,7 +5,7 @@ version 1.7.5
 **2019-05-15**
 
 * New methods: `Datum.nc_has_variable`, `Datum.nc_get_variable`,
-  `Datum.nc_has_variable`, `Datum.nc_set_variable`.
+  `Datum.nc_has_variable`, `Datum.nc_set_variable`. [issue #3]
   
 version 1.7.4
 -------------
@@ -57,16 +57,17 @@ version 1.7.3
   are provided: Now returns all possible constructs that *could* have
   the feature, with any values.
 * Renamed the "underlying_array" methods to "source"
-* Added _field_data_axes attribute to Constructs instances.
+* Added _field_data_axes attribute to `Constructs` instances.
 * Added _units and _fill_value arguments to get_data method.
-* Moved contents of cfdm/read_write/constants.py to NetCDFRead and
-  NetCDFWrite.
-* Fixed bug in CoordinateReference.clear_coordinates
-* Fixed bug in Field.convert (which omitted domain ancillaries in the result)
-* Added **kwargs parameter to CFDMImplementation.initialise_Data, to
+* Moved contents of cfdm/read_write/constants.py to `NetCDFRead` and
+  `NetCDFWrite`.
+* Fixed bug in `CoordinateReference.clear_coordinates`.
+* Fixed bug in `Field.convert` (which omitted domain ancillaries in
+  the result).
+* Added **kwargs parameter to `CFDMImplementation.initialise_Data`, to
   facilitate subclassing.
-* Added NetCDFRead._customize_read_vars to facilitate sublcassing.
-* Added NetCDFWrite._transform_strings to facilitate sublcassing.
+* Added `NetCDFRead._customize_read_vars` to facilitate sublcassing.
+* Added `NetCDFWrite._transform_strings` to facilitate sublcassing.
 
 version 1.7.2
 -------------
@@ -86,10 +87,11 @@ version 1.7.1
 
 **2019-04-02**
 
-* New methods Constructs.clear_filters_applied,
-  Constructs.filter_by_naxes
+* New methods `Constructs.clear_filters_applied`,
+  `Constructs.filter_by_naxes`.
 * Changed behaviour of Constructs.unfilter and
-  Constructs.inverse_filters: added depth keyword and changed default
+  `Constructs.inverse_filters`: added depth keyword and changed
+  default.
 
 version 1.7.0
 -------------
