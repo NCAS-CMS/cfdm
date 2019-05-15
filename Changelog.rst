@@ -1,8 +1,17 @@
-version 1.7.4
+version 1.7.5
 -------------
 ----
 
-**Not yet released**
+**2019-05-15**
+
+* Changed behaviour of Constructs.filter_by_axis.
+* New methods: Data.has_units, Data.has_calendar, Data.has_fill_value.
+* New keyword 'constructs' to Field.transpose.
+*version 1.7.4
+-------------
+----
+
+**2019-05-14**
 
 * Changed behaviour of Constructs.filter_by_axis.
 * New methods: Data.has_units, Data.has_calendar, Data.has_fill_value.

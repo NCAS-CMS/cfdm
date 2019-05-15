@@ -13,17 +13,17 @@
 * Create a source tarball using `python setup.py sdist`
 
 * Test the tarball release using `test_release <vn>`
-  (e.g. ./test_release 1.7.0). Do this for python2.7 and python3.
+  (e.g. ./test_release 1.7.6). Do this for python2.7 and python3.
 
 * Update the latest documentation using `./release_latest_docs <vn>`
-  (e.g. ./release_latest_docs 1.7.5)
+  (e.g. ./release_latest_docs 1.7.6)
 
 * Create an archived copy of the documentation using
   `./release_archive_docs <vn>` (e.g. ./release_archive_docs 1.7.5)
 
 * Push recent commits using `git push origin master`
 
-* Tag the release using `./tag <vn>` (e.g. ./tag 1.7.5)
+* Tag the release using `./tag <vn>` (e.g. ./tag 1.7.6)
 
 * Upload the source tarball to PyPi
 

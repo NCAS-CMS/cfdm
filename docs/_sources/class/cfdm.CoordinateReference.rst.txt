@@ -121,6 +121,10 @@ NetCDF
    ~cfdm.CoordinateReference.nc_get_variable
    ~cfdm.CoordinateReference.nc_has_variable
    ~cfdm.CoordinateReference.nc_set_variable 
+   ~cfdm.CoordinateReference.nc_del_datum_variable
+   ~cfdm.CoordinateReference.nc_get_datum_variable
+   ~cfdm.CoordinateReference.nc_has_datum_variable
+   ~cfdm.CoordinateReference.nc_set_datum_variable 
       
 Special
 -------

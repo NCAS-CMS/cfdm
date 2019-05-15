@@ -31,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.4</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.5</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -93,7 +93,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CoordinateReference">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.4/cfdm/coordinatereference.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.5/cfdm/coordinatereference.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.coordinatereference.CoordinateReference</span></code></p>
 <p>A coordinate reference construct of the CF data model.</p>
 <p>A coordinate reference construct relates the coordinate values of the
@@ -357,6 +357,18 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.nc_set_variable.html#cfdm.CoordinateReference.nc_set_variable" title="cfdm.CoordinateReference.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
 <td>Set the netCDF variable name.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CoordinateReference.nc_del_datum_variable</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CoordinateReference.nc_get_datum_variable</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CoordinateReference.nc_has_datum_variable</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CoordinateReference.nc_set_datum_variable</span></code></td>
+<td></td>
 </tr>
 </tbody>
 </table>

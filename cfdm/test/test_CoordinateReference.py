@@ -172,6 +172,13 @@ class CoordinateReferenceTest(unittest.TestCase):
 
         _ = cr.del_datum()
         self.assertTrue(_.equals(d))
+
+        f = self.f.copy()
+        key = f.construct_key('grid_mapping_name:rotated_latitude_longitude')
+        f.del_construct(key)
+        cr = f.construct('standard_name:atmosphere_hybrid_height_coordinate')
+        cr.datum.nc_set_variable('my_name')
+        cfdm.write(f, 'delme.nc')
     #--- End: def
 
 #--- End: class

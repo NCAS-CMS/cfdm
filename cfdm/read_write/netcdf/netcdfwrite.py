@@ -59,7 +59,9 @@ class NetCDFWrite(IOWrite):
     def _create_netcdf_variable_name(self, parent, default):
 #                                     force_use_existing=False):
         '''
-        
+    
+.. versionadded:: 1.7.0
+    
 :Parameters:
         
     parent:
@@ -68,7 +70,7 @@ class NetCDFWrite(IOWrite):
     
 :Returns:
 
-    out: `str`
+    `str`
         The netCDF variable name.
 
         '''
@@ -1880,7 +1882,7 @@ measure will not be written.
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
         '''Write a grid mapping georeference to the netCDF file.
     
-.. note:: This function updates ``grid_mapping``, ``g['seen']``.
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -1893,9 +1895,7 @@ measure will not be written.
 
 :Returns:
 
-    out: `str`
-
-:Examples:
+    `str`
 
         '''
         g = self.write_vars
@@ -2716,7 +2716,7 @@ extra trailing dimension.
         # Create netCDF variables grid mappings
         # ------------------------------------------------------------
         multiple_grid_mappings = (len(g['grid_mapping_refs']) > 1)
-        
+
         grid_mapping = [self._write_grid_mapping(f, ref, multiple_grid_mappings)
                         for ref in g['grid_mapping_refs']]
         
@@ -2828,15 +2828,15 @@ extra trailing dimension.
 
     def _create_vertical_datum(self, ref, coord_key):
         '''Deal with a vertical datum
+
+.. versionaddedd:: 1.7.0
+
         '''
         g = self.write_vars
 
         if not self.implementation.has_datum(ref):
             return
 
-#        if g['verbose']:
-#            print('      Datum =', self.implementation.get_datum(ref))
-            
         count = [0, None]
         for grid_mapping in g['grid_mapping_refs']:
             if self.implementation.equal_datums(ref, grid_mapping):
@@ -2849,9 +2849,7 @@ extra trailing dimension.
             # Add the vertical coordinate to an existing
             # horizontal coordinate reference
             if g['verbose']:
-                print('      Adding', coord_key, 'to', grid_mapping)
-
-
+                print('      Adding {!r} to {!r}'.format(coord_key, grid_mapping))
                 
             grid_mapping = count[1]
             self.implementation.set_coordinate_reference_coordinate(grid_mapping,
@@ -2879,7 +2877,11 @@ extra trailing dimension.
             self.implementation.set_datum(
                 coordinate_reference=new_grid_mapping,
                 datum=datum)
-        
+
+            ncvar = self.implementation.nc_get_variable(datum)
+            if ncvar is not None:
+                self.implementation.nc_set_variable(new_grid_mapping, ncvar)
+            
             g['grid_mapping_refs'].append(new_grid_mapping)
     #--- End: def
                             

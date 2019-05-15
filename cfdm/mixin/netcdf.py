@@ -388,6 +388,202 @@ None
 #--- End: class
 
 
+#class NetCDFDatumVariable(NetCDF):
+#    '''Mixin class for accessing the netCDF variable name of a datum of a
+#corodinate reference construct.
+#
+#.. versionadded:: 1.7.5
+#
+#    '''
+#    def nc_del_datum_variable(self, default=ValueError()):
+#        '''Remove the datum netCDF variable name.
+#
+#The name is only used if the datum needs to be written out as an
+#independent netCDF grid mapping variable. This occurs if a coordinate
+#reference construct for a vertical CRS defines a datum which is not
+#identical to the datum of another coordinate reference construct for a
+#horizontal CRS, that is contained in the same field construct.
+#
+#.. versionadded:: 1.7.5
+#
+#.. seealso:: `nc_get_datum_variable`, `nc_has_datum_variable`,
+#             `nc_set_datum_variable`
+#
+#:Parameters:
+#
+#    default: optional
+#        Return the value of the *default* parameter if the netCDF
+#        datum variable name has not been set. If set to an `Exception`
+#        instance then it will be raised instead.
+#
+#:Returns:
+#
+#    `str`
+#        The removed datum netCDF variable name.
+#
+#**Examples:**
+#
+#>>> f.nc_set_datum_variable('datum')
+#>>> f.nc_has_datum_variable()
+#True
+#>>> f.nc_get_datum_variable()
+#'tas'
+#>>> f.nc_del_datum_variable()
+#'tas'
+#>>> f.nc_has_datum_variable()
+#False
+#>>> print(f.nc_get_datum_variable(None))
+#None
+#>>> print(f.nc_del_datum_variable(None))
+#None
+#
+#        '''        
+#        try:
+#            return self._get_component('netcdf').pop('datum_variable')
+#        except KeyError:
+#            return self._default(default,
+#                   "{!r} has no datum netCDF variable name".format(
+#                       self.__class__.__name__))
+#    #--- End: def
+#        
+#    def nc_get_datum_variable(self, default=ValueError()):
+#        '''Return the datum netCDF variable name.
+#
+#The name is only used if the datum needs to be written out as an
+#independent netCDF grid mapping variable. This occurs if a coordinate
+#reference construct for a vertical CRS defines a datum which is not
+#identical to the datum of another coordinate reference construct for a
+#horizontal CRS, that is contained in the same field construct.
+#
+#.. versionadded:: 1.7.5
+#
+#.. seealso:: `nc_del_datum_variable`, `nc_has_datum_variable`,
+#             `nc_set_datum_variable`
+#
+#:Parameters:
+#
+#    default: optional
+#        Return the value of the *default* parameter if the netCDF
+#        datum variable name has not been set. If set to an `Exception`
+#        instance then it will be raised instead.
+#
+#:Returns:
+#
+#    `str`
+#        The datum netCDF variable name. If unset then *default* is
+#        returned, if provided.
+#
+#**Examples:**
+#
+#>>> f.nc_set_datum_variable('datum')
+#>>> f.nc_has_datum_variable()
+#True
+#>>> f.nc_get_datum_variable()
+#'tas'
+#>>> f.nc_del_datum_variable()
+#'tas'
+#>>> f.nc_has_datum_variable()
+#False
+#>>> print(f.nc_get_datum_variable(None))
+#None
+#>>> print(f.nc_del_datum_variable(None))
+#None
+#
+#        '''
+#        try:
+#            return self._get_component('netcdf')['datum_variable']
+#        except KeyError:
+#            return self._default(default,
+#                   "{!r} has no datum netCDF variable name".format(
+#                       self.__class__.__name__))
+#    #--- End: def
+#
+#    def nc_has_datum_variable(self):
+#        '''Whether the datum netCDF variable name has been set.
+#
+#The name is only used if the datum needs to be written out as an
+#independent netCDF grid mapping variable. This occurs if a coordinate
+#reference construct for a vertical CRS defines a datum which is not
+#identical to the datum of another coordinate reference construct for a
+#horizontal CRS, that is contained in the same field construct.
+#
+#.. versionadded:: 1.7.5
+#
+#.. seealso:: `nc_del_datum_variable`, `nc_get_datum_variable`,
+#             `nc_set_datum_variable`
+#
+#:Returns:
+#
+#    `bool`
+#        True if the datum netCDF variable name has been set, otherwise
+#        False.
+#
+#**Examples:**
+#
+#>>> f.nc_set_datum_variable('datum')
+#>>> f.nc_has_datum_variable()
+#True
+#>>> f.nc_get_datum_variable()
+#'tas'
+#>>> f.nc_del_datum_variable()
+#'tas'
+#>>> f.nc_has_datum_variable()
+#False
+#>>> print(f.nc_get_datum_variable(None))
+#None
+#>>> print(f.nc_del_datum_variable(None))
+#None
+#
+#        '''
+#        return 'datum_variable' in self._get_component('netcdf')
+#    #--- End: def
+#
+#    def nc_set_datum_variable(self, value):
+#        '''Set the datum netCDF variable name.
+#
+#The name is only used if the datum needs to be written out as an
+#independent netCDF grid mapping variable. This occurs if a coordinate
+#reference construct for a vertical CRS defines a datum which is not
+#identical to the datum of another coordinate reference construct for a
+#horizontal CRS, that is contained in the same field construct.
+#
+#.. versionadded:: 1.7.5
+#
+#.. seealso:: `nc_del_datum_variable`, `nc_get_datum_variable`,
+#             `nc_has_datum_variable`
+#
+#:Parameters:
+#
+#    value: `str`
+#        The value for the datum netCDF variable name.
+#
+#:Returns:
+#
+#    `None`
+#
+#**Examples:**
+#
+#>>> f.nc_set_datum_variable('datum')
+#>>> f.nc_has_datum_variable()
+#True
+#>>> f.nc_get_datum_variable()
+#'tas'
+#>>> f.nc_del_datum_variable()
+#'tas'
+#>>> f.nc_has_datum_variable()
+#False
+#>>> print(f.nc_get_datum_variable(None))
+#None
+#>>> print(f.nc_del_datum_variable(None))
+#None
+#
+#        '''
+#        self._get_component('netcdf')['datum_variable'] = value
+#    #--- End: def
+#
+##--- End: class
+
+
 class NetCDFSampleDimension(NetCDF):
     '''Mixin class for accessing the netCDF sample dimension name.
 

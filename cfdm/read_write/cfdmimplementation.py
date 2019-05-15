@@ -1752,6 +1752,34 @@ also be provided.
         parent.nc_set_variable(ncvar)
     #--- End: def
 
+    def nc_get_datum_variable(self, ref):
+        '''
+
+.. versionadded:: 1.7.5
+
+:Parameters:
+
+:Returns:
+
+    `str` or `None`
+        '''
+        return ref.nc_get_datum_variable(default=None)
+    #--- End: def
+
+    def nc_set_datum_variable(self, ref, ncvar):
+        '''
+
+.. versionadded:: 1.7.5
+
+:Parameters:
+
+:Returns:
+
+    `None`
+        '''
+        ref.nc_set_datum_variable(ncvar)
+    #--- End: def
+
 #    def set_node_ncdim(self, parent, ncdim):
 #        '''Set the netCDF name of the dimension of a node coordinate variable.
 #
