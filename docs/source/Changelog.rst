@@ -1,7 +1,7 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-**What's new**
+**Change log**
 ==============
 
 .. include:: ../../Changelog.rst

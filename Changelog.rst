@@ -47,13 +47,13 @@ version 1.7.3
 
 **2019-04-24**
 
-* New method: Constructs.filter_by_size
-* New method: Data.uncompress
-* Changed the default behaviours of the Construct.filter_by_axis,
-  Construct.filter_by_size, Construct.filter_by_naxes,
-  Construct.filter_by_property, Construct.filter_by_ncvar,
-  Construct.filter_by_ncdim, Construct.filter_by_method,
-  Construct.filter_by_measure methods in the case when no arguments
+* New method: `Constructs.filter_by_size`.
+* New method: `Data.uncompress`.
+* Changed the default behaviours of the `Construct.filter_by_axis`,
+  `Construct.filter_by_size`, `Construct.filter_by_naxes`,
+  `Construct.filter_by_property`, `Construct.filter_by_ncvar`,
+  `Construct.filter_by_ncdim`, `Construct.filter_by_method`,
+  `Construct.filter_by_measure` methods in the case when no arguments
   are provided: Now returns all possible constructs that *could* have
   the feature, with any values.
 * Renamed the "underlying_array" methods to "source"
