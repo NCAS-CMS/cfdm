@@ -1,3 +1,6 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 **What's new**
 ==============
 

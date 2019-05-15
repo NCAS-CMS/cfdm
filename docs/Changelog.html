@@ -43,7 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>What’s new</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-5">version 1.7.5</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-7-4">*version 1.7.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-4">version 1.7.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-3">version 1.7.3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-2">version 1.7.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-1">version 1.7.1</a></li>
@@ -96,21 +96,21 @@
 </ul>
 </div>
 <div class="section" id="version-1-7-4">
-<h2><a href="#id1"><span class="problematic" id="id2">*</span></a>version 1.7.4<a class="headerlink" href="#version-1-7-4" title="Permalink to this headline">¶</a></h2>
+<h2>version 1.7.4<a class="headerlink" href="#version-1-7-4" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-05-14</strong></p>
 <ul class="simple">
-<li>Changed behaviour of Constructs.filter_by_axis.</li>
-<li>New methods: Data.has_units, Data.has_calendar, Data.has_fill_value.</li>
-<li>New keyword ‘constructs’ to Field.transpose.</li>
+<li>Changed behaviour of <cite>Constructs.filter_by_axis</cite>.</li>
+<li>New methods: <cite>Data.has_units</cite>, <cite>Data.has_calendar</cite>, <cite>Data.has_fill_value</cite>.</li>
+<li>New keyword ‘constructs’ to <cite>Field.transpose</cite>.</li>
 <li>Keyword ‘axes’ to Field.set_data is now optional.</li>
 <li>Added the ‘has_bounds’ method to constructs that have data but can’t
 have bounds.</li>
-<li>New methods: DomainAxis.nc_is_unlimited,
-DomainAxis.nc_set_unlimited.</li>
+<li>New methods: <cite>DomainAxis.nc_is_unlimited</cite>,
+<cite>DomainAxis.nc_set_unlimited</cite>.</li>
 <li>Made Data a virtual subclass of Array.</li>
-<li>Deprecated methods: Field.nc_unlimited, Field.nc_clear_unlimited,
-Field.nc_clear_unlimited.</li>
+<li>Deprecated methods: <cite>Field.nc_unlimited</cite>, <cite>Field.nc_clear_unlimited</cite>,
+<cite>Field.nc_clear_unlimited</cite>.</li>
 <li>Fixed bug when writing new horizontal coordinate reference for the
 vertical datum.</li>
 <li>Fixed bug in del_data method.</li>
@@ -121,12 +121,12 @@ writing to a file.</li>
 <li>Added _shape keyword to Field.set_data_axes to allow the data shape
 to be checked prior to insertion.</li>
 <li>Added the ‘_custom’ attribute to facilitate subclassing.</li>
-<li>New class mixin.NetCDFUnlimitedDimension replaces
-mixin.NetCDFUnlimitedDimensions, which is deprecated.</li>
-<li>New method CFDMImplementation.nc_is_unlimited_axis replaces
-CFDMImplementation.nc_get_unlimited_axes, which is deprecated.</li>
-<li>New method CFDMImplementation.nc_set_unlimited_axis replaces
-CFDMImplementation.nc_set_unlimited_dimensions, which is deprecated.</li>
+<li>New class <cite>mixin.NetCDFUnlimitedDimension</cite> replaces
+<cite>mixin.NetCDFUnlimitedDimensions</cite>, which is deprecated.</li>
+<li>New method <cite>CFDMImplementation.nc_is_unlimited_axis</cite> replaces
+<cite>CFDMImplementation.nc_get_unlimited_axes</cite>, which is deprecated.</li>
+<li>New method <cite>CFDMImplementation.nc_set_unlimited_axis</cite> replaces
+<cite>CFDMImplementation.nc_set_unlimited_dimensions</cite>, which is deprecated.</li>
 </ul>
 </div>
 <div class="section" id="version-1-7-3">
@@ -150,7 +150,7 @@ the feature, with any values.</li>
 NetCDFWrite.</li>
 <li>Fixed bug in CoordinateReference.clear_coordinates</li>
 <li>Fixed bug in Field.convert (which omitted domain ancillaries in the result)</li>
-<li>Added <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs parameter to CFDMImplementation.initialise_Data, to
+<li>Added <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs parameter to CFDMImplementation.initialise_Data, to
 facilitate subclassing.</li>
 <li>Added NetCDFRead._customize_read_vars to facilitate sublcassing.</li>
 <li>Added NetCDFWrite._transform_strings to facilitate sublcassing.</li>

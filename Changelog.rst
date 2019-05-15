@@ -26,12 +26,12 @@ version 1.7.4
   `Field.nc_clear_unlimited`.
 * Fixed bug when writing new horizontal coordinate reference for the
   vertical datum.
-* Fixed bug in del_data method.
+* Fixed bug in `del_data` methods.
 * Fixed bug with in-place operations.
-* Fixed bug with position in some insert_dimension methods.
+* Fixed bug with position in some `insert_dimension` methods.
 * Fixed bug that sometimes made duplicate netCDF dimensions when
   writing to a file.
-* Added _shape keyword to Field.set_data_axes to allow the data shape
+* Added _shape keyword to `Field.set_data_axes` to allow the data shape
   to be checked prior to insertion.
 * Added the '_custom' attribute to facilitate subclassing.
 * New class `mixin.NetCDFUnlimitedDimension` replaces
