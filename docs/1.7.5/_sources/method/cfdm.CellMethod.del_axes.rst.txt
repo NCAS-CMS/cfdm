@@ -1,0 +1,7 @@
+cfdm.CellMethod.del_axes
+========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CellMethod.del_axes

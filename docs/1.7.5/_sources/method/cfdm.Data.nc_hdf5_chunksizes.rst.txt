@@ -1,0 +1,7 @@
+cfdm.Data.nc_hdf5_chunksizes
+============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Data.nc_hdf5_chunksizes

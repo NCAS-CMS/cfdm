@@ -1,0 +1,7 @@
+cfdm.core.Array.__deepcopy__
+============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.core.Array.__deepcopy__

@@ -1,0 +1,7 @@
+cfdm.Bounds.equals
+==================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Bounds.equals

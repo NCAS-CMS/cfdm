@@ -1,0 +1,7 @@
+cfdm.GatheredArray.__array__
+============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.GatheredArray.__array__
