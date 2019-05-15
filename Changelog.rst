@@ -75,11 +75,11 @@ version 1.7.2
 
 **2019-04-05**
 
-* New "mode" parameter options to Constructs.filter_by_axis: 'exact',
-  'subset', 'superset'
-* Enabled setting of HDF5 chunksizes
+* New "mode" parameter options to `Constructs.filter_by_axis`: 'exact',
+  'subset', 'superset'.
+* Enabled setting of HDF5 chunksizes.
 * Fixed bug that caused coordinate bounds to be not sliced during
-  subspacing (issue #1)
+  subspacing (issue #1).
 
 version 1.7.1
 -------------
@@ -89,7 +89,7 @@ version 1.7.1
 
 * New methods `Constructs.clear_filters_applied`,
   `Constructs.filter_by_naxes`.
-* Changed behaviour of Constructs.unfilter and
+* Changed behaviour of `Constructs.unfilter` and
   `Constructs.inverse_filters`: added depth keyword and changed
   default.
 
