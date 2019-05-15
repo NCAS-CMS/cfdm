@@ -4,26 +4,26 @@ version 1.7.5
 
 **2019-05-15**
 
-* New methods: Datum.nc_has_variable, Datum.nc_get_variable,
-  Datum.nc_has_variable, Datum.nc_set_variable.
+* New methods: `Datum.nc_has_variable`, `Datum.nc_get_variable`,
+  `Datum.nc_has_variable`, `Datum.nc_set_variable`.
   
-*version 1.7.4
+version 1.7.4
 -------------
 ----
 
 **2019-05-14**
 
-* Changed behaviour of Constructs.filter_by_axis.
-* New methods: Data.has_units, Data.has_calendar, Data.has_fill_value.
-* New keyword 'constructs' to Field.transpose.
+* Changed behaviour of `Constructs.filter_by_axis`.
+* New methods: `Data.has_units`, `Data.has_calendar`, `Data.has_fill_value`.
+* New keyword 'constructs' to `Field.transpose`.
 * Keyword 'axes' to Field.set_data is now optional.
 * Added the 'has_bounds' method to constructs that have data but can't
   have bounds.
-* New methods: DomainAxis.nc_is_unlimited,
-  DomainAxis.nc_set_unlimited.
+* New methods: `DomainAxis.nc_is_unlimited`,
+  `DomainAxis.nc_set_unlimited`.
 * Made Data a virtual subclass of Array.   
-* Deprecated methods: Field.nc_unlimited, Field.nc_clear_unlimited,
-  Field.nc_clear_unlimited.
+* Deprecated methods: `Field.nc_unlimited`, `Field.nc_clear_unlimited`,
+  `Field.nc_clear_unlimited`.
 * Fixed bug when writing new horizontal coordinate reference for the
   vertical datum.
 * Fixed bug in del_data method.
@@ -34,12 +34,12 @@ version 1.7.5
 * Added _shape keyword to Field.set_data_axes to allow the data shape
   to be checked prior to insertion.
 * Added the '_custom' attribute to facilitate subclassing.
-* New class mixin.NetCDFUnlimitedDimension replaces
-  mixin.NetCDFUnlimitedDimensions, which is deprecated.
-* New method CFDMImplementation.nc_is_unlimited_axis replaces
-  CFDMImplementation.nc_get_unlimited_axes, which is deprecated.
-* New method CFDMImplementation.nc_set_unlimited_axis replaces
-  CFDMImplementation.nc_set_unlimited_dimensions, which is deprecated.
+* New class `mixin.NetCDFUnlimitedDimension` replaces
+  `mixin.NetCDFUnlimitedDimensions`, which is deprecated.
+* New method `CFDMImplementation.nc_is_unlimited_axis` replaces
+  `CFDMImplementation.nc_get_unlimited_axes`, which is deprecated.
+* New method `CFDMImplementation.nc_set_unlimited_axis` replaces
+  `CFDMImplementation.nc_set_unlimited_dimensions`, which is deprecated.
   
 version 1.7.3
 -------------
