@@ -5,7 +5,7 @@ version 1.7.5
 **2019-05-15**
 
 * New methods: `Datum.nc_has_variable`, `Datum.nc_get_variable`,
-  `Datum.nc_has_variable`, `Datum.nc_set_variable`. [issue #3]
+  `Datum.nc_has_variable`, `Datum.nc_set_variable` (issue #3).
   
 version 1.7.4
 -------------
@@ -79,7 +79,7 @@ version 1.7.2
   'subset', 'superset'
 * Enabled setting of HDF5 chunksizes
 * Fixed bug that caused coordinate bounds to be not sliced during
-  subspacing.
+  subspacing (issue #1)
 
 version 1.7.1
 -------------
