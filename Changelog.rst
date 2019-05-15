@@ -4,9 +4,9 @@ version 1.7.5
 
 **2019-05-15**
 
-* Changed behaviour of Constructs.filter_by_axis.
-* New methods: Data.has_units, Data.has_calendar, Data.has_fill_value.
-* New keyword 'constructs' to Field.transpose.
+* New methods: Datum.nc_has_variable, Datum.nc_get_variable,
+  Datum.nc_has_variable, Datum.nc_set_variable.
+  
 *version 1.7.4
 -------------
 ----
