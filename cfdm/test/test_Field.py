@@ -300,6 +300,42 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.get_data_axes() == ref)
     #--- End: def
 
+    def test_Field_convert(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+
+        key = f.construct_key('grid_latitude')        
+        c = f.convert(key)
+
+        self.assertTrue(c.data.ndim == 1)
+        self.assertTrue(c.get_property('standard_name') == 'grid_latitude')
+        self.assertTrue(len(c.dimension_coordinates) == 1)
+        self.assertTrue(len(c.auxiliary_coordinates) == 1)
+        self.assertTrue(len(c.cell_measures) == 0)
+        self.assertTrue(len(c.coordinate_references) == 1)
+        self.assertTrue(len(c.domain_ancillaries) == 0)
+        self.assertTrue(len(c.field_ancillaries) == 0)
+        self.assertTrue(len(c.cell_methods) == 0)
+
+        key = f.construct_key('latitude')        
+        c = f.convert(key)
+        
+        self.assertTrue(c.data.ndim == 2)
+        self.assertTrue(c.get_property('standard_name') == 'latitude')
+        self.assertTrue(len(c.dimension_coordinates) == 2)
+        self.assertTrue(len(c.auxiliary_coordinates) == 3)
+        self.assertTrue(len(c.cell_measures) == 1)
+        self.assertTrue(len(c.coordinate_references) == 1)
+        self.assertTrue(len(c.domain_ancillaries) == 0)
+        self.assertTrue(len(c.field_ancillaries) == 0)
+        self.assertTrue(len(c.cell_methods) == 0)
+
+        with self.assertRaises(ValueError):
+            f.convert('qwerty')
+    #--- End: def
+
     def test_Field_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

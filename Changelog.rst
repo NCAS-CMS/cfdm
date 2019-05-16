@@ -4,6 +4,8 @@ version 1.7.6
 
 **Not yet released**
 
+* Fixed bug in `Field.convert`.
+  
 version 1.7.5
 -------------
 ----

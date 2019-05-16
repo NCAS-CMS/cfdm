@@ -925,14 +925,16 @@ Field: surface_altitude (ncvar%surface_altitude)
 Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
 		   
         '''
-        c = self.constructs.filter_by_key(key).value()
+        c = self.constructs.filter_by_key(key).value().copy()
         
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the
         # construct
         # ------------------------------------------------------------
+        data = c.del_data()
+        
         f = type(self)(source=c, copy=True)
-
+        
         # ------------------------------------------------------------
         # Add domain axes
         # ------------------------------------------------------------
@@ -945,10 +947,10 @@ Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
         #--- End: if
 
         # ------------------------------------------------------------
-        # Set the data axes
+        # Set data axes
         # ------------------------------------------------------------
         if data_axes is not None:
-            f.set_data_axes(axes=data_axes)
+            f.set_data(data, axes=data_axes)
             
         # ------------------------------------------------------------
         # Add a more complete domain
