@@ -1246,11 +1246,14 @@ Boundaries" of the CF conventions for details.
             data = bounds.get_data(None)
             if data is not None:
                 if (ndim == 2 and data.ndim == 3 and data.shape[-1] == 4 and 
-                    b_axes[0:2] == [1, 0]): 
+                    b_axes[0:2] == [1, 0]):
+#                    print ('UUUUUUUUUUUUUUUUU')
                     # Swap elements 1 and 3 of the trailing dimension so 
                     # that the values are still contiguous (if they ever 
                     # were). See section 7.1 of the CF conventions. 
-                    data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)] 
+#                    print (data[2 ,3, slice(1, 4, 2)].array)
+#                    print (data[2, 3, slice(3, 0, -2)].array)
+                    data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)]
                     bounds.set_data(data, copy=False) 
         #--- End: if 
  
