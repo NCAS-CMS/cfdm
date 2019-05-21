@@ -14,7 +14,6 @@ class Constructs(core.Constructs):
 .. versionadded:: 1.7.0
 
     ''' 
-       
     def __call__(self, *identities):
         '''Select metadata constructs by identity.
 
@@ -490,7 +489,8 @@ The identity is the first found of the following:
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_compression=False, _ignore_type=False):
+               ignore_compression=False, _ignore_type=False,
+               _return_axis_map=False):
         '''Whether two `Constructs` instances are the same.
 
 Two real numbers ``x`` and ``y`` are considered equal if
@@ -562,7 +562,8 @@ False
 
         '''        
         if self is other:
-            return True
+            if not _return_axis_map:
+                return True
 
         construct_verbose = (verbose > 1)
         
@@ -571,7 +572,8 @@ False
             if verbose:
                 print("{0}: Incompatible type: {1}".format(
                     self.__class__.__name__, other.__class__.__name__))
-            return False
+            if not _return_axis_map:
+                return False
         
         axes0_to_axes1 = {}
         axis0_to_axis1 = {}
@@ -586,7 +588,8 @@ False
                                         ignore_type=_ignore_type,
                                         axis1_to_axis0=axis1_to_axis0,
                                         key1_to_key0=key1_to_key0):
-            return False
+            if not _return_axis_map:
+                return False
         
         # ------------------------------------------------------------
         # Constructs with arrays
@@ -680,16 +683,11 @@ False
                         self.__class__.__name__, names))
                     if log:
                         print('\n'.join(log))
-#                    print()
-##                    print(axes_to_constructs0)
-#                    print(self)
-#                    print()
-##                    print(axes_to_constructs1)
-#                    print(other)
-                return False
-
-            # Map item axes in the two instances
-            axes0_to_axes1[axes0] = axes1
+                if not _return_axis_map:
+                    return False
+            else:
+                # Map item axes in the two instances
+                axes0_to_axes1[axes0] = axes1
         #--- End: for
 
         for axes0, axes1 in axes0_to_axes1.items():
@@ -697,26 +695,31 @@ False
                 if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:
                     if verbose:
                         print(
-"{0}: Ambiguous axis mapping ({1} -> both {2} and {3})".format(
-    self.__class__.__name__,
-    self.domain_axis_identity(axes0),
-    other.domain_axis_identity(axis1),
-    other.domain_axis_identity(axis0_to_axis1[axis0])))
-                    return False
+                            "{0}: Ambiguous axis mapping ({1} -> both {2} and {3})".format(
+                                self.__class__.__name__,
+                                self.domain_axis_identity(axes0),
+                                other.domain_axis_identity(axis1),
+                                other.domain_axis_identity(axis0_to_axis1[axis0])))
+                    if not _return_axis_map:
+                        return False
                 elif axis1 in axis1_to_axis0 and axis0 != axis1_to_axis0[axis1]:
                     if verbose:
                         print(
-"{0}: Ambiguous axis mapping ({1} -> both {2} and {3})".format(
-    self.__class__.__name__,
-    self.domain_axis_identity(axis0),
-    self.domain_axis_identity(axis1_to_axis0[axis0]),
-    other.domain_axis_identity(axes1)))
-                    return False
+                            "{0}: Ambiguous axis mapping ({1} -> both {2} and {3})".format(
+                                self.__class__.__name__,
+                                self.domain_axis_identity(axis0),
+                                self.domain_axis_identity(axis1_to_axis0[axis0]),
+                                other.domain_axis_identity(axes1)))
+                    if not _return_axis_map:
+                        return False
 
                 axis0_to_axis1[axis0] = axis1
                 axis1_to_axis0[axis1] = axis0
         #--- End: for
 
+        if _return_axis_map:
+            return axis0_to_axis1
+        
         # ------------------------------------------------------------
         # Constructs with no arrays
         # ------------------------------------------------------------

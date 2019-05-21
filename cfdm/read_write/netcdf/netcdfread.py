@@ -774,7 +774,8 @@ TODO
                 netcdf_external_variables, parsed_external_variables)
             g['external_variables'] = set(parsed_external_variables)
 
-        # Now that all of the variables have been scanned, 
+        # Now that all of the variables have been scanned, customize
+        # the read parameters.
         self._customize_read_vars()
             
         if _scan_only:

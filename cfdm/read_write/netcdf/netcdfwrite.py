@@ -174,7 +174,10 @@ class NetCDFWrite(IOWrite):
 :Examples 2:
     
         '''
-        netcdf_attrs = self.implementation.get_properties(parent)
+        if parent is None:
+            netcdf_attrs = {}
+        else:
+            netcdf_attrs = self.implementation.get_properties(parent)
         
         netcdf_attrs.update(extra)
     
@@ -293,8 +296,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
  :Parameters:
  
      variable: 
-         Any object with a `!dtype` attribute whose value is a
-         `numpy.dtype` object or `None`.
+         A numpy array or an object with a `get_data` method.
  
  :Returns:
  
@@ -305,9 +307,12 @@ If the input variable has no `!dtype` attribute (or it is None) then
         '''
         g = self.write_vars
 
-        data = self.implementation.get_data(variable, None)
-        if data is None:
-            return 'S1'
+        if not isinstance(variable, numpy.ndarray):        
+            data = self.implementation.get_data(variable, None)
+            if data is None:
+                return 'S1'
+        else:
+            data = variable
 
         dtype = getattr(data, 'dtype', None)
         if dtype is None or dtype.char == 'S' or dtype.char == 'U':
@@ -2003,10 +2008,8 @@ created. The ``seen`` dictionary is updated for *cfvar*.
 
         original_ncdimensions = ncdimensions 
 
-        data, ncdimensions = self._transform_strings(cfvar, data, ncdimensions)
-        
-        if verbose:
-            print(' to netCDF variable: {}({})'.format(ncvar, ', '.join(ncdimensions)))
+        data, ncdimensions = self._transform_strings(cfvar, data,
+                                                     ncdimensions)
 
         # ------------------------------------------------------------
         # Find the fill value - the value that the variable's data get
@@ -2044,6 +2047,13 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         }
         
         kwargs.update(g['netcdf_compression'])
+
+        # TODO
+        kwargs = self._customize_createVariable(cfvar, kwargs)
+               
+        if verbose:
+            print(' to netCDF variable: {}({})'.format(
+                ncvar, ', '.join(ncdimensions)))
 
         try:
             self._createVariable(**kwargs)
@@ -2089,7 +2099,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
 
             compressed = bool(set(ncdimensions).intersection(g['sample_ncdim'].values()))
             
-            self._write_data(data, ncvar, ncdimensions,
+            self._write_data(data, cfvar, ncvar, ncdimensions,
                              unset_values=unset_values, compressed=compressed)
     
         # Update the 'seen' dictionary
@@ -2098,6 +2108,15 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                                 'ncdims'  : original_ncdimensions}
     #--- End: def
 
+    def _customize_createVariable(self, cfvar, kwargs):
+        '''TODO
+
+.. versionadded:: 1.7.6
+
+        '''
+        return kwargs
+    #--- End: def
+    
     def _transform_strings(self, construct, data, ncdimensions):
         '''TODO
 
@@ -2136,13 +2155,15 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         return data, ncdimensions
     #--- End: def
     
-    def _write_data(self, data, ncvar, ncdimensions, unset_values=(),
+    def _write_data(self, data, cfvar, ncvar, ncdimensions, unset_values=(),
                     compressed=False):
         '''
 
 :Parameters:
 
     data: Data instance
+
+    cfvar: cfdm instance
 
     ncvar: `str`
 
@@ -2811,7 +2832,7 @@ extra trailing dimension.
 #                extra['geometry'] = gc_ncvar
 #        #--- End: if
                 
-        # Create a new data variable
+        # Create a new CF-netCDF data variable
         self._write_netcdf_variable(ncvar, ncdimensions, f,
                                     omit=g['global_attributes'],
                                     extra=extra, data_variable=True)
@@ -3024,8 +3045,9 @@ write them to the netCDF4.Dataset.
         #--- End: for
            
         if [x for x in g['Conventions'] if ',' in x]:
-            raise ValueError("Conventions names can not contain commas: {0}".format(
-                g['Conventions']))
+            raise ValueError(
+                "Conventions names can not contain commas: {0}".format(
+                    g['Conventions']))
         
         g['output_version'] = g['latest_version']
         g['Conventions'] = ['CF-'+str(g['output_version'])] + list(g['Conventions'])

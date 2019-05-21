@@ -4,7 +4,9 @@ version 1.7.6
 
 **Not yet released**
 
+* Added attributes `_ATOL` and `_RTOL` to facilitate subclassing.
 * Fixed bug in `Field.convert`.
+* Fixed bug in `core.constructs.new_identifier`.
   
 version 1.7.5
 -------------

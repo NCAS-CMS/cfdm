@@ -995,8 +995,9 @@ Constructs:
         
         keys = self._constructs[construct_type]
 
+        n = len(keys)
         key_base = self._key_base[construct_type]
-        key = '{0}{1}'.format(key_base, len(keys))
+        key = '{0}{1}'.format(key_base, n)
         while key in keys:
             n += 1
             key = '{0}{1}'.format(key_base, n)

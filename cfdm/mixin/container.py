@@ -37,7 +37,19 @@ x.__str__() <==> str(x)
         return ', '.join(out)
     #--- End: def
 
-    @classmethod
+    @property
+    def _ATOL(self):
+        '''TODO
+        '''
+        return ATOL()
+    
+    @property
+    def _RTOL(self):
+        '''TODO
+        '''
+        return RTOL()
+    
+#    @classmethod
     def _equals(self, x, y, rtol=None, atol=None,
                 ignore_data_type=False, **kwargs):
         '''Whether two objects are the same.
@@ -51,17 +63,17 @@ casts them as numpy arrays and carried aout numericlly tolerant equality checks.
 
     atol: float, optional
         The tolerance on absolute differences between real
-        numbers. The default value is set by the `cfdm.ATOL` function.
+        numbers. The default value is set by the `ATOL` function.
         
     rtol: float, optional
         The tolerance on relative differences between real
-        numbers. The default value is set by the `cfdm.RTOL` function.
+        numbers. The default value is set by the `RTOL` function.
 
         '''
         if rtol is None:
-            rtol = RTOL()
+            rtol = self._RTOL
         if atol is None:
-            atol = ATOL()
+            atol = self._ATOL
 
         kwargs['ignore_data_type'] = ignore_data_type
         kwargs['rtol'] = rtol

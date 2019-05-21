@@ -1570,8 +1570,8 @@ False
         if not self._equals(self.array, other.array,
                             rtol=rtol, atol=atol):
             if verbose:
-                print("{0}: Different array values".format(
-                    self.__class__.__name__))
+                print("{0}: Different array values (atol={1}, rtol={2})".format(
+                    self.__class__.__name__, atol, rtol))
             return False
 
         # ------------------------------------------------------------
