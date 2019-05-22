@@ -1139,10 +1139,9 @@ Select constructs that could contain data:
         In addition, each construct also has an identity based its
         construct key (e.g. ``'key%dimensioncoordinate2'``)
 
-        Note that the identifiers of a metadata construct in the
-        output of a `print` or `!dump` call are always one of its
-        identities, and so may always be used as an *identities*
-        argument.
+        Note that in the output of a `print` call or `!dump` method, a
+        construct is always described by one of its identities, and so
+        this description may always be used as an *identities* argument.
 
 :Returns:
 

@@ -355,9 +355,9 @@ Constructs:
         In addition, each construct also has an identity based its
         construct key (e.g. ``'key%dimensioncoordinate2'``)
 
-        Note that the identifiers of metadata constructs in the output
-        of a `print` or `!dump` call are always one of its identities,
-        and so may always be used as the *identity* argument.
+        Note that in the output of a `print` call or `!dump` method, a
+        construct is always described by one of its identities, and so
+        this description may always be used as an *identity* argument.
 
     default: optional
         Return the value of the *default* parameter if the property
@@ -445,9 +445,9 @@ ValueError: Can't return 2 constructs
         In addition, each construct also has an identity based its
         construct key (e.g. ``'key%dimensioncoordinate2'``)
 
-        Note that the identifiers of metadata constructs in the output
-        of a `print` or `!dump` call are always one of its identities,
-        and so may always be used as the *identity* argument.
+        Note that in the output of a `print` call or `!dump` method, a
+        construct is always described by one of its identities, and so
+        this description may always be used as an *identity* argument.
 
     default: optional
         Return the value of the *default* parameter if the property
@@ -532,10 +532,9 @@ coordinate constructs.
         In addition, each construct also has an identity based its
         construct key (e.g. ``'key%dimensioncoordinate2'``)
 
-        Note that the identifiers of a metadata construct in the
-        output of a `print` or `!dump` call are always one of its
-        identities, and so may always be used as an *identities*
-        argument.
+        Note that in the output of a `print` call or `!dump` method, a
+        construct is always described by one of its identities, and so
+        this description may always be used as an *identity* argument.
 
     default: optional
         Return the value of the *default* parameter if a domain axis

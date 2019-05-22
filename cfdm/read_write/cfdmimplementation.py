@@ -1070,10 +1070,6 @@ attributes: `dict`
     def get_data(self, parent, default=None):
         '''Return the data array.
 
-:Examples 1:
-
->>> data = w.get_data(x)
-
 :Parameters:
 
     parent: 
@@ -1083,7 +1079,7 @@ attributes: `dict`
 
         The data.
 
-:Examples 2:
+**Examples:**
 
 >>> d
 <DimensionCoordinate: latitude(180) degrees_north>

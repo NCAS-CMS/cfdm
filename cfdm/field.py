@@ -69,7 +69,7 @@ The netCDF variable name of the construct may be accessed with the
         parameter is set.
 
         *Parameter example:*
-           ``properties={'standard_name': 'air_temperature'}``
+          ``properties={'standard_name': 'air_temperature'}``
         
         Properties may also be set after initialisation with the
         `set_properties` and `set_property` methods.

@@ -2113,6 +2113,12 @@ created. The ``seen`` dictionary is updated for *cfvar*.
 
 .. versionadded:: 1.7.6
 
+:Parameters:
+
+    cfvar: CFDM instance that contains data
+
+    kwargs: `dict`
+
         '''
         return kwargs
     #--- End: def

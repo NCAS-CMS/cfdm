@@ -47,10 +47,10 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
                 properties = None
         #--- End: if
 
-        if properties is None:
-            properties = {}
+        self._set_component('properties', {}, copy=False)
         
-        self._set_component('properties', properties, copy=False)
+        if properties is not None:
+            self.set_properties(properties, copy=copy)
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -81,25 +81,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         self._set_component('properties', {})
         return out.copy()
     #--- End: def
-
-#    def copy(self):
-#        '''Return a deep copy.
-#
-#``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-#
-#.. versionadded:: 1.7.0
-#
-#:Returns:
-#
-#        The deep copy.
-#
-#**Examples:**
-#
-#>>> g = f.copy()
-#
-#        '''
-#        return type(self)(source=self, copy=True)
-#    #--- End: def
 
     def del_property(self, prop, default=ValueError()):
         '''Remove a property.

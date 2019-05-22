@@ -1865,6 +1865,8 @@ variable should be pre-filled with missing values.
     def _create_field(self, field_ncvar):
         '''Create a field for a given netCDF variable.
     
+.. versionadded:: 1.7.0
+
 :Parameters:
 
     field_ncvar: `str`
@@ -2245,13 +2247,13 @@ variable should be pre-filled with missing values.
                     bounds = g['formula_terms'][coord_ncvar]['bounds'].get(term)
                     if bounds == ncvar:
                         bounds = None
-        
+                        
                     domain_anc = self._create_domain_ancillary(
                         field_ncvar,
                         ncvar,
                         f,
                         bounds_ncvar=bounds)
-                
+
                 if len(axes) == len(self._ncdimensions(ncvar)):
                     domain_ancillaries.append((ncvar, domain_anc, axes))
                 else:
@@ -3707,11 +3709,8 @@ variable.
 
 If the variable has been compressed then the *implied uncompressed*
 dimensions are returned.
-    
-:Examples 1: 
 
->>> n._ncdimensions('humidity')
-['time', 'lat', 'lon']
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -3720,9 +3719,14 @@ dimensions are returned.
 
 :Returns:
 
-    out: `list`
+    `list`
         The list of netCDF dimension names spanned by the netCDF
         variable.
+    
+**Examples:**
+
+>>> n._ncdimensions('humidity')
+['time', 'lat', 'lon']
 
         '''
         g = self.read_vars

@@ -169,9 +169,9 @@ False
           ``axes=['domainaxis1', 'domainaxis0']``
         
     copy: `bool`, optional
-        If True then return a copy of the unique selected
-        construct. By default the construct is not copied.
-        
+        If True then set a copy of the construct. By default the
+        construct is not copied.
+      
 :Returns:
 
      `str`
