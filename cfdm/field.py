@@ -1236,7 +1236,7 @@ may be selected for removal.
                     # No need to transpose 1-d constructs
                     continue
                     
-                construct_axes = f.get_data_axes(key=key)
+                construct_axes = f.get_data_axes(key)
 
                 new_construct_axes = [axis for axis in new_data_axes
                                       if axis in construct_axes]

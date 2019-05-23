@@ -60,10 +60,10 @@ class NetCDFArray(abstract.Array):
         '''
         super().__init__(filename=filename, ncvar=ncvar, varid=varid)
         
-        self._netcdf = None
+        self._set_component('netcdf', None, copy=False)
         
         # By default, close the netCDF file after data array access
-        self._close = True
+        self._set_component('close', True, copy=False)
 
         if ndim is not None:
             self._set_component('ndim', ndim)
@@ -154,7 +154,7 @@ indexing (given the restrictions on the type of indices allowed) is:
 #            array = numpy.ma.where(array=='', numpy.ma.masked, array)
         #--- End: if
 
-        if self._close:
+        if self._get_component('close'):
             # Close the netCDF file
             self.close()
 
@@ -185,7 +185,7 @@ x.__str__() <==> str(x)
 
         return "file={0} {1}".format(self.get_filename(), name)
     #--- End: def
-
+ 
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -361,12 +361,12 @@ None
 >>> a.close()
 
         '''
-        netcdf = self._netcdf
+        netcdf = self._get_component('netcdf')
         if netcdf is  None:
             return
         
         netcdf.close()    
-        self._netcdf = None
+        self._set_component('netcdf', None, copy=False)
     #--- End: def
 
     @property
@@ -403,14 +403,13 @@ True
 'eastward_wind'
 
         '''
-        netcdf = self._netcdf
-        if netcdf is None:
+        if self._get_component('netcdf') is None:
             try:        
                 netcdf = netCDF4.Dataset(self.get_filename(), 'r')
             except RuntimeError as error:
                 raise RuntimeError("{}: {}".format(error, filename))        
 
-            self._netcdf = netcdf
+            self._set_component('netcdf', netcdf, copy=False)
             
         return netcdf
     #--- End: def

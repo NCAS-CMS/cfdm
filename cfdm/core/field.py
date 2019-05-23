@@ -302,7 +302,7 @@ of the field or of a metadata construct.
 >>> f.get_data_axes()
 ('domainaxis0', 'domainaxis1')
 
->>> f.get_data_axes(key='dimensioncoordinate2')
+>>> f.get_data_axes('dimensioncoordinate2')
 ('domainaxis1',)
 
 >>> f.has_data_axes()
@@ -352,7 +352,7 @@ True
 False
 
         '''
-        axes = self.get_data_axes(key=key, default=None)
+        axes = self.get_data_axes(key, default=None)
         if axes is None:
             return False
 

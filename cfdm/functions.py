@@ -33,7 +33,7 @@ than 1 that is representable as a float).
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `cfdm.RTOL`
+.. seealso:: `RTOL`
 
 :Parameters:
 
@@ -78,7 +78,7 @@ than 1 that is representable as a float).
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `cfdm.ATOL`
+.. seealso:: `ATOL`
 
 :Parameters:
 
@@ -94,12 +94,12 @@ than 1 that is representable as a float).
 
 **Examples:**
 
->>> cfdm.RTOL()
+>>> RTOL()
 2.220446049250313e-16
 >>> old = RTOL(1e-10)
 >>> RTOL(old)
 1e-10
->>> cfdm.RTOL()
+>>> RTOL()
 2.220446049250313e-16
 
     '''
@@ -130,7 +130,7 @@ def environment(display=True):
 
 **Examples:**
 
->>> cfdm.environment()
+>>> environment()
 Platform: Linux-4.15.0-43-generic-x86_64-with-debian-stretch-sid
 python: 3.6.5 /home/david/anaconda3/bin/python
 HDF5 library: 1.10.2
@@ -180,7 +180,7 @@ changed.
 
 **Examples:**
 
->>> cfdm.CF()
+>>> CF()
 '1.7'
 
     '''

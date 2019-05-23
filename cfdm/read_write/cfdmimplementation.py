@@ -1507,9 +1507,7 @@ attributes: `dict`
     #--- End: def
 
     def set_data(self, construct, data, axes=None, copy=True):
-        '''
-
-If the construct is a Field then the corresponding domain axes must
+        '''If the construct is a Field then the corresponding domain axes must
 also be provided.
 
 :Parameters:
@@ -1525,6 +1523,7 @@ also be provided.
 :Returns:
 
     `None`
+
         '''
         if axes is None:
             construct.set_data(data, copy=copy)
