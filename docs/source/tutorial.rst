@@ -1398,7 +1398,7 @@ method of the `Data` instance.
    :caption: *Inspect the the values of a "time" construct as elapsed
              times and as date-times.*
 
-   >>> time = q.constructs('time')
+   >>> time = q.construct('time')
    >>> time
    <DimensionCoordinate: time(1) days since 2018-12-01 >
    >>> time.get_property('units')
