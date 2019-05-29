@@ -617,8 +617,8 @@ is accessed with the `~Field.data` attribute of the field construct.
    >>> t.data
    <Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
 
-The `Data` instance provide access to full array of values, as well as
-attributes to describe the array and methods for describing any
+The `Data` instance provides access to full array of values, as well
+as attributes to describe the array and methods for describing any
 :ref:`data compression <Compression>`.
 
 .. code-block:: python3
