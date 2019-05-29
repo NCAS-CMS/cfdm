@@ -1517,7 +1517,8 @@ individually with the `~cfdm.Field.auxiliary_coordinates` and
 .. code-block:: python3
    :caption: *Retrieve both types of coordinate constructs.*
       
-   >>> t.coordinates()
+   >>> print(t.coordinates)
+   Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
     'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
