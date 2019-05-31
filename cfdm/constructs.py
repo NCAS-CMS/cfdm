@@ -11,14 +11,23 @@ from . import core
 class Constructs(core.Constructs):
     '''A container for metadata constructs.
 
+Calling a `Constructs` instance selects metadata constructs by
+identity and is an alias for the `filter_by_identity` method.
+
+**Examples:**
+
+Select constructs that have a "standard_name" property of 'foo':
+
+>>> d = c('foo')
+
 .. versionadded:: 1.7.0
 
     ''' 
     def __call__(self, *identities):
         '''Select metadata constructs by identity.
 
-Calling a `Constructs` instance is an alias for `filter_by_identity`,
-so see that method method for details.
+Calling a `Constructs` instance selects metadata constructs by
+identity and is an alias for the `filter_by_identity` method.
 
 .. versionadded:: 1.7.0
 

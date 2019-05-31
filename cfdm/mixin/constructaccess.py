@@ -101,19 +101,10 @@ object.
 
 .. seealso:: `constructs`
 
-:Parameters:
-
-    copy: `bool`, optional
-        If True then return copies of the constructs. By default the
-        constructs are not copied.
-
 :Returns:
 
     `Constructs`
-        The  constructs and their construct keys.
-    `dict`
-        Constructs are returned as values of a dictionary, keyed by
-        their construct identifiers.
+        The constructs and their construct keys.
 
 
 **Examples:**
@@ -293,12 +284,6 @@ Constructs:
 .. versionadded:: 1.7.0
 
 .. seealso:: `constructs`
-
-:Parameters:
-
-    copy: `bool`, optional
-        If True then return copies of the constructs. By default the
-        constructs are not copied.
 
 :Returns:
 
@@ -501,7 +486,7 @@ ValueError: Can't return the key of 2 constructs
 
         return self._default(
             default,
-            "Can't return the key of {0} constructs".format(len(c)))
+            "Can't return the keys of {0} constructs".format(len(c)))
     #--- End: def
 
     def domain_axis_key(self, identity, default=ValueError()):
