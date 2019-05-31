@@ -1076,7 +1076,7 @@ Select constructs whose data spans the "domainaxis1" or the
 
 Selection is not based on whether they thay actually have data, rather
 by whether the construct supports the inclusion of data. For example,
-constructs selected by this method will all have `!get_data` method.
+constructs selected by this method will all have a `!get_data` method.
 
 .. versionadded:: 1.7.0
 
