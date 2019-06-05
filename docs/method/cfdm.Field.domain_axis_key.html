@@ -9,13 +9,12 @@
     <title>cfdm.Field.domain_axis_key &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Field.constructs" href="../attribute/cfdm.Field.constructs.html" />
@@ -31,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.5</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -94,7 +93,7 @@
 <h1>cfdm.Field.domain_axis_key<a class="headerlink" href="#cfdm-field-domain-axis-key" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.domain_axis_key">
-<code class="descclassname">Field.</code><code class="descname">domain_axis_key</code><span class="sig-paren">(</span><em>identity</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.5/cfdm/mixin/constructaccess.py#L507"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.domain_axis_key" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">domain_axis_key</code><span class="sig-paren">(</span><em>identity</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.6/cfdm/mixin/constructaccess.py#L492"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.domain_axis_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the key of the domain axis construct that is spanned by 1-d
 coordinate constructs.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -114,16 +113,15 @@ selected if any of them match any of those provided. A
 construct’s identities are those returned by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code>
 method. In the following example, the construct <code class="docutils literal notranslate"><span class="pre">x</span></code> has four
 identities:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
 <span class="go">[&#39;time&#39;, &#39;long_name=Time&#39;, &#39;foo=bar&#39;, &#39;ncvar%T&#39;]</span>
 </pre></div>
 </div>
 <p>In addition, each construct also has an identity based its
 construct key (e.g. <code class="docutils literal notranslate"><span class="pre">'key%dimensioncoordinate2'</span></code>)</p>
-<p>Note that the identifiers of a metadata construct in the
-output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code> call are always one of its
-identities, and so may always be used as an <em>identities</em>
-argument.</p>
+<p>Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code> method, a
+construct is always described by one of its identities, and so
+this description may always be used as an <em>identity</em> argument.</p>
 </div></blockquote>
 <dl class="docutils">
 <dt>default: optional</dt>
@@ -160,7 +158,7 @@ data of the selected 1-d coordinate constructs.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

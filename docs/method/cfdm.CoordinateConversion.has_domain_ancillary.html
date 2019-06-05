@@ -9,13 +9,12 @@
     <title>cfdm.CoordinateConversion.has_domain_ancillary &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.CoordinateConversion.set_domain_ancillary" href="cfdm.CoordinateConversion.set_domain_ancillary.html" />
@@ -31,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.5</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -94,7 +93,7 @@
 <h1>cfdm.CoordinateConversion.has_domain_ancillary<a class="headerlink" href="#cfdm-coordinateconversion-has-domain-ancillary" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CoordinateConversion.has_domain_ancillary">
-<code class="descclassname">CoordinateConversion.</code><code class="descname">has_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.5/cfdm/core/abstract/parametersdomainancillaries.py#L261"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion.has_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CoordinateConversion.</code><code class="descname">has_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.6/cfdm/core/abstract/parametersdomainancillaries.py#L261"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion.has_domain_ancillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a domain ancillary has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -126,7 +125,7 @@ instance then it will be raised instead.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_domain_ancillary</span><span class="p">(</span><span class="s1">&#39;orog&#39;</span><span class="p">,</span> <span class="s1">&#39;domainancillary2&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_domain_ancillary</span><span class="p">(</span><span class="s1">&#39;orog&#39;</span><span class="p">,</span> <span class="s1">&#39;domainancillary2&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_domain_ancillary</span><span class="p">(</span><span class="s1">&#39;orog&#39;</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_domain_ancillary</span><span class="p">(</span><span class="s1">&#39;orog&#39;</span><span class="p">)</span>
@@ -135,9 +134,9 @@ instance then it will be raised instead.</p>
 <span class="go">domainancillary2&#39;   </span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_domain_ancillaryr</span><span class="p">(</span><span class="s1">&#39;orog&#39;</span><span class="p">)</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">del_domain_ancillaryy</span><span class="p">(</span><span class="s1">&#39;orog&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">del_domain_ancillaryy</span><span class="p">(</span><span class="s1">&#39;orog&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_domain_ancillary</span><span class="p">(</span><span class="s1">&#39;orog&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_domain_ancillary</span><span class="p">(</span><span class="s1">&#39;orog&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
 </pre></div>
 </div>
@@ -155,7 +154,7 @@ instance then it will be raised instead.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

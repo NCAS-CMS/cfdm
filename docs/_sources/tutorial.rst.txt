@@ -617,8 +617,8 @@ is accessed with the `~Field.data` attribute of the field construct.
    >>> t.data
    <Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
 
-The `Data` instance provide access to full array of values, as well as
-attributes to describe the array and methods for describing any
+The `Data` instance provides access to full array of values, as well
+as attributes to describe the array and methods for describing any
 :ref:`data compression <Compression>`.
 
 .. code-block:: python3
@@ -1398,7 +1398,7 @@ method of the `Data` instance.
    :caption: *Inspect the the values of a "time" construct as elapsed
              times and as date-times.*
 
-   >>> time = q.constructs('time')
+   >>> time = q.construct('time')
    >>> time
    <DimensionCoordinate: time(1) days since 2018-12-01 >
    >>> time.get_property('units')
@@ -1517,7 +1517,8 @@ individually with the `~cfdm.Field.auxiliary_coordinates` and
 .. code-block:: python3
    :caption: *Retrieve both types of coordinate constructs.*
       
-   >>> t.coordinates()
+   >>> print(t.coordinates)
+   Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
     'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >,

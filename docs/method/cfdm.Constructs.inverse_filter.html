@@ -9,13 +9,12 @@
     <title>cfdm.Constructs.inverse_filter &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Constructs.unfilter" href="cfdm.Constructs.unfilter.html" />
@@ -31,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.5</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -94,7 +93,7 @@
 <h1>cfdm.Constructs.inverse_filter<a class="headerlink" href="#cfdm-constructs-inverse-filter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Constructs.inverse_filter">
-<code class="descclassname">Constructs.</code><code class="descname">inverse_filter</code><span class="sig-paren">(</span><em>depth=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.5/cfdm/constructs.py#L2061"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.inverse_filter" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Constructs.</code><code class="descname">inverse_filter</code><span class="sig-paren">(</span><em>depth=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.6/cfdm/constructs.py#L2072"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.inverse_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the inverse of previous filters.</p>
 <p>By default, the inverse comprises all of the constructs that were
 <em>not</em> selected by all previously applied filters. If no filters have
@@ -147,7 +146,7 @@ empty <a class="reference internal" href="../class/cfdm.Constructs.html#cfdm.Con
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">Constructs:</span>
 <span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
@@ -156,31 +155,31 @@ empty <a class="reference internal" href="../class/cfdm.Constructs.html#cfdm.Con
 <span class="go"> &#39;domainaxis0&#39;: &lt;DomainAxis: size(5)&gt;,</span>
 <span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: size(8)&gt;,</span>
 <span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: size(1)&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
 <span class="go">Constructs:</span>
 <span class="go">{}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">,</span> <span class="s1">&#39;cell_method&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 <span class="go">Constructs:</span>
 <span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
 <span class="go">Constructs:</span>
 <span class="go">{&#39;domainaxis0&#39;: &lt;DomainAxis: size(5)&gt;,</span>
 <span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: size(8)&gt;,</span>
 <span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: size(1)&gt;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">filter_by_method</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 <span class="go">Constructs:</span>
 <span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 <span class="go">Constructs:</span>
 <span class="go">{&#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
 <span class="go">Constructs:</span>
 <span class="go">{&#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
@@ -188,7 +187,7 @@ empty <a class="reference internal" href="../class/cfdm.Constructs.html#cfdm.Con
 <span class="go"> &#39;domainaxis0&#39;: &lt;DomainAxis: size(5)&gt;,</span>
 <span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: size(8)&gt;,</span>
 <span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: size(1)&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
 <span class="go">Constructs:</span>
 <span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
 <span class="go"> &#39;domainaxis0&#39;: &lt;DomainAxis: size(5)&gt;,</span>
@@ -210,7 +209,7 @@ empty <a class="reference internal" href="../class/cfdm.Constructs.html#cfdm.Con
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

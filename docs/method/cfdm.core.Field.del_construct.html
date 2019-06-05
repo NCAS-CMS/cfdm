@@ -9,13 +9,12 @@
     <title>cfdm.core.Field.del_construct &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.core.Field.get_construct" href="cfdm.core.Field.get_construct.html" />
@@ -31,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.5</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -94,7 +93,7 @@
 <h1>cfdm.core.Field.del_construct<a class="headerlink" href="#cfdm-core-field-del-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.Field.del_construct">
-<code class="descclassname">Field.</code><code class="descname">del_construct</code><span class="sig-paren">(</span><em>key</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.5/cfdm/core/field.py#L362"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field.del_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">del_construct</code><span class="sig-paren">(</span><em>key</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.6/cfdm/core/field.py#L362"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field.del_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a metadata construct.</p>
 <p>If a domain axis construct is selected for removal then it can’t be
 spanned by any data arrays of the field nor metadata constructs, nor
@@ -137,11 +136,11 @@ will be raised instead.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="s1">&#39;auxiliarycoordinate2&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="s1">&#39;auxiliarycoordinate2&#39;</span><span class="p">)</span>
 <span class="go">&lt;AuxiliaryCoordinate: latitude(111, 106) degrees_north&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="s1">&#39;auxiliarycoordinate2&#39;</span><span class="p">)</span>
 <span class="go">ValueError: Can&#39;t get remove non-existent construct</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="s1">&#39;auxiliarycoordinate2&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="s1">&#39;auxiliarycoordinate2&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
@@ -159,7 +158,7 @@ will be raised instead.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
