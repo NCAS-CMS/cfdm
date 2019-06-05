@@ -1,0 +1,7 @@
+cfdm.Constructs.__iter__
+========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Constructs.__iter__

@@ -1,0 +1,7 @@
+cfdm.Data.squeeze
+=================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Data.squeeze

@@ -1,0 +1,7 @@
+cfdm.CellMethod.__deepcopy__
+============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CellMethod.__deepcopy__

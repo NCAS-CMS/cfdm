@@ -1,0 +1,7 @@
+cfdm.CellMeasure.__str__
+========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CellMeasure.__str__
