@@ -637,8 +637,8 @@ reference is replace with `None`.
                                               construct=construct)
         elif axes is not None:
             raise ValueError(
-"Can't set {!r}: Can't provide domain axis constructs for {} construct".format(
-    construct, self._construct_type_description(construct_type)))
+                "Can't set {!r}: Can't provide domain axis constructs for {} construct".format(
+                    construct, self._construct_type_description(construct_type)))
 
         # Record the construct type
         self._construct_type[key] = construct_type
@@ -718,11 +718,10 @@ reference is replace with `None`.
 
         extra_axes=0
         data = construct.get_data(None)
-        if data is not None:
-            if data.shape[:data.ndim - extra_axes] != axes_shape:
-                raise ValueError(
-"Can't set {!r}: Data shape of {!r} does not match the shape required by domain axes {}: {}".format(
-    construct, data.shape, tuple(axes), axes_shape))
+        if data is not None and data.shape[:data.ndim - extra_axes] != axes_shape:
+            raise ValueError(
+                "Can't set {!r}: Data shape of {!r} does not match the shape required by domain axes {}: {}".format(
+                    construct, data.shape, tuple(axes), axes_shape))
 
         try:
             bounds = construct.get_bounds(None)
@@ -733,8 +732,8 @@ reference is replace with `None`.
                 data = bounds.get_data(None)
                 if data is not None and data.shape[:len(axes_shape)] != axes_shape:
                     raise ValueError(
-"Can't set {!r}: Bounds data shape of {!r} does not match the shape required by domain axes {}: {}".format(
-    construct, data.shape, tuple(axes), axes_shape))
+                        "Can't set {!r}: Bounds data shape of {!r} does not match the shape required by domain axes {}: {}".format(
+                            construct, data.shape, tuple(axes), axes_shape))
         #--- End: try
         
         self._construct_axes[key] = tuple(axes)

@@ -2631,9 +2631,9 @@ variable's netCDF dimensions.
 
 :Returns:
 
-    out: `list`
+    `list`
 
-:Examples:
+**Examples:**
 
 >>> r._get_domain_axes('areacello')
 ['domainaxis0', 'domainaxis1']
@@ -4136,13 +4136,13 @@ Checks that
     field_ncvar: `str`
         
     ancillary_variables: `str`
-        The value of the netCDF cell_measures attribute.
+        The value of the netCDF ancillary_variables attribute.
 
     parsed_ancillary_variables: `list`
 
 :Returns:
 
-    out: `bool`
+    `bool`
 
         '''
         attribute = {field_ncvar+':ancillary_variables': string}

@@ -3478,7 +3478,8 @@ and auxiliary coordinate roles for different data variables.
                        compress=compress,
                        fletcher32=fletcher32,
                        shuffle=shuffle,
-                       verbose=verbose)            
+                       verbose=verbose,
+                       extra_write_vars=extra_write_vars)            
     #--- End: def
    
 #--- End: class
