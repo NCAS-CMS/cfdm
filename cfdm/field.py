@@ -371,13 +371,17 @@ construct from a dataset.
 
 **Examples:**
 
->>> f.field_ancillaries
+>>> print(f.field_ancillaries)
 Constructs:
 {}
 
->>> f.field_ancillaries
+>>> print(f.field_ancillaries)
 Constructs:
 {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+
+>>> print(f.field_ancillaries('specific_humuidity standard_error'))
+Constructs:
+{'fieldancillary0': <FieldAncillary: specific_humidity standard_error(10, 9) K>}
 
         '''
         return self.constructs.filter_by_type('field_ancillary')

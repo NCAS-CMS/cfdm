@@ -157,7 +157,7 @@ and institution).
 
 **Examples:**
 
->>> prnt(f.constructs)
+>>> print(f.constructs)
 Constructs:
 {'cellmethod0': <CellMethod: area: mean>,
  'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,

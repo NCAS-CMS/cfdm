@@ -1,3 +1,11 @@
+version 1.7.7
+-------------
+----
+
+**Not yet released**
+
+* Updated documentation
+  
 version 1.7.6
 -------------
 ----

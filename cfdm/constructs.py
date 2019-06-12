@@ -1115,6 +1115,9 @@ Select constructs that could contain data:
     def filter_by_identity(self, *identities):
         '''Select metadata constructs by identity.
 
+Calling a `Constructs` instance selects metadata constructs by
+identity and is an alias for the `filter_by_identity` method.
+
 .. versionadded:: 1.7.0
 
 .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
