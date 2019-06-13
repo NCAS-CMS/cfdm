@@ -1,0 +1,7 @@
+cfdm.CellMethod.clear_properties
+================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CellMethod.clear_properties

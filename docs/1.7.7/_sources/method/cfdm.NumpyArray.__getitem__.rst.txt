@@ -1,0 +1,7 @@
+cfdm.NumpyArray.__getitem__
+===========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.NumpyArray.__getitem__
