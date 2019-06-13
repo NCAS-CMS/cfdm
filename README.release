@@ -23,7 +23,7 @@
 
 * Push recent commits using `git push origin master`
 
-* Tag the release using `./tag <vn>` (e.g. ./tag 1.7.7)
+* Tag the release using `./tag <vn>` (e.g. ./tag 1.7.8)
 
 * Upload the source tarball to PyPi
 
