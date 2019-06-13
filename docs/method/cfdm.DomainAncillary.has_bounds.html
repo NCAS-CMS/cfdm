@@ -9,12 +9,14 @@
     <title>cfdm.DomainAncillary.has_bounds &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.DomainAncillary.set_bounds" href="cfdm.DomainAncillary.set_bounds.html" />
@@ -30,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.6</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.7</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -87,13 +89,15 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="cfdm-domainancillary-has-bounds">
 <h1>cfdm.DomainAncillary.has_bounds<a class="headerlink" href="#cfdm-domainancillary-has-bounds" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.DomainAncillary.has_bounds">
-<code class="descclassname">DomainAncillary.</code><code class="descname">has_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.6/cfdm/core/abstract/propertiesdatabounds.py#L384"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.has_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DomainAncillary.</code><code class="descname">has_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.7/cfdm/core/abstract/propertiesdatabounds.py#L384"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.has_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether or not there are bounds.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -116,7 +120,7 @@
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
@@ -128,9 +132,9 @@
 <span class="go">&lt;Bounds: (5, 2) &gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
 <span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
 <span class="go">None</span>
 </pre></div>
 </div>
@@ -140,6 +144,7 @@
 
 
           </div>
+          
         </div>
       </div>
     <div class="clearer"></div>
@@ -148,8 +153,8 @@
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cfdm.DomainAncillary.has_bounds.rst.txt"

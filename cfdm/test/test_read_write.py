@@ -111,6 +111,22 @@ class read_writeTest(unittest.TestCase):
         #--- End: for
     #--- End: def
 
+    def test_read_write_missing_data(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.read(self.filename)[0]
+        for fmt in ('NETCDF3_CLASSIC',
+                    'NETCDF3_64BIT',
+                    'NETCDF4',
+                    'NETCDF4_CLASSIC'):
+            cfdm.write(f, tmpfile, fmt=fmt)
+            g = cfdm.read(tmpfile)[0]
+            self.assertTrue(f.equals(g, verbose=True),
+                            'Bad read/write of format: {}'.format(fmt))
+        #--- End: for
+    #--- End: def
+
     def test_write_datatype(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

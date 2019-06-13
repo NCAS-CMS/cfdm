@@ -2,8 +2,11 @@ version 1.7.7
 -------------
 ----
 
-**Not yet released**
+**2019-06-13**
 
+* Don't set the fill mode for a `netCDF4.Dataset` open for writing to
+  `off`, to prevent incorrect reading of some netCDF4 files (issue
+  #4).
 * Updated documentation
   
 version 1.7.6

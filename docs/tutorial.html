@@ -9,12 +9,14 @@
     <title>cfdm tutorial &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API reference" href="api_reference.html" />
@@ -30,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cfdm 1.7.6</a></b></h3>
+<h3><b><a href="index.html">cfdm 1.7.7</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
@@ -100,12 +102,14 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="cfdm-tutorial">
 <span id="tutorial"></span><h1><strong>cfdm tutorial</strong><a class="headerlink" href="#cfdm-tutorial" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.7.6 for version 1.7 of the CF conventions.</p>
+<p>Version 1.7.7 for version 1.7 of the CF conventions.</p>
 <div class="section" id="import">
 <span id="id1"></span><h2><strong>Import</strong><a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -148,7 +152,7 @@ variables in the file.</p>
 <p>Datasets of any version of CF up to and including CF-1.7 can be
 read.</p>
 <p>All formats of netCDF3 and netCDF4 files can be read.</p>
-<p>For example, to read the file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> (<a class="reference download internal" href="_downloads/file.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 9kB) <a class="footnote-reference" href="#files" id="id5">[2]</a>, which contains two field
+<p>For example, to read the file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> (<a class="reference download internal" download="" href="_downloads/f48d7afe4147b17ac19ae1bba473c78c/file.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 9kB) <a class="footnote-reference" href="#files" id="id5">[2]</a>, which contains two field
 constructs:</p>
 <div class="literal-block-wrapper docutils container" id="id58">
 <div class="code-block-caption"><span class="caption-text"><em>Read file.nc and show that the result is a two-element
@@ -576,34 +580,34 @@ following attributes of the field construct:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="attribute/cfdm.Field.domain_axes.html#cfdm.Field.domain_axes" title="cfdm.Field.domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.domain_axes.html#cfdm.Field.domain_axes" title="cfdm.Field.domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code></a></td>
 <td>Domain axes</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="attribute/cfdm.Field.dimension_coordinates.html#cfdm.Field.dimension_coordinates" title="cfdm.Field.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.dimension_coordinates.html#cfdm.Field.dimension_coordinates" title="cfdm.Field.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a></td>
 <td>Dimension coordinates</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="attribute/cfdm.Field.auxiliary_coordinates.html#cfdm.Field.auxiliary_coordinates" title="cfdm.Field.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.auxiliary_coordinates.html#cfdm.Field.auxiliary_coordinates" title="cfdm.Field.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a></td>
 <td>Auxiliary coordinates</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="attribute/cfdm.Field.coordinate_references.html#cfdm.Field.coordinate_references" title="cfdm.Field.coordinate_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_references</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.coordinate_references.html#cfdm.Field.coordinate_references" title="cfdm.Field.coordinate_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_references</span></code></a></td>
 <td>Coordinate references</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="attribute/cfdm.Field.domain_ancillaries.html#cfdm.Field.domain_ancillaries" title="cfdm.Field.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.domain_ancillaries.html#cfdm.Field.domain_ancillaries" title="cfdm.Field.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></td>
 <td>Domain ancillaries</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="attribute/cfdm.Field.cell_measures.html#cfdm.Field.cell_measures" title="cfdm.Field.cell_measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measures</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.cell_measures.html#cfdm.Field.cell_measures" title="cfdm.Field.cell_measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measures</span></code></a></td>
 <td>Cell measures</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="attribute/cfdm.Field.field_ancillaries.html#cfdm.Field.field_ancillaries" title="cfdm.Field.field_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">field_ancillaries</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.field_ancillaries.html#cfdm.Field.field_ancillaries" title="cfdm.Field.field_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">field_ancillaries</span></code></a></td>
 <td>Field ancillaries</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="attribute/cfdm.Field.cell_methods.html#cfdm.Field.cell_methods" title="cfdm.Field.cell_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_methods</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.cell_methods.html#cfdm.Field.cell_methods" title="cfdm.Field.cell_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_methods</span></code></a></td>
 <td>Cell methods</td>
 </tr>
 </tbody>
 </table>
 <p>Each of these attributes returns a <a class="reference internal" href="class/cfdm.Constructs.html#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> class instance that
-maps metadata constructs to a unique identifiers called a “construct
+maps metadata constructs to unique identifiers called “construct
 keys”. A <a class="reference internal" href="class/cfdm.Constructs.html#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance has methods for selecting constructs
 that meet particular criteria (see the section on <a class="reference internal" href="#filtering-metadata-constructs"><span class="std std-ref">filtering
 metadata constructs</span></a>). It also behaves
@@ -654,7 +658,7 @@ internally and are unique within the field construct. However,
 construct keys may be different for equivalent metadata constructs
 from different field constructs, and for different Python sessions.</p>
 <p>Metadata constructs of all types may be returned by the
-<a class="reference internal" href="attribute/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> attribute of the field construct:</p>
+<a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> attribute of the field construct:</p>
 <div class="literal-block-wrapper docutils container" id="id68">
 <div class="code-block-caption"><span class="caption-text"><em>Retrieve all of the field construct’s metadata
 constructs.</em></span><a class="headerlink" href="#id68" title="Permalink to this code">¶</a></div>
@@ -710,9 +714,9 @@ some illustrative values.</em></span><a class="headerlink" href="#id69" title="P
 </pre></div>
 </div>
 </div>
-<p>The <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance provides access to full array of values, as well
-as attributes to describe the array and methods for describing any
-<a class="reference internal" href="#compression"><span class="std std-ref">data compression</span></a>.</p>
+<p>The <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance provides access to the full array of values, as
+well as attributes to describe the array and methods for describing
+any <a class="reference internal" href="#compression"><span class="std std-ref">data compression</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id70">
 <div class="code-block-caption"><span class="caption-text"><em>Retrieve a numpy array of the data.</em></span><a class="headerlink" href="#id70" title="Permalink to this code">¶</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
@@ -1609,9 +1613,9 @@ the <a class="reference internal" href="method/cfdm.DomainAxis.get_size.html#cfd
 <hr class="docutils" />
 <p>There are two types of coordinate construct, dimension and auxiliary
 coordinate constructs, which can be retrieved together with the
-<a class="reference internal" href="attribute/cfdm.Field.coordinates.html#cfdm.Field.coordinates" title="cfdm.Field.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a> method of the field construct, as well as
-individually with the <a class="reference internal" href="attribute/cfdm.Field.auxiliary_coordinates.html#cfdm.Field.auxiliary_coordinates" title="cfdm.Field.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a> and
-<a class="reference internal" href="attribute/cfdm.Field.dimension_coordinates.html#cfdm.Field.dimension_coordinates" title="cfdm.Field.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a> methods.</p>
+<a class="reference internal" href="method/cfdm.Field.coordinates.html#cfdm.Field.coordinates" title="cfdm.Field.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a> method of the field construct, as well as
+individually with the <a class="reference internal" href="method/cfdm.Field.auxiliary_coordinates.html#cfdm.Field.auxiliary_coordinates" title="cfdm.Field.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a> and
+<a class="reference internal" href="method/cfdm.Field.dimension_coordinates.html#cfdm.Field.dimension_coordinates" title="cfdm.Field.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a> methods.</p>
 <div class="literal-block-wrapper docutils container" id="id108">
 <div class="code-block-caption"><span class="caption-text"><em>Retrieve both types of coordinate constructs.</em></span><a class="headerlink" href="#id108" title="Permalink to this code">¶</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)</span>
@@ -3086,7 +3090,7 @@ other netCDF files known as “external files”. External variables may,
 however, be incorporated into the field constructs of the dataset, as
 if they had actually been stored in the same file, simply by providing
 the external file names to the <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function.</p>
-<p>This is illustrated with the files <code class="docutils literal notranslate"><span class="pre">parent.nc</span></code> (<a class="reference download internal" href="_downloads/parent.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id48">[2]</a>:</p>
+<p>This is illustrated with the files <code class="docutils literal notranslate"><span class="pre">parent.nc</span></code> (<a class="reference download internal" download="" href="_downloads/609a18ba1ee2929f9c738c4cd0a7b960/parent.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id48">[2]</a>:</p>
 <div class="literal-block-wrapper docutils container" id="id152">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the parent dataset with the ncdump command line
 tool.</em></span><a class="headerlink" href="#id152" title="Permalink to this code">¶</a></div>
@@ -3114,7 +3118,7 @@ variables:
 </pre></div>
 </div>
 </div>
-<p>and <code class="docutils literal notranslate"><span class="pre">external.nc</span></code> (<a class="reference download internal" href="_downloads/external.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>,
+<p>and <code class="docutils literal notranslate"><span class="pre">external.nc</span></code> (<a class="reference download internal" download="" href="_downloads/d6b6919b7acbac5509f39600030ec26a/external.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>,
 1kB) <a class="footnote-reference" href="#files" id="id49">[2]</a>:</p>
 <div class="literal-block-wrapper docutils container" id="id153">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the external dataset with the ncdump command
@@ -3325,7 +3329,7 @@ is accessed with the <a class="reference internal" href="method/cfdm.Data.get_co
 indexed contiguous, ragged array is stored in an <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a> instance and
 is accessed with the <a class="reference internal" href="method/cfdm.Data.get_index.html#cfdm.Data.get_index" title="cfdm.Data.get_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index</span></code></a> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
 <p>The contiguous case is is illustrated with the file <code class="docutils literal notranslate"><span class="pre">contiguous.nc</span></code>
-(<a class="reference download internal" href="_downloads/contiguous.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id52">[2]</a>:</p>
+(<a class="reference download internal" download="" href="_downloads/41a48ffbe06eb316ee6f08e9b82c6304/contiguous.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id52">[2]</a>:</p>
 <div class="literal-block-wrapper docutils container" id="id160">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the compressed dataset with the ncdump command
 line tool.</em></span><a class="headerlink" href="#id160" title="Permalink to this code">¶</a></div>
@@ -3542,7 +3546,7 @@ reducing the number of values that need to be stored.</p>
 <p>The list variable that is required to uncompress a gathered array is
 stored in a <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a> object and is retrieved with the <a class="reference internal" href="method/cfdm.Data.get_list.html#cfdm.Data.get_list" title="cfdm.Data.get_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list</span></code></a>
 method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
-<p>This is illustrated with the file <code class="docutils literal notranslate"><span class="pre">gathered.nc</span></code> (<a class="reference download internal" href="_downloads/gathered.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id54">[2]</a>:</p>
+<p>This is illustrated with the file <code class="docutils literal notranslate"><span class="pre">gathered.nc</span></code> (<a class="reference download internal" download="" href="_downloads/d347af6e208d56e9f7ef78113aa117b2/gathered.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id54">[2]</a>:</p>
 <div class="literal-block-wrapper docutils container" id="id168">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the compressed dataset with the ncdump command
 line tool.</em></span><a class="headerlink" href="#id168" title="Permalink to this code">¶</a></div>
@@ -3773,6 +3777,7 @@ of the on-line code repository.</td></tr>
 
 
           </div>
+          
         </div>
       </div>
     <div class="clearer"></div>
@@ -3781,8 +3786,8 @@ of the on-line code repository.</td></tr>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/tutorial.rst.txt"

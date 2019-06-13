@@ -1,7 +1,7 @@
 cfdm.CompressedArray.dtype
 ==========================
 
-.. currentmodule:: cfdm
+.. currentmodule:: cf
 .. default-role:: obj
 
 .. autoattribute:: cfdm.CompressedArray.dtype

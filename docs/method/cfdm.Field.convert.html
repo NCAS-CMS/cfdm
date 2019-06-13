@@ -9,12 +9,14 @@
     <title>cfdm.Field.convert &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Field.nc_del_variable" href="cfdm.Field.nc_del_variable.html" />
@@ -30,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.6</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.7</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -87,13 +89,15 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="cfdm-field-convert">
 <h1>cfdm.Field.convert<a class="headerlink" href="#cfdm-field-convert" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.convert">
-<code class="descclassname">Field.</code><code class="descname">convert</code><span class="sig-paren">(</span><em>key</em>, <em>full_domain=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.6/cfdm/field.py#L851"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.convert" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">convert</code><span class="sig-paren">(</span><em>key</em>, <em>full_domain=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.7/cfdm/field.py#L855"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.convert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a metadata construct into a new field construct.</p>
 <p>The new field construct has the properties and data of the metadata
 construct, and domain axis constructs corresponding to the data. By
@@ -140,8 +144,8 @@ the domain as possible is copied to the new field construct.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%ta)</span>
 <span class="go">---------------------------------</span>
 <span class="go">Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
@@ -161,7 +165,7 @@ the domain as possible is copied to the new field construct.</p>
 <span class="go">                : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]</span>
 <span class="go">                : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;domainancillary2&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="go">Field: surface_altitude (ncvar%surface_altitude)</span>
 <span class="go">------------------------------------------------</span>
 <span class="go">Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m</span>
@@ -172,8 +176,8 @@ the domain as possible is copied to the new field construct.</p>
 <span class="go">                : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]</span>
 <span class="go">Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
 <span class="go">Coord references: rotated_latitude_longitude</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;domainancillary2&#39;</span><span class="p">,</span> <span class="n">full_domain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;domainancillary2&#39;</span><span class="p">,</span> <span class="n">full_domain</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 <span class="go">Field: surface_altitude (ncvar%surface_altitude)</span>
 <span class="go">------------------------------------------------</span>
 <span class="go">Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m</span>
@@ -185,6 +189,7 @@ the domain as possible is copied to the new field construct.</p>
 
 
           </div>
+          
         </div>
       </div>
     <div class="clearer"></div>
@@ -193,8 +198,8 @@ the domain as possible is copied to the new field construct.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cfdm.Field.convert.rst.txt"

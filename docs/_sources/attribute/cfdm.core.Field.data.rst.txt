@@ -1,7 +1,7 @@
 cfdm.core.Field.data
 ====================
 
-.. currentmodule:: cfdm
+.. currentmodule:: cf
 .. default-role:: obj
 
 .. autoattribute:: cfdm.core.Field.data

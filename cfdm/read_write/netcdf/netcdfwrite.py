@@ -2016,10 +2016,10 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # filled before any data is written. if the fill value is
         # False then the variable is not pre-filled.
         # ------------------------------------------------------------
-        if fill:
-            fill_value = self.implementation.get_property(cfvar, '_FillValue', None)
-        else:
-            fill_value = False
+        #if fill:
+        #    fill_value = self.implementation.get_property(cfvar, '_FillValue', None)
+        #else:
+#        fill_value = None #False
     
         if data_variable:
             lsd = g['least_significant_digit']
@@ -2050,7 +2050,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
 
         # TODO
         kwargs = self._customize_createVariable(cfvar, kwargs)
-               
+        
         if verbose:
             print(' to netCDF variable: {}({})'.format(
                 ncvar, ', '.join(ncdimensions)))
@@ -3109,7 +3109,7 @@ write them to the netCDF4.Dataset.
             nc = netCDF4.Dataset(filename, mode, format=fmt)
         except RuntimeError as error:
             raise RuntimeError("{}: {}".format(error, filename))        
-            
+
         return nc
     #--- End: def
 
@@ -3427,12 +3427,12 @@ and auxiliary coordinate roles for different data variables.
         g['filename'] = filename
         g['netcdf'] = self.file_open(filename, mode, fmt)
     
-        # ---------------------------------------------------------------
-        # Set the fill mode for a Dataset open for writing to off. This
-        # will prevent the data from being pre-filled with fill values,
-        # which may result in some performance improvements.
-        # ---------------------------------------------------------------
-        g['netcdf'].set_fill_off()
+#        # ---------------------------------------------------------------
+#        # Set the fill mode for a Dataset open for writing to off. This
+#        # will prevent the data from being pre-filled with fill values,
+#        # which may result in some performance improvements.
+#        # ---------------------------------------------------------------
+#        g['netcdf'].set_fill_off()
     
         # ---------------------------------------------------------------
         # Write global properties to the file first. This is important

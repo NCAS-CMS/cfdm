@@ -502,7 +502,7 @@ Attribute                       Metadata constructs
 ==============================  =====================  
 
 Each of these attributes returns a `Constructs` class instance that
-maps metadata constructs to a unique identifiers called a "construct
+maps metadata constructs to unique identifiers called "construct
 keys". A `~Constructs` instance has methods for selecting constructs
 that meet particular criteria (see the section on :ref:`filtering
 metadata constructs <Filtering-metadata-constructs>`). It also behaves
@@ -617,9 +617,9 @@ is accessed with the `~Field.data` attribute of the field construct.
    >>> t.data
    <Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
 
-The `Data` instance provides access to full array of values, as well
-as attributes to describe the array and methods for describing any
-:ref:`data compression <Compression>`.
+The `Data` instance provides access to the full array of values, as
+well as attributes to describe the array and methods for describing
+any :ref:`data compression <Compression>`.
 
 .. code-block:: python3
    :caption: *Retrieve a numpy array of the data.*

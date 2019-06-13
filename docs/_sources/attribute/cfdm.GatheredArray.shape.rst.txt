@@ -1,7 +1,7 @@
 cfdm.GatheredArray.shape
 ========================
 
-.. currentmodule:: cfdm
+.. currentmodule:: cf
 .. default-role:: obj
 
 .. autoattribute:: cfdm.GatheredArray.shape
