@@ -152,11 +152,8 @@ class NetCDFWrite(IOWrite):
     #--- End: def
     
     def _write_attributes(self, parent, ncvar, extra={}, omit=()):
-        '''
-:Examples 1:
+        '''TODO
 
->>> w._write_attributes(x, 'lat')
-    
 :Parameters:
 
     parent:
@@ -171,7 +168,7 @@ class NetCDFWrite(IOWrite):
 
     `None`
 
-:Examples 2:
+**Examples:**
     
         '''
         if parent is None:
