@@ -1,3 +1,12 @@
+version 1.7.8
+-------------
+----
+
+**Not yet released**
+
+* During writing to netCDF files, ensured that _FillValue and
+  missing_value have the same data type as the data.
+
 version 1.7.7
 -------------
 ----
