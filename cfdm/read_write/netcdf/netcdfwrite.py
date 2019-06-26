@@ -169,7 +169,7 @@ class NetCDFWrite(IOWrite):
     `None`
 
 **Examples:**
-    
+
         '''
         if parent is None:
             netcdf_attrs = {}
@@ -183,6 +183,17 @@ class NetCDFWrite(IOWrite):
     
         if not netcdf_attrs:
             return
+
+        # Make sure that _FillValue and missing data have the same
+        # data type as the data
+        for attr in ('_FillValue', 'missing_value'):
+            if attr not in netcdf_attrs:
+                continue
+
+            data = self.implementation.get_data(parent, None)
+            if data is not None:
+                netcdf_attrs[attr] = numpy.array(netcdf_attrs[attr], dtype=data.dtype)
+        #--- End: for
         
         self.write_vars['nc'][ncvar].setncatts(netcdf_attrs)
     #--- End: def

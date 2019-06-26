@@ -1,3 +1,16 @@
+version 1.7.8
+-------------
+----
+
+**Not yet released**
+
+* During writing to netCDF files, ensured that _FillValue and
+  missing_value have the same data type as the data.
+
+* Fixed bug during construct equality testing that didn't recognise
+  equal cell method constructs in transposed, but otherwise equal
+  field constructs.
+
 version 1.7.7
 -------------
 ----

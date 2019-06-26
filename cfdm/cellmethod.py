@@ -401,7 +401,7 @@ False
                                 ignore_data_type=True,
                                 verbose=verbose):
                 if verbose:
-                    print("{0}: Different {1}: {2!r}, {3!r}".format(
+                    print("{0}: Different {1} qualifiers: {2!r}, {3!r}".format(
                         self.__class__.__name__, prop, x, y))
                 return False
         #--- End: for
@@ -415,7 +415,7 @@ False
             if not intervals1:
                 if verbose:
                     print(
-                        "{0}: Different intervals: {1!r} != {2!r}".format(
+                        "{0}: Different interval qualifiers: {1!r} != {2!r}".format(
                             self.__class__.__name__, intervals0, intervals1))
                 return False
             #--- End: if
@@ -423,7 +423,7 @@ False
             if len(intervals0) != len(intervals1):
                 if verbose:
                     print(
-                        "{0}: Different numbers of intervals: {1!r} != {2!r}".format(
+                        "{0}: Different numbers of interval qualifiers: {1!r} != {2!r}".format(
                             self.__class__.__name__, intervals0, intervals1))
                     return False
             #--- End: if
@@ -436,7 +436,7 @@ False
                                     ignore_fill_value=True):
                     if verbose:
                         print(
-                            "{0}: Different intervals: {1!r} != {2!r}".format(
+                            "{0}: Different interval qualifiers: {1!r} != {2!r}".format(
                                 self.__class__.__name__, intervals0, intervals1))
                     return False
 
