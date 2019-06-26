@@ -200,7 +200,7 @@ instances are equal.
         cell_methods1 = cell_methods1.ordered()
 
         axis0_to_axis1 = {axis0: axis1
-                          for axis0, axis1 in axis1_to_axis0.items()}
+                          for axis1, axis0 in axis1_to_axis0.items()}
 
         for cm0, cm1 in zip(tuple(cell_methods0.values()),
                             tuple(cell_methods1.values())):
@@ -247,7 +247,7 @@ instances are equal.
 
             if len(cm1.get_axes(())) != len(indices):
                 if verbose:
-                    print("{0}: Different cell methods:\n  {1}\n  {2}".format(
+                    print("{0}: [4] Different cell methods (mismatched axes):\n  {1}\n  {2}".format(
                         cm0.__class__.__name__, cell_methods0, cell_methods1))
                 return False
 
@@ -291,8 +291,8 @@ instances are equal.
                 found_match = False
                 for key1, ref1 in tuple(refs1.items()):
                     if construct_verbose:
-                        print ("{0}: Comparing {1!r}, {2!r}".format(
-                            self.__class__.__name__, ref0, ref1), end=": ")
+                        print("{0}: Comparing {1!r}, {2!r}".format(
+                            self.__class__.__name__, ref0, ref1), end=": ") # pragma: no cover
  
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
                                        verbose=construct_verbose,
@@ -307,7 +307,7 @@ instances are equal.
                         
                     if coordinates0 != coordinates1:
                         if construct_verbose:
-                            print("Coordinates don't match")
+                            print("Coordinates don't match") # pragma: no cover
                             
                         continue
     
@@ -319,12 +319,12 @@ instances are equal.
 
                     if terms0 != terms1:
                         if construct_verbose:
-                            print("Coordinate conversion domain ancillaries don't match")
+                            print("Coordinate conversion domain ancillaries don't match") # pragma: no cover
  
                         continue
 
                     if construct_verbose:
-                        print("OK")
+                        print("OK") # pragma: no cover
                         
                     found_match = True
                     del refs1[key1]                                       
@@ -644,8 +644,8 @@ False
                         matched_construct = False
                         for key1, item1 in tuple(role_constructs1.items()):
                             if construct_verbose:
-                                print ("{}: Comparing {!r}, {!r}".format(
-                                    self.__class__.__name__, item0, item1), end=": ")
+                                print("{}: Comparing {!r}, {!r}".format(
+                                    self.__class__.__name__, item0, item1), end=": ") # pragma: no cover
                                 
                             if item0.equals(item1,
                                             rtol=rtol, atol=atol,
@@ -655,7 +655,8 @@ False
                                             ignore_compression=ignore_compression,
                                             ignore_type=_ignore_type):
                                 if construct_verbose:
-                                    print("OK")
+                                    print("OK") # pragma: no cover
+                                    
                                 del role_constructs1[key1]
                                 key1_to_key0[key1] = key0
                                 matched_construct = True
@@ -708,7 +709,7 @@ False
                                 self.__class__.__name__,
                                 self.domain_axis_identity(axes0),
                                 other.domain_axis_identity(axis1),
-                                other.domain_axis_identity(axis0_to_axis1[axis0])))
+                                other.domain_axis_identity(axis0_to_axis1[axis0]))) # pragma: no cover
                     if not _return_axis_map:
                         return False
                 elif axis1 in axis1_to_axis0 and axis0 != axis1_to_axis0[axis1]:
@@ -718,7 +719,7 @@ False
                                 self.__class__.__name__,
                                 self.domain_axis_identity(axis0),
                                 self.domain_axis_identity(axis1_to_axis0[axis0]),
-                                other.domain_axis_identity(axes1)))
+                                other.domain_axis_identity(axes1))) # pragma: no cover
                     if not _return_axis_map:
                         return False
 
