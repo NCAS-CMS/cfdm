@@ -399,6 +399,100 @@ instances are equal.
         return out
     #--- End: def
 
+#    def domain_axis_key(self, identity, default=ValueError()):
+#        '''Return the key of the domain axis construct that is spanned by 1-d
+#coordinate constructs.
+#
+#.. versionadded:: 1.7.8
+#
+#.. seealso:: `domain_axis_identity`
+#
+#:Parameters:
+#
+#    identity:
+#
+#        Select the 1-d coordinate constructs that have the given
+#        identity.
+#
+#        An identity is specified by a string (e.g. ``'latitude'``,
+#        ``'long_name=time'``, etc.); or a compiled regular expression
+#        (e.g. ``re.compile('^atmosphere')``), for which all constructs
+#        whose identities match (via `re.search`) are selected.
+#
+#        Each coordinate construct has a number of identities, and is
+#        selected if any of them match any of those provided. A
+#        construct's identities are those returned by its `!identities`
+#        method. In the following example, the construct ``x`` has four
+#        identities:
+#
+#           >>> x.identities()
+#           ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
+#
+#        In addition, each construct also has an identity based its
+#        construct key (e.g. ``'key%dimensioncoordinate2'``)
+#
+#        Note that in the output of a `print` call or `!dump` method, a
+#        construct is always described by one of its identities, and so
+#        this description may always be used as an *identity* argument.
+#
+#    default: optional
+#        Return the value of the *default* parameter if a domain axis
+#        construct can not be found. If set to an `Exception` instance
+#        then it will be raised instead.
+#
+#:Returns:
+#
+#    `str`
+#        The key of the domain axis construct that is spanned by the
+#        data of the selected 1-d coordinate constructs.
+#
+#**Examples:**
+#
+#TODO
+#
+#        '''
+#        # Select 1-d coordinate constructs with the given identity
+#        c = self.filter_by_type('dimension_coordinate',
+#                                'auxiliary_coordinates')
+#        c = c.filter_by_naxes(1)
+#        c = c.filter_by_identity(identity)
+#        
+#        if not len(c) :
+#            return self._default(
+#                default,
+#                "No 1-d coordinate constructs have identity {!r}".format(identity))
+#
+#        data_axes = self.data_axes()
+#        domain_axes = self.filter_by_type('domain_axis')
+#        
+#        keys = []
+#        for ckey, coord in c.items():
+#            axes = data_axes.get(ckey)
+#            if not axes:
+#                continue
+#            
+#            key = axes[0]
+#            if domain_axes.get(key):
+#                keys.append(key)
+#        #--- End: for
+#        
+#        keys = set(keys)
+#            
+#        if not keys:
+#            return self._default(
+#                default,
+#                "1-d coordinate constructs selected with identity {!r} have not been assigned a domain axis contructs".format(
+#                    coord))                       
+#        
+#        if len(keys) > 1:
+#            return self._default(
+#                default,
+#                "Multiple 1-d coordinate constructs selected with identity {!r} span multiple domain axes: {!r}".format(
+#                    identity, keys))
+#
+#        return keys.pop()
+#    #--- End: def
+
     def domain_axis_identity(self, key):
         '''Return the canonical identity for a domain axis construct.
 
@@ -746,173 +840,6 @@ False
         # Still here? Then the two objects are equal
         # ------------------------------------------------------------     
         return True
-    #--- End: def
-
-    def filter_by_axisX(self, *mode, **axes):
-        '''Select metadata constructs by axes spanned by their data.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `filter_by_data`, `filter_by_key`, `filter_by_measure`,
-             `filter_by_method`, `filter_by_identity`,
-             `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
-             `filter_by_property`, `filter_by_type`,
-             `filters_applied`, `inverse_filter`, `unfilter`
-
-:Parameters:
-
-    mode: optional
-        Define the behaviour when multiple axes are provided.
-
-        By default (or if the *modes* parameter is ``'and'``) a
-        construct is selected if it matches all of the given axis
-        requirements. If the *mode* parameter is ``'or'`` then a
-        construct will be selected when at least one of the axis
-        requirements is met. If the *mode* parameter is ``'exact'``
-        then a construct will be selected when its data axes are
-        exactly those defined by the axis requirements. If the mode
-        parameter is ``'subset'`` then a construct will be selected
-        when its data axes are a subset of those defined by the axis
-        requirements.  If the mode parameter is ``'superset'`` then a
-        construct will be selected when its data axes are a superset
-        of those defined by the axis requirements.
-
-    axes: optional
-        Select constructs whose data does, or does not, span
-        particular domain axis constructs.
-
-        A domain axis construct is identified by a keyword parameter
-        of the domain axis construct key (e.g. ``domainaxis1``). The
-        value is a boolean indicating if a construct should be
-        selected when its data does span the axis (`True`), or
-        selected when its data does not span the axis (`False`).
-
-        If no axes are provided then all constructs that do or could
-        have data, spanning any domain axes constructs, are selected.
-
-:Returns:
-
-    `Constructs`
-        The selected constructs and their construct keys.
-
-**Examples:**
-
-Select constructs whose data spans the "domainaxis1" domain axis
-construct:
-
->>> d = c.filter_by_axis(domainaxis1=True)
-
-Select constructs whose data does not span the "domainaxis2" domain
-axis construct:
-
->>> d = c.filter_by_axis(domainaxis2=False)
-
-Select constructs whose data spans the "domainaxis1", but not the
-"domainaxis2" domain axis constructs:
-
->>> d = c.filter_by_axis(domainaxis1=True, domainaxis2=False)
-
-Select constructs whose data spans the "domainaxis1" or the
-"domainaxis2" domain axis constructs:
-
->>> d = c.filter_by_axis('or', domainaxis1=True, domainaxis2=True)
-
-        '''       
-        out = self.shallow_copy()
-
-        out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + ({'filter_by_axis': (mode, axes)},)
-
-        
-        
-        # Parse the mode parameter
-        _and      = False
-        _or       = False
-        _exact    = False
-        _subset   = False
-        _superset = False
-        if mode:
-            if len(mode) > 1:
-                raise ValueError("Can provide at most one mode value")
-            
-            mode = mode[0]
-            if mode == 'or':
-                _or = True
-            elif mode == 'and':
-                _and = True
-            elif mode == 'exact':
-                _exact = True
-            elif mode == 'subset':
-                _subset = True
-            elif mode == 'superset':
-                _superset = True
-            else:
-                raise ValueError(
-                    "mode, if provided, must be one of 'and', 'or', 'exact', subset', 'superset'")
-        else:
-            # By default, mode is 'and'
-            _and = True
-            
-        data_contructs = self.filter_by_data()
-        constructs_data_axes = self.data_axes()
-        
-        if _exact or _subset or _superset:
-            axes_True = set([axis for axis, value in axes.items() if value])
-            if _exact and not axes_True:
-                _exact = False
-                _and   = True
-        #--- End: if
-
-        if not axes:            
-            for cid in tuple(out):
-                if cid not in data_contructs:
-                    out._pop(cid)
-            #--- End: for
-            
-            return out
-        
-        # Still here?
-        for cid in tuple(out):
-            if cid not in data_contructs:
-                out._pop(cid)
-                continue
-                
-            x = constructs_data_axes.get(cid)
-            if x is None:
-                # This construct does not have data axes
-                out._pop(cid)
-                continue
-            
-            ok = True
-            if _exact:
-                if set(x) != axes_True:
-                    ok = False
-            elif _subset:
-                if not axes_True.issubset(x):
-                    ok = False
-            elif _superset:
-                if not set(x).issuperset(axes_True):
-                    ok = False
-            else:
-                for axis_key, value in axes.items():
-                    if value:
-                        ok = axis_key in x
-                    else:
-                        ok = axis_key not in x
-                
-                    if _or:
-                        if ok:
-                            break
-                    elif not ok:
-                        break
-            #--- End: if
-
-            if not ok:
-                # This construct ..
-                out._pop(cid)
-        #--- End: for
-        
-        return out
     #--- End: def
 
     def filter_by_axis(self, mode=None, *axes):

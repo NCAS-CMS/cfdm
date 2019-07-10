@@ -688,11 +688,10 @@ the field construct. For example, the data of the field construct
    ('domainaxis0', 'domainaxis1', 'domainaxis2')
 
 The data may be set with the `~Field.set_data` method of the field
-construct. The domain axis constructs spanned by the data must be
-considered, either by explicitly providing them via their construct
-keys, or by using those that may have already been set. In any case,
-the data axes may be set at any time with the `~Field.set_data_axes`
-method of the field construct.
+construct. The domain axis constructs spanned by the data may also be
+set by explicitly providing them via their construct keys. In any
+case, the data axes may be set at any time with the
+`~Field.set_data_axes` method of the field construct.
 
 .. code-block:: python3
    :caption: *Delete the data and then reinstate it, using the
