@@ -5,6 +5,7 @@
 __author__       = 'David Hassell'
 __date__         = '2019-06-13'
 __cf_version__   = '1.7'
+#__cf_version__   = '1.8'
 __version__      = '1.7.7'
 
 from distutils.version import LooseVersion

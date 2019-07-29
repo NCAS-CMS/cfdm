@@ -5,10 +5,16 @@ import os
 import tempfile
 import unittest
 
+from distutils.version import LooseVersion
+
 import numpy
 import netCDF4
 
 import cfdm
+
+VN = cfdm.CF()
+if LooseVersion(VN) < LooseVersion('1.8'):
+    VN = '1.8'
 
 def _make_geometry_1_file(filename):
     '''See n.comment for details.
@@ -16,7 +22,7 @@ def _make_geometry_1_file(filename):
     '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
-    n.Conventions = 'CF-'+cfdm.CF()
+    n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
     n.comment     = "Make a netCDF file with 2 node coordinates variables, each of which has a corresponding auxiliary coordinate variable."
     
@@ -94,7 +100,7 @@ def _make_geometry_2_file(filename):
     '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
-    n.Conventions = 'CF-'+cfdm.CF()
+    n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
     n.comment     = 'A netCDF file with 3 node coordinates variables, only two of which have a corresponding auxiliary coordinate variable.'
    
@@ -176,7 +182,7 @@ def _make_geometry_3_file(filename):
     '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
-    n.Conventions = 'CF-'+cfdm.CF()
+    n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
     n.comment     = "A netCDF file with 3 node coordinates variables, each of which contains only one point, only two of which have a corresponding auxiliary coordinate variables. There is no node count variable."
 
@@ -256,7 +262,7 @@ def _make_geometry_4_file(filename):
     '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
-    n.Conventions = 'CF-'+cfdm.CF()
+    n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
     n.comment     = "A netCDF file with 2 node coordinates variables, none of which have a corresponding auxiliary coordinate variable."
     
@@ -328,7 +334,7 @@ def _make_geometry_4_file(filename):
 #    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 #    
 #    # Global arttributes
-#    n.Conventions = 'CF-'+cfdm.CF()
+#    n.Conventions = 'CF-'+VN
 #
 #    # Dimensions
 #    time     = n.createDimension('time', 4)
@@ -436,7 +442,7 @@ def _make_interior_ring_file(filename):
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
     # Global arttributes
-    n.Conventions = 'CF-'+cfdm.CF()
+    n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
     n.comment = 'TODO'
 
@@ -564,16 +570,17 @@ class DSGTest(unittest.TestCase):
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
         os.close(fd)
-        
+#        self.tempfilename = 'delme.nc'
+
+       
         self.test_only = []
 #        self.test_only = ['test_node_count']
 #        self.test_only = ['test_geometry_interior_ring']
 
-    #--- End: def
  
     def tearDown(self):
         os.remove(self.tempfilename)
-    #--- End: def
+
     
     def test_node_count(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -593,7 +600,7 @@ class DSGTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
-        cfdm.write(f, self.tempfilename, Conventions='CF-'+cfdm.CF(), verbose=False)
+        cfdm.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
 
         f2 = cfdm.read(self.tempfilename, verbose=False)
         self.assertTrue(len(f2) == 2, 'f2 = '+repr(f2))
@@ -627,7 +634,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
                 
-        f = cfdm.read(self.geometry_2_file, verbose=True)
+        f = cfdm.read(self.geometry_2_file, verbose=False)
 
         self.assertTrue(len(f) == 2, 'f = '+repr(f))
 
@@ -642,7 +649,7 @@ class DSGTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
-        cfdm.write(f, self.tempfilename, Conventions='CF-'+cfdm.CF(), verbose=False)
+        cfdm.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
 
         f2 = cfdm.read(self.tempfilename, verbose=False)
 
@@ -680,7 +687,7 @@ class DSGTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
-        cfdm.write(f, self.tempfilename, Conventions='CF-'+cfdm.CF(), verbose=False)
+        cfdm.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
 
         f2 = cfdm.read(self.tempfilename, verbose=False)
 
@@ -708,7 +715,7 @@ class DSGTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
-        cfdm.write(f, self.tempfilename, Conventions='CF-'+cfdm.CF(), verbose=False)
+        cfdm.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
 
         f2 = cfdm.read(self.tempfilename, verbose=False)
 
@@ -746,7 +753,7 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(coord.has_part_node_count(), 'axis='+axis)
             self.assertTrue(coord.has_interior_ring(), 'axis='+axis)
 
-        cfdm.write(f, self.tempfilename, Conventions='CF-'+cfdm.CF(), verbose=False)
+        cfdm.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
 
         f2 = cfdm.read(self.tempfilename, verbose=False)
 

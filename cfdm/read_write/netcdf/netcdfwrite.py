@@ -771,7 +771,7 @@ a new netCDF dimension for the bounds.
         gc = {}        
         for key, coord in self.implementation.get_auxiliary_coordinates(field).items():
             geometry_type = self.implementation.get_geometry(coord, None)
-            if geometry_type not in constants.geometry_types:
+            if geometry_type not in self.cf_geometry_types():
                 # No geometry bounds for this auxiliary coordinate
                 continue
             
@@ -2338,6 +2338,9 @@ extra trailing dimension.
         # 
         g['sample_ncdim']     = {}
         
+        # 
+        g['part_ncdim'] = None
+
         # Initialize the list of the field's auxiliary/scalar coordinates
         coordinates = []
 
