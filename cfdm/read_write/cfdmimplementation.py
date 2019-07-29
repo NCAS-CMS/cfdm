@@ -14,6 +14,7 @@ from .. import (AuxiliaryCoordinate,
                 Field,
                 FieldAncillary,
                 Bounds,
+                InteriorRing,
                 CoordinateConversion,
                 Datum,
                 Count,
@@ -1742,76 +1743,77 @@ also be provided.
     def set_dataset_compliance(self, field, report):
         '''TODO
 
-..versionadded:: 1.7
+    ..versionadded:: 1.7
 
         '''
         field._set_dataset_compliance(report)
-    #-- End: def
+
     
     def nc_set_dimension(self, construct, ncdim):
-        '''
-:Parameters:
+        '''TODO
 
-:Returns:
+    :Parameters:
 
-    `None`
+    :Returns:
+
+        `None`
 
         '''
         construct.nc_set_dimension(ncdim)
-    #--- End: def
 
-    def nc_set_geometry(self, field, ncvar):
+
+    def nc_set_geometry_variable(self, field, ncvar):
         '''TODO
 
-:Parameters:
+    :Parameters:
 
-:Returns:
+    :Returns:
 
-    `None`
+        `None`
 
         '''
-        field.nc_set_geometry(ncvar)
-    #--- End: def
+        field.nc_set_geometry_variable(ncvar)
 
+    
     def nc_set_variable(self, parent, ncvar):
-        '''
+        '''TODO
 
-:Parameters:
+    :Parameters:
+    
+    :Returns:
 
-:Returns:
-
-    `None`
+        `None`
         '''
         parent.nc_set_variable(ncvar)
-    #--- End: def
+
 
     def nc_get_datum_variable(self, ref):
-        '''
+        '''TODO
 
-.. versionadded:: 1.7.5
+    .. versionadded:: 1.7.5
 
-:Parameters:
+    :Parameters:
 
-:Returns:
+    :Returns:
 
-    `str` or `None`
+        `str` or `None`
         '''
         return ref.nc_get_datum_variable(default=None)
-    #--- End: def
+
 
     def nc_set_datum_variable(self, ref, ncvar):
-        '''
+        '''TODO
 
-.. versionadded:: 1.7.5
+    .. versionadded:: 1.7.5
 
-:Parameters:
+    :Parameters:
 
-:Returns:
+    :Returns:
 
-    `None`
+        `None`
         '''
         ref.nc_set_datum_variable(ncvar)
-    #--- End: def
+
 
 #    def set_node_ncdim(self, parent, ncdim):
 #        '''Set the netCDF name of the dimension of a node coordinate variable.
@@ -1841,15 +1843,17 @@ also be provided.
 #    #--- End: def
 
     def set_properties(self, construct, properties, copy=True):
-        '''
-:Parameters:
+        '''TODO
 
-:Returns:
+    :Parameters:
 
-    `None`
+    :Returns:
+
+        `None`
+
         '''
         construct.set_properties(properties, copy=copy)
-    #--- End: def
+
  
 #    def set_data_units(self, data, units):
 #        '''

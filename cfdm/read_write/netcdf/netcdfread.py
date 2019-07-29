@@ -746,23 +746,23 @@ TODO
                                                                instance_dimension)
         #--- End: if
 
-#        # ------------------------------------------------------------
-#        # Geometry container variables (CF>=1.8)
-#        #
-#        # Identify and parse all geometry container variables
-#        # ------------------------------------------------------------
-#        if g['CF>=1.8']:
-#            for ncvar, attributes in variable_attributes.items():
-#                if 'geometry' not in attributes:
-#                    continue
-#            
-#                geometry_ncvar = attributes['geometry']
-#                self._parse_geometry(ncvar, geometry_ncvar, variable_attributes)
-#                
-#                # Do not attempt to create a field from a geometry
-#                # container variable
-#                g['do_not_create_field'].add(geometry_ncvar)
-#        #--- End: if
+        # ------------------------------------------------------------
+        # Geometry container variables (CF>=1.8)
+        #
+        # Identify and parse all geometry container variables
+        # ------------------------------------------------------------
+        if g['CF>=1.8']:
+            for ncvar, attributes in variable_attributes.items():
+                if 'geometry' not in attributes:
+                    continue
+            
+                geometry_ncvar = attributes['geometry']
+                self._parse_geometry(ncvar, geometry_ncvar, variable_attributes)
+                
+                # Do not attempt to create a field from a geometry
+                # container variable
+                g['do_not_create_field'].add(geometry_ncvar)
+        #--- End: if
         
         # ------------------------------------------------------------
         # Parse external variables (CF>=1.7)
@@ -1201,24 +1201,24 @@ variable should be pre-filled with missing values.
     def _parse_geometry(self, field_ncvar, geometry_ncvar, attributes):
         '''TODO
 
-.. versionadded:: 1.8.0
+    .. versionadded:: 1.8.0
+    
+    :Parameters:
+    
+        field_ncvar: `str`
+            The netCDF variable name of the parent data variable.
+    
+        ncvar: `str`
+            The netCDF variable name of the geometry container
+            variable.
+    
+        attributes: `dict`
+    
+    :Returns:
+    
+        TODO
 
-:Parameters:
-
-    field_ncvar: `str`
-        The netCDF variable name of the parent data variable.
-
-    ncvar: `str`
-        The netCDF variable name of the geometry container variable.
-
-    attributes: `dict`
-
-:Returns:
-
-    out: `str`
-        The made-up netCDF dimension name of the element dimension.
-
-    '''
+        '''
         g = self.read_vars        
         
         verbose = g['verbose']
@@ -1446,7 +1446,7 @@ variable should be pre-filled with missing values.
              'node_coordinates'  : parsed_node_coordinates,
              'node_dimension'    : node_dimension}
         )
-    #--- End: def
+
 
     def _set_ragged_contiguous_parameters(self,
                                           elements_per_instance=None,
@@ -1952,7 +1952,7 @@ variable should be pre-filled with missing values.
         if g['CF>=1.8']:
             geometry = self.implementation.del_property(f, 'geometry', None)
             if geometry is not None:
-                self.implementation.nc_set_geometry(f, geometry)
+                self.implementation.nc_set_geometry_variable(f, geometry)
         #--- End: if
         
         # Map netCDF dimension names to domain axis names.
@@ -2523,26 +2523,27 @@ variable should be pre-filled with missing values.
     def _get_geometry(self, field_ncvar):
         '''Return a geometry container for this field construct.
 
-.. versionadded:: 1.8.0
-
-:Parameters:
-
-    field_ncvar: `str`
-        The netCDF varibalename for the field construct.
-
-:Returns:
-
-    `dict` or `None`
-        A `dict` containing geometry container information. If there
-        is no geometry container for this data variable, or if the
-        file version is pre-CF-1.8, then `None` is returned.
+    .. versionadded:: 1.8.0
+    
+    :Parameters:
+    
+        field_ncvar: `str`
+            The netCDF varibalename for the field construct.
+    
+    :Returns:
+    
+        `dict` or `None`
+            A `dict` containing geometry container information. If
+            there is no geometry container for this data variable, or
+            if the file version is pre-CF-1.8, then `None` is
+            returned.
 
         '''
         g = self.read_vars        
         if g['CF>=1.8']:
             geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
             return g['geometries'].get(geometry_ncvar)
-    #--- End: def
+        
         
     def _add_message(self, field_ncvar, ncvar, message=None,
                      attribute=None, dimensions=None, variable=None,
@@ -2745,8 +2746,11 @@ variable's netCDF dimensions.
         # ------------------------------------------------------------
         # Look for a geometry container
         # ------------------------------------------------------------
-        geometry = None
-
+        if g['CF>=1.8']:
+            geometry = self._get_geometry(field_ncvar)
+        else:
+            geometry = None
+            
         has_bounds = False
         attribute = 'bounds' # TODO Bad default? consider if bounds != None
 
@@ -2894,7 +2898,7 @@ variable's netCDF dimensions.
                 if interior_ring is not None:
                     self.implementation.set_interior_ring(parent=c,
                                                           interior_ring=interior_ring)
-        #--- End: if
+       #--- End: if
        
         # Store the netCDF variable name
         self.implementation.nc_set_variable(c, ncvar)
@@ -4352,8 +4356,8 @@ Checks that
                                 node_coordinates,
                                 parsed_node_coordinates):
         '''TODO
-        '''
 
+        '''
         attribute = {geometry_ncvar+':node_coordinates': node_coordinates}
 
         g = self.read_vars
@@ -4389,11 +4393,12 @@ Checks that
         #--- End: for
 
         return ok
-    #--- End: def
-
+    
+    
     def _check_node_count(self, field_ncvar, geometry_ncvar,
                           node_count, parsed_node_count):
         '''TODO
+
         '''
         attribute = {geometry_ncvar+':node_count': node_count}
 
@@ -4424,11 +4429,12 @@ Checks that
         #--- End: for
 
         return ok
-    #--- End: def
+
 
     def _check_part_node_count(self, field_ncvar, geometry_ncvar,
                                part_node_count, parsed_part_node_count):
         '''TODO
+
         '''
         if part_node_count is None:
             return True
@@ -4459,11 +4465,12 @@ Checks that
         #--- End: for
 
         return ok
-    #--- End: def
+
 
     def _check_interior_ring(self, field_ncvar, geometry_ncvar,
                           interior_ring, parsed_interior_ring):
-        '''
+        '''TODO
+
         '''
         if interior_ring is None:
             return True
@@ -4500,7 +4507,7 @@ Checks that
         #--- End: for
 
         return ok
-    #--- End: def
+
 
     def _check_instance_dimension(self, parent_ncvar, instance_dimension):
         '''asdasd
@@ -4529,10 +4536,11 @@ CF-1.7 Appendix A
         return True
     #--- End: def
                 
+         
     def _check_geometry_dimension(self, parent_ncvar, geometry_dimension):
         '''TODO
 
-.. versionadded:: 1.8.0
+    .. versionadded:: 1.8.0
 
         '''
         attribute={parent_ncvar+':geometry_dimension': geometry_dimension}
@@ -4546,8 +4554,8 @@ CF-1.7 Appendix A
                               attribute=attribute)
             
         return ok
-    #--- End: def
-         
+
+
     def _check_sample_dimension(self, parent_ncvar, sample_dimension):
         '''asdasd
 
