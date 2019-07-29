@@ -1924,8 +1924,8 @@ variable should be pre-filled with missing values.
     
             unpacked_dtype = numpy.result_type(*values)
 
-#        # Initialise node_coordinates_as_bounds
-#        g['node_coordinates_as_bounds'] = set()
+        # Initialise node_coordinates_as_bounds
+        g['node_coordinates_as_bounds'] = set()
         
         # ----------------------------------------------------------------
         # Initialize the field with properties
@@ -2746,10 +2746,7 @@ variable's netCDF dimensions.
         # ------------------------------------------------------------
         # Look for a geometry container
         # ------------------------------------------------------------
-        if g['CF>=1.8']:
-            geometry = self._get_geometry(field_ncvar)
-        else:
-            geometry = None
+        geometry = self._get_geometry(field_ncvar)
             
         has_bounds = False
         attribute = 'bounds' # TODO Bad default? consider if bounds != None

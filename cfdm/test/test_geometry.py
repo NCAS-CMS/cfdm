@@ -627,7 +627,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
                 
-        f = cfdm.read(self.geometry_2_file, verbose=False)
+        f = cfdm.read(self.geometry_2_file, verbose=True)
 
         self.assertTrue(len(f) == 2, 'f = '+repr(f))
 

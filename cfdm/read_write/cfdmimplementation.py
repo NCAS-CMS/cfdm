@@ -599,7 +599,7 @@ axes, and possibly other axes, are returned.
 #        return index.nc_get_instance_dimension(default=default)
 #    #--- End: def
 
-    def nc_get_geometry(self, field, default=None):
+    def nc_get_geometry_variable(self, field, default=None):
         '''TODO
 
 .. versionadded:: 1.8.0
@@ -611,7 +611,7 @@ axes, and possibly other axes, are returned.
     `str`
 
         '''
-        return field.nc_get_geometry(default)
+        return field.nc_get_geometry_variable(default)
     #--- End: def
 
     def nc_get_hdf5_chunksizes(self, data):
@@ -648,26 +648,6 @@ axes, and possibly other axes, are returned.
         return count.nc_get_sample_dimension(default=default)
     #--- End: def
 
-#    def nc_get_unlimited_axes(self, field):
-#        '''Return the selection of domain axis constructs that are to written
-#as netCDF unlimited dimensions.
-#
-#.. versionadded:: 1.7.0
-#
-#:Parameters:
-#  
-#    field: `Field`
-#
-#:Returns:
-#
-#    out: `set`
-#        The selection of domain axis construct identifiers that are
-#        unlimited.
-#
-#        '''
-#        return field.nc_unlimited_dimensions()
-#    #--- End: def
-    
     def nc_is_unlimited_axis(self, field, axis):
         '''Whether a domain axis corresponds to a netCDF unlimited dimension.
 
@@ -1684,15 +1664,15 @@ also be provided.
         return field.set_construct(construct, axes=axes, copy=copy)
     #--- End: def
 
-#    def set_geometry(self, coordinate, value):
-#        '''
-#
-#.. versionadded:: 1.8.0
-#
-#        '''
-#        coordinate.set_geometry(value)
-#    #--- End: def
-#
+    def set_geometry(self, coordinate, value):
+        '''
+
+    .. versionadded:: 1.8.0
+
+        '''
+        coordinate.set_geometry(value)
+
+
     def set_node_count(self, parent, node_count, copy=True):
         '''Insert TODO
 
