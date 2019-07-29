@@ -110,14 +110,17 @@ from .data import (Data,
                    RaggedIndexedArray,
                    RaggedIndexedContiguousArray)
 
-from .count         import Count
-from .index         import Index
-from .list          import List
+from .count                   import Count
+from .index                   import Index
+from .list                    import List
+from .nodecountproperties     import NodeCountProperties
+from .partnodecountproperties import PartNodeCountProperties
 
 from .bounds               import Bounds
 from .coordinateconversion import CoordinateConversion
 from .datum                import Datum
 from .domain               import Domain
+from .interiorring         import InteriorRing
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure         import CellMeasure
