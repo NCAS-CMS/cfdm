@@ -634,7 +634,7 @@ reference is replace with `None`.
 
             if axes is not None:
                 self._set_construct_data_axes(key=key, axes=axes,
-                                              construct=construct)
+                                              construct=construct)                        
         elif axes is not None:
             raise ValueError(
                 "Can't set {!r}: Can't provide domain axis constructs for {} construct".format(
