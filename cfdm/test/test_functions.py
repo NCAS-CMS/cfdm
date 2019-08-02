@@ -14,7 +14,7 @@ class FunctionsTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        self.assertTrue(cfdm.CF() == '1.7')
+        self.assertTrue(cfdm.CF() == cfdm.core.__cf_version__)
 
         org = cfdm.RTOL()
         self.assertTrue(cfdm.RTOL(1e-5) == org)

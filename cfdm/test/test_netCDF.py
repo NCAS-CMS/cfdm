@@ -134,7 +134,7 @@ class NetCDFTest(unittest.TestCase):
             self.assertTrue(x.properties() == {'comment': 'variable comment',
                                                'foo': 'bar',
                                                'qwerty': 'asdf',
-                                               'Conventions': 'CF-1.7'})
+                                               'Conventions': 'CF-'+cfdm.CF()})
             self.assertTrue(x.nc_global_attributes() == {'comment': 'global comment',
                                                          'qwerty': None,
                                                          'Conventions': None},
