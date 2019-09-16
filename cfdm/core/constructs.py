@@ -1025,26 +1025,26 @@ Constructs:
     def ordered(self):
         '''Return the contructs in their predetermined order.
 
-For cell method constructs, the predetermined order is that in which
-they where added.
-
-.. versionadded:: 1.7.0
-
-:Returns:
-
-     `collections.OrderedDict`
-         The constructs and their construct keys, in their
-         predetermined order.
-
-**Examples:**
-
->>> print(c)
-onstructs:
-{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean>,
- 'cellmethod1': <CellMethod: domainaxis3: maximum>}
->>> c.ordered()
-OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean>),
-             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+    For cell method constructs, the predetermined order is that in
+    which they where added.
+    
+    .. versionadded:: 1.7.0
+    
+    :Returns:
+    
+         `collections.OrderedDict`
+             The constructs and their construct keys, in their
+             predetermined order.
+    
+    **Examples:**
+    
+    >>> print(c)
+    onstructs:
+    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean>,
+     'cellmethod1': <CellMethod: domainaxis3: maximum>}
+    >>> c.ordered()
+    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean>),
+                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
         '''
         if len(self._constructs) > 1:
@@ -1056,7 +1056,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean>),
                 "Can't order un-orderable construct type: {!r}".format(self))
 
         return self._constructs[tuple(self._ordered_constructs)[0]].copy()
-    #--- End: def
+
     
     def filter_by_type(self, *types):
         '''Select metadata constructs by type.
