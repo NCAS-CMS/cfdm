@@ -70,7 +70,7 @@ class Data(abstract.Container):
 
         '''
         super().__init__(source=source)
-        
+
         if source is not None:
             try:                
                 array = source._get_Array(None)
