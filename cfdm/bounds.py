@@ -35,7 +35,7 @@ The netCDF variable name of the bounds may be accessed with the
 
 The name of the trailing netCDF dimension spanned by bounds (which
 does not correspond to a domain axis construct) may be accessed with
-the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension and
+the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension` and
 `nc_has_dimension` methods.
 
 .. versionadded:: 1.7.0
