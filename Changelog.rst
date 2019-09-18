@@ -11,6 +11,9 @@ version 1.7.8
   equal cell method constructs in transposed, but otherwise equal
   field constructs.
 
+* Bounds netCDF dimension name is now saved, and can be set. The
+  saved/set value is written out to disk.
+
 version 1.7.7
 -------------
 ----
