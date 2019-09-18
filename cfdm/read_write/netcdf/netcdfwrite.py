@@ -22,7 +22,7 @@ class NetCDFWrite(IOWrite):
     '''
     def cf_description_of_file_contents_attributes(self):
         '''Description of file contents properties
-'''
+        '''
         return ('comment',
                 'Conventions',
                 'featureType',
@@ -62,18 +62,18 @@ class NetCDFWrite(IOWrite):
 #                                     force_use_existing=False):
         '''
     
-.. versionadded:: 1.7.0
-    
-:Parameters:
+    .. versionadded:: 1.7.0
         
-    parent:
-           
-    default: `str`
+    :Parameters:
+            
+        parent:
+               
+        default: `str`
+        
+    :Returns:
     
-:Returns:
-
-    `str`
-        The netCDF variable name.
+        `str`
+            The netCDF variable name.
 
         '''
         ncvar = self.implementation.nc_get_variable(parent, None)
@@ -93,7 +93,7 @@ class NetCDFWrite(IOWrite):
         #--- End: if
                 
         return self._netcdf_name(ncvar)
-    #--- End: def
+
     
     def _netcdf_name(self, base, dimsize=None, role=None):
         '''Return a new netCDF variable or dimension name.
@@ -212,7 +212,7 @@ extra trailing dimension.
 
     out: `numpy.ndarray`
 
-:Examples:
+**Examples:**
 
 >>> print a, a.shape, a.dtype.itemsize
 ['fu' 'bar'] (2,) 3
@@ -457,27 +457,27 @@ If the construct has no data, then return `None`
                          size=None):
         '''Write a netCDF dimension to the file.
     
-:Parameters:
-    
-    ncdim: `str`
-        The netCDF dimension name.
-
-    f: Field construct
-   
-    axis: `str` or `None`
-        The field's domain axis identifier.
-
-    unlimited: `bool`, optional
-        If True then create an unlimited dimension. By default
-        dimensions are not unlimited.
-
-    size: `int`, optional
-        Must be set if *axis* is `None`.
-
-:Returns:
-
-    `None`
+    :Parameters:
         
+        ncdim: `str`
+            The netCDF dimension name.
+    
+        f: Field construct
+       
+        axis: `str` or `None`
+            The field's domain axis identifier.
+    
+        unlimited: `bool`, optional
+            If `True` then create an unlimited dimension. By default
+            dimensions are not unlimited.
+    
+        size: `int`, optional
+            Must be set if *axis* is `None`.
+    
+    :Returns:
+    
+        `None`
+
         '''
         g = self.write_vars
         verbose = g['verbose']
@@ -504,7 +504,8 @@ If the construct has no data, then return `None`
                 error = str(error)
                 if error == 'NetCDF: NC_UNLIMITED size already in use':
                     raise RuntimeError(
-message+" In a {} file only one unlimited dimension is allowed. Consider using a netCDF4 format.".format(g['netcdf'].file_format))
+                        message+" In a {} file only one unlimited dimension is allowed. Consider using a netCDF4 format.".format(
+                            g['netcdf'].file_format))
                     
                 raise RuntimeError(message)
         else:
@@ -515,26 +516,26 @@ message+" In a {} file only one unlimited dimension is allowed. Consider using a
                     "Can't create dimension of size {} in {} file ({})".format(
                         size, g['netcdf'].file_format, error))
         #--- End: if
-    #--- End: def
+
     
     def _write_dimension_coordinate(self, f, key, coord):
         '''Write a coordinate variable and its bound variable to the file.
     
-This also writes a new netCDF dimension to the file and, if required,
-a new netCDF dimension for the bounds.
-
-:Parameters:
-
-    f: Field construct
-   
-    key: `str`
-
-    coord: Dimension coordinate construct
-
-:Returns:
-
-    out: `str`
-        The netCDF name of the dimension coordinate.
+    This also writes a new netCDF dimension to the file and, if
+    required, a new netCDF dimension for the bounds.
+    
+    :Parameters:
+    
+        f: Field construct
+       
+        key: `str`
+    
+        coord: Dimension coordinate construct
+    
+    :Returns:
+    
+        out: `str`
+            The netCDF name of the dimension coordinate.
 
         '''
         g = self.write_vars
@@ -585,11 +586,11 @@ a new netCDF dimension for the bounds.
         g['axis_to_ncdim'][axis] = ncvar
 
         return ncvar
-    #--- End: def
+
 
     def _write_count_variable(self, f, count_variable, ncdim=None,
                               create_ncdim=True):
-        '''
+        '''TODO
 
         '''
         g = self.write_vars
@@ -625,7 +626,7 @@ a new netCDF dimension for the bounds.
             sample_ncdim = g['count_variable_sample_dimension'][ncvar]
     
         return sample_ncdim
-    #--- End: def
+
     
     def _write_index_variable(self, f, index_variable,
                               sample_dimension, ncdim=None,
@@ -906,20 +907,20 @@ a new netCDF dimension for the bounds.
     (names and order) to that of a variable in the g['seen']
     dictionary.
         
-    When True is returned, the input variable is added to the
+    When `True` is returned, the input variable is added to the
     g['seen'] dictionary.
         
     :Parameters:
         
         variable : 
     
-        ncdims : tuple, optional
+        ncdims : `tuple`, optional
     
     :Returns:
     
         `bool`
-            True if the variable has already been written to the file,
-            False otherwise.
+            `True` if the variable has already been written to the
+            file, `False` otherwise.
 
         '''
         g = self.write_vars
@@ -943,7 +944,7 @@ a new netCDF dimension for the bounds.
         #--- End: for
         
         return False
-    #--- End: def
+
 
     def _write_geometry_container(self, field, geometry_container):
         '''Write a netCDF geometry container variable.
@@ -1054,7 +1055,10 @@ a new netCDF dimension for the bounds.
         
         size = data.shape[-1]
     
-        ncdim = self._netcdf_name('bounds{0}'.format(size),
+#        ncdim = self._netcdf_name('bounds{0}'.format(size),
+#                                  dimsize=size, role='bounds')
+
+        ncdim = self._netcdf_name(self.implementation.nc_get_dimension(bounds, 'bounds{0}'.format(size)),
                                   dimsize=size, role='bounds')
 
         # Check if this bounds variable has not been previously
@@ -1114,7 +1118,7 @@ a new netCDF dimension for the bounds.
         g['bounds'][coord_ncvar] = ncvar
             
         return extra
-    #--- End: def
+
             
     def _write_node_coordinates(self, coord, coord_ncvar,
                                 coord_ncdimensions):
@@ -1385,7 +1389,7 @@ a new netCDF dimension for the bounds.
     
         `dict`
     
-    **:Examples:**
+    ****Examples:****
     
     >>> _write_part_node_count(c, b)
     {'part_node_count': 'pnc'}
@@ -1607,7 +1611,7 @@ then the input coordinate is not written.
         The list of netCDF auxiliary coordinate names updated in
         place.
 
-:Examples:
+**Examples:**
 
 >>> coordinates = _write_auxiliary_coordinate(f, 'aux2', coordinates)
 
@@ -1670,24 +1674,24 @@ then the input coordinate is not written.
     def _write_domain_ancillary(self, f, key, anc):
         '''Write a domain ancillary and its bounds to the netCDF file.
     
-If an equal domain ancillary has already been written to the file athen
-it is not re-written.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    f: Field construct
-   
-    key: `str`
-        The internal identifier of the domain ancillary object.
-
-    anc: Domain ancillary construct
+    If an equal domain ancillary has already been written to the file
+    athen it is not re-written.
     
-:Returns:
-
-    `str`
-        The netCDF variable name of the domain ancillary variable.
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        f: Field construct
+       
+        key: `str`
+            The internal identifier of the domain ancillary object.
+    
+        anc: Domain ancillary construct
+        
+    :Returns:
+    
+        `str`
+            The netCDF variable name of the domain ancillary variable.
 
         '''
         g = self.write_vars
@@ -1697,8 +1701,7 @@ it is not re-written.
         create = not self._already_in_file(anc, ncdimensions, ignore_type=True)
     
         if not create:
-            ncvar = g['seen'][id(anc)]['ncvar']
-        
+            ncvar = g['seen'][id(anc)]['ncvar']        
         else:
             # See if we can set the default netCDF variable name to
             # its formula_terms term
@@ -1724,38 +1727,37 @@ it is not re-written.
     
             # Create a new domain ancillary variable
             self._write_netcdf_variable(ncvar, ncdimensions, anc)
-        #--- End: if
     
         g['key_to_ncvar'][key] = ncvar
         g['key_to_ncdims'][key] = ncdimensions
     
         return ncvar
-    #--- End: def
+
       
     def _write_field_ancillary(self, f, key, anc):
         '''Write a field ancillary to the netCDF file.
     
-If an equal field ancillary has already been written to the file then
-it is not re-written.
+    If an equal field ancillary has already been written to the file
+    then it is not re-written.
+        
+    :Parameters:
     
-:Parameters:
+        f : Field construct
+       
+        key : str
+    
+        anc : Field ancillary construct
+    
+    :Returns:
+    
+        out: `str`
+            The netCDF variable name of the field ancillary object.
+    
+    **Examples:**
+    
+    >>> ncvar = _write_field_ancillary(f, 'fieldancillary2', anc)
 
-    f : Field construct
-   
-    key : str
-
-    anc : Field ancillary construct
-
-:Returns:
-
-    out: `str`
-        The netCDF variable name of the field ancillary object.
-
-:Examples:
-
->>> ncvar = _write_field_ancillary(f, 'fieldancillary2', anc)
-
-    '''
+        '''
         g = self.write_vars
 
         ncdimensions = self._netcdf_dimensions(f, key, anc)
@@ -1774,30 +1776,28 @@ it is not re-written.
         g['key_to_ncdims'][key] = ncdimensions
         
         return ncvar
-    #--- End: def
+    
       
     def _write_cell_measure(self, field, key, cell_measure):
         '''Write a cell measure construct to the netCDF file.
 
-If an identical construct has already in the file then the cell
-measure will not be written.
-
-:Parameters:
-
-    field: Field construct
-        The field containing the cell measure.
-
-    key: `str`
-        The identifier of the cell measure (e.g. 'cellmeasure0').
-
-    cell_measure: Cell measure construct
-
-:Returns:
-
-    out: `str`
-        The 'measure: ncvar'.
-
-:Examples:
+    If an identical construct has already in the file then the cell
+    measure will not be written.
+    
+    :Parameters:
+    
+        field: Field construct
+            The field containing the cell measure.
+    
+        key: `str`
+            The identifier of the cell measure (e.g. 'cellmeasure0').
+    
+        cell_measure: Cell measure construct
+    
+    :Returns:
+    
+        out: `str`
+            The 'measure: ncvar'.
 
         '''
         g = self.write_vars
@@ -1805,7 +1805,7 @@ measure will not be written.
         measure = self.implementation.get_measure(cell_measure)
         if measure is None:
             raise ValueError(
-"Can't create a netCDF cell measure variable without a 'measure' property")
+                "Can't create a netCDF cell measure variable without a 'measure' property")
 
         ncdimensions = self._netcdf_dimensions(field, key, cell_measure)
 
@@ -1834,7 +1834,6 @@ measure will not be written.
         
         # Update the field's cell_measures list
         return '{0}: {1}'.format(measure, ncvar)
-    #--- End: def
 
 
     def _set_external_variables(self, ncvar):

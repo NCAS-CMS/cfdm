@@ -24,7 +24,6 @@ from . import constants
 class NetCDFRead(IORead):
     '''
     '''
-
     _code0 = {
         # Physically meaningful and corresponding to constructs
         'Cell measures variable' : 100,
@@ -2660,46 +2659,48 @@ variable's netCDF dimensions.
         
     def _create_auxiliary_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
-        '''
+        '''TODO
 
-:Returns:
+    :Returns:
 
-    The auxiliary coordinate constuct.
+        The auxiliary coordinate constuct.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
                                               ncvar=ncvar, f=f,
                                               auxiliary=True,
                                               bounds_ncvar=bounds_ncvar)
-    #--- End: def
+
 
     def _create_dimension_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
-        '''
-:Returns:
+        '''TODO
 
-    The dimension coordinate constuct.
+    :Returns:
+
+        The dimension coordinate constuct.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
                                               ncvar=ncvar, f=f,
                                               dimension=True,
                                               bounds_ncvar=bounds_ncvar)
-    #--- End: def
+
 
     def _create_domain_ancillary(self, field_ncvar, ncvar, f,
                                  bounds_ncvar=None):
-        '''
-:Returns:
+        '''TODO
 
-    The domain ancillary constuct.
+    :Returns:
+
+        The domain ancillary constuct.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
                                               ncvar=ncvar, f=f,
                                               domain_ancillary=True,
                                               bounds_ncvar=bounds_ncvar)
-    #--- End: def
+
 
     def _create_bounded_construct(self, field_ncvar, ncvar, f,
                                   dimension=False, auxiliary=False,
@@ -2708,27 +2709,27 @@ variable's netCDF dimensions.
                                   has_coordinates=True):
         '''Create a variable which might have bounds.
     
-:Parameters:
-
-    ncvar: `str`
-        The netCDF name of the variable.
-
-    f: `Field`
-        The parent field.
-
-    dimension: `bool`, optional
-        If True then a dimension coordinate is created.
-
-    auxiliary: `bool`, optional
-        If True then an auxiliary coordinate is created.
-
-    domain_ancillary: `bool`, optional
-        If True then a domain ancillary is created.
-
-:Returns:
-
-    out : `DimensionCoordinate` or `AuxiliaryCoordinate` or `DomainAncillary`
-        The new item.
+    :Parameters:
+    
+        ncvar: `str`
+            The netCDF name of the variable.
+    
+        f: `Field`
+            The parent field.
+    
+        dimension: `bool`, optional
+            If True then a dimension coordinate is created.
+    
+        auxiliary: `bool`, optional
+            If True then an auxiliary coordinate is created.
+    
+        domain_ancillary: `bool`, optional
+            If True then a domain ancillary is created.
+    
+    :Returns:
+    
+        out : `DimensionCoordinate` or `AuxiliaryCoordinate` or `DomainAncillary`
+            The new item.
     
         '''
         g = self.read_vars
@@ -2857,6 +2858,10 @@ variable's netCDF dimensions.
             
             # Store the netCDF variable name
             self.implementation.nc_set_variable(bounds, bounds_ncvar)
+
+            # Store the netCDF bounds dimension name
+            self.implementation.nc_set_dimension(bounds,
+                                                 g['variable_dimensions'][bounds_ncvar][-1])
             
             self.implementation.set_bounds(c, bounds, copy=False)
 
@@ -2907,7 +2912,7 @@ variable's netCDF dimensions.
         # Return the bounded variable
         # ---------------------------------------------------------
         return c
-    #--- End: def
+
 
     def _create_cell_measure(self, measure, ncvar):
         '''Create a cell measure object.
@@ -3968,31 +3973,31 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
     # ================================================================
     def _check_bounds(self, field_ncvar, parent_ncvar, attribute,
                       bounds_ncvar, geometry=False):
-        '''asdasdasds
+        '''TODO
 
-Checks that
-
-  * The bounds variable has exactly one more dimension than the parent
-    variable
-
-  * The bounds variable's dimensions, other than the trailing
-    dimension are the same, and in the same order, as the parent
-    variable's dimensions.
-
-:Parameters:
-
-    nc: `netCDF4.Dataset`
-        The netCDF dataset object.
-
-    parent_ncvar: `str`
-        The netCDF variable name of the parent variable.
-
-    bounds_ncvar: `str`
-        The netCDF variable name of the bounds.
-
-:Returns:
-
-    out: `bool`
+    Checks that
+    
+    * The bounds variable has exactly one more dimension than the
+      parent variable
+    
+    * The bounds variable's dimensions, other than the trailing
+      dimension are the same, and in the same order, as the parent
+      variable's dimensions.
+    
+    :Parameters:
+    
+        nc: `netCDF4.Dataset`
+            The netCDF dataset object.
+    
+        parent_ncvar: `str`
+            The netCDF variable name of the parent variable.
+    
+        bounds_ncvar: `str`
+            The netCDF variable name of the bounds.
+    
+    :Returns:
+    
+        out: `bool`
 
         '''
         attribute = {parent_ncvar+':'+attribute: bounds_ncvar}
@@ -4042,27 +4047,27 @@ Checks that
         #--- End: if
         
         return ok
-    #--- End: def
+
     
     def _check_cell_measures(self, field_ncvar, string, parsed_string):
         '''Checks requirements
 
-  * 7.2.requirement.1
-  * 7.2.requirement.3
-  * 7.2.requirement.4
+    * 7.2.requirement.1
+    * 7.2.requirement.3
+    * 7.2.requirement.4
 
-:Parameters:
-
-    field_ncvar: `str`
-        
-    string: `str`
-        The value of the netCDF cell_measures attribute.
-
-    parsed_string: `list`
-
-:Returns:
-
-    out: `bool`
+    :Parameters:
+    
+        field_ncvar: `str`
+            
+        string: `str`
+            The value of the netCDF cell_measures attribute.
+    
+        parsed_string: `list`
+    
+    :Returns:
+    
+        out: `bool`
 
         '''
         attribute = {field_ncvar+':cell_measures': string}
@@ -4120,7 +4125,7 @@ Checks that
                     self._add_message(field_ncvar, ncvar,
                                       message=incorrect_dimensions,
                                       attribute=attribute,
-                                      dimensions=g['dimensons'][ncvar],
+                                      dimensions=g['variable_dimensons'][ncvar],
                                       conformance='7.2.requirement.4')
                     ok = False
                     continue
@@ -4192,7 +4197,7 @@ Checks that
         #--- End: for
 
         return ok
-    #--- End: def
+
 
     def _check_auxiliary_scalar_coordinate(self, field_ncvar,
                                            coord_ncvar, string):
