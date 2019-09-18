@@ -97,6 +97,10 @@ NetCDF
    ~cfdm.Bounds.nc_get_variable
    ~cfdm.Bounds.nc_has_variable
    ~cfdm.Bounds.nc_set_variable 
+   ~cfdm.Bounds.nc_del_dimension
+   ~cfdm.Bounds.nc_get_dimension
+   ~cfdm.Bounds.nc_has_dimension
+   ~cfdm.Bounds.nc_set_dimension 
 
 Special
 -------
