@@ -2580,18 +2580,6 @@ Method                                  Description
 `~Field.nc_clear_global_attributes`     Clear the selection of properties
                                         to be written as netCDF global
                                         attributes
-				        
-`~Field.nc_unlimited_dimensions`        Return the selection of domain axis
-                                        constructs to be written as
-                                        netCDF unlimited dimensions
-
-`~Field.nc_set_unlimited_dimensions`    Set the selection of domain axis
-                                        constructs to be written as
-                                        netCDF unlimited dimensions
-
-`~Field.nc_clear_unlimited_dimensions`  Clear the selection of domain
-                                        axis constructs to be written
-                                        as netCDF unlimited dimensions
 ======================================  ======================================
 
 .. code-block:: python3
@@ -2602,8 +2590,6 @@ Method                                  Description
    'q'
    >>> q.nc_global_attributes()
    {'project': None, 'Conventions': None}
-   >>> q.nc_unlimited_dimensions()
-   set()
    >>> q.nc_set_variable('humidity')
    >>> q.nc_get_variable()
    'humidity'
@@ -2646,19 +2632,17 @@ Method                            Classes                                  NetCD
 `!nc_has_dimension`	          `DomainAxis`, `Count`, `Index`           Dimension name
 			          			                    
 `!nc_set_dimension`	          `DomainAxis`, `Count`, `Index`           Dimension name
-			          
+
+`!nc_is_unlimited`                `cf.DomainAxis`                          Unlimited dimension
+
+`!nc_set_unlimited` 	          `cf.DomainAxis` 	                   Unlimited dimension
+
 `!nc_global_attributes`	          `Field`                                  Global attributes
 			          
 `!nc_set_global_attribute`        `Field`                                  Global attributes
 			          
 `!nc_clear_global_attributes`     `Field`                                  Global attributes
 			          
-`!nc_unlimited_dimensions`        `Field`                                  Unlimited dimension names
-			     
-`!nc_set_unlimited_dimensions`    `Field`                                  Unlimited dimension names
-			     
-`!nc_clear_unlimited_dimensions`  `Field`                                  Unlimited dimension names
-			     
 `!nc_get_external`                `CellMeasure`                            External variable status
 
 `!nc_set_external`                `CellMeasure`                            External variable status
@@ -2777,7 +2761,7 @@ will be generated internally (usually based on the standard name if it
 exists).
 
 It is possible to create netCDF unlimited dimensions using the
-`nc_unlimited_dimensions` method of the field construct.
+`~DomainAxis.nc_set_unlimited` method of the domain axis construct.
 
 A field construct is not transformed through being written to a file
 on disk and subsequently read back from that file.
