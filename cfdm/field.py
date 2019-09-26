@@ -125,7 +125,7 @@ x.__str__() <==> str(x)
         units = getattr(self, 'units', '')
         calendar = getattr(self, 'calendar', None)
         if calendar is not None:
-            units += ' {0} {1}'.format(calendar)
+            units += ' {0}'.format(calendar)
             
         # Axes
         data_axes = self.get_data_axes(default=())

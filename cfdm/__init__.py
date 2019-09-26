@@ -40,56 +40,58 @@ __date__         = core.__date__
 __cf_version__   = core.__cf_version__
 __version__      = core.__version__
 
-requires = ('numpy',
-            'netCDF4',
-            'cftime',
-            'future')
+#_requires = ('numpy',
+#             'netCDF4',
+#             'cftime',
+#             'future')
 
-error0 = 'cfdm requires the modules {}. '.format(', '.join(requires))
+_requires = ('cftime',)
+
+_error0 = 'cfdm requires the modules {}. '.format(', '.join(_requires))
 
 from distutils.version import LooseVersion
 import platform
 
-# Check the version of python
-minimum_vn = '2.7.0'
-if LooseVersion(platform.python_version()) < LooseVersion(minimum_vn):
-    raise ValueError(
-        "Bad python version: cfdm requires python version {} or later. Got {}".format(
-            minimum_vn,  platform.python_version()))
-
-try:
-    import netCDF4
-except ImportError as error1:
-    raise ImportError(error0+str(error1))
-
-try:
-    import numpy
-except ImportError as error1:
-    raise ImportError(error0+str(error1))
+## Check the version of python
+#_minimum_vn = '2.7.0'
+#if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
+#    raise ValueError(
+#        "Bad python version: cfdm requires python version {} or later. Got {}".format(
+#            _minimum_vn,  platform.python_version()))
+#
+#try:
+#    import netCDF4
+#except ImportError as error1:
+#    raise ImportError(_error0+str(error1))
+#
+#try:
+#    import numpy
+#except ImportError as error1:
+#    raise ImportError(_error0+str(error1))
 
 try:
     import cftime
 except ImportError as error1:
-    raise ImportError(error0+str(error1))
+    raise ImportError(_error0+str(error1))
 
-try:
-    import future
-except ImportError as error1:
-    raise ImportError(error0+str(error1))
+#try:
+#    import future
+#except ImportError as error1:
+#    raise ImportError(_error0+str(error1))
 
-# Check the version of netCDF4
-minimum_vn = '1.4.0'
-if LooseVersion(netCDF4.__version__) < LooseVersion(minimum_vn):
-    raise ValueError(
-        "Bad netCDF4 version: cfdm requires netCDF4 version {} or later. Got {} at {}".format(
-            minimum_vn, netCDF4.__version__, netCDF4.__file__))
-
-# Check the version of numpy
-minimum_vn = '1.15'
-if LooseVersion(numpy.__version__) < LooseVersion(minimum_vn):
-    raise ValueError(
-        "Bad numpy version: cfdm requires numpy version {} or later. Got {} at {}".format(
-            minimum_vn, numpy.__version__, numpy.__file__))
+## Check the version of netCDF4
+#_minimum_vn = '1.4.0'
+#if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
+#    raise ValueError(
+#        "Bad netCDF4 version: cfdm requires netCDF4 version {} or later. Got {} at {}".format(
+#            minimum_vn, netCDF4.__version__, netCDF4.__file__))
+#
+## Check the version of numpy
+#_minimum_vn = '1.15'
+#if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
+#    raise ValueError(
+#        "Bad numpy version: cfdm requires numpy version {} or later. Got {} at {}".format(
+#            minimum_vn, numpy.__version__, numpy.__file__))
 
 from .constants  import masked
 

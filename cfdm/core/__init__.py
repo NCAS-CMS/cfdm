@@ -11,11 +11,47 @@ __version__      = '1.7.7'
 from distutils.version import LooseVersion
 import platform
 
+_requires = ('numpy',
+             'netCDF4',
+             'future')
+
+_error0 = 'cfdm.core requires the modules {}. '.format(', '.join(_requires))
+
+try:
+    import netCDF4
+except ImportError as error1:
+    raise ImportError(_error0+str(error1))
+
+try:
+    import numpy
+except ImportError as error1:
+    raise ImportError(_error0+str(error1))
+
+try:
+    import future
+except ImportError as error1:
+    raise ImportError(_error0+str(error1))
+
 # Check the version of python
-if LooseVersion(platform.python_version()) < LooseVersion('2.7.0'):
+_minimum_vn = '2.7.0'
+if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     raise ValueError(
-        "cfdm requires python version >= 2.7. Got python version {}".format(
-        platform.python_version()))
+        "Bad python version: cfdm.core requires python version {} or later. Got {}".format(
+            _minimum_vn,  platform.python_version()))
+
+# Check the version of netCDF4
+minimum_vn = '1.4.0'
+if LooseVersion(netCDF4.__version__) < LooseVersion(minimum_vn):
+    raise ValueError(
+        "Bad netCDF4 version: cfdm.core requires netCDF4 version {} or later. Got {} at {}".format(
+            minimum_vn, netCDF4.__version__, netCDF4.__file__))
+
+# Check the version of numpy
+minimum_vn = '1.15'
+if LooseVersion(numpy.__version__) < LooseVersion(minimum_vn):
+    raise ValueError(
+        "Bad numpy version: cfdm.core requires numpy version {} or later. Got {} at {}".format(
+            minimum_vn, numpy.__version__, numpy.__file__))
 
 from .constructs import Constructs
 
@@ -41,9 +77,3 @@ from .domainancillary     import DomainAncillary
 from .domainaxis          import DomainAxis
 from .field               import Field
 from .fieldancillary      import FieldAncillary
-
-
-
-
-
-    
