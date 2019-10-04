@@ -102,16 +102,16 @@ or a CDL file on disk (see below).</p>
 <p>The returned field constructs are sorted by the netCDF variable
 names of their corresponding data variables.</p>
 <p><strong>CDL files</strong></p>
-<p>A file is considered to be a CDL representation of a netCDF on
-disk if it is a text file that starts with the seven characters
+<p>A file is considered to be a CDL representation of a netCDF
+dataset if it is a text file that starts with the seven characters
 “netcdf ” (six letters followed by a space). It is converted to a
 temporary netCDF4 file using the external <code class="docutils literal notranslate"><span class="pre">ncgen</span></code> command, and
 the temporary file persists until the end of the Python session,
 at which time it is automatically deleted. The CDL file may omit
 the data array values (as would be the case, for example, if the
-file was created with the <code class="docutils literal notranslate"><span class="pre">-h</span></code> option to <code class="docutils literal notranslate"><span class="pre">ncdump</span></code>), in which
-case the the relevant constructs in memory will be created with
-data containing missing values.</p>
+file was created with the <code class="docutils literal notranslate"><span class="pre">-h</span></code> or <code class="docutils literal notranslate"><span class="pre">-c</span></code> option to <code class="docutils literal notranslate"><span class="pre">ncdump</span></code>),
+in which case the the relevant constructs in memory will be
+created with data containing missing values.</p>
 <p><strong>Performance</strong></p>
 <p>Descriptive properties are always read into memory, but lazy
 loading is employed for all data arrays, which means that no data
