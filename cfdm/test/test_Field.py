@@ -29,6 +29,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field___setitem__']
 #        self.test_only = ['test_Field_field']
 
+
     def test_Field__repr__str__dump_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -39,7 +40,7 @@ class FieldTest(unittest.TestCase):
         _ = str(f)
         _ = f.dump(display=False)
         self.assertTrue(f.construct_type == 'field')
-    #--- End: def
+
 
     def test_Field___getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -117,7 +118,7 @@ class FieldTest(unittest.TestCase):
         b = c.bounds
         self.assertTrue(c.data.shape == (4,))
         self.assertTrue(b.data.shape == (4, 2))
-        #--- End: def
+
 
 #    def test_Field___setitem__(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -149,7 +150,7 @@ class FieldTest(unittest.TestCase):
 #            
 #            values, counts = numpy.unique(f.data.array, return_counts=True)
 #            self.assertTrue(counts[0] == array.size)
-#    #--- End: def
+
 
     def test_Field_PROPERTIES(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -168,7 +169,7 @@ class FieldTest(unittest.TestCase):
         _ = f.clear_properties()
         f.set_properties(_)
         f.set_properties(_, copy=False)
-    #--- End: def
+
 
     def test_Field_DATA(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -199,7 +200,7 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(f.del_data_axes(key, default=None) == None)
             self.assertTrue(f.get_data_axes(key, default=None) == None)
             self.assertFalse(f.has_data_axes(key))
-    #--- End: def
+
 
     def test_Field_CONSTRUCTS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -281,7 +282,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.domain_axis_key('grid_latitude') == dakey)        
         self.assertTrue(f.domain_axis_key('XXXX_latitude', default=None) == None)
         self.assertTrue(f.domain_axis_key(re.compile('^grid_'), default=None) == None)
-    #--- End: def
+
 
     def test_Field_data_axes(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -298,7 +299,7 @@ class FieldTest(unittest.TestCase):
         
         self.assertTrue(f.set_data_axes(ref) == None)
         self.assertTrue(f.get_data_axes() == ref)
-    #--- End: def
+
 
     def test_Field_convert(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -334,7 +335,7 @@ class FieldTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             f.convert('qwerty')
-    #--- End: def
+
 
     def test_Field_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -357,7 +358,7 @@ class FieldTest(unittest.TestCase):
         h = f.copy()
         h.data[...] = h.data.array[...] + 1
         self.assertFalse(f.equals(h))
-    #--- End: def
+
 
     def test_Field_del_construct(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -375,7 +376,7 @@ class FieldTest(unittest.TestCase):
             
         a = f.del_construct('auxiliarycoordinate1', default=None)
         self.assertTrue(a == None)        
-    #--- End: def
+
     
     def test_Field_squeeze_transpose_insert_dimension(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -403,7 +404,7 @@ class FieldTest(unittest.TestCase):
         h = g.insert_dimension(position=g.data.ndim, axis=key)
         self.assertTrue(h.data.ndim == f.data.ndim + 1)
         self.assertTrue(h.get_data_axes()[:-1] == f.get_data_axes())
-    #--- End: def
+
 
 #--- End: class
 

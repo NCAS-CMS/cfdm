@@ -6,6 +6,8 @@ import operator
 import os
 import re
 import struct
+import subprocess
+import tempfile
 
 from ast               import literal_eval
 from collections       import OrderedDict
@@ -20,7 +22,8 @@ from .. import IORead
 
 from . import constants
 
-
+_cached_temporary_files = {}
+        
 class NetCDFRead(IORead):
     '''
     '''
@@ -85,18 +88,17 @@ class NetCDFRead(IORead):
                 'towgs84',
         )
 
-    #--- End: def
 
     def cf_coordinate_reference_coordinates(self):
         '''Mapping of each coordinate reference canonical name to the
-coordinates to which it applies. The coordinates are defined by their
-standard names.
-        
-A coordinate reference canonical name is either the value of the
-grid_mapping_name attribute of a grid mapping variable
-(e.g. 'lambert_azimuthal_equal_area'), or the standard name of a
-vertical coordinate variable with a formula_terms attribute
-(e.g. ocean_sigma_coordinate').
+    coordinates to which it applies. The coordinates are defined by
+    their standard names.
+            
+    A coordinate reference canonical name is either the value of the
+    grid_mapping_name attribute of a grid mapping variable
+    (e.g. 'lambert_azimuthal_equal_area'), or the standard name of a
+    vertical coordinate variable with a formula_terms attribute
+    (e.g. ocean_sigma_coordinate').
 
         '''
         return {
@@ -169,137 +171,126 @@ vertical coordinate variable with a formula_terms attribute
             'ocean_sigma_z_coordinate'                   : ('ocean_sigma_z_coordinate',),
             'ocean_double_sigma_coordinate'              : ('ocean_double_sigma_coordinate',),
         }
-    #--- End: def
-    
 
-#    def _dereference(self, ncvar):
-#        '''Decrement by one the reference count to a netCDF variable.
-#        
-#:Examples 1:
-#
-#>>> r._dereference('longitude')
-#
-#:Parameters:
-#
-#    ncvar: `str`
-#        The netCDF variable name.
-#
-#:Returns:
-#
-#    out: `int`
-#        The new reference count.
-#
-#        '''
-#        r = self.read_vars['references'].get(ncvar, 0)
-#        r -= 1
-#        if r < 0:
-#            r = 0
-#
-#        self.read_vars['references'][ncvar] = r
-#        return r
-#    #--- End: def 
 
     def _is_unreferenced(self, ncvar):
         '''Return True if the netCDF variable is not referenced by any other
-netCDF variable.
+    netCDF variable.
+    
+    :Parameters:
+    
+        ncvar: `str`
+            The netCDF variable name.
+    
+    :Returns:
+    
+        out: `bool`
 
-:Examples 1:
-
->>> x = r._is_unreferenced('tas')
-
-:Parameters:
-
-    ncvar: `str`
-        The netCDF variable name.
-
-:Returns:
-
-    out: `bool`
+    **Examples:**
+    
+    >>> x = r._is_unreferenced('tas')
 
         '''
         return self.read_vars['references'].get(ncvar, 0) <= 0
-    #--- End: def
+
 
     def  _reference(self, ncvar):
         '''Increment by one the reference count to a netCDF variable.
 
-:Examples 1:
-
->>> r._reference('longitude')
-
-:Parameters:
-
-    ncvar: `str`
-        The netCDF variable name.
-
-:Returns:
-
-    out: `int`
-        The new reference count.
-
+    :Parameters:
+    
+        ncvar: `str`
+            The netCDF variable name.
+    
+    :Returns:
+    
+        out: `int`
+            The new reference count.
+    
+    
+    **Examples:**
+    
+    >>> r._reference('longitude')
 
         '''
         count = self.read_vars['references'].setdefault(ncvar, 0)
         count += 1
         self.read_vars['references'][ncvar] = count
         return count
-    #--- End: def 
+
 
     def file_close(self):
         '''Close the netCDF files that have been read.
 
-:Returns:
+    :Returns:
 
-    `None`
+        `None`
 
         '''
         for nc in self.read_vars['datasets']:
             nc.close()
-    #--- End: def
+
         
     def file_open(self, filename):
         '''Open the netCDf file for reading.
 
-:Paramters:
-
-    filename: `str`
-        The netCDF file to be read.
-
-:Returns:
-
-    out: `netCDF4.Dataset`
-        A `netCDF4.Dataset` object for the file.
+    :Paramters:
+    
+        filename: `str`
+            The netCDF file to be read.
+    
+    :Returns:
+    
+        out: `netCDF4.Dataset`
+            A `netCDF4.Dataset` object for the file.
 
         '''
         try:        
             return netCDF4.Dataset(filename, 'r')
         except RuntimeError as error:
             raise RuntimeError("{}: {}".format(error, filename))
-    #--- End: def        
 
+        
+    @classmethod
+    def cdl_to_netcdf(cls, filename):
+        '''TODO
+        
+        '''
+        x = tempfile.NamedTemporaryFile(mode='wb', dir= tempfile.gettempdir())
+        tmpfile = x.name
+        
+        # ----------------------------------------------------------------
+        # Need to cache the TemporaryFile object so that it doesn't get
+        # deleted too soon
+        # ----------------------------------------------------------------
+        _cached_temporary_files[tmpfile] = x    
+        
+        subprocess.run(['ncgen', '-v3', '-o', tmpfile, filename], check=True) 
+        
+        return tmpfile
+
+    
     @classmethod    
     def is_netcdf_file(cls, filename):
-        '''Return True if the file is a netCDF file.
+        '''Return `True` if the file is a netCDF file.
     
-Note that the file type is determined by inspecting the file's
-contents and any file suffix is not not considered.
+    Note that the file type is determined by inspecting the file's
+    contents and any file suffix is not not considered.
+    
+    :Parameters:
+    
+        filename: `str`
+            The name of the file.
+        
+    :Returns:
+    
+        out: `bool`
+            `True` if the file is netCDF, otherwise `False`    
 
-:Examples 1:
-
->>> x = NetCDFRead.is_netcdf_file(filename)
-
-:Parameters:
-
-    filename: `str`
-
-:Returns:
-
-    out: `bool`
-
-:Examples 2:
-
->>> if NetCDFRead.is_netcdf_file(filename):
-...     return 'netCDF'
+    **Examples:**
+    
+    >>> if NetCDFRead.is_netcdf_file(filename):
+    ...     return 'netCDF'
 
         '''
         # Assume that URLs are in netCDF format
@@ -322,7 +313,55 @@ contents and any file suffix is not not considered.
             return True
         else:
             return False
-    #--- End: def
+
+
+    def is_cdl_file(cls, filename):
+        '''Return True if the file is a CDL text representation of a netCDF
+    file.
+    
+    Note that the file type is determined by inspecting the file's
+    contents and any file suffix is not not considered. The file is
+    assumed to be a CDL file if it is a text file that starts with
+    "netcdf ".
+        
+    .. versionaddedd:: 1.7.8
+    
+    :Parameters:
+    
+        filename: `str`
+            The name of the file.
+
+    :Returns:
+    
+        out: `bool`
+            `True` if the file is CDL, otherwise `False`
+
+    **Examples:**
+    
+    >>> if NetCDFRead.is_cdl_file(filename):
+    ...     return 'CDL'
+
+        '''
+        # Read the magic number
+        magic_number = None
+        try:
+            fh = open(filename, 'rt')
+            magic_number = fh.read(7)
+        except UnicodeDecodeError:
+            pass
+        except:
+            pass
+            
+        try:
+            fh.close()
+        except:
+            pass
+    
+        if magic_number == 'netcdf ':
+            return True
+
+        return False
+
 
     def read(self, filename, extra=None, default_version=None,
              external=None, extra_read_vars=None, _scan_only=False,

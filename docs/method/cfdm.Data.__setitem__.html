@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.7</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -97,7 +97,7 @@
 <h1>cfdm.Data.__setitem__<a class="headerlink" href="#cfdm-data-setitem" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.__setitem__">
-<code class="descclassname">Data.</code><code class="descname">__setitem__</code><span class="sig-paren">(</span><em>indices</em>, <em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.7/cfdm/data/data.py#L225"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.__setitem__" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">__setitem__</code><span class="sig-paren">(</span><em>indices</em>, <em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/data/data.py#L225"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.__setitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign to data elements defined by indices.</p>
 <p>d.__setitem__(indices, x) &lt;==&gt; d[indices]=x</p>
 <p>Indexing follows rules that are very similar to the numpy indexing
@@ -115,7 +115,7 @@ behaviour as indexing on a Variable object of the netCDF4 package.</li>
 shape defined by the indices, using the numpy broadcasting rules.</p>
 <p><strong>Missing data</strong></p>
 <p>Data array elements may be set to missing values by assigning them to
-<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.masked" title="(in NumPy v1.16)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.masked</span></code></a>. Missing values may be unmasked by assigning them to
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.masked" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.masked</span></code></a>. Missing values may be unmasked by assigning them to
 any other value.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>

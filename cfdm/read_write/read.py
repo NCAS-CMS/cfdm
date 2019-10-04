@@ -2,8 +2,6 @@ from __future__ import print_function
 from past.builtins import basestring
 
 import os
-import subprocess
-import tempfile
 
 from . import implementation
 
@@ -11,19 +9,31 @@ from .netcdf import NetCDFRead
 
 
 _implementation = implementation()
-
-_cached_temporary_files = {}
-
+       
 
 def read(filename, external=None, extra=None, verbose=False,
-         cdl=False, warnings=False, _implementation=_implementation):
+         warnings=False, _implementation=_implementation):
     '''Read field constructs from a dataset.
 
-    The dataset may be a netCDF file on disk or on an OPeNDAP server.
+    The dataset may be a netCDF file on disk or on an OPeNDAP server,
+    or a CDL file on disk (see below).
     
     The returned field constructs are sorted by the netCDF variable
     names of their corresponding data variables.
     
+    **CDL files**
+
+    A file is considered to be a CDL representation of a netCDF on
+    disk if it is a text file that starts with the seven characters
+    "netcdf " (six letters followed by a space). It is converted to a
+    temporary netCDF4 file using the external ``ncgen`` command, and
+    the temporary file persists until the end of the Python session,
+    at which time it is automatically deleted. The CDL file may omit
+    the data array values (as would be the case, for example, if the
+    file was created with the ``-h`` option to ``ncdump``), in which
+    case the the relevant constructs in memory will be created with
+    data containing missing values.
+   
     **Performance**
     
     Descriptive properties are always read into memory, but lazy
@@ -32,7 +42,7 @@ def read(filename, external=None, extra=None, verbose=False,
     to modify the array contents. This maximises the number of field
     constructs that may be read within a session, and makes the read
     operation fast.
-    
+
     **NetCDF unlimited dimensions**
     
     Domain axis constructs that correspond to NetCDF unlimited
@@ -164,7 +174,9 @@ def read(filename, external=None, extra=None, verbose=False,
     
     **Examples:**
     
-    >>> x = cfdm.read('file.nc')
+    >>> x = cfdm.rea
+
+    d('file.nc')
     >>> print(type(x))
     <type 'list'>
     
@@ -201,21 +213,24 @@ def read(filename, external=None, extra=None, verbose=False,
     # Read the fields in the file
     # ----------------------------------------------------------------
 
-    # ----------------------------------------------------------------
     # Initialise a netCDF read object
-    # ----------------------------------------------------------------
     netcdf = NetCDFRead(_implementation)
 
-    # ----------------------------------------------------------------
     # Read the file into fields.
-    # ----------------------------------------------------------------
-    if cdl:
-        filename = cdl_to_netcdf(filename)
-    
+    cdl = False
+    if netcdf.is_cdl_file(filename):        
+        cdl = True
+        cdl_filename = filename
+        filename = netcdf.cdl_to_netcdf(filename)
+
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
                              extra_read_vars=None)
+    elif cdl:
+        raise IOError(
+            "Can't determine format of file {} generated from CDL file {}".format(
+                filename, cdl_filename))
     else:
         raise IOError("Can't determine format of file {}".format(filename))
 
@@ -223,22 +238,3 @@ def read(filename, external=None, extra=None, verbose=False,
     # Return the fields
     # ----------------------------------------------------------------
     return fields
-
-
-def cdl_to_netcdf(filename):
-    '''TODO
-
-    '''
-    x = tempfile.NamedTemporaryFile(mode='wb', dir= tempfile.gettempdir())
-    tmpfile = x.name
-
-    # ----------------------------------------------------------------
-    # Need to cache the TemporaryFile object so that it doesn't get
-    # deleted too soon
-    # ----------------------------------------------------------------
-    _cached_temporary_files[tmpfile] = x    
-
-    subprocess.run(['ncgen', '-v3', '-o', tmpfile, filename], check=True) 
-
-    return tmpfile
-

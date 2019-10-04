@@ -31,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cfdm 1.7.7</a></b></h3>
+<h3><b><a href="index.html">cfdm 1.7.8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="versioning.html"><strong>Versioning</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Change log</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-8">version 1.7.8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-7">version 1.7.7</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-6">version 1.7.6</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-5">version 1.7.5</a></li>
@@ -91,14 +92,29 @@
             
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-1-7-8">
+<h2>version 1.7.8<a class="headerlink" href="#version-1-7-8" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2019-10-04</strong></p>
+<ul class="simple">
+<li>During writing to netCDF files, ensured that _FillValue and
+missing_value have the same data type as the data.</li>
+<li>Fixed bug during construct equality testing that didn’t recognise
+equal cell method constructs in transposed, but otherwise equal
+field constructs.</li>
+<li>Bounds netCDF dimension name is now saved, and can be set. The
+saved/set value is written out to disk.</li>
+<li>Now reads CDL files (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/5">https://github.com/NCAS-CMS/cfdm/issues/5</a>)</li>
+</ul>
+</div>
 <div class="section" id="version-1-7-7">
 <h2>version 1.7.7<a class="headerlink" href="#version-1-7-7" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-06-13</strong></p>
 <ul class="simple">
 <li>Don’t set the fill mode for a <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code> open for writing to
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">off</span></code>, to prevent incorrect reading of some netCDF4 files (issue
-#4).</li>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">off</span></code>, to prevent incorrect reading of some netCDF4 files
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/4">https://github.com/NCAS-CMS/cfdm/issues/4</a>).</li>
 <li>Updated documentation</li>
 </ul>
 </div>
@@ -118,7 +134,8 @@
 <p><strong>2019-05-15</strong></p>
 <ul class="simple">
 <li>New methods: <a class="reference internal" href="method/cfdm.Datum.nc_has_variable.html#cfdm.Datum.nc_has_variable" title="cfdm.Datum.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_has_variable</span></code></a>, <a class="reference internal" href="method/cfdm.Datum.nc_get_variable.html#cfdm.Datum.nc_get_variable" title="cfdm.Datum.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_get_variable</span></code></a>,
-<a class="reference internal" href="method/cfdm.Datum.nc_has_variable.html#cfdm.Datum.nc_has_variable" title="cfdm.Datum.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_has_variable</span></code></a>, <a class="reference internal" href="method/cfdm.Datum.nc_set_variable.html#cfdm.Datum.nc_set_variable" title="cfdm.Datum.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_set_variable</span></code></a> (issue #3).</li>
+<a class="reference internal" href="method/cfdm.Datum.nc_has_variable.html#cfdm.Datum.nc_has_variable" title="cfdm.Datum.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_has_variable</span></code></a>, <a class="reference internal" href="method/cfdm.Datum.nc_set_variable.html#cfdm.Datum.nc_set_variable" title="cfdm.Datum.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_set_variable</span></code></a>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/3">https://github.com/NCAS-CMS/cfdm/issues/3</a>).</li>
 </ul>
 </div>
 <div class="section" id="version-1-7-4">
@@ -192,7 +209,7 @@ facilitate subclassing.</li>
 ‘subset’, ‘superset’.</li>
 <li>Enabled setting of HDF5 chunksizes.</li>
 <li>Fixed bug that caused coordinate bounds to be not sliced during
-subspacing (issue #1).</li>
+subspacing (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/1">https://github.com/NCAS-CMS/cfdm/issues/1</a>).</li>
 </ul>
 </div>
 <div class="section" id="version-1-7-1">

@@ -2,17 +2,16 @@ version 1.7.8
 -------------
 ----
 
-**Not yet released**
+**2019-10-04**
 
 * During writing to netCDF files, ensured that _FillValue and
   missing_value have the same data type as the data.
-
 * Fixed bug during construct equality testing that didn't recognise
   equal cell method constructs in transposed, but otherwise equal
   field constructs.
-
 * Bounds netCDF dimension name is now saved, and can be set. The
   saved/set value is written out to disk.
+* Now reads CDL files (https://github.com/NCAS-CMS/cfdm/issues/5)
 
 version 1.7.7
 -------------
@@ -21,8 +20,8 @@ version 1.7.7
 **2019-06-13**
 
 * Don't set the fill mode for a `netCDF4.Dataset` open for writing to
-  `off`, to prevent incorrect reading of some netCDF4 files (issue
-  #4).
+  `off`, to prevent incorrect reading of some netCDF4 files
+  (https://github.com/NCAS-CMS/cfdm/issues/4).
 * Updated documentation
   
 version 1.7.6
@@ -42,7 +41,8 @@ version 1.7.5
 **2019-05-15**
 
 * New methods: `Datum.nc_has_variable`, `Datum.nc_get_variable`,
-  `Datum.nc_has_variable`, `Datum.nc_set_variable` (issue #3).
+  `Datum.nc_has_variable`, `Datum.nc_set_variable`
+  (https://github.com/NCAS-CMS/cfdm/issues/3).
   
 version 1.7.4
 -------------
@@ -116,7 +116,7 @@ version 1.7.2
   'subset', 'superset'.
 * Enabled setting of HDF5 chunksizes.
 * Fixed bug that caused coordinate bounds to be not sliced during
-  subspacing (issue #1).
+  subspacing (https://github.com/NCAS-CMS/cfdm/issues/1).
 
 version 1.7.1
 -------------

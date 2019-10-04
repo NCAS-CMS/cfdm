@@ -11,6 +11,7 @@
 
 ----
 
+* `Version 1.7.8 <https://ncas-cms.github.io/cfdm/1.7.8>`_
 * `Version 1.7.7 <https://ncas-cms.github.io/cfdm/1.7.7>`_
 * `Version 1.7.6 <https://ncas-cms.github.io/cfdm/1.7.6>`_
 * `Version 1.7.5 <https://ncas-cms.github.io/cfdm/1.7.5>`_

@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cfdm 1.7.7</a></b></h3>
+<h3><b><a href="index.html">cfdm 1.7.8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
@@ -109,7 +109,7 @@
   <div class="section" id="cfdm-tutorial">
 <span id="tutorial"></span><h1><strong>cfdm tutorial</strong><a class="headerlink" href="#cfdm-tutorial" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.7.7 for version 1.7 of the CF conventions.</p>
+<p>Version 1.7.8 for version 1.7 of the CF conventions.</p>
 <div class="section" id="import">
 <span id="id1"></span><h2><strong>Import</strong><a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -152,7 +152,7 @@ variables in the file.</p>
 <p>Datasets of any version of CF up to and including CF-1.7 can be
 read.</p>
 <p>All formats of netCDF3 and netCDF4 files can be read.</p>
-<p>For example, to read the file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> (<a class="reference download internal" download="" href="_downloads/file.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 9kB) <a class="footnote-reference" href="#files" id="id5">[2]</a>, which contains two field
+<p>For example, to read the file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> (<a class="reference download internal" download="" href="_downloads/f48d7afe4147b17ac19ae1bba473c78c/file.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 9kB) <a class="footnote-reference" href="#files" id="id5">[2]</a>, which contains two field
 constructs:</p>
 <div class="literal-block-wrapper docutils container" id="id58">
 <div class="code-block-caption"><span class="caption-text"><em>Read file.nc and show that the result is a two-element
@@ -781,11 +781,10 @@ construct’s data.</em></span><a class="headerlink" href="#id72" title="Permali
 </div>
 </div>
 <p>The data may be set with the <a class="reference internal" href="method/cfdm.Field.set_data.html#cfdm.Field.set_data" title="cfdm.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method of the field
-construct. The domain axis constructs spanned by the data must be
-considered, either by explicitly providing them via their construct
-keys, or by using those that may have already been set. In any case,
-the data axes may be set at any time with the <a class="reference internal" href="method/cfdm.Field.set_data_axes.html#cfdm.Field.set_data_axes" title="cfdm.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a>
-method of the field construct.</p>
+construct. The domain axis constructs spanned by the data may also be
+set by explicitly providing them via their construct keys. In any
+case, the data axes may be set at any time with the
+<a class="reference internal" href="method/cfdm.Field.set_data_axes.html#cfdm.Field.set_data_axes" title="cfdm.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a> method of the field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id73">
 <div class="code-block-caption"><span class="caption-text"><em>Delete the data and then reinstate it, using the
 existing data axes.</em></span><a class="headerlink" href="#id73" title="Permalink to this code">¶</a></div>
@@ -2112,7 +2111,7 @@ and metadata constructs.</em></span><a class="headerlink" href="#id124" title="P
 </div>
 <p>Here is a more complete example which creates a field construct that
 contains every type of metadata construct (again, data arrays have
-been generated with dummy values using <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.16)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a>):</p>
+been generated with dummy values using <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a>):</p>
 <div class="literal-block-wrapper docutils container" id="id125">
 <div class="code-block-caption"><span class="caption-text"><em>Create a field construct that contains at least one
 instance of each type of metadata construct.</em></span><a class="headerlink" href="#id125" title="Permalink to this code">¶</a></div>
@@ -2638,21 +2637,6 @@ netCDF global attribute</td>
 to be written as netCDF global
 attributes</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></td>
-<td>Return the selection of domain axis
-constructs to be written as
-netCDF unlimited dimensions</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited_dimensions</span></code></td>
-<td>Set the selection of domain axis
-constructs to be written as
-netCDF unlimited dimensions</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_unlimited_dimensions</span></code></td>
-<td>Clear the selection of domain
-axis constructs to be written
-as netCDF unlimited dimensions</td>
-</tr>
 </tbody>
 </table>
 <div class="literal-block-wrapper docutils container" id="id140">
@@ -2662,8 +2646,6 @@ metadata constructs.</em></span><a class="headerlink" href="#id140" title="Perma
 <span class="go">&#39;q&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
 <span class="go">{&#39;project&#39;: None, &#39;Conventions&#39;: None}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_unlimited_dimensions</span><span class="p">()</span>
-<span class="go">set()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;humidity&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
 <span class="go">&#39;humidity&#39;</span>
@@ -2734,6 +2716,14 @@ metadata constructs.</em></span><a class="headerlink" href="#id140" title="Perma
 <td><a class="reference internal" href="class/cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a>, <a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
 <td>Dimension name</td>
 </tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_is_unlimited</span></code></td>
+<td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></td>
+<td>Unlimited dimension</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited</span></code></td>
+<td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></td>
+<td>Unlimited dimension</td>
+</tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></td>
 <td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></td>
 <td>Global attributes</td>
@@ -2746,39 +2736,27 @@ metadata constructs.</em></span><a class="headerlink" href="#id140" title="Perma
 <td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></td>
 <td>Global attributes</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></td>
-<td>Unlimited dimension names</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited_dimensions</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></td>
-<td>Unlimited dimension names</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_unlimited_dimensions</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></td>
-<td>Unlimited dimension names</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_external</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_external</span></code></td>
 <td><a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a></td>
 <td>External variable status</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_external</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_external</span></code></td>
 <td><a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a></td>
 <td>External variable status</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_sample_dimension</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_sample_dimension</span></code></td>
 <td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
 <td>Sample dimension name</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_sample_dimension</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_sample_dimension</span></code></td>
 <td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
 <td>Sample dimension name</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_sample_dimension</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_sample_dimension</span></code></td>
 <td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
 <td>Sample dimension name</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension</span></code></td>
 <td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
 <td>Sample dimension name</td>
 </tr>
@@ -2877,7 +2855,7 @@ manually with the <code class="xref py py-obj docutils literal notranslate"><spa
 will be generated internally (usually based on the standard name if it
 exists).</p>
 <p>It is possible to create netCDF unlimited dimensions using the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code> method of the field construct.</p>
+<a class="reference internal" href="method/cfdm.DomainAxis.nc_set_unlimited.html#cfdm.DomainAxis.nc_set_unlimited" title="cfdm.DomainAxis.nc_set_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited</span></code></a> method of the domain axis construct.</p>
 <p>A field construct is not transformed through being written to a file
 on disk and subsequently read back from that file.</p>
 <div class="literal-block-wrapper docutils container" id="id144">
@@ -3090,7 +3068,7 @@ other netCDF files known as “external files”. External variables may,
 however, be incorporated into the field constructs of the dataset, as
 if they had actually been stored in the same file, simply by providing
 the external file names to the <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function.</p>
-<p>This is illustrated with the files <code class="docutils literal notranslate"><span class="pre">parent.nc</span></code> (<a class="reference download internal" download="" href="_downloads/parent.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id48">[2]</a>:</p>
+<p>This is illustrated with the files <code class="docutils literal notranslate"><span class="pre">parent.nc</span></code> (<a class="reference download internal" download="" href="_downloads/609a18ba1ee2929f9c738c4cd0a7b960/parent.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id48">[2]</a>:</p>
 <div class="literal-block-wrapper docutils container" id="id152">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the parent dataset with the ncdump command line
 tool.</em></span><a class="headerlink" href="#id152" title="Permalink to this code">¶</a></div>
@@ -3118,7 +3096,7 @@ variables:
 </pre></div>
 </div>
 </div>
-<p>and <code class="docutils literal notranslate"><span class="pre">external.nc</span></code> (<a class="reference download internal" download="" href="_downloads/external.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>,
+<p>and <code class="docutils literal notranslate"><span class="pre">external.nc</span></code> (<a class="reference download internal" download="" href="_downloads/d6b6919b7acbac5509f39600030ec26a/external.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>,
 1kB) <a class="footnote-reference" href="#files" id="id49">[2]</a>:</p>
 <div class="literal-block-wrapper docutils container" id="id153">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the external dataset with the ncdump command
@@ -3329,7 +3307,7 @@ is accessed with the <a class="reference internal" href="method/cfdm.Data.get_co
 indexed contiguous, ragged array is stored in an <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a> instance and
 is accessed with the <a class="reference internal" href="method/cfdm.Data.get_index.html#cfdm.Data.get_index" title="cfdm.Data.get_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index</span></code></a> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
 <p>The contiguous case is is illustrated with the file <code class="docutils literal notranslate"><span class="pre">contiguous.nc</span></code>
-(<a class="reference download internal" download="" href="_downloads/contiguous.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id52">[2]</a>:</p>
+(<a class="reference download internal" download="" href="_downloads/41a48ffbe06eb316ee6f08e9b82c6304/contiguous.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id52">[2]</a>:</p>
 <div class="literal-block-wrapper docutils container" id="id160">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the compressed dataset with the ncdump command
 line tool.</em></span><a class="headerlink" href="#id160" title="Permalink to this code">¶</a></div>
@@ -3546,7 +3524,7 @@ reducing the number of values that need to be stored.</p>
 <p>The list variable that is required to uncompress a gathered array is
 stored in a <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a> object and is retrieved with the <a class="reference internal" href="method/cfdm.Data.get_list.html#cfdm.Data.get_list" title="cfdm.Data.get_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list</span></code></a>
 method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
-<p>This is illustrated with the file <code class="docutils literal notranslate"><span class="pre">gathered.nc</span></code> (<a class="reference download internal" download="" href="_downloads/gathered.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id54">[2]</a>:</p>
+<p>This is illustrated with the file <code class="docutils literal notranslate"><span class="pre">gathered.nc</span></code> (<a class="reference download internal" download="" href="_downloads/d347af6e208d56e9f7ef78113aa117b2/gathered.nc"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id54">[2]</a>:</p>
 <div class="literal-block-wrapper docutils container" id="id168">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the compressed dataset with the ncdump command
 line tool.</em></span><a class="headerlink" href="#id168" title="Permalink to this code">¶</a></div>
