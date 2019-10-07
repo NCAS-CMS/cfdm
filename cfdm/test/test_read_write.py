@@ -14,9 +14,9 @@ import cfdm
 
 warnings = False
 
-tmpfile  = tempfile.mktemp('.cf-python_test')
-tmpfileh  = tempfile.mktemp('.cf-python_test')
-tmpfilec  = tempfile.mktemp('.cf-python_test')
+tmpfile  = tempfile.mktemp('.cfdm_test')
+tmpfileh  = tempfile.mktemp('.cfdm_test')
+tmpfilec  = tempfile.mktemp('.cfdm_test')
 tmpfiles = [tmpfile, tmpfileh, tmpfilec]
 def _remove_tmpfiles():
     '''
@@ -37,7 +37,7 @@ class read_writeTest(unittest.TestCase):
 
     test_only = []
 #    test_only = ['NOTHING!!!!!']
-#    test_only = ['test_read_write_CDL']
+#    test_only = ['test_read_CDL']
 #    test_only = ['test_write_HDF_chunks']
 #    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_read_field']
@@ -168,7 +168,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(f.domain_axes['domainaxis2'].nc_is_unlimited())
 
 
-    def test_read_write_CDL(self):
+    def test_read_CDL(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
