@@ -206,8 +206,7 @@ class NetCDFRead(IORead):
     
         out: `int`
             The new reference count.
-    
-    
+        
     **Examples:**
     
     >>> r._reference('longitude')
@@ -369,73 +368,76 @@ class NetCDFRead(IORead):
              verbose=False, warnings=True,
              supplementary_read_vars=None):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
-location.
-        
-The file may be big or little endian.
-
-NetCDF dimension names are stored in the `ncdim` attributes of the
-field's DomainAxis objects and netCDF variable names are stored in the
-`ncvar` attributes of the field and its components (coordinates,
-coordinate bounds, cell measures and coordinate references, domain
-ancillaries, field ancillaries).
-
-:Parameters:
-
-    filename: `str`
-        The file name or OPenDAP URL of the dataset.
-
-        Relative paths are allowed, and standard tilde and shell
-        parameter expansions are applied to the string.
-
-        *Parameter example:*
-          The file ``file.nc`` in the user's home directory could be
-          described by any of the following: ``'$HOME/file.nc'``,
-          ``'${HOME}/file.nc'``, ``'~/file.nc'``,
-          ``'~/tmp/../file.nc'``.
-
-    extra: sequence of `str`, optional
-        Create extra, independent fields from the particular types of
-        metadata constructs. The *extra* parameter may be one, or a
-        sequence, of:
-
-          ==========================  ================================
-          *extra*                     Metadata constructs
-          ==========================  ================================
-          ``'field_ancillary'``       Field ancillary constructs
-          ``'domain_ancillary'``      Domain ancillary constructs
-          ``'dimension_coordinate'``  Dimension coordinate constructs
-          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-          ``'cell_measure'``          Cell measure constructs
-          ==========================  ================================
-
-        *Parameter example:*
-          To create fields from auxiliary coordinate constructs:
-          ``extra='auxiliary_coordinate'`` or
-          ``extra=['auxiliary_coordinate']``.
-
-        *Parameter example:*
-          To create fields from domain ancillary and cell measure
-          constructs: ``extra=['domain_ancillary', 'cell_measure']``.
-
-    warnings: `bool`, optional
-        If False then do not print warnings when an output field
-        construct is incomplete due to "structural non-CF-compliance"
-        of the dataset. By default such warnings are displayed.
-
-        Structural non-CF-compliance occurs when it is not possible to
-        unambiguously map an element of the netCDF dataset to an
-        element of the CF data model. Other type on non-CF-compliance
-        are not checked, for example, whether or not controlled
-        vocabularies have been adhered to is not checked.
-        
-:Returns:
-
-    out: `list`
-        The fields in the file.
-
-:Examples:
-
-TODO
+    location.
+            
+    The file may be big or little endian.
+    
+    NetCDF dimension names are stored in the `ncdim` attributes of the
+    field's DomainAxis objects and netCDF variable names are stored in
+    the `ncvar` attributes of the field and its components
+    (coordinates, coordinate bounds, cell measures and coordinate
+    references, domain ancillaries, field ancillaries).
+    
+    :Parameters:
+    
+        filename: `str`
+            The file name or OPenDAP URL of the dataset.
+    
+            Relative paths are allowed, and standard tilde and shell
+            parameter expansions are applied to the string.
+    
+            *Parameter example:*
+              The file ``file.nc`` in the user's home directory could
+              be described by any of the following:
+              ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
+              ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
+    
+        extra: sequence of `str`, optional
+            Create extra, independent fields from the particular types
+            of metadata constructs. The *extra* parameter may be one,
+            or a sequence, of:
+    
+            ==========================  ================================
+            *extra*                     Metadata constructs
+            ==========================  ================================
+            ``'field_ancillary'``       Field ancillary constructs
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ==========================  ================================
+    
+            *Parameter example:*
+              To create fields from auxiliary coordinate constructs:
+              ``extra='auxiliary_coordinate'`` or
+              ``extra=['auxiliary_coordinate']``.
+    
+            *Parameter example:*
+              To create fields from domain ancillary and cell measure
+              constructs: ``extra=['domain_ancillary',
+              'cell_measure']``.
+    
+        warnings: `bool`, optional
+            If False then do not print warnings when an output field
+            construct is incomplete due to "structural
+            non-CF-compliance" of the dataset. By default such
+            warnings are displayed.
+    
+            Structural non-CF-compliance occurs when it is not
+            possible to unambiguously map an element of the netCDF
+            dataset to an element of the CF data model. Other type on
+            non-CF-compliance are not checked, for example, whether or
+            not controlled vocabularies have been adhered to is not
+            checked.
+            
+    :Returns:
+    
+        out: `list`
+            The fields in the file.
+    
+    **Examples:**
+    
+    TODO
 
         '''
         # ------------------------------------------------------------
@@ -928,20 +930,20 @@ TODO
                                            netcdf_external_variables):
         '''Get external variables from external files.
 
-..versionadded:: 1.7.0
-
-:Parameters:
-
-    netcdf_external_variables: `str`
-        The un-parsed netCDF external_variables attribute in the
-        parent file.
-
-          :Example:
-            ``external_variables='areacello'``
-
-:Returns:
-
-    `None`
+    ..versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        netcdf_external_variables: `str`
+            The un-parsed netCDF external_variables attribute in the
+            parent file.
+    
+            *Parmaeter example:*
+              ``external_variables='areacello'``
+    
+    :Returns:
+    
+        `None`
 
         '''
         attribute = {'external_variables': netcdf_external_variables}
@@ -1035,10 +1037,10 @@ TODO
                     external_variables.remove(ncvar)
             #--- End: for
         #--- End: for
-    #--- End: def
+
     
     def _parse_compression_gathered(self, ncvar, compress):
-        '''
+        '''TODO
         '''
         g = self.read_vars
         verbose = g['verbose']
@@ -1058,7 +1060,7 @@ TODO
             'gathered': {'list_variable'       : list_variable,
                          'implied_ncdimensions': parsed_compress,
                          'sample_dimension'    : gathered_ncdimension}}
-    #--- End: def
+
     
     def _parse_ragged_contiguous_compression(self, ncvar, 
                                              sample_dimension):
@@ -3272,18 +3274,16 @@ variable's netCDF dimensions.
     def _create_netcdfarray(self, ncvar, unpacked_dtype=False):
         '''Set the Data attribute of a variable.
 
-:Parameters:
-
-    ncvar: `str`
-
-    unpacked_dtype: `False` or `numpy.dtype`, optional
-
-:Returns:
-
-    out: `NetCDFArray`
-
-:Examples:
-
+    :Parameters:
+    
+        ncvar: `str`
+    
+        unpacked_dtype: `False` or `numpy.dtype`, optional
+    
+    :Returns:
+    
+        out: `NetCDFArray`
+        
         '''
         g = self.read_vars
         
@@ -3318,29 +3318,27 @@ variable's netCDF dimensions.
             ndim=ndim,
             shape=shape,
             size=size)
-    #--- End: def 
+
     
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None,
                      parent_ncvar=None): 
-        '''TODO ppp
+        '''TODO
 
-:Parameters:
-
-    ncvar: `str`
-        The name of the netCDF variable that contains the data.
-
-    construct: optional
-
-    unpacked_dtype: `False` or `numpy.dtype`, optional
-
-    uncompress_override: `bool`, optional
-
-:Returns:
-
-    `Data`
-
-**Examples:**
+    :Parameters:
+    
+        ncvar: `str`
+            The name of the netCDF variable that contains the data.
+    
+        construct: optional
+    
+        unpacked_dtype: `False` or `numpy.dtype`, optional
+    
+        uncompress_override: `bool`, optional
+    
+    :Returns:
+    
+        `Data`
 
         '''
         g = self.read_vars
@@ -3453,16 +3451,16 @@ variable's netCDF dimensions.
         #--- End: if
 
         return self._create_Data(array, units=units, calendar=calendar) #, ncvar=ncvar)
-    #--- End: def
+
 
     def _create_domain_axis(self, size, ncdim=None):
-        '''
+        '''TODO
 
-:Parameters:
+    :Parameters:
 
-    size: `int`
+        size: `int`
 
-    ncdim: `str, optional
+        ncdim: `str, optional
 
         '''
         domain_axis = self.implementation.initialise_DomainAxis(size=size)
@@ -3470,20 +3468,20 @@ variable's netCDF dimensions.
             self.implementation.nc_set_dimension(construct=domain_axis, ncdim=ncdim)
 
         return domain_axis
-    #-- End: def
+
 
     def _create_field_ancillary(self, ncvar):
         '''Create a field ancillary object.
     
-:Parameters:
+    :Parameters:
+        
+        ncvar: `str`
+            The netCDF name of the field ancillary variable.
     
-    ncvar: `str`
-        The netCDF name of the field ancillary variable.
-
-:Returns:
-
-    out: `FieldAncillary`
-        The new item.
+    :Returns:
+    
+        out: `FieldAncillary`
+            The new item.
 
         '''
         # Create a field ancillary object
@@ -3502,28 +3500,24 @@ variable's netCDF dimensions.
         self.implementation.nc_set_variable(field_ancillary, ncvar)
     
         return field_ancillary
-    #--- End: def
+
 
     def _parse_cell_methods(self, cell_methods_string, field_ncvar=None):
         '''Parse a CF cell_methods string.
 
-:Examples 1:
-
->>> cell_methods = c.parse_cell_methods('time: mean')
-
-:Parameters:
-
-    cell_methods_string: `str`
-        A CF cell_methods string.
-
-:Returns:
-
-    out: `list` of `dict`
-
-:Examples 2:
-
->>> c = parse_cell_methods('t: minimum within years t: mean over ENSO years)')
->>> print c
+    :Parameters:
+    
+        cell_methods_string: `str`
+            A CF cell_methods string.
+    
+    :Returns:
+    
+        out: `list` of `dict`
+    
+    **Examples:**
+    
+    >>> c = parse_cell_methods('t: minimum within years t: mean over ENSO years)')
+    >>> print c
 
         '''
         if field_ncvar:
@@ -3672,33 +3666,33 @@ variable's netCDF dimensions.
         #--- End: while
 
         return out
-    #--- End: def
+
 
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
-        '''asdasdasdas
+        '''TODO
 
-If the coordinate object has properties 'standard_name' or
-'computed_standard_name' then they are copied to coordinate conversion
-parameters.
-
-:Parameters:
-
-    f: `Field`
-
-    key: `str`
-        The internal identifier of the coordinate.
-
-    coord: `Coordinate`
-
-    formula_terms: `dict`
-        The formula_terms attribute value from the netCDF file.
-
-        *Parameter example:*
-          ``formula_terms={'a':'a','b':'b','orog':'surface_altitude'}``
-
-:Returns:
-
-    out: `CoordinateReference`
+    If the coordinate object has properties 'standard_name' or
+    'computed_standard_name' then they are copied to coordinate
+    conversion parameters.
+    
+    :Parameters:
+    
+        f: `Field`
+    
+        key: `str`
+            The internal identifier of the coordinate.
+    
+        coord: `Coordinate`
+    
+        formula_terms: `dict`
+            The formula_terms attribute value from the netCDF file.
+    
+            *Parameter example:*
+              ``formula_terms={'a':'a','b':'b','orog':'surface_altitude'}``
+    
+    :Returns:
+    
+        out: `CoordinateReference`
 
         '''
         g = self.read_vars
@@ -3748,32 +3742,32 @@ parameters.
             coordinate_conversion=coordinate_conversion)
         
         return coordref
-    #--- End: def
+
 
     def _ncdimensions(self, ncvar):
         '''Return a list of the netCDF dimensions corresponding to a netCDF
-variable.
-
-If the variable has been compressed then the *implied uncompressed*
-dimensions are returned.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    ncvar: `str`
-        The netCDF variable name.
-
-:Returns:
-
-    `list`
-        The list of netCDF dimension names spanned by the netCDF
-        variable.
+    variable.
     
-**Examples:**
-
->>> n._ncdimensions('humidity')
-['time', 'lat', 'lon']
+    If the variable has been compressed then the *implied
+    uncompressed* dimensions are returned.
+    
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        ncvar: `str`
+            The netCDF variable name.
+    
+    :Returns:
+    
+        `list`
+            The list of netCDF dimension names spanned by the netCDF
+            variable.
+        
+    **Examples:**
+    
+    >>> n._ncdimensions('humidity')
+    ['time', 'lat', 'lon']
 
         '''
         g = self.read_vars
@@ -3828,24 +3822,24 @@ dimensions are returned.
         #--- End: if
         
         return list(map(str, ncdimensions))
-    #--- End: def
+
 
     def _create_gathered_array(self, gathered_array=None,
                                uncompressed_shape=None,
                                compressed_dimension=None,
                                list_variable=None):
         '''Create a `Data` object for a compressed-by-gathering netCDF
-variable.
-
-:Parameters:
-
-    gathered_array: `NetCDFArray`
-
-    list_variable: `List`
-
-:Returns:
-
-    out: `Data`
+    variable.
+    
+    :Parameters:
+    
+        gathered_array: `NetCDFArray`
+    
+        list_variable: `List`
+    
+    :Returns:
+    
+        out: `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -3859,25 +3853,25 @@ variable.
             compressed_dimension=compressed_dimension,
             list_variable=list_variable,
         )
-    #--- End: def
+
     
     def _create_ragged_contiguous_array(self, ragged_contiguous_array,
                                         uncompressed_shape=None,
                                         count_variable=None):
         '''Create a `Data` object for a compressed-by-contiguous-ragged-array
-netCDF variable.
-
-:Parameters:
-
-    ragged_contiguous_array: `Data`
-
-    uncompressed_shape; `tuple`
-
-    count_variable: `Count`
-
-:Returns:
-
-    out: `Data`
+    netCDF variable.
+    
+    :Parameters:
+    
+        ragged_contiguous_array: `Data`
+    
+        uncompressed_shape; `tuple`
+    
+        count_variable: `Count`
+    
+    :Returns:
+    
+        out: `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -3889,17 +3883,17 @@ netCDF variable.
             shape=uncompressed_shape,
             size=uncompressed_size,
             count_variable=count_variable)
-    #--- End: def
+
     
     def _create_ragged_indexed_array(self, ragged_indexed_array,
                                      uncompressed_shape=None,
                                      index_variable=None):
         '''Create a `Data` object for a compressed-by-indexed-ragged-array
-netCDF variable.
+    netCDF variable.
 
-:Returns:
+    :Returns:
 
-    out: `Data`
+        out: `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -3911,7 +3905,7 @@ netCDF variable.
             shape=uncompressed_shape,
             size=uncompressed_size,
             index_variable=index_variable)
-    #--- End: def
+
     
     def _create_ragged_indexed_contiguous_array(self,
                                                 ragged_indexed_contiguous_array,
@@ -3919,11 +3913,11 @@ netCDF variable.
                                                 count_variable=None,
                                                 index_variable=None):
         '''Create a `Data` object for a
-compressed-by-indexed-contiguous-ragged-array netCDF variable.
+    compressed-by-indexed-contiguous-ragged-array netCDF variable.
 
-:Returns:
+    :Returns:
 
-    out: `Data`
+        out: `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -3936,56 +3930,45 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             size=uncompressed_size,
             count_variable=count_variable,
             index_variable=index_variable)
-    #--- End: def
+
     
     def _create_Data(self, array=None, units=None, calendar=None,
                      ncvar=None, **kwargs):
         '''TODO
-
-:Parameters:
-
-    ncvar: `str`
-        The netCDF variable from which to get units and calendar
+    
+    :Parameters:
+    
+        ncvar: `str`
+            The netCDF variable from which to get units and calendar
 
         '''
         g = self.read_vars
-
-#        if ncvar is not None:
-#            units    = g['variable_attributes'][ncvar].get('units', None)
-#            calendar = g['variable_attributes'][ncvar].get('calendar', None)
-#        else:
-#            units    = None
-#            calendar = None
 
         return self.implementation.initialise_Data(array=array,
                                                    units=units,
                                                    calendar=calendar,
                                                    copy=False,
                                                    **kwargs)
-    #--- End: def
+
 
     def _copy_construct(self, construct_type, field_ncvar, ncvar):
         '''Return a copy of an existing construct.
 
-:Examples 1:
-
->>> c = n._copy_construct('domain_ancillary', 'tas', 'orog')
-
-:Parameters:
-
-    construct_type: `str`
-        E.g. 'dimension_coordinate'
-
-    field_ncvar: `str
-        The netCDF variable name of the field that will contain the
-        copy of the construct.
-
-    ncvar: `str`
-        The netCDF variable name of the construct.
-
-:Returns:
-
-    out:
+    :Parameters:
+    
+        construct_type: `str`
+            E.g. 'dimension_coordinate'
+    
+        field_ncvar: `str
+            The netCDF variable name of the field that will contain the
+            copy of the construct.
+    
+        ncvar: `str`
+            The netCDF variable name of the construct.
+    
+    :Returns:
+    
+        out:
         A copy of the construct.
 
         '''
@@ -4000,14 +3983,13 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
         #--- End: if
 
         return self.implementation.copy_construct(g[construct_type][ncvar])
-    #--- End: def
+
     
     # ================================================================
-    #
     # Methods for checking CF compliance
     #
     # These methods (whose names all start with "_check") check the
-    # minimum required for mapping te file to CFDM structural
+    # minimum required for mapping the file to CFDM structural
     # elements. General CF compliance is not checked (e.g. whether or
     # not grid mapping variable has a grid_mapping_name attribute).
     # ================================================================
@@ -4118,7 +4100,6 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
                                  'is not in file nor referenced by the external_variables global attribute')
 
         g = self.read_vars
-#        version = g['file_version']
         
         if not parsed_string:
             self._add_message(field_ncvar, field_ncvar,
@@ -4172,24 +4153,24 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
         #--- End: for
 
         return ok
-    #--- End: def
+
 
     def _check_ancillary_variables(self, field_ncvar, string,
                                    parsed_string):
         '''Checks requirements
 
-:Parameters:
-
-    field_ncvar: `str`
-        
-    ancillary_variables: `str`
-        The value of the netCDF ancillary_variables attribute.
-
-    parsed_ancillary_variables: `list`
-
-:Returns:
-
-    `bool`
+    :Parameters:
+    
+        field_ncvar: `str`
+            
+        ancillary_variables: `str`
+            The value of the netCDF ancillary_variables attribute.
+    
+        parsed_ancillary_variables: `list`
+    
+    :Returns:
+    
+        `bool`
 
         '''
         attribute = {field_ncvar+':ancillary_variables': string}
@@ -4243,16 +4224,16 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
                                            coord_ncvar, string):
         '''Checks requirements
 
-  * 5.requirement.5
-  * 5.requirement.6
-
-:Parameters:
-
-    field_ncvar: `str`
-        
-:Returns:
-
-    out: `bool`
+      * 5.requirement.5
+      * 5.requirement.6
+    
+    :Parameters:
+    
+        field_ncvar: `str`
+            
+    :Returns:
+    
+        out: `bool`
 
         '''
         attribute = {field_ncvar+':coordinates': string}
@@ -4288,10 +4269,11 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             return False
 
         return True
-    #--- End: def
+
 
     def _dimensions_are_subset(self, ncvar, dimensions, parent_dimensions):
-        '''Return True if 
+        '''Return True if TODO
+
         '''
         if not set(dimensions).issubset(parent_dimensions):
             if not (self.read_vars['variables'][ncvar].datatype.kind == 'S' and
@@ -4299,27 +4281,27 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
                 return False
 
         return True
-    #--- End: def
+
     
     def _check_grid_mapping(self, field_ncvar, grid_mapping,
                             parsed_grid_mapping):
         '''Checks requirements
 
-  * 5.6.requirement.1
-  * 5.6.requirement.2
-  * 5.6.requirement.3
-
-:Parameters:
-
-    field_ncvar: `str`
-
-    grid_mapping: `str`
-
-    parsed_grid_mapping: `dict`
-
-:Returns:
-
-    out: `bool`
+      * 5.6.requirement.1
+      * 5.6.requirement.2
+      * 5.6.requirement.3
+    
+    :Parameters:
+    
+        field_ncvar: `str`
+    
+        grid_mapping: `str`
+    
+        parsed_grid_mapping: `dict`
+    
+    :Returns:
+    
+        out: `bool`
 
         '''
         attribute = {field_ncvar+':grid_mapping': grid_mapping}
@@ -4362,10 +4344,11 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             return False
         
         return True
-    #--- End: def
+
 
     def _check_compress(self, parent_ncvar, compress, parsed_compress):
-        '''
+        '''TODO
+
         '''
         attribute = {parent_ncvar+':compress': compress}
 
@@ -4392,7 +4375,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
         #--- End: for
         
         return ok
-    #--- End: def
+
 
     def _check_node_coordinates(self, field_ncvar, geometry_ncvar,
                                 node_coordinates,
@@ -4554,15 +4537,16 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
     def _check_instance_dimension(self, parent_ncvar, instance_dimension):
         '''asdasd
 
-.. versionadded:: 1.7.0
-
-CF-1.7 Appendix A
-
-* instance_dimension: An attribute which identifies an index variable
-                      and names the instance dimension to which it
-                      applies. The index variable indicates that the
-                      indexed ragged array representation is being
-                      used for a collection of features.
+    .. versionadded:: 1.7.0
+    
+    CF-1.7 Appendix A
+    
+    * instance_dimension: An attribute which identifies an index
+                          variable and names the instance dimension to
+                          which it applies. The index variable
+                          indicates that the indexed ragged array
+                          representation is being used for a
+                          collection of features.
 
         '''  
         attribute = {parent_ncvar+':instance_dimension': instance_dimension}
@@ -4576,7 +4560,6 @@ CF-1.7 Appendix A
             return False
 
         return True
-    #--- End: def
                 
          
     def _check_geometry_dimension(self, parent_ncvar, geometry_dimension):
@@ -4601,23 +4584,24 @@ CF-1.7 Appendix A
     def _check_sample_dimension(self, parent_ncvar, sample_dimension):
         '''asdasd
 
-.. versionadded:: 1.7.0
-
-CF-1.7 Appendix A
-
-* sample_dimension: An attribute which identifies a count variable and
-                    names the sample dimension to which it
-                    applies. The count variable indicates that the
-                    contiguous ragged array representation is being
-                    used for a collection of features.
+    .. versionadded:: 1.7.0
+    
+    CF-1.7 Appendix A
+    
+    * sample_dimension: An attribute which identifies a count variable
+                        and names the sample dimension to which it
+                        applies. The count variable indicates that the
+                        contiguous ragged array representation is
+                        being used for a collection of features.
 
         '''        
         # Check that the sample dimension name is a netCDF dimension
         return sample_dimension in self.read_vars['internal_dimension_sizes']
-    #--- End: def
+
         
     def _split_string_by_white_space(self, parent_ncvar, string):
         '''Split a string by white space.
+
         '''
         if string is None:
             return []
@@ -4626,12 +4610,12 @@ CF-1.7 Appendix A
             return string.split()
         except AttributeError:
             return []         
-    #--- End: def
+
 
     def _parse_grid_mapping(self, parent_ncvar, string):
-        '''
+        '''TODO
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         g = self.read_vars
@@ -4645,12 +4629,12 @@ CF-1.7 Appendix A
                 return [{out[0]: []}]
 
             return []
-    #--- End: def
+
     
     def _parse_x(self, parent_ncvar, string):
-        '''
+        '''TODO
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         # ============================================================
@@ -4690,7 +4674,7 @@ CF-1.7 Appendix A
         #--- End: if
         
         return out
-    #--- End: def
+
 
 #--- End: class
 

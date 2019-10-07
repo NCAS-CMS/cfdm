@@ -67,39 +67,39 @@ class CFDMImplementation(Implementation):
     ):
         '''**Initialisation**
 
-:Parameters:
-
-    AuxiliaryCoordinate:
-        An auxiliary coordinate construct class.
-
-    CellMeasure:
-        A cell measure construct class.
-
-    CellMethod:
-        A cell method construct class.
-
-    CoordinateReference:
-        A coordinate reference construct class.
-
-    DimensionCoordinate:
-        A dimension coordinate construct class.
-
-    DomainAncillary:
-        A domain ancillary construct class.
-
-    DomainAxis:
-        A domain axis construct class.
-
-    Field:
-        A field construct class.
-
-    FieldAncillary:
-        A field ancillary construct class.
-
-    Bounds:              = Bounds
-    CoordinateAncillary = CoordinateAncillary
-    Data                = Data
-    NetCDF              = NetCDF
+    :Parameters:
+    
+        AuxiliaryCoordinate:
+            An auxiliary coordinate construct class.
+    
+        CellMeasure:
+            A cell measure construct class.
+    
+        CellMethod:
+            A cell method construct class.
+    
+        CoordinateReference:
+            A coordinate reference construct class.
+    
+        DimensionCoordinate:
+            A dimension coordinate construct class.
+    
+        DomainAncillary:
+            A domain ancillary construct class.
+    
+        DomainAxis:
+            A domain axis construct class.
+    
+        Field:
+            A field construct class.
+    
+        FieldAncillary:
+            A field ancillary construct class.
+    
+        Bounds:              = Bounds
+        CoordinateAncillary = CoordinateAncillary
+        Data                = Data
+        NetCDF              = NetCDF
 
         '''
         super().__init__(
@@ -133,16 +133,16 @@ class CFDMImplementation(Implementation):
             NodeCountProperties=NodeCountProperties,
             PartNodeCountProperties=PartNodeCountProperties,        
         )
-    #--- End: def
+
 
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
+    x.__repr__() <==> repr(x)
 
         '''
         return '<{0}: >'.format(self.__class__.__name__)
-    #--- End: def
+
 
     def conform_geometry_variables(self, field):
         '''TODO
@@ -207,141 +207,147 @@ x.__repr__() <==> repr(x)
 
 
     def copy_construct(self, construct):
-        '''
-:Returns:
+        '''TODO
 
-    out:
-        The deep copy.
+    :Returns:
+    
+        out:
+            The deep copy.
         '''
         return construct.copy()
-    #--- End: def
+
 
     def convert(self, field=None, construct_id=None):
         '''TODO
+
         '''
         return field.convert(construct_id, full_domain=False)
-    #--- End: def
+
         
     def del_property(self, construct, prop, default):
-        '''
+        '''TODO
 
-:Parameters:
-
-:Returns:
-
-    out:
-        The value of the deleted property
-
-:Examples:
-
->>> c.set_properties(f, {'standard_name', 'air_temperature'})
->>> c.del_property(f, 'standard_name')
-'air_temperature'
->>> c.get_property(f, 'standard_name')
-AttributeError: Field doesn't have property 'standard_name'
+    :Parameters:
+    
+    :Returns:
+    
+        out:
+            The value of the deleted property
+    
+    **Examples:**
+    
+    >>> c.set_properties(f, {'standard_name', 'air_temperature'})
+    >>> c.del_property(f, 'standard_name')
+    'air_temperature'
+    >>> c.get_property(f, 'standard_name')
+    AttributeError: Field doesn't have property 'standard_name'
         
         '''
         return construct.del_property(prop, default)
-    #--- End: def
+
 
     def field_insert_dimension(self, field, position=0, axis=None):
-        '''
+        '''TODO
         '''
         return field.insert_dimension(axis, position=position)
-    #--- End: def
+
 
     def get_array(self, data):
-        '''
-:Parameters:
+        '''TODO
 
-    data: `Data`
+    :Parameters:
+
+        data: `Data`
 
         '''
         return data.array
-    #--- End: def
+
 
     def get_auxiliary_coordinates(self, field):
-        '''
+        '''TODO
         '''
         return field.auxiliary_coordinates
-    #--- End: def
+
 
     def get_bounds(self, parent, default=None):
-        '''
+        '''TODO
         '''
         return parent.get_bounds(default=default)
-    #--- End: def
+
     
     def get_bounds_ncvar(self, parent, default=None):
-        '''
+        '''TODO
         '''
         bounds = parent.get_bounds(None)
         if bounds is None:
             return default
 
         return self.nc_get_variable(bounds, default=default)
-    #--- End: def
+
     
     def get_cell_measures(self, field):
-       '''
+       '''TODO
        '''
        return field.cell_measures
-    #--- End: def
+
 
     def get_cell_methods(self, field):
-        '''
+        '''TODO
         '''
         return field.cell_methods.ordered()
-    #--- End: def
+
        
     def get_cell_method_axes(self, cell_method, default=None):
+        '''TODO
+
+    :Returns:
+    
+        out: `tuple`
         '''
-
-:Returns:
-
-    out: `tuple`
-'''
         return cell_method.get_axes(default=default)
-    #--- End: for
+
     
     def get_cell_method_string(self, cell_method):
-        '''
-:Returns:
+        '''TODO
 
-    out: `str`
-'''
+    :Returns:
+
+        out: `str`
+        '''
         return str(cell_method)
-    #--- End: for
+
 
     def get_cell_method_qualifiers(self, cell_method):
-        '''
-:Returns:
+        '''TODO
 
-    out: `str`
-'''
+    :Returns:
+
+        out: `str`
+        '''
         return cell_method.qualifiers()
-    #--- End: for
+
 
     def get_compressed_array(self, data):
-        '''
+        '''TODO
 
-:Parameters:
-
-    data: `Data`
-
-:Returns:
-
-    out: `numpy.ndarray`
+    :Parameters:
+    
+        data: `Data`
+    
+    :Returns:
+    
+        out: `numpy.ndarray`
         '''
         return data.compressed_array
-    #--- End: def
+
 
     def get_compressed_axes(self, field, key=None, construct=None):
-        '''
-:Returns:
+        '''TODO
 
-    out: `list`
-        '''
+    :Returns:
+    
+        out: `list`
+            '''
         if construct is not None:
             data = self.get_data(construct)
         else:
@@ -353,20 +359,20 @@ AttributeError: Field doesn't have property 'standard_name'
             data_axes = self.get_field_data_axes(field)
             
         return [data_axes[i] for i in self.get_data_compressed_axes(data)]
-    #--- End: def
+
 
     def get_compression_type(self, construct):
         '''TODO
-
-:Parameters:
-
-    construct:      
-
-:Returns:
-
-    `str`
-        The compression type. If there is no compression then an empty
-        string is returned.
+ 
+    :Parameters:
+    
+        construct:      
+    
+    :Returns:
+    
+        `str`
+            The compression type. If there is no compression then an
+            empty string is returned.
 
         '''
         data = construct.get_data(None)
@@ -374,120 +380,118 @@ AttributeError: Field doesn't have property 'standard_name'
             return ''
         
         return data.get_compression_type()
-    #--- End: def
+
         
     def get_construct_data_axes(self, field, key):
-        '''
+        '''TODO
         '''
         return field.constructs.data_axes()[key]
-    #--- End: def
+
     
     def get_constructs(self, field, axes=[]):
         '''Return constructs that span particular axes.
 
-If no axes are specified then all constructs are returned.
-
-If axes are specified then constructs whose data arrays span those
-axes, and possibly other axes, are returned.
-
-:Parameters:
-
-    axes: sequence of `str`
-
-:Returns:
-
-    `dict`
+    If no axes are specified then all constructs are returned.
+    
+    If axes are specified then constructs whose data arrays span those
+    axes, and possibly other axes, are returned.
+    
+    :Parameters:
+    
+        axes: sequence of `str`
+    
+    :Returns:
+    
+        `dict`
 
         '''
         return dict(field.constructs.filter_by_axis('and', *axes))
-    #--- End: def
+
     
     def get_coordinate_reference_coordinates(self, coordinate_reference):
         '''Return the coordinates of a coordinate reference object.
 
-:Parameters:
-
-    coordinate_reference: `CoordinateReference`
-
-:Returns:
-
-    out: `set`
+    :Parameters:
+    
+        coordinate_reference: `CoordinateReference`
+    
+    :Returns:
+    
+        out: `set`
 
         '''
         return coordinate_reference.coordinates()
-    #--- End: def
+
     
     def get_coordinate_conversion_parameters(self, coordinate_reference):
-        '''
+        '''TODO
 
-:Returns:
+    :Returns:
 
-    out: `dict`
+        out: `dict`
 
         '''
         return coordinate_reference.coordinate_conversion.parameters()
-    #--- End: def
+
 
     def get_coordinate_references(self, field):
-        '''
+        '''TODO
         '''
         return field.coordinate_references
-    #--- End: def
+
 
     def get_coordinates(self, field):
-       '''
-:Parameters:
+       '''TODO
+
+    :Parameters:
 
        '''
        return field.coordinates
-    #--- End: def
+
     
     def get_data_calendar(self, data, default=None):
-        '''
+        '''TODO
         '''
         return data.get_calendar(default=default)
-    #--- End: def
+
 
     def get_data_compressed_axes(self, data):
-        '''
-:Returns:
+        '''TODO
 
-    out: `list`
+    :Returns:
+
+        out: `list`
         '''
         return data.get_compressed_axes()
-    #--- End: def
+
 
     def get_data_ndim(self, parent):
         '''Return the number of dimensions spanned by the data array.
 
-:Parameters:
-
-    parent: 
-        The object containing the data array.
-
-:Returns:
-
-    out: `int`
-        The number of dimensions spanned by the data array.
-
-:Examples 1:
-
->>> ndim = w.get_data_ndim(x)
-
-:Examples 2:
-
->>> d
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.get_data_ndim(d)
-1
-
->>> b
-<Bounds: latitude(180, 2) degrees_north>
->>> w.get_data_ndim(b)
-2
+    :Parameters:
+    
+        parent: 
+            The object containing the data array.
+    
+    :Returns:
+    
+        out: `int`
+            The number of dimensions spanned by the data array.
+    
+    **Examples:**
+    
+    >>> d
+    <DimensionCoordinate: latitude(180) degrees_north>
+    >>> w.get_data_ndim(d)
+    1
+    
+    >>> b
+    <Bounds: latitude(180, 2) degrees_north>
+    >>> w.get_data_ndim(b)
+    2
         '''
         return parent.data.ndim
-    #--- End: def
+
 
     def get_data_size(self, parent):
         '''Return the number of elements in the data array.
@@ -502,11 +506,7 @@ axes, and possibly other axes, are returned.
     out: `int`
         The number of elements in the data array.
 
-:Examples 1:
-
->>> size = w.get_data_size(x)
-
-:Examples 2:
+**Examples:**
 
 >>> d
 <DimensionCoordinate: latitude(180) degrees_north>
@@ -794,7 +794,7 @@ attributes: `dict`
     out: `bool`
         Whether the construct is external.
 
-:Examples 2:
+**Examples:**
         '''
         if not hasattr(parent, 'nc_get_external'):
             return False
@@ -804,10 +804,6 @@ attributes: `dict`
     
     def get_field_ancillaries(self, field):
         '''Return the field ancillaries of a field.
-
-:Examples 1:
-
->>> x = i.get_field_ancillaries(f)
 
 :Parameters:
 
@@ -820,7 +816,7 @@ attributes: `dict`
         A dictionary whose values are field ancillary objects, keyed
         by unique identifiers.
 
-:Examples 2:
+**Examples:**
 
 >>> w.get_field_ancillaries(f)
 {'fieldancillary0': <FieldAncillary: ....>,
@@ -865,10 +861,6 @@ attributes: `dict`
     def get_count(self, construct):
         '''Return the measure property of a cell measure contruct.
 
-:Examples 1:
-
->>> measure = w.get_measure(c)
-
 :Parameters:
 
     cell_measure:
@@ -879,7 +871,7 @@ attributes: `dict`
     out: `str` or `None`
         The measure property, or `None` if it has not been set.
 
-:Examples 2:
+**Examples:**
 
 >>> c
 <CellMeasure: area(73, 96) km2>
@@ -890,23 +882,21 @@ attributes: `dict`
     #--- End: def
     
     def get_index(self, construct):
-        '''
+        '''TODO
 
-:Parameters:
-
-  
-:Returns:
-
-    out: 
-
-:Examples:
+    :Parameters:
+    
+      
+    :Returns:
+    
+        out: 
 
         '''
         return construct.get_data().get_index(default=None)
-    #--- End: def
+
     
     def get_interior_ring(self, construct):
-        '''
+        '''TODO
 
     :Parameters:
     
@@ -921,39 +911,15 @@ attributes: `dict`
 
     
     def get_list(self, construct):
-        '''Return the measure property of a cell measure contruct.
+        '''TODO
 
-:Examples 1:
-
->>> measure = w.get_measure(c)
-
-:Parameters:
-
-    cell_measure:
-        The cell measure object.
-
-:Returns:
-
-    out: `str` or `None`
-        The measure property, or `None` if it has not been set.
-
-:Examples 2:
-
->>> c
-<CellMeasure: area(73, 96) km2>
->>> w.get_measure(c)
-'area'
         '''
         return construct.get_data().get_list(default=None)
-    #--- End: def
+
     
     def get_measure(self, cell_measure):
         '''Return the measure property of a cell measure contruct.
 
-:Examples 1:
-
->>> measure = w.get_measure(c)
-
 :Parameters:
 
     cell_measure:
@@ -964,7 +930,7 @@ attributes: `dict`
     out: `str` or `None`
         The measure property, or `None` if it has not been set.
 
-:Examples 2:
+**Examples:**
 
 >>> c
 <CellMeasure: area(73, 96) km2>
@@ -976,10 +942,6 @@ attributes: `dict`
     
     def nc_get_dimension(self, parent, default=None):
         '''Return the netCDF variable name.
-
-:Examples 1:
-
->>> ncdim = w.get_ncdim(x)
 
 :Parameters:
 
@@ -993,7 +955,7 @@ attributes: `dict`
     out: 
         The netCDF dimension name.
 
-:Examples 2:
+**Examples:**
         '''
         return parent.nc_get_dimension(default=default)
     #--- End: def
@@ -1060,11 +1022,7 @@ attributes: `dict`
     out: `dict`
         The property names and their values
 
-:Examples 1:
-
->>> properties = w.get_properties(x)
-
-:Examples 2:
+**Examples:**
 
 >>> d
 <DimensionCoordinate: latitude(180) degrees_north>
@@ -1077,188 +1035,188 @@ attributes: `dict`
     #--- End: def
 
     def get_property(self, construct, prop, default=None):
-       '''
+       '''TODO
 
-:Parameters:
+    :Parameters:
 
-:Returns:
+    :Returns:
 
-    out:
+       out:
        '''
        return construct.get_property(prop, default=default)
-    #--- End: def
+
 
     def get_geometry(self, construct, default=None):
-       '''
+       '''TODO
 
-:Parameters:
+    :Parameters:
 
-:Returns:
+    :Returns:
 
-    out:
+       out:
        '''
        return construct.get_geometry(default=default)
-    #--- End: def
+
 
     def get_data(self, parent, default=None):
         '''Return the data array.
 
-:Parameters:
-
-    parent: 
-        The object containing the data array.
-
-:Returns:
-
-        The data.
-
-**Examples:**
-
->>> d
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.get_data(d)
-<Data(180): [-89.5, ..., 89.5] degrees_north>
-
->>> b
-<Bounds: latitude(180, 2) degrees_north>
->>> w.get_data(b)
-<Data(180, 2): [[-90, ..., 90]] degrees_north>
+    :Parameters:
+    
+        parent: 
+            The object containing the data array.
+    
+    :Returns:
+    
+            The data.
+    
+    **Examples:**
+    
+    >>> d
+    <DimensionCoordinate: latitude(180) degrees_north>
+    >>> w.get_data(d)
+    <Data(180): [-89.5, ..., 89.5] degrees_north>
+    
+    >>> b
+    <Bounds: latitude(180, 2) degrees_north>
+    >>> w.get_data(b)
+    <Data(180, 2): [[-90, ..., 90]] degrees_north>
         '''
         return parent.get_data(default=default)
-    #--- End: def
+
 
     def initialise_AuxiliaryCoordinate(self):
-        '''
+        '''TODO
         '''
         cls = self.get_class('AuxiliaryCoordinate')
         return cls()
-    #--- End: def
+
 
     def initialise_Bounds(self):
-        '''
+        '''TODO
         '''
         cls = self.get_class('Bounds')
         return cls()
-    #--- End: def
+
 
     def initialise_CellMeasure(self, measure=None):
-        '''
+        '''TODO
         '''
         cls = self.get_class('CellMeasure')
         return cls(measure=measure)
-    #--- End: def
+
 
     def initialise_CellMethod(self, axes=None, method=None,
                               qualifiers=None):
-        '''
+        '''TODO
         '''
         cls = self.get_class('CellMethod')
         return cls(axes=axes, method=method, qualifiers=qualifiers)
-    #--- End: def
+
 
     def initialise_CoordinateConversion(self, 
                                         domain_ancillaries=None,
                                         parameters=None):
-        '''
+        '''TODO
         '''
         cls = self.get_class('CoordinateConversion')
         return cls(domain_ancillaries=domain_ancillaries,
                    parameters=parameters)
-    #--- End: def
+
 
     def initialise_CoordinateReference(self):
-        '''
+        '''TODO
         '''
         cls = self.get_class('CoordinateReference')
         return cls()
-    #--- End: def
+
  
     def initialise_Count(self):
-        '''
+        '''TODO
 
         '''
         cls = self.get_class('Count')
         return cls()
-    #--- End: def
+
 
     def initialise_Data(self, array=None, units=None, calendar=None,
                         copy=True, **kwargs):
-        '''<TODO>
+        '''TODO
 
-:Patameters:
-
-    array:
-
-    units:
-
-    calendar:
-
-    copy: `bool`, optional
-
-    kwargs: optional
-        Not used in this imlementation
-
-:Returns;
-
-    `Data`
-        <TODO>
+    :Patameters:
+    
+        array:
+    
+        units:
+    
+        calendar:
+    
+        copy: `bool`, optional
+    
+        kwargs: optional
+            Not used in this imlementation
+    
+    :Returns;
+    
+        `Data`
+            TODO
 
         '''
         cls = self.get_class('Data')
         return cls(array=array, units=units, calendar=calendar,
                    copy=copy, **kwargs)
-    #--- End: def
+
 
     def initialise_Datum(self, parameters=None):
-        '''
+        '''TODO
         '''
         cls = self.get_class('Datum')
         return cls(parameters=parameters)
-    #--- End: def
+
 
     def initialise_DimensionCoordinate(self, properties=None,
                                        data=None, bounds=None,
                                        interior_ring=None, copy=True):
-        '''
+        '''TODO
         '''
         cls = self.get_class('DimensionCoordinate')
         return cls(properties=properties, data=data, bounds=bounds,
                    interior_ring=interior_ring, copy=copy)
-    #--- End: def
+
 
     def initialise_DimensionCoordinate_from_AuxiliaryCoordinate(            
             self,
             auxiliary_coordinate=None,
             copy=True):
-        '''
+        '''TODO
         '''
         cls = self.get_class('DimensionCoordinate')
         return cls(source=auxiliary_coordinate, copy=copy)
 
 
     def initialise_DomainAncillary(self):
-        '''
+        '''TODO
         '''
         cls = self.get_class('DomainAncillary')
         return cls()
 
 
     def initialise_DomainAxis(self, size=None):
-        '''
+        '''TODO
         '''
         cls = self.get_class('DomainAxis')
         return cls(size=size)
 
 
     def initialise_Field(self):
-        '''
+        '''TODO
         '''
         cls = self.get_class('Field')
         return cls()
 
 
     def initialise_FieldAncillary(self):
-        '''
+        '''TODO
         '''
         cls = self.get_class('FieldAncillary')
         return cls()
@@ -1268,7 +1226,7 @@ attributes: `dict`
                                  ndim=None, shape=None, size=None,
                                  compressed_dimension=None,
                                  list_variable=None):
-        '''
+        '''TODO
 
         '''
         cls = self.get_class('GatheredArray')
@@ -1276,18 +1234,18 @@ attributes: `dict`
                    shape=shape, size=size,
                    compressed_dimension=compressed_dimension,
                    list_variable=list_variable)
-    #--- End: def
+
 
     def initialise_Index(self):
-        '''
+        '''TODO
 
         '''
         cls = self.get_class('Index')
         return cls()
-    #--- End: def
+
 
     def initialise_InteriorRing(self):
-        '''
+        '''TODO
 
         '''
         cls = self.get_class('InteriorRing')
@@ -1295,12 +1253,12 @@ attributes: `dict`
 
 
     def initialise_List(self):
-        '''
+        '''TODO
 
         '''
         cls = self.get_class('List')
         return cls()
-    #--- End: def
+
 
     def initialise_NetCDFArray(self, filename=None, ncvar=None,
                                dtype=None, ndim=None, shape=None,
@@ -1358,206 +1316,211 @@ attributes: `dict`
                                                 size=None,
                                                 count_variable=None,
                                                 index_variable=None):
-        '''
+        '''TODO
         '''
         cls = self.get_class('RaggedIndexedContiguousArray')
         return cls(compressed_array=compressed_array, ndim=ndim,
                    shape=shape, size=size,
                    count_variable=count_variable,
                    index_variable=index_variable)
-    #--- End: def
+
 
     def is_climatology(self, coordinate):
-        '''
+        '''TODO
 
-:Returns:
-
-    out: `bool`
-        The value of the 'climatology' cell extent parameter, or False
-        if not set.
+    :Returns:
+    
+        out: `bool`
+            The value of the 'climatology' cell extent parameter, or
+            False if not set.
 
         '''
         return bool(coordinate.get_geometry(None) == 'climatology')
-    #--- End: def
+
 
     def is_geometry(self, coordinate):
         '''Return True if the coordinate bounds are geometries.
 
-:Parameters:
-
-    coordinate: 
-        The coordinate construct.
-
-:Returns:
-
-    out: `bool`
-         True if the coordinate bounds are geometries, otherwise
-         False.
+    :Parameters:
+    
+        coordinate: 
+            The coordinate construct.
+    
+    :Returns:
+    
+        out: `bool`
+             True if the coordinate bounds are geometries, otherwise
+             False.
 
         '''
         return bool(coordinate.get_geometry(None) in ('point', 'line', 'polygon'))
-    #--- End: def
+
 
     def nc_set_instance_dimension(self, variable, ncdim):
-        '''
+        '''TODO
         '''
         variable.nc_set_instance_dimension(ncdim)
-    #--- End: def
+
     
 
     def nc_set_sample_dimension(self, variable, ncdim):
-        '''
+        '''TODO
         '''
         variable.nc_set_sample_dimension(ncdim)
-    #--- End: def
+
     
     def set_auxiliary_coordinate(self, field, construct, axes, copy=True):
         '''Insert a auxiliary coordinate object into a field.
         
-:Parameters:
-
-    field: `Field`
-
-    construct: `AuxiliaryCoordinate`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
+    :Parameters:
+    
+        field: `Field`
+    
+        construct: `AuxiliaryCoordinate`
+    
+        axes: `tuple`
+    
+        copy: `bool`, optional
+    
+    :Returns:
+    
+        out: `str`
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
-    #--- End: def
+
 
     def set_bounds(self, construct, bounds, copy=True):
-        '''
-:Parameters:
+        '''TODO
 
-:Returns:
-
-    `None`
+    :Parameters:
+    
+    :Returns:
+    
+        `None`
 
         '''
         construct.set_bounds(bounds, copy=copy)
-    #--- End: def
+
 
     def set_cell_measure(self, field, construct, axes, copy=True):
         '''Insert a cell_measure object into a field.
 
-:Parameters:
-
-    field: `Field`
-
-    construct: `CellMeasure`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
+    :Parameters:
+    
+        field: `Field`
+    
+        construct: `CellMeasure`
+    
+        axes: `tuple`
+    
+        copy: `bool`, optional
+    
+    :Returns:
+    
+        out: `str`
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
-    #--- End: def
+
 
     def set_cell_method(self, field, construct, copy=True):
         '''Insert a cell_method object into a field.
 
-:Parameters:
-
-    field: `Field`
-
-    construct: `CellMethod`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
+    :Parameters:
+    
+        field: `Field`
+    
+        construct: `CellMethod`
+    
+        copy: `bool`, optional
+    
+    :Returns:
+    
+        out: `str`
         '''
         return field.set_construct(construct, copy=copy)
-    #--- End: def
+
 
     def set_cell_method_axes(self, cell_method, axes):
+        '''TODO
         '''
-'''
         cell_method.set_axes(axes)
-    #--- End: for
+
     
     def set_cell_method_method(self, cell_method, method):
+        '''TODO
         '''
-'''
         cell_method.set_method(method)
-    #--- End: for
+
     
     def set_coordinate_conversion(self, coordinate_reference, coordinate_conversion):
-        '''
+        '''TODO
 
-:Parameters:
-
-:Returns:
-
-    `None`
-
+    :Parameters:
+    
+    :Returns:
+    
+        `None`
+    
         '''
         coordinate_reference.set_coordinate_conversion(coordinate_conversion)
-    #--- End: def
+
 
     def set_coordinate_reference(self, field, construct, copy=True):
         '''Insert a coordinate reference object into a field.
 
-:Parameters:
-    field: `Field`
-    construct: `CoordinateReference`
-    copy: `bool`, optional
-:Returns:
-    out: `str`
-        '''
+    :Parameters:
+        field: `Field`
+
+        construct: `CoordinateReference`
+
+        copy: `bool`, optional
+
+    :Returns:
+
+        out: `str`
+            '''
         return field.set_construct(construct, copy=copy)
-    #--- End: def
+
 
     def set_coordinate_reference_coordinates(self,
                                              coordinate_reference,
                                              coordinates):
-        '''
+        '''TODO
 
-:Parameters:
-
-:Returns:
-
-    `None`
+    :Parameters:
+    
+    :Returns:
+    
+        `None`
         '''
         coordinate_reference.set_coordinates(coordinates)
-    #--- End: def
+
 
     def set_coordinate_reference_coordinate(self,
                                             coordinate_reference,
                                             coordinate):
-        '''
+        '''TODO
         '''
         coordinate_reference.set_coordinate(coordinate)
-    #--- End: def
+
 
     def set_data(self, construct, data, axes=None, copy=True):
         '''If the construct is a Field then the corresponding domain axes must
-also be provided.
-
-:Parameters:
-
-    construct: construct
-
-    data: `Data`
-
-    axes: `tuple`, optional
-
-    copy: `bool`, optional
-
-:Returns:
-
-    `None`
+    also be provided.
+    
+    :Parameters:
+    
+        construct: construct
+    
+        data: `Data`
+    
+        axes: `tuple`, optional
+    
+        copy: `bool`, optional
+    
+    :Returns:
+    
+        `None`
 
         '''
         if axes is None:
@@ -1569,11 +1532,11 @@ also be provided.
     def set_datum(self, coordinate_reference, datum):
         '''
 
-:Parameters:
-
-:Returns:
-
-    `None`
+    :Parameters:
+    
+    :Returns:
+    
+        `None`
 
         '''
         coordinate_reference.set_datum(datum)
@@ -1582,19 +1545,19 @@ also be provided.
     def set_dimension_coordinate(self, field, construct, axes, copy=True):
         '''Insert a dimension coordinate object into a field.
         
-:Parameters:
-
-    field: `Field`
-
-    construct: `DimensionCoordinate`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
+    :Parameters:
+    
+        field: `Field`
+    
+        construct: `DimensionCoordinate`
+    
+        axes: `tuple`
+    
+        copy: `bool`, optional
+    
+    :Returns:
+    
+        out: `str`
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
     #--- End: def
@@ -1603,19 +1566,19 @@ also be provided.
 #                             extra_axes=0, copy=True):
         '''Insert a domain ancillary object into a field.
 
-:Parameters:
-
-    field: `Field`
-
-    construct: `DomainAncillary`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
+    :Parameters:
+    
+        field: `Field`
+    
+        construct: `DomainAncillary`
+    
+        axes: `tuple`
+    
+        copy: `bool`, optional
+    
+    :Returns:
+    
+        out: `str`
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
     #--- End: def
@@ -1623,23 +1586,23 @@ also be provided.
     def set_domain_axis(self, field, construct, copy=True):
         '''Insert a domain_axis object into a field.
 
-:Parameters:
-
-    field: `Field`
-
-    construct: `domain_axis`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
+    :Parameters:
+    
+        field: `Field`
+    
+        construct: `domain_axis`
+    
+        copy: `bool`, optional
+    
+    :Returns:
+    
+        out: `str`
         '''
         return field.set_construct(construct, copy=copy)
     #--- End: def
 
     def nc_set_external(self, construct):
-        '''
+        '''TODO
         '''
         construct.nc_set_external(True)
     #--- End: def
@@ -1647,25 +1610,25 @@ also be provided.
     def set_field_ancillary(self, field, construct, axes, copy=True):
         '''Insert a field ancillary object into a field.
 
-:Parameters:
-
-    field: `Field`
-
-    construct: `FieldAncillary`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
+    :Parameters:
+    
+        field: `Field`
+    
+        construct: `FieldAncillary`
+    
+        axes: `tuple`
+    
+        copy: `bool`, optional
+    
+    :Returns:
+    
+        out: `str`
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
     #--- End: def
 
     def set_geometry(self, coordinate, value):
-        '''
+        '''TODO
 
     .. versionadded:: 1.8.0
 
@@ -1795,33 +1758,6 @@ also be provided.
         ref.nc_set_datum_variable(ncvar)
 
 
-#    def set_node_ncdim(self, parent, ncdim):
-#        '''Set the netCDF name of the dimension of a node coordinate variable.
-#
-#:Parameters:
-#
-#:Returns:
-#
-#    `None`
-#
-#        '''
-#        parent.set_node_ncdim(ncdim)
-#    #--- End: def
-#
-#    def set_part_ncdim(self, parent, ncdim):
-#        '''Set the netCDF name of the dimension of the part_node count
-#variable.
-#
-#:Parameters:
-#
-#:Returns:
-#
-#    `None`
-#
-#        '''
-#        parent.nc_set_part_ncdim(ncdim)
-#    #--- End: def
-
     def set_properties(self, construct, properties, copy=True):
         '''TODO
 
@@ -1835,41 +1771,6 @@ also be provided.
         construct.set_properties(properties, copy=copy)
 
  
-#    def set_data_units(self, data, units):
-#        '''
-#:Parameters:
-#
-#:Returns:
-#
-#    `None`
-#        '''
-#        if units is not None:
-#            data.set_units(units)
-#    #--- End: def
-# 
-#    def set_data_calendar(self, data, calendar):
-#        '''
-#:Parameters:
-#
-#:Returns:
-#
-#    `None`
-#        '''
-#        if calendar is not None:
-#            data.set_calendar(calendar)
-#    #--- End: def
-# 
-#    def set_size(self, domain_axis, size):
-#        '''
-#:Parameters:
-#
-#:Returns:
-#
-#    `None`
-#        '''
-#        domain_axis.set_size(size)
-#    #--- End: def
- 
     def has_bounds(self, construct):
         '''
 :Parameters:
@@ -1881,72 +1782,62 @@ also be provided.
         return construct.has_bounds()
     #--- End: def
     
-#    def _transpose_data(self, data, axes=None, copy=True):
-#        '''
-#        '''
-#        data = data.tranpose(axes=axes, copy=copy)
-#        return data
-#    #--- End: def
     
     def has_datum(self, coordinate_reference):
         '''Return True if a coordinate reference has a datum.
 
-:Parameters:
-
-    coordinate_reference: coordinate reference construct
-
-:Returns:
-
-    out: `bool`
-
-:Examples:
-
->>> if API.has_datum(ref):
-...     print ref, 'has a datum'
-... else:
-...     print ref, 'does not have a datum'
-
+    :Parameters:
+    
+        coordinate_reference: coordinate reference construct
+    
+    :Returns:
+    
+        out: `bool`
+    
+    **Examples:**
+    
+    >>> if API.has_datum(ref):
+    ...     print ref, 'has a datum'
+    ... else:
+    ...     print ref, 'does not have a datum'
+    
         '''
         return bool(coordinate_reference.datum)
-    #--- End: def
+
     
     def has_property(self, parent, prop):
         '''Return True if a property exists.
 
-:Examples 1:
-
->>> has_standard_name = w.has_property(x, 'standard_name')
-
-:Parameters:
-
-    parent: 
-        The object containing the property.
-
-:Returns:
-
-    out: `bool`
-        `True` if the property exists, otherwise `False`.
-
-:Examples 2:
-
->>> coord
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.has_property(coord, 'units')
-True
-
->>> bounds
-<Bounds: latitude(180, 2) degrees_north>
->>> w.has_property(bounds, 'long_name')
-False
+    :Parameters:
+    
+        parent: 
+            The object containing the property.
+    
+    :Returns:
+    
+        out: `bool`
+            `True` if the property exists, otherwise `False`.
+    
+    **Examples:**
+    
+    >>> coord
+    <DimensionCoordinate: latitude(180) degrees_north>
+    >>> w.has_property(coord, 'units')
+    True
+    
+    >>> bounds
+    <Bounds: latitude(180, 2) degrees_north>
+    >>> w.has_property(bounds, 'long_name')
+    False
         '''
         return parent.has_property(prop)
-    #--- End: def
+
     
     def squeeze(self, construct, axes=None):
-        '''
+        '''TODO
         '''
         return construct.squeeze(axes=axes)
-    #--- End: def
+
         
 #--- End: class
 
@@ -1987,46 +1878,46 @@ _implementation = CFDMImplementation(
 def implementation():
     '''Return a container for the CF data model implementation.
 
-.. versionadded:: 1.7.0
-
-.. seealso:: `cfdm.read`, `cfdm.write`
-
-:Returns:
-
-    `CFDMImplementation`
-        A container for the CF data model implementation.
-
-**Examples:**
-
->>> i = cfdm.implementation()
->>> i
-<CFDMImplementation: >
->>> i.classes()
-{'AuxiliaryCoordinate': cfdm.auxiliarycoordinate.AuxiliaryCoordinate,
- 'Bounds': cfdm.bounds.Bounds,
- 'CellMeasure': cfdm.cellmeasure.CellMeasure,
- 'CellMethod': cfdm.cellmethod.CellMethod,
- 'CoordinateConversion': cfdm.coordinateconversion.CoordinateConversion,
- 'CoordinateReference': cfdm.coordinatereference.CoordinateReference,
- 'Count': cfdm.count.Count,
- 'Data': cfdm.data.data.Data,
- 'Datum': cfdm.datum.Datum,
- 'DimensionCoordinate': cfdm.dimensioncoordinate.DimensionCoordinate,
- 'DomainAncillary': cfdm.domainancillary.DomainAncillary,
- 'DomainAxis': cfdm.domainaxis.DomainAxis,
- 'Field': cfdm.field.Field,
- 'FieldAncillary': cfdm.fieldancillary.FieldAncillary,
- 'GatheredArray': cfdm.data.gatheredarray.GatheredArray,
- 'Index': cfdm.index.Index,
- 'InteriorRing': cfdm.interiorring.InteriorRing,
- 'List': cfdm.list.List,
- 'NetCDFArray': cfdm.data.netcdfarray.NetCDFArray,
- 'NodeCountProperties': cfdm.nodecount.NodeCountProperties,
- 'PartNodeCountProperties': cfdm.partnodecount.PartNodeCountProperties,
- 'RaggedContiguousArray': cfdm.data.raggedcontiguousarray.RaggedContiguousArray,
- 'RaggedIndexedArray': cfdm.data.raggedindexedarray.RaggedIndexedArray,
- 'RaggedIndexedContiguousArray': cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray}
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `cfdm.read`, `cfdm.write`
+    
+    :Returns:
+    
+        `CFDMImplementation`
+            A container for the CF data model implementation.
+    
+    **Examples:**
+    
+    >>> i = cfdm.implementation()
+    >>> i
+    <CFDMImplementation: >
+    >>> i.classes()
+    {'AuxiliaryCoordinate': cfdm.auxiliarycoordinate.AuxiliaryCoordinate,
+     'Bounds': cfdm.bounds.Bounds,
+     'CellMeasure': cfdm.cellmeasure.CellMeasure,
+     'CellMethod': cfdm.cellmethod.CellMethod,
+     'CoordinateConversion': cfdm.coordinateconversion.CoordinateConversion,
+     'CoordinateReference': cfdm.coordinatereference.CoordinateReference,
+     'Count': cfdm.count.Count,
+     'Data': cfdm.data.data.Data,
+     'Datum': cfdm.datum.Datum,
+     'DimensionCoordinate': cfdm.dimensioncoordinate.DimensionCoordinate,
+     'DomainAncillary': cfdm.domainancillary.DomainAncillary,
+     'DomainAxis': cfdm.domainaxis.DomainAxis,
+     'Field': cfdm.field.Field,
+     'FieldAncillary': cfdm.fieldancillary.FieldAncillary,
+     'GatheredArray': cfdm.data.gatheredarray.GatheredArray,
+     'Index': cfdm.index.Index,
+     'InteriorRing': cfdm.interiorring.InteriorRing,
+     'List': cfdm.list.List,
+     'NetCDFArray': cfdm.data.netcdfarray.NetCDFArray,
+     'NodeCountProperties': cfdm.nodecount.NodeCountProperties,
+     'PartNodeCountProperties': cfdm.partnodecount.PartNodeCountProperties,
+     'RaggedContiguousArray': cfdm.data.raggedcontiguousarray.RaggedContiguousArray,
+     'RaggedIndexedArray': cfdm.data.raggedindexedarray.RaggedIndexedArray,
+     'RaggedIndexedContiguousArray': cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray}
 
     '''
     return _implementation.copy()
-#--- End: def
+

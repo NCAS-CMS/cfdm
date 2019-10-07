@@ -22,6 +22,7 @@ class NetCDFWrite(IOWrite):
     '''
     def cf_description_of_file_contents_attributes(self):
         '''Description of file contents properties
+
         '''
         return ('comment',
                 'Conventions',
@@ -38,7 +39,7 @@ class NetCDFWrite(IOWrite):
         '''Geometry types
         
     .. versionadded:: 1.8.0
-    
+
         '''
         return set(('point',
                     'line',
@@ -48,6 +49,7 @@ class NetCDFWrite(IOWrite):
 
     def cf_cell_method_qualifiers(self):
         '''Cell method qualifiers
+
         '''
         return set((
             'within',
@@ -60,7 +62,7 @@ class NetCDFWrite(IOWrite):
     
     def _create_netcdf_variable_name(self, parent, default):
 #                                     force_use_existing=False):
-        '''
+        '''TODO
     
     .. versionadded:: 1.7.0
         
@@ -98,20 +100,20 @@ class NetCDFWrite(IOWrite):
     def _netcdf_name(self, base, dimsize=None, role=None):
         '''Return a new netCDF variable or dimension name.
     
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    base: `str`
-
-    dimsize: `int`, optional
-
-    role: `str`, optional
-
-:Returns:
-
-    out: `str`
-        NetCDF dimension name or netCDF variable name.
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        base: `str`
+    
+        dimsize: `int`, optional
+    
+        role: `str`, optional
+    
+    :Returns:
+    
+        out: `str`
+            NetCDF dimension name or netCDF variable name.
 
         '''
         g = self.write_vars
@@ -151,7 +153,7 @@ class NetCDFWrite(IOWrite):
             g['dimensions_with_role'].setdefault(role, []).append(ncvar)
         
         return ncvar
-    #--- End: def
+
     
     def _write_attributes(self, parent, ncvar, extra={}, omit=()):
         '''TODO
