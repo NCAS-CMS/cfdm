@@ -34,24 +34,14 @@ def read(filename, external=None, extra=None, verbose=False,
     in which case the the relevant constructs in memory will be
     created with data containing missing values.
    
-    **Performance**
-    
-    Descriptive properties are always read into memory, but lazy
-    loading is employed for all data arrays, which means that no data
-    is read into memory until the data is required for inspection or
-    to modify the array contents. This maximises the number of field
-    constructs that may be read within a session, and makes the read
-    operation fast.
-
     **NetCDF unlimited dimensions**
     
     Domain axis constructs that correspond to NetCDF unlimited
     dimensions may be accessed with the
-    `~cfdm.Field.nc_unlimited_dimensions`
-    `~cfdm.Field.nc_set_unlimited_dimensions` and
-    `~cfdm.Field.nc_clear_unlimited_dimensions` methods of a field
+    `~cf.DomainAxis.nc_is_unlimited` and
+    `~cf.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
-    
+
     **CF-compliance**
     
     If the dataset is partially CF-compliant to the extent that it is
@@ -72,10 +62,18 @@ def read(filename, external=None, extra=None, verbose=False,
     well as optionally displayed when the dataset is read by setting
     the *warnings* parameter.
     
+    **Performance**
+    
+    Descriptive properties are always read into memory, but lazy
+    loading is employed for all data arrays, which means that no data
+    is read into memory until the data is required for inspection or
+    to modify the array contents. This maximises the number of field
+    constructs that may be read within a session, and makes the read
+    operation fast.
+
     .. versionadded:: 1.7.0
     
     .. seealso:: `cfdm.write`, `cfdm.Field.convert`,
-                 `cfdm.Field.nc_unlimited_dimensions`,
                  `cfdm.Field.dataset_compliance`
     
     :Parameters:
@@ -219,6 +217,7 @@ def read(filename, external=None, extra=None, verbose=False,
     # Read the file into fields.
     cdl = False
     if netcdf.is_cdl_file(filename):        
+        # Create a temporary netCDF file from input CDL
         cdl = True
         cdl_filename = filename
         filename = netcdf.cdl_to_netcdf(filename)

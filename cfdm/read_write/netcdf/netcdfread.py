@@ -256,7 +256,8 @@ class NetCDFRead(IORead):
         '''TODO
         
         '''
-        x = tempfile.NamedTemporaryFile(mode='wb', dir= tempfile.gettempdir())
+        x = tempfile.NamedTemporaryFile(mode='wb', dir=tempfile.gettempdir(),
+                                        prefix='cfdm_', suffix='.nc')
         tmpfile = x.name
         
         # ----------------------------------------------------------------

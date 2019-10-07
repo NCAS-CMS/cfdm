@@ -1017,7 +1017,7 @@ from a dataset.
 If the dataset is partially CF-compliant to the extent that it is not
 possible to unambiguously map an element of the netCDF dataset to an
 element of the CF data model, then a field construct is still returned
-by `cf.read`, but may be incomplete.
+by the `read` function, but may be incomplete.
 
 Such "structural" non-compliance would occur, for example, if the
 "coordinates" attribute of a CF-netCDF data variable refers to another
