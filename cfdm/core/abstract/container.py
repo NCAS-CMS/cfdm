@@ -15,8 +15,8 @@ class Container(with_metaclass(abc.ABCMeta, object)):
     def __init__(self, source=None, copy=True):
         '''**Initialisation**
 
-A container is initialised with no parameters. Components are set
-after initialisation with the `_set_component` method.
+    A container is initialised with no parameters. Components are set
+    after initialisation with the `_set_component` method.
 
         '''
         self._components = {}
@@ -38,23 +38,23 @@ after initialisation with the `_set_component` method.
             custom = {}
 
         self._set_component('custom', custom, copy=False)
-    #--- End: def
+
         
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` function.
 
-x.__deepcopy__() <==> copy.deepcopy(x)
-
-.. versionadded:: 1.7.0
-
-**Examples:**
-
->>> import copy
->>> y = copy.deepcopy(x)
+    x.__deepcopy__() <==> copy.deepcopy(x)
+    
+    .. versionadded:: 1.7.0
+    
+    **Examples:**
+    
+    >>> import copy
+    >>> y = copy.deepcopy(x)
 
         '''
         return self.copy()
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Private methods
@@ -62,23 +62,23 @@ x.__deepcopy__() <==> copy.deepcopy(x)
     def _default(self, default, message=None):
         '''TODO
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
-:Parameters:
-
-    default: 
+    :Parameters:
+    
+        default: 
+            TODO
+            
+        message: `str`, optional 
+            TODO
+            
+    :Returns:
+    
         TODO
-        
-    message: `str`, optional 
-        TODO
-        
-:Returns:
-
+    
+    **Examples:**
+    
     TODO
-
-**Examples:**
-
-TODO
 
         '''
         if isinstance(default, Exception):
@@ -89,39 +89,39 @@ TODO
             raise default
         
         return default
-    #--- End: def
+
     
     def _del_component(self, component, default=ValueError()):
         '''Remove a component.
 
-.. versionadded:: 1.7.0
-
-.. seealso:: `_get_component`, `_has_component`, `_set_component`
-
-:Parameters:
-
-    component: 
-        The name of the component to be removed.
-
-    default: optional
-        Return *default* if the component has not been set.
-
-:Returns:
-
-        The removed component. If unset then *default* is returned, if
-        provided.
-
-**Examples:**
-
->>> f._set_component('foo', 'bar')
->>> f._has_component('foo')
-True
->>> f._get_component('foo')
-'bar'
->>> f._del_component('foo')
-'bar'
->>> f._has_component('foo')
-False
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `_get_component`, `_has_component`, `_set_component`
+    
+    :Parameters:
+    
+        component: 
+            The name of the component to be removed.
+    
+        default: optional
+            Return *default* if the component has not been set.
+    
+    :Returns:
+    
+            The removed component. If unset then *default* is
+            returned, if provided.
+    
+    **Examples:**
+    
+    >>> f._set_component('foo', 'bar')
+    >>> f._has_component('foo')
+    True
+    >>> f._get_component('foo')
+    'bar'
+    >>> f._del_component('foo')
+    'bar'
+    >>> f._has_component('foo')
+    False
 
         '''
         try:
@@ -130,66 +130,66 @@ False
              return self._default(default,
                                   "{!r} has no {!r} component".format(
                                       self.__class__.__name__, component))
-    #--- End: def
+
 
     @property
     def _custom(self):
         '''Storage for additional attributes.
 
-.. versionadded:: 1.7.4
-
-**Examples:**
-
->>> f._custom
-{}
->>> f._custom['feature'] = ['f']
->>> g = f.copy()
->>> g._custom['feature'][0] = 'g'
->>> f._custom
-{'feature': ['f']}
->>> g._custom
-{'feature': ['g']}
->>> del g._custom['feature']
->>> f._custom
-{'feature': ['f']}
->>> g._custom
-{}
-
-'''
+    .. versionadded:: 1.7.4
+    
+    **Examples:**
+    
+    >>> f._custom
+    {}
+    >>> f._custom['feature'] = ['f']
+    >>> g = f.copy()
+    >>> g._custom['feature'][0] = 'g'
+    >>> f._custom
+    {'feature': ['f']}
+    >>> g._custom
+    {'feature': ['g']}
+    >>> del g._custom['feature']
+    >>> f._custom
+    {'feature': ['f']}
+    >>> g._custom
+    {}
+    
+    '''
         return self._get_component('custom')
-    #--- End: def
+
     
     def _get_component(self, component, default=ValueError()):
         '''Return a component
 
-.. versionadded:: 1.7.0
-
-.. seealso:: `_del_component`, `_has_component`, `_set_component`
-
-:Parameters:
-
-    component: 
-        The name of the component to be returned.
-
-    default: optional
-        Return *default* if the component has not been set.
-
-:Returns:
-
-        The component. If unset then *default* is returned, if
-        provided.
-
-**Examples:**
-
->>> f._set_component('foo', 'bar')
->>> f._has_component('foo')
-True
->>> f._get_component('foo')
-'bar'
->>> f._del_component('foo')
-'bar'
->>> f._has_component('foo')
-False
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `_del_component`, `_has_component`, `_set_component`
+    
+    :Parameters:
+    
+        component: 
+            The name of the component to be returned.
+    
+        default: optional
+            Return *default* if the component has not been set.
+    
+    :Returns:
+    
+            The component. If unset then *default* is returned, if
+            provided.
+    
+    **Examples:**
+    
+    >>> f._set_component('foo', 'bar')
+    >>> f._has_component('foo')
+    True
+    >>> f._get_component('foo')
+    'bar'
+    >>> f._del_component('foo')
+    'bar'
+    >>> f._has_component('foo')
+    False
 
         '''
         try:            
@@ -198,79 +198,78 @@ False
             return self._default(default,
                                  "{!r} has no {!r} component".format(
                                      self.__class__.__name__, component))
-    #--- End: def
+
 
     def _has_component(self, component):
         '''Whether a component has been set.
 
-.. versionadded:: 1.7.0
-
-.. seealso:: `_del_component`, `_get_component`, `_set_component`
-
-:Parameters:
-
-    component: 
-        The name of the component.
-
-:Returns:
-
-     `bool`
-        True if the component has been set, otherwise False.
-
-**Examples:**
-
->>> f._set_component('foo', 'bar')
->>> f._has_component('foo')
-True
->>> f._get_component('foo')
-'bar'
->>> f._del_component('foo')
-'bar'
->>> f._has_component('foo')
-False
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `_del_component`, `_get_component`, `_set_component`
+    
+    :Parameters:
+    
+        component: 
+            The name of the component.
+    
+    :Returns:
+    
+        `bool`
+            True if the component has been set, otherwise False.
+    
+    **Examples:**
+    
+    >>> f._set_component('foo', 'bar')
+    >>> f._has_component('foo')
+    True
+    >>> f._get_component('foo')
+    'bar'
+    >>> f._del_component('foo')
+    'bar'
+    >>> f._has_component('foo')
+    False
 
         '''
         return component in self._components
-    #--- End: def
+
 
     def _set_component(self, component, value, copy=True):
         '''Set a component.
 
-.. versionadded:: 1.7.0
-
-.. seealso:: `_del_component`, `_get_component`, `_has_component`
-
-:Parameters:
-
-    component: `str`
-        The name of the component.
-
-    value:
-        The value for the component.
-
-:Returns:
-
-     `None`
-
-**Examples:**
-
-
->>> f._set_component('foo', 'bar')
->>> f._has_component('foo')
-True
->>> f._get_component('foo')
-'bar'
->>> f._del_component('foo')
-'bar'
->>> f._has_component('foo')
-False
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `_del_component`, `_get_component`, `_has_component`
+    
+    :Parameters:
+    
+        component: `str`
+            The name of the component.
+    
+        value:
+            The value for the component.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+        
+    >>> f._set_component('foo', 'bar')
+    >>> f._has_component('foo')
+    True
+    >>> f._get_component('foo')
+    'bar'
+    >>> f._del_component('foo')
+    'bar'
+    >>> f._has_component('foo')
+    False
 
         '''
         if copy:
             value = deepcopy(value)
             
         self._components[component] = value
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Methods
@@ -278,20 +277,20 @@ False
     def copy(self):
         '''Return a deep copy.
 
-``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-.. versionadded:: 1.7.0
-
-:Returns:
-
-        The deep copy.
-
-**Examples:**
-
->>> g = f.copy()
+    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+    
+    .. versionadded:: 1.7.0
+    
+    :Returns:
+    
+            The deep copy.
+    
+    **Examples:**
+    
+    >>> g = f.copy()
 
         '''
         return type(self)(source=self, copy=True)
-    #--- End: def
+
     
 #--- End: class

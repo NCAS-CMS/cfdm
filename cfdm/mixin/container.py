@@ -10,64 +10,67 @@ from ..functions import ATOL, RTOL
 class Container(object):
     '''Mixin class for storing object components.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
+    x.__repr__() <==> repr(x)
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__,
                                    str(self))
-    #--- End: def
+
 
     def __str__(self):
         '''Called by the `str` built-in function.
 
-x.__str__() <==> str(x)
+    x.__str__() <==> str(x)
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         out = sorted(self._components)
         return ', '.join(out)
-    #--- End: def
+
 
     @property
     def _ATOL(self):
         '''TODO
         '''
         return ATOL()
+
     
     @property
     def _RTOL(self):
         '''TODO
         '''
         return RTOL()
+
     
 #    @classmethod
     def _equals(self, x, y, rtol=None, atol=None,
                 ignore_data_type=False, **kwargs):
         '''Whether two objects are the same.
 
-Equality either uses one or other of the objects `!equals` methods, or
-casts them as numpy arrays and carried aout numericlly tolerant equality checks.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    atol: float, optional
-        The tolerance on absolute differences between real
-        numbers. The default value is set by the `ATOL` function.
-        
-    rtol: float, optional
-        The tolerance on relative differences between real
-        numbers. The default value is set by the `RTOL` function.
+    Equality either uses one or other of the objects `!equals`
+    methods, or casts them as numpy arrays and carried aout numericlly
+    tolerant equality checks.
+    
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        atol: float, optional
+            The tolerance on absolute differences between real
+            numbers. The default value is set by the `ATOL` function.
+            
+        rtol: float, optional
+            The tolerance on relative differences between real
+            numbers. The default value is set by the `RTOL` function.
 
         '''
         if rtol is None:
@@ -156,23 +159,23 @@ casts them as numpy arrays and carried aout numericlly tolerant equality checks.
                     return True
                 else:
                     return bool(out)
-    #--- End: def
+
 
     def _equals_preprocess(self, other, verbose=False,
                            ignore_type=False):
         '''Common preprocessing prior to testing of equality.
 
-* If the LHS operand is (object identity) the RHS operand then return
-  True.
-
-* If ignore_type=False and the LHS operand is not of the same type, or
-  a sublcass of, the RHS operand then return False
-
-* If ignore_type=True and the LHS operand is not of the same type, or
-  a sublcass of, the RHS operand then instantiate a new instance based
-  on the the RHS class and return it.
-
-.. versionadded:: 1.7.0
+    * If the LHS operand is (object identity) the RHS operand then
+      return True.
+    
+    * If ignore_type=False and the LHS operand is not of the same type, or
+      a squblcass of, the RHS operand then return False
+    
+    * If ignore_type=True and the LHS operand is not of the same type,
+      or a sublcass of, the RHS operand then instantiate a new
+      instance based on the the RHS class and return it.
+    
+    .. versionadded:: 1.7.0
 
         '''
         # Check for object identity
@@ -190,6 +193,6 @@ casts them as numpy arrays and carried aout numericlly tolerant equality checks.
             return False
 
         return other
-    #--- End: def
+
    
 #--- End: class
