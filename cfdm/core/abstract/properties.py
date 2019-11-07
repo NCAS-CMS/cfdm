@@ -59,29 +59,42 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
     def clear_properties(self):
         '''Remove all properties.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `del_property` `properties`, `set_properties`
+    
+    :Returns:
+    
+        `dict`
+            The properties that have been removed.
+    
+    **Examples:**
 
-.. seealso:: `del_property` `properties`, `set_properties`
-
-:Returns:
-
-    `dict`
-        The properties that have been removed.
-
-**Examples:**
-
->>> f.clear properties()
-{'standard_name': 'altitude',
- 'foo': 'bar'}
->>> f.properties()
-{}
+    >>> f.properties()
+    {}
+    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.set_properties({'standard_name': 'air_pressure', 'foo': 'bar'})
+    >>> f.properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.clear_properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.properties()
+    {}
 
         '''
         out = self._get_component('properties')
         self._set_component('properties', {})
         return out.copy()
-    #--- End: def
 
+    
     def del_property(self, prop, default=ValueError()):
         '''Remove a property.
 
@@ -226,63 +239,86 @@ None
     def properties(self):
         '''Return all properties.
 
-.. versionadded:: 1.7.0
-
-.. seealso:: `clear_properties`, `get_property`, `has_property`
-             `set_properties`
-
-:Returns:
-
-    `dict`
-        The properties.
-
-**Examples:**
-
->>> f.properties()
-{'standard_name': 'altitude',
- 'foo': 'bar'}
-
->>> f.properties()
-{}
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `clear_properties`, `get_property`, `has_property`
+                 `set_properties`
+    
+    :Returns:
+    
+        `dict`
+            The properties.
+    
+    **Examples:**
+    
+    >>> f.properties()
+    {}
+    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.set_properties({'standard_name': 'air_pressure', 'foo': 'bar'})
+    >>> f.properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.clear_properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.properties()
+    {}
 
         '''
         return self._get_component('properties').copy()
-    #--- End: def
+
 
     def set_properties(self, properties, copy=True):
         '''Set properties.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `clear_properties`, `properties`, `set_property`
+    
+    :Parameters:
+    
+        properties: `dict` 
+            Store the properties from the dictionary supplied.
+    
+            *Parameter example:*
 
-.. seealso:: `clear_properties`, `properties`, `set_property`
-
-:Parameters:
-
-    properties: `dict` 
-        Store the properties from the dictionary supplied.
-
-        *Parameter example:*
-          ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
-
-    copy: `bool`, optional
-        If False then any property values provided by the *properties*
-        parameter are not copied before insertion. By default they are
-        deep copied.
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> f.properties()
-{'standard_name': 'altitude',
- 'foo': 'bar'}
->>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'}
->>> f.properties()
-{'standard_name': 'air_pressure',
- 'foo': 'bar',
- 'long_name': 'Air Pressure'}
+              ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
+    
+        copy: `bool`, optional
+            If False then any property values provided by the
+            *properties* parameter are not copied before insertion. By
+            default they are deep copied.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> f.properties()
+    {}
+    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.set_properties({'standard_name': 'air_pressure', 'foo': 'bar'})
+    >>> f.properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.clear_properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.properties()
+    {}
 
         '''
         if copy:
@@ -291,7 +327,7 @@ None
             properties = properties.copy()
         
         self._get_component('properties').update(properties)
-    #--- End: def
+
 
     def set_property(self, prop, value, copy=True):
         '''Set a property.
