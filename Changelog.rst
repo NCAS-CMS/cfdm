@@ -1,3 +1,13 @@
+version 1.7.9
+-------------
+----
+
+**2019-11-07**
+
+* Fixed bug relating to setting of parameters on datum and coordinate
+  conversion objects of coordinate conversion constucts
+  (https://github.com/NCAS-CMS/cfdm/issues/6).
+
 version 1.7.8
 -------------
 ----

@@ -409,7 +409,7 @@ class CoordinateReference(abstract.Container):
         out = self._get_component('coordinate_conversion', None)
         if out is None:
             out = self._CoordinateConversion()
-            self.set_coordinate_conversion(out)
+            self.set_coordinate_conversion(out, copy=False)
 
         return out
 
@@ -435,7 +435,7 @@ class CoordinateReference(abstract.Container):
         out = self._get_component('datum', None)
         if out is None:
             out = self._Datum()
-            self.set_datum(out)
+            self.set_datum(out, copy=False)
             
         return out
 
@@ -576,7 +576,6 @@ class CoordinateReference(abstract.Container):
             The coordinate conversion component to be inserted.
     
         copy: `bool`, optional
-
             If False then do not copy the coordinate conversion prior
             to insertion. By default the coordinate conversion is
             copied.
