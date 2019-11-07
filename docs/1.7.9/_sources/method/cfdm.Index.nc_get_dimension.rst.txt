@@ -1,0 +1,7 @@
+cfdm.Index.nc_get_dimension
+===========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Index.nc_get_dimension

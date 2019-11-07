@@ -1,0 +1,7 @@
+cfdm.Index.has_data
+===================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Index.has_data

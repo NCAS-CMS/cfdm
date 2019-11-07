@@ -1,0 +1,7 @@
+cfdm.Constructs.filters_applied
+===============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Constructs.filters_applied
