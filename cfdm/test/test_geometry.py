@@ -581,7 +581,9 @@ class DSGTest(unittest.TestCase):
     def tearDown(self):
         os.remove(self.tempfilename)
 
-    
+        
+    @unittest.skipIf(cfdm.__version__ < '1.8',
+                     "not supported in this library version")
     def test_node_count(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -630,6 +632,8 @@ class DSGTest(unittest.TestCase):
         self.assertFalse(c.has_node_count())
     #--- End: def
 
+    @unittest.skipIf(cfdm.__version__ < '1.8',
+                     "not supported in this library version")
     def test_geometry_2(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -668,6 +672,8 @@ class DSGTest(unittest.TestCase):
         cfdm.write(f, self.tempfilename, verbose=False)
     #--- End: def
 
+    @unittest.skipIf(cfdm.__version__ < '1.8',
+                     "not supported in this library version")
     def test_geometry_3(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -697,6 +703,8 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(a.equals(b, verbose=True))
     #--- End: def
 
+    @unittest.skipIf(cfdm.__version__ < '1.8',
+                     "not supported in this library version")
     def test_geometry_4(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -734,6 +742,8 @@ class DSGTest(unittest.TestCase):
         cfdm.write(f, self.tempfilename, verbose=False)
     #--- End: def
 
+    @unittest.skipIf(cfdm.__version__ < '1.8',
+                     "not supported in this library version")
     def test_geometry_interior_ring(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
