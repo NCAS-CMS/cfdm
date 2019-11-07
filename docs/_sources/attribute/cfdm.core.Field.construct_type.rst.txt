@@ -1,7 +1,7 @@
 cfdm.core.Field.construct_type
 ==============================
 
-.. currentmodule:: cf
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. autoattribute:: cfdm.core.Field.construct_type

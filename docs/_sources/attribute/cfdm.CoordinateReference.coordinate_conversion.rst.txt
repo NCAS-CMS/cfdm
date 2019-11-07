@@ -1,7 +1,7 @@
 cfdm.CoordinateReference.coordinate_conversion
 ==============================================
 
-.. currentmodule:: cf
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. autoattribute:: cfdm.CoordinateReference.coordinate_conversion

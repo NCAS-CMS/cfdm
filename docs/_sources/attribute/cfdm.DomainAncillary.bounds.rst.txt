@@ -1,7 +1,7 @@
 cfdm.DomainAncillary.bounds
 ===========================
 
-.. currentmodule:: cf
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. autoattribute:: cfdm.DomainAncillary.bounds

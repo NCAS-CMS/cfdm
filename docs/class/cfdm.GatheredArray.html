@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.8</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -96,7 +96,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.GatheredArray">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">GatheredArray</code><span class="sig-paren">(</span><em>compressed_array=None</em>, <em>shape=None</em>, <em>size=None</em>, <em>ndim=None</em>, <em>compressed_dimension=None</em>, <em>list_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/data/gatheredarray.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.GatheredArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">GatheredArray</code><span class="sig-paren">(</span><em>compressed_array=None</em>, <em>shape=None</em>, <em>size=None</em>, <em>ndim=None</em>, <em>compressed_dimension=None</em>, <em>list_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.9/cfdm/data/gatheredarray.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.GatheredArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.compressedarray.CompressedArray</span></code></p>
 <p>An underlying gathered array.</p>
 <p>Compression by gathering combines axes of a multidimensional array
@@ -116,16 +116,16 @@ variable” that gives the indices of the required points.</p>
 <dt>compressed_array: <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></dt>
 <dd><p class="first last">The compressed array.</p>
 </dd>
-<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
 <dd><p class="first last">The uncompressed array dimension sizes.</p>
 </dd>
-<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">Number of elements in the uncompressed array.</p>
 </dd>
-<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">The number of uncompressed array dimensions</p>
 </dd>
-<dt>compressed_dimension: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>compressed_dimension: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">The position of the compressed dimension in the compressed
 array.</p>
 </dd>
@@ -219,16 +219,16 @@ to the data of a CF-netCDF list variable.</p>
 <td>The numpy array interface.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.GatheredArray.__deepcopy__.html#cfdm.GatheredArray.__deepcopy__" title="cfdm.GatheredArray.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.GatheredArray.__getitem__.html#cfdm.GatheredArray.__getitem__" title="cfdm.GatheredArray.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
 <td>x.__getitem__(indices) &lt;==&gt; x[indices]</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.GatheredArray.__repr__.html#cfdm.GatheredArray.__repr__" title="cfdm.GatheredArray.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.GatheredArray.__str__.html#cfdm.GatheredArray.__str__" title="cfdm.GatheredArray.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
 </tr>
 </tbody>
 </table>
@@ -247,7 +247,7 @@ to the data of a CF-netCDF list variable.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/class/cfdm.GatheredArray.rst.txt"

@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.8</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.9</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -96,7 +96,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CoordinateConversion">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/coordinateconversion.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.9/cfdm/coordinateconversion.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.parametersdomainancillaries.ParametersDomainAncillaries</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.coordinateconversion.CoordinateConversion</span></code></p>
 <p>A coordinate conversion component of a coordinate reference
 construct of the CF data model.</p>
@@ -118,7 +118,7 @@ field to locations in a planetary reference frame.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Set parameters. The dictionary keys are term names, with
 corresponding parameter values. Ignored if the <em>source</em>
 parameter is set.</p>
@@ -130,7 +130,7 @@ parameter is set.</p>
 <p class="last">Parameters may also be set after initialisation with the
 <a class="reference internal" href="../method/cfdm.CoordinateConversion.set_parameters.html#cfdm.CoordinateConversion.set_parameters" title="cfdm.CoordinateConversion.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateConversion.set_parameter.html#cfdm.CoordinateConversion.set_parameter" title="cfdm.CoordinateConversion.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
 </dd>
-<dt>domain_ancillaries: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dt>domain_ancillaries: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Set references to domain ancillary constructs. The dictionary
 keys are term names, with corresponding domain ancillary
 construct keys. Ignored if the <em>source</em> parameter is set.</p>
@@ -147,7 +147,7 @@ methods.</p>
 <dd><p class="first last">Initialize the parameters and domain ancillary terms from
 those of <em>source</em>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
@@ -252,19 +252,19 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__bool__.html#cfdm.CoordinateConversion.__bool__" title="cfdm.CoordinateConversion.__bool__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__bool__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> built-in function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> built-in function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__deepcopy__.html#cfdm.CoordinateConversion.__deepcopy__" title="cfdm.CoordinateConversion.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__nonzero__.html#cfdm.CoordinateConversion.__nonzero__" title="cfdm.CoordinateConversion.__nonzero__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__nonzero__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> built-in function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> built-in function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__repr__.html#cfdm.CoordinateConversion.__repr__" title="cfdm.CoordinateConversion.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__str__.html#cfdm.CoordinateConversion.__str__" title="cfdm.CoordinateConversion.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
 </tr>
 </tbody>
 </table>
@@ -283,7 +283,7 @@ initialization. By default arguments are deep copied.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/class/cfdm.CoordinateConversion.rst.txt"
