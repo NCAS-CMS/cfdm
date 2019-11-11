@@ -343,24 +343,33 @@ class NetCDFRead(IORead):
 
         '''
         # Read the magic number
-        magic_number = None
+        cdl = False
         try:
             fh = open(filename, 'rt')
-            magic_number = fh.read(7)
         except UnicodeDecodeError:
             pass
         except:
             pass
-            
+        else:
+            try:
+                line = fh.readline()
+    
+                # Match comment and blank lines at the top of the file
+                while re.match('^\s*//|^\s*$', line):
+                    line = fh.readline()
+                    
+                if line.startswith('netcdf '):
+                    cdl = True
+            except UnicodeDecodeError:
+                pass
+        #--- End: try
+                
         try:
             fh.close()
         except:
             pass
     
-        if magic_number == 'netcdf ':
-            return True
-
-        return False
+        return cdl
 
 
     def read(self, filename, extra=None, default_version=None,
