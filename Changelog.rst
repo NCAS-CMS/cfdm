@@ -1,3 +1,13 @@
+version 1.7.10
+--------------
+----
+
+**Not yet released**
+
+* New method: `cfdm.Field.nc_set_global_attributes`.
+* Fixed bug relating to the reading of some CDL files
+  (https://github.com/NCAS-CMS/cfdm/issues/5).
+
 version 1.7.9
 -------------
 ----

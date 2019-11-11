@@ -10,7 +10,7 @@ class DeprecationError(Exception):
 class NetCDF(object):
     '''Mixin class for storing simple netCDF elements.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def _initialise_netcdf(self, source=None):
@@ -54,7 +54,7 @@ class NetCDF(object):
 class NetCDFDimension(NetCDF):
     '''Mixin class for accessing the netCDF dimension name.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def nc_del_dimension(self, default=ValueError()):
@@ -224,7 +224,7 @@ class NetCDFDimension(NetCDF):
 class NetCDFVariable(NetCDF):
     '''Mixin class for accessing the netCDF variable name.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def nc_del_variable(self, default=ValueError()):
@@ -395,7 +395,7 @@ class NetCDFVariable(NetCDF):
 class NetCDFSampleDimension(NetCDF):
     '''Mixin class for accessing the netCDF sample dimension name.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def nc_del_sample_dimension(self, default=ValueError()):
@@ -565,7 +565,7 @@ class NetCDFSampleDimension(NetCDF):
 class NetCDFGlobalAttributes(NetCDF):
     '''Mixin class for accessing netCDF global attributes.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def nc_global_attributes(self):
@@ -588,7 +588,7 @@ class NetCDFGlobalAttributes(NetCDF):
     .. versionadded:: 1.7.0
     
     .. seealso:: `cfdm.write`, `nc_clear_global_attributes`,
-                 `nc_set_global_attribute`
+                 `nc_set_global_attribute`, `nc_set_global_attributes`
     
     :Returns:
     
@@ -602,12 +602,12 @@ class NetCDFGlobalAttributes(NetCDF):
     {'Conventions': None, 'comment': None}
     >>> f.nc_set_global_attribute('foo')
     >>> f.nc_global_attributes()
-    {'Conventions': None, 'comment': None, 'foo'}
+    {'Conventions': None, 'comment': None, 'foo': None}
     >>> f.nc_set_global_attribute('comment', 'global comment')
     >>> f.nc_global_attributes()
-    {'Conventions': None, 'comment': 'global_comment', 'foo'}
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
     >>> f.nc_clear_global_attributes()
-    {'Conventions': None, 'comment': 'global_comment', 'foo'}
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
     >>> f.nc_global_attributes()
     {}
 
@@ -640,7 +640,7 @@ class NetCDFGlobalAttributes(NetCDF):
     .. versionadded:: 1.7.0
     
     .. seealso:: `cfdm.write`, `nc_global_attributes`,
-                 `nc_set_global_attribute`
+                 `nc_set_global_attribute`, `nc_set_global_attributes`
     
     :Returns:
     
@@ -654,12 +654,12 @@ class NetCDFGlobalAttributes(NetCDF):
     {'Conventions': None, 'comment': None}
     >>> f.nc_set_global_attribute('foo')
     >>> f.nc_global_attributes()
-    {'Conventions': None, 'comment': None, 'foo'}
+    {'Conventions': None, 'comment': None, 'foo': None}
     >>> f.nc_set_global_attribute('comment', 'global comment')
     >>> f.nc_global_attributes()
-    {'Conventions': None, 'comment': 'global_comment', 'foo'}
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
     >>> f.nc_clear_global_attributes()
-    {'Conventions': None, 'comment': 'global_comment', 'foo'}
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
     >>> f.nc_global_attributes()
     {}
 
@@ -693,7 +693,8 @@ class NetCDFGlobalAttributes(NetCDF):
     .. versionadded:: 1.7.0
     
     .. seealso:: `cfdm.write`, `nc_global_attributes`,
-                 `nc_clear_global_attributes`
+                 `nc_clear_global_attributes`,
+                 `nc_set_global_attributes`
     
     :Parameters:
     
@@ -719,12 +720,12 @@ class NetCDFGlobalAttributes(NetCDF):
     {'Conventions': None, 'comment': None}
     >>> f.nc_set_global_attribute('foo')
     >>> f.nc_global_attributes()
-    {'Conventions': None, 'comment': None, 'foo'}
+    {'Conventions': None, 'comment': None, 'foo': None}
     >>> f.nc_set_global_attribute('comment', 'global comment')
     >>> f.nc_global_attributes()
-    {'Conventions': None, 'comment': 'global_comment', 'foo'}
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
     >>> f.nc_clear_global_attributes()
-    {'Conventions': None, 'comment': 'global_comment', 'foo'}
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
     >>> f.nc_global_attributes()
     {}
 
@@ -739,15 +740,89 @@ class NetCDFGlobalAttributes(NetCDF):
         self._get_component('netcdf')['global_attributes'] = out
 
     
+    def nc_set_global_attributes(self, properties, copy=True):
+        '''Set properties to be written as netCDF global attributes.
+
+    When multiple field constructs are being written to the same file,
+    it is only possible to create a netCDF global attribute from a
+    property that has identical values for each field construct. If
+    any field construct's property has a different value then the
+    property will not be written as a netCDF global attribute, even if
+    it has been selected as such, but will appear instead as
+    attributes on the netCDF data variables corresponding to each
+    field construct.
+    
+    The standard description-of-file-contents properties are always
+    written as netCDF global attributes, if possible, so selecting
+    them is optional.
+    
+    .. versionadded:: 1.7.10
+    
+    .. seealso:: `cfdm.write`, `nc_clear_global_attributes`,
+                 `nc_global_attributes`, `nc_set_global_attribute`
+    
+    :Parameters:
+    
+        properties: `dict` 
+            Set the properties be written as a netCDF global attribute
+            from the dictionary supplied. The value of a netCDF global
+            attribute, which will be created (if possible) in addition
+            to the property as written to a netCDF data variable. If a
+            value of `None` is used then this acts as an instruction
+            to write the property (if possible) to a netCDF global
+            attribute instead of to a netCDF data variable.
+    
+            *Parameter example:*
+              ``properties={'Conventions': None, 'project': 'research'}
+    
+        copy: `bool`, optional
+            If False then any property values provided by the
+            *properties* parameter are not copied before insertion. By
+            default they are deep copied.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': None}
+    >>> f.nc_set_global_attributes({})
+    >>> f.nc_set_global_attributes({'foo': None})
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': None, 'foo': None}
+    >>> f.nc_set_global_attributes('comment', 'global comment')
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
+    >>> f.nc_set_global_attributes('foo', 'bar')
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': 'global_comment', 'foo': 'bar'}
+
+        '''
+        if copy:
+            properties = deepcopy(properties)                
+        else:
+            properties = properties.copy()
+        
+        out = self._get_component('netcdf').get('global_attributes')
+        if out is None:
+            out = {}        
+
+        out.update(properties)
+        
+        self._get_component('netcdf')['global_attributes'] = out
+
+    
 #--- End: class
 
 
 class NetCDFUnlimitedDimensions(NetCDF):
     '''Mixin class for accessing netCDF unlimited dimensions.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
-Deprecated at version 1.7.4
+    Deprecated at version 1.7.4
 
     '''
     def nc_unlimited_dimensions(self):
@@ -903,7 +978,7 @@ Deprecated at version 1.7.4
 class NetCDFExternal(NetCDF):
     '''Mixin class for accessing the netCDF external variable status.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def nc_get_external(self):
@@ -965,9 +1040,9 @@ class NetCDFExternal(NetCDF):
 
 class NetCDFGeometry(NetCDF):
     '''Mixin class for accessing the netCDF geometry container variable
-name.
+    name.
 
-.. versionadded:: 1.8.0
+    .. versionadded:: 1.8.0
 
     '''   
     def nc_del_geometry_variable(self, default=ValueError()):
@@ -1138,7 +1213,7 @@ name.
 class NetCDFHDF5(NetCDF):
     '''Mixin class for TODO
 
-.. versionadded:: 1.7.2
+    .. versionadded:: 1.7.2
 
     '''
     def nc_hdf5_chunksizes(self):
@@ -1150,7 +1225,7 @@ class NetCDFHDF5(NetCDF):
     .. note:: Chunksizes are ignored for netCDF3 files that do not use
               HDF5.
 
-.. versionadded:: 1.7.2
+    .. versionadded:: 1.7.2
     
     .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`
     
@@ -1270,7 +1345,7 @@ class NetCDFHDF5(NetCDF):
 class NetCDFHDF5_exp(NetCDF):
     '''Mixin class for TODO
 
-.. versionadded:: 1.7.2
+    .. versionadded:: 1.7.2
 
     '''
     def nc_del_hdf5_chunksize(self, default=ValueError()):
@@ -1426,7 +1501,7 @@ class NetCDFHDF5_exp(NetCDF):
 class NetCDFUnlimitedDimension(NetCDF):
     '''Mixin class for accessing a netCDF unlimited dimension.
 
-.. versionadded:: 1.7.4
+    .. versionadded:: 1.7.4
 
     '''
     def nc_is_unlimited(self):

@@ -113,7 +113,17 @@ class NetCDFTest(unittest.TestCase):
         f.nc_set_global_attribute('project')
         self.assertTrue(f.nc_global_attributes() == {'Conventions': None,
                                                      'project': None})
-
+        
+        _ = f.nc_clear_global_attributes()
+        f.nc_set_global_attributes({})
+        self.assertTrue(f.nc_global_attributes() == {})
+                
+        f.nc_set_global_attributes({'comment': 123}, copy=False)
+        self.assertTrue(f.nc_global_attributes() == {'comment': 123})
+                
+        f.nc_set_global_attributes({'comment': None, 'foo': 'bar'})
+        self.assertTrue(f.nc_global_attributes() == {'comment': None,
+                                                     'foo': 'bar'})
 
         f = cfdm.Field()
         f.set_properties({'foo': 'bar', 'comment': 'variable comment'})
