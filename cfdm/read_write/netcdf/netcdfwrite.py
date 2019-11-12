@@ -665,7 +665,7 @@ If the construct has no data, then return `None`
                                                       default='index')
 
             if create_ncdim:
-                ncdim = self._netcdf_name(ncdim)
+                ncdiml = self._netcdf_name(ncdim)
                 self._write_dimension(
                     ncdim, f, None,
                     size=self.implementation.get_data_size(index_variable))
@@ -2596,7 +2596,8 @@ extra trailing dimension.
                 # of the netCDF sample dimension.
                 # ----------------------------------------------------
                 index = self.implementation.get_index(f)
-                index_ncdim = self.implementation.nc_get_dimension(index)
+                index_ncdim = self.implementation.nc_get_dimension(index,
+                                                                   default='sample')
                 sample_ncdim = self._write_index_variable(
                     f, index,
                     sample_dimension=index_ncdim,
@@ -2611,7 +2612,8 @@ extra trailing dimension.
                 # of the netCDF sample dimension.
                 # ----------------------------------------------------
                 count = self.implementation.get_count(f)
-                count_ncdim = self.implementation.nc_get_dimension(count)
+                count_ncdim = self.implementation.nc_get_dimension(count,
+                                                                   default='feature')
                 sample_ncdim = self._write_count_variable(
                     f, count,
                     ncdim=count_ncdim, create_ncdim=True)
