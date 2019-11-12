@@ -2577,6 +2577,9 @@ Method                                  Description
 `~Field.nc_set_global_attribute`        Set a property to be written as a
                                         netCDF global attribute
 
+`~Field.nc_set_global_attributes`       Set properties to be written as
+                                        netCDF global attributes
+
 `~Field.nc_clear_global_attributes`     Clear the selection of properties
                                         to be written as netCDF global
                                         attributes
@@ -2640,6 +2643,8 @@ Method                            Classes                                  NetCD
 `!nc_global_attributes`	          `Field`                                  Global attributes
 			          
 `!nc_set_global_attribute`        `Field`                                  Global attributes
+			          
+`!nc_set_global_attributes`       `Field`                                  Global attributes
 			          
 `!nc_clear_global_attributes`     `Field`                                  Global attributes
 			          
@@ -2786,13 +2791,14 @@ description-of-file-contents attributes are automatically written as
 netCDF global attributes. Other attributes may also be written as
 netCDF global attributes if they have been identified as such with the
 *global_attributes* keyword, or via the
-`~Field.nc_set_global_attribute` method of the field constructs. In
-either case, the creation of a netCDF global attribute depends on the
-corresponding property values being identical across all of the field
-constructs being written to the file. If they are all equal then the
-property will be written as a netCDF global attribute and not as an
-attribute of any netCDF data variable; if any differ then the property
-is written only to each netCDF data variable.
+`~Field.nc_set_global_attribute` or `~Field.nc_set_global_attributes`
+method of the field constructs. In either case, the creation of a
+netCDF global attribute depends on the corresponding property values
+being identical across all of the field constructs being written to
+the file. If they are all equal then the property will be written as a
+netCDF global attribute and not as an attribute of any netCDF data
+variable; if any differ then the property is written only to each
+netCDF data variable.
 
 .. code-block:: python3
    :caption: *Request that the "model" property is written as a netCDF
@@ -2816,7 +2822,8 @@ is written only to each netCDF data variable.
 It is possible to create both a netCDF global attribute and a netCDF
 data variable attribute with the same name, but with different
 values. This may be done by assigning the global value to the property
-name with the `~Field.nc_set_global_attribute` method, or by via the
+name with the `~Field.nc_set_global_attribute` or
+`~Field.nc_set_global_attributes` method, or by via the
 *file_descriptors* keyword. For the former technique, any
 inconsistencies arising from multiple field constructs being written
 to the same file will be resolved by omitting the netCDF global

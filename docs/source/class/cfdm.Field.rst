@@ -189,6 +189,7 @@ NetCDF
    ~cfdm.Field.nc_global_attributes
    ~cfdm.Field.nc_clear_global_attributes
    ~cfdm.Field.nc_set_global_attribute
+   ~cfdm.Field.nc_set_global_attributes
    ~cfdm.Field.dataset_compliance
 
 .. _Field-Special:

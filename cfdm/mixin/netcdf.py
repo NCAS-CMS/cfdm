@@ -773,7 +773,7 @@ class NetCDFGlobalAttributes(NetCDF):
             attribute instead of to a netCDF data variable.
     
             *Parameter example:*
-              ``properties={'Conventions': None, 'project': 'research'}
+              ``properties={'Conventions': None, 'project': 'research'}``
     
         copy: `bool`, optional
             If False then any property values provided by the
