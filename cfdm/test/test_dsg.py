@@ -9,6 +9,7 @@ import netCDF4
 
 import cfdm
 
+
 def _make_contiguous_file(filename):        
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
@@ -83,7 +84,7 @@ def _make_contiguous_file(filename):
     n.close()
     
     return filename
-#--- End: def
+
 
 def _make_indexed_file(filename):        
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
@@ -172,7 +173,7 @@ def _make_indexed_file(filename):
     n.close()
     
     return filename
-#--- End: def
+
 
 def _make_indexed_contiguous_file(filename):        
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
@@ -319,7 +320,7 @@ def _make_indexed_contiguous_file(filename):
     n.close()
     
     return filename
-#--- End: def
+
 
 contiguous_file = _make_contiguous_file('DSG_timeSeries_contiguous.nc')
 indexed_file    = _make_indexed_file('DSG_timeSeries_indexed.nc')
@@ -426,11 +427,11 @@ class DSGTest(unittest.TestCase):
         self.b = b
         
         self.test_only = []
-    #--- End: def
+
  
     def tearDown(self):
         os.remove(self.tempfilename)
-    #--- End: def
+
     
     def test_DSG_contiguous(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -497,11 +498,8 @@ class DSGTest(unittest.TestCase):
         tas.set_data(cfdm.Data(array), axes=[Y, X])
         
         cfdm.write(tas, self.tempfilename)
-    #--- End: def   
-        
-        
-    #--- End: def        
 
+            
     def test_DSG_indexed(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -531,7 +529,7 @@ class DSGTest(unittest.TestCase):
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], verbose=True))
-    #--- End: def        
+
 
     def test_DSG_indexed_contiguous(self):  
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -565,7 +563,7 @@ class DSGTest(unittest.TestCase):
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], verbose=True))
-    #--- End: def        
+
 
     def test_DSG_create_contiguous(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -610,7 +608,7 @@ class DSGTest(unittest.TestCase):
         
         self.assertTrue((z.data.get_count().data.array == numpy.array(
             [2, 3])).all())
-    #--- End: def
+
 
 #--- End: class
 

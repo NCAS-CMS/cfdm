@@ -20,7 +20,7 @@ tmpfilec  = tempfile.mktemp('.cfdm_test')
 tmpfiles = [tmpfile, tmpfileh, tmpfilec]
 def _remove_tmpfiles():
     '''
-'''
+    '''
     for f in tmpfiles:
         try:
             os.remove(f)

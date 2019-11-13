@@ -9,6 +9,7 @@ import numpy
 
 import cfdm
 
+
 class CoordinateReferenceTest(unittest.TestCase):
     def setUp(self):
         self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -18,7 +19,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.f = f[0]
 
         self.test_only = []
-    #--- End: def
+
 
     def test_CoordinateReference__repr__str__dump_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -31,7 +32,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             _ = str(cr)
             _ = cr.dump(display=False)
             self.assertTrue(cr.construct_type == 'coordinate_reference')
-    #--- End: def
+
 
     def test_CoordinateReference_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -95,7 +96,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                                'false_northing': -30000})
         )
         self.assertTrue(t.equals(t.copy(), verbose=True))
-    #--- End: def
+
 
     def test_CoordinateConversion(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -143,7 +144,7 @@ class CoordinateReferenceTest(unittest.TestCase):
 
         _ = cr.del_coordinate_conversion()
         self.assertTrue(_.equals(cc))
-    #--- End: def
+
 
     def test_Datum(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -179,7 +180,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         cr = f.construct('standard_name:atmosphere_hybrid_height_coordinate')
         cr.datum.nc_set_variable('my_name')
         cfdm.write(f, 'delme.nc')
-    #--- End: def
+
 
 #--- End: class
 

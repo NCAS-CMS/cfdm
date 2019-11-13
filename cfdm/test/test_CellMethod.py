@@ -9,6 +9,7 @@ import numpy
 
 import cfdm
 
+
 class CellMethodTest(unittest.TestCase):
     def setUp(self):
         self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -18,7 +19,7 @@ class CellMethodTest(unittest.TestCase):
         self.f = f[0]
 
         self.test_only = []
-    #--- End: def
+
 
     def test_CellMethod__repr__str__dump_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -31,7 +32,7 @@ class CellMethodTest(unittest.TestCase):
             _ = str(c)
             _ = c.dump(display=False)
             self.assertTrue(c.construct_type == 'cell_method')
-    #--- End: def
+
 
     def test_CellMethod(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -82,7 +83,8 @@ class CellMethodTest(unittest.TestCase):
                             qualifiers={'interval': [3]})
         
         self.assertTrue(d.equals(c.sorted(), verbose=True))
-   #--- End: def
+
+        
 #--- End: class
 
 if __name__ == '__main__':

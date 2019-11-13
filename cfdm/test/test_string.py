@@ -9,17 +9,18 @@ import numpy
 
 import cfdm
 
+
 class StringTest(unittest.TestCase):
     def setUp(self):
         self.test_only = []
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
         os.close(fd)        
-    #--- End: def
+
 
     def tearDown(self):
         os.remove(self.tempfilename)
-    #--- End: def
+
         
     def test_STRING(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -76,7 +77,7 @@ class StringTest(unittest.TestCase):
             self.assertTrue(aux0.data.shape == array.shape, aux0.data.shape)
             self.assertTrue(aux1.data.shape == array.shape, aux1.data.shape)
         #--- End: for
-    #--- End: def
+
     
 #--- End: class
 

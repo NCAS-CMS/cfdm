@@ -9,6 +9,7 @@ import numpy
 
 import cfdm
 
+
 class CellMeasureTest(unittest.TestCase):
     def setUp(self):
         self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -18,7 +19,7 @@ class CellMeasureTest(unittest.TestCase):
         self.f = f[0]
 
         self.test_only = []
-    #--- End: def
+
 
     def test_CellMeasure__repr__str__dump_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -31,7 +32,7 @@ class CellMeasureTest(unittest.TestCase):
             _ = str(cm)
             _ = cm.dump(display=False)
             self.assertTrue(cm.construct_type == 'cell_measure')
-    #--- End: def
+
 
     def test_CellMeasure(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -50,7 +51,7 @@ class CellMeasureTest(unittest.TestCase):
         cm.set_measure(_)
         self.assertTrue(cm.has_measure())
         self.assertTrue(cm.get_measure() == 'area')
-    #--- End: def
+
 
 #--- End: class
 

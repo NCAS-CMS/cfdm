@@ -16,6 +16,7 @@ VN = cfdm.CF()
 if LooseVersion(VN) < LooseVersion('1.8'):
     VN = '1.8'
 
+    
 def _make_geometry_1_file(filename):
     '''See n.comment for details.
 
@@ -92,7 +93,7 @@ def _make_geometry_1_file(filename):
     n.close()
     
     return filename
-#--- End: def
+
 
 def _make_geometry_2_file(filename):        
     '''See n.comment for details
@@ -174,7 +175,7 @@ def _make_geometry_2_file(filename):
     n.close()
     
     return filename
-#--- End: def
+
 
 def _make_geometry_3_file(filename):        
     '''See n.comment for details
@@ -255,7 +256,7 @@ def _make_geometry_3_file(filename):
     n.close()
     
     return filename
-#--- End: def
+
 
 def _make_geometry_4_file(filename):
     '''See n.comment for details.
@@ -326,7 +327,7 @@ def _make_geometry_4_file(filename):
     n.close()
     
     return filename
-#--- End: def
+
 
 #def _make_interior_ring_file_DEL(filename):        
 #    '''See n.comment for details.
@@ -434,7 +435,7 @@ def _make_geometry_4_file(filename):
 #    n.close()
 #    
 #    return filename
-##--- End: def
+
 
 def _make_interior_ring_file(filename):        
     '''See n.comment for details.
@@ -551,7 +552,7 @@ def _make_interior_ring_file(filename):
     n.close()
     
     return filename
-#--- End: def
+
 
 geometry_1_file    = _make_geometry_1_file('geometry_1.nc')
 geometry_2_file    = _make_geometry_2_file('geometry_2.nc')
@@ -630,7 +631,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(c.get_node_count(None).equals(n, verbose=True))
         self.assertTrue(c.del_node_count(None).equals(n, verbose=True))
         self.assertFalse(c.has_node_count())
-    #--- End: def
+
 
     @unittest.skipIf(cfdm.__version__ < '1.8',
                      "not supported in this library version")
@@ -670,7 +671,7 @@ class DSGTest(unittest.TestCase):
         cfdm.write(f, self.tempfilename, verbose=False)
         nc.nc_set_variable('new_var_name')
         cfdm.write(f, self.tempfilename, verbose=False)
-    #--- End: def
+
 
     @unittest.skipIf(cfdm.__version__ < '1.8',
                      "not supported in this library version")
@@ -701,7 +702,7 @@ class DSGTest(unittest.TestCase):
         
         for a, b in zip(f, f2):
             self.assertTrue(a.equals(b, verbose=True))
-    #--- End: def
+
 
     @unittest.skipIf(cfdm.__version__ < '1.8',
                      "not supported in this library version")
@@ -740,7 +741,7 @@ class DSGTest(unittest.TestCase):
         cfdm.write(f, self.tempfilename, verbose=False)
         nc.nc_set_variable('new_var_name')
         cfdm.write(f, self.tempfilename, verbose=False)
-    #--- End: def
+
 
     @unittest.skipIf(cfdm.__version__ < '1.8',
                      "not supported in this library version")
@@ -820,7 +821,8 @@ class DSGTest(unittest.TestCase):
         
         pnc.nc_set_dimension('new_dim_name')
         cfdm.write(f, self.tempfilename)
-    #--- End: def    
+
+        
 #--- End: class
 
 

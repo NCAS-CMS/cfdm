@@ -10,6 +10,7 @@ import numpy
 
 import cfdm
 
+
 def _make_gathered_file(filename):
     '''
     '''
@@ -127,7 +128,7 @@ def _make_gathered_file(filename):
     n.close()
 
     return filename
-#--- End: def
+
 
 gathered = _make_gathered_file('gathered.nc')
     
@@ -229,11 +230,11 @@ class DSGTest(unittest.TestCase):
         self.b = b
         
         self.test_only = []
-    #--- End: def
+
     
     def tearDown(self):
         os.remove(self.tempfilename)
-    #--- End: def
+
 
     def test_GATHERING(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -273,7 +274,7 @@ class DSGTest(unittest.TestCase):
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], verbose=True))
-    #--- End: def        
+
 
     def test_GATHERING_create(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -334,7 +335,6 @@ class DSGTest(unittest.TestCase):
         
         self.assertTrue((tas.data.get_list().data.array == numpy.array(
             [1, 4, 5])).all())
-    #--- End: def
 
     
 #--- End: class

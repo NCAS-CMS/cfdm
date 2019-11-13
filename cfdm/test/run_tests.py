@@ -5,6 +5,7 @@ import unittest
 
 import cfdm
 
+
 # Build the test suite from the tests found in the test files.
 testsuite_setup = unittest.TestSuite()
 testsuite_setup.addTests(unittest.TestLoader().discover('.', pattern='setup_create_field*.py'))
@@ -17,11 +18,13 @@ def run_test_suite_setup(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite_setup)
 
+    
 # Run the test suite.
 def run_test_suite(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite)
 
+    
 if __name__ == '__main__':
     print('---------------')
     print('CFDM TEST SUITE')

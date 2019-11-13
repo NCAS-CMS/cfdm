@@ -5,10 +5,11 @@ import unittest
 
 import cfdm
 
+
 class FunctionsTest(unittest.TestCase):
     def setUp(self):
         self.test_only = []
-    #--- End: def
+
         
     def test_CF_ATOL_RTOL_environment(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -29,7 +30,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertTrue(cfdm.ATOL() == org)
 
         out = cfdm.environment(display=False)
-    #--- End: def
+
     
 #--- End: class
 

@@ -12,6 +12,7 @@ import cfdm
 verbose  = False
 warnings = False
 
+
 class create_fieldTest_2(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file_b.nc')
@@ -267,8 +268,6 @@ class create_fieldTest_2(unittest.TestCase):
 #        print h
 
         
-    #--- End: def
-
 #--- End: class
 
 if __name__ == "__main__":

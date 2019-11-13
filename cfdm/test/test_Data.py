@@ -11,10 +11,10 @@ import sys
 import time
 import unittest
 
-
 import numpy
 
 import cfdm
+
 
 class DataTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -47,7 +47,7 @@ class DataTest(unittest.TestCase):
         ]:
             _ = repr(d)
             _ = str(d)
-    #--- End: def
+
 
 #    def test_Data__getitem__(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -104,7 +104,7 @@ class DataTest(unittest.TestCase):
         a = d.array
         self.assertTrue(a.shape == ())
         self.assertTrue(a[()] is numpy.ma.masked)
-    #--- End: def
+
 
 #    def test_Data_astype(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -128,7 +128,7 @@ class DataTest(unittest.TestCase):
 #            self.assertTrue(False)
 #        except TypeError:
 #            pass
-#    #--- End: def
+
 
     def test_Data_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -174,7 +174,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(a2.shape == b.shape)
         self.assertTrue((a2 == b).all())
         self.assertFalse((a2 == a).all())
-    #--- End: def
+
 
     def test_Data_datetime_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -197,7 +197,7 @@ class DataTest(unittest.TestCase):
         d[()] = cfdm.masked
         dt = d.datetime_array
         self.assertTrue(dt[()] is numpy.ma.masked)
-    #--- End: def
+
 
     def test_Data_transpose(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -216,7 +216,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((d.array == a).all(), message)
             #--- End: for
         #--- End: for
-    #--- End: def
+
         
     def test_Data_unique(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -232,7 +232,7 @@ class DataTest(unittest.TestCase):
         u = d.unique()
         self.assertTrue(u.shape == (3,))        
         self.assertTrue((u.array == cfdm.Data([1, 2, 4], 'metre').array).all())
-    #--- End: def
+
 
     def test_Data_equals(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -247,7 +247,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.equals(d, verbose=True))
         self.assertTrue(d.equals(e, verbose=True))
         self.assertTrue(e.equals(d, verbose=True))    
-    #--- End: def
+
         
     def test_Data_max_min_sum_squeeze(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -294,7 +294,7 @@ class DataTest(unittest.TestCase):
         x = d.sum(axes=[0, 3]).squeeze([0, 3])
         self.assertTrue(x.shape == b.shape)
         self.assertTrue((x.array == b).all(), (x.shape, b.shape))
-    #--- End: def
+
 
 #--- End: class
 

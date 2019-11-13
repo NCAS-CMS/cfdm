@@ -11,6 +11,7 @@ import cfdm
 verbose  =  False
 warnings = False
 
+
 class create_fieldTest(unittest.TestCase):
     def setUp(self):
         filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -21,7 +22,7 @@ class create_fieldTest(unittest.TestCase):
             os.remove(self.filename)
         except:
             pass        
-    #--- End: def
+
             
     def test_create_field(self):
 
@@ -270,8 +271,6 @@ class create_fieldTest(unittest.TestCase):
 #        print h
 
         
-    #--- End: def
-
 #--- End: class
 
 if __name__ == "__main__":
