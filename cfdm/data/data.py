@@ -365,7 +365,7 @@ any other value.
                         
                     try:
                         middle = type(self)(
-                            numpy.ma.array(middle, mask=mask),
+                            numpy.ma.array(middle, mask=mask[1]),
                             units, calendar).datetime_array
                     except (ValueError, OverflowError):
                         middle = '??'
