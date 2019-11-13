@@ -288,7 +288,7 @@ any other value.
     def __str__(self):
         '''Called by the `str` built-in function.
 
-x.__str__() <==> str(x)
+    x.__str__() <==> str(x)
 
         '''
         units    = self.get_units(None)
@@ -317,12 +317,19 @@ x.__str__() <==> str(x)
         open_brackets  = '[' * ndim
         close_brackets = ']' * ndim
 
+        mask = [False, False, False]
+        
         if size == 1:
             if isreftime:
                 # Convert reference time to date-time
+                if first is numpy.ma.masked:
+                    first = 0
+                    mask[0] = True
+                    
                 try:
                     first = type(self)(
-                        numpy.ma.array(first), units, calendar).datetime_array
+                        numpy.ma.array(first, mask=mask[0]),
+                        units, calendar).datetime_array
                 except (ValueError, OverflowError):
                     first = '??'
 
@@ -332,10 +339,15 @@ x.__str__() <==> str(x)
         else:
             last = self.last_element()
             if isreftime:
+                if last is numpy.ma.masked:
+                    last = 0
+                    mask[-1] = True
+                    
                 # Convert reference times to date-times
                 try:
                     first, last = type(self)(
-                        numpy.ma.array([first, last]), units, calendar).datetime_array
+                        numpy.ma.array([first, last], mask=(mask[0], mask[-1])),
+                        units, calendar).datetime_array
                 except (ValueError, OverflowError):
                     first, last = ('??', '??')
 
@@ -347,9 +359,14 @@ x.__str__() <==> str(x)
                 middle = self.second_element()
                 if isreftime:
                     # Convert reference time to date-time
+                    if middle is numpy.ma.masked:
+                        middle = 0
+                        mask[1] = True
+                        
                     try:
                         middle = type(self)(
-                            numpy.ma.array(middle), units, calendar).datetime_array
+                            numpy.ma.array(middle, mask=mask),
+                            units, calendar).datetime_array
                     except (ValueError, OverflowError):
                         middle = '??'
                         
@@ -373,7 +390,7 @@ x.__str__() <==> str(x)
             out += ' {0}'.format(units)
             
         return out
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Private methods
