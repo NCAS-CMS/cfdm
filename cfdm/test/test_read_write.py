@@ -192,7 +192,25 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(OSError):
             x = cfdm.read('test_read_write.py')
             
+        subprocess.run(' '.join(['sed', '-i', '"1 i\ \ "', tmpfileh]),
+                       shell=True, check=True)
+        h = cfdm.read(tmpfileh)[0]
         
+        subprocess.run(' '.join(['sed', '-i', '"1 i\// comment"', tmpfileh]),
+                       shell=True, check=True)
+        h = cfdm.read(tmpfileh)[0]
+
+        subprocess.run(' '.join(['sed', '-i', '"1 i\ // comment"', tmpfileh]),
+                       shell=True, check=True)
+        h = cfdm.read(tmpfileh)[0]
+
+        subprocess.run(' '.join(['sed', '-i', '"1 i\ \t// comment"', tmpfileh]),
+                       shell=True, check=True)
+        h = cfdm.read(tmpfileh)[0]
+
+#        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)
+
+            
 #--- End: class
 
 if __name__ == "__main__":
