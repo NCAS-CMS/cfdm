@@ -488,12 +488,13 @@ class Field(mixin.NetCDFVariable,
     The following type of compression are available (see the *method*
     parameter):
 
-    * Ragged arrays for discrete sampling geometries (DSG). Three
-      different types of ragged array representation are supported.
-
-    ..
-
-    * Compression by gathering. 
+        * Ragged arrays for discrete sampling geometries (DSG). Three
+          different types of ragged array representation are
+          supported.
+        
+        ..
+        
+        * Compression by gathering. 
 
     .. versionadded:: 1.7.11
     
@@ -686,7 +687,7 @@ class Field(mixin.NetCDFVariable,
                                shape=data.shape,
                                size=data.size, ndim=data.ndim,
                                **kwargs)
-                data._create_partition_matrix_for_compressed_array(y)
+                data._set_Array(y, copy=False)
         #--- End: def
 
         if inplace:
