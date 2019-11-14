@@ -1,0 +1,7 @@
+cfdm.mixin.PropertiesDataBounds.HDF_chunks
+==========================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.mixin.PropertiesDataBounds.HDF_chunks

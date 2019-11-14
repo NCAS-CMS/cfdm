@@ -1,0 +1,7 @@
+cfdm.FieldAncillary.equals
+==========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.FieldAncillary.equals

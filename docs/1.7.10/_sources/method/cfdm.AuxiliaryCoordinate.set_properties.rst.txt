@@ -1,0 +1,7 @@
+cfdm.AuxiliaryCoordinate.set_properties
+=======================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.AuxiliaryCoordinate.set_properties

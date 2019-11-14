@@ -1,0 +1,7 @@
+cfdm.Constructs.__str__
+=======================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Constructs.__str__

@@ -1,0 +1,7 @@
+cfdm.Constructs.domain_axis
+===========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Constructs.domain_axis
