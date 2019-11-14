@@ -10,42 +10,41 @@ from . import Domain
 class Field(mixin.NetCDFVariable,
             mixin.NetCDFGeometry,
             mixin.NetCDFGlobalAttributes,
-#            mixin.NetCDFUnlimitedDimensions,
             mixin.ConstructAccess,
             mixin.PropertiesData,
             core.Field):
     '''A field construct of the CF data model.
 
-The field construct is central to the CF data model, and includes all
-the other constructs. A field corresponds to a CF-netCDF data variable
-with all of its metadata. All CF-netCDF elements are mapped to a field
-construct or some element of the CF field construct. The field
-construct contains all the data and metadata which can be extracted
-from the file using the CF conventions.
-
-The field construct consists of a data array and the definition of its
-domain (that describes the locations of each cell of the data array),
-field ancillary constructs containing metadata defined over the same
-domain, and cell method constructs to describe how the cell values
-represent the variation of the physical quantity within the cells of
-the domain. The domain is defined collectively by the following
-constructs of the CF data model: domain axis, dimension coordinate,
-auxiliary coordinate, cell measure, coordinate reference and domain
-ancillary constructs.
-
-The field construct also has optional properties to describe aspects
-of the data that are independent of the domain. These correspond to
-some netCDF attributes of variables (e.g. units, long_name and
-standard_name), and some netCDF global file attributes (e.g. history
-and institution).
-
-**NetCDF interface**
-
-The netCDF variable name of the construct may be accessed with the
-`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-`nc_has_variable` methods.
-
-.. versionadded:: 1.7.0
+    The field construct is central to the CF data model, and includes
+    all the other constructs. A field corresponds to a CF-netCDF data
+    variable with all of its metadata. All CF-netCDF elements are
+    mapped to a field construct or some element of the CF field
+    construct. The field construct contains all the data and metadata
+    which can be extracted from the file using the CF conventions.
+    
+    The field construct consists of a data array and the definition of
+    its domain (that describes the locations of each cell of the data
+    array), field ancillary constructs containing metadata defined
+    over the same domain, and cell method constructs to describe how
+    the cell values represent the variation of the physical quantity
+    within the cells of the domain. The domain is defined collectively
+    by the following constructs of the CF data model: domain axis,
+    dimension coordinate, auxiliary coordinate, cell measure,
+    coordinate reference and domain ancillary constructs.
+    
+    The field construct also has optional properties to describe
+    aspects of the data that are independent of the domain. These
+    correspond to some netCDF attributes of variables (e.g. units,
+    long_name and standard_name), and some netCDF global file
+    attributes (e.g. history and institution).
+    
+    **NetCDF interface**
+    
+    The netCDF variable name of the construct may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+    `nc_has_variable` methods.
+    
+    .. versionadded:: 1.7.0
 
     '''
     def __new__(cls, *args, **kwargs):
@@ -55,32 +54,32 @@ The netCDF variable name of the construct may be accessed with the
         instance._Constructs = Constructs
         instance._Domain     = Domain
         return instance
-    #--- End: def
+
 
     def __init__(self, properties=None, source=None, copy=True,
                  _use_data=True):
         '''**Initialization**
 
-:Parameters:
-
-    properties: `dict`, optional
-        Set descriptive properties. The dictionary keys are property
-        names, with corresponding values. Ignored if the *source*
-        parameter is set.
-
-        *Parameter example:*
-          ``properties={'standard_name': 'air_temperature'}``
-        
-        Properties may also be set after initialisation with the
-        `set_properties` and `set_property` methods.
-
-    source: optional
-        Initialize the properties, data and metadata constructs from
-        those of *source*.
-        
-    copy: `bool`, optional
-        If False then do not deep copy input parameters prior to
-        initialization. By default arguments are deep copied.
+    :Parameters:
+    
+        properties: `dict`, optional
+            Set descriptive properties. The dictionary keys are
+            property names, with corresponding values. Ignored if the
+            *source* parameter is set.
+    
+            Properties may also be set after initialisation with the
+            `set_properties` and `set_property` methods.
+    
+            *Parameter example:*
+              ``properties={'standard_name': 'air_temperature'}``
+            
+        source: optional
+            Initialize the properties, data and metadata constructs
+            from those of *source*.
+            
+        copy: `bool`, optional
+            If False then do not deep copy input parameters prior to
+            initialization. By default arguments are deep copied.
 
         '''        
         # Initialize the new field with attributes and CF properties
@@ -89,26 +88,26 @@ The netCDF variable name of the construct may be accessed with the
                             _use_data=_use_data)
         
         self._initialise_netcdf(source)
-    #--- End: def
+
 
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
-
-.. versionadded:: 1.7.0
+    x.__repr__() <==> repr(x)
+    
+    .. versionadded:: 1.7.0
 
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__,
                                    self._one_line_description())
-    #--- End: def
+
 
     def __str__(self):
         '''Called by the `str` built-in function.
 
-x.__str__() <==> str(x)
+    x.__str__() <==> str(x)
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         title = "Field: {0}".format(self.identity(''))
@@ -191,49 +190,51 @@ x.__str__() <==> str(x)
         string.append(str(self.domain))
         
         return '\n'.join(string)
-    #--- End def
+
 
     def __getitem__(self, indices):
         '''Return a subspace of the field defined by indices.
 
-f.__getitem__(indices) <==> f[indices]
-
-The new subspace contains the same properties and similar metadata
-constructs to the original field, but the latter are also subspaced
-when they span domain axis constructs that have been changed.
-
-Indexing follows rules that are very similar to the numpy indexing
-rules, the only differences being:
-
-* An integer index i takes the i-th element but does not reduce the
-  rank by one.
-
-* When two or more dimensions' indices are sequences of integers then
-  these indices work independently along each dimension (similar to
-  the way vector subscripts work in Fortran). This is the same
-  behaviour as indexing on a Variable object of the netCDF4 package.
-
-.. versionadded:: 1.7.0
-
-:Returns:
-
-    `Field`
-        The subspace of the field construct.
-
-**Examples:**
-
->>> f.data.shape
-(1, 10, 9)
->>> f[:, :, 1].data.shape
-(1, 10, 1)
->>> f[:, 0].data.shape
-(1, 1, 9)
->>> f[..., 6:3:-1, 3:6].data.shape
-(1, 3, 3)
->>> f[0, [2, 9], [4, 8]].data.shape
-(1, 2, 2)
->>> f[0, :, -2].data.shape
-(1, 10, 1)
+    f.__getitem__(indices) <==> f[indices]
+    
+    The new subspace contains the same properties and similar metadata
+    constructs to the original field, but the latter are also
+    subspaced when they span domain axis constructs that have been
+    changed.
+    
+    Indexing follows rules that are very similar to the numpy indexing
+    rules, the only differences being:
+    
+    * An integer index i takes the i-th element but does not reduce
+      the rank by one.
+    
+    * When two or more dimensions' indices are sequences of integers
+      then these indices work independently along each dimension
+      (similar to the way vector subscripts work in Fortran). This is
+      the same behaviour as indexing on a Variable object of the
+      netCDF4 package.
+    
+    .. versionadded:: 1.7.0
+    
+    :Returns:
+    
+        `Field`
+            The subspace of the field construct.
+    
+    **Examples:**
+    
+    >>> f.data.shape
+    (1, 10, 9)
+    >>> f[:, :, 1].data.shape
+    (1, 10, 1)
+    >>> f[:, 0].data.shape
+    (1, 1, 9)
+    >>> f[..., 6:3:-1, 3:6].data.shape
+    (1, 3, 3)
+    >>> f[0, [2, 9], [4, 8]].data.shape
+    (1, 2, 2)
+    >>> f[0, :, -2].data.shape
+    (1, 10, 1)
 
         ''' 
         data  = self.get_data()
@@ -252,7 +253,6 @@ rules, the only differences being:
         # ------------------------------------------------------------
         # Subspace the field's data
         # ------------------------------------------------------------
-#        new.set_data(data[tuple(indices)], axes=None) #, data_axes)
         new_data = data[tuple(indices)]
 
         # Replace domain axes
@@ -269,7 +269,6 @@ rules, the only differences being:
         new_constructs_data_axes = new.constructs.data_axes()
         
         if data_axes:
-#            for key, construct in new.constructs.filter_by_data().items():
             for key, construct in new.constructs.filter_by_axis('or', *data_axes).items():
                 needs_slicing = False
                 dice = []
@@ -282,19 +281,13 @@ rules, the only differences being:
                 #--- End: for
     
                 if needs_slicing:
-#                    new_construct = construct[tuple(dice)]
                     new.set_construct(construct[tuple(dice)], key=key, copy=False)
-#                else:
-#                    new_construct = construct.copy()
-#                    
-#                new.set_construct(new_construct, key=key, copy=False)
         #--- End: if
 
-#        new.set_data_axes(axes=data_axes)
         new.set_data(new_data, copy=False)
        
         return new
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Private methods
@@ -322,30 +315,30 @@ rules, the only differences being:
             units += ' {0}'.format(calendar)
             
         return "{0}{1}{2}".format(self.identity(''), axis_names, units)
-    #--- End: def
+
 
     def _set_dataset_compliance(self, value):
         '''Set the report of problems encountered whilst reading the field
-construct from a dataset.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `dataset_compliance`
-
-:Parameters:
-
-    value:
-        The value of the data_compliance component
-
-:Returns:
-
-    `None`
-
-**Examples:**
+    construct from a dataset.
+    
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `dataset_compliance`
+    
+    :Parameters:
+    
+        value:
+            The value of the data_compliance component
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
 
         '''
         self._set_component('dataset_compliance', value, copy=True)
-    #--- End: def    
+
 
     # ----------------------------------------------------------------
     # Attributes
@@ -354,80 +347,80 @@ construct from a dataset.
     def field_ancillaries(self):
         '''Return field ancillary constructs.
 
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs`, `get_construct`
-
-:Parameters:
-
-    copy: `bool`, optional
-        If True then return copies of the constructs. By default the
-        constructs are not copied.
-
-:Returns:
-
-    `Constructs`
-        The field ancillary constructs and their construct keys.
-
-**Examples:**
-
->>> print(f.field_ancillaries)
-Constructs:
-{}
-
->>> print(f.field_ancillaries)
-Constructs:
-{'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-
->>> print(f.field_ancillaries('specific_humuidity standard_error'))
-Constructs:
-{'fieldancillary0': <FieldAncillary: specific_humidity standard_error(10, 9) K>}
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `constructs`, `get_construct`
+    
+    :Parameters:
+    
+        copy: `bool`, optional
+            If True then return copies of the constructs. By default
+            the constructs are not copied.
+    
+    :Returns:
+    
+        `Constructs`
+            The field ancillary constructs and their construct keys.
+    
+    **Examples:**
+    
+    >>> print(f.field_ancillaries)
+    Constructs:
+    {}
+    
+    >>> print(f.field_ancillaries)
+    Constructs:
+    {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+    
+    >>> print(f.field_ancillaries('specific_humuidity standard_error'))
+    Constructs:
+    {'fieldancillary0': <FieldAncillary: specific_humidity standard_error(10, 9) K>}
 
         '''
         return self.constructs.filter_by_type('field_ancillary')
-    #--- End: def
+
 
     @property
     def cell_methods(self):
         '''Return cell method constructs.
 
-The cell methods are not returned in the order in which they were
-applied. To achieve this use the `~Constructs.ordered` of the returned
-`Constructs` instance.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs`, `get_construct`, `set_construct`
-
-:Parameters:
-
-    copy: `bool`, optional
-        If True then return copies of the constructs. By default the
-        constructs are not copied.
-
-:Returns:
-
-    `Constructs`
-        The cell method constructs and their construct keys.
-
-**Examples:**
-
->>> f.cell_methods
-Constructs:
-{}
-
->>> f.cell_methods
-Constructs:
-{'cellmethod1': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
- 'cellmethod0': <CellMethod: domainaxis3: maximum>}
-
->>> f.cell_methods.ordered()
-OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+    The cell methods are not returned in the order in which they were
+    applied. To achieve this use the `~Constructs.ordered` of the
+    returned `Constructs` instance.
+    
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `constructs`, `get_construct`, `set_construct`
+    
+    :Parameters:
+    
+        copy: `bool`, optional
+            If True then return copies of the constructs. By default
+            the constructs are not copied.
+    
+    :Returns:
+    
+        `Constructs`
+            The cell method constructs and their construct keys.
+    
+    **Examples:**
+    
+    >>> f.cell_methods
+    Constructs:
+    {}
+    
+    >>> f.cell_methods
+    Constructs:
+    {'cellmethod1': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+     'cellmethod0': <CellMethod: domainaxis3: maximum>}
+    
+    >>> f.cell_methods.ordered()
+    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
         '''
         return self.constructs.filter_by_type('cell_method')
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Methods
@@ -435,16 +428,16 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     def climatological_time_axes(self):
         '''TODO
 
-.. versionadded:: 1.7.0
-
-:Returns:
-
-    `list`
-        TODO
-
-**Examples:**
-
-TODO
+    .. versionadded:: 1.7.0
+    
+    :Returns:
+    
+        `list`
+            TODO
+    
+    **Examples:**
+    
+    TODO
 
         '''
         out = []
@@ -468,37 +461,37 @@ TODO
             out.append((axis,))
 
         return out
-    #--- End: def
+
 
     def copy(self, data=True):
         '''Return a deep copy of the field construct.
 
-``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-Arrays within `Data` instances are copied with a copy-on-write
-technique. This means that a copy takes up very little extra memory,
-even when the original contains very large data arrays, and the copy
-operation is fast.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    data: `bool`, optional
-        If False then do not copy the data field construct, nor that
-        of any of its metadata constructs. By default all data are
-        copied.
-
-:Returns:
-
-        The deep copy.
-
-**Examples:**
-
->>> g = f.copy()
->>> g = f.copy(data=False)
->>> g.has_data()
-False
+    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+    
+    Arrays within `Data` instances are copied with a copy-on-write
+    technique. This means that a copy takes up very little extra
+    memory, even when the original contains very large data arrays,
+    and the copy operation is fast.
+    
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        data: `bool`, optional
+            If False then do not copy the data field construct, nor
+            that of any of its metadata constructs. By default all
+            data are copied.
+    
+    :Returns:
+    
+            The deep copy.
+    
+    **Examples:**
+    
+    >>> g = f.copy()
+    >>> g = f.copy(data=False)
+    >>> g.has_data()
+    False
 
         '''
         new = super().copy(data=data)
@@ -506,29 +499,29 @@ False
         new._set_dataset_compliance(self.dataset_compliance())
 
         return new
-    #--- End: def
+
 
     def dump(self, display=True, _level=0, _title=None):
         '''A full description of the field construct.
 
-Returns a description of all properties, including those of metadata
-constructs and their components, and provides selected values of all
-data arrays.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed.
-
-:Returns:
-
-    `None` or `str`
-        The description. If *display* is True then the description is
-        printed and `None` is returned. Otherwise the description is
-        returned as a string.
+    Returns a description of all properties, including those of
+    metadata constructs and their components, and provides selected
+    values of all data arrays.
+    
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        display: `bool`, optional
+            If False then return the description as a string. By
+            default the description is printed.
+    
+    :Returns:
+    
+        `None` or `str`
+            The description. If *display* is True then the description
+            is printed and `None` is returned. Otherwise the
+            description is returned as a string.
 
         '''
         indent = '    '      
@@ -614,7 +607,7 @@ data arrays.
             print(string)
         else:
             return string
-    #--- End: def
+
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -622,112 +615,116 @@ data arrays.
                ignore_type=False):
         '''Whether two field constructs are the same.
 
-Equality is strict by default. This means that for two field
-constructs to be considered equal they must have corresponding
-metadata constructs and for each pair of constructs:
-
-* the same descriptive properties must be present, with the same
-  values and data types, and vector-valued properties must also have
-  same the size and be element-wise equal (see the *ignore_properties*
-  and *ignore_data_type* parameters), and
-
-..
-
-* if there are data arrays then they must have same shape and data
-  type, the same missing data mask, and be element-wise equal (see the
-  *ignore_data_type* parameter).
-
-Two real numbers ``x`` and ``y`` are considered equal if
-``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers. See the *atol* and *rtol*
-parameters.
-
-If data arrays are compressed then the compression type and the
-underlying compressed arrays must be the same, as well as the arrays
-in their uncompressed forms. See the *ignore_compression* parameter.
-
-Any type of object may be tested but, in general, equality is only
-possible with another field construct, or a subclass of one. See the
-*ignore_type* parameter.
-
-NetCDF elements, such as netCDF variable and dimension names, do not
-constitute part of the CF data model and so are not checked on any
-construct.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    other: 
-        The object to compare for equality.
-
-    atol: float, optional
-        The tolerance on absolute differences between real
-        numbers. The default value is set by the `cfdm.ATOL` function.
-        
-    rtol: float, optional
-        The tolerance on relative differences between real
-        numbers. The default value is set by the `cfdm.RTOL` function.
-
-    ignore_fill_value: `bool`, optional
-        If True then the "_FillValue" and "missing_value" properties
-        are omitted from the comparison, for the field construct and
-        metadata constructs.
-
-    verbose: `bool`, optional
-        If True then print information about differences that lead to
-        inequality.
-
-    ignore_properties: sequence of `str`, optional
-        The names of properties of the field construct (not the
-        metadata constructs) to omit from the comparison. Note that
-        the "Conventions" property is always omitted by default.
-
-    ignore_data_type: `bool`, optional
-        If True then ignore the data types in all numerical 
-        comparisons. By default different numerical data types imply
-        inequality, regardless of whether the elements are within the
-        tolerance for equality.
-
-    ignore_compression: `bool`, optional
-        If True then any compression applied to underlying arrays is
-        ignored and only uncompressed arrays are tested for
-        equality. By default the compression type and, if applicable,
-        the underlying compressed arrays must be the same, as well as
-        the arrays in their uncompressed forms
-
-    ignore_type: `bool`, optional
-        Any type of object may be tested but, in general, equality is
-        only possible with another field construct, or a subclass of
-        one. If *ignore_type* is True then ``Field(source=other)`` is
-        tested, rather than the ``other`` defined by the *other*
-        parameter.
-
-:Returns: 
-  
-    `bool`
-        Whether the two field constructs are equal.
-
-**Examples:**
-
->>> f.equals(f)
-True
->>> f.equals(f.copy())
-True
->>> f.equals(f[...])
-True
->>> f.equals('not a Field instance')
-False
-
->>> g = f.copy()
->>> g.set_property('foo', 'bar')
->>> f.equals(g)
-False
->>> f.equals(g, verbose=True)
-Field: Non-common property name: foo
-Field: Different properties
-False
+    Equality is strict by default. This means that for two field
+    constructs to be considered equal they must have corresponding
+    metadata constructs and for each pair of constructs:
+    
+    * the same descriptive properties must be present, with the same
+      values and data types, and vector-valued properties must also
+      have same the size and be element-wise equal (see the
+      *ignore_properties* and *ignore_data_type* parameters), and
+    
+    ..
+    
+    * if there are data arrays then they must have same shape and data
+      type, the same missing data mask, and be element-wise equal (see
+      the *ignore_data_type* parameter).
+    
+    Two real numbers ``x`` and ``y`` are considered equal if
+    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
+    differences) and ``rtol`` (the tolerance on relative differences)
+    are positive, typically very small numbers. See the *atol* and
+    *rtol* parameters.
+    
+    If data arrays are compressed then the compression type and the
+    underlying compressed arrays must be the same, as well as the
+    arrays in their uncompressed forms. See the *ignore_compression*
+    parameter.
+    
+    Any type of object may be tested but, in general, equality is only
+    possible with another field construct, or a subclass of one. See
+    the *ignore_type* parameter.
+    
+    NetCDF elements, such as netCDF variable and dimension names, do
+    not constitute part of the CF data model and so are not checked on
+    any construct.
+    
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        other: 
+            The object to compare for equality.
+    
+        atol: float, optional
+            The tolerance on absolute differences between real
+            numbers. The default value is set by the `cfdm.ATOL`
+            function.
+            
+        rtol: float, optional
+            The tolerance on relative differences between real
+            numbers. The default value is set by the `cfdm.RTOL`
+            function.
+    
+        ignore_fill_value: `bool`, optional
+            If True then the "_FillValue" and "missing_value"
+            properties are omitted from the comparison, for the field
+            construct and metadata constructs.
+    
+        verbose: `bool`, optional
+            If True then print information about differences that lead
+            to inequality.
+    
+        ignore_properties: sequence of `str`, optional
+            The names of properties of the field construct (not the
+            metadata constructs) to omit from the comparison. Note
+            that the "Conventions" property is always omitted by
+            default.
+    
+        ignore_data_type: `bool`, optional
+            If True then ignore the data types in all numerical
+            comparisons. By default different numerical data types
+            imply inequality, regardless of whether the elements are
+            within the tolerance for equality.
+    
+        ignore_compression: `bool`, optional
+            If True then any compression applied to underlying arrays
+            is ignored and only uncompressed arrays are tested for
+            equality. By default the compression type and, if
+            applicable, the underlying compressed arrays must be the
+            same, as well as the arrays in their uncompressed forms
+    
+        ignore_type: `bool`, optional
+            Any type of object may be tested but, in general, equality
+            is only possible with another field construct, or a
+            subclass of one. If *ignore_type* is True then
+            ``Field(source=other)`` is tested, rather than the
+            ``other`` defined by the *other* parameter.
+    
+    :Returns: 
+      
+        `bool`
+            Whether the two field constructs are equal.
+    
+    **Examples:**
+    
+    >>> f.equals(f)
+    True
+    >>> f.equals(f.copy())
+    True
+    >>> f.equals(f[...])
+    True
+    >>> f.equals('not a Field instance')
+    False
+    
+    >>> g = f.copy()
+    >>> g.set_property('foo', 'bar')
+    >>> f.equals(g)
+    False
+    >>> f.equals(g, verbose=True)
+    Field: Non-common property name: foo
+    Field: Different properties
+    False
 
         '''
         # ------------------------------------------------------------
@@ -760,60 +757,60 @@ False
             return False
 
         return True
-    #--- End: def
+
         
     def insert_dimension(self, axis, position=0, inplace=False):
         '''Expand the shape of the data array.
 
-Inserts a new size 1 axis, corresponding to an existing domain axis
-construct, into the data array.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `squeeze`, `transpose`
-
-:Parameters:
-
-    axis: `str`
-        The construct identifier of the domain axis construct
-        corresponding to the inserted axis.
-
-        *Parameter example:*
-          ``axis='domainaxis2'``
-
-    position: `int`, optional
-        Specify the position that the new axis will have in the data
-        array. By default the new axis has position 0, the slowest
-        varying position. Negative integers counting from the last
-        position are allowed.
-
-        *Parameter example:*
-          ``position=2``
-
-        *Parameter example:*
-          ``position=-1``
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-:Returns:
-
-    `Field` or `None`
-        The new field construct with expanded data axes. If the
-        operation was in-place then `None` is returned.
-
-**Examples:**
-
->>> f.data.shape
-(19, 73, 96)
->>> f.insert_dimension('domainaxis3').data.shape
-(1, 96, 73, 19)
->>> f.insert_dimension('domainaxis3', position=3).data.shape
-(19, 73, 96, 1)
->>> f.insert_dimension('domainaxis3', position=-1, inplace=True)
-(19, 73, 1, 96)
->>> f.data.shape
-(19, 73, 1, 96)
+    Inserts a new size 1 axis, corresponding to an existing domain
+    axis construct, into the data array.
+    
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `squeeze`, `transpose`
+    
+    :Parameters:
+    
+        axis: `str`
+            The construct identifier of the domain axis construct
+            corresponding to the inserted axis.
+    
+            *Parameter example:*
+              ``axis='domainaxis2'``
+    
+        position: `int`, optional
+            Specify the position that the new axis will have in the
+            data array. By default the new axis has position 0, the
+            slowest varying position. Negative integers counting from
+            the last position are allowed.
+    
+            *Parameter example:*
+              ``position=2``
+    
+            *Parameter example:*
+              ``position=-1``
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Field` or `None`
+            The new field construct with expanded data axes. If the
+            operation was in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> f.data.shape
+    (19, 73, 96)
+    >>> f.insert_dimension('domainaxis3').data.shape
+    (1, 96, 73, 19)
+    >>> f.insert_dimension('domainaxis3', position=3).data.shape
+    (19, 73, 96, 1)
+    >>> f.insert_dimension('domainaxis3', position=-1, inplace=True)
+    (19, 73, 1, 96)
+    >>> f.data.shape
+    (19, 73, 1, 96)
 
         '''
         if inplace:
@@ -828,7 +825,8 @@ construct, into the data array.
         
         if domain_axis.get_size() != 1:
             raise ValueError(
-"Can't insert an axis of size {}: {!r}".format(domain_axis.get_size(), axis))
+                "Can't insert an axis of size {}: {!r}".format(
+                    domain_axis.get_size(), axis))
 
         data_axes = f.get_data_axes(default=None)
         if data_axes is not None:
@@ -840,7 +838,6 @@ construct, into the data array.
             data_axes.insert(position, axis)
 
         # Expand the dims in the field's data array
-#        f.data.insert_dimension(position, inplace=True)
         super(Field, f).insert_dimension(position, inplace=True)
 
         if data_axes is not None:
@@ -850,84 +847,87 @@ construct, into the data array.
             f = None
 
         return f
-    #--- End: def
+
 
     def convert(self, key, full_domain=True):
         '''Convert a metadata construct into a new field construct.
 
-The new field construct has the properties and data of the metadata
-construct, and domain axis constructs corresponding to the data. By
-default it also contains other metadata constructs (such as dimension
-coordinate and coordinate reference constructs) that define its
-domain.
+    The new field construct has the properties and data of the
+    metadata construct, and domain axis constructs corresponding to
+    the data. By default it also contains other metadata constructs
+    (such as dimension coordinate and coordinate reference constructs)
+    that define its domain.
+    
+    The `cfdm.read` function allows a field construct to be derived
+    directly from a netCDF variable that corresponds to a metadata
+    construct. In this case, the new field construct will have a
+    domain limited to that which can be inferred from the
+    corresponding netCDF variable - typically only domain axis and
+    dimension coordinate constructs. This will usually result in a
+    different field construct to that created with the
+    `~Field.convert` method.
+    
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `cfdm.read`
+    
+    :Parameters:
+    
+        key: `str` 
+            Convert the metadata construct with the given construct
+            key.
+    
+        full_domain: `bool`, optional
+            If False then do not create a domain, other than domain
+            axis constructs, for the new field construct. By default
+            as much of the domain as possible is copied to the new
+            field construct.
+    
+    :Returns:
+    
+        `Field`
+            The new field construct.
+    
+    **Examples:**
+    
+    >>> f = cfdm.read('file.nc')[0]
+    >>> print(f)
+    Field: air_temperature (ncvar%ta)
+    ---------------------------------
+    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                    : time(1) = [2019-01-01 00:00:00]
+    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                    : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
+    Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+    Coord references: atmosphere_hybrid_height_coordinate
+                    : rotated_latitude_longitude
+    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+    >>> x = f.convert('domainancillary2')
+    >>> print(x)
+    Field: surface_altitude (ncvar%surface_altitude)
+    ------------------------------------------------
+    Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
+    Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
+                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                    : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
+    Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+    Coord references: rotated_latitude_longitude
+    >>> y = f.convert('domainancillary2', full_domain=False)
+    >>> print(y)
+    Field: surface_altitude (ncvar%surface_altitude)
+    ------------------------------------------------
+    Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
 
-The `cfdm.read` function allows a field construct to be derived
-directly from a netCDF variable that corresponds to a metadata
-construct. In this case, the new field construct will have a domain
-limited to that which can be inferred from the corresponding netCDF
-variable - typically only domain axis and dimension coordinate
-constructs. This will usually result in a different field construct to
-that created with the `~Field.convert` method.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `cfdm.read`
-
-:Parameters:
-
-    key: `str` 
-        Convert the metadata construct with the given construct key.
-
-    full_domain: `bool`, optional
-        If False then do not create a domain, other than domain axis
-        constructs, for the new field construct. By default as much of
-        the domain as possible is copied to the new field construct.
-
-:Returns:
-
-    `Field`
-        The new field construct.
-
-**Examples:**
-
->>> f = cfdm.read('file.nc')[0]
->>> print(f)
-Field: air_temperature (ncvar%ta)
----------------------------------
-Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
-Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
-Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
-Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
-                : grid_latitude(10) = [2.2, ..., -1.76] degrees
-                : grid_longitude(9) = [-4.7, ..., -1.18] degrees
-                : time(1) = [2019-01-01 00:00:00]
-Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
-                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
-Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
-Coord references: atmosphere_hybrid_height_coordinate
-                : rotated_latitude_longitude
-Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
-                : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
-                : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
->>> x = f.convert('domainancillary2')
->>> print(x)
-Field: surface_altitude (ncvar%surface_altitude)
-------------------------------------------------
-Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
-Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
-                : grid_longitude(9) = [-4.7, ..., -1.18] degrees
-Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
-                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
-Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
-Coord references: rotated_latitude_longitude
->>> y = f.convert('domainancillary2', full_domain=False)
->>> print(y)
-Field: surface_altitude (ncvar%surface_altitude)
-------------------------------------------------
-Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
-		   
         '''
         c = self.constructs.filter_by_key(key).value().copy()
         
@@ -1008,48 +1008,48 @@ Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
         #--- End: if
               
         return f
-    #--- End: def
+
    
     def dataset_compliance(self, display=False):
         '''A report of problems encountered whilst reading the field construct
-from a dataset.
-
-If the dataset is partially CF-compliant to the extent that it is not
-possible to unambiguously map an element of the netCDF dataset to an
-element of the CF data model, then a field construct is still returned
-by the `read` function, but may be incomplete.
-
-Such "structural" non-compliance would occur, for example, if the
-"coordinates" attribute of a CF-netCDF data variable refers to another
-variable that does not exist, or refers to a variable that spans a
-netCDF dimension that does not apply to the data variable.
-
-Other types of non-compliance are not checked, such whether or not
-controlled vocabularies have been adhered to.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `cfdm.read`
-
-:Parameters:
-
-    display: `bool`, optional
-        If True print the compliance report. By default the report is
-        returned as a dictionary.
-
-:Returns:
-
-    `None` or `dict`
-        The report. If *display* is True then the report is printed
-        and `None` is returned. Otherwise the report is returned as a
-        dictionary.
-
-**Examples:**
-
-If no problems were encountered, an empty dictionary is returned:
-
->>> f.dataset_compliance()
-{}
+    from a dataset.
+    
+    If the dataset is partially CF-compliant to the extent that it is
+    not possible to unambiguously map an element of the netCDF dataset
+    to an element of the CF data model, then a field construct is
+    still returned by the `read` function, but may be incomplete.
+    
+    Such "structural" non-compliance would occur, for example, if the
+    "coordinates" attribute of a CF-netCDF data variable refers to
+    another variable that does not exist, or refers to a variable that
+    spans a netCDF dimension that does not apply to the data variable.
+    
+    Other types of non-compliance are not checked, such whether or not
+    controlled vocabularies have been adhered to.
+    
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `cfdm.read`
+    
+    :Parameters:
+    
+        display: `bool`, optional
+            If True print the compliance report. By default the report
+            is returned as a dictionary.
+    
+    :Returns:
+    
+        `None` or `dict`
+            The report. If *display* is True then the report is
+            printed and `None` is returned. Otherwise the report is
+            returned as a dictionary.
+    
+    **Examples:**
+    
+    If no problems were encountered, an empty dictionary is returned:
+    
+    >>> f.dataset_compliance()
+    {}
 
         '''
         d = self._get_component('dataset_compliance', {})
@@ -1072,60 +1072,60 @@ If no problems were encountered, an empty dictionary is returned:
                     print('            {{{0}}},'.format(
                         '\n             '.join(['{0!r}: {1!r},'.format(key2, value2)
                                                 for key2, value2 in sorted(x.items())])))
-                #--- End: for
+
                 print('        ],')
 
             print('    },')
             print('}\n')
-    #--- End: def
+
      
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
-By default all size one axes are removed, but particular size one axes
-may be selected for removal.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `insert_dimension`, `transpose`
-
-:Parameters:
-
-    axes: (sequence of) `int`, optional
-        The positions of the size one axes to be removed. By default
-        all size one axes are removed. Each axis is identified by its
-        original integer position. Negative integers counting from the
-        last position are allowed.
-
-        *Parameter example:*
-          ``axes=0``
-
-        *Parameter example:*
-          ``axes=-2``
-
-        *Parameter example:*
-          ``axes=[2, 0]``
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-:Returns:
-
-    `Field` or `None`
-        The field construct with removed data axes. If the operation
-        was in-place then `None` is returned.
-
-**Examples:**
-
->>> f.data.shape
-(1, 73, 1, 96)
->>> f.squeeze().data.shape
-(73, 96)
->>> f.squeeze(0).data.shape
-(73, 1, 96)
->>> f.squeeze([-3, 2], inplace=True)
->>> f.data.shape
-(73, 96)
+    By default all size one axes are removed, but particular size one
+    axes may be selected for removal.
+    
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `insert_dimension`, `transpose`
+    
+    :Parameters:
+    
+        axes: (sequence of) `int`, optional
+            The positions of the size one axes to be removed. By
+            default all size one axes are removed. Each axis is
+            identified by its original integer position. Negative
+            integers counting from the last position are allowed.
+    
+            *Parameter example:*
+              ``axes=0``
+    
+            *Parameter example:*
+              ``axes=-2``
+    
+            *Parameter example:*
+              ``axes=[2, 0]``
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Field` or `None`
+            The field construct with removed data axes. If the
+            operation was in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> f.data.shape
+    (1, 73, 1, 96)
+    >>> f.squeeze().data.shape
+    (73, 96)
+    >>> f.squeeze(0).data.shape
+    (73, 1, 96)
+    >>> f.squeeze([-3, 2], inplace=True)
+    >>> f.data.shape
+    (73, 96)
 
         '''
         if inplace:            
@@ -1147,7 +1147,6 @@ may be selected for removal.
                              for i in range(f.data.ndim) if i not in iaxes]
             
         # Squeeze the field's data array
-#        f.data.squeeze(iaxes, inplace=True)
         super(Field, f).squeeze(iaxes, inplace=True)
 
         if data_axes is not None:
@@ -1157,54 +1156,55 @@ may be selected for removal.
             f = None
 
         return f
-    #--- End: def
+
 
     def transpose(self, axes=None, constructs=False, inplace=False):
         '''Permute the axes of the data array.
 
-.. versionadded:: 1.7.0
-
-.. seealso:: `insert_dimension`, `squeeze`
-
-:Parameters:
-
-    axes: (sequence of) `int`
-        The new axis order. By default the order is reversed. Each
-        axis in the new order is identified by its original integer
-        position. Negative integers counting from the last position
-        are allowed.
-
-        *Parameter example:*
-          ``axes=[2, 0, 1]``
-
-        *Parameter example:*
-          ``axes=[-1, 0, 1]``
-
-    constructs: `bool`
-        If True then tranpose the metadata constructs to have the same
-        relative domain axis order as the data of tranposed field
-        constuct. By default, metadata constructs are not changed.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-:Returns:
-
-    `Field` or `None`
-        The field construct with permuted data axes. If the operation
-        was in-place then `None` is returned.
-
-**Examples:**
-
->>> f.data.shape
-(19, 73, 96)
->>> f.transpose().data.shape
-(96, 73, 19)
->>> f.transpose([1, 0, 2]).data.shape
-(73, 19, 96)
->>> f.transpose(inplace=True)
->>> f.data.shape
-(96, 19, 73)
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `insert_dimension`, `squeeze`
+    
+    :Parameters:
+    
+        axes: (sequence of) `int`
+            The new axis order. By default the order is reversed. Each
+            axis in the new order is identified by its original
+            integer position. Negative integers counting from the last
+            position are allowed.
+    
+            *Parameter example:*
+              ``axes=[2, 0, 1]``
+    
+            *Parameter example:*
+              ``axes=[-1, 0, 1]``
+    
+        constructs: `bool`
+            If True then tranpose the metadata constructs to have the
+            same relative domain axis order as the data of tranposed
+            field constuct. By default, metadata constructs are not
+            changed.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Field` or `None`
+            The field construct with permuted data axes. If the
+            operation was in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> f.data.shape
+    (19, 73, 96)
+    >>> f.transpose().data.shape
+    (96, 73, 19)
+    >>> f.transpose([1, 0, 2]).data.shape
+    (73, 19, 96)
+    >>> f.transpose(inplace=True)
+    >>> f.data.shape
+    (96, 19, 73)
 
         '''
         if inplace:
@@ -1256,13 +1256,12 @@ may be selected for removal.
                 construct.transpose(iaxes, inplace=True)
     
                 f.set_data_axes(axes=new_construct_axes, key=key)
-            #--- End: for
         #--- End: if
 
         if inplace:
             f = None
         
         return f
-    #--- End: def
+
 
 #--- End: class
