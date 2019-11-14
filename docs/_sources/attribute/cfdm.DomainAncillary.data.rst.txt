@@ -1,7 +1,7 @@
 cfdm.DomainAncillary.data
 =========================
 
-.. currentmodule:: cfdm
+.. currentmodule:: cf
 .. default-role:: obj
 
 .. autoattribute:: cfdm.DomainAncillary.data

@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.9</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -97,7 +97,7 @@
 <h1>cfdm.Field.nc_global_attributes<a class="headerlink" href="#cfdm-field-nc-global-attributes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.nc_global_attributes">
-<code class="descclassname">Field.</code><code class="descname">nc_global_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.9/cfdm/mixin/netcdf.py#L571"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.nc_global_attributes" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">nc_global_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/mixin/netcdf.py#L571"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.nc_global_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the selection of properties to be written as netCDF global
 attributes.</p>
 <p>When multiple field constructs are being written to the same file,
@@ -117,7 +117,7 @@ them is optional.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>, <a class="reference internal" href="cfdm.Field.nc_clear_global_attributes.html#cfdm.Field.nc_clear_global_attributes" title="cfdm.Field.nc_clear_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code></a>,
-<a class="reference internal" href="cfdm.Field.nc_set_global_attribute.html#cfdm.Field.nc_set_global_attribute" title="cfdm.Field.nc_set_global_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code></a></p>
+<a class="reference internal" href="cfdm.Field.nc_set_global_attribute.html#cfdm.Field.nc_set_global_attribute" title="cfdm.Field.nc_set_global_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code></a>, <a class="reference internal" href="cfdm.Field.nc_set_global_attributes.html#cfdm.Field.nc_set_global_attributes" title="cfdm.Field.nc_set_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attributes</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -138,12 +138,12 @@ netCDF global attributes.</p>
 <span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: None}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_global_attribute</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
-<span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: None, &#39;foo&#39;}</span>
+<span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: None, &#39;foo&#39;: None}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_global_attribute</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">,</span> <span class="s1">&#39;global comment&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
-<span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: &#39;global_comment&#39;, &#39;foo&#39;}</span>
+<span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: &#39;global_comment&#39;, &#39;foo&#39;: None}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_clear_global_attributes</span><span class="p">()</span>
-<span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: &#39;global_comment&#39;, &#39;foo&#39;}</span>
+<span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: &#39;global_comment&#39;, &#39;foo&#39;: None}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
 <span class="go">{}</span>
 </pre></div>
@@ -164,7 +164,7 @@ netCDF global attributes.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cfdm.Field.nc_global_attributes.rst.txt"

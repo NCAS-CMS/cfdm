@@ -2,7 +2,7 @@ version 1.7.10
 --------------
 ----
 
-**Not yet released**
+**2019-11-14**
 
 * New method: `cfdm.Field.nc_set_global_attributes`.
 * Fixed bug relating to the reading of some CDL files

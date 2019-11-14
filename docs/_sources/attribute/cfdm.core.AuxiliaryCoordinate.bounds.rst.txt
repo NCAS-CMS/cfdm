@@ -1,7 +1,7 @@
 cfdm.core.AuxiliaryCoordinate.bounds
 ====================================
 
-.. currentmodule:: cfdm
+.. currentmodule:: cf
 .. default-role:: obj
 
 .. autoattribute:: cfdm.core.AuxiliaryCoordinate.bounds
