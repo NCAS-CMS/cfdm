@@ -1,4 +1,12 @@
-version 1.7.10
+version 1.7.11
+--------------
+----
+
+**Not yet released**
+
+* New method: `cfdm.Data.flatten`
+  
+ version 1.7.10
 --------------
 ----
 

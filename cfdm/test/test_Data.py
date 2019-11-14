@@ -15,6 +15,11 @@ import numpy
 
 import cfdm
 
+def axes_combinations(ndim):
+    return  [axes
+             for n in range(1, ndim+1)
+             for axes in itertools.permutations(range(ndim), n)]
+
 
 class DataTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -28,6 +33,7 @@ class DataTest(unittest.TestCase):
 #    test_only = ['test_Data_array', 'test_Data_datetime_array']
 #    test_only = ['test_dumpd_loadd']
 #    test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
+
 
     def test_Data__repr__str(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -197,8 +203,43 @@ class DataTest(unittest.TestCase):
         d[()] = cfdm.masked
         dt = d.datetime_array
         self.assertTrue(dt[()] is numpy.ma.masked)
+        
 
+    def test_Data_flatten(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
 
+        ma = numpy.ma.arange(24).reshape(1, 2, 3, 4)
+        ma[0, 1, 1, 2] = cfdm.masked
+        ma[0, 0, 2, 1] = cfdm.masked
+
+        d = cfdm.Data(ma.copy())        
+        self.assertTrue(d.equals(d.flatten([]), verbose=True))
+        self.assertTrue(d.flatten(inplace=True) is None)
+        
+        d = cfdm.Data(ma.copy())
+        
+        b = ma.flatten()
+        for axes in (None, list(range(d.ndim))):
+            e = d.flatten(axes)
+            self.assertTrue(e.ndim == 1)
+            self.assertTrue(e.shape == b.shape)
+            self.assertTrue(e.equals(cfdm.Data(b), verbose=True))
+            
+        for axes in axes_combinations(d.ndim):
+            e = d.flatten(axes)
+            
+            if len(axes) <= 1:
+                shape  = d.shape
+            else:                    
+                shape = [n for i, n in enumerate(d.shape) if i not in axes]
+                shape.insert(sorted(axes)[0], numpy.prod([n for i, n in enumerate(d.shape) if i in axes]))
+                
+            self.assertTrue(e.shape == tuple(shape))
+            self.assertTrue(e.ndim == d.ndim-len(axes)+1)
+            self.assertTrue(e.size == d.size)
+
+        
     def test_Data_transpose(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

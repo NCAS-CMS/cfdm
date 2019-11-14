@@ -20,7 +20,7 @@ class Data(mixin.Container,
            core.Data):
     '''An orthogonal multidimensional array with masked values and units.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def __init__(self, array=None, units=None, calendar=None,
@@ -28,73 +28,75 @@ class Data(mixin.Container,
                  _use_array=True, **kwargs):
         '''**Initialization**
 
-:Parameters:
+    :Parameters:
+    
+        array: numpy array-like or subclass of `Array`, optional
+            The array of values. Ignored if the *source* parameter is
+            set.
+    
+            *Parameter example:*
+              ``array=[34.6]``
+    
+            *Parameter example:*
+              ``array=[[1, 2], [3, 4]]``
+    
+            *Parameter example:*
+              ``array=numpy.ma.arange(10).reshape(2, 1, 5)``
+    
+        units: `str`, optional
+            The physical units of the data. Ignored if the *source*
+            parameter is set.
+    
+            The units may also be set after initialisation with the
+            `set_units` method.
+    
+            *Parameter example:*
+              ``units='km hr-1'``
+    
+            *Parameter example:*
+              ``units='days since 2018-12-01'``
+    
+        calendar: `str`, optional
+            The calendar for reference time units. Ignored if the
+            *source* parameter is set.
+            
+            The calendar may also be set after initialisation with the
+            `set_calendar` method.
+    
+            *Parameter example:*
+              ``calendar='360_day'``
+    
+        fill_value: optional 
+            The fill value of the data. By default, or if set to
+            `None`, the `numpy` fill value appropriate to the array's
+            data type will be used (see
+            `numpy.ma.default_fill_value`). Ignored if the *source*
+            parameter is set.
+    
+            The fill value may also be set after initialisation with
+            the `set_fill_value` method.
+    
+            *Parameter example:*
+              ``fill_value=-999.``
+                    
+        source: optional
+            Initialize the array, units, calendar and fill value from
+            those of *source*.
+    
+        copy: `bool`, optional
+            If False then do not deep copy input parameters prior to
+            initialization. By default arguments are deep copied.
+    
+        kwargs: ignored
+            Not used. Present to facilitate subclassing.
 
-    array: numpy array-like or subclass of `Array`, optional
-        The array of values. Ignored if the *source* parameter is set.
-
-        *Parameter example:*
-          ``array=[34.6]``
-
-        *Parameter example:*
-          ``array=[[1, 2], [3, 4]]``
-
-        *Parameter example:*
-          ``array=numpy.ma.arange(10).reshape(2, 1, 5)``
-
-    units: `str`, optional
-        The physical units of the data. Ignored if the *source*
-        parameter is set.
-
-        *Parameter example:*
-          ``units='km hr-1'``
-
-        *Parameter example:*
-          ``units='days since 2018-12-01'``
-
-        The units may also be set after initialisation with the
-        `set_units` method.
-
-    calendar: `str`, optional
-        The calendar for reference time units. Ignored if the *source*
-        parameter is set.
-
-        *Parameter example:*
-          ``calendar='360_day'``
-        
-        The calendar may also be set after initialisation with the
-        `set_calendar` method.
-
-    fill_value: optional 
-        The fill value of the data. By default, or if set to `None`,
-        the `numpy` fill value appropriate to the array's data type
-        will be used (see `numpy.ma.default_fill_value`). Ignored if
-        the *source* parameter is set.
-
-        *Parameter example:*
-          ``fill_value=-999.``
-                
-        The fill value may also be set after initialisation with the
-        `set_fill_value` method.
-
-    source: optional
-        Initialize the array, units, calendar and fill value from
-        those of *source*.
-
-    copy: `bool`, optional
-        If False then do not deep copy input parameters prior to
-        initialization. By default arguments are deep copied.
-
-    kwargs: ignored
-        Not used. Present to facilitate subclassing.
-        
         '''
         super().__init__(array=array, units=units, calendar=calendar,
                          fill_value=fill_value, source=source,
                          copy=copy, _use_array=_use_array)
 
         self._initialise_netcdf(source)
-    #--- End: def
+        
                  
     def __array__(self, *dtype):
         '''The numpy array interface.
@@ -1632,7 +1634,147 @@ False
         '''
         return self._item((slice(0, 1),)*self.ndim)
     #--- End: def
+
+    def flatten(self, axes=None, inplace=False):
+        '''Flatten axes of the data
+
+    Any subset of the axes may be flattened.
+
+    The shape of the data may change, but the size will not.
+
+    The flattening is executed in row-major (C-style) order. For
+    example, the array ``[[1, 2], [3, 4]]`` would be flattened across
+    both dimensions to ``[1 2 3 4]``.
+
+    .. versionaddedd:: 3.0.2
+
+    .. seealso:: `insert_dimension`, `squeeze`, `transpose`
+
+    :Parameters:
+   
+        axes: (sequence of) int or str, optional
+            Select the axes.  By default all axes are flattened. The
+            *axes* argument may be one, or a sequence, of:
     
+              * An internal axis identifier. Selects this axis.
+            ..
+    
+              * An integer. Selects the axis coresponding to the given
+                position in the list of axes of the data array.
+    
+            No axes are flattened if *axes* is an empty sequence.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+        `Data` or `None`
+            The flattened data, or `None` if the operation was
+            in-place.
+
+    **Examples**
+
+    >>> d = cfdm.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+    >>> d
+    <Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+    >>> print(d.array)
+    [[[[ 0  1  2  3]
+       [ 4  5  6  7]
+       [ 8  9 10 11]]
+      [[12 13 14 15]
+       [16 17 18 19]
+       [20 21 22 23]]]]
+
+    >>> e = d.flatten()
+    >>> e
+    <Data(24): [0, ..., 23]>   
+    >>> print(e.array)
+    [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23]
+
+    >>> e = d.flatten([])
+    >>> e
+    <Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+
+    >>> e = d.flatten([1, 3])
+    >>> e             
+    <Data(1, 8, 3): [[[0, ..., 23]]]>
+    >>> print(e.array)
+    [[[ 0  4  8]
+      [ 1  5  9]
+      [ 2  6 10]
+      [ 3  7 11]
+      [12 16 20]
+      [13 17 21]
+      [14 18 22]
+      [15 19 23]]]
+
+    >>> d.flatten([0, -1], inplace=True)
+    >>> d          
+    <Data(4, 2, 3): [[[0, ..., 23]]]>
+    >>> print(d.array)
+    [[[ 0  4  8]
+      [12 16 20]]
+     [[ 1  5  9]
+      [13 17 21]]
+     [[ 2  6 10]
+      [14 18 22]]
+     [[ 3  7 11]
+      [15 19 23]]]
+
+        '''
+        if inplace:
+            d = self
+        else:
+            d = self.copy()
+            
+        ndim = self.ndim
+        if not ndim:
+            if axes or axes == 0:
+                raise ValueError(
+                    "Can't flatten: Can't remove an axis from scalar {}".format(
+                        self.__class__.__name__))
+            
+            if inplace:
+                d = None
+            return d
+
+        shape = list(d.shape)
+
+        # Note that it is important that the first axis in the list is
+        # the left-most flattened axis
+        if axes is None:
+            axes = list(range(ndim))
+        else:
+            axes = sorted(d._parse_axes(axes))
+
+        n_axes = len(axes)
+        if n_axes <= 1:
+            if inplace:
+                d = None
+            return d
+
+        order = [i for i in range(ndim) if i not in axes]
+        order[axes[0]:axes[0]] = axes
+
+        d.transpose(order, inplace=True)
+        
+        new_shape = [n for i, n in enumerate(shape) if i not in axes]
+        new_shape.insert(axes[0], numpy.prod([shape[i] for i in axes]))
+
+        array = d.array.reshape(new_shape)
+
+        out = type(self)(array, units=d.get_units(None),
+                         calendar=d.get_calendar(None),
+                         fill_value=d.get_fill_value(None))
+            
+        if inplace:
+            d.__dict__ = out.__dict__
+            out = None
+                  
+        return out
+    
+        
     def last_element(self):
         '''Return the last element of the data as a scalar.
 
