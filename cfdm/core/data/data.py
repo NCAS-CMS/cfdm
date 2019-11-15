@@ -649,93 +649,92 @@ None
     def set_calendar(self, calendar):
         '''Set the calendar.
 
-.. seealso:: `del_calendar`, `get_calendar`
-
-:Parameters:
-
-    value: `str`
-        The new calendar.
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> d.set_calendar('none')
->>> d.get_calendar
-'none'
->>> d.del_calendar()
->>> d.get_calendar()
-ValueError: Can't get non-existent calendar
->>> print(d.get_calendar(None))
-None
+    .. seealso:: `del_calendar`, `get_calendar`
+    
+    :Parameters:
+    
+        value: `str`
+            The new calendar.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> d.set_calendar('none')
+    >>> d.get_calendar
+    'none'
+    >>> d.del_calendar()
+    >>> d.get_calendar()
+    ValueError: Can't get non-existent calendar
+    >>> print(d.get_calendar(None))
+    None
 
         '''
         return self._set_component('calendar', calendar, copy=False)
-#        self._calendar = calendar
-    #--- End: def
+
 
     def _set_Array(self, array, copy=True):
         '''Set the array.
 
-:Parameters:
-
-    array: subclass of `Array`
-        The array to be inserted.
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> d._set_Array(a)
+    :Parameters:
+    
+        array: subclass of `Array`
+            The array to be inserted.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> d._set_Array(a)
 
         '''
         if copy:
             array = array.copy()
             
         self._set_component('array', array, copy=False)
-    #--- End: def
+
 
     def set_fill_value(self, value):
         '''Set the missing data value.
 
-.. seealso:: `del_fill_value`, `get_fill_vlaue`
-
-:Parameters:
-
-    value: scalar
-        The new fill value.
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> f.set_fill_value(-9999)
->>> f.get_fill_value()
--9999
->>> print(f.del_fill_value())
--9999
->>> f.get_fill_value()
-ValueError: Can't get non-existent fill value
->>> f.get_fill_value(10**10)
-10000000000
->>> print(f.get_fill_value(None))
-None
->>> f.set_fill_value(None)
->>> print(f.get_fill_value())
-None
+    .. seealso:: `del_fill_value`, `get_fill_vlaue`
+    
+    :Parameters:
+    
+        value: scalar
+            The new fill value.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> f.set_fill_value(-9999)
+    >>> f.get_fill_value()
+    -9999
+    >>> print(f.del_fill_value())
+    -9999
+    >>> f.get_fill_value()
+    ValueError: Can't get non-existent fill value
+    >>> f.get_fill_value(10**10)
+    10000000000
+    >>> print(f.get_fill_value(None))
+    None
+    >>> f.set_fill_value(None)
+    >>> print(f.get_fill_value())
+    None
 
         '''
         if value is None:
             self.del_fill_value(None)
 
         self._set_component('fill_value', value, copy=False)
-    #--- End: def
+
 
     def set_units(self, value):
         '''Set the units.
