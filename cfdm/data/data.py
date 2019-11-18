@@ -1668,7 +1668,7 @@ False
         '''        
         return self._item((slice(-1, None),)*self.ndim)
     #--- End: def
- 
+
     def second_element(self):
         '''Return the second element of the data as a scalar.
 
