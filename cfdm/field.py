@@ -5,8 +5,17 @@ from . import mixin
 from . import core
 from . import Constructs
 from . import Domain
+from . import Count
+from . import Index
+from . import List
 
 from .constants import masked as cfdm_masked
+
+from .data import Data
+from .data import RaggedContiguousArray
+from .data import RaggedIndexedArray
+from .data import RaggedIndexedContiguousArray
+from .data import GatheredArray
 
 
 class Field(mixin.NetCDFVariable,
@@ -55,6 +64,14 @@ class Field(mixin.NetCDFVariable,
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         instance._Domain     = Domain
+        instance._Data       = Data
+        instance._RaggedContiguousArray        = RaggedContiguousArray         
+        instance._RaggedIndexedArray           = RaggedIndexedArray            
+        instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray  
+        instance._GatheredArray                = GatheredArray                  
+        instance._Count = Count
+        instance._Index = Index
+        instance._List  = List
         return instance
 
 
@@ -632,11 +649,42 @@ class Field(mixin.NetCDFVariable,
      1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2]
 
         '''
-        def _empty_compressed_data(data, N):            
-            return Data(numpy.ma.empty(shape=(N,), dtype=data.dtype))
+        def _empty_compressed_data(data, shape):
+            return data.empty(shape=shape, dtype=data.dtype,
+                              units=data.get_units(None),
+                              calendar=data.get_calendar(None))
         #--- End: def
         
-        def _compress_metadata(f, count, N, Array_func,
+        def _RaggedContiguousArray(self, compressed_data, data,
+                                   count_variable):
+            return self._RaggedContiguousArray(compressed_data,
+                                               shape=data.shape,
+                                               size=data.size,
+                                               ndim=data.ndim,
+                                               count_variable=count_variable)
+        #--- End: def
+        
+        def _RaggedIndexedArray(self, compressed_data, data,
+                                index_variable):
+            return self._RaggedIndexedArray(compressed_data,
+                                            shape=data.shape,
+                                            size=data.size,
+                                            ndim=data.ndim,
+                                            index_variable=index_variable)
+        #--- End: def
+        
+        def _RaggedIndexedContiguousArray(self, compressed_data, data,
+                                          count_variable,
+                                          index_variable):
+            return self._RaggedIndexedContiguousArray(compressed_data,
+                                                      shape=data.shape,
+                                                      size=data.size,
+                                                      ndim=data.ndim,
+                                                      count_variable=count_variable,
+                                                      index_variable=index_variable)
+        #--- End: def
+
+        def _compress_metadata(f, method, count, N, axes, Array_func,
                                **kwargs):
             '''TODO
 
@@ -647,17 +695,22 @@ class Field(mixin.NetCDFVariable,
             count: sequence of `int`
     
             N: `int`
+                The number of elements in the compressed array.
     
+            axes: sequence of `str`
+
             Array_func: 
                 
-            variables:
+            kwargs:
     
         :Returns:
     
             `None`
 
             '''
-            axes = f.get_data_axes()
+            if method == 'indexed_contiguous':
+                shape1 = f.shape[1]
+                
             for key, c in f.constructs.filter_by_axis('or').items():
                 c_axes = f.get_data_axes(key)
                 if c_axes != axes:
@@ -667,27 +720,75 @@ class Field(mixin.NetCDFVariable,
 
                 # Initialize the compressed data for the metadata
                 # construct
-                data = c.data
-                compressed_data = _empty_compressed_data(data, N)                
+                data = c.get_data(None)
+                if data is not None:
+                    compressed_data = _empty_compressed_data(data, (N,))                
+                    
+                    # Populate the compressed data for the metadata
+                    # construct
+                    start = 0            
+                    if method == 'indexed_contiguous' and c.ndim == 2:
+                        c_start = 0
+                        for i, d in enumerate(data.flatten(range(data.ndim-1))):
+                            c_start = shape1 * i
+                            c_end = c_start + shape1
+                            last = sum(n > 0 for n in count[c_start:c_end]) # What if last = 0? TODO
+                            
+                            end = start + last
+                            compressed_data[start:end] = d[:last]
+                            start += last
+                    else:                        
+                        for last, d in zip(count, data.flatten(range(data.ndim-1))):
+                            if not last:
+                                continue
+                            
+                            end = start + last
+                            compressed_data[start:end] = d[:last]
+                            start += last
+                #--- End: if
                 
-                # Populate the compressed data for the metadata
-                # construct
-                start = 0            
-                for last, d in zip(count, data.flatten(range(data.ndim-1))):
-                    if not last:
-                        continue
-
-                    end = start + last
-                    compressed_data[start:end] = d[:last]
-                    start += last
-
                 # Insert the compressed data into the metadata
                 # construct
-                y = Array_func(compressed_data=compressed_data,
-                               shape=data.shape,
-                               size=data.size, ndim=data.ndim,
+                y = Array_func(f, compressed_data, data=data,
                                **kwargs)
-                data._set_Array(y, copy=False)
+                data._set_CompressedArray(y, copy=False)
+
+                if c.has_bounds():
+                    data = c.get_bounds_data(None)
+                    if data is None:
+                        continue
+
+                    b_shape = data.shape[c.ndim:]
+                    compressed_data = _empty_compressed_data(data, (N,) + b_shape)
+                
+                    # Populate the compressed data for the metadata
+                    # construct
+                    start = 0            
+                    if method == 'indexed_contiguous' and c.ndim == 2:
+                        c_start = 0
+                        for i, d in enumerate(data.flatten(range(c.ndim-1))):
+                            c_start = shape1 * i
+                            c_end = c_start + shape1
+                            last = sum(n > 0 for n in count[c_start:c_end]) # What if last = 0? TODO
+                            
+                            end = start + last
+                            compressed_data[start:end] = d[:last]
+                            start += last
+                    else:                        
+                        for last, d in zip(count, data.flatten(range(c.ndim-1))):
+                            if not last:
+                                continue
+                            
+                            end = start + last
+                            compressed_data[start:end] = d[:last]
+                            start += last
+                    #--- End: if
+                    
+                    # Insert the compressed data into the metadata
+                    # construct
+                    y = Array_func(f, compressed_data, data=data,
+                                   **kwargs)
+                    data._set_CompressedArray(y, copy=False)                
         #--- End: def
 
         if inplace:
@@ -711,20 +812,24 @@ class Field(mixin.NetCDFVariable,
         if method == 'contiguous':
             if self.ndim != 2:
                 raise ValueError(
-                    "The data must have exactly 2 dimensions for DSG ragged contiguous compression. Got {}".format(
+                    "The field data must have exactly 2 dimensions for DSG ragged contiguous compression. Got {}".format(
                         self.ndim))
         elif method == 'indexed':
             if self.ndim != 2:
                 raise ValueError(
-                    "The data must have exactly 2 dimensions for DSG ragged indexed compression. Got {}".format(
+                    "The field data must have exactly 2 dimensions for DSG ragged indexed compression. Got {}".format(
                         self.ndim))                            
         elif method == 'indexed_contiguous':
             if self.ndim != 3:
                 raise ValueError(
-                    "The data must have exactly 3 dimensions for DSG ragged indexed contiguous compression. Got {}".format(
+                    "The field data must have exactly 3 dimensions for DSG ragged indexed contiguous compression. Got {}".format(
                         self.ndim))
         #--- End: if
 
+        # Make sure that the metadata constructs have the same
+        # relative axis order as the field's data
+        f.transpose(range(self.ndim), constructs=True, inplace=True)
+        
         if method != 'gathered':
             # --------------------------------------------------------
             # DSG compression
@@ -744,7 +849,7 @@ class Field(mixin.NetCDFVariable,
                 count.append(last)
     
             N = sum(count)
-            compressed_field_data = _empty_compressed_data(data, N)
+            compressed_field_data = _empty_compressed_data(data, (N,))
     
             start = 0            
             for last, d in zip(count, flattened_data):
@@ -760,23 +865,24 @@ class Field(mixin.NetCDFVariable,
             # --------------------------------------------------------
             # Ragged contiguous
             # --------------------------------------------------------
-            count_variable = Count(properties=count_properties,
-                                   data=Data([n for n in count if n]))
+            count_variable = self._Count(properties=count_properties,
+                                         data=self._Data([n for n in count if n]))
 
-            x = RaggedContiguousArray(compressed_field_data,
-                                      shape=data.shape,
-                                      size=data.size, ndim=data.ndim,
-                                      count_variable=count_variable)
+            x = _RaggedContiguousArray(self, compressed_field_data,
+                                       data,
+                                       count_variable=count_variable)
 
-            _compress_metadata(f, count, N, RaggedContiguousArray,
+            _compress_metadata(f, method, count, N, f.get_data_axes(),
+                               _RaggedContiguousArray,
                                count_variable=count_variable)
             
         elif method == 'indexed':
             # --------------------------------------------------------
             # Ragged indexed
             # --------------------------------------------------------
-            index_variable = Index(properties=index_properties,
-                                   data=Data.empty(shape=(N,), dtype=int))
+            index_variable = self._Index(properties=index_properties,
+                                         data=self._Data.empty(shape=(N,),
+                                                               dtype=int))
 
             start = 0            
             for i, (last, d) in enumerate(zip(count, flattened_data)):
@@ -787,10 +893,11 @@ class Field(mixin.NetCDFVariable,
                 index_variable[start:end] = i
                 start += last
             
-            x = _RaggedIndexedArray(compressed_field_data, data,
+            x = _RaggedIndexedArray(self, compressed_field_data, data,
                                     index_variable)
 
-            _compress_metadata(f, count, N, _RaggedIndexedArray,
+            _compress_metadata(f, method, count, N, f.get_data_axes(),
+                               _RaggedIndexedArray,
                                index_variable=index_variable)
             
         elif method == 'indexed_contiguous':
@@ -804,52 +911,60 @@ class Field(mixin.NetCDFVariable,
                 end = start + shape1
                 index.extend([i] * sum(n > 0 for n in count[start:end]))
 
-            count_variable = Count(properties=count_properties,
-                                   data=Data([n for n in count if n]))
-            index_variable = Index(properties=index_properties,
-                                   data=Data(index))
+            count_variable = self._Count(properties=count_properties,
+                                         data=self._Data([n for n in count if n]))
+            index_variable = self._Index(properties=index_properties,
+                                         data=self._Data(index))
 
-            x = _RaggedIndexedContiguousArray(compressed_field_data,
+            x = _RaggedIndexedContiguousArray(self,
+                                              compressed_field_data,
                                               data, count_variable,
                                               index_variable)
                                    
-            _compress_metadata(f, count, N,
+            _compress_metadata(f, method, count, N, f.get_data_axes(),
                                _RaggedIndexedContiguousArray,
                                count_variable=count_variable,
                                index_variable=index_variable)
-            
-            axes = f.get_data_axes()[:-1]
-            for key, c in f.constructs.filter_by_axis('or').items():
-                c_axes = f.get_data_axes(key)
-                if c_axes != axes:
-                    # Skip metadata constructs which don't span
-                    # exactly the same axes in the same order
-                    continue
-                
-                # Initialize the compressed data for the metadata
-                # construct
-                data = c.data
-                compressed_data = _empty_compressed_data(data, len(index))                
-                
-                # Populate the compressed data for the metadata
-                # construct
-                start = 0
-                c_start = 0                
-                for i, d in enumerate(data.flatten(range(data.ndim-1))):
-                    c_start = shape1 * i
-                    c_end = c_start + shape1
-                    last = sum(n > 0 for n in count[c_start:c_end])
 
-                    end = start + last
-                    compressed_data[start:end] = d[:last]
-                    start += last
-                    
-                # Insert the compressed data into the metadata
-                # construct
-                y = _RaggedIndexedArray(compressed_data, data,
-                                        index_variable=index_variable)                
-                data._create_partition_matrix_for_compressed_array(y)
-        #--- End: def
+            # Compress metadata constructs that span the index axis,
+            # but not the count axis.
+            _compress_metadata(f, method, count, len(index),
+                               f.get_data_axes()[:-1],
+                               _RaggedIndexedArray,
+                               index_variable=index_variable)
+            
+#            axes = f.get_data_axes()[:-1]
+#            for key, c in f.constructs.filter_by_axis('or').items():
+#                c_axes = f.get_data_axes(key)
+#                if c_axes != axes:
+#                    # Skip metadata constructs which don't span
+#                    # exactly the same axes in the same order
+#                    continue
+#                
+#                # Initialize the compressed data for the metadata
+#                # construct
+#                data = c.data
+#                compressed_data = _empty_compressed_data(data, len(index))                
+#                
+#                # Populate the compressed data for the metadata
+#                # construct
+#                start = 0
+#                c_start = 0                
+#                for i, d in enumerate(data.flatten(range(data.ndim-1))):
+#                    c_start = shape1 * i
+#                    c_end = c_start + shape1
+#                    last = sum(n > 0 for n in count[c_start:c_end])
+#
+#                    end = start + last
+#                    compressed_data[start:end] = d[:last]
+#                    start += last
+#                    
+#                # Insert the compressed data into the metadata
+#                # construct
+#                y = _RaggedIndexedArray(compressed_data, data,
+#                                        index_variable=index_variable)                
+#                data._create_partition_matrix_for_compressed_array(y)
+        #--- End: if
 
         elif method == 'gathered':
             # --------------------------------------------------------
@@ -860,7 +975,7 @@ class Field(mixin.NetCDFVariable,
         else:
             raise ValueError("Unknown compression method: {!r}".format(method))
         
-        f.data._create_partition_matrix_for_compressed_array(x)
+        f.data._set_CompressedArray(x, copy=False)
 
         if inplace:
             f = None

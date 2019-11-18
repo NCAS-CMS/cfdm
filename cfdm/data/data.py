@@ -492,6 +492,8 @@ class Data(mixin.Container,
     def _set_Array(self, array, copy=True):
         '''Set the array.
 
+    .. seealso:: `_set_CompressedArray`
+    
     :Parameters:
     
         array: numpy array-like or subclass of `Array`, optional
@@ -513,6 +515,30 @@ class Data(mixin.Container,
             array = NumpyArray(array)
 
         super()._set_Array(array, copy=copy)
+
+
+    def _set_CompressedArray(self, array, copy=True):
+        '''Set the compressed array.
+
+    .. versionadded:: 1.7.11
+    
+    .. seealso:: `_set_Array`
+    
+    :Parameters:
+    
+        array: subclass of `CompressedArray`      
+            The compressed array to be inserted.
+
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+
+    >>> d._set_CompressedArray(a)
+
+        '''
+        self._set_Array(array, copy=copy)
 
 
     @classmethod
@@ -1419,6 +1445,42 @@ class Data(mixin.Container,
         return ma.get_compression_type()
 
     
+    @classmethod
+    def empty(cls, shape, dtype=None, units=None, calendar=None):
+        '''Create a new data array without initializing the elements.
+
+    Note that the mask of the returned empty data is hard.
+
+    .. seealso:: `full`, `hardmask`, `ones`, `zeros`
+    
+    :Parameters:
+    
+        shape: `int` or `tuple` of `int`
+            The shape of the new array.
+    
+        dtype: `numpy.dtype` or any object convertible to `numpy.dtype`
+            The data-type of the new array. By default the data-type
+            is ``float``.
+    
+        units: `str` or `Units`
+            The units for the empty data array.
+    
+        calendar: `str`, optional
+            The calendar for reference time units.
+            
+    :Returns:
+    
+        `Data`
+    
+    **Examples:**
+    
+    >>> d = cfdm.Data.empty((96, 73))
+
+        '''
+        return cls(numpy.empty(shape=shape, dtype=dtype), units=units,
+                   calendar=calendar)
+
+
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_compression=False, ignore_type=False,
@@ -1651,7 +1713,7 @@ class Data(mixin.Container,
     example, the array ``[[1, 2], [3, 4]]`` would be flattened across
     both dimensions to ``[1 2 3 4]``.
 
-    .. versionaddedd:: 3.0.2
+    .. versionaddedd:: 1.7.11
 
     .. seealso:: `insert_dimension`, `squeeze`, `transpose`
 
