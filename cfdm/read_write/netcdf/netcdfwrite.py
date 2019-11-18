@@ -368,20 +368,21 @@ If the input variable has no `!dtype` attribute (or it is None) then
     
     def _netcdf_dimensions(self, field, key, construct):
         '''Return a tuple of the netCDF dimension names for the axes of a
-metadata construct.
+    metadata construct.
+        
+    If the construct has no data, then return `None`
     
-If the construct has no data, then return `None`
-
-:Parameters:
-
-    field: Field construct
-
-    key: `str`
-
-:Returns:
-
-    out: `tuple` or `None`
-        The netCDF dimension names, or `None` if there are no data.
+    :Parameters:
+    
+        field: Field construct
+    
+        key: `str`
+    
+    :Returns:
+    
+        out: `tuple` or `None`
+            The netCDF dimension names, or `None` if there are no
+            data.
 
         '''
         g = self.write_vars
@@ -445,15 +446,15 @@ If the construct has no data, then return `None`
                 pass
             else:
                 raise ValueError(
-"Can't write {!r}: Unknown compression type: {!r}".format(construct, compression_type))
+                    "Can't write {!r}: Unknown compression type: {!r}".format(
+                        construct, compression_type))
 
             n = len(compressed_ncdims)
             ncdims[sample_dimension_position:sample_dimension_position+n] = [sample_ncdim]
         #--- End: if
-#        print (tuple(ncdims)  )
 
         return tuple(ncdims)
-    #--- End: def
+
         
     def _write_dimension(self, ncdim, f, axis=None, unlimited=False,
                          size=None):
