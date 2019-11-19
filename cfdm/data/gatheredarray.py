@@ -10,14 +10,14 @@ from . import abstract
 class GatheredArray(abstract.CompressedArray):
     '''An underlying gathered array.
 
-Compression by gathering combines axes of a multidimensional array
-into a new, discrete axis whilst omitting the missing values and thus
-reducing the number of values that need to be stored.
-
-The information needed to uncompress the data is stored in a "list
-variable" that gives the indices of the required points.
-
-.. versionadded:: 1.7.0
+    Compression by gathering combines axes of a multidimensional array
+    into a new, discrete axis whilst omitting the missing values and
+    thus reducing the number of values that need to be stored.
+    
+    The information needed to uncompress the data is stored in a "list
+    variable" that gives the indices of the required points.
+    
+    .. versionadded:: 1.7.0
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
@@ -25,27 +25,27 @@ variable" that gives the indices of the required points.
                  list_variable=None):
         '''**Initialization**
 
-:Parameters:
-
-    compressed_array: `Data`
-        The compressed array.
-
-    shape: `tuple`
-        The uncompressed array dimension sizes.
-
-    size: `int`
-        Number of elements in the uncompressed array.
-
-    ndim: `int`
-        The number of uncompressed array dimensions
-
-    compressed_dimension: `int`
-        The position of the compressed dimension in the compressed
-        array.
-
-    list_variable: `List`
-        The "list variable" required to uncompress the data, identical
-        to the data of a CF-netCDF list variable.
+    :Parameters:
+    
+        compressed_array: `Data`
+            The compressed array.
+    
+        shape: `tuple`
+            The uncompressed array dimension sizes.
+    
+        size: `int`
+            Number of elements in the uncompressed array.
+    
+        ndim: `int`
+            The number of uncompressed array dimensions
+    
+        compressed_dimension: `int`
+            The position of the compressed dimension in the compressed
+            array.
+    
+        list_variable: `List`
+            The "list variable" required to uncompress the data,
+            identical to the data of a CF-netCDF list variable.
 
         '''
         super().__init__(compressed_array=compressed_array,
@@ -53,25 +53,27 @@ variable" that gives the indices of the required points.
                          compressed_dimension=compressed_dimension,
                          list_variable=list_variable,
                          compression_type='gathered')
-    #--- End: def
+
 
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
-Returns an subspace of the uncompressed data as an independent numpy
-array.
-
-The indices that define the subspace are relative to the uncompressed
-data and must be either `Ellipsis` or a sequence that contains an
-index for each dimension. In the latter case, each dimension's index
-must either be a `slice` object or a sequence of two or more integers.
-
-Indexing is similar to numpy indexing. The only difference to numpy
-indexing (given the restrictions on the type of indices allowed) is:
-
-  * When two or more dimension's indices are sequences of integers
-    then these indices work independently along each dimension
-    (similar to the way vector subscripts work in Fortran).
+    Returns an subspace of the uncompressed data as an independent
+    numpy array.
+    
+    The indices that define the subspace are relative to the
+    uncompressed data and must be either `Ellipsis` or a sequence that
+    contains an index for each dimension. In the latter case, each
+    dimension's index must either be a `slice` object or a sequence of
+    two or more integers.
+    
+    Indexing is similar to numpy indexing. The only difference to
+    numpy indexing (given the restrictions on the type of indices
+    allowed) is:
+    
+      * When two or more dimension's indices are sequences of integers
+        then these indices work independently along each dimension
+        (similar to the way vector subscripts work in Fortran).
 
         '''
         # ------------------------------------------------------------
@@ -121,53 +123,52 @@ indexing (given the restrictions on the type of indices allowed) is:
             compressed = compressed[tuple(sample_indices)]
             
             uarray[tuple(u_indices)] = compressed
-        #--- End: for
 
         return self.get_subspace(uarray, indices, copy=True)
-    #--- End: def
+
 
     def get_list(self, default=ValueError()):
         '''Return the list variable for a compressed array.
 
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    default: optional
-        Return the value of the *default* parameter if the list
-        variable has not been set. If set to an `Exception` instance
-        then it will be raised instead.
-
-:Returns:
-
-    `List`
-        The list variable.
-
-**Examples:**
-
->>> l = g.get_list()
-
->>> l = g.get_list(default=None)
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        default: optional
+            Return the value of the *default* parameter if the list
+            variable has not been set. If set to an `Exception`
+            instance then it will be raised instead.
+    
+    :Returns:
+    
+        `List`
+            The list variable.
+    
+    **Examples:**
+    
+    >>> l = g.get_list()
+    
+    >>> l = g.get_list(default=None)
 
         '''
         return self._get_component('list_variable', default=default)
-    #--- End: def
+
 
     def to_memory(self):
         '''TODO
-
-:Returns:
-
-    `GatheredArray`
-
-**Examples:**
-
-TODO
+    
+    :Returns:
+    
+        `GatheredArray`
+    
+    **Examples:**
+    
+    TODO
 
         '''
         super().to_memory()
         self.get_list().data.to_memory()
         return self
-    #--- End def
+
     
 #--- End: class

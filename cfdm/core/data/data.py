@@ -8,7 +8,7 @@ from .. import abstract
 class Data(abstract.Container):
     '''An orthogonal multidimensional array with masked values and units.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def __init__(self, array=None, units=None, calendar=None,
@@ -16,57 +16,60 @@ class Data(abstract.Container):
                  _use_array=True, _custom_deep_copy=False):
         '''**Initialization**
 
-:Parameters:
+    :Parameters:
+    
+        array: subclass of `Array`
+            The array of values. Ignored if the *source* parameter is
+            set.
+    
+        units: `str`, optional
+            The physical units of the data. Ignored if the *source*
+            parameter is set.
+    
+            The units may also be set after initialisation with the
+            `set_units` method.
+    
+            *Parameter example:*
+              ``units='km hr-1'``
+    
+            *Parameter example:*
+              ``units='days since 2018-12-01'``
+    
+        calendar: `str`, optional
+            The calendar for reference time units. Ignored if the
+            *source* parameter is set.
+    
+            The calendar may also be set after initialisation with the
+            `set_calendar` method.
+    
+            *Parameter example:*
+              ``calendar='360_day'``
+            
+        fill_value: optional 
+            The fill value of the data. By default, or if set to
+            `None`, the `numpy` fill value appropriate to the array's
+            data type will be used (see
+            `numpy.ma.default_fill_value`). Ignored if the *source*
+            parameter is set.
+    
+            The fill value may also be set after initialisation with
+            the `set_fill_value` method.
+    
+            *Parameter example:*
+              ``fill_value=-999.``
+                    
+        source: *optional*
+            Initialize the data, units, calendar and fill value from
+            those of *source*.
+            
+        source: optional
 
-    array: subclass of `Array`
-        The array of values. Ignored if the *source* parameter is set.
-
-    units: `str`, optional
-        The physical units of the data. Ignored if the *source*
-        parameter is set.
-
-        *Parameter example:*
-          ``units='km hr-1'``
-
-        *Parameter example:*
-          ``units='days since 2018-12-01'``
-
-        The units may also be set after initialisation with the
-        `set_units` method.
-
-    calendar: `str`, optional
-        The calendar for reference time units. Ignored if the *source*
-        parameter is set.
-
-        *Parameter example:*
-          ``calendar='360_day'``
-        
-        The calendar may also be set after initialisation with the
-        `set_calendar` method.
-
-    fill_value: optional 
-        The fill value of the data. By default, or if set to `None`,
-        the `numpy` fill value appropriate to the array's data type
-        will be used (see `numpy.ma.default_fill_value`). Ignored if
-        the *source* parameter is set.
-
-        *Parameter example:*
-          ``fill_value=-999.``
-                
-        The fill value may also be set after initialisation with the
-        `set_fill_value` method.
-
-    source: *optional*
-        Initialize the data, units, calendar and fill value from those
-        of *source*.
-        
-    source: optional
-        Initialize the array, units, calendar and fill value from
-        those of *source*.
-
-    copy: `bool`, optional
-        If False then do not deep copy input parameters prior to
-        initialization. By default arguments are deep copied.
+            Initialize the array, units, calendar and fill value from
+            those of *source*.
+    
+        copy: `bool`, optional
+            If False then do not deep copy input parameters prior to
+            initialization. By default arguments are deep copied.
 
         '''
         super().__init__(source=source)
@@ -104,7 +107,7 @@ class Data(abstract.Container):
 
         if _use_array and array is not None:
             self._set_Array(array, copy=copy)
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Attributes

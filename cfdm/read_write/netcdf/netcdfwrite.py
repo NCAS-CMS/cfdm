@@ -2218,10 +2218,10 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 temp_array = array.compressed()
             else:
                 temp_array = array
-                
-            if numpy.intersect1d(unset_values, temp_array):
+
+            if numpy.intersect1d(unset_values, temp_array).size:
                 raise ValueError(
-"ERROR: Can't write data that has _FillValue or missing_value at unmasked point: {!r}".format(ncvar))
+                    "ERROR: Can't write data that has _FillValue or missing_value at unmasked point: {!r}".format(ncvar))
         #--- End: if
 
         # Copy the array into the netCDF variable
