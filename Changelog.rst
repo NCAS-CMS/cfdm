@@ -5,6 +5,8 @@ version 1.7.11
 **Not yet released**
 
 * New method: `cfdm.Data.flatten`
+* Changed the default value of the ``ignore_compression`` parameter to
+  `True`.
   
  version 1.7.10
 --------------

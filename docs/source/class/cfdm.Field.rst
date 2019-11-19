@@ -166,9 +166,11 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Field.compress
    ~cfdm.Field.copy
    ~cfdm.Field.equals
    ~cfdm.Field.convert
+   ~cfdm.Field.uncompress
 
 .. _Field-NetCDF:
    

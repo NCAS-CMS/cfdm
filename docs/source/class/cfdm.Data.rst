@@ -109,6 +109,7 @@ Miscellaneous
    ~cfdm.Data.equals
    ~cfdm.Data.to_memory
    ~cfdm.Data.source
+   ~cfdm.Data.uncompress
    
 Compression
 -----------

@@ -189,7 +189,7 @@ class PropertiesData(Properties):
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_compression=False,
+               ignore_properties=(), ignore_compression=True,
                ignore_type=False):
         '''Whether two instances are the same.
 
@@ -536,6 +536,9 @@ class PropertiesData(Properties):
     Whether or not the construct is compressed does not alter its
     functionality nor external appearance.
 
+    A construct that is already uncompressed will be returned
+    uncompressed.
+
     The following type of compression are available:
 
         * Ragged arrays for discrete sampling geometries (DSG). Three
@@ -546,10 +549,8 @@ class PropertiesData(Properties):
         
         * Compression by gathering.
 
-    .. versionadded:: 3.0.6
+    .. versionadded:: 1.7.11
     
-    .. seealso:: `cf.write`, `flatten`
-
     :Parameters:
 
         inplace: `bool`, optional

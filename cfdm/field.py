@@ -487,15 +487,18 @@ class Field(mixin.NetCDFVariable,
                  inplace=False):
         '''Compress the field construct.
 
-    Compression saves space by identifying and removing unwanted
+    Compression can save space by identifying and removing unwanted
     missing data. Such compression techniques store the data more
     efficiently and result in no precision loss.
 
-    The field construct data is compressesed, along with any
-    applicable metadata constructs.
+    The field construct data is compressed, along with any applicable
+    metadata constructs.
 
     Whether or not the field construct is compressed does not alter
     its functionality nor external appearance.
+
+    A field that is already compressed will returned compressed by the
+    chosen method.
 
     When writing a compressed field construct to a dataset space will
     be saved by the creation of compressed netCDF variables, along
@@ -514,9 +517,9 @@ class Field(mixin.NetCDFVariable,
         * Compression by gathering. 
 
     .. versionadded:: 1.7.11
-    
-    .. seealso:: `cfdm.write`
 
+    .. seealso:: `uncompress`
+    
     :Parameters:
 
         method: `str`
@@ -572,7 +575,7 @@ class Field(mixin.NetCDFVariable,
             array representation.
 
             *Parameter example:*
-              ``count_properties={'long_name': 'number of obs for this timeseries'}``
+              ``count_properties={'long_name': 'number of timeseries'}``
 
         index_properties: `dict`, optional
             Provide properties to the index variable for indexed
@@ -580,7 +583,7 @@ class Field(mixin.NetCDFVariable,
             array representation.
 
             *Parameter example:*
-              ``index_properties={'long_name': 'which station this profile is for'}``
+              ``index_properties={'long_name': 'station of profile'}``
 
         list_properties: `dict`, optional
             Provide properties to the list variable for compression by
@@ -600,53 +603,28 @@ class Field(mixin.NetCDFVariable,
 
     **Examples:**
 
-    >>> f = cf.example_field(3)
-    >>> print(f)                                                                
-    Field: precipitation_flux (ncvar%p)
-    -----------------------------------
-    Data            : precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1
-    Auxiliary coords: time(cf_role=timeseries_id(4), ncdim%timeseries(9)) = [[1969-12-29 00:00:00, ..., 1970-01-07 00:00:00]]
-                    : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north
-                    : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east
-                    : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m
-                    : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b'station1', ..., b'station4']
-                    : long_name=some kind of station info(cf_role=timeseries_id(4)) = [-10, ..., -7]
     >>> f.data.get_compression_type()
     ''
-    >>> f.compress('contiguous', inplace=True)
-    >>> f.data.get_compression_type()
-    'ragged contiguous'
-    >>> f.data.get_count()                     
-    <CF Count: (4) >
-    >>> print(f.data.get_count().array)                         
-    [3 7 5 9]
+    >>> print(f.array)
+    [[3.98  0.0  0.0  --    --   --   --  --  --]
+     [ 0.0  0.0  0.0  3.4  0.0  0.0 4.61  --  --]
+     [0.86  0.8 0.75  0.0 4.56   --   --  --  --]
+     [ 0.0 0.09  0.0 0.91 2.96 1.14 3.86 0.0 0.0]]
+    >>> g = f.compress('contiguous')
+    >>> cfdm.write(g, 'compressed_file_c.nc')
 
-    >>> f = cf.example_field(4)
-    >>> print(f)
-    Field: precipitation_flux (ncvar%p)
-    -----------------------------------
-    Data            : precipitation_flux(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) kg m-2 day-1
-    Auxiliary coords: time(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[1970-01-04 00:00:00, ..., --]]
-                    : latitude(cf_role=timeseries_id(3)) = [-9.0, 2.0, 34.0] degrees_north
-                    : longitude(cf_role=timeseries_id(3)) = [-23.0, 0.0, 67.0] degrees_east
-                    : height(cf_role=timeseries_id(3)) = [0.5, 12.6, 23.7] m
-                    : altitude(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07, ..., --]]] km
-                    : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b'station1', b'station2', b'station3']
-                    : long_name=some kind of station info(cf_role=timeseries_id(3)) = [-10, -9, -8]
-                    : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]
-    >>> f.data.get_compression_type()                     
-    ''
-    >>> g = f.compress('indexed_contiguous', 
-    ...                count_properties={'long_name': 'number of obs for each profile'})
-    >>> g.data.get_compression_type()                     
-    'ragged indexed contiguous'
-    >> g.data.get_count()
-    <CF Count: long_name=number of obs for each profile(58) >
+    >>> g.data.get_compression_type()
+    'ragged contiguous'
+    >>> g.data.get_count()                   
+    <CF Count: (4) >
+    >>> print(g.data.get_count().array)
+    [3 7 5 9]
+    >>> g.compress('indexed', inplace=True)
     >>> g.data.get_index()
-    <CF Index: (58) >
-    >>> print(g.data.get_index().array)                     
-    [0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-     1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2]
+     <CF Index: (24) >
+    >>> print(g.data.get_index().array)
+    [0 0 0 1 1 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 3 3]
+    >>> cfdm.write(g, 'compressed_file_i.nc')
 
         '''
         def _empty_compressed_data(data, shape):
@@ -732,7 +710,7 @@ class Field(mixin.NetCDFVariable,
                         for i, d in enumerate(data.flatten(range(data.ndim-1))):
                             c_start = shape1 * i
                             c_end = c_start + shape1
-                            last = sum(n > 0 for n in count[c_start:c_end]) # What if last = 0? TODO
+                            last = sum(n > 0 for n in count[c_start:c_end])
                             
                             end = start + last
                             compressed_data[start:end] = d[:last]
@@ -769,7 +747,7 @@ class Field(mixin.NetCDFVariable,
                         for i, d in enumerate(data.flatten(range(c.data.ndim-1))):
                             c_start = shape1 * i
                             c_end = c_start + shape1
-                            last = sum(n > 0 for n in count[c_start:c_end]) # What if last = 0? TODO
+                            last = sum(n > 0 for n in count[c_start:c_end])
                             
                             end = start + last
                             compressed_data[start:end] = d[:last]
@@ -1130,7 +1108,7 @@ class Field(mixin.NetCDFVariable,
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_compression=False,
+               ignore_properties=(), ignore_compression=True,
                ignore_type=False):
         '''Whether two field constructs are the same.
 
@@ -1155,10 +1133,9 @@ class Field(mixin.NetCDFVariable,
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
     
-    If data arrays are compressed then the compression type and the
-    underlying compressed arrays must be the same, as well as the
-    arrays in their uncompressed forms. See the *ignore_compression*
-    parameter.
+    Any compression is ignored by default, with only the the arrays in
+    their uncompressed forms being compared. See the
+    *ignore_compression* parameter.
     
     Any type of object may be tested but, in general, equality is only
     possible with another field construct, or a subclass of one. See
@@ -1207,11 +1184,10 @@ class Field(mixin.NetCDFVariable,
             within the tolerance for equality.
     
         ignore_compression: `bool`, optional
-            If True then any compression applied to underlying arrays
-            is ignored and only uncompressed arrays are tested for
-            equality. By default the compression type and, if
-            applicable, the underlying compressed arrays must be the
-            same, as well as the arrays in their uncompressed forms
+            If False then the compression type and, if applicable, the
+            underlying compressed arrays must be the same, as well as
+            the arrays in their uncompressed forms. By default only
+            the arrays in their uncompressed forms are compared.
     
         ignore_type: `bool`, optional
             Any type of object may be tested but, in general, equality
@@ -1792,6 +1768,9 @@ class Field(mixin.NetCDFVariable,
     Whether or not the construct is compressed does not alter its
     functionality nor external appearance.
 
+    A field construct that is already uncompressed will be returned
+    uncompressed.
+
     The following type of compression are available:
 
         * Ragged arrays for discrete sampling geometries (DSG). Three
@@ -1802,9 +1781,9 @@ class Field(mixin.NetCDFVariable,
         
         * Compression by gathering.
 
-    .. versionadded:: 3.0.6
+    .. versionadded:: 1.7.11
     
-    .. seealso:: `cf.write`, `compress`, `flatten`, `varray`
+    .. seealso:: `compress`
 
     :Parameters:
 

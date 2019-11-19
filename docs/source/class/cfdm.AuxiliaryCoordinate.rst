@@ -114,6 +114,7 @@ Miscellaneous
 
    ~cfdm.AuxiliaryCoordinate.copy
    ~cfdm.AuxiliaryCoordinate.equals
+   ~cfdm.AuxiliaryCoordinate.uncompress
 
 
 

@@ -1533,7 +1533,7 @@ class Data(mixin.Container,
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_compression=False, ignore_type=False,
+               ignore_compression=True, ignore_type=False,
                _check_values=True):
         '''Whether two data arrays are the same.
 
@@ -1558,11 +1558,11 @@ class Data(mixin.Container,
     differences) and ``rtol`` (the tolerance on relative differences)
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
-    
-    The compression type and, if applicable, the underlying compressed
-    arrays must be the same, as well as the arrays in their
-    uncompressed forms. See the *ignore_compression* parameter.
-    
+   
+    Any compression is ignored by default, with only the arrays in
+    their uncompressed forms being compared. See the
+    *ignore_compression* parameter.
+
     Any type of object may be tested but, in general, equality is only
     possible with another cell measure construct, or a subclass of
     one. See the *ignore_type* parameter.
@@ -1599,12 +1599,10 @@ class Data(mixin.Container,
             are within the tolerance for equality.
     
         ignore_compression: `bool`, optional
-            If True then any compression applied to the underlying
-            arrays is ignored and only the uncompressed arrays are
-            tested for equality. By default the compression type and,
-            if applicable, the underlying compressed arrays must be
-            the same, as well as the arrays in their uncompressed
-            forms
+            If False then the compression type and, if applicable, the
+            underlying compressed arrays must be the same, as well as
+            the arrays in their uncompressed forms. By default only
+            the the arrays in their uncompressed forms are compared.
     
         ignore_type: `bool`, optional
             Any type of object may be tested but, in general, equality
@@ -1674,31 +1672,31 @@ class Data(mixin.Container,
                 return False
         #--- End: for
            
-        #if not ignore_compression:
-        #    # --------------------------------------------------------
-        #    # Check for equal compression types
-        #    # --------------------------------------------------------
-        #    compression_type = self.get_compression_type()
-        #    if compression_type != other.get_compression_type():
-        #        if verbose:
-        #            print("{0}: Different compression types: {1} != {2}".format(
-        #                self.__class__.__name__,
-        #                compression_type,
-        #                other.get_compression_type()))
-        #        return False
-        #    
-        #    # --------------------------------------------------------
-        #    # Check for equal compressed array values
-        #    # --------------------------------------------------------
-        #    if compression_type:
-        #        if not self._equals(self.compressed_array,
-        #                            other.compressed_array,
-        #                            rtol=rtol, atol=atol):
-        #            if verbose:
-        #                print("{0}: Different compressed array values".format(
-        #                    self.__class__.__name__))
-        #            return False
-        ##--- End: if
+        if not ignore_compression:
+            # --------------------------------------------------------
+            # Check for equal compression types
+            # --------------------------------------------------------
+            compression_type = self.get_compression_type()
+            if compression_type != other.get_compression_type():
+                if verbose:
+                    print("{0}: Different compression types: {1} != {2}".format(
+                        self.__class__.__name__,
+                        compression_type,
+                        other.get_compression_type()))
+                return False
+            
+            # --------------------------------------------------------
+            # Check for equal compressed array values
+            # --------------------------------------------------------
+            if compression_type:
+                if not self._equals(self.compressed_array,
+                                    other.compressed_array,
+                                    rtol=rtol, atol=atol):
+                    if verbose:
+                        print("{0}: Different compressed array values".format(
+                            self.__class__.__name__))
+                    return False
+        #--- End: if
         
         # ------------------------------------------------------------
         # Check for equal (uncompressed) array values
@@ -2056,11 +2054,11 @@ class Data(mixin.Container,
     def uncompress(self, inplace=False):
         '''Uncompress the underlying appprray in-place.
 
-    If the array is not compressed, then no change is made.
+    If the data is not compressed, then no change is made.
     
     .. versionadded:: 1.7.3
     
-    .. seealso:: `array`, `compress`, `compressed_array`, `source`
+    .. seealso:: `array`, `compressed_array`, `source`
     
     :Parameters:
 

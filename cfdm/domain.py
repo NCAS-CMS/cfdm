@@ -283,19 +283,19 @@ last values.
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_compression=False, ignore_type=False):
+               ignore_compression=True, ignore_type=False):
         '''Whether two domains are the same.
-
-.. versionadded:: 1.7.0
-
-**Examples:**
-
->>> d.equals(d)
-True
->>> d.equals(d.copy())
-True
->>> d.equals('not a domain')
-False
+    
+    .. versionadded:: 1.7.0
+    
+    **Examples:**
+    
+    >>> d.equals(d)
+    True
+    >>> d.equals(d.copy())
+    True
+    >>> d.equals('not a domain')
+    False
         '''
         pp = super()._equals_preprocess(other, verbose=verbose,
                                         ignore_type=ignore_type)
@@ -306,7 +306,7 @@ False
 
         # ------------------------------------------------------------
         # Check the constructs
-        # ------------------------------------------------------------              
+        # ------------------------------------------------------------
         if not self._equals(self.constructs, other.constructs,
                             rtol=rtol, atol=atol, verbose=verbose,
                             ignore_data_type=ignore_data_type,
@@ -318,6 +318,6 @@ False
             return False
 
         return True
-    #--- End: def
+
         
 #--- End: class

@@ -114,6 +114,7 @@ Miscellaneous
 
    ~cfdm.DomainAncillary.copy
    ~cfdm.DomainAncillary.equals
+   ~cfdm.DomainAncillary.uncompress
 
 
 

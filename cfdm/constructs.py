@@ -592,76 +592,75 @@ The identity is the first found of the following:
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_compression=False, _ignore_type=False,
+               ignore_compression=True, _ignore_type=False,
                _return_axis_map=False):
         '''Whether two `Constructs` instances are the same.
 
-Two real numbers ``x`` and ``y`` are considered equal if
-``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers. See the *atol* and *rtol*
-parameters.
-
-If data arrays are compressed then the compression type and the
-underlying compressed arrays must be the same, as well as the arrays
-in their uncompressed forms. See the *ignore_compression* parameter.
-
-Any type of object may be tested but equality is only possible with
-another `Constructs` construct, or a subclass of one.
-
-NetCDF elements, such as netCDF variable and dimension names, do not
-constitute part of the CF data model and so are not checked on any
-construct.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    other: 
-        The object to compare for equality.
-
-    atol: float, optional
-        The tolerance on absolute differences between real
-        numbers. The default value is set by the `cfdm.ATOL` function.
-        
-    rtol: float, optional
-        The tolerance on relative differences between real
-        numbers. The default value is set by the `cfdm.RTOL` function.
-
-    ignore_fill_value: `bool`, optional
-        If True then the "_FillValue" and "missing_value" properties
-        are omitted from the comparison for the metadata constructs.
-
-    verbose: `bool`, optional
-        If True then print information about differences that lead to
-        inequality.
-
-    ignore_data_type: `bool`, optional
-        If True then ignore the data types in all numerical
-        comparisons. By default different numerical data types imply
-        inequality, regardless of whether the elements are within the
-        tolerance for equality.
-
-    ignore_compression: `bool`, optional
-        If True then any compression applied to underlying arrays is
-        ignored and only uncompressed arrays are tested for
-        equality. By default the compression type and, if applicable,
-        the underlying compressed arrays must be the same, as well as
-        the arrays in their uncompressed forms
-
-:Returns: 
-  
-    `bool`
-        Whether the two instances are equal.
-
-**Examples:**
-
->>> x.equals(x)
-True
->>> x.equals(x.copy())
-True
->>> x.equals('something else')
-False
+    Two real numbers ``x`` and ``y`` are considered equal if
+    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
+    differences) and ``rtol`` (the tolerance on relative differences) are
+    positive, typically very small numbers. See the *atol* and *rtol*
+    parameters.
+    
+    Any compression is ignored by default, with only the arrays in
+    their uncompressed forms being compared. See the
+    *ignore_compression* parameter.
+    
+    Any type of object may be tested but equality is only possible with
+    another `Constructs` construct, or a subclass of one.
+    
+    NetCDF elements, such as netCDF variable and dimension names, do not
+    constitute part of the CF data model and so are not checked on any
+    construct.
+    
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        other: 
+            The object to compare for equality.
+    
+        atol: float, optional
+            The tolerance on absolute differences between real
+            numbers. The default value is set by the `cfdm.ATOL` function.
+            
+        rtol: float, optional
+            The tolerance on relative differences between real
+            numbers. The default value is set by the `cfdm.RTOL` function.
+    
+        ignore_fill_value: `bool`, optional
+            If True then the "_FillValue" and "missing_value" properties
+            are omitted from the comparison for the metadata constructs.
+    
+        verbose: `bool`, optional
+            If True then print information about differences that lead to
+            inequality.
+    
+        ignore_data_type: `bool`, optional
+            If True then ignore the data types in all numerical
+            comparisons. By default different numerical data types imply
+            inequality, regardless of whether the elements are within the
+            tolerance for equality.
+    
+        ignore_compression: `bool`, optional
+            If False then the compression type and, if applicable, the
+            underlying compressed arrays must be the same, as well as
+            the arrays in their uncompressed forms. By default only
+            the arrays in their uncompressed forms are compared.
+    
+    :Returns: 
+      
+        `bool`
+            Whether the two instances are equal.
+    
+    **Examples:**
+    
+    >>> x.equals(x)
+    True
+    >>> x.equals(x.copy())
+    True
+    >>> x.equals('something else')
+    False
 
         '''        
         if self is other:
@@ -840,7 +839,7 @@ False
         # Still here? Then the two objects are equal
         # ------------------------------------------------------------     
         return True
-    #--- End: def
+
 
     def filter_by_axis(self, mode=None, *axes):
         '''Select metadata constructs by axes spanned by their data.

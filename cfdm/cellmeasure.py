@@ -131,108 +131,107 @@ components, and provides selected values of all data arrays.
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_compression=False,
+               ignore_properties=(), ignore_compression=True,
                ignore_type=False):
         '''Whether two cell measure constructs are the same.
 
-Equality is strict by default. This means that:
-
-* the same descriptive properties must be present, with the same
-  values and data types, and vector-valued properties must also have
-  same the size and be element-wise equal (see the *ignore_properties*
-  and *ignore_data_type* parameters), and
-
-..
-
-* if there are data arrays then they must have same shape and data
-  type, the same missing data mask, and be element-wise equal (see the
-  *ignore_data_type* parameter).
-
-Two real numbers ``x`` and ``y`` are considered equal if
-``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers. See the *atol* and *rtol*
-parameters.
-
-If data arrays are compressed then the compression type and the
-underlying compressed arrays must be the same, as well as the arrays
-in their uncompressed forms. See the *ignore_compression* parameter.
-
-Any type of object may be tested but, in general, equality is only
-possible with another cell measure construct, or a subclass of
-one. See the *ignore_type* parameter.
-
-NetCDF elements, such as netCDF variable and dimension names, do not
-constitute part of the CF data model and so are not checked.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    other: 
-        The object to compare for equality.
-
-    atol: float, optional
-        The tolerance on absolute differences between real
-        numbers. The default value is set by the `cfdm.ATOL` function.
-        
-    rtol: float, optional
-        The tolerance on relative differences between real
-        numbers. The default value is set by the `cfdm.RTOL` function.
-
-    ignore_fill_value: `bool`, optional
-        If True then the "_FillValue" and "missing_value" properties
-        are omitted from the comparison.
-
-    verbose: `bool`, optional
-        If True then print information about differences that lead to
-        inequality.
-
-    ignore_properties: sequence of `str`, optional
-        The names of properties to omit from the comparison.
-
-    ignore_data_type: `bool`, optional
-        If True then ignore the data types in all numerical
-        comparisons. By default different numerical data types imply
-        inequality, regardless of whether the elements are within the
-        tolerance for equality.
-
-    ignore_compression: `bool`, optional
-        If True then any compression applied to the underlying arrays
-        is ignored and only the uncompressed arrays are tested for
-        equality. By default the compression type and, if applicable,
-        the underlying compressed arrays must be the same, as well as
-        the arrays in their uncompressed forms
-
-    ignore_type: `bool`, optional
-        Any type of object may be tested but, in general, equality is
-        only possible with another cell measure construct, or a
-        subclass of one. If *ignore_type* is True then
-        ``CellMeasure(source=other)`` is tested, rather than the
-        ``other`` defined by the *other* parameter.
-
-:Returns: 
-  
-    `bool`
-        Whether the two cell measure constructs are equal.
-
-**Examples:**
-
->>> f.equals(f)
-True
->>> f.equals(f.copy())
-True
->>> f.equals('not a cell measure')
-False
-
->>> g = f.copy()
->>> g.set_property('foo', 'bar')
->>> f.equals(g)
-False
->>> f.equals(g, verbose=True)
-CellMeasure: Non-common property name: foo
-CellMeasure: Different properties
-False
+    Equality is strict by default. This means that:
+    
+    * the same descriptive properties must be present, with the same
+      values and data types, and vector-valued properties must also have
+      same the size and be element-wise equal (see the *ignore_properties*
+      and *ignore_data_type* parameters), and
+    
+    ..
+    
+    * if there are data arrays then they must have same shape and data
+      type, the same missing data mask, and be element-wise equal (see the
+      *ignore_data_type* parameter).
+    
+    Two real numbers ``x`` and ``y`` are considered equal if
+    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
+    differences) and ``rtol`` (the tolerance on relative differences) are
+    positive, typically very small numbers. See the *atol* and *rtol*
+    parameters.
+    
+    Any compression is ignored by default, with only the arrays in
+    their uncompressed forms being compared. See the
+    *ignore_compression* parameter.
+    
+    Any type of object may be tested but, in general, equality is only
+    possible with another cell measure construct, or a subclass of
+    one. See the *ignore_type* parameter.
+    
+    NetCDF elements, such as netCDF variable and dimension names, do not
+    constitute part of the CF data model and so are not checked.
+    
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        other: 
+            The object to compare for equality.
+    
+        atol: float, optional
+            The tolerance on absolute differences between real
+            numbers. The default value is set by the `cfdm.ATOL` function.
+            
+        rtol: float, optional
+            The tolerance on relative differences between real
+            numbers. The default value is set by the `cfdm.RTOL` function.
+    
+        ignore_fill_value: `bool`, optional
+            If True then the "_FillValue" and "missing_value" properties
+            are omitted from the comparison.
+    
+        verbose: `bool`, optional
+            If True then print information about differences that lead to
+            inequality.
+    
+        ignore_properties: sequence of `str`, optional
+            The names of properties to omit from the comparison.
+    
+        ignore_data_type: `bool`, optional
+            If True then ignore the data types in all numerical
+            comparisons. By default different numerical data types imply
+            inequality, regardless of whether the elements are within the
+            tolerance for equality.
+    
+        ignore_compression: `bool`, optional
+            If False then the compression type and, if applicable, the
+            underlying compressed arrays must be the same, as well as
+            the arrays in their uncompressed forms. By default only
+            the arrays in their uncompressed forms are compared.
+    
+        ignore_type: `bool`, optional
+            Any type of object may be tested but, in general, equality is
+            only possible with another cell measure construct, or a
+            subclass of one. If *ignore_type* is True then
+            ``CellMeasure(source=other)`` is tested, rather than the
+            ``other`` defined by the *other* parameter.
+    
+    :Returns: 
+      
+        `bool`
+            Whether the two cell measure constructs are equal.
+    
+    **Examples:**
+    
+    >>> f.equals(f)
+    True
+    >>> f.equals(f.copy())
+    True
+    >>> f.equals('not a cell measure')
+    False
+    
+    >>> g = f.copy()
+    >>> g.set_property('foo', 'bar')
+    >>> f.equals(g)
+    False
+    >>> f.equals(g, verbose=True)
+    CellMeasure: Non-common property name: foo
+    CellMeasure: Different properties
+    False
 
         '''
         if not super().equals(other,
@@ -252,10 +251,9 @@ False
                 print("{0}: Different measure ({1} != {2})".format(
                     self.__class__.__name__, measure0, measure1))
             return False
-        #--- End: if
 
         return True
-    #--- End: def
+
 
     def identity(self, default=''):
         '''Return the canonical identity.
