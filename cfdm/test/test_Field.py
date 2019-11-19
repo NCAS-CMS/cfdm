@@ -419,6 +419,7 @@ class FieldTest(unittest.TestCase):
         for method in methods:
             message = 'method='+method
             for f in cfdm.read(getattr(self, method)):
+#                print(f)
                 self.assertTrue(bool(f.data.get_compression_type()), message)
 
                 u = f.uncompress()
@@ -426,14 +427,17 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue(f.equals(u, verbose=True), message)
 
                 for method1 in methods:
+                    message += ', method1='+method1
                     if method1 == 'indexed_contiguous':
-                        if f.ndim != 3:
+                        if f.data.ndim != 3:
                             continue
-                    elif f.ndim != 2:
+                    elif f.data.ndim != 2:
                         continue
                     
-                    print(method, method1, f.ndim)
+#                    print(method, method1, f.data.ndim)
+
                     c = u.compress(method1)
+
                     self.assertTrue(bool(c.data.get_compression_type()), message)
 
                     self.assertTrue(u.equals(c, verbose=True), message)
@@ -441,8 +445,14 @@ class FieldTest(unittest.TestCase):
                     
                     c = f.compress(method1)
                     self.assertTrue(bool(c.data.get_compression_type()), message)
-                
+
                     self.assertTrue(u.equals(c, verbose=True), message)
+                    self.assertTrue(f.equals(c, verbose=True), message)
+
+                    cfdm.write(c, 'delme.nc')
+                    c = cfdm.read('delme.nc')[0]
+
+                    self.assertTrue(bool(c.data.get_compression_type()), message)
                     self.assertTrue(f.equals(c, verbose=True), message)
         #--- End: for
         

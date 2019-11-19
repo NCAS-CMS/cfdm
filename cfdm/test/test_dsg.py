@@ -19,12 +19,20 @@ def _make_contiguous_file(filename):
     station = n.createDimension('station', 4)
     obs     = n.createDimension('obs'    , 24)
     name_strlen = n.createDimension('name_strlen', 8)
-    
+    bounds  = n.createDimension('bounds', 2)
+  
     lon = n.createVariable('lon', 'f8', ('station',))
     lon.standard_name = "longitude"
     lon.long_name = "station longitude"
     lon.units = "degrees_east"
+    lon.bounds = "lon_bounds"
     lon[...] = [-23, 0, 67, 178]
+    
+    lon_bounds = n.createVariable('lon_bounds', 'f8', ('station', 'bounds'))
+    lon_bounds[...] = [[-24, -22],
+                       [ -1,   1],
+                       [ 66,  68],
+                       [177, 179]]
     
     lat = n.createVariable('lat', 'f8', ('station',))
     lat.standard_name = "latitude"
@@ -59,13 +67,18 @@ def _make_contiguous_file(filename):
     row_size[...] = [3, 7, 5, 9]
     
     time = n.createVariable('time', 'f8', ('obs',))
-    time.standard_name = "time";
+    time.standard_name = "time"
     time.long_name = "time of measurement" 
     time.units = "days since 1970-01-01 00:00:00"
+    time.bounds = "time_bounds"
     time[ 0: 3] = [-3, -2, -1]
     time[ 3:10] = [1, 2, 3, 4, 5, 6, 7]
     time[10:15] = [0.5, 1.5, 2.5, 3.5, 4.5]
     time[15:24] = range(-2, 7)
+    
+    time_bounds = n.createVariable('time_bounds', 'f8', ('obs', 'bounds'))
+    time_bounds[..., 0] = time[...] - 0.5
+    time_bounds[..., 1] = time[...] + 0.5
     
     humidity = n.createVariable('humidity', 'f8', ('obs',), fill_value=-999.9)
     humidity.standard_name = "specific_humidity"
@@ -86,6 +99,82 @@ def _make_contiguous_file(filename):
     return filename
 
 
+#def _make_contiguous_file(filename):        
+#    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
+#    
+#    n.Conventions = 'CF-1.7'
+#    n.featureType = 'timeSeries'
+#
+#    station = n.createDimension('station', 4)
+#    obs     = n.createDimension('obs'    , 24)
+#    name_strlen = n.createDimension('name_strlen', 8)
+#    
+#    lon = n.createVariable('lon', 'f8', ('station',))
+#    lon.standard_name = "longitude"
+#    lon.long_name = "station longitude"
+#    lon.units = "degrees_east"
+#    lon[...] = [-23, 0, 67, 178]
+#    
+#    lat = n.createVariable('lat', 'f8', ('station',))
+#    lat.standard_name = "latitude"
+#    lat.long_name = "station latitude" 
+#    lat.units = "degrees_north"
+#    lat[...] = [-9, 2, 34, 78]
+#    
+#    alt = n.createVariable('alt', 'f8', ('station',))
+#    alt.long_name = "vertical distance above the surface" 
+#    alt.standard_name = "height" 
+#    alt.units = "m"
+#    alt.positive = "up"
+#    alt.axis = "Z"
+#    alt[...] = [0.5, 12.6, 23.7, 345]
+#    
+#    station_name = n.createVariable('station_name', 'S1',
+#                                    ('station', 'name_strlen'))
+#    station_name.long_name = "station name"
+#    station_name.cf_role = "timeseries_id"
+#    station_name[...] = numpy.array([[x for x in 'station1'],
+#                                     [x for x in 'station2'],
+#                                     [x for x in 'station3'],
+#                                     [x for x in 'station4']])
+#    
+#    station_info = n.createVariable('station_info', 'i4', ('station',))
+#    station_info.long_name = "some kind of station info"
+#    station_info[...] = [-10, -9, -8, -7]
+#    
+#    row_size = n.createVariable('row_size', 'i4', ('station',))
+#    row_size.long_name = "number of observations for this station"
+#    row_size.sample_dimension = "obs"
+#    row_size[...] = [3, 7, 5, 9]
+#    
+#    time = n.createVariable('time', 'f8', ('obs',))
+#    time.standard_name = "time";
+#    time.long_name = "time of measurement" 
+#    time.units = "days since 1970-01-01 00:00:00"
+#    time[ 0: 3] = [-3, -2, -1]
+#    time[ 3:10] = [1, 2, 3, 4, 5, 6, 7]
+#    time[10:15] = [0.5, 1.5, 2.5, 3.5, 4.5]
+#    time[15:24] = range(-2, 7)
+#    
+#    humidity = n.createVariable('humidity', 'f8', ('obs',), fill_value=-999.9)
+#    humidity.standard_name = "specific_humidity"
+#    humidity.coordinates = "time lat lon alt station_name station_info"
+#    humidity[ 0: 3] = numpy.arange(0, 3)
+#    humidity[ 3:10] = numpy.arange(1, 71, 10)
+#    humidity[10:15] = numpy.arange(2, 502, 100)
+#    humidity[15:24] = numpy.arange(3, 9003, 1000)
+#    
+#    temp = n.createVariable('temp', 'f8', ('obs',), fill_value=-999.9)
+#    temp.standard_name = "air_temperature"
+#    temp.units = "Celsius"
+#    temp.coordinates = "time lat lon alt station_name station_info"
+#    temp[...] = humidity[...] + 273.15
+#    
+#    n.close()
+#    
+#    return filename
+
+
 def _make_indexed_file(filename):        
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
@@ -95,12 +184,20 @@ def _make_indexed_file(filename):
     station = n.createDimension('station', 4)
     obs     = n.createDimension('obs'    , None)
     name_strlen = n.createDimension('name_strlen', 8)
+    bounds  = n.createDimension('bounds', 2)
     
     lon = n.createVariable('lon', 'f8', ('station',))
     lon.standard_name = "longitude"
     lon.long_name = "station longitude"
     lon.units = "degrees_east"
+    lon.bounds = "lon_bounds"
     lon[...] = [-23, 0, 67, 178]
+    
+    lon_bounds = n.createVariable('lon_bounds', 'f8', ('station', 'bounds'))
+    lon_bounds[...] = [[-24, -22],
+                       [ -1,   1],
+                       [ 66,  68],
+                       [177, 179]]
     
     lat = n.createVariable('lat', 'f8', ('station',))
     lat.standard_name = "latitude"
@@ -145,11 +242,16 @@ def _make_indexed_file(filename):
     time.standard_name = "time";
     time.long_name = "time of measurement" 
     time.units = "days since 1970-01-01 00:00:00"
+    time.bounds = "time_bounds"
     ssi = [0, 0, 0, 0]
     for i, si in enumerate(stationIndex[...]):
         time[i] = t[si][ssi[si]]
         ssi[si] += 1
-        
+
+    time_bounds = n.createVariable('time_bounds', 'f8', ('obs', 'bounds'))
+    time_bounds[..., 0] = time[...] - 0.5
+    time_bounds[..., 1] = time[...] + 0.5
+    
     humidity = n.createVariable('humidity', 'f8', ('obs',), fill_value=-999.9)
     humidity.standard_name = "specific_humidity"
     humidity.coordinates = "time lat lon alt station_name station_info"
@@ -322,15 +424,15 @@ def _make_indexed_contiguous_file(filename):
     return filename
 
 
-contiguous_file = _make_contiguous_file('DSG_timeSeries_contiguous.nc')
-indexed_file    = _make_indexed_file('DSG_timeSeries_indexed.nc')
-indexed_contiguous_file = _make_indexed_contiguous_file('DSG_timeSeriesProfile_indexed_contiguous.nc')
+#contiguous_file = _make_contiguous_file('DSG_timeSeries_contiguous.nc')
+#indexed_file    = _make_indexed_file('DSG_timeSeries_indexed.nc')
+#indexed_contiguous_file = _make_indexed_contiguous_file('DSG_timeSeriesProfile_indexed_contiguous.nc')
 
 class DSGTest(unittest.TestCase):
     def setUp(self):
-        self.contiguous         = contiguous_file
-        self.indexed            = indexed_file
-        self.indexed_contiguous = indexed_contiguous_file
+        self.contiguous         = 'DSG_timeSeries_contiguous.nc' #contiguous_file
+        self.indexed            = 'DSG_timeSeries_indexed.nc' #indexed_file
+        self.indexed_contiguous = 'DSG_timeSeriesProfile_indexed_contiguous.nc' #indexed_contiguous_file
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
         os.close(fd)

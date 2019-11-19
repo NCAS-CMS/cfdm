@@ -709,7 +709,7 @@ class Field(mixin.NetCDFVariable,
 
             '''
             if method == 'indexed_contiguous':
-                shape1 = f.shape[1]
+                shape1 = f.data.shape[1]
                 
             for key, c in f.constructs.filter_by_axis('or').items():
                 c_axes = f.get_data_axes(key)
@@ -727,7 +727,7 @@ class Field(mixin.NetCDFVariable,
                     # Populate the compressed data for the metadata
                     # construct
                     start = 0            
-                    if method == 'indexed_contiguous' and c.ndim == 2:
+                    if method == 'indexed_contiguous' and c.data.ndim == 2:
                         c_start = 0
                         for i, d in enumerate(data.flatten(range(data.ndim-1))):
                             c_start = shape1 * i
@@ -758,15 +758,15 @@ class Field(mixin.NetCDFVariable,
                     if data is None:
                         continue
 
-                    b_shape = data.shape[c.ndim:]
+                    b_shape = data.shape[c.data.ndim:]
                     compressed_data = _empty_compressed_data(data, (N,) + b_shape)
                 
                     # Populate the compressed data for the metadata
                     # construct
                     start = 0            
-                    if method == 'indexed_contiguous' and c.ndim == 2:
+                    if method == 'indexed_contiguous' and c.data.ndim == 2:
                         c_start = 0
-                        for i, d in enumerate(data.flatten(range(c.ndim-1))):
+                        for i, d in enumerate(data.flatten(range(c.data.ndim-1))):
                             c_start = shape1 * i
                             c_end = c_start + shape1
                             last = sum(n > 0 for n in count[c_start:c_end]) # What if last = 0? TODO
@@ -775,7 +775,7 @@ class Field(mixin.NetCDFVariable,
                             compressed_data[start:end] = d[:last]
                             start += last
                     else:                        
-                        for last, d in zip(count, data.flatten(range(c.ndim-1))):
+                        for last, d in zip(count, data.flatten(range(c.data.ndim-1))):
                             if not last:
                                 continue
                             
@@ -810,26 +810,26 @@ class Field(mixin.NetCDFVariable,
             return f
     
         if method == 'contiguous':
-            if self.ndim != 2:
+            if self.data.ndim != 2:
                 raise ValueError(
                     "The field data must have exactly 2 dimensions for DSG ragged contiguous compression. Got {}".format(
-                        self.ndim))
+                        self.data.ndim))
         elif method == 'indexed':
-            if self.ndim != 2:
+            if self.data.ndim != 2:
                 raise ValueError(
                     "The field data must have exactly 2 dimensions for DSG ragged indexed compression. Got {}".format(
-                        self.ndim))                            
+                        self.data.ndim))                            
         elif method == 'indexed_contiguous':
-            if self.ndim != 3:
+            if self.data.ndim != 3:
                 raise ValueError(
                     "The field data must have exactly 3 dimensions for DSG ragged indexed contiguous compression. Got {}".format(
-                        self.ndim))
+                        self.data.ndim))
         #--- End: if
 
         # Make sure that the metadata constructs have the same
         # relative axis order as the field's data
-        f.transpose(range(self.ndim), constructs=True, inplace=True)
-        
+        f.transpose(range(self.data.ndim), constructs=True, inplace=True)
+
         if method != 'gathered':
             # --------------------------------------------------------
             # DSG compression
@@ -860,7 +860,7 @@ class Field(mixin.NetCDFVariable,
                 compressed_field_data[start:end] = d[:last]
                 start += last
         #--- End: if
-                                           
+
         if method == 'contiguous':
             # --------------------------------------------------------
             # Ragged contiguous
@@ -890,7 +890,7 @@ class Field(mixin.NetCDFVariable,
                     continue
 
                 end = start + last
-                index_variable[start:end] = i
+                index_variable.data[start:end] = i
                 start += last
             
             x = _RaggedIndexedArray(self, compressed_field_data, data,
@@ -905,8 +905,8 @@ class Field(mixin.NetCDFVariable,
             # Ragged indexed contiguous
             # --------------------------------------------------------
             index = []
-            shape1 = f.shape[1]
-            for i in range(f.shape[0]):
+            shape1 = f.data.shape[1]
+            for i in range(f.data.shape[0]):
                 start = shape1 * i
                 end = start + shape1
                 index.extend([i] * sum(n > 0 for n in count[start:end]))
@@ -1782,4 +1782,56 @@ class Field(mixin.NetCDFVariable,
         return f
 
 
+    def uncompress(self, inplace=False):
+        '''Uncompress the construct.
+
+    Compression saves space by identifying and removing unwanted
+    missing data. Such compression techniques store the data more
+    efficiently and result in no precision loss.
+
+    Whether or not the construct is compressed does not alter its
+    functionality nor external appearance.
+
+    The following type of compression are available:
+
+        * Ragged arrays for discrete sampling geometries (DSG). Three
+          different types of ragged array representation are
+          supported.
+        
+        ..
+        
+        * Compression by gathering.
+
+    .. versionadded:: 3.0.6
+    
+    .. seealso:: `cf.write`, `compress`, `flatten`, `varray`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+        `Field` or `None`
+            The uncompressed field construct, or `None` if the
+            operation was in-place.
+
+    **Examples:** 
+
+    TODO
+
+        '''
+        f = super().uncompress(inplace=inplace)
+        if inplace:
+            f = self
+           
+        for c in f.constructs.filter_by_data().values():
+            c.uncompress(inplace=True)
+
+        if inplace:
+            f = None
+        return f    
+
+    
 #--- End: class

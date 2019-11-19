@@ -19,6 +19,9 @@ class RaggedContiguousArray(abstract.CompressedArray,
     The information needed to uncompress the data is stored in a
     "count variable" that gives the size of each block.
     
+    It is assumed that the compressed dimension is the left-most
+    dimension in the compressed array.
+
     .. versionadded:: 1.7.0
 
     '''
@@ -50,7 +53,7 @@ class RaggedContiguousArray(abstract.CompressedArray,
                          count_variable=count_variable,
                          compression_type='ragged contiguous',
                          compressed_dimension=0)
-
+       
         
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
@@ -76,7 +79,7 @@ class RaggedContiguousArray(abstract.CompressedArray,
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-        
+       
         compressed_array = self._get_compressed_Array()
 
         # Initialise the un-sliced uncompressed array
@@ -100,7 +103,6 @@ class RaggedContiguousArray(abstract.CompressedArray,
                          slice(0, sample_indices.stop - sample_indices.start))
             
             uarray[u_indices] = compressed_array[(sample_indices,)]
-
             start += n
 
         return self.get_subspace(uarray, indices, copy=True)

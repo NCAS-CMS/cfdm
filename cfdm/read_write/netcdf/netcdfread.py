@@ -2766,21 +2766,21 @@ variable's netCDF dimensions.
             The netCDF name of the variable.
     
         f: `Field`
-            The parent field.
+            The parent field construct.
     
         dimension: `bool`, optional
-            If True then a dimension coordinate is created.
+            If True then a dimension coordinate construct is created.
     
         auxiliary: `bool`, optional
-            If True then an auxiliary coordinate is created.
+            If True then an auxiliary coordinate consrtruct is created.
     
         domain_ancillary: `bool`, optional
-            If True then a domain ancillary is created.
+            If True then a domain ancillary construct is created.
     
     :Returns:
     
-        out : `DimensionCoordinate` or `AuxiliaryCoordinate` or `DomainAncillary`
-            The new item.
+        `DimensionCoordinate` or `AuxiliaryCoordinate` or `DomainAncillary`
+            The new contruct.
     
         '''
         g = self.read_vars
@@ -2839,7 +2839,7 @@ variable's netCDF dimensions.
             c = self.implementation.initialise_DomainAncillary()
         else:
             raise ValueError(
-"Must set one of the dimension, auxiliary or domain_ancillary parameters to True")
+                "Must set one of the dimension, auxiliary or domain_ancillary parameters to True")
 
         self.implementation.set_properties(c, properties)
 
@@ -2870,9 +2870,13 @@ variable's netCDF dimensions.
             bounds_properties.pop('formula_terms', None)                
             self.implementation.set_properties(bounds, bounds_properties)
 
+            bounds_dimensions = g['variable_dimensions'][bounds_ncvar]
+
 #            if bounds_properties.get('units') is not None:
             bounds_data = self._create_data(bounds_ncvar, bounds,
                                             parent_ncvar=ncvar)
+#                                            non_compressed_dimensions=nc_dimensions=bounds_dimensions)
+#ppp            
 #            else:
 #                bounds_data = self._create_data(ncvar, bounds)
 #                self.implementation.set_data_units(bounds_data, properties.get('units'))
@@ -3331,7 +3335,7 @@ variable's netCDF dimensions.
     
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None,
-                     parent_ncvar=None): 
+                     parent_ncvar=None, nc_dimensions=None): 
         '''TODO
 
     :Parameters:
@@ -3381,7 +3385,6 @@ variable's netCDF dimensions.
             # --------------------------------------------------------
             # The array is compressed
             # --------------------------------------------------------
-
             # Loop round the dimensions of data variable, as they
             # appear in the netCDF file
             for ncdim in dimensions:
@@ -3405,7 +3408,6 @@ variable's netCDF dimensions.
                         # dimensions.
                         # --------------------------------------------
                         c = c['gathered']
-                        dimensions = g['nc'].dimensions        
                         uncompressed_shape = tuple(
                             [g['internal_dimension_sizes'][dim]
                              for dim in self._ncdimensions(ncvar)])
@@ -3423,9 +3425,20 @@ variable's netCDF dimensions.
                         # indexed and contiguous array.
                         # --------------------------------------------
                         c = c['ragged_indexed_contiguous']
-                        uncompressed_shape = (c['instance_dimension_size'],
-                                              c['element_dimension_1_size'],
-                                              c['element_dimension_2_size'])
+
+                        i = dimensions.index(ncdim)
+                        if i != 0:
+                            raise ValueError("TODO")
+                        
+                        uncompressed_shape = list(array.shape)
+                        uncompressed_shape[i:i+1] = [c['instance_dimension_size'],
+                                                     c['element_dimension_1_size'],
+                                                     c['element_dimension_2_size']]
+                        uncompressed_shape = tuple(uncompressed_shape)
+                        
+#                        uncompressed_shape = (c['instance_dimension_size'],
+#                                              c['element_dimension_1_size'],
+#                                              c['element_dimension_2_size'])
                         array = self._create_ragged_indexed_contiguous_array(
 #                            ragged_indexed_contiguous_array=array,
                             ragged_indexed_contiguous_array=self._create_Data(array),
@@ -3437,8 +3450,20 @@ variable's netCDF dimensions.
                         # Contiguous ragged array
                         # --------------------------------------------
                         c = c['ragged_contiguous']
-                        uncompressed_shape=(c['instance_dimension_size'],
-                                            c['element_dimension_size'])
+
+                        i = dimensions.index(ncdim)
+                        if i != 0:
+                            raise ValueError("TODO")
+                        
+                        uncompressed_shape = list(array.shape)
+                        uncompressed_shape[i:i+1] = [c['instance_dimension_size'],
+                                                     c['element_dimension_size']]
+                        uncompressed_shape = tuple(uncompressed_shape)
+
+#                        print('uncompressed_shape=',uncompressed_shape)
+#                        uncompressed_shape=(c['instance_dimension_size'],
+#                                            c['element_dimension_size'])
+
                         array = self._create_ragged_contiguous_array(
 #                            ragged_contiguous_array=array,
                             ragged_contiguous_array=self._create_Data(array),
@@ -3449,8 +3474,18 @@ variable's netCDF dimensions.
                         # Indexed ragged array
                         # --------------------------------------------
                         c = c['ragged_indexed']
-                        uncompressed_shape = (c['instance_dimension_size'],
-                                              c['element_dimension_size'])
+
+                        i = dimensions.index(ncdim)
+                        if i != 0:
+                            raise ValueError("TODO")
+                        
+                        uncompressed_shape = list(array.shape)
+                        uncompressed_shape[i:i+1] = [c['instance_dimension_size'],
+                                                     c['element_dimension_size']]
+                        uncompressed_shape = tuple(uncompressed_shape)
+
+#                        uncompressed_shape = (c['instance_dimension_size'],
+#                                              c['element_dimension_size'])
                         array = self._create_ragged_indexed_array(
                             ragged_indexed_array=self._create_Data(array), #array,
                             uncompressed_shape=uncompressed_shape,
@@ -3526,7 +3561,6 @@ variable's netCDF dimensions.
     **Examples:**
     
     >>> c = parse_cell_methods('t: minimum within years t: mean over ENSO years)')
-    >>> print c
 
         '''
         if field_ncvar:
@@ -3806,27 +3840,30 @@ variable's netCDF dimensions.
                         # of situation may arise with simple
                         # geometries.
                         continue
+
+                    i = ncdimensions.index(ncdim)
                     
                     if 'gathered' in c:
                         # Compression by gathering
-                        i = ncdimensions.index(ncdim)
                         ncdimensions[i:i+1] = c['gathered']['implied_ncdimensions']
                     elif 'ragged_indexed_contiguous' in c:
-                        # Indexed contiguous ragged array. ppp
+                        # Indexed contiguous ragged array.
                         #
                         # Check this before ragged_indexed and
                         # ragged_contiguous because both of these will
                         # exist for an array that is both indexed and
                         # contiguous.
-                        i = ncdimensions.index(ncdim)
-                        ncdimensions = c['ragged_indexed_contiguous']['implied_ncdimensions']
+#                        ncdimensions = c['ragged_indexed_contiguous']['implied_ncdimensions']
+                        ncdimensions[i:i+1] = c['ragged_indexed_contiguous']['implied_ncdimensions']
                     elif 'ragged_contiguous' in c:
                         # Contiguous ragged array
-                        ncdimensions = c['ragged_contiguous']['implied_ncdimensions']
+#                        ncdimensions = c['ragged_contiguous']['implied_ncdimensions']
+                        ncdimensions[i:i+1] = c['ragged_contiguous']['implied_ncdimensions']
                     elif 'ragged_indexed' in c:
                         # Indexed ragged array
-                        ncdimensions = c['ragged_indexed']['implied_ncdimensions']
-    
+#                        ncdimensions = c['ragged_indexed']['implied_ncdimensions']
+                        ncdimensions[i:i+1] = c['ragged_indexed']['implied_ncdimensions']
+
                     break
         #--- End: if
         

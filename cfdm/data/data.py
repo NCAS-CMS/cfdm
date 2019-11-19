@@ -226,6 +226,56 @@ class Data(mixin.Container,
         return int(self.array)
 
 
+    def __iter__(self):
+        '''Called when an iterator is required.
+
+    x.__iter__() <==> iter(x)
+    
+    **Examples:**
+    
+    >>> d = cfdm.Data([1, 2, 3], 'metres')
+    >>> for e in d:
+    ...    print repr(e)
+    ...
+    1
+    2
+    3
+    
+    >>> d = cfdm.Data([[1, 2], [4, 5]], 'metres')
+    >>> for e in d:
+    ...    print repr(e)
+    ...
+    <CF Data: [1, 2] metres>
+    <CF Data: [4, 5] metres>
+    
+    >>> d = cfdm.Data(34, 'metres')
+    >>> for e in d:
+    ...     print repr(e)
+    ..
+    TypeError: iteration over a 0-d Data
+
+        '''
+        ndim = self.ndim
+
+        if not ndim:
+            raise TypeError(
+                "Iteration over 0-d {}".format(self.__class__.__name__))
+            
+        if ndim == 1:
+            i = iter(self.array)
+            while 1:
+                try:
+                    yield next(i)
+                except StopIteration:
+                    return 
+        else:
+            # ndim > 1
+            for n in range(self.shape[0]):
+                out = self[n, ...]
+                out.squeeze(0, inplace=True)
+                yield out
+
+
     def __setitem__(self, indices, value):
         '''Assign to data elements defined by indices.
 
@@ -1624,31 +1674,31 @@ class Data(mixin.Container,
                 return False
         #--- End: for
            
-        if not ignore_compression:
-            # --------------------------------------------------------
-            # Check for equal compression types
-            # --------------------------------------------------------
-            compression_type = self.get_compression_type()
-            if compression_type != other.get_compression_type():
-                if verbose:
-                    print("{0}: Different compression types: {1} != {2}".format(
-                        self.__class__.__name__,
-                        compression_type,
-                        other.get_compression_type()))
-                return False
-            
-            # --------------------------------------------------------
-            # Check for equal compressed array values
-            # --------------------------------------------------------
-            if compression_type:
-                if not self._equals(self.compressed_array,
-                                    other.compressed_array,
-                                    rtol=rtol, atol=atol):
-                    if verbose:
-                        print("{0}: Different compressed array values".format(
-                            self.__class__.__name__))
-                    return False
-        #--- End: if
+        #if not ignore_compression:
+        #    # --------------------------------------------------------
+        #    # Check for equal compression types
+        #    # --------------------------------------------------------
+        #    compression_type = self.get_compression_type()
+        #    if compression_type != other.get_compression_type():
+        #        if verbose:
+        #            print("{0}: Different compression types: {1} != {2}".format(
+        #                self.__class__.__name__,
+        #                compression_type,
+        #                other.get_compression_type()))
+        #        return False
+        #    
+        #    # --------------------------------------------------------
+        #    # Check for equal compressed array values
+        #    # --------------------------------------------------------
+        #    if compression_type:
+        #        if not self._equals(self.compressed_array,
+        #                            other.compressed_array,
+        #                            rtol=rtol, atol=atol):
+        #            if verbose:
+        #                print("{0}: Different compressed array values".format(
+        #                    self.__class__.__name__))
+        #            return False
+        ##--- End: if
         
         # ------------------------------------------------------------
         # Check for equal (uncompressed) array values
@@ -2003,8 +2053,8 @@ class Data(mixin.Container,
 #        return underlying_array        
 
 
-    def uncompress(self):
-        '''Uncompress the underlying array in-place.
+    def uncompress(self, inplace=False):
+        '''Uncompress the underlying appprray in-place.
 
     If the array is not compressed, then no change is made.
     
@@ -2012,25 +2062,41 @@ class Data(mixin.Container,
     
     .. seealso:: `array`, `compress`, `compressed_array`, `source`
     
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
     :Returns:
     
-        `None`
-    
+        `Data` or `None`
+            The uncompressed data, or `None` if the operation was
+            in-place.
+
     **Examples:**
     
     >>> d.get_compression_type()
     'ragged contiguous'
     >>> d.source()
     <RaggedContiguousArray(4, 9): >
-    >>> d.uncompress()
+    >>> d.uncompress(inpalce=True)
     >>> d.get_compression_type()
     ''
     >>> d.source()
     <NumpyArray(4, 9): >
 
         '''
-        if self.get_compression_type():
-            self._set_Array(self.array, copy=False)
+        if inplace:
+            d = self
+        else:
+            d = self.copy()
+    
+        if d.get_compression_type():
+            d._set_Array(d.array, copy=False)
+
+        if inplace:
+            d = None
+        return d
 
     
     def unique(self):
