@@ -4,7 +4,8 @@ version 1.7.11
 
 **Not yet released**
 
-* New method: `cfdm.Data.flatten`
+* New methods: `cfdm.Field.compress`, `cfdm.Field.uncompress`
+* New methods: `cfdm.Data.flatten`, `cfdm.Data.uncompress`
 * Changed the default value of the ``ignore_compression`` parameter to
   `True`.
   

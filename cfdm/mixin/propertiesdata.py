@@ -212,11 +212,10 @@ class PropertiesData(Properties):
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
     
-    If data arrays are compressed then the compression type and the
-    underlying compressed arrays must be the same, as well as the
-    arrays in their uncompressed forms. See the *ignore_compression*
-    parameter.
-    
+    Any compression is ignored by default, with only the arrays in
+    their uncompressed forms being compared. See the
+    *ignore_compression* parameter.
+
     Any type of object may be tested but, in general, equality is only
     possible with another object of the same type, or a subclass of
     one. See the *ignore_type* parameter.
@@ -259,12 +258,10 @@ class PropertiesData(Properties):
             within the tolerance for equality.
     
         ignore_compression: `bool`, optional
-            If True then any compression applied to the underlying
-            arrays is ignored and only the uncompressed arrays are
-            tested for equality. By default the compression type and,
-            if appliciable, the underlying compressed arrays must be
-            the same, as well as the arrays in their uncompressed
-            forms.
+            If False then the compression type and, if applicable, the
+            underlying compressed arrays must be the same, as well as
+            the arrays in their uncompressed forms. By default only
+            the the arrays in their uncompressed forms are compared.
     
         ignore_type: `bool`, optional
             Any type of object may be tested but, in general, equality
@@ -563,7 +560,13 @@ class PropertiesData(Properties):
 
     **Examples:** 
 
-    TODO
+    >>> f.data.get_compression_type()
+    'ragged contiguous'
+    >>> g = f.uncompress()
+    >>> g.data.get_compression_type()
+    ''
+    >>> g.equals(f)
+    True
 
         '''
         if inplace:

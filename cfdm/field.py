@@ -612,6 +612,9 @@ class Field(mixin.NetCDFVariable,
      [ 0.0 0.09  0.0 0.91 2.96 1.14 3.86 0.0 0.0]]
     >>> g = f.compress('contiguous')
     >>> cfdm.write(g, 'compressed_file_c.nc')
+    
+    >>> g.equals(f)
+    True
 
     >>> g.data.get_compression_type()
     'ragged contiguous'
@@ -1798,8 +1801,14 @@ class Field(mixin.NetCDFVariable,
 
     **Examples:** 
 
-    TODO
-
+    >>> f.data.get_compression_type()
+    'ragged contiguous'
+    >>> g = f.uncompress()
+    >>> g.data.get_compression_type()
+    ''
+    >>> g.equals(f)
+    True
+ 
         '''
         f = super().uncompress(inplace=inplace)
         if inplace:

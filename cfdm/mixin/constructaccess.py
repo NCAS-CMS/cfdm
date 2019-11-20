@@ -5,9 +5,9 @@ import re
 
 class ConstructAccess(object):
     '''Mixin class for manipulating constructs stored in a `Constructs`
-object.
+    object.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     # ----------------------------------------------------------------
@@ -16,18 +16,18 @@ object.
     def _unique_construct_names(self):
         '''Return unique metadata construct names.
 
-.. versionadded:: 1.7.0
-
-**Examples:**
-
->>> f._unique_construct_names()
-{'cellmethod0': 'method:mean',
- 'dimensioncoordinate0': 'latitude',
- 'dimensioncoordinate1': 'longitude',
- 'dimensioncoordinate2': 'time',
- 'domainaxis0': 'ncdim%lat',
- 'domainaxis1': 'ncdim%lon',
- 'domainaxis2': 'key%domainaxis2'}
+    .. versionadded:: 1.7.0
+    
+    **Examples:**
+    
+    >>> f._unique_construct_names()
+    {'cellmethod0': 'method:mean',
+     'dimensioncoordinate0': 'latitude',
+     'dimensioncoordinate1': 'longitude',
+     'dimensioncoordinate2': 'time',
+     'domainaxis0': 'ncdim%lat',
+     'domainaxis1': 'ncdim%lon',
+     'domainaxis2': 'key%domainaxis2'}
 
         '''    
         key_to_name = {}
@@ -53,19 +53,19 @@ object.
         #--- End: for
         
         return key_to_name
-    #--- End: def
+
     
     def _unique_domain_axis_identities(self):
         '''Return unique domain axis construct names.
 
-.. versionadded:: 1.7.0
-
-**Examples:**
-
->>> f._unique_domain_axis_identities()
-{'domainaxis0': 'latitude(5)',
- 'domainaxis1': 'longitude(8)',
- 'domainaxis2': 'time(1)'}
+    .. versionadded:: 1.7.0
+    
+    **Examples:**
+    
+    >>> f._unique_domain_axis_identities()
+    {'domainaxis0': 'latitude(5)',
+     'domainaxis1': 'longitude(8)',
+     'domainaxis2': 'time(1)'}
 
         '''
         key_to_name = {}
@@ -88,7 +88,7 @@ object.
         #--- End: for
         
         return key_to_name
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Attributes
@@ -97,30 +97,30 @@ object.
     def coordinate_references(self):
         '''Return coordinate reference constructs.
 
-.. versionadded:: 1.7.0
-
-.. seealso:: `constructs`
-
-:Returns:
-
-    `Constructs`
-        The constructs and their construct keys.
-
-
-**Examples:**
-
->>> f.coordinate_references
-Constructs:
-{}
-
->>> f.coordinate_references
-Constructs:
-{'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
- 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `constructs`
+    
+    :Returns:
+    
+        `Constructs`
+            The constructs and their construct keys.
+    
+    
+    **Examples:**
+    
+    >>> f.coordinate_references
+    Constructs:
+    {}
+    
+    >>> f.coordinate_references
+    Constructs:
+    {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
+     'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
 
         '''
         return self.constructs.filter_by_type('coordinate_reference')
-    #--- End: def
+
 
     @property
     def domain_axes(self):
