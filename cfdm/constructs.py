@@ -11,59 +11,59 @@ from . import core
 class Constructs(core.Constructs):
     '''A container for metadata constructs.
 
-Calling a `Constructs` instance selects metadata constructs by
-identity and is an alias for the `filter_by_identity` method.
-
-**Examples:**
-
-Select constructs that have a "standard_name" property of 'foo':
-
->>> d = c('foo')
-
-.. versionadded:: 1.7.0
+    Calling a `Constructs` instance selects metadata constructs by
+    identity and is an alias for the `filter_by_identity` method.
+    
+    **Examples:**
+    
+    Select constructs that have a "standard_name" property of 'foo':
+    
+    >>> d = c('foo')
+    
+    .. versionadded:: 1.7.0
 
     ''' 
     def __call__(self, *identities):
         '''Select metadata constructs by identity.
 
-Calling a `Constructs` instance selects metadata constructs by
-identity and is an alias for the `filter_by_identity` method.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `filter_by_identity`
-
-:Parameters:
-
-    identities: optional
-        See `filter_by_identity` for details.
-
-:Returns:
-
-    `Constructs`
-        The selected constructs and their construct keys.
-
-**Examples:**
-
->>> c('latitude')
-Constructs:
-{'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
->>> c.filter_by_identity('latitude')
-Constructs:
-{'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
-
- See `filter_by_identity` for more examples.
+    Calling a `Constructs` instance selects metadata constructs by
+    identity and is an alias for the `filter_by_identity` method.
+    
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `filter_by_identity`
+    
+    :Parameters:
+    
+        identities: optional
+            See `filter_by_identity` for details.
+    
+    :Returns:
+    
+        `Constructs`
+            The selected constructs and their construct keys.
+    
+    **Examples:**
+    
+    >>> print(c('latitude'))
+    Constructs:
+    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+    >>> print(c.filter_by_identity('latitude'))
+    Constructs:
+    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+    
+    See `filter_by_identity` for more examples.
 
         '''
         return self.filter_by_identity(*identities)
-    #--- End: def
+
     
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
+    x.__repr__() <==> repr(x)
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         construct_types = ['{0}({1})'.format(c, len(v))
@@ -71,14 +71,14 @@ x.__repr__() <==> repr(x)
                            if len(v) and c not in self._ignore]    
         
         return '<{0}: {1}>'.format(self.__class__.__name__, ', '.join(construct_types))
-    #--- End: def
+
 
     def __str__(self):
         '''Called by the `str` built-in function.
 
-x.__str__() <==> str(x)
+    x.__str__() <==> str(x)
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         out = ['Constructs:']
@@ -103,7 +103,7 @@ x.__str__() <==> str(x)
             out[-1] = out[-1][:-1] + '}'
 
         return '\n '.join(out)
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Private methods

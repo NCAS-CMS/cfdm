@@ -7,7 +7,7 @@ from copy import copy
 class Constructs(object):
     '''A container for metadata constucts.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def __init__(self, 
@@ -26,64 +26,64 @@ class Constructs(object):
                  _ignore=()):
         '''**Initialization**
 
-:Parameters:
-
-    auxiliary_coordinate: `str`, optional
-        The base name for keys of auxiliary coordinate constructs.
-
-        *Parameter example:*
-          ``auxiliary_coordinate='auxiliarycoordinate'``
-
-    dimension_coordinate: `str`, optional
-        The base name for keys of dimension coordinate constructs.
-
-        *Parameter example:*
-          ``dimension_coordinate='dimensioncoordinate'``
-
-    domain_ancillary: `str`, optional
-        The base name for keys of domain ancillary constructs.
-
-        *Parameter example:*
-          ``domain_ancillary='domainancillary'``
-
-    field_ancillary: `str`, optional
-        The base name for keys of field ancillary constructs.
-
-        *Parameter example:*
-          ``field_ancillary='fieldancillary'``
-
-    cell_measure: `str`, optional
-        The base name for keys of cell measure constructs.
-
-        *Parameter example:*
-          ``cell_measure='cellmeasure'``
-
-    coordinate_reference: `str`, optional
-        The base name for keys of coordinate reference constructs.
-
-        *Parameter example:*
-          ``coordinate_reference='coordinatereference'``
-
-    domain_axis: `str`, optional
-        The base name for keys of domain axis constructs.
-
-        *Parameter example:*
-          ``domain_axis='domainaxis'``
-
-    cell_method: `str`, optional
-        The base name for keys of cell method constructs.
-
-        *Parameter example:*
-          ``cell_method='cellmethod'``
-
-    source: optional
-        Initialize the construct keys and contained metadata
-        constructs from those of *source*.
-
-    copy: `bool`, optional
-        If False then do not deep copy metadata constructs from those
-        of *source* prior to initialization. By default such metadata
-        constructs deep copied.
+    :Parameters:
+    
+        auxiliary_coordinate: `str`, optional
+            The base name for keys of auxiliary coordinate constructs.
+    
+            *Parameter example:*
+              ``auxiliary_coordinate='auxiliarycoordinate'``
+    
+        dimension_coordinate: `str`, optional
+            The base name for keys of dimension coordinate constructs.
+    
+            *Parameter example:*
+              ``dimension_coordinate='dimensioncoordinate'``
+    
+        domain_ancillary: `str`, optional
+            The base name for keys of domain ancillary constructs.
+    
+            *Parameter example:*
+              ``domain_ancillary='domainancillary'``
+    
+        field_ancillary: `str`, optional
+            The base name for keys of field ancillary constructs.
+    
+            *Parameter example:*
+              ``field_ancillary='fieldancillary'``
+    
+        cell_measure: `str`, optional
+            The base name for keys of cell measure constructs.
+    
+            *Parameter example:*
+              ``cell_measure='cellmeasure'``
+    
+        coordinate_reference: `str`, optional
+            The base name for keys of coordinate reference constructs.
+    
+            *Parameter example:*
+              ``coordinate_reference='coordinatereference'``
+    
+        domain_axis: `str`, optional
+            The base name for keys of domain axis constructs.
+    
+            *Parameter example:*
+              ``domain_axis='domainaxis'``
+    
+        cell_method: `str`, optional
+            The base name for keys of cell method constructs.
+    
+            *Parameter example:*
+              ``cell_method='cellmethod'``
+    
+        source: optional
+            Initialize the construct keys and contained metadata
+            constructs from those of *source*.
+    
+        copy: `bool`, optional
+            If False then do not deep copy metadata constructs from
+            those of *source* prior to initialization. By default such
+            metadata constructs deep copied.
 
         '''
         self._ignore = tuple(set(_ignore))
@@ -234,43 +234,43 @@ class Constructs(object):
         
         for x in self._ordered_constructs:
             self._constructs[x] = OrderedDict()
-    #--- End: def
+
 
     def __contains__(self, key):
         '''Called to implement membership test operators for construct keys.
 
-x.__contains__(y) <==> y in x
+    x.__contains__(y) <==> y in x
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         return key in self._construct_type        
-    #--- End: def
+
     
     def __copy__(self):
         '''Called by the `copy.copy` standard library function.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         return self.shallow_copy()
-    #--- End: def
+
    
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` standard library function.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         return self.copy()
-    #--- End: def
+
    
     def __getitem__(self, key):
         '''Return a construct with the given key.
 
-x.__getitem__(y) <==> x[y]
+    x.__getitem__(y) <==> x[y]
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         construct_type = self.construct_type(key) # ignore??
@@ -282,29 +282,29 @@ x.__getitem__(y) <==> x[y]
             d = {}
             
         return d[key]
-    #--- End: def
+
 
     def __iter__(self):
         '''Called when an iterator is required.
 
-x.__iter__() <==> iter(x)
+    x.__iter__() <==> iter(x)
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         return iter(self._dictionary().keys())
-    #--- End: def'
+
             
     def __len__(self):
         '''Return the number of constructs.
 
-x.__len__() <==> len(x)
+    x.__len__() <==> len(x)
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         return len(self._dictionary())
-    #--- End: def
+
     
     # ----------------------------------------------------------------
     # Private methods
@@ -312,23 +312,23 @@ x.__len__() <==> len(x)
     def _default(self, default, message=None):
         '''TODO
 
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    default: 
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        default: 
+            TODO
+            
+        message: `str`, optional 
+            TODO
+            
+    :Returns:
+    
         TODO
-        
-    message: `str`, optional 
-        TODO
-        
-:Returns:
-
+    
+    **Examples:**
+    
     TODO
-
-**Examples:**
-
-TODO
 
         '''
         if isinstance(default, Exception):
@@ -339,27 +339,27 @@ TODO
             raise default
         
         return default
-    #--- End: def
+
 
     def _del_data_axes(self, k, *d):
         '''Remove and return a construct's axes, if any.
 
-If k is not found, d is returned if given, otherwise KeyError is
-raised
+    If k is not found, d is returned if given, otherwise KeyError is
+    raised
 
         '''
         return self._construct_axes.pop(k, *d)
-    #--- End: def
+
     
     # ----------------------------------------------------------------
     # Private dictionary-like methods    
     # ----------------------------------------------------------------
     def _pop(self, k, *d):
         '''D.pop(k[,d]) -> v, remove specified key and return the
-corresponding value.
-
-If k is not found, d is returned if given, otherwise KeyError is
-raised
+    corresponding value.
+    
+    If k is not found, d is returned if given, otherwise KeyError is
+    raised
 
         '''
         # Remove the construct axes, if any
@@ -376,7 +376,7 @@ raised
             
         # Remove and return the construct
         return self._constructs[construct_type].pop(k, *d)
-    #--- End: def
+
 
     def _update(self, other):
         '''D.update(E) -> None. Update D from E.
@@ -391,7 +391,7 @@ raised
         self._construct_axes.update      (other._construct_axes)
         self._construct_type.update      (other._construct_type)
         self._constructs.update          (other._constructs)
-    #--- End: def
+
 
     def construct_type(self, key):
         '''TODO
@@ -401,7 +401,7 @@ raised
             return
         
         return x
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Private methods    
@@ -409,19 +409,19 @@ raised
     def _check_construct_type(self, construct_type, default=ValueError()):
         '''<TODO>
 
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    construct_type: `str`
-
-:Returns:
-
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        construct_type: `str`
+    
+    :Returns:
+    
+        TODO
+    
+    **Examples:**
+    
     TODO
-
-**Examples:**
-
-TODO
 
         '''
         if construct_type is None:
