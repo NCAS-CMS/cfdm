@@ -3380,7 +3380,6 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    ''
 
-
 Perhaps the easist way to create a compressed field construct is to
 create the equivalent uncompressed field construct and then compress
 it with its `~Field.compress` method, which also compresses the
@@ -3395,10 +3394,10 @@ metadata constructs as required.
    import cfdm
    
    # Define the array values
-   data = cfdm.Data(numpy.ma.array([[280.0,   -99,   -99,   -99],
-	                            [281.0, 279.0, 278.0, 279.5]],
-				    mask=[[0, 1, 1, 1],
-                                          [0, 0, 0, 0]]))
+   data = cfdm.Data([[280.0,   -99,   -99,   -99],
+	             [281.0, 279.0, 278.0, 279.5]],
+      	            mask=[[0, 1, 1, 1],
+                          [0, 0, 0, 0]])
    	     
    # Create the field construct
    T = cfdm.Field()

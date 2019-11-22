@@ -10,28 +10,30 @@ class IO(with_metaclass(abc.ABCMeta, object)):
     def __init__(self, implementation):
         '''**Initialisation**
 
-:Parameters:
-
-    implementation: `Implementation'
-        The objects required to represent a Field.
+    :Parameters:
+    
+        implementation: `Implementation'
+            The objects required to represent a Field.
 
         '''
         self.implementation = implementation
-    #--- End: def
+
 
     @abc.abstractmethod
     def file_close(self, *args, **kwargs):
         '''Close the dataset file.
+
         '''
         raise NotImplementedError() # pragma: no cover
-    #--- End: def
+
 
     @abc.abstractmethod
     def file_open(self, *args, **kwargs):
         '''Open the dataset file.
+
         '''
         raise NotImplementedError() # pragma: no cover
-    #--- End: def
+
 
 #--- End: class
 
@@ -46,7 +48,7 @@ class IORead(with_metaclass(abc.ABCMeta, IO)):
 
         '''
         raise NotImplementedError() # pragma: no cover
-    #--- End: def
+
 
 #--- End: class
 
@@ -61,6 +63,6 @@ class IOWrite(with_metaclass(abc.ABCMeta, IO)):
 
         '''
         raise NotImplementedError() # pragma: no cover
-    #--- End: def
+
     
 #--- End: class

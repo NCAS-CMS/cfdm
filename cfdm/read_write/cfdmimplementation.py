@@ -496,172 +496,162 @@ class CFDMImplementation(Implementation):
     def get_data_size(self, parent):
         '''Return the number of elements in the data array.
 
-:Parameters:
-
-    parent: 
-        The object containing the data array.
-
-:Returns:
-
-    out: `int`
-        The number of elements in the data array.
-
-**Examples:**
-
->>> d
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.get_data_ndim(d)
-180
-
->>> b
-<Bounds: latitude(180, 2) degrees_north>
->>> w.get_data_ndim(b)
-360
+    :Parameters:
+    
+        parent: 
+            The object containing the data array.
+    
+    :Returns:
+    
+        out: `int`
+            The number of elements in the data array.
+    
+    **Examples:**
+    
+    >>> d
+    <DimensionCoordinate: latitude(180) degrees_north>
+    >>> w.get_data_ndim(d)
+    180
+    
+    >>> b
+    <Bounds: latitude(180, 2) degrees_north>
+    >>> w.get_data_ndim(b)
+    360
         '''
         return parent.data.size
-    #--- End: def
+
 
     def get_data_units(self, data, default=None):
-        '''
+        '''TODO
+
         '''
         return data.get_units(default=default)
-    #--- End: def
+
 
     def get_datum(self, coordinate_reference):
-        '''
+        '''TODO
         
-:Parameters:
-
-:Returns:
-
-    out: datum object
-        
+    :Parameters:
+    
+    :Returns:
+    
+        out: datum object
+            
         '''
         return coordinate_reference.datum
-    #--- End: def
+
             
     def get_datum_parameters(self, ref):
         '''Return the parameter-valued terms of a coordinate reference datum.
 
-:Parameters:
-
-    coordinate_reference: `CoordinateReference`
-
-:Returns:
-
-    out: `dict`
-
+    :Parameters:
+    
+        coordinate_reference: `CoordinateReference`
+    
+    :Returns:
+    
+        out: `dict`
+    
         '''        
         return ref.datum.parameters()
-    #--- End: def
+
 
     def get_dimension_coordinates(self, field):
-        '''
+        '''TODO
         '''
         return field.dimension_coordinates
-    #--- End: def
+
 
     def get_domain_ancillaries(self, field):
-       '''
-:Parameters:
+       '''TODO
 
        '''
        return field.domain_ancillaries
-    #--- End: def
+
 
     def get_domain_axes(self, field):
-        '''
+        '''TODO
+
         '''
         return field.domain_axes
-    #--- End: def
+
  
     def get_domain_axis_size(self, field, axis):
-        '''
+        '''TODO
         '''
         return field.domain_axes[axis].get_size()
-    #--- End: def
+
 
     def get_sample_dimension_position(self, construct):
-        '''
+        '''TODO
+
         '''
         return construct.get_data().get_compressed_dimension()
-    #--- End: def
 
-#    def nc_get_instance_dimension(self, index, default=None):
-#        '''Return the name of the netCDF instance dimension.
-#
-#:Returns: 
-#
-#    `str`
-#        The name of the netCDF instance dimension.
-#
-#        '''
-#        return index.nc_get_instance_dimension(default=default)
-#    #--- End: def
 
     def nc_get_geometry_variable(self, field, default=None):
         '''TODO
 
-.. versionadded:: 1.8.0
-
-:Parameters:
-
-:Returns:
-
-    `str`
-
+    .. versionadded:: 1.8.0
+    
+    :Parameters:
+    
+    :Returns:
+    
+        `str`
+    
         '''
         return field.nc_get_geometry_variable(default)
-    #--- End: def
+
 
     def nc_get_hdf5_chunksizes(self, data):
         '''Return the HDF5 chunksizes for the data. 
 
-..versionadded:: 1.7.2
-
-:Parameters:
-
-    data: Data instance
-
-:Returns: 
-
-    `tuple` or `None`
-        The HDF5 chunksizes, or `None` if they haven't been set.
-
+    ..versionadded:: 1.7.2
+    
+    :Parameters:
+    
+        data: Data instance
+    
+    :Returns: 
+    
+        `tuple` or `None`
+            The HDF5 chunksizes, or `None` if they haven't been set.
+    
         '''
         out = data.nc_hdf5_chunksizes()
         if not out:
             out = None
 
         return out
-    #--- End: def
+
 
     def nc_get_sample_dimension(self, count, default=None):
         '''Return the name of the netCDF sample dimension.
 
-:Returns: 
-
-    `str`
-        The name of the netCDF sample dimension.
+    :Returns: 
+    
+        `str`
+            The name of the netCDF sample dimension.
 
         '''
         return count.nc_get_sample_dimension(default=default)
-    #--- End: def
+
 
     def nc_is_unlimited_axis(self, field, axis):
         '''Whether a domain axis corresponds to a netCDF unlimited dimension.
 
-.. versionadded:: 1.7.0
-
-:Parameters:
-  
-    field: `Field`
-
-:Returns:
-
-    out: `set`
-        The selection of domain axis construct identifiers that are
-        unlimited.
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+      
+        field: `Field`
+    
+    :Returns:
+    
+        out: `set`
+            The selection of domain axis construct identifiers that are
+            unlimited.
 
         '''
         domain_axis = field.constructs.get(axis)
@@ -669,23 +659,23 @@ class CFDMImplementation(Implementation):
             return False
 
         return domain_axis.nc_is_unlimited()
-    #--- End: def
+
     
     def nc_set_unlimited_axis(self, field, axis):
         '''Set a domain axis to correspond to a netCDF unlimited dimension.
-
-.. versionadded:: 1.7.4
-
-:Parameters:
-  
-    field: `Field`
-
-    axis: `str`
-        Domain axis construct key.
-
-:Returns:
-
-    `None`
+    
+    .. versionadded:: 1.7.4
+    
+    :Parameters:
+      
+        field: `Field`
+    
+        axis: `str`
+            Domain axis construct key.
+    
+    :Returns:
+    
+        `None`
 
         '''
         domain_axis = field.constructs.get(axis)
@@ -693,170 +683,153 @@ class CFDMImplementation(Implementation):
             return
 
         domain_axis.nc_set_unlimited(True)
-    #--- End: def
-    
-#    def nc_set_unlimited_dimensions(self, field, unlimited):
-#        '''Set the selection of domain axis constructs that were read in as
-#netCDF unlimited dimensions.
-#
-#.. versionadded:: 1.7.0
-#
-#:Parameters:
-#  
-#    field: `Field`
-#
-#    unlimited: sequence of `str`
-#
-#:Returns:
-#
-#    out: `set`
-#        The selection of domain axis construct identifiers that are
-#        unlimited.
-#
-#        '''
-#        return field.nc_set_unlimited_dimensions(unlimited)
-#    #--- End: def
+
     
     def nc_get_global_attributes(self, field):
         '''TODO
+
         '''
         return field.nc_global_attributes()
-    #--- End: def
+
     
     def nc_set_global_attributes(self, field, attributes):
         '''TODO
 
-.. versionadded:: 1.7.0
-
-attributes: `dict`
-
+    .. versionadded:: 1.7.0
+    
+    attributes: `dict`
+    
         '''
         for attr, value in attributes.items():
             field.nc_set_global_attribute(attr, value)
-    #--- End: def
+
     
     def equal_constructs(self, construct0, construct1,
                          ignore_type=False):
-        '''
+        '''TODO
 
         '''    
         return construct0.equals(construct1, ignore_type=ignore_type)
-    #--- End: def
+
 
     def equal_properties(self, property_value0, property_value1):
-        '''
+        '''TODO
 
         '''
         field = self.get_class('Field')()
         return field._equals(property_value0, property_value1)
-    #--- End: def
+
 
     def equal_datums(self, coordinate_reference0, coordinate_reference1):
-        ''':Parameters:
+        '''TODO
 
-    coordinate_reference0: coordinate reference construct
-
-    coordinate_reference1: coordinate reference construct
-
-:Returns:
-
-    out: `bool`
+    :Parameters:
+    
+        coordinate_reference0: coordinate reference construct
+    
+        coordinate_reference1: coordinate reference construct
+    
+    :Returns:
+    
+        out: `bool`
 
         '''
         datum0 = coordinate_reference0.datum
         datum1 = coordinate_reference1.datum
         return datum0.equals(datum1)
-    #--- End: def
+
 
     def get_construct_data_size(self, construct):
-        '''
+        '''TODO
 
-:Parameters:
-
-:Returns:
-
-    out: `int`
-
+    :Parameters:
+    
+    :Returns:
+    
+        out: `int`
+    
         '''
         return construct.data.size
-    #--- End: def
+
    
     def nc_get_external(self, parent):
         '''Return whether a construct is external.
 
-:Parameters:
+    :Parameters:
+    
+        parent: 
+            The object
+    
+    :Returns:
+    
+        out: `bool`
+            Whether the construct is external.
+    
+    `**Examples:**
 
-    parent: 
-        The object
-
-:Returns:
-
-    out: `bool`
-        Whether the construct is external.
-
-**Examples:**
         '''
         if not hasattr(parent, 'nc_get_external'):
             return False
         
         return parent.nc_get_external()
-    #--- End: def
+
     
     def get_field_ancillaries(self, field):
         '''Return the field ancillaries of a field.
 
-:Parameters:
-
-    field: 
-        The field object.
-
-:Returns:
-
-    out: `dict`
-        A dictionary whose values are field ancillary objects, keyed
-        by unique identifiers.
-
-**Examples:**
-
->>> w.get_field_ancillaries(f)
-{'fieldancillary0': <FieldAncillary: ....>,
- 'fieldancillary1': <FieldAncillary: ....>}
+    :Parameters:
+    
+        field: 
+            The field object.
+    
+    :Returns:
+    
+        out: `dict`
+            A dictionary whose values are field ancillary objects, keyed
+            by unique identifiers.
+    
+    **Examples:**
+    
+    >>> w.get_field_ancillaries(f)
+    {'fieldancillary0': <FieldAncillary: ....>,
+     'fieldancillary1': <FieldAncillary: ....>}
 
         '''
         return field.field_ancillaries
-    #--- End: def
+
                   
     def get_field_data_axes(self, field):
-        '''
+        '''TODO
+
         '''
         return field.get_data_axes()
-    #--- End: def
+
          
     def get_data_max(self, parent):
-        '''
+        '''TODO
 
-:Parameters:
-
-:Returns:
-
-    out: `int`
+    :Parameters:
+    
+    :Returns:
+    
+        out: `int`
         
         '''
         return parent.data.max()
-    #--- End: def
+
     
     def get_data_sum(self, parent):
-        '''
+        '''TODO
 
-:Parameters:
-
-:Returns:
-
-    out: `int`
-        
+    :Parameters:
+    
+    :Returns:
+    
+        out: `int`
+            
         '''
         return parent.data.sum()
-    #--- End: def
+
     
     def get_count(self, construct):
         '''Return the measure property of a cell measure contruct.

@@ -611,7 +611,7 @@ class Field(mixin.NetCDFVariable,
      [0.86  0.8 0.75  0.0 4.56   --   --  --  --]
      [ 0.0 0.09  0.0 0.91 2.96 1.14 3.86 0.0 0.0]]
     >>> g = f.compress('contiguous')
-    >>> cfdm.write(g, 'compressed_file_c.nc')
+    >>> cfdm.write(g, 'compressed_file_contiguous.nc')
     
     >>> g.equals(f)
     True
@@ -627,7 +627,7 @@ class Field(mixin.NetCDFVariable,
      <CF Index: (24) >
     >>> print(g.data.get_index().array)
     [0 0 0 1 1 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 3 3]
-    >>> cfdm.write(g, 'compressed_file_i.nc')
+    >>> cfdm.write(g, 'compressed_file_indexed.nc')
 
         '''
         def _empty_compressed_data(data, shape):
@@ -816,7 +816,7 @@ class Field(mixin.NetCDFVariable,
             # DSG compression
             # --------------------------------------------------------
             flattened_data = data.flatten(range(data.ndim-1))
-            
+
             count = []
             for d in flattened_data:
                 last = d.size
@@ -828,7 +828,7 @@ class Field(mixin.NetCDFVariable,
                 #--- End: for
     
                 count.append(last)
-    
+
             N = sum(count)
             compressed_field_data = _empty_compressed_data(data, (N,))
     

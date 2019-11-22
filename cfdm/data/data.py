@@ -24,8 +24,8 @@ class Data(mixin.Container,
 
     '''
     def __init__(self, array=None, units=None, calendar=None,
-                 fill_value=None, source=None, copy=True,
-                 _use_array=True, **kwargs):
+                 fill_value=None, source=None, copy=True, dtype=None,
+                 mask=None, _use_array=True, **kwargs):
         '''**Initialization**
 
     :Parameters:
@@ -79,6 +79,33 @@ class Data(mixin.Container,
             *Parameter example:*
               ``fill_value=-999.``
                     
+        dtype: data-type, optional
+            The desired data-type for the data. By default the
+            data-type will be inferred form the *array* parameter.
+
+            The data-type may also be set after initialisation with
+            the `dtype` attribute.
+
+            *Parameter example:*
+                ``dtype=float``
+
+            *Parameter example:*
+                ``dtype='float32'``
+
+            *Parameter example:*
+                ``dtype=numpy.dtype('i2')``
+
+        mask: optional
+            Apply this mask to the data given by the *array*
+            parameter. By default, or if *mask* is `None`, no mask is
+            applied. May be any scalar or array-like object (such as a
+            `numpy` array or `Data` instance) that is scalar or has
+            the same shape as *array*. Masking will be carried out
+            where mask elements evaluate to `True`.
+
+            This mask will applied in addition to any mask already
+            defined by the *array* parameter.
+
         source: optional
             Initialize the array, units, calendar and fill value from
             those of *source*.
@@ -91,6 +118,24 @@ class Data(mixin.Container,
             Not used. Present to facilitate subclassing.
 
         '''
+        if dtype is not None:
+            if isinstance(array, abstract.Array):
+                array = array.array
+            elif not isinstance(array, numpy.ndarray):
+                array = numpy.asanyarray(array)
+
+            array = array.astype(dtype)
+            array = NumpyArray(array)
+
+        if mask is not None:
+            if isinstance(array, abstract.Array):
+                array = array.array
+            elif not isinstance(array, numpy.ndarray):
+                array = numpy.asanyarray(array)
+
+            array = numpy.ma.array(array, mask=mask)                
+            array = NumpyArray(array)
+
         super().__init__(array=array, units=units, calendar=calendar,
                          fill_value=fill_value, source=source,
                          copy=copy, _use_array=_use_array)
@@ -750,6 +795,39 @@ class Data(mixin.Container,
 
         return array
 
+    
+    @property
+    def mask(self):
+        '''The boolean missing data mask of the data array.
+
+    The boolean mask has True where the data array has missing data
+    and False otherwise.
+        
+    :Returns:
+        
+        `Data`
+            TODO
+        
+    **Examples:**
+    
+   >>> d = Data(numpy.ma.array([[280.0,   -99,   -99,   -99], 
+                                [281.0, 279.0, 278.0, 279.5]], 
+                mask=[[0, 1, 1, 1], 
+                      [0, 0, 0, 0]]))
+    >>> d
+    <Data(2, 4): [[280.0, ..., 279.5]]>
+    >>> print(d.array)
+    [[280.0    --    --    --]
+     [281.0 279.0 278.0 279.5]]
+    >>> d.mask
+    <Data(2, 4): [[False, ..., False]]>
+    >>> print(d.mask.array)
+    [[False  True  True  True]
+     [False False False False]]
+
+        '''
+        return type(self)(numpy.ma.getmaskarray(self.array))
+    
 
     # ----------------------------------------------------------------
     # Methods
@@ -777,7 +855,7 @@ class Data(mixin.Container,
         '''
         return super().copy(array=array)
 
-
+    
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
 
@@ -1081,7 +1159,7 @@ class Data(mixin.Container,
     
         return parsed_indices
 
-    
+
     def max(self, axes=None):
         '''Return the maximum of an array or the maximum along axes.
 
@@ -2052,7 +2130,7 @@ class Data(mixin.Container,
 
 
     def uncompress(self, inplace=False):
-        '''Uncompress the underlying appprray in-place.
+        '''Uncompress the underlying array in-place.
 
     If the data is not compressed, then no change is made.
     

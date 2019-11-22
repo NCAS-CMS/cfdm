@@ -6,7 +6,7 @@ __author__       = 'David Hassell'
 __date__         = 'Not yet released'
 __cf_version__   = '1.7'
 #__cf_version__   = '1.8'
-__version__      = '1.7.10'
+__version__      = '1.7.11'
 
 from distutils.version import LooseVersion
 import platform

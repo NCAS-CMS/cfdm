@@ -336,7 +336,47 @@ class DataTest(unittest.TestCase):
         self.assertTrue(x.shape == b.shape)
         self.assertTrue((x.array == b).all(), (x.shape, b.shape))
 
+        
+    def test_Data_dtype_mask(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
 
+        a = numpy.ma.array([[280.0,   -99,   -99,   -99], 
+                            [281.0, 279.0, 278.0, 279.0]],
+                           dtype=float,
+                           mask=[[0, 1, 1, 1], 
+                                 [0, 0, 0, 0]]) 
+
+        d = cfdm.Data([[280, -99, -99, -99], 
+                       [281, 279, 278, 279]])
+        self.assertTrue(d.dtype == numpy.dtype(int))
+
+        d = cfdm.Data([[280, -99, -99, -99], 
+                       [281, 279, 278, 279]],
+                      dtype=float,
+                      mask=[[0, 1, 1, 1], 
+                            [0, 0, 0, 0]])
+        
+        self.assertTrue(d.dtype==a.dtype)
+        self.assertTrue((d.array==a).all())
+        self.assertTrue(d.mask.shape==a.mask.shape)
+        self.assertTrue((d.mask.array==numpy.ma.getmaskarray(a)).all())
+        
+        a = numpy.array([[280.0,   -99,   -99,   -99], 
+                         [281.0, 279.0, 278.0, 279.0]],
+                        dtype=float)
+        mask = numpy.ma.masked_all(a.shape).mask
+
+        d = cfdm.Data([[280, -99, -99, -99], 
+                       [281, 279, 278, 279]],
+                      dtype=float)      
+
+        self.assertTrue(d.dtype==a.dtype)
+        self.assertTrue((d.array==a).all())
+        self.assertTrue(d.mask.shape==mask.shape)
+        self.assertTrue((d.mask.array==numpy.ma.getmaskarray(a)).all())
+
+        
 #--- End: class
 
 

@@ -6,10 +6,11 @@ version 1.7.11
 
 * New methods: `cfdm.Field.compress`, `cfdm.Field.uncompress`
 * New methods: `cfdm.Data.flatten`, `cfdm.Data.uncompress`
+* New keyword parameters to `cfdm.Data`: ``dtype``, ``mask``.
 * Changed the default value of the ``ignore_compression`` parameter to
   `True`.
   
- version 1.7.10
+version 1.7.10
 --------------
 ----
 

@@ -924,16 +924,16 @@ class NetCDFRead(IORead):
         # Return the fields
         # ------------------------------------------------------------
         return out
-    #--- End: def
+
 
     def _customize_read_vars(self):
         '''TODO
 
-.. versionadded:: 1.7.3
+    .. versionadded:: 1.7.3
 
         '''
         pass
-    #--- End: def
+
     
     def _get_variables_from_external_files(self,
                                            netcdf_external_variables):
@@ -1075,20 +1075,20 @@ class NetCDFRead(IORead):
                                              sample_dimension):
         '''TODO
 
-:Parameters:
-
-    ncvar: `str`
-        The netCDF variable name of the count variable (section
-        9.3.3).
-
-    sample_dimension: `str`
-        The netCDF dimension name of the sample dimension (section
-        9.3.3).
-
-:Returns:
-
-    out: `str`
-        The made-up netCDF dimension name of the element dimension.
+    :Parameters:
+    
+        ncvar: `str`
+            The netCDF variable name of the count variable (section
+            9.3.3).
+    
+        sample_dimension: `str`
+            The netCDF dimension name of the sample dimension (section
+            9.3.3).
+    
+    :Returns:
+    
+        out: `str`
+            The made-up netCDF dimension name of the element dimension.
 
         '''
         g = self.read_vars        
@@ -1122,31 +1122,31 @@ class NetCDFRead(IORead):
                 instance_dimension=instance_dimension)
 
         return element_dimension
-    #--- End: def
+
     
     def _parse_indexed_compression(self, ncvar, instance_dimension):
         '''TODO
 
-The CF-netCDF index variable contains the zero-based index of the
-feature to which each element belongs. It is identifiable by the
-presence of an attribute, "instance_dimension", which names the
-dimension of the instance variables. For those indices of the sample
-dimension into which data have not yet been written, the index
-variable should be pre-filled with missing values.
-
-:Parameters:
-
-    ncvar: `str`
-        The netCDF variable name of the index variable.
+    The CF-netCDF index variable contains the zero-based index of the
+    feature to which each element belongs. It is identifiable by the
+    presence of an attribute, "instance_dimension", which names the
+    dimension of the instance variables. For those indices of the
+    sample dimension into which data have not yet been written, the
+    index variable should be pre-filled with missing values.
     
-    instance_dimension: `str`
-        The netCDF variable name of the instance dimension.
-
-:Returns:
-
-    out: `str`
-        An invented netCDF name for the element dimension,
-        e.g. ``'timeseriesprofile'``.
+    :Parameters:
+    
+        ncvar: `str`
+            The netCDF variable name of the index variable.
+        
+        instance_dimension: `str`
+            The netCDF variable name of the instance dimension.
+    
+    :Returns:
+    
+        out: `str`
+            An invented netCDF name for the element dimension,
+            e.g. ``'timeseriesprofile'``.
 
         '''
         g = self.read_vars
@@ -1180,21 +1180,21 @@ variable should be pre-filled with missing values.
             instance_dimension=instance_dimension)
         
         return element_dimension
-    #--- End: def
+
     
     def _parse_indexed_contiguous_compression(self, sample_dimension,
                                               instance_dimension):
         '''TODO
 
-:Parameters:
+    :Parameters:
+        
+        sample_dimension: `str`
+            The netCDF dimension name of the sample dimension.
     
-    sample_dimension: `str`
-        The netCDF dimension name of the sample dimension.
-
-    element_dimension_1: `str`
-        The name of the implied element dimension whose size is the
-        maximum number of sub-features in any instance.
-
+        element_dimension_1: `str`
+            The name of the implied element dimension whose size is the
+            maximum number of sub-features in any instance.
+    
     '''
         g = self.read_vars
                 
@@ -1246,7 +1246,7 @@ variable should be pre-filled with missing values.
                 sample_dimension))
             
         del g['compression'][sample_dimension]['ragged_contiguous']
-    #--- End: def
+
        
     def _parse_geometry(self, field_ncvar, geometry_ncvar, attributes):
         '''TODO
@@ -1503,23 +1503,23 @@ variable should be pre-filled with missing values.
                                           sample_dimension=None,
                                           element_dimension=None,
                                           instance_dimension=None):
-        '''qwertyy
+        '''TODO
 
-:Parameters:
-
-    elements_per_instance: `Count`
-
-    sample_dimension: `str`
-
-    element_dimension: `str`
- 
-    instance_dimension: `str`
-
-:Returns:
-
-    out: `str`
-       The element dimension, possibly modified to make sure that it
-       is unique.
+    :Parameters:
+    
+        elements_per_instance: `Count`
+    
+        sample_dimension: `str`
+    
+        element_dimension: `str`
+     
+        instance_dimension: `str`
+    
+    :Returns:
+    
+        out: `str`
+           The element dimension, possibly modified to make sure that it
+           is unique.
 
         '''
         g = self.read_vars
@@ -1553,29 +1553,29 @@ variable should be pre-filled with missing values.
                 sample_dimension))
 
         return element_dimension
-    #--- End: def
+
             
     def _set_ragged_indexed_parameters(self,
                                        index=None,
                                        indexed_sample_dimension=None,
                                        element_dimension=None,
                                        instance_dimension=None):
-        '''qwertyy
+        '''TODO
 
-:Parameters:
-
-   
-    index: `Index`
-
-    element_dimension: `str`
- 
-    instance_dimension: `str`
-
-:Returns:
-
-    out: `str`
-       The element dimension, possibly modified to make sure that it
-       is unique.
+    :Parameters:
+    
+       
+        index: `Index`
+    
+        element_dimension: `str`
+     
+        instance_dimension: `str`
+    
+    :Returns:
+    
+        out: `str`
+           The element dimension, possibly modified to make sure that it
+           is unique.
 
         '''
         g = self.read_vars
@@ -1614,26 +1614,26 @@ variable should be pre-filled with missing values.
                 indexed_sample_dimension))
     
         return element_dimension
-    #--- End: def
+
     
     def _check_external_variables(self, external_variables,
                                   parsed_external_variables):
         '''TODO
 
-:Parameters:
-
-    external_variables: `str`
-        The external_variables attribute as found in the file.
- 
-    parsed_external_variables: `list`
-        The external_variables attribute parsed into a list of
-        external variable names.
-
-:Returns:
-
-    out: `list`
-        The external variable names, less those which are also netCDF
-        variables in the file.
+    :Parameters:
+    
+        external_variables: `str`
+            The external_variables attribute as found in the file.
+     
+        parsed_external_variables: `list`
+            The external_variables attribute parsed into a list of
+            external variable names.
+    
+    :Returns:
+    
+        out: `list`
+            The external variable names, less those which are also netCDF
+            variables in the file.
 
         '''
         g = self.read_vars
@@ -1653,22 +1653,22 @@ variable should be pre-filled with missing values.
         #--- End: for
         
         return out
-    #--- End: def
+
             
     def _check_formula_terms(self, field_ncvar, coord_ncvar,
                              formula_terms, z_ncdim=None):
         '''asdsdsa
 
-.. versionadded:: 1.7.0
-
-:Parameters:
+    .. versionadded:: 1.7.0
     
-    field_ncvar: `str`
-
-    coord_ncvar: `str`
+    :Parameters:
+        
+        field_ncvar: `str`
     
-    formula_terms: `str`
-        A CF-netCDF formula_terms attribute.
+        coord_ncvar: `str`
+        
+        formula_terms: `str`
+            A CF-netCDF formula_terms attribute.
     
         '''
         #=============================================================
@@ -1911,22 +1911,22 @@ variable should be pre-filled with missing values.
                 #--- End: for
             #--- End: if
         #--- End: if
-    #--- End: def
+
 
     def _create_field(self, field_ncvar):
         '''Create a field for a given netCDF variable.
     
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    field_ncvar: `str`
-        The name of the netCDF variable to be turned into a field.
-
-:Returns:
-
-    out: `Field`
-        The new field.
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        field_ncvar: `str`
+            The name of the netCDF variable to be turned into a field.
+    
+    :Returns:
+    
+        out: `Field`
+            The new field.
 
         '''
         g = self.read_vars
@@ -2568,7 +2568,7 @@ variable should be pre-filled with missing values.
 
         # Return the finished field
         return f
-    #--- End: def
+
 
     def _get_geometry(self, field_ncvar):
         '''Return a geometry container for this field construct.
@@ -2600,36 +2600,35 @@ variable should be pre-filled with missing values.
                      conformance=None):
         '''TODO
 
-:Parameters:
-
-    field_ncvar: `str`
-        The netCDF variable name of the field.
-
-        *Parameter example:*
-          ``field_ncvar='tas'``
-
-    ncvar: `str`
-        The netCDF variable name of the field component that has the problem.
-
-        *Parameter example:*
-          ``field_ncvar='rotated_latitude_longitude'``
-
-    message: (`str`, `str`), optional
-
-    attribute: `str`, optional
-        The name and value of the netCDF attribute that has a problem.
-        
-        *Parameter example:*
-          ``attribute={'tas:cell_measures': 'area: areacella'}``
-
-    dimensions: sequence of `str`, optional
-        The netCDF dimensions of the variable that has a problem.
-
-        *Parameter example:*
-          ``dimensions=('lat', 'lon')``
-
-        
-    variable: `str`, optional
+    :Parameters:
+    
+        field_ncvar: `str`
+            The netCDF variable name of the field.
+    
+            *Parameter example:*
+              ``field_ncvar='tas'``
+    
+        ncvar: `str`
+            The netCDF variable name of the field component that has the problem.
+    
+            *Parameter example:*
+              ``field_ncvar='rotated_latitude_longitude'``
+    
+        message: (`str`, `str`), optional
+    
+        attribute: `str`, optional
+            The name and value of the netCDF attribute that has a problem.
+            
+            *Parameter example:*
+              ``attribute={'tas:cell_measures': 'area: areacella'}``
+    
+        dimensions: sequence of `str`, optional
+            The netCDF dimensions of the variable that has a problem.
+    
+            *Parameter example:*
+              ``dimensions=('lat', 'lon')``
+            
+        variable: `str`, optional
 
         '''
         g = self.read_vars
@@ -2666,32 +2665,32 @@ variable should be pre-filled with missing values.
                 ncvar, dimensions, d['reason']))
         
         return d
-    #--- End: def
+
 
     def _get_domain_axes(self, ncvar, allow_external=False):
         '''Return the domain axis identifiers that correspond to a netCDF
-variable's netCDF dimensions.
-
-:Parameter:
-
-    ncvar: `str`
-        The netCDF variable name.
-
-    allow_external: `bool`
-        If True and *ncvar* is an external variable then return an
-        empty list.
-
-:Returns:
-
-    `list`
-
-**Examples:**
-
->>> r._get_domain_axes('areacello')
-['domainaxis0', 'domainaxis1']
-
->>> r._get_domain_axes('areacello', allow_external=True)
-[]
+    variable's netCDF dimensions.
+    
+    :Parameter:
+    
+        ncvar: `str`
+            The netCDF variable name.
+    
+        allow_external: `bool`
+            If True and *ncvar* is an external variable then return an
+            empty list.
+    
+    :Returns:
+    
+        `list`
+    
+    **Examples:**
+    
+    >>> r._get_domain_axes('areacello')
+    ['domainaxis0', 'domainaxis1']
+    
+    >>> r._get_domain_axes('areacello', allow_external=True)
+    []
 
         '''
         g = self.read_vars
@@ -2706,7 +2705,7 @@ variable's netCDF dimensions.
                     if ncdim in ncdim_to_axis]
 
         return axes
-    #--- End: def
+
         
     def _create_auxiliary_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
@@ -2972,25 +2971,25 @@ variable's netCDF dimensions.
     def _create_cell_measure(self, measure, ncvar):
         '''Create a cell measure object.
     
-:Parameters:
-
-    measure: `str`
-        The cell measure.
-        
-        *Parameter example:*
-           ``measure='area'``
+    :Parameters:
     
-    ncvar: `str`
-        The netCDF name of the cell measure variable.
-
-        *Parameter example:*
-           ``ncvar='areacello'``
-
-:Returns:
-
-    out: `CellMeasure`
-        The new item.
-
+        measure: `str`
+            The cell measure.
+            
+            *Parameter example:*
+               ``measure='area'``
+        
+        ncvar: `str`
+            The netCDF name of the cell measure variable.
+    
+            *Parameter example:*
+               ``ncvar='areacello'``
+    
+    :Returns:
+    
+        out: `CellMeasure`
+            The new item.
+    
         '''
         g = self.read_vars
         
@@ -3011,28 +3010,28 @@ variable's netCDF dimensions.
             self.implementation.set_data(cell_measure, data, copy=False)
             
         return cell_measure
-    #--- End: def
+
 
     def _create_Count(self, ncvar, ncdim):
         '''Create a 
     
-:Parameters:
+    :Parameters:
+        
+        ncvar: `str`
+            The name of the netCDF count variable.
     
-    ncvar: `str`
-        The name of the netCDF count variable.
-
-        *Parameter example:*
-           ``ncvar='row_size'``
-
-    ncdim: `str`
-        The name of the count variable's netCDF dimension.
-
-        *Parameter example:*
-           ``ncdim='profile'``
-
-:Returns:
-
-    out: Count variable instance
+            *Parameter example:*
+               ``ncvar='row_size'``
+    
+        ncdim: `str`
+            The name of the count variable's netCDF dimension.
+    
+            *Parameter example:*
+               ``ncdim='profile'``
+    
+    :Returns:
+    
+        out: Count variable instance
 
         '''
         g = self.read_vars
@@ -3061,28 +3060,28 @@ variable's netCDF dimensions.
         self.implementation.set_data(variable, data, copy=False)
             
         return variable
-    #--- End: def
+
 
     def _create_Index(self, ncvar, ncdim):
         '''Create a 
     
-:Parameters:
+    :Parameters:
+        
+        ncvar: `str`
+            The name of the netCDF index variable.
     
-    ncvar: `str`
-        The name of the netCDF index variable.
-
-        *Parameter example:*
-          ``ncvar='landpoints'``
-
-    ncdim: `str`
-        The name of the index variable's netCDF dimension.
-
-        *Parameter example:*
-          ``ncdim='profile'``
-
-:Returns:
-
-    out: Index variable
+            *Parameter example:*
+              ``ncvar='landpoints'``
+    
+        ncdim: `str`
+            The name of the index variable's netCDF dimension.
+    
+            *Parameter example:*
+              ``ncdim='profile'``
+    
+    :Returns:
+    
+        out: Index variable
 
         '''
         g = self.read_vars
@@ -3116,30 +3115,30 @@ variable's netCDF dimensions.
         self.implementation.set_data(variable, data, copy=False)
             
         return variable
-    #--- End: def
+
 
     def _create_InteriorRing(self, ncvar, ncdim):
         '''Create a 
     
-.. versionadded:: 1.8.0
-
-:Parameters:
+    .. versionadded:: 1.8.0
     
-    ncvar: `str`
-        The name of the netCDF interior ring variable.
-
-        *Parameter example:*
-          ``ncvar='interior_ring'``
-
-    ncdim: `str`
-        The name of the part dimension.
-
-        *Parameter example:*
-          ``ncdim='part'``
-
-:Returns:
-
-    out: Interior ring variable
+    :Parameters:
+        
+        ncvar: `str`
+            The name of the netCDF interior ring variable.
+    
+            *Parameter example:*
+              ``ncvar='interior_ring'``
+    
+        ncdim: `str`
+            The name of the part dimension.
+    
+            *Parameter example:*
+              ``ncdim='part'``
+    
+    :Returns:
+    
+        out: Interior ring variable
 
         '''
         g = self.read_vars
@@ -3158,22 +3157,22 @@ variable's netCDF dimensions.
         self.implementation.set_data(variable, data, copy=False)
             
         return variable
-    #--- End: def
+
 
     def _create_List(self, ncvar):
         '''Create a TODO
     
-:Parameters:
+    :Parameters:
+        
+        ncvar: `str`
+            The name of the netCDF list variable.
     
-    ncvar: `str`
-        The name of the netCDF list variable.
-
-        *Parameter example:*
-           ``ncvar='landpoints'``
-
-:Returns:
-
-    out: `List`
+            *Parameter example:*
+               ``ncvar='landpoints'``
+    
+    :Returns:
+    
+        out: `List`
 
         '''
         # Initialise the list variable
@@ -3190,24 +3189,24 @@ variable's netCDF dimensions.
         self.implementation.set_data(variable, data, copy=False)
             
         return variable
-    #--- End: def
+
 
     def _create_NodeCount(self, ncvar):
         '''Create a node count variable.
+        
+    .. versionadded:: 1.8.0
     
-.. versionadded:: 1.8.0
-
-:Parameters:
+    :Parameters:
+        
+        ncvar: `str`
+            The netCDF node count variable name.
     
-    ncvar: `str`
-        The netCDF node count variable name.
-
-        *Parameter example:*
-          ``ncvar='node_count'``
-
-:Returns:
-
-    out: Node count variable
+            *Parameter example:*
+              ``ncvar='node_count'``
+    
+    :Returns:
+    
+        out: Node count variable
 
         '''
         g = self.read_vars
@@ -3222,30 +3221,30 @@ variable's netCDF dimensions.
         self.implementation.set_properties(variable, properties)
 
         return variable
-    #--- End: def
+
 
     def _create_PartNodeCount(self, ncvar, ncdim):
         '''Create a part node count variable.
  
-.. versionadded:: 1.8.0
-
-:Parameters:
+    .. versionadded:: 1.8.0
     
-    ncvar: `str`
-        The name of the netCDF part node count variable.
-
-        *Parameter example:*
-          ``ncvar='part_node_count'``
-
-    ncdim: `str`
-        The name of the part dimension.
-
-        *Parameter example:*
-          ``ncdim='part'``
-
-:Returns:
-
-    out: Part node count variable
+    :Parameters:
+        
+        ncvar: `str`
+            The name of the netCDF part node count variable.
+    
+            *Parameter example:*
+              ``ncvar='part_node_count'``
+    
+        ncdim: `str`
+            The name of the part dimension.
+    
+            *Parameter example:*
+              ``ncdim='part'``
+    
+    :Returns:
+    
+        out: Part node count variable
 
         '''
         g = self.read_vars
@@ -3261,28 +3260,28 @@ variable's netCDF dimensions.
         self.implementation.set_properties(variable, properties)
 
         return variable
-    #--- End: def
+
 
     def _create_cell_method(self, axes, method, qualifiers):
         '''Create a cell method object.
     
-:Parameters:
-
-    axes: `tuple`
-
-    method: 'str`
-
-    properties: `dict`
-        
-:Returns:
-
-    out: `CellMethod`
+    :Parameters:
+    
+        axes: `tuple`
+    
+        method: 'str`
+    
+        properties: `dict`
+            
+    :Returns:
+    
+        out: `CellMethod`
 
         '''
         return self.implementation.initialise_CellMethod(axes=axes,
                                                          method=method,
                                                          qualifiers=qualifiers)
-    #--- End: def
+
 
     def _create_netcdfarray(self, ncvar, unpacked_dtype=False):
         '''Set the Data attribute of a variable.

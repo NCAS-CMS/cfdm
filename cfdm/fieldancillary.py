@@ -42,31 +42,32 @@ class FieldAncillary(mixin.NetCDFVariable,
 
         '''**Initialization**
 
-:Parameters:
-
-    properties: `dict`, optional
-       Set descriptive properties. The dictionary keys are property
-       names, with corresponding values. Ignored if the *source*
-       parameter is set.
-
-       *Parameter example:*
-          ``properties={'standard_name': 'altitude'}``
-
-       Properties may also be set after initialisation with the
-       `set_properties` and `set_property` methods.
-
-    data: `Data`, optional
-        Set the data array. Ignored if the *source* parameter is set.
-
-        The data array may also be set after initialisation with the
-        `set_data` method.
-
-    source: optional
-        Initialize the properties and data from those of *source*.
-
-    copy: `bool`, optional
-        If False then do not deep copy input parameters prior to
-        initialization. By default arguments are deep copied.
+    :Parameters:
+    
+        properties: `dict`, optional
+           Set descriptive properties. The dictionary keys are
+           property names, with corresponding values. Ignored if the
+           *source* parameter is set.
+    
+           Properties may also be set after initialisation with the
+           `set_properties` and `set_property` methods.
+    
+           *Parameter example:*
+              ``properties={'standard_name': 'altitude'}``
+    
+        data: `Data`, optional
+            Set the data array. Ignored if the *source* parameter is
+            set.
+    
+            The data array may also be set after initialisation with
+            the `set_data` method.
+    
+        source: optional
+            Initialize the properties and data from those of *source*.
+    
+        copy: `bool`, optional
+            If False then do not deep copy input parameters prior to
+            initialization. By default arguments are deep copied.
 
         '''
         super().__init__(properties=properties, data=data,
@@ -74,7 +75,7 @@ class FieldAncillary(mixin.NetCDFVariable,
                          _use_data=_use_data)
         
         self._initialise_netcdf(source)
-    #--- End: def
+
     
     def dump(self, display=True, _omit_properties=None, _key=None,
              _level=0, _title=None, _axes=None, _axis_names=None):
@@ -220,6 +221,6 @@ class FieldAncillary(mixin.NetCDFVariable,
                               ignore_properties=ignore_properties,
                               ignore_compression=ignore_compression,
                               ignore_type=ignore_type)
-    #--- End: def
+
     
 #--- End: class

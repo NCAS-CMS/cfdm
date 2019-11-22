@@ -9,7 +9,7 @@ from copy import copy, deepcopy
 class Container(with_metaclass(abc.ABCMeta, object)):
     '''Abstract base class for storing components.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def __init__(self, source=None, copy=True):

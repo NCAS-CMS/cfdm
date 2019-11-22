@@ -20,33 +20,33 @@ from . import (__version__,
 def environment(display=True):
     '''Return the names, versions and paths of all dependencies.
 
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description of the environment as a
-        string. By default the description is printed.
-
-:Returns:
-
-    `None` or `str`
-        If *display* is True then the description of the environment
-        is printed and `None` is returned. Otherwise the description
-        is returned as a string.
-
-**Examples:**
-
->>> cfdm.environment()
-Platform: Linux-4.15.0-43-generic-x86_64-with-debian-stretch-sid
-python: 3.6.5 /home/david/anaconda3/bin/python
-HDF5 library: 1.10.2
-netcdf library: 4.6.1
-netCDF4: 1.4.0 /home/user/anaconda3/lib/python3.6/site-packages/netCDF4/__init__.py
-cftime: 1.0.0b1 /home/user/anaconda3/lib/python3.6/site-packages/cftime/__init__.py
-numpy: 1.14.3 /home/user/anaconda3/lib/python3.6/site-packages/numpy/__init__.py
-future: 0.16.0 /home/user/anaconda3/lib/python3.6/site-packages/future/__init__.py
-cfdm: 1.7.0 /home/user/cfdm/cfdm/__init__.py
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        display: `bool`, optional
+            If False then return the description of the environment as
+            a string. By default the description is printed.
+    
+    :Returns:
+    
+        `None` or `str`
+            If *display* is True then the description of the
+            environment is printed and `None` is returned. Otherwise
+            the description is returned as a string.
+    
+    **Examples:**
+    
+    >>> cfdm.environment()
+    Platform: Linux-4.15.0-43-generic-x86_64-with-debian-stretch-sid
+    python: 3.6.5 /home/david/anaconda3/bin/python
+    HDF5 library: 1.10.2
+    netcdf library: 4.6.1
+    netCDF4: 1.4.0 /home/user/anaconda3/lib/python3.6/site-packages/netCDF4/__init__.py
+    cftime: 1.0.0b1 /home/user/anaconda3/lib/python3.6/site-packages/cftime/__init__.py
+    numpy: 1.14.3 /home/user/anaconda3/lib/python3.6/site-packages/numpy/__init__.py
+    future: 0.16.0 /home/user/anaconda3/lib/python3.6/site-packages/future/__init__.py
+    cfdm: 1.7.11 /home/user/cfdm/cfdm/__init__.py
 
     '''
     out = []
@@ -68,28 +68,28 @@ cfdm: 1.7.0 /home/user/cfdm/cfdm/__init__.py
         print(out)
     else:
         return out
-#--- End: def
+
 
 def CF():
     '''The version of the CF conventions.
 
-This indicates which version of the CF conventions are represented by
-this release of the cfdm.core package, and therefore the version can
-not be changed.
-
-.. versionadded:: 1.7.0
-
-:Returns:
-
-    `str`
-        The version of the CF conventions represented by this release
-        of the cfdm.core package.
-
-**Examples:**
-
->>> cfdm.core.CF()
-'1.7'
+    This indicates which version of the CF conventions are represented
+    by this release of the cfdm.core package, and therefore the
+    version can not be changed.
+    
+    .. versionadded:: 1.7.0
+    
+    :Returns:
+    
+        `str`
+            The version of the CF conventions represented by this
+            release of the cfdm.core package.
+    
+    **Examples:**
+    
+    >>> cfdm.core.CF()
+    '1.7'
 
     '''
     return __cf_version__
-#--- End: def
+

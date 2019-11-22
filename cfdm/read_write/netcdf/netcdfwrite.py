@@ -158,22 +158,22 @@ class NetCDFWrite(IOWrite):
     def _write_attributes(self, parent, ncvar, extra={}, omit=()):
         '''TODO
 
-:Parameters:
-
-    parent:
-
-    ncvar: `str`
-
-    extra: `dict`, optional
+    :Parameters:
     
-    omit: sequence of `str`, optional
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
+        parent:
+    
+        ncvar: `str`
+    
+        extra: `dict`, optional
+        
+        omit: sequence of `str`, optional
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
         '''
         if parent is None:
             netcdf_attrs = {}
@@ -200,35 +200,35 @@ class NetCDFWrite(IOWrite):
         #--- End: for
         
         self.write_vars['nc'][ncvar].setncatts(netcdf_attrs)
-    #--- End: def
+
     
     def _character_array(self, array):
         '''Convert a numpy string array to a numpy character array wih an
-extra trailing dimension.
+    extra trailing dimension.
+        
+    :Parameters:
     
-:Parameters:
-
-    array: `numpy.ndarray`
-
-:Returns:
-
-    out: `numpy.ndarray`
-
-**Examples:**
-
->>> print a, a.shape, a.dtype.itemsize
-['fu' 'bar'] (2,) 3
->>> b = _character_array(a)
->>> print b, b.shape, b.dtype.itemsize
-[['f' 'u' ' ']
- ['b' 'a' 'r']] (2, 3) 1
-
->>> print a, a.shape, a.dtype.itemsize
-[-- 'bar'] (2,) 3
->>> b = _character_array(a)
->>> print b, b.shape, b.dtype.itemsize
-[[-- -- --]
- ['b' 'a' 'r']] (2, 3) 1
+        array: `numpy.ndarray`
+    
+    :Returns:
+    
+        out: `numpy.ndarray`
+    
+    **Examples:**
+    
+    >>> print a, a.shape, a.dtype.itemsize
+    ['fu' 'bar'] (2,) 3
+    >>> b = _character_array(a)
+    >>> print b, b.shape, b.dtype.itemsize
+    [['f' 'u' ' ']
+     ['b' 'a' 'r']] (2, 3) 1
+    
+    >>> print a, a.shape, a.dtype.itemsize
+    [-- 'bar'] (2,) 3
+    >>> b = _character_array(a)
+    >>> print b, b.shape, b.dtype.itemsize
+    [[-- -- --]
+     ['b' 'a' 'r']] (2, 3) 1
 
         '''
 #        strlen = array.dtype.itemsize
@@ -287,34 +287,35 @@ extra trailing dimension.
 
 #        print('new=', repr(new))
         return array
-    #--- End: def
+
     
     def _datatype(self, variable):
         '''Return the netCDF4.createVariable datatype corresponding to the
-datatype of the array of the input variable
+    datatype of the array of the input variable
     
-For example, if variable.dtype is 'float32', then 'f4' will be
-returned.
-    
-Numpy string data types will return 'S1' regardless of the numpy
-string length. This means that the required conversion of
-multi-character datatype numpy arrays into single-character datatype
-numpy arrays (with an extra trailing dimension) is expected to be done
-elsewhere (currently in the _write_netcdf_variable method).
-    
-If the input variable has no `!dtype` attribute (or it is None) then
-'S1' is returned.
-    
- :Parameters:
- 
-     variable: 
-         A numpy array or an object with a `get_data` method.
- 
- :Returns:
- 
-     out: `str`
-        The `netCDF4.createVariable` data type corresponding to the
-        datatype of the array of the input variable.
+    For example, if variable.dtype is 'float32', then 'f4' will be
+    returned.
+        
+    Numpy string data types will return 'S1' regardless of the numpy
+    string length. This means that the required conversion of
+    multi-character datatype numpy arrays into single-character
+    datatype numpy arrays (with an extra trailing dimension) is
+    expected to be done elsewhere (currently in the
+    _write_netcdf_variable method).
+        
+    If the input variable has no `!dtype` attribute (or it is None)
+    then 'S1' is returned.
+        
+     :Parameters:
+     
+         variable: 
+             A numpy array or an object with a `get_data` method.
+     
+     :Returns:
+     
+         out: `str`
+            The `netCDF4.createVariable` data type corresponding to the
+            datatype of the array of the input variable.
 
         '''
         g = self.write_vars
@@ -335,19 +336,19 @@ If the input variable has no `!dtype` attribute (or it is None) then
             dtype = new_dtype
             
         return '{0}{1}'.format(dtype.kind, dtype.itemsize)
-    #--- End: def
+
     
     def _string_length_dimension(self, size):
         '''Create, if necessary, a netCDF dimension for string variables.
+        
+    :Parameters:
     
-:Parameters:
-
-    size: `int`
-
-:Returns:
-
-    out: `str`
-        The netCDF dimension name.
+        size: `int`
+    
+    :Returns:
+    
+        out: `str`
+            The netCDF dimension name.
 
         '''
         g = self.write_vars
@@ -364,7 +365,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
             g['netcdf'].createDimension(ncdim, size)
 
         return ncdim
-    #--- End: def
+
     
     def _netcdf_dimensions(self, field, key, construct):
         '''Return a tuple of the netCDF dimension names for the axes of a
@@ -1535,29 +1536,29 @@ If the input variable has no `!dtype` attribute (or it is None) then
                                  extra={}):
         '''Write a scalar coordinate and its bounds to the netCDF file.
     
-It is assumed that the input coordinate is has size 1, but this is not
-checked.
+    It is assumed that the input coordinate is has size 1, but this is not
+    checked.
+        
+    If an equal scalar coordinate has already been written to the file
+    then the input coordinate is not written.
+        
+    :Parameters:
     
-If an equal scalar coordinate has already been written to the file
-then the input coordinate is not written.
+        f: Field construct
+       
+        key: `str`
+            The coordinate construct key
     
-:Parameters:
-
-    f: Field construct
-   
-    key: `str`
-        The coordinate construct key
-
-    coordinate
-    axis : str
-        The field's axis identifier for the scalar coordinate.
-
-    coordinates: `list`
-
-:Returns:
-
-    coordinates: `list`
-        The updated list of netCDF auxiliary coordinate names.
+        coordinate
+        axis : str
+            The field's axis identifier for the scalar coordinate.
+    
+        coordinates: `list`
+    
+    :Returns:
+    
+        coordinates: `list`
+            The updated list of netCDF auxiliary coordinate names.
 
         '''
         g = self.write_vars
@@ -1590,33 +1591,33 @@ then the input coordinate is not written.
         coordinates.append(ncvar)
     
         return coordinates
-    #--- End: def
+
 
     def _write_auxiliary_coordinate(self, f, key, coord, coordinates):
         '''Write auxiliary coordinates and bounds to the netCDF file.
+        
+    If an equal auxiliary coordinate has already been written to the file
+    then the input coordinate is not written.
+        
+    :Parameters:
     
-If an equal auxiliary coordinate has already been written to the file
-then the input coordinate is not written.
+        f: Field construct
+       
+        key: `str`
     
-:Parameters:
-
-    f: Field construct
-   
-    key: `str`
-
-    coord: `Coordinate`
-
-    coordinates: `list`
-
-:Returns:
-
-    coordinates: `list`
-        The list of netCDF auxiliary coordinate names updated in
-        place.
-
-**Examples:**
-
->>> coordinates = _write_auxiliary_coordinate(f, 'aux2', coordinates)
+        coord: `Coordinate`
+    
+        coordinates: `list`
+    
+    :Returns:
+    
+        coordinates: `list`
+            The list of netCDF auxiliary coordinate names updated in
+            place.
+    
+    **Examples:**
+    
+    >>> coordinates = _write_auxiliary_coordinate(f, 'aux2', coordinates)
 
         '''
         g = self.write_vars
@@ -1672,7 +1673,7 @@ then the input coordinate is not written.
             coordinates.append(ncvar)        
 
         return coordinates
-    #--- End: def
+
 
     def _write_domain_ancillary(self, f, key, anc):
         '''Write a domain ancillary and its bounds to the netCDF file.
@@ -1856,13 +1857,13 @@ then the input coordinate is not written.
         g['netcdf'].setncattr('external_variables', external_variables)
 
         g['external_variables'] = external_variables
-    #--- End: def
+
     
     def _create_external(self, field=None, construct_id=None,
                          ncvar=None, ncdimensions=None):
         '''Create a new field to flag it for being written the external file.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         g = self.write_vars
@@ -1887,12 +1888,12 @@ then the input coordinate is not written.
         g['external_fields'].append(external)
 
         return external
-    #--- End: def
+
     
     def _createVariable(self, **kwargs):
         '''TODO
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''
         g = self.write_vars
@@ -1900,25 +1901,25 @@ then the input coordinate is not written.
         ncvar = kwargs['varname']
 
         g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs)
-    #--- End: def
+
     
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
         '''Write a grid mapping georeference to the netCDF file.
     
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    f: Field construct
-
-    ref: Coordinate reference construct
-        The grid mapping coordinate reference to write to the file.
-
-    multiple_grid_mappings: `bool`
-
-:Returns:
-
-    `str`
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        f: Field construct
+    
+        ref: Coordinate reference construct
+            The grid mapping coordinate reference to write to the file.
+    
+        multiple_grid_mappings: `bool`
+    
+    :Returns:
+    
+        `str`
 
         '''
         g = self.write_vars
@@ -1979,36 +1980,37 @@ then the input coordinate is not written.
                             for key in self.implementation.get_coordinate_reference_coordinates(ref)])))
         else:
             return ncvar
-    #--- End: def
+
     
     def _write_netcdf_variable(self, ncvar, ncdimensions, cfvar,
                                omit=(), extra={}, fill=False,
                                data_variable=False):
         '''Create a netCDF variable from *cfvar* with name *ncvar* and
-dimensions *ncdimensions*. The new netCDF variable's properties are
-given by cfvar.properties(), less any given by the *omit* argument. If
-a new string-length netCDF dimension is required then it will also be
-created. The ``seen`` dictionary is updated for *cfvar*.
+    dimensions *ncdimensions*. The new netCDF variable's properties
+    are given by cfvar.properties(), less any given by the *omit*
+    argument. If a new string-length netCDF dimension is required then
+    it will also be created. The ``seen`` dictionary is updated for
+    *cfvar*.
+        
+    :Parameters:
     
-:Parameters:
-
-    ncvar: `str`
-        The netCDF name of the variable.
-
-    dimensions: `tuple`
-        The netCDF dimension names of the variable
-
-    cfvar: `Variable`
-        The coordinate, cell measure or field object to write to the
-        file.
-
-    omit: sequence of `str`, optional
-
-    extra: `dict`, optional
-
-:Returns:
-
-    `None`
+        ncvar: `str`
+            The netCDF name of the variable.
+    
+        dimensions: `tuple`
+            The netCDF dimension names of the variable
+    
+        cfvar: `Variable`
+            The coordinate, cell measure or field object to write to the
+            file.
+    
+        omit: sequence of `str`, optional
+    
+        extra: `dict`, optional
+    
+    :Returns:
+    
+        `None`
 
         '''
         g = self.write_vars
@@ -2124,36 +2126,36 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         g['seen'][id(cfvar)] = {'variable': cfvar,
                                 'ncvar'   : ncvar,
                                 'ncdims'  : original_ncdimensions}
-    #--- End: def
+
 
     def _customize_createVariable(self, cfvar, kwargs):
         '''TODO
 
-.. versionadded:: 1.7.6
-
-:Parameters:
-
-    cfvar: CFDM instance that contains data
-
-    kwargs: `dict`
+    .. versionadded:: 1.7.6
+    
+    :Parameters:
+    
+        cfvar: CFDM instance that contains data
+    
+        kwargs: `dict`
 
         '''
         return kwargs
-    #--- End: def
+
     
     def _transform_strings(self, construct, data, ncdimensions):
         '''TODO
 
-.. versionadded:: 1.7.3
-
-:Parameters:
-
-    construct: 
-
-    data: Data instance or `None`
-
-    ncdimensions: `tuple`
-        
+    .. versionadded:: 1.7.3
+    
+    :Parameters:
+    
+        construct: 
+    
+        data: Data instance or `None`
+    
+        ncdimensions: `tuple`
+            
         '''
         datatype = self._datatype(construct)                
     
@@ -2177,23 +2179,23 @@ created. The ``seen`` dictionary is updated for *cfvar*.
             ncdimensions = ncdimensions + (ncdim,)
 
         return data, ncdimensions
-    #--- End: def
+
     
     def _write_data(self, data, cfvar, ncvar, ncdimensions, unset_values=(),
                     compressed=False):
-        '''
+        '''TODO
 
-:Parameters:
-
-    data: Data instance
-
-    cfvar: cfdm instance
-
-    ncvar: `str`
-
-    ncdimensions: `tuple` of `str`
-
-    unset_values: sequence of numbers
+    :Parameters:
+    
+        data: Data instance
+    
+        cfvar: cfdm instance
+    
+        ncvar: `str`
+    
+        ncdimensions: `tuple` of `str`
+    
+        unset_values: sequence of numbers
 
         '''
         g = self.write_vars
@@ -2228,29 +2230,30 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         g['nc'][ncvar][...] = array
 
         self._aaa(ncvar, array)
-    #--- End: def
+
 
     def _aaa(self, ncvar, array):
-        '''
+        '''TODO
+
         '''
         g = self.write_vars
-    #--- End: def
+
     
     def _convert_to_char(self, data):
         '''Convert string data into character data
 
-The return Data instance object will have data type 'S1' and will have an
-extra trailing dimension.
+    The return Data instance object will have data type 'S1' and will have an
+    extra trailing dimension.
+        
+    .. versionadded:: 1.7.0
     
-.. versionadded:: 1.7.0
-
-:Parameters:
+    :Parameters:
+        
+        data: Data instance
     
-    data: Data instance
-
-:Returns:
-
-    out: Data instance
+    :Returns:
+    
+        out: Data instance
 
         '''
         strlen = data.dtype.itemsize
@@ -2263,25 +2266,25 @@ extra trailing dimension.
                 copy=False)
     
         return data
-    #--- End: def
+
     
     def _write_field(self, f, add_to_seen=False,
                      allow_data_insert_dimension=True):
         '''TODO
     
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    f : Field construct
-
-    add_to_seen : bool, optional
-
-    allow_data_insert_dimension: `bool`, optional
-
-:Returns:
-
-    `None`
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        f : Field construct
+    
+        add_to_seen : bool, optional
+    
+        allow_data_insert_dimension: `bool`, optional
+    
+    :Returns:
+    
+        `None`
 
         '''
         g = self.write_vars
@@ -2880,12 +2883,12 @@ extra trailing dimension.
 
         if xxx:
             g['xxx'].extend(xxx)
-    #--- End: def
+
 
     def _create_vertical_datum(self, ref, coord_key):
         '''Deal with a vertical datum
 
-.. versionaddedd:: 1.7.0
+    .. versionaddedd:: 1.7.0
 
         '''
         g = self.write_vars
@@ -2939,40 +2942,39 @@ extra trailing dimension.
                 self.implementation.nc_set_variable(new_grid_mapping, ncvar)
             
             g['grid_mapping_refs'].append(new_grid_mapping)
-    #--- End: def
+
                             
     def _unlimited(self, field, axis):
         '''Whether an axis is unlimited.
 
-.. versionadded:: 1.7.0
-
-:Parameters:
-  
-    field: Field construct
-
-    axis: `str`
-   
-:Returns:
-
-    `bool`
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+      
+        field: Field construct
+    
+        axis: `str`
+       
+    :Returns:
+    
+        `bool`
 
         '''
-#        return axis in self.implementation.nc_get_unlimited_axes(field)
         return self.implementation.nc_is_unlimited_axis(field, axis)
-    #--- End: def
+
     
     def _write_global_attributes(self, fields):
         '''Find the netCDF global properties from all of the input fields and
-write them to the netCDF4.Dataset.
+    write them to the netCDF4.Dataset.
+        
+    :Parameters:
+      
+        fields : `list` of field constructs
+      
+    :Returns:
+        
+        `None`
     
-:Parameters:
-  
-    fields : `list` of field constructs
-  
-:Returns:
-    
-    `None`
-
         '''
         g = self.write_vars
        
@@ -3113,26 +3115,26 @@ write them to the netCDF4.Dataset.
             g['netcdf'].setncattr(attr,v)
 
         g['global_attributes'] = global_attributes
-    #--- End: def
+
 
     def file_close(self, filename):
         '''Close the netCDF file that has been written.
-
-:Returns:
-
-    `None`
+    
+    :Returns:
+    
+        `None`
 
         '''
         self.write_vars['netcdf'].close()
-    #--- End: def
+
 
     def file_open(self, filename, mode, fmt):
         '''Open the netCDF file for writing.
         
-:Returns:
-        
-    out: `netCDF.Dataset`
-        
+    :Returns:
+            
+        out: `netCDF.Dataset`
+            
         '''
         try:        
             nc = netCDF4.Dataset(filename, mode, format=fmt)
@@ -3140,7 +3142,7 @@ write them to the netCDF4.Dataset.
             raise RuntimeError("{}: {}".format(error, filename))        
 
         return nc
-    #--- End: def
+
 
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
               global_attributes=None, variable_attributes=None,
@@ -3151,130 +3153,130 @@ write them to the netCDF4.Dataset.
               verbose=False):
         '''Write fields to a netCDF file.
         
-NetCDF dimension and variable names will be taken from variables'
-`!ncvar` attributes and the field attribute `!ncdimensions` if
-present, otherwise they are inferred from standard names or set to
-defaults. NetCDF names may be automatically given a numerical suffix
-to avoid duplication.
-    
-Output netCDF file global properties are those which occur in the set
-of CF global properties and non-standard data variable properties and
-which have equal values across all input fields.
-    
-Logically identical field components are only written to the file
-once, apart from when they need to fulfil both dimension coordinate
-and auxiliary coordinate roles for different data variables.
-
-.. versionadded:: 1.7.0
-    
-:Parameters:
-
-    fields : (arbitrarily nested sequence of) `cf.Field`
-        The field or fields to write to the file.
-
-    filename : str
-        The output CF-netCDF file. Various type of expansion are
-        applied to the file names:
+    NetCDF dimension and variable names will be taken from variables'
+    `!ncvar` attributes and the field attribute `!ncdimensions` if
+    present, otherwise they are inferred from standard names or set to
+    defaults. NetCDF names may be automatically given a numerical suffix
+    to avoid duplication.
         
-          ====================  ======================================
-          Expansion             Description
-          ====================  ======================================
-          Tilde                 An initial component of ``~`` or
-                                ``~user`` is replaced by that *user*'s
-                                home directory.
-           
-          Environment variable  Substrings of the form ``$name`` or
-                                ``${name}`` are replaced by the value
-                                of environment variable *name*.
-          ====================  ======================================
+    Output netCDF file global properties are those which occur in the set
+    of CF global properties and non-standard data variable properties and
+    which have equal values across all input fields.
+        
+    Logically identical field components are only written to the file
+    once, apart from when they need to fulfil both dimension coordinate
+    and auxiliary coordinate roles for different data variables.
     
-        Where more than one type of expansion is used in the same
-        string, they are applied in the order given in the above
-        table.
-
-          Example: If the environment variable *MYSELF* has been set
-          to the "david", then ``'~$MYSELF/out.nc'`` is equivalent to
-          ``'~david/out.nc'``.
-  
-    fmt : str, optional
-        The format of the output file. One of:
-
-           =====================  ================================================
-           fmt                    Description
-           =====================  ================================================
-           ``'NETCDF3_CLASSIC'``  Output to a CF-netCDF3 classic format file
-           ``'NETCDF3_64BIT'``    Output to a CF-netCDF3 64-bit offset format file
-           ``'NETCDF4_CLASSIC'``  Output to a CF-netCDF4 classic format file
-           ``'NETCDF4'``          Output to a CF-netCDF4 format file
-           =====================  ================================================
-
-        By default the *fmt* is ``'NETCDF3_CLASSIC'``. Note that the
-        netCDF3 formats may be slower than any of the other options.
-
-    overwrite: bool, optional
-        If False then raise an exception if the output file
-        pre-exists. By default a pre-existing output file is over
-        written.
-
-    verbose : bool, optional
-        If True then print one-line summaries of each field written.
+    .. versionadded:: 1.7.0
+        
+    :Parameters:
     
-    datatype : dict, optional
-        Specify data type conversions to be applied prior to writing
-        data to disk. Arrays with data types which are not specified
-        remain unchanged. By default, array data types are preserved
-        with the exception of booleans (``numpy.dtype(bool)``, which
-        are converted to 32 bit integers.
-
-        *Parameter example:*
-          To convert 64 bit floats and integers to their 32 bit
-          counterparts: ``dtype={numpy.dtype(float):
-          numpy.dtype('float32'), numpy.dtype(int):
-          numpy.dtype('int32')}``.
-
-    Conventions: (sequence of) `str`, optional
-         Specify conventions to be recorded by the netCDF global
-         "Conventions" attribute. These conventions are in addition to
-         version of CF being used e.g. ``'CF-1.7'``, which must not be
-         specified. If the "Conventions" property is set on a field
-         construct then it is ignored. Note that a convention name is
-         not allowed to contain any commas.
-
-         *Parameter example:*
-           ``Conventions='UGRID-1.0'``
-
-         *Parameter example:*
-           ``Conventions=['UGRID-1.0']``
-
-         *Parameter example:*
-           ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
-
-         *Parameter example:*
-           ``Conventions='CF-1.7'``
-
-         *Parameter example:*
-           ``Conventions=['CF-1.7', 'CMIP-6.2']``
-
-:Returns:
-
-    `None`
-
-:Examples 2:
-
->>> f
-[<CF Field: air_pressure(30, 24)>,
- <CF Field: u_compnt_of_wind(19, 29, 24)>,
- <CF Field: v_compnt_of_wind(19, 29, 24)>,
- <CF Field: potential_temperature(19, 30, 24)>]
->>> write(f, 'file')
-
->>> type(f)
-<class 'cf.field.FieldList'>
->>> cf.write([f, g], 'file.nc', verbose=True)
-[<CF Field: air_pressure(30, 24)>,
- <CF Field: u_compnt_of_wind(19, 29, 24)>,
- <CF Field: v_compnt_of_wind(19, 29, 24)>,
- <CF Field: potential_temperature(19, 30, 24)>]
+        fields : (arbitrarily nested sequence of) `cf.Field`
+            The field or fields to write to the file.
+    
+        filename : str
+            The output CF-netCDF file. Various type of expansion are
+            applied to the file names:
+            
+              ====================  ======================================
+              Expansion             Description
+              ====================  ======================================
+              Tilde                 An initial component of ``~`` or
+                                    ``~user`` is replaced by that *user*'s
+                                    home directory.
+               
+              Environment variable  Substrings of the form ``$name`` or
+                                    ``${name}`` are replaced by the value
+                                    of environment variable *name*.
+              ====================  ======================================
+        
+            Where more than one type of expansion is used in the same
+            string, they are applied in the order given in the above
+            table.
+    
+              Example: If the environment variable *MYSELF* has been set
+              to the "david", then ``'~$MYSELF/out.nc'`` is equivalent to
+              ``'~david/out.nc'``.
+      
+        fmt : str, optional
+            The format of the output file. One of:
+    
+               =====================  ================================================
+               fmt                    Description
+               =====================  ================================================
+               ``'NETCDF3_CLASSIC'``  Output to a CF-netCDF3 classic format file
+               ``'NETCDF3_64BIT'``    Output to a CF-netCDF3 64-bit offset format file
+               ``'NETCDF4_CLASSIC'``  Output to a CF-netCDF4 classic format file
+               ``'NETCDF4'``          Output to a CF-netCDF4 format file
+               =====================  ================================================
+    
+            By default the *fmt* is ``'NETCDF3_CLASSIC'``. Note that the
+            netCDF3 formats may be slower than any of the other options.
+    
+        overwrite: bool, optional
+            If False then raise an exception if the output file
+            pre-exists. By default a pre-existing output file is over
+            written.
+    
+        verbose : bool, optional
+            If True then print one-line summaries of each field written.
+        
+        datatype : dict, optional
+            Specify data type conversions to be applied prior to writing
+            data to disk. Arrays with data types which are not specified
+            remain unchanged. By default, array data types are preserved
+            with the exception of booleans (``numpy.dtype(bool)``, which
+            are converted to 32 bit integers.
+    
+            *Parameter example:*
+              To convert 64 bit floats and integers to their 32 bit
+              counterparts: ``dtype={numpy.dtype(float):
+              numpy.dtype('float32'), numpy.dtype(int):
+              numpy.dtype('int32')}``.
+    
+        Conventions: (sequence of) `str`, optional
+             Specify conventions to be recorded by the netCDF global
+             "Conventions" attribute. These conventions are in addition to
+             version of CF being used e.g. ``'CF-1.7'``, which must not be
+             specified. If the "Conventions" property is set on a field
+             construct then it is ignored. Note that a convention name is
+             not allowed to contain any commas.
+    
+             *Parameter example:*
+               ``Conventions='UGRID-1.0'``
+    
+             *Parameter example:*
+               ``Conventions=['UGRID-1.0']``
+    
+             *Parameter example:*
+               ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
+    
+             *Parameter example:*
+               ``Conventions='CF-1.7'``
+    
+             *Parameter example:*
+               ``Conventions=['CF-1.7', 'CMIP-6.2']``
+    
+    :Returns:
+    
+        `None`
+    
+    :Examples 2:
+    
+    >>> f
+    [<CF Field: air_pressure(30, 24)>,
+     <CF Field: u_compnt_of_wind(19, 29, 24)>,
+     <CF Field: v_compnt_of_wind(19, 29, 24)>,
+     <CF Field: potential_temperature(19, 30, 24)>]
+    >>> write(f, 'file')
+    
+    >>> type(f)
+    <class 'cf.field.FieldList'>
+    >>> cf.write([f, g], 'file.nc', verbose=True)
+    [<CF Field: air_pressure(30, 24)>,
+     <CF Field: u_compnt_of_wind(19, 29, 24)>,
+     <CF Field: v_compnt_of_wind(19, 29, 24)>,
+     <CF Field: potential_temperature(19, 30, 24)>]
 
         '''    
         if verbose:
@@ -3509,6 +3511,6 @@ and auxiliary coordinate roles for different data variables.
                        shuffle=shuffle,
                        verbose=verbose,
                        extra_write_vars=extra_write_vars)            
-    #--- End: def
+
    
 #--- End: class
