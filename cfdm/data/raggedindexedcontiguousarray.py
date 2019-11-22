@@ -11,45 +11,46 @@ class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
                                    abstract.CompressedArray):
     '''An underlying indexed contiguous ragged array.
 
-A collection of features, each of which is sequence of (vertical)
-profiles, stored using an indexed contiguous ragged array combines all
-feature elements along a single dimension (the "sample dimension")
-such that a contiguous ragged array representation is used for each
-profile and the indexed ragged array representation to organise the
-profiles into timeseries.
-
-The information needed to uncompress the data is stored in a "count
-variable" that gives the size of each profile; and in a "index
-variable" that specifies the feature that each profile belongs to.
-
-.. versionadded:: 1.7.0
+    A collection of features, each of which is sequence of (vertical)
+    profiles, stored using an indexed contiguous ragged array combines
+    all feature elements along a single dimension (the "sample
+    dimension") such that a contiguous ragged array representation is
+    used for each profile and the indexed ragged array representation
+    to organise the profiles into timeseries.
+    
+    The information needed to uncompress the data is stored in a
+    "count variable" that gives the size of each profile; and in a
+    "index variable" that specifies the feature that each profile
+    belongs to.
+    
+    .. versionadded:: 1.7.0
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
                  ndim=None, count_variable=None, index_variable=None):
         '''**Initialization**
 
-:Parameters:
-
-    compressed_array: `Data`
-        The compressed array.
-
-    shape: `tuple`
-        The uncompressed array dimension sizes.
-
-    size: `int`
-        Number of elements in the uncompressed array.
-
-    ndim: `int`
-        The number of uncompressed array dimensions
-
-    count_variable: `Count`
-        The count variable required to uncompress the data,
-        corresponding to a CF-netCDF count variable.
-
-    index_variable: `Index`
-        The index variable required to uncompress the data,
-        corresponding to a CF-netCDF CF-netCDF index variable.
+    :Parameters:
+    
+        compressed_array: `Data`
+            The compressed array.
+    
+        shape: `tuple`
+            The uncompressed array dimension sizes.
+    
+        size: `int`
+            Number of elements in the uncompressed array.
+    
+        ndim: `int`
+            The number of uncompressed array dimensions
+    
+        count_variable: `Count`
+            The count variable required to uncompress the data,
+            corresponding to a CF-netCDF count variable.
+    
+        index_variable: `Index`
+            The index variable required to uncompress the data,
+            corresponding to a CF-netCDF CF-netCDF index variable.
 
         '''
 #        if not isinstance(compressed_array, abstract.Array):
@@ -64,25 +65,27 @@ variable" that specifies the feature that each profile belongs to.
                          index_variable=index_variable,
                          compression_type='ragged indexed contiguous',
                          compressed_dimension=0)    
-    #--- End: def
+
 
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
-
-Returns an subspace of the uncompressed data an independent numpy
-array.
-
-The indices that define the subspace are relative to the uncompressed
-data and must be either `Ellipsis` or a sequence that contains an
-index for each dimension. In the latter case, each dimension's index
-must either be a `slice` object or a sequence of two or more integers.
-
-Indexing is similar to numpy indexing. The only difference to numpy
-indexing (given the restrictions on the type of indices allowed) is:
-
-  * When two or more dimension's indices are sequences of integers
-    then these indices work independently along each dimension
-    (similar to the way vector subscripts work in Fortran).
+    
+    Returns an subspace of the uncompressed data an independent numpy
+    array.
+    
+    The indices that define the subspace are relative to the
+    uncompressed data and must be either `Ellipsis` or a sequence that
+    contains an index for each dimension. In the latter case, each
+    dimension's index must either be a `slice` object or a sequence of
+    two or more integers.
+    
+    Indexing is similar to numpy indexing. The only difference to
+    numpy indexing (given the restrictions on the type of indices
+    allowed) is:
+    
+      * When two or more dimension's indices are sequences of integers
+        then these indices work independently along each dimension
+        (similar to the way vector subscripts work in Fortran).
 
         '''
         # ------------------------------------------------------------
@@ -135,25 +138,25 @@ indexing (given the restrictions on the type of indices allowed) is:
         #--- End: for
 
         return self.get_subspace(uarray, indices, copy=True)
-    #--- End: def
+
     
     def to_memory(self):
         '''TODO
 
-:Returns:
-
-    `RaggedIndexedContiguousArray`
-        TODO
-
-**Examples:**
-
-TODO
+    :Returns:
+    
+        `RaggedIndexedContiguousArray`
+            TODO
+    
+    **Examples:**
+    
+    TODO
 
         '''
         super().to_memory()
         self.get_count().data.to_memory()
         self.get_index().data.to_memory()
         return self
-    #--- End def
+
     
 #--- End: class

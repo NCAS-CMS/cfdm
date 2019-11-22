@@ -16,46 +16,46 @@ from .numpyarray import NumpyArray
 class NetCDFArray(abstract.Array):
     '''An underlying array stored in a netCDF file.
     
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
     '''
     def __init__(self, filename=None, ncvar=None, varid=None,
                  dtype=None, ndim=None, shape=None, size=None):
         '''**Initialization**
 
-:Parameters:
-
-    filename: `str`
-        The name of the netCDF file containing the array.
-
-    ncvar: `str`, optional
-        The name of the netCDF variable containing the array. Required
-        unless *varid* is set.
-
-    varid: `int`, optional
-        The UNIDATA netCDF interface ID of the variable containing the
-        array. Required if *ncvar* is not set, ignored if *ncvar* is
-        set.
-
-    dtype: `numpy.dtype`
-        The data type of the array in the netCDF file.
-
-    shape: `tuple`
-        The array dimension sizes in the netCDF file.
-
-    size: `int`
-        Number of elements in the array in the netCDF file.
-
-    ndim: `int`
-        The number of array dimensions in the netCDF file.
-
-**Examples:**
-
->>> import netCDF4
->>> nc = netCDF4.Dataset('file.nc', 'r')
->>> v = nc.variable['tas']
->>> a = NetCDFFileArray(filename='file.nc', ncvar='tas', dtype=v.dtype, 
-...                     ndim=v.ndim, shape=v.shape, size=v.size)
+    :Parameters:
+    
+        filename: `str`
+            The name of the netCDF file containing the array.
+    
+        ncvar: `str`, optional
+            The name of the netCDF variable containing the
+            array. Required unless *varid* is set.
+    
+        varid: `int`, optional
+            The UNIDATA netCDF interface ID of the variable containing
+            the array. Required if *ncvar* is not set, ignored if
+            *ncvar* is set.
+    
+        dtype: `numpy.dtype`
+            The data type of the array in the netCDF file.
+    
+        shape: `tuple`
+            The array dimension sizes in the netCDF file.
+    
+        size: `int`
+            Number of elements in the array in the netCDF file.
+    
+        ndim: `int`
+            The number of array dimensions in the netCDF file.
+    
+    **Examples:**
+    
+    >>> import netCDF4
+    >>> nc = netCDF4.Dataset('file.nc', 'r')
+    >>> v = nc.variable['tas']
+    >>> a = NetCDFFileArray(filename='file.nc', ncvar='tas', dtype=v.dtype, 
+    ...                     ndim=v.ndim, shape=v.shape, size=v.size)
 
         '''
         super().__init__(filename=filename, ncvar=ncvar, varid=varid)
@@ -76,24 +76,25 @@ class NetCDFArray(abstract.Array):
 
         if dtype is not None:
             self._set_component('dtype', dtype)
-    #--- End: def
+
             
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
-Returns a subspace of the array as an independent numpy array.
-
-The indices that define the subspace must be either `Ellipsis` or a
-sequence that contains an index for each dimension. In the latter
-case, each dimension's index must either be a `slice` object or a
-sequence of two or more integers.
-
-Indexing is similar to numpy indexing. The only difference to numpy
-indexing (given the restrictions on the type of indices allowed) is:
-
-  * When two or more dimension's indices are sequences of integers
-    then these indices work independently along each dimension
-    (similar to the way vector subscripts work in Fortran).
+    Returns a subspace of the array as an independent numpy array.
+    
+    The indices that define the subspace must be either `Ellipsis` or
+    a sequence that contains an index for each dimension. In the
+    latter case, each dimension's index must either be a `slice`
+    object or a sequence of two or more integers.
+    
+    Indexing is similar to numpy indexing. The only difference to
+    numpy indexing (given the restrictions on the type of indices
+    allowed) is:
+    
+      * When two or more dimension's indices are sequences of integers
+        then these indices work independently along each dimension
+        (similar to the way vector subscripts work in Fortran).
 
         '''
         netcdf = self.open()
@@ -159,24 +160,20 @@ indexing (given the restrictions on the type of indices allowed) is:
             self.close()
 
         return array
-    #--- End: def
+
 
     def __repr__(self):
+        '''x.__repr__() <==> repr(x)
+
         '''
-
-x.__repr__() <==> repr(x)
-
-'''
         return "<{0}{1}: {2}>".format(
             self.__class__.__name__, self.shape, str(self))
-    #--- End: def
+
      
     def __str__(self):
-        '''
+        '''x.__str__() <==> str(x)
 
-x.__str__() <==> str(x)
-
-'''      
+        '''      
         name = self.get_ncvar()
         if name is None:
             name = "varid={0}".format(self.get_varid())
@@ -184,7 +181,7 @@ x.__str__() <==> str(x)
             name = "variable={0}".format(name)
 
         return "file={0} {1}".format(self.get_filename(), name)
-    #--- End: def
+
  
     # ----------------------------------------------------------------
     # Attributes
@@ -192,159 +189,159 @@ x.__str__() <==> str(x)
     @property
     def dtype(self):
         '''Data-type of the data elements.
-         
-**Examples:**
-
->>> a.dtype
-dtype('float64')
->>> print(type(a.dtype))
-<type 'numpy.dtype'>
-
+             
+    **Examples:**
+    
+    >>> a.dtype
+    dtype('float64')
+    >>> print(type(a.dtype))
+    <type 'numpy.dtype'>
+    
         '''
         return self._get_component('dtype')
-    #--- End: def
+
     
     @property
     def ndim(self):
         '''Number of array dimensions
         
-**Examples:**
-
->>> a.shape
-(73, 96)
->>> a.ndim
-2
->>> a.size
-7008
-
->>> a.shape
-(1, 1, 1)
->>> a.ndim
-3
->>> a.size
-1
-
->>> a.shape
-()
->>> a.ndim
-0
->>> a.size
-1
+    **Examples:**
+    
+    >>> a.shape
+    (73, 96)
+    >>> a.ndim
+    2
+    >>> a.size
+    7008
+    
+    >>> a.shape
+    (1, 1, 1)
+    >>> a.ndim
+    3
+    >>> a.size
+    1
+    
+    >>> a.shape
+    ()
+    >>> a.ndim
+    0
+    >>> a.size
+    1
         '''
         return self._get_component('ndim')
-    #--- End: def
+
     
     @property
     def shape(self):
         '''Tuple of array dimension sizes.
-
-**Examples:**
-
->>> a.shape
-(73, 96)
->>> a.ndim
-2
->>> a.size
-7008
-
->>> a.shape
-(1, 1, 1)
->>> a.ndim
-3
->>> a.size
-1
-
->>> a.shape
-()
->>> a.ndim
-0
->>> a.size
-1
+    
+    **Examples:**
+    
+    >>> a.shape
+    (73, 96)
+    >>> a.ndim
+    2
+    >>> a.size
+    7008
+    
+    >>> a.shape
+    (1, 1, 1)
+    >>> a.ndim
+    3
+    >>> a.size
+    1
+    
+    >>> a.shape
+    ()
+    >>> a.ndim
+    0
+    >>> a.size
+    1
         '''
         return self._get_component('shape')
-    #--- End: def
+
     
     @property
     def size(self):        
         '''Number of elements in the array.
-
-**Examples:**
-
->>> a.shape
-(73, 96)
->>> a.size
-7008
->>> a.ndim
-2
-
->>> a.shape
-(1, 1, 1)
->>> a.ndim
-3
->>> a.size
-1
-
->>> a.shape
-()
->>> a.ndim
-0
->>> a.size
-1
+    
+    **Examples:**
+    
+    >>> a.shape
+    (73, 96)
+    >>> a.size
+    7008
+    >>> a.ndim
+    2
+    
+    >>> a.shape
+    (1, 1, 1)
+    >>> a.ndim
+    3
+    >>> a.size
+    1
+    
+    >>> a.shape
+    ()
+    >>> a.ndim
+    0
+    >>> a.size
+    1
 
         '''
         return self._get_component('size')
-    #--- End: def
+
     
     def get_filename(self):
         '''The name of the netCDF file containing the array.
 
-**Examples:**
-
->>> a.get_filename()
-'file.nc'
+    **Examples:**
+    
+    >>> a.get_filename()
+    'file.nc'
 
         '''
         return self._get_component('filename')
-    #--- End: def
+
     
     def get_ncvar(self):
         '''The name of the netCDF variable containing the array.
 
-**Examples:**
-
->>> print(a.netcdf)
-'tas'
->>> print(a.varid)
-None
-
->>> print(a.netcdf)
-None
->>> print(a.varid)
-4
+    **Examples:**
+    
+    >>> print(a.netcdf)
+    'tas'
+    >>> print(a.varid)
+    None
+    
+    >>> print(a.netcdf)
+    None
+    >>> print(a.varid)
+    4
 
         '''
         return self._get_component('ncvar')
-    #--- End: def
+
     
     def get_varid(self):
         '''The UNIDATA netCDF interface ID of the variable containing the
-array.
-
-**Examples:**
-
->>> print(a.netcdf)
-'tas'
->>> print(a.varid)
-None
-
->>> print(a.netcdf)
-None
->>> print(a.varid)
-4
+    array.
+    
+    **Examples:**
+    
+    >>> print(a.netcdf)
+    'tas'
+    >>> print(a.varid)
+    None
+    
+    >>> print(a.netcdf)
+    None
+    >>> print(a.varid)
+    4
 
         '''
         return self._get_component('varid')
-    #--- End: def
+
     
     # ----------------------------------------------------------------
     # Methods
@@ -352,14 +349,14 @@ None
     def close(self):
         '''Close the `netCDF4.Dataset` for the file containing the data.
 
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> a.close()
-
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> a.close()
+    
         '''
         netcdf = self._get_component('netcdf')
         if netcdf is  None:
@@ -367,41 +364,41 @@ None
         
         netcdf.close()    
         self._set_component('netcdf', None, copy=False)
-    #--- End: def
+
 
     @property
     def array(self):
         '''Return an independent numpy array containing the data.
-
-:Returns:
-
-    `numpy.ndarray`
-        An independent numpy array of the data.
-
-**Examples:**
-
->>> n = numpy.asanyarray(a)
->>> isinstance(n, numpy.ndarray)
-True
+    
+    :Returns:
+    
+        `numpy.ndarray`
+            An independent numpy array of the data.
+    
+    **Examples:**
+    
+    >>> n = numpy.asanyarray(a)
+    >>> isinstance(n, numpy.ndarray)
+    True
 
         '''
         return self[...]
-    #--- End: def
+
     
     def open(self):
         '''Return an open `netCDF4.Dataset` for the file containing the array.
 
-:Returns:
-
-    `netCDF4.Dataset`
-
-**Examples:**
-
->>> netcdf = a.open()
->>> variable = netcdf.variables[a.get_ncvar()]
->>> variable.getncattr('standard_name')
-'eastward_wind'
-
+    :Returns:
+    
+        `netCDF4.Dataset`
+    
+    **Examples:**
+    
+    >>> netcdf = a.open()
+    >>> variable = netcdf.variables[a.get_ncvar()]
+    >>> variable.getncattr('standard_name')
+    'eastward_wind'
+    
         '''
         if self._get_component('netcdf') is None:
             try:        
@@ -412,12 +409,13 @@ True
             self._set_component('netcdf', netcdf, copy=False)
             
         return netcdf
-    #--- End: def
+
 
     def to_memory(self):
-        '''
+        '''TODO
+
         '''
         return NumpyArray(self[...])
-    #--- End def
+
     
 #--- End: class

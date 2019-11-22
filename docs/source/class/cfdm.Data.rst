@@ -34,6 +34,7 @@ Inspection
    ~cfdm.Data.array
    ~cfdm.Data.datetime_array
    ~cfdm.Data.dtype
+   ~cfdm.Data.mask
    ~cfdm.Data.ndim
    ~cfdm.Data.shape
    ~cfdm.Data.size

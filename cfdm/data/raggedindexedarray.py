@@ -9,38 +9,39 @@ class RaggedIndexedArray(mixin.RaggedIndexed,
                          abstract.CompressedArray):
     '''An underlying indexed ragged array.
 
-A collection of features stored using an indexed ragged array combines
-all features along a single dimension (the "sample dimension") such
-that the values of each feature in the collection are interleaved.
-
-The information needed to uncompress the data is stored in an "index
-variable" that specifies the feature that each element of the sample
-dimension belongs to.
-
-.. versionadded:: 1.7.0
+    A collection of features stored using an indexed ragged array
+    combines all features along a single dimension (the "sample
+    dimension") such that the values of each feature in the collection
+    are interleaved.
+    
+    The information needed to uncompress the data is stored in an
+    "index variable" that specifies the feature that each element of
+    the sample dimension belongs to.
+    
+    .. versionadded:: 1.7.0
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
                  ndim=None, index_variable=None):
         '''**Initialization**
 
-:Parameters:
-
-    compressed_array: `Data`
-        The compressed array.
-
-    shape: `tuple`
-        The uncompressed array dimension sizes.
-
-    size: `int`
-        Number of elements in the uncompressed array.
-
-    ndim: `int`
-        The number of uncompressed array dimensions
-
-    index_variable: `Index`
-        The index variable required to uncompress the data,
-        corresponding to a CF-netCDF index variable.
+    :Parameters:
+    
+        compressed_array: `Data`
+            The compressed array.
+    
+        shape: `tuple`
+            The uncompressed array dimension sizes.
+    
+        size: `int`
+            Number of elements in the uncompressed array.
+    
+        ndim: `int`
+            The number of uncompressed array dimensions
+    
+        index_variable: `Index`
+            The index variable required to uncompress the data,
+            corresponding to a CF-netCDF index variable.
 
         '''
 #        if not isinstance(compressed_array, abstract.Array):
@@ -54,25 +55,27 @@ dimension belongs to.
                          index_variable=index_variable,
                          compressed_dimension=0,
                          compression_type='ragged indexed')
-    #--- End: def
+
 
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
-Returns an subspace of the uncompressed data an independent numpy
-array.
-
-The indices that define the subspace are relative to the uncompressed
-data and must be either `Ellipsis` or a sequence that contains an
-index for each dimension. In the latter case, each dimension's index
-must either be a `slice` object or a sequence of two or more integers.
-
-Indexing is similar to numpy indexing. The only difference to numpy
-indexing (given the restrictions on the type of indices allowed) is:
-
-  * When two or more dimension's indices are sequences of integers
-    then these indices work independently along each dimension
-    (similar to the way vector subscripts work in Fortran).
+    Returns an subspace of the uncompressed data an independent numpy
+    array.
+    
+    The indices that define the subspace are relative to the
+    uncompressed data and must be either `Ellipsis` or a sequence that
+    contains an index for each dimension. In the latter case, each
+    dimension's index must either be a `slice` object or a sequence of
+    two or more integers.
+    
+    Indexing is similar to numpy indexing. The only difference to
+    numpy indexing (given the restrictions on the type of indices
+    allowed) is:
+    
+      * When two or more dimension's indices are sequences of integers
+        then these indices work independently along each dimension
+        (similar to the way vector subscripts work in Fortran).
 
         '''
         # ------------------------------------------------------------
@@ -102,14 +105,15 @@ indexing (given the restrictions on the type of indices allowed) is:
         #--- End: for
 
         return self.get_subspace(uarray, indices, copy=True)
-    #--- End: def
+
 
     def to_memory(self):
-        '''
+        '''TODO
+
         '''
         super().to_memory()
         self.get_index().data.to_memory()
         return self
-    #--- End def
+
     
 #--- End: class
