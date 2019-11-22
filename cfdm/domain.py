@@ -12,29 +12,29 @@ class Domain(mixin.ConstructAccess,
              core.Domain):
     '''A domain of the CF data model.
 
-The domain represents a set of discrete "locations" in what generally
-would be a multi-dimensional space, either in the real world or in a
-model's simulated world. These locations correspond to individual data
-array elements of a field construct
-
-The domain is defined collectively by the following constructs of the
-CF data model: domain axis, dimension coordinate, auxiliary
-coordinate, cell measure, coordinate reference and domain ancillary
-constructs.
-
-.. versionadded:: 1.7.0
+    The domain represents a set of discrete "locations" in what
+    generally would be a multi-dimensional space, either in the real
+    world or in a model's simulated world. These locations correspond
+    to individual data array elements of a field construct
+    
+    The domain is defined collectively by the following constructs of
+    the CF data model: domain axis, dimension coordinate, auxiliary
+    coordinate, cell measure, coordinate reference and domain
+    ancillary constructs.
+    
+    .. versionadded:: 1.7.0
 
     '''
     def __new__(cls, *args, **kwargs):
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         return instance
-    #--- End: def
+
     
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
+    x.__repr__() <==> repr(x)
 
         '''
         shape = sorted([domain_axis.get_size()
@@ -43,12 +43,12 @@ x.__repr__() <==> repr(x)
         shape = shape[1:-1]
         
         return '<{0}: {{{1}}}>'.format(self.__class__.__name__, shape)
-    #--- End: def
+
 
     def __str__(self):
         '''Called by the `str` built-in function.
 
-x.__str__() <==> str(x)
+    x.__str__() <==> str(x)
 
         '''
         def _print_item(self, cid, variable, axes):
@@ -141,26 +141,26 @@ x.__str__() <==> str(x)
         string.append('')
 
         return '\n'.join(string)
-    #--- End def
+
                           
     def _dump_axes(self, axis_names, display=True, _level=0):
         '''Return a string containing a description of the domain axes of the
-field.
+    field.
+        
+    :Parameters:
+        
+        display: `bool`, optional
+            If False then return the description as a string. By
+            default the description is printed.
+        
+        _level: `int`, optional
     
-:Parameters:
-    
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed.
-    
-    _level: `int`, optional
-
-:Returns:
-    
-    `str`
-        A string containing the description.
-    
-**Examples:**
+    :Returns:
+        
+        `str`
+            A string containing the description.
+        
+    **Examples:**
 
         '''
         indent1 = '    ' * _level
@@ -177,31 +177,31 @@ field.
             print(string)
         else:
             return string
-    #--- End: def
+
     
     def dump(self, display=True, _level=0, _title=None):
         '''A full description of the domain.
 
-The domain components are described without abbreviation with the
-exception of data arrays, which are abbreviated to their first and
-last values.
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed.
-
-          *Parameter example:*
-            ``f.dump()`` is equivalent to ``print
-            f.dump(display=False)``.
-
-:Returns:
-
-    `None` or `str`
-        If *display* is True then the description is printed and
-        `None` is returned. Otherwise the description is returned as a
-        string.
+    The domain components are described without abbreviation with the
+    exception of data arrays, which are abbreviated to their first and
+    last values.
+    
+    :Parameters:
+    
+        display: `bool`, optional
+            If False then return the description as a string. By
+            default the description is printed.
+    
+            *Parameter example:*
+              ``f.dump()`` is equivalent to ``print
+              f.dump(display=False)``.
+    
+    :Returns:
+    
+        `None` or `str`
+            If *display* is True then the description is printed and
+            `None` is returned. Otherwise the description is returned
+            as a string.
 
         '''
         indent = '    '      
@@ -279,7 +279,7 @@ last values.
             print(string)
         else:
             return string
-    #--- End: def
+
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,

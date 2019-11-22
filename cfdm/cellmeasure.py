@@ -11,72 +11,74 @@ class CellMeasure(mixin.NetCDFVariable,
                   core.CellMeasure):
     '''A cell measure construct of the CF data model.
 
-A cell measure construct provides information that is needed about the
-size or shape of the cells and that depends on a subset of the domain
-axis constructs. Cell measure constructs have to be used when the size
-or shape of the cells cannot be deduced from the dimension or
-auxiliary coordinate constructs without special knowledge that a
-generic application cannot be expected to have.
-
-The cell measure construct consists of a numeric array of the metric
-data which spans a subset of the domain axis constructs, and
-properties to describe the data. The cell measure construct specifies
-a "measure" to indicate which metric of the space it supplies,
-e.g. cell horizontal areas, and must have a units property consistent
-with the measure, e.g. square metres. It is assumed that the metric
-does not depend on axes of the domain which are not spanned by the
-array, along which the values are implicitly propagated. CF-netCDF
-cell measure variables correspond to cell measure constructs.
-
-**NetCDF interface**
-
-The netCDF variable name of the construct may be accessed with the
-`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-`nc_has_variable` methods.
-
-.. versionadded:: 1.7.0
+    A cell measure construct provides information that is needed about
+    the size or shape of the cells and that depends on a subset of the
+    domain axis constructs. Cell measure constructs have to be used
+    when the size or shape of the cells cannot be deduced from the
+    dimension or auxiliary coordinate constructs without special
+    knowledge that a generic application cannot be expected to have.
+    
+    The cell measure construct consists of a numeric array of the
+    metric data which spans a subset of the domain axis constructs,
+    and properties to describe the data. The cell measure construct
+    specifies a "measure" to indicate which metric of the space it
+    supplies, e.g. cell horizontal areas, and must have a units
+    property consistent with the measure, e.g. square metres. It is
+    assumed that the metric does not depend on axes of the domain
+    which are not spanned by the array, along which the values are
+    implicitly propagated. CF-netCDF cell measure variables correspond
+    to cell measure constructs.
+    
+    **NetCDF interface**
+    
+    The netCDF variable name of the construct may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+    `nc_has_variable` methods.
+    
+    .. versionadded:: 1.7.0
 
     '''
     def __init__(self, measure=None, properties=None, data=None,
                  source=None, copy=True, _use_data=True):
         '''**Initialisation**
 
-:Parameters:
-
-    measure: `str`, optional
-        Set the measure that indicates which metric given by the data
-        array. Ignored if the *source* parameter is set.
-
-        *Parameter example:*
-          ``measure='area'``
-
-        The measure may also be set after initialisation with the
-        `set_measure` method.
-
-    properties: `dict`, optional
-       Set descriptive properties. The dictionary keys are property
-       names, with corresponding values. Ignored if the *source*
-       parameter is set.
-
-       *Parameter example:*
-          ``properties={'standard_name': 'cell_area'}``
-
-       Properties may also be set after initialisation with the
-       `set_properties` and `set_property` methods.
-
-    data: `Data`, optional
-        Set the data array. Ignored if the *source* parameter is set.
-
-        The data array may also be set after initialisation with the
-        `set_data` method.
-
-    source: optional
-        Initialize the measure, properties and data from those of
-        *source*.
-
-    copy: `bool`, optional
-        If False then do not deep copy input parameters prior to
-        initialization. By default arguments are deep copied.
+    :Parameters:
+    
+        measure: `str`, optional
+            Set the measure that indicates which metric given by the
+            data array. Ignored if the *source* parameter is set.
+    
+            The measure may also be set after initialisation with the
+            `set_measure` method.
+    
+            *Parameter example:*
+              ``measure='area'``
+    
+        properties: `dict`, optional
+           Set descriptive properties. The dictionary keys are
+           property names, with corresponding values. Ignored if the
+           *source* parameter is set.
+    
+           Properties may also be set after initialisation with the
+           `set_properties` and `set_property` methods.
+    
+           *Parameter example:*
+             ``properties={'standard_name': 'cell_area'}``
+    
+        data: `Data`, optional
+            Set the data array. Ignored if the *source* parameter is
+            set.
+    
+            The data array may also be set after initialisation with
+            the `set_data` method.
+    
+        source: optional
+            Initialize the measure, properties and data from those of
+            *source*.
+    
+        copy: `bool`, optional
+            If False then do not deep copy input parameters prior to
+            initialization. By default arguments are deep copied.
 
         '''
         super().__init__(measure=measure, properties=properties,
@@ -84,31 +86,31 @@ The netCDF variable name of the construct may be accessed with the
                          _use_data=_use_data)
         
         self._initialise_netcdf(source)
-    #--- End: def
+
     
     def dump(self, display=True, _omit_properties=None, _key=None,
              _level=0, _title=None, _axes=None, _axis_names=None):
         '''A full description of the cell measure construct.
 
-Returns a description of all properties, including those of
-components, and provides selected values of all data arrays.
+    Returns a description of all properties, including those of
+    components, and provides selected values of all data arrays.
+    
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        display: `bool`, optional
+            If False then return the description as a string. By
+            default the description is printed.
+    
+    :Returns:
+    
+        `None` or `str`
+            The description. If *display* is True then the description
+            is printed and `None` is returned. Otherwise the
+            description is returned as a string.
 
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed.
-
-:Returns:
-
-    `None` or `str`
-        The description. If *display* is True then the description is
-        printed and `None` is returned. Otherwise the description is
-        returned as a string.
-
-''' 
+        ''' 
         if _title is None:
             name = self.identity(default=self.get_property('units', ''))
             _title = 'Cell Measure: ' + name
@@ -127,7 +129,7 @@ components, and provides selected values of all data arrays.
                              _omit_properties=_omit_properties,
                              _level=_level, _title=_title,
                              _axes=_axes, _axis_names=_axis_names)
-    #--- End: def
+
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -258,58 +260,58 @@ components, and provides selected values of all data arrays.
     def identity(self, default=''):
         '''Return the canonical identity.
 
-By default the identity is the first found of the following:
-
-1. The measure property, preceeded by ``'measure:'``.
-2. The "standard_name" property.
-3. The "cf_role" property, preceeded by 'cf_role='.
-4. The "long_name" property, preceeded by 'long_name='.
-5. The netCDF variable name, preceeded by 'ncvar%'.
-6. The value of the default parameter.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `identities`
-
-:Parameters:
-
-    default: optional
-        If no identity can be found then return the value of the
-        default parameter.
-
-:Returns:
-
-        The identity.
-
-**Examples:**
-
->>> c.get_measure()
-'area'
->>> c.properties()
-{'long_name': 'Area',
- 'standard_name': 'cell_area'}
->>> c.nc_get_variable()
-'areacello'
->>> c.identity(default='no identity')
-'measure:area'
->>> c.del_measure()
-'area'
->>> c.identity()
-'cell_area'
->>> c.del_property('standard_name')
-'cell_area'
->>> c.identity()
-'long_name=Area'
->>> c.del_properly('long_name')
-'Area'
->>> c.identity()
-'ncvar%areacello'
->>> c.nc_del_variable()
-'areacello'
->>> c.identity()
-''
->>> c.identity(default='no identity')
-'no identity'
+    By default the identity is the first found of the following:
+    
+    * The measure property, preceeded by ``'measure:'``.
+    * The "standard_name" property.
+    * The "cf_role" property, preceeded by 'cf_role='.
+    * The "long_name" property, preceeded by 'long_name='.
+    * The netCDF variable name, preceeded by 'ncvar%'.
+    * The value of the default parameter.
+    
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `identities`
+    
+    :Parameters:
+    
+        default: optional
+            If no identity can be found then return the value of the
+            default parameter.
+    
+    :Returns:
+    
+            The identity.
+    
+    **Examples:**
+    
+    >>> c.get_measure()
+    'area'
+    >>> c.properties()
+    {'long_name': 'Area',
+     'standard_name': 'cell_area'}
+    >>> c.nc_get_variable()
+    'areacello'
+    >>> c.identity(default='no identity')
+    'measure:area'
+    >>> c.del_measure()
+    'area'
+    >>> c.identity()
+    'cell_area'
+    >>> c.del_property('standard_name')
+    'cell_area'
+    >>> c.identity()
+    'long_name=Area'
+    >>> c.del_properly('long_name')
+    'Area'
+    >>> c.identity()
+    'ncvar%areacello'
+    >>> c.nc_del_variable()
+    'areacello'
+    >>> c.identity()
+    ''
+    >>> c.identity(default='no identity')
+    'no identity'
 
         '''
         n = self.get_measure(None)
@@ -331,7 +333,7 @@ By default the identity is the first found of the following:
             return 'ncvar%{0}'.format(n)
 
         return default
-    #--- End: def
+
 
     def identities(self):
         '''Return all possible identities.
@@ -377,6 +379,6 @@ The identities comprise:
             out.insert(0, 'measure:{0}'.format(n))
 
         return out
-    #--- End: def
+
 
 #--- End: class

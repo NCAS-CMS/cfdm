@@ -13,57 +13,59 @@ class CoordinateReference(mixin.NetCDFVariable,
                           core.CoordinateReference):
     '''A coordinate reference construct of the CF data model. 
 
-A coordinate reference construct relates the coordinate values of the
-coordinate system to locations in a planetary reference frame.
-
-The domain of a field construct may contain various coordinate
-systems, each of which is constructed from a subset of the dimension
-and auxiliary coordinate constructs. For example, the domain of a
-four-dimensional field construct may contain horizontal (y-x),
-vertical (z), and temporal (t) coordinate systems. There may be more
-than one of each of these, if there is more than one coordinate
-construct applying to a particular spatiotemporal dimension (for
-example, there could be both latitude-longitude and y-x projection
-coordinate systems). In general, a coordinate system may be
-constructed implicitly from any subset of the coordinate constructs,
-yet a coordinate construct does not need to be explicitly or
-exclusively associated with any coordinate system.
-
-A coordinate system of the field construct can be explicitly defined
-by a coordinate reference construct which relates the coordinate
-values of the coordinate system to locations in a planetary reference
-frame and consists of the following:
-
-* References to the dimension coordinate and auxiliary coordinate
-  constructs that define the coordinate system to which the coordinate
-  reference construct applies. Note that the coordinate values are not
-  relevant to the coordinate reference construct, only their
-  properties.
-
-..
-
-* A definition of a datum specifying the zeroes of the dimension and
-  auxiliary coordinate constructs which define the coordinate
-  system. The datum may be implied by the metadata of the referenced
-  dimension and auxiliary coordinate constructs, or explicitly
-  provided.
-
-..
-
-* A coordinate conversion, which defines a formula for converting
-  coordinate values taken from the dimension or auxiliary coordinate
-  constructs to a different coordinate system. A coordinate reference
-  construct relates the coordinate values of the field to locations in
-  a planetary reference frame.
-
-
-**NetCDF interface**
-
-The netCDF grid mapping variable name of a coordinate reference
-construct may be accessed with the `nc_set_variable`,
-`nc_get_variable`, `nc_del_variable` and `nc_has_variable` methods.
-
-.. versionadded:: 1.7.0
+    A coordinate reference construct relates the coordinate values of
+    the coordinate system to locations in a planetary reference frame.
+    
+    The domain of a field construct may contain various coordinate
+    systems, each of which is constructed from a subset of the
+    dimension and auxiliary coordinate constructs. For example, the
+    domain of a four-dimensional field construct may contain
+    horizontal (y-x), vertical (z), and temporal (t) coordinate
+    systems. There may be more than one of each of these, if there is
+    more than one coordinate construct applying to a particular
+    spatiotemporal dimension (for example, there could be both
+    latitude-longitude and y-x projection coordinate systems). In
+    general, a coordinate system may be constructed implicitly from
+    any subset of the coordinate constructs, yet a coordinate
+    construct does not need to be explicitly or exclusively associated
+    with any coordinate system.
+    
+    A coordinate system of the field construct can be explicitly
+    defined by a coordinate reference construct which relates the
+    coordinate values of the coordinate system to locations in a
+    planetary reference frame and consists of the following:
+    
+    * References to the dimension coordinate and auxiliary coordinate
+      constructs that define the coordinate system to which the
+      coordinate reference construct applies. Note that the coordinate
+      values are not relevant to the coordinate reference construct,
+      only their properties.
+    
+    ..
+    
+    * A definition of a datum specifying the zeroes of the dimension
+      and auxiliary coordinate constructs which define the coordinate
+      system. The datum may be implied by the metadata of the
+      referenced dimension and auxiliary coordinate constructs, or
+      explicitly provided.
+    
+    ..
+    
+    * A coordinate conversion, which defines a formula for converting
+      coordinate values taken from the dimension or auxiliary
+      coordinate constructs to a different coordinate system. A
+      coordinate reference construct relates the coordinate values of
+      the field to locations in a planetary reference frame.
+    
+    
+    **NetCDF interface**
+    
+    The netCDF grid mapping variable name of a coordinate reference
+    construct may be accessed with the `nc_set_variable`,
+    `nc_get_variable`, `nc_del_variable` and `nc_has_variable`
+    methods.
+    
+    .. versionadded:: 1.7.0
 
     '''
     def __new__(cls, *args, **kwargs):
@@ -71,50 +73,52 @@ construct may be accessed with the `nc_set_variable`,
         instance._CoordinateConversion = CoordinateConversion
         instance._Datum                = Datum
         return instance
-    #--- End: def
+
 
     def __init__(self, coordinates=None, datum=None,
                  coordinate_conversion=None,
                  source=None, copy=True):
         '''**Initialization**
 
-:Parameters:
-
-    coordinates: sequence of `str`, optional
-        Identify the related dimension and auxiliary coordinate
-        constructs by their construct identifiers. Ignored if the
-        *source* parameter is set.
-
-        *Parameter example:*
-          ``coordinates=['dimensioncoordinate2']``
-
-        *Parameter example:*
-          ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1')``
-
-        The coordinates may also be set after initialisation with the
-        `set_coordinates` and `set_coordinate` methods.
-
-    datum: `Datum`, optional
-        Set the datum component of the coordinate reference
-        construct. Ignored if the *source* parameter is set.
-
-        The datum may also be set after initialisation with the
-        `set_datum` method.
-
-    coordinate_conversion: `CoordinateConversion`, optional
-        Set the coordinate conversion component of the coordinate
-        reference construct. Ignored if the *source* parameter is set.
-
-        The coordinate conversion may also be set after initialisation
-        with the `set_coordinate_conversion` method.
-
-    source: optional
-        Initialize the coordinates, datum and coordinate conversion
-        from those of *source*.
-
-    copy: `bool`, optional
-        If False then do not deep copy arguments prior to
-        initialization. By default arguments are deep copied.
+    :Parameters:
+    
+        coordinates: sequence of `str`, optional
+            Identify the related dimension and auxiliary coordinate
+            constructs by their construct identifiers. Ignored if the
+            *source* parameter is set.
+    
+            The coordinates may also be set after initialisation with
+            the `set_coordinates` and `set_coordinate` methods.
+    
+            *Parameter example:*
+              ``coordinates=['dimensioncoordinate2']``
+    
+            *Parameter example:*
+              ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1')``
+    
+        datum: `Datum`, optional
+            Set the datum component of the coordinate reference
+            construct. Ignored if the *source* parameter is set.
+    
+            The datum may also be set after initialisation with the
+            `set_datum` method.
+    
+        coordinate_conversion: `CoordinateConversion`, optional
+            Set the coordinate conversion component of the coordinate
+            reference construct. Ignored if the *source* parameter is
+            set.
+    
+            The coordinate conversion may also be set after
+            initialisation with the `set_coordinate_conversion`
+            method.
+    
+        source: optional
+            Initialize the coordinates, datum and coordinate
+            conversion from those of *source*.
+    
+        copy: `bool`, optional
+            If False then do not deep copy arguments prior to
+            initialization. By default arguments are deep copied.
 
         '''
         super().__init__(
@@ -125,41 +129,41 @@ construct may be accessed with the `nc_set_variable`,
             copy=copy)
         
         self._initialise_netcdf(source)
-    #--- End: def
+
    
     def __str__(self):
         '''Called by the `str` built-in function.
 
-x.__str__() <==> str(x)
+    x.__str__() <==> str(x)
 
-.. versionadded:: 1.7.0
+    .. versionadded:: 1.7.0
 
         '''    
         return self.identity(default=self.nc_get_variable(''))
-    #--- End: def
+
 
     def dump(self, display=True, _omit_properties=None, field=None,
              key='', _level=0, _title=None, _construct_names=None,
              _auxiliary_coordinates=None, _dimension_coordinates=None):
         '''A full description of the coordinate reference construct.
 
-Returns a description of all properties, including those of
-components.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed.
-
-:Returns:
-
-    `None` or `str`
-        The description. If *display* is True then the description is
-        printed and `None` is returned. Otherwise the description is
-        returned as a string.
+    Returns a description of all properties, including those of
+    components.
+    
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        display: `bool`, optional
+            If False then return the description as a string. By
+            default the description is printed.
+    
+    :Returns:
+    
+        `None` or `str`
+            The description. If *display* is True then the description
+            is printed and `None` is returned. Otherwise the
+            description is returned as a string.
 
         '''          
         indent0 = '    ' * _level
@@ -218,76 +222,80 @@ components.
             print(string)
         else:
             return string
-    #--- End: def
+
             
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_type=False):
         '''Whether two coordinate reference constructs are the same.
 
-Equality is strict by default. This means that:
-
-* the datum and coordinate conversion components must have the same
-  string and numerical parameters.
-
-The dimension coordinate, auxiliary coordinate and domain ancillary
-constructs of the coordinate reference constructs are *not*
-considered, because they may only be correctly interpreted by the field
-constructs that contain the coordinate reference constructs in
-question. They are, however, taken into account when two fields
-constructs are tested for equality.
-
-Two real numbers ``x`` and ``y`` are considered equal if
-``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers. The data type of the numbers
-is not taken into consideration. See the *atol* and *rtol* parameters.
-
-Any type of object may be tested but, in general, equality is only
-possible with another coordinate reference construct, or a subclass of
-one. See the *ignore_type* parameter.
-
-NetCDF elements, such as netCDF variable and dimension names, do not
-constitute part of the CF data model and so are not checked.
-
-.. versionadded:: 1.7.0
-
-:Parameters:
-
-    other: 
-        The object to compare for equality.
-
-    atol: float, optional
-        The tolerance on absolute differences between real
-        numbers. The default value is set by the `cfdm.ATOL` function.
-        
-    rtol: float, optional
-        The tolerance on relative differences between real
-        numbers. The default value is set by the `cfdm.RTOL` function.
-
-    verbose: `bool`, optional
-        If True then print information about differences that lead to
-        inequality.
-
-    ignore_type: `bool`, optional
-        Any type of object may be tested but, in general, equality is
-        only possible with another coordinate reference construct, or
-        a subclass of one. If *ignore_type* is True then
-        ``CoordinateReference(source=other)`` is tested, rather than
-        the ``other`` defined by the *other* parameter.
-
-:Returns: 
-  
-    `bool`
-        Whether the two coordinate reference constructs are equal.
-
-**Examples:**
-
->>> c.equals(c)
-True
->>> c.equals(c.copy())
-True
->>> c.equals('not a coordinate reference')
-False
+    Equality is strict by default. This means that:
+    
+    * the datum and coordinate conversion components must have the
+      same string and numerical parameters.
+    
+    The dimension coordinate, auxiliary coordinate and domain
+    ancillary constructs of the coordinate reference constructs are
+    *not* considered, because they may only be correctly interpreted
+    by the field constructs that contain the coordinate reference
+    constructs in question. They are, however, taken into account when
+    two fields constructs are tested for equality.
+    
+    Two real numbers ``x`` and ``y`` are considered equal if
+    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
+    differences) and ``rtol`` (the tolerance on relative differences)
+    are positive, typically very small numbers. The data type of the
+    numbers is not taken into consideration. See the *atol* and *rtol*
+    parameters.
+    
+    Any type of object may be tested but, in general, equality is only
+    possible with another coordinate reference construct, or a
+    subclass of one. See the *ignore_type* parameter.
+    
+    NetCDF elements, such as netCDF variable and dimension names, do
+    not constitute part of the CF data model and so are not checked.
+    
+    .. versionadded:: 1.7.0
+    
+    :Parameters:
+    
+        other: 
+            The object to compare for equality.
+    
+        atol: float, optional
+            The tolerance on absolute differences between real
+            numbers. The default value is set by the `cfdm.ATOL`
+            function.
+            
+        rtol: float, optional
+            The tolerance on relative differences between real
+            numbers. The default value is set by the `cfdm.RTOL`
+            function.
+    
+        verbose: `bool`, optional
+            If True then print information about differences that lead
+            to inequality.
+    
+        ignore_type: `bool`, optional
+            Any type of object may be tested but, in general, equality
+            is only possible with another coordinate reference
+            construct, or a subclass of one. If *ignore_type* is True
+            then ``CoordinateReference(source=other)`` is tested,
+            rather than the ``other`` defined by the *other*
+            parameter.
+    
+    :Returns: 
+      
+        `bool`
+            Whether the two coordinate reference constructs are equal.
+    
+    **Examples:**
+    
+    >>> c.equals(c)
+    True
+    >>> c.equals(c.copy())
+    True
+    >>> c.equals('not a coordinate reference')
+    False
 
         '''
         pp = super()._equals_preprocess(other, verbose=verbose,
@@ -329,50 +337,50 @@ False
         # Still here? Then the two coordinate references are as equal
         # as can be ascertained in the absence of domains.
         return True
-    #--- End: def
+
 
     def identity(self, default=''):
         '''Return the canonical identity.
 
-By default the identity is the first found of the following:
-
-1. The "standard_name" coordinate conversion parameter, preceeded by
-   ``'standard_name:'``.
-2. The "grid_mapping_name" coordinate conversion parameter, preceeded
-   by ``'grid_mapping_name:'``.
-3. The netCDF variable name (corresponding to a netCDF grid mapping
-   variable), preceeded by ``'ncvar%'``.
-4. The value of the *default* parameter.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `identities`
-
-:Parameters:
-
-    default: optional
-        If no identity can be found then return the value of the
-        default parameter.
-
-:Returns:
-
-        The identity.
-
-**Examples:**
-
->>> c.identity()
-'standard_name:atmosphere_ln_pressure_coordinate'
-
->>> c.identity()
-'grid_mapping_name:lambert_azimuthal_equal_area'
-
->>> c.identity()
-'ncvar%rotated_pole'
-
->>> c.identity()
-''
->>> c.identity(default='no identity')
-'no identity'
+    By default the identity is the first found of the following:
+    
+    * The "standard_name" coordinate conversion parameter, preceeded
+      by ``'standard_name:'``.
+    * The "grid_mapping_name" coordinate conversion parameter,
+      preceeded by ``'grid_mapping_name:'``.
+    * The netCDF variable name (corresponding to a netCDF grid mapping
+      variable), preceeded by ``'ncvar%'``.
+    * The value of the *default* parameter.
+    
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `identities`
+    
+    :Parameters:
+    
+        default: optional
+            If no identity can be found then return the value of the
+            default parameter.
+    
+    :Returns:
+    
+            The identity.
+    
+    **Examples:**
+    
+    >>> c.identity()
+    'standard_name:atmosphere_ln_pressure_coordinate'
+    
+    >>> c.identity()
+    'grid_mapping_name:lambert_azimuthal_equal_area'
+    
+    >>> c.identity()
+    'ncvar%rotated_pole'
+    
+    >>> c.identity()
+    ''
+    >>> c.identity(default='no identity')
+    'no identity'
 
         '''
         for prop in ('standard_name', 'grid_mapping_name'):
@@ -386,42 +394,42 @@ By default the identity is the first found of the following:
             return 'ncvar%{0}'.format(n)
 
         return default
-    #--- End: def
+
 
     def identities(self):
         '''Return all possible identities.
 
-The identities comprise:
-
-* The "standard_name" coordinate conversion parameter, preceeded by
-  ``'standard_name:'``.
-* The "grid_mapping_name" coordinate conversion parameter, preceeded
-  by ``'grid_mapping_name:'``.
-* The netCDF variable name (corresponding to a netCDF grid mapping
-  variable), preceeded by ``'ncvar%'``.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `identity`
-
-:Returns:
-
-    `list`
-        The identities.
-
-**Examples:**
-
->>> c.identities()
-['standard_name:atmosphere_ln_pressure_coordinate']
-
->>> c.identities()
-['grid_mapping_name:lambert_azimuthal_equal_area', 'ncvar%grid_mapping']
-
->>> c.identity()
-['ncvar%rotated_pole']
-
->>> c.identities()
-[]
+    The identities comprise:
+    
+    * The "standard_name" coordinate conversion parameter, preceeded
+      by ``'standard_name:'``.
+    * The "grid_mapping_name" coordinate conversion parameter,
+      preceeded by ``'grid_mapping_name:'``.
+    * The netCDF variable name (corresponding to a netCDF grid mapping
+      variable), preceeded by ``'ncvar%'``.
+    
+    .. versionadded:: 1.7.0
+    
+    .. seealso:: `identity`
+    
+    :Returns:
+    
+        `list`
+            The identities.
+    
+    **Examples:**
+    
+    >>> c.identities()
+    ['standard_name:atmosphere_ln_pressure_coordinate']
+    
+    >>> c.identities()
+    ['grid_mapping_name:lambert_azimuthal_equal_area', 'ncvar%grid_mapping']
+    
+    >>> c.identity()
+    ['ncvar%rotated_pole']
+    
+    >>> c.identities()
+    []
 
         '''
 
@@ -438,6 +446,6 @@ The identities comprise:
             out.append('ncvar%{0}'.format(n))
 
         return out
-    #--- End: def
+
 
 #--- End: class
