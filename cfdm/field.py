@@ -811,7 +811,12 @@ class Field(mixin.NetCDFVariable,
         # relative axis order as the field's data
         f.transpose(range(self.data.ndim), constructs=True, inplace=True)
 
-        if method != 'gathered':
+        if method == 'gathered':
+            # --------------------------------------------------------
+            # Compression by gathering
+            # --------------------------------------------------------            
+            pass
+        else:
             # --------------------------------------------------------
             # DSG compression
             # --------------------------------------------------------
