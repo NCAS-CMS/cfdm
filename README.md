@@ -31,6 +31,11 @@ Documentation
 
 https://ncas-cms.github.io/cfdm
 
+Tutorial
+========
+
+https://ncas-cms.github.io/cfdm/tutorial
+
 Installation
 ============
 

@@ -2,7 +2,7 @@ version 1.7.11
 --------------
 ----
 
-**Not yet released**
+**2019-11-27**
 
 * New methods: `cfdm.Field.compress`, `cfdm.Field.uncompress`
 * New methods: `cfdm.Data.flatten`, `cfdm.Data.uncompress`

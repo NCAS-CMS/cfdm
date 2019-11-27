@@ -1,0 +1,7 @@
+cfdm.Data.uncompress
+====================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Data.uncompress

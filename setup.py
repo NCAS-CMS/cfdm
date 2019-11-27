@@ -59,13 +59,30 @@ The **cfdm** package can
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form.
 
-**Command line utility**
+Documentation
+=============
+
+https://ncas-cms.github.io/cfdm
+
+Tutorial
+========
+
+https://ncas-cms.github.io/cfdm/tutorial
+
+Installation
+============
+
+https://ncas-cms.github.io/cfdm/installation.html
+
+Command line utility
+====================
 
 During installation the `cfdump` command line tool is also installed,
 which generates text descriptions of the field constructs contained
 in a netCDF dataset.
 
-**Source code**
+Source code
+===========
 
 This project is hosted on a `GitHub repository
 <https://github.com/NCAS-CMS/cfdm>`_ where you may access the most

@@ -138,7 +138,7 @@ class Domain(mixin.ConstructAccess,
             string.append('Domain ancils   : {}'.format(
                 '\n                : '.join(x)))
                                       
-        string.append('')
+#        string.append('')
 
         return '\n'.join(string)
 

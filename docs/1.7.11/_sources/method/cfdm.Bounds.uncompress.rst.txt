@@ -1,0 +1,7 @@
+cfdm.Bounds.uncompress
+======================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Bounds.uncompress

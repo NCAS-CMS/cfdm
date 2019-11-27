@@ -1,0 +1,7 @@
+cfdm.RaggedIndexedArray.compressed_array
+========================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.RaggedIndexedArray.compressed_array
