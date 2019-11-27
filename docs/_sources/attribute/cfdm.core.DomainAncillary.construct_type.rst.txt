@@ -1,7 +1,7 @@
 cfdm.core.DomainAncillary.construct_type
 ========================================
 
-.. currentmodule:: cf
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. autoattribute:: cfdm.core.DomainAncillary.construct_type

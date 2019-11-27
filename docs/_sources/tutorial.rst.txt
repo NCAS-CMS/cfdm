@@ -2636,9 +2636,9 @@ Method                            Classes                                  NetCD
 			          			                    
 `!nc_set_dimension`	          `DomainAxis`, `Count`, `Index`           Dimension name
 
-`!nc_is_unlimited`                `cf.DomainAxis`                          Unlimited dimension
+`!nc_is_unlimited`                `DomainAxis`                             Unlimited dimension
 
-`!nc_set_unlimited` 	          `cf.DomainAxis` 	                   Unlimited dimension
+`!nc_set_unlimited` 	          `DomainAxis`   	                   Unlimited dimension
 
 `!nc_global_attributes`	          `Field`                                  Global attributes
 			          
@@ -3224,15 +3224,25 @@ both:
 
 ..
 
+* An uncompressed field construct can be compressed, prior to being
+  written to a dataset, with its `~Field.compress` method, which also
+  compresses the metadata constructs as required.
+
+..
+
+* An compressed field construct can be uncompressed with its
+  `~Field.uncompress` method, which also uncompresses the metadata
+  constructs as required.
+
+..
+
 * If an underlying array is compressed at the time of writing to disk
   with the `cfdm.write` function, then it is written to the file as a
   compressed array, along with the supplementary netCDF variables and
   attributes that are required for the encoding. This means that if a
   dataset using compression is read from disk then it will be written
   back to disk with the same compression, unless data elements have
-  been modified by assignment. Any compressed arrays that have been
-  modified will be written to an output dataset as uncompressed
-  arrays.
+  been modified by assignment.
 
 Examples of all of the above may be found in the sections on
 :ref:`discrete sampling geometries <Discrete-sampling-geometries>` and
@@ -3370,49 +3380,43 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    ''
 
-A construct with an underlying ragged array is created by initialising
-a `Data` instance with a ragged array that is stored in one of three
-special array objects: `RaggedContiguousArray`, `RaggedIndexedArray`
-or `RaggedIndexedContiguousArray`. The following code creates a simple
-field construct with an underlying contiguous ragged array:
+Perhaps the easist way to create a compressed field construct is to
+create the equivalent uncompressed field construct and then compress
+it with its `~Field.compress` method, which also compresses the
+metadata constructs as required.
+   
+.. Code Block 4
 
-.. code-block:: python3
-   :caption: *Create a field construct with compressed data.*
+.. code-block:: python
+   :caption: *Create a field construct and then compress it.*
 
    import numpy
    import cfdm
    
-   # Define the ragged array values
-   ragged_array = cfdm.Data([280, 281, 279, 278, 279.5])
-
-   # Define the count array values
-   count_array = [1, 4]
-
-   # Create the count variable
-   count_variable = cfdm.Count(data=cfdm.Data(count_array))
-   count_variable.set_property('long_name', 'number of obs for this timeseries')
-
-   # Create the contiguous ragged array object, specifying the
-   # uncompressed shape
-   array = cfdm.RaggedContiguousArray(
-                    compressed_array=ragged_array,
-                    shape=(2, 4), size=8, ndim=2,
-                    count_variable=count_variable)
-
-   # Create the field construct with the domain axes and the ragged
-   # array
+   # Define the array values
+   data = cfdm.Data([[280.0,   -99,   -99,   -99],
+	             [281.0, 279.0, 278.0, 279.5]],
+      	            mask=[[0, 1, 1, 1],
+                          [0, 0, 0, 0]])
+   	     
+   # Create the field construct
    T = cfdm.Field()
    T.set_properties({'standard_name': 'air_temperature',
                      'units': 'K',
                      'featureType': 'timeSeries'})
    
-   # Create the domain axis constructs for the uncompressed array
+   # Create the domain axis constructs
    X = T.set_construct(cfdm.DomainAxis(4))
    Y = T.set_construct(cfdm.DomainAxis(2))
    
    # Set the data for the field
-   T.set_data(cfdm.Data(array), axes=[Y, X])
-				
+   T.set_data(data, axes=[Y, X])
+ 
+   # Compress the data 
+   T.compress('contiguous',
+              count_properties={'long_name': 'number of obs for this timeseries'},
+              inplace=True)
+		
 The new field construct can now be inspected and written to a netCDF file:
 
 .. code-block:: python3
@@ -3463,6 +3467,51 @@ The content of the new file is:
     air_temperature = 280, 281, 279, 278, 279.5 ;
    }
 
+Exactly the same field construct may be also created explicitly with
+underlying compressed data. A construct with an underlying ragged
+array is created by initialising a `cf.Data` instance with a ragged
+array that is stored in one of three special array objects:
+`RaggedContiguousArray`, `RaggedIndexedArray` or
+`RaggedIndexedContiguousArray`.
+
+.. code-block:: python3
+   :caption: *Create a field construct with compressed data.*
+
+   import numpy
+   import cfdm
+   
+   # Define the ragged array values
+   ragged_array = cfdm.Data([280, 281, 279, 278, 279.5])
+
+   # Define the count array values
+   count_array = [1, 4]
+
+   # Create the count variable
+   count_variable = cfdm.Count(data=cfdm.Data(count_array))
+   count_variable.set_property('long_name', 'number of obs for this timeseries')
+
+   # Create the contiguous ragged array object, specifying the
+   # uncompressed shape
+   array = cfdm.RaggedContiguousArray(
+                    compressed_array=ragged_array,
+                    shape=(2, 4), size=8, ndim=2,
+                    count_variable=count_variable)
+
+   # Create the field construct with the domain axes and the ragged
+   # array
+   T = cfdm.Field()
+   T.set_properties({'standard_name': 'air_temperature',
+                     'units': 'K',
+                     'featureType': 'timeSeries'})
+   
+   # Create the domain axis constructs for the uncompressed array
+   X = T.set_construct(cfdm.DomainAxis(4))
+   Y = T.set_construct(cfdm.DomainAxis(2))
+   
+   # Set the data for the field
+   T.set_data(cfdm.Data(array), axes=[Y, X])
+
+   
 .. _Gathering:
 
 **Gathering**

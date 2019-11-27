@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -96,7 +96,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.Data">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em>, <em>_custom_deep_copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/core/data/data.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em>, <em>_custom_deep_copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/core/data/data.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>An orthogonal multidimensional array with masked values and units.</p>
 <div class="versionadded">
@@ -107,14 +107,17 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>array: subclass of <a class="reference internal" href="cfdm.core.Array.html#cfdm.core.Array" title="cfdm.core.Array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Array</span></code></a></dt>
-<dd><p class="first last">The array of values. Ignored if the <em>source</em> parameter is set.</p>
+<dd><p class="first last">The array of values. Ignored if the <em>source</em> parameter is
+set.</p>
 </dd>
 <dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">The physical units of the data. Ignored if the <em>source</em>
 parameter is set.</p>
-<dl class="docutils">
+<p>The units may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.core.Data.set_units.html#cfdm.core.Data.set_units" title="cfdm.core.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a> method.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">units='km</span> <span class="pre">hr-1'</span></code></p>
 </dd>
@@ -122,41 +125,43 @@ parameter is set.</p>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">units='days</span> <span class="pre">since</span> <span class="pre">2018-12-01'</span></code></p>
 </dd>
 </dl>
-<p class="last">The units may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.Data.set_units.html#cfdm.core.Data.set_units" title="cfdm.core.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a> method.</p>
 </dd>
 <dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">The calendar for reference time units. Ignored if the <em>source</em>
-parameter is set.</p>
-<dl class="docutils">
+<dd><p class="first">The calendar for reference time units. Ignored if the
+<em>source</em> parameter is set.</p>
+<p>The calendar may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.core.Data.set_calendar.html#cfdm.core.Data.set_calendar" title="cfdm.core.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a> method.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">calendar='360_day'</span></code></p>
 </dd>
 </dl>
-<p class="last">The calendar may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.Data.set_calendar.html#cfdm.core.Data.set_calendar" title="cfdm.core.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a> method.</p>
 </dd>
 <dt>fill_value: optional </dt>
-<dd><p class="first">The fill value of the data. By default, or if set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>,
-the <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s data type
-will be used (see <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if
-the <em>source</em> parameter is set.</p>
-<dl class="docutils">
+<dd><p class="first">The fill value of the data. By default, or if set to
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
+data type will be used (see
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the <em>source</em>
+parameter is set.</p>
+<p>The fill value may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.core.Data.set_fill_value.html#cfdm.core.Data.set_fill_value" title="cfdm.core.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a> method.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">fill_value=-999.</span></code></p>
 </dd>
 </dl>
-<p class="last">The fill value may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.Data.set_fill_value.html#cfdm.core.Data.set_fill_value" title="cfdm.core.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a> method.</p>
 </dd>
 <dt>source: <em>optional</em></dt>
-<dd><p class="first last">Initialize the data, units, calendar and fill value from those
-of <em>source</em>.</p>
-</dd>
-<dt>source: optional</dt>
-<dd><p class="first last">Initialize the array, units, calendar and fill value from
+<dd><p class="first last">Initialize the data, units, calendar and fill value from
 those of <em>source</em>.</p>
 </dd>
+</dl>
+<p>source: optional</p>
+<blockquote>
+<div><p>Initialize the array, units, calendar and fill value from
+those of <em>source</em>.</p>
+</div></blockquote>
+<dl class="last docutils">
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
@@ -281,7 +286,7 @@ initialization. By default arguments are deep copied.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/class/cfdm.core.Data.rst.txt"

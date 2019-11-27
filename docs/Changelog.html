@@ -31,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="versioning.html"><strong>Versioning</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Change log</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-11">version 1.7.11</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-10">version 1.7.10</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-9">version 1.7.9</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-7-8">version 1.7.8</a></li>
@@ -94,6 +95,18 @@
             
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-1-7-11">
+<h2>version 1.7.11<a class="headerlink" href="#version-1-7-11" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2019-11-27</strong></p>
+<ul class="simple">
+<li>New methods: <a class="reference internal" href="method/cfdm.Field.compress.html#cfdm.Field.compress" title="cfdm.Field.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.compress</span></code></a>, <a class="reference internal" href="method/cfdm.Field.uncompress.html#cfdm.Field.uncompress" title="cfdm.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.uncompress</span></code></a></li>
+<li>New methods: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.flatten</span></code>, <a class="reference internal" href="method/cfdm.Data.uncompress.html#cfdm.Data.uncompress" title="cfdm.Data.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.uncompress</span></code></a></li>
+<li>New keyword parameters to <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data</span></code></a>: <code class="docutils literal notranslate"><span class="pre">dtype</span></code>, <code class="docutils literal notranslate"><span class="pre">mask</span></code>.</li>
+<li>Changed the default value of the <code class="docutils literal notranslate"><span class="pre">ignore_compression</span></code> parameter to
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</li>
+</ul>
+</div>
 <div class="section" id="version-1-7-10">
 <h2>version 1.7.10<a class="headerlink" href="#version-1-7-10" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -270,7 +283,7 @@ default.</li>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/Changelog.rst.txt"

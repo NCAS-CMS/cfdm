@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -96,7 +96,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.abstract.Coordinate">
-<em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">Coordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/core/abstract/coordinate.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Coordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">Coordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/core/abstract/coordinate.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Coordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdatabounds.PropertiesDataBounds</span></code></p>
 <p>Abstract base class for dimension and auxiliary coordinate
 constructs of the CF data model.</p>
@@ -110,38 +110,39 @@ constructs of the CF data model.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
-<dd><p class="first">Set descriptive properties. The dictionary keys are property
-names, with corresponding values. Ignored if the <em>source</em>
-parameter is set.</p>
-<dl class="docutils">
+<dd><p class="first">Set descriptive properties. The dictionary keys are
+property names, with corresponding values. Ignored if the
+<em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_properties.html#cfdm.core.abstract.Coordinate.set_properties" title="cfdm.core.abstract.Coordinate.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_property.html#cfdm.core.abstract.Coordinate.set_property" title="cfdm.core.abstract.Coordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'longitude'}</span></code></p>
 </dd>
 </dl>
-<p class="last">Properties may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_properties.html#cfdm.core.abstract.Coordinate.set_properties" title="cfdm.core.abstract.Coordinate.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_property.html#cfdm.core.abstract.Coordinate.set_property" title="cfdm.core.abstract.Coordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
 </dd>
 <dt>data: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code>, optional</dt>
-<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is set.</p>
-<p class="last">The data array may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_data.html#cfdm.core.abstract.Coordinate.set_data" title="cfdm.core.abstract.Coordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is
+set.</p>
+<p class="last">The data array may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_data.html#cfdm.core.abstract.Coordinate.set_data" title="cfdm.core.abstract.Coordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
 </dd>
 <dt>bounds: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code>, optional</dt>
 <dd><p class="first">Set the bounds array. Ignored if the <em>source</em> parameter is
 set.</p>
-<p class="last">The bounds array may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_bounds.html#cfdm.core.abstract.Coordinate.set_bounds" title="cfdm.core.abstract.Coordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a> method.</p>
+<p class="last">The bounds array may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.set_bounds.html#cfdm.core.abstract.Coordinate.set_bounds" title="cfdm.core.abstract.Coordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a> method.</p>
 </dd>
 <dt>geometry: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Set the geometry type. Ignored if the <em>source</em> parameter is
-set.</p>
-<dl class="docutils">
+<dd><p class="first">Set the geometry type. Ignored if the <em>source</em> parameter
+is set.</p>
+<p>The geometry type may also be set after initialisation
+with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code> method.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">geometry='polygon'</span></code></p>
 </dd>
 </dl>
-<p class="last">The geometry type may also be set after initialisation with
-the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code> method.</p>
 </dd>
 <dt>interior_ring: <code class="xref py py-obj docutils literal notranslate"><span class="pre">InteriorRing</span></code>, optional</dt>
 <dd><p class="first">Set the interior ring variable. Ignored if the <em>source</em>
@@ -210,7 +211,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Remove the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.get_data.html#cfdm.core.abstract.Coordinate.get_data" title="cfdm.core.abstract.Coordinate.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
-<td>Return the data.o</td>
+<td>Return the data.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Coordinate.has_data.html#cfdm.core.abstract.Coordinate.has_data" title="cfdm.core.abstract.Coordinate.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
 <td>Whether a data has been set.</td>
@@ -337,7 +338,7 @@ initialization. By default arguments are deep copied.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/class/cfdm.core.abstract.Coordinate.rst.txt"

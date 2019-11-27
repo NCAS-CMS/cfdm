@@ -90,6 +90,7 @@ Miscellaneous
 
    ~cfdm.FieldAncillary.copy
    ~cfdm.FieldAncillary.equals
+   ~cfdm.FieldAncillary.uncompress
 
 
 

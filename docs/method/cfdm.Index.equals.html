@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -97,7 +97,7 @@
 <h1>cfdm.Index.equals<a class="headerlink" href="#cfdm-index-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Index.equals">
-<code class="descclassname">Index.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/mixin/propertiesdata.py#L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Index.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Index.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_compression=True</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/mixin/propertiesdata.py#L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Index.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -116,10 +116,9 @@ the <em>ignore_data_type</em> parameter).</li>
 differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences)
 are positive, typically very small numbers. See the <em>atol</em> and
 <em>rtol</em> parameters.</p>
-<p>If data arrays are compressed then the compression type and the
-underlying compressed arrays must be the same, as well as the
-arrays in their uncompressed forms. See the <em>ignore_compression</em>
-parameter.</p>
+<p>Any compression is ignored by default, with only the arrays in
+their uncompressed forms being compared. See the
+<em>ignore_compression</em> parameter.</p>
 <p>Any type of object may be tested but, in general, equality is only
 possible with another object of the same type, or a subclass of
 one. See the <em>ignore_type</em> parameter.</p>
@@ -164,12 +163,10 @@ imply inequality, regardless of whether the elements are
 within the tolerance for equality.</p>
 </dd>
 <dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then any compression applied to the underlying
-arrays is ignored and only the uncompressed arrays are
-tested for equality. By default the compression type and,
-if appliciable, the underlying compressed arrays must be
-the same, as well as the arrays in their uncompressed
-forms.</p>
+<dd><p class="first last">If False then the compression type and, if applicable, the
+underlying compressed arrays must be the same, as well as
+the arrays in their uncompressed forms. By default only
+the the arrays in their uncompressed forms are compared.</p>
 </dd>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">Any type of object may be tested but, in general, equality
@@ -214,7 +211,7 @@ is possible for any object with a compatible API.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cfdm.Index.equals.rst.txt"

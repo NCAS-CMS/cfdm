@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -97,10 +97,10 @@
 <h1>cfdm.Data.equals<a class="headerlink" href="#cfdm-data-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.equals">
-<code class="descclassname">Data.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em>, <em>_check_values=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/data/data.py#L1419"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_compression=True</em>, <em>ignore_type=False</em>, <em>_check_values=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/data/data.py#L1612"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two data arrays are the same.</p>
-<p>Equality is strict by default. This means that for data arrays to be
-considered equal:</p>
+<p>Equality is strict by default. This means that for data arrays to
+be considered equal:</p>
 <ul class="simple">
 <li>the units and calendar must be the same,</li>
 </ul>
@@ -109,18 +109,18 @@ considered equal:</p>
 parameter), and</li>
 </ul>
 <ul class="simple">
-<li>the arrays must have same shape and data type, the same missing data
-mask, and be element-wise equal (see the <em>ignore_data_type</em>
+<li>the arrays must have same shape and data type, the same missing
+data mask, and be element-wise equal (see the <em>ignore_data_type</em>
 parameter).</li>
 </ul>
 <p>Two numerical elements <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
-differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
-positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
-parameters.</p>
-<p>The compression type and, if applicable, the underlying compressed
-arrays must be the same, as well as the arrays in their uncompressed
-forms. See the <em>ignore_compression</em> parameter.</p>
+differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences)
+are positive, typically very small numbers. See the <em>atol</em> and
+<em>rtol</em> parameters.</p>
+<p>Any compression is ignored by default, with only the arrays in
+their uncompressed forms being compared. See the
+<em>ignore_compression</em> parameter.</p>
 <p>Any type of object may be tested but, in general, equality is only
 possible with another cell measure construct, or a subclass of
 one. See the <em>ignore_type</em> parameter.</p>
@@ -137,38 +137,40 @@ one. See the <em>ignore_type</em> parameter.</p>
 </dd>
 <dt>atol: float, optional</dt>
 <dd><p class="first last">The tolerance on absolute differences between real
-numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.ATOL.html#cfdm.ATOL" title="cfdm.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a> function.</p>
+numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.ATOL.html#cfdm.ATOL" title="cfdm.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a>
+function.</p>
 </dd>
 <dt>rtol: float, optional</dt>
 <dd><p class="first last">The tolerance on relative differences between real
-numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a> function.</p>
+numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a>
+function.</p>
 </dd>
 <dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then the fill value is omitted from the comparison.</p>
+<dd><p class="first last">If True then the fill value is omitted from the
+comparison.</p>
 </dd>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then print information about differences that lead to
-inequality.</p>
+<dd><p class="first last">If True then print information about differences that lead
+to inequality.</p>
 </dd>
 <dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then ignore the data types in all numerical data array
-comparisons. By default different numerical data types imply
-inequality, regardless of whether the elements are within the
-tolerance for equality.</p>
+<dd><p class="first last">If True then ignore the data types in all numerical data
+array comparisons. By default different numerical data
+types imply inequality, regardless of whether the elements
+are within the tolerance for equality.</p>
 </dd>
 <dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then any compression applied to the underlying arrays
-is ignored and only the uncompressed arrays are tested for
-equality. By default the compression type and, if applicable,
-the underlying compressed arrays must be the same, as well as
-the arrays in their uncompressed forms</p>
+<dd><p class="first last">If False then the compression type and, if applicable, the
+underlying compressed arrays must be the same, as well as
+the arrays in their uncompressed forms. By default only
+the the arrays in their uncompressed forms are compared.</p>
 </dd>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">Any type of object may be tested but, in general, equality is
-only possible with another data array, or a subclass of
-one. If <em>ignore_type</em> is True then then <code class="docutils literal notranslate"><span class="pre">Data(source=other)</span></code>
-is tested, rather than the <code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the <em>other</em>
-parameter.</p>
+<dd><p class="first last">Any type of object may be tested but, in general, equality
+is only possible with another data array, or a subclass of
+one. If <em>ignore_type</em> is True then then
+<code class="docutils literal notranslate"><span class="pre">Data(source=other)</span></code> is tested, rather than the
+<code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the <em>other</em> parameter.</p>
 </dd>
 </dl>
 </td>
@@ -207,7 +209,7 @@ parameter.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cfdm.Data.equals.rst.txt"

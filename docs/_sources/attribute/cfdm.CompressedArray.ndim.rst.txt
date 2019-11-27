@@ -1,7 +1,7 @@
 cfdm.CompressedArray.ndim
 =========================
 
-.. currentmodule:: cf
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. autoattribute:: cfdm.CompressedArray.ndim

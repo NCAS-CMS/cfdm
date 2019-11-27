@@ -16,10 +16,10 @@
   (e.g. ./test_release 1.7.12). Do this for python2.7 and python3.
 
 * Update the latest documentation using `./release_latest_docs <vn>`
-  (e.g. ./release_latest_docs 1.7.11)
+  (e.g. ./release_latest_docs 1.7.12)
 
 * Create an archived copy of the documentation using
-  `./release_archive_docs <vn>` (e.g. ./release_archive_docs 1.7.11)
+  `./release_archive_docs <vn>` (e.g. ./release_archive_docs 1.7.12)
 
 * Push recent commits using `git push origin master`
 

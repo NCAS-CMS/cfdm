@@ -1,7 +1,7 @@
 cfdm.NumpyArray.dtype
 =====================
 
-.. currentmodule:: cf
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. autoattribute:: cfdm.NumpyArray.dtype

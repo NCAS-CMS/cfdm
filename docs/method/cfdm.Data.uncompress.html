@@ -19,8 +19,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Data.get_count" href="cfdm.Data.get_count.html" />
-    <link rel="prev" title="cfdm.Data.get_compressed_dimension" href="cfdm.Data.get_compressed_dimension.html" />
+    <link rel="next" title="cfdm.Data.get_compression_type" href="cfdm.Data.get_compression_type.html" />
+    <link rel="prev" title="cfdm.Data.source" href="cfdm.Data.source.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -58,8 +58,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Data.html">cfdm.Data</a><ul>
-      <li>Previous: <a href="cfdm.Data.get_compressed_dimension.html" title="previous chapter">cfdm.Data.get_compressed_dimension</a></li>
-      <li>Next: <a href="cfdm.Data.get_count.html" title="next chapter">cfdm.Data.get_count</a></li>
+      <li>Previous: <a href="cfdm.Data.source.html" title="previous chapter">cfdm.Data.source</a></li>
+      <li>Next: <a href="cfdm.Data.get_compression_type.html" title="next chapter">cfdm.Data.get_compression_type</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -97,9 +97,9 @@
 <h1>cfdm.Data.uncompress<a class="headerlink" href="#cfdm-data-uncompress" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.uncompress">
-<code class="descclassname">Data.</code><code class="descname">uncompress</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/data/data.py#L1797"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.uncompress" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">uncompress</code><span class="sig-paren">(</span><em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/data/data.py#L2132"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.uncompress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uncompress the underlying array in-place.</p>
-<p>If the array is not compressed, then no change is made.</p>
+<p>If the data is not compressed, then no change is made.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.3.</span></p>
 </div>
@@ -111,7 +111,20 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt>
+<dd><p class="first last">The uncompressed data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was
+in-place.</p>
+</dd>
+</dl>
+</td>
 </tr>
 </tbody>
 </table>
@@ -120,7 +133,7 @@
 <span class="go">&#39;ragged contiguous&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">source</span><span class="p">()</span>
 <span class="go">&lt;RaggedContiguousArray(4, 9): &gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">uncompress</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">uncompress</span><span class="p">(</span><span class="n">inpalce</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
 <span class="go">&#39;&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">source</span><span class="p">()</span>
@@ -143,7 +156,7 @@
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cfdm.Data.uncompress.rst.txt"

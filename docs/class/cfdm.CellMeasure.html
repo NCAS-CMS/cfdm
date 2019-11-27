@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -96,24 +96,25 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CellMeasure">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CellMeasure</code><span class="sig-paren">(</span><em>measure=None</em>, <em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/cellmeasure.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CellMeasure</code><span class="sig-paren">(</span><em>measure=None</em>, <em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/cellmeasure.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFExternal</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.cellmeasure.CellMeasure</span></code></p>
 <p>A cell measure construct of the CF data model.</p>
-<p>A cell measure construct provides information that is needed about the
-size or shape of the cells and that depends on a subset of the domain
-axis constructs. Cell measure constructs have to be used when the size
-or shape of the cells cannot be deduced from the dimension or
-auxiliary coordinate constructs without special knowledge that a
-generic application cannot be expected to have.</p>
-<p>The cell measure construct consists of a numeric array of the metric
-data which spans a subset of the domain axis constructs, and
-properties to describe the data. The cell measure construct specifies
-a “measure” to indicate which metric of the space it supplies,
-e.g. cell horizontal areas, and must have a units property consistent
-with the measure, e.g. square metres. It is assumed that the metric
-does not depend on axes of the domain which are not spanned by the
-array, along which the values are implicitly propagated. CF-netCDF
-cell measure variables correspond to cell measure constructs.</p>
+<p>A cell measure construct provides information that is needed about
+the size or shape of the cells and that depends on a subset of the
+domain axis constructs. Cell measure constructs have to be used
+when the size or shape of the cells cannot be deduced from the
+dimension or auxiliary coordinate constructs without special
+knowledge that a generic application cannot be expected to have.</p>
+<p>The cell measure construct consists of a numeric array of the
+metric data which spans a subset of the domain axis constructs,
+and properties to describe the data. The cell measure construct
+specifies a “measure” to indicate which metric of the space it
+supplies, e.g. cell horizontal areas, and must have a units
+property consistent with the measure, e.g. square metres. It is
+assumed that the metric does not depend on axes of the domain
+which are not spanned by the array, along which the values are
+implicitly propagated. CF-netCDF cell measure variables correspond
+to cell measure constructs.</p>
 <p><strong>NetCDF interface</strong></p>
 <p>The netCDF variable name of the construct may be accessed with the
 <a class="reference internal" href="../method/cfdm.CellMeasure.nc_set_variable.html#cfdm.CellMeasure.nc_set_variable" title="cfdm.CellMeasure.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CellMeasure.nc_get_variable.html#cfdm.CellMeasure.nc_get_variable" title="cfdm.CellMeasure.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CellMeasure.nc_del_variable.html#cfdm.CellMeasure.nc_del_variable" title="cfdm.CellMeasure.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
@@ -128,32 +129,33 @@ cell measure variables correspond to cell measure constructs.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>measure: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Set the measure that indicates which metric given by the data
-array. Ignored if the <em>source</em> parameter is set.</p>
-<dl class="docutils">
+<dd><p class="first">Set the measure that indicates which metric given by the
+data array. Ignored if the <em>source</em> parameter is set.</p>
+<p>The measure may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.CellMeasure.set_measure.html#cfdm.CellMeasure.set_measure" title="cfdm.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a> method.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">measure='area'</span></code></p>
 </dd>
 </dl>
-<p class="last">The measure may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.CellMeasure.set_measure.html#cfdm.CellMeasure.set_measure" title="cfdm.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a> method.</p>
 </dd>
 <dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
-<dd><p class="first">Set descriptive properties. The dictionary keys are property
-names, with corresponding values. Ignored if the <em>source</em>
-parameter is set.</p>
-<dl class="docutils">
+<dd><p class="first">Set descriptive properties. The dictionary keys are
+property names, with corresponding values. Ignored if the
+<em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.CellMeasure.set_properties.html#cfdm.CellMeasure.set_properties" title="cfdm.CellMeasure.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.CellMeasure.set_property.html#cfdm.CellMeasure.set_property" title="cfdm.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'cell_area'}</span></code></p>
 </dd>
 </dl>
-<p class="last">Properties may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.CellMeasure.set_properties.html#cfdm.CellMeasure.set_properties" title="cfdm.CellMeasure.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.CellMeasure.set_property.html#cfdm.CellMeasure.set_property" title="cfdm.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
 </dd>
 <dt>data: <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, optional</dt>
-<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is set.</p>
-<p class="last">The data array may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.CellMeasure.set_data.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is
+set.</p>
+<p class="last">The data array may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.CellMeasure.set_data.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
 </dd>
 <dt>source: optional</dt>
 <dd><p class="first last">Initialize the measure, properties and data from those of
@@ -261,7 +263,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Remove the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_data.html#cfdm.CellMeasure.get_data" title="cfdm.CellMeasure.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
-<td>Return the data.o</td>
+<td>Return the data.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_data.html#cfdm.CellMeasure.has_data" title="cfdm.CellMeasure.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
 <td>Whether a data has been set.</td>
@@ -307,6 +309,9 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.equals.html#cfdm.CellMeasure.equals" title="cfdm.CellMeasure.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
 <td>Whether two cell measure constructs are the same.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.uncompress.html#cfdm.CellMeasure.uncompress" title="cfdm.CellMeasure.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></td>
+<td>Uncompress the construct.</td>
 </tr>
 </tbody>
 </table>
@@ -379,7 +384,7 @@ initialization. By default arguments are deep copied.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/class/cfdm.CellMeasure.rst.txt"

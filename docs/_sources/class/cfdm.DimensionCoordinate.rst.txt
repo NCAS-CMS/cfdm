@@ -114,6 +114,7 @@ Miscellaneous
 
    ~cfdm.DimensionCoordinate.copy
    ~cfdm.DimensionCoordinate.equals
+   ~cfdm.DimensionCoordinate.uncompress
 
 
 

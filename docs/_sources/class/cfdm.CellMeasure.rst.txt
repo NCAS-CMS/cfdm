@@ -95,6 +95,7 @@ Miscellaneous
 
    ~cfdm.CellMeasure.copy
    ~cfdm.CellMeasure.equals
+   ~cfdm.CellMeasure.uncompress
 
 NetCDF
 ------

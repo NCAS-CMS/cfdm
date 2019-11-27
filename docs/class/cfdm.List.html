@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -96,17 +96,17 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.List">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">List</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/list.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.List" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">List</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/list.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.List" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>A list variable required to uncompress a gathered array.</p>
 <p>Compression by gathering combines axes of a multidimensional array
-into a new, discrete axis whilst omitting the missing values and thus
-reducing the number of values that need to be stored.</p>
+into a new, discrete axis whilst omitting the missing values and
+thus reducing the number of values that need to be stored.</p>
 <p>The information needed to uncompress the data is stored in a list
 variable that gives the indices of the required points.</p>
 <p><strong>NetCDF interface</strong></p>
-<p>The netCDF variable name of the list variable may be accessed with the
-<a class="reference internal" href="../method/cfdm.List.nc_set_variable.html#cfdm.List.nc_set_variable" title="cfdm.List.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.List.nc_get_variable.html#cfdm.List.nc_get_variable" title="cfdm.List.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.List.nc_del_variable.html#cfdm.List.nc_del_variable" title="cfdm.List.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
+<p>The netCDF variable name of the list variable may be accessed with
+the <a class="reference internal" href="../method/cfdm.List.nc_set_variable.html#cfdm.List.nc_set_variable" title="cfdm.List.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.List.nc_get_variable.html#cfdm.List.nc_get_variable" title="cfdm.List.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.List.nc_del_variable.html#cfdm.List.nc_del_variable" title="cfdm.List.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
 <a class="reference internal" href="../method/cfdm.List.nc_has_variable.html#cfdm.List.nc_has_variable" title="cfdm.List.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -118,21 +118,22 @@ variable that gives the indices of the required points.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
-<dd><p class="first">Set descriptive properties. The dictionary keys are property
-names, with corresponding values. Ignored if the <em>source</em>
-parameter is set.</p>
-<dl class="docutils">
+<dd><p class="first">Set descriptive properties. The dictionary keys are
+property names, with corresponding values. Ignored if the
+<em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.List.set_properties.html#cfdm.List.set_properties" title="cfdm.List.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.List.set_property.html#cfdm.List.set_property" title="cfdm.List.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'uncompression</span> <span class="pre">indices'}</span></code></p>
 </dd>
 </dl>
-<p class="last">Properties may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.List.set_properties.html#cfdm.List.set_properties" title="cfdm.List.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.List.set_property.html#cfdm.List.set_property" title="cfdm.List.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
 </dd>
 <dt>data: <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, optional</dt>
-<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is set.</p>
-<p class="last">The data array may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.List.set_data.html#cfdm.List.set_data" title="cfdm.List.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is
+set.</p>
+<p class="last">The data array may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.List.set_data.html#cfdm.List.set_data" title="cfdm.List.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
 </dd>
 <dt>source: optional</dt>
 <dd><p class="first last">Initialize the properties and data from those of <em>source</em>.</p>
@@ -215,7 +216,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Remove the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.get_data.html#cfdm.List.get_data" title="cfdm.List.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
-<td>Return the data.o</td>
+<td>Return the data.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.has_data.html#cfdm.List.has_data" title="cfdm.List.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
 <td>Whether a data has been set.</td>
@@ -327,7 +328,7 @@ initialization. By default arguments are deep copied.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/class/cfdm.List.rst.txt"

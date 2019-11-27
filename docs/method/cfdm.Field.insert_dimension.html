@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -97,10 +97,10 @@
 <h1>cfdm.Field.insert_dimension<a class="headerlink" href="#cfdm-field-insert-dimension" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.insert_dimension">
-<code class="descclassname">Field.</code><code class="descname">insert_dimension</code><span class="sig-paren">(</span><em>axis</em>, <em>position=0</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/field.py#L765"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.insert_dimension" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">insert_dimension</code><span class="sig-paren">(</span><em>axis</em>, <em>position=0</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/field.py#L1265"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.insert_dimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expand the shape of the data array.</p>
-<p>Inserts a new size 1 axis, corresponding to an existing domain axis
-construct, into the data array.</p>
+<p>Inserts a new size 1 axis, corresponding to an existing domain
+axis construct, into the data array.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -123,10 +123,10 @@ corresponding to the inserted axis.</p>
 </dl>
 </dd>
 <dt>position: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
-<dd><p class="first">Specify the position that the new axis will have in the data
-array. By default the new axis has position 0, the slowest
-varying position. Negative integers counting from the last
-position are allowed.</p>
+<dd><p class="first">Specify the position that the new axis will have in the
+data array. By default the new axis has position 0, the
+slowest varying position. Negative integers counting from
+the last position are allowed.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">position=2</span></code></p>
@@ -181,7 +181,7 @@ operation was in-place then <a class="reference external" href="https://docs.pyt
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cfdm.Field.insert_dimension.rst.txt"

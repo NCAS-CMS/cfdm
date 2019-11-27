@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -96,12 +96,12 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.GatheredArray">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">GatheredArray</code><span class="sig-paren">(</span><em>compressed_array=None</em>, <em>shape=None</em>, <em>size=None</em>, <em>ndim=None</em>, <em>compressed_dimension=None</em>, <em>list_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/data/gatheredarray.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.GatheredArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">GatheredArray</code><span class="sig-paren">(</span><em>compressed_array=None</em>, <em>shape=None</em>, <em>size=None</em>, <em>ndim=None</em>, <em>compressed_dimension=None</em>, <em>list_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/data/gatheredarray.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.GatheredArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.compressedarray.CompressedArray</span></code></p>
 <p>An underlying gathered array.</p>
 <p>Compression by gathering combines axes of a multidimensional array
-into a new, discrete axis whilst omitting the missing values and thus
-reducing the number of values that need to be stored.</p>
+into a new, discrete axis whilst omitting the missing values and
+thus reducing the number of values that need to be stored.</p>
 <p>The information needed to uncompress the data is stored in a “list
 variable” that gives the indices of the required points.</p>
 <div class="versionadded">
@@ -130,8 +130,8 @@ variable” that gives the indices of the required points.</p>
 array.</p>
 </dd>
 <dt>list_variable: <a class="reference internal" href="cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a></dt>
-<dd><p class="first last">The “list variable” required to uncompress the data, identical
-to the data of a CF-netCDF list variable.</p>
+<dd><p class="first last">The “list variable” required to uncompress the data,
+identical to the data of a CF-netCDF list variable.</p>
 </dd>
 </dl>
 </td>
@@ -247,7 +247,7 @@ to the data of a CF-netCDF list variable.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/class/cfdm.GatheredArray.rst.txt"

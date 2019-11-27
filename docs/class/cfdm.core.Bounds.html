@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -96,17 +96,17 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.Bounds">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Bounds</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/core/bounds.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Bounds</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/core/bounds.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>A cell bounds component of a coordinate or domain ancillary
 construct of the CF data model.</p>
-<p>An array of cell bounds spans the same domain axes as its coordinate
-array, with the addition of an extra dimension whose size is that of
-the number of vertices of each cell. This extra dimension does not
-correspond to a domain axis construct since it does not relate to an
-independent axis of the domain. Note that, for climatological time
-axes, the bounds are interpreted in a special way indicated by the
-cell method constructs.</p>
+<p>An array of cell bounds spans the same domain axes as its
+coordinate array, with the addition of an extra dimension whose
+size is that of the number of vertices of each cell. This extra
+dimension does not correspond to a domain axis construct since it
+does not relate to an independent axis of the domain. Note that,
+for climatological time axes, the bounds are interpreted in a
+special way indicated by the cell method constructs.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -117,16 +117,16 @@ cell method constructs.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
-<dd><p class="first">Set descriptive properties. The dictionary keys are property
-names, with corresponding values. Ignored if the <em>source</em>
-parameter is set.</p>
-<dl class="docutils">
+<dd><p class="first">Set descriptive properties. The dictionary keys are
+property names, with corresponding values. Ignored if the
+<em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.core.Bounds.set_properties.html#cfdm.core.Bounds.set_properties" title="cfdm.core.Bounds.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.core.Bounds.set_property.html#cfdm.core.Bounds.set_property" title="cfdm.core.Bounds.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'altitude'}</span></code></p>
 </dd>
 </dl>
-<p class="last">Properties may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.Bounds.set_properties.html#cfdm.core.Bounds.set_properties" title="cfdm.core.Bounds.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.core.Bounds.set_property.html#cfdm.core.Bounds.set_property" title="cfdm.core.Bounds.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
 </dd>
 <dt>data: <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, optional</dt>
 <dd><p class="first">Set the data. Ignored if the <em>source</em> parameter is set.</p>
@@ -197,7 +197,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Remove the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Bounds.get_data.html#cfdm.core.Bounds.get_data" title="cfdm.core.Bounds.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
-<td>Return the data.o</td>
+<td>Return the data.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Bounds.has_data.html#cfdm.core.Bounds.has_data" title="cfdm.core.Bounds.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
 <td>Whether a data has been set.</td>
@@ -264,7 +264,7 @@ initialization. By default arguments are deep copied.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/class/cfdm.core.Bounds.rst.txt"

@@ -1,7 +1,7 @@
 cfdm.Data.ndim
 ==============
 
-.. currentmodule:: cf
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. autoattribute:: cfdm.Data.ndim

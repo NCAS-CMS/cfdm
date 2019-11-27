@@ -34,6 +34,7 @@ Inspection
    ~cfdm.Data.array
    ~cfdm.Data.datetime_array
    ~cfdm.Data.dtype
+   ~cfdm.Data.mask
    ~cfdm.Data.ndim
    ~cfdm.Data.shape
    ~cfdm.Data.size
@@ -109,6 +110,7 @@ Miscellaneous
    ~cfdm.Data.equals
    ~cfdm.Data.to_memory
    ~cfdm.Data.source
+   ~cfdm.Data.uncompress
    
 Compression
 -----------

@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cfdm 1.7.10</a></b></h3>
+<h3><b><a href="../index.html">cfdm 1.7.11</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -95,24 +95,25 @@
 <h1>cfdm.read<a class="headerlink" href="#cfdm-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.read">
-<code class="descclassname">cfdm.</code><code class="descname">read</code><span class="sig-paren">(</span><em>filename</em>, <em>external=None</em>, <em>extra=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/read_write/read.py#L14"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.read" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cfdm.</code><code class="descname">read</code><span class="sig-paren">(</span><em>filename</em>, <em>external=None</em>, <em>extra=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/read_write/read.py#L14"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read field constructs from a dataset.</p>
 <p>The dataset may be a netCDF file on disk or on an OPeNDAP server,
 or a CDL file on disk (see below).</p>
 <p>The returned field constructs are sorted by the netCDF variable
 names of their corresponding data variables.</p>
 <p><strong>CDL files</strong></p>
-<p>A file is considered to be a CDL (Common Data Language)
-representation of a netCDF dataset if it is a text file that
-starts with the seven characters “netcdf ” (six letters followed
-by a space). It is converted to a temporary netCDF4 file using the
-external <code class="docutils literal notranslate"><span class="pre">ncgen</span></code> command, and the temporary file persists until
-the end of the Python session, at which time it is automatically
-deleted. The CDL file may omit the data array values (as would be
-the case, for example, if the file was created with the <code class="docutils literal notranslate"><span class="pre">-h</span></code> or
-<code class="docutils literal notranslate"><span class="pre">-c</span></code> option to <code class="docutils literal notranslate"><span class="pre">ncdump</span></code>), in which case the the relevant
-constructs in memory will be created with data containing missing
-values.</p>
+<p>A file is considered to be a CDL representation of a netCDF
+dataset
+(<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html">https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html</a>)
+if it is a text file that starts with the seven characters “netcdf
+” (six letters followed by a space). It is converted to a
+temporary netCDF4 file using the external <code class="docutils literal notranslate"><span class="pre">ncgen</span></code> command, and
+the temporary file persists until the end of the Python session,
+at which time it is automatically deleted. The CDL file may omit
+data array values (as would be the case, for example, if the file
+was created with the <code class="docutils literal notranslate"><span class="pre">-h</span></code> or <code class="docutils literal notranslate"><span class="pre">-c</span></code> option to <code class="docutils literal notranslate"><span class="pre">ncdump</span></code>), in
+which case the the relevant constructs in memory will be created
+with data containing missing values.</p>
 <p><strong>NetCDF unlimited dimensions</strong></p>
 <p>Domain axis constructs that correspond to NetCDF unlimited
 dimensions may be accessed with the
@@ -315,7 +316,7 @@ particular types metadata constructs:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cfdm.read.rst.txt"
