@@ -92,18 +92,18 @@
 <p>Version 1.7.11 for version 1.7 of the CF conventions.</p>
 <p>The basic requirement of the reference implementation is to represent
 the logical <a class="reference internal" href="introduction.html#cf-data-model"><span class="std std-ref">CF data model</span></a> in memory with a
-package of Python classes, with no further features. However, to be
-useful, the implementation must also have the practical functionality
-to read and write netCDF datasets, and inspect CF data model
-constructs.</p>
+package of Python classes, with no further features. However, in order
+to be useful the implementation must also have the practical
+functionality to read and write netCDF datasets, and inspect CF data
+model constructs.</p>
 <p>In order to satisfy both needs there is a stand-alone core
 implementation, the <a class="reference internal" href="class_core.html#class-core"><span class="std std-ref">cfdm.core</span></a> package, that
-includes no functionality beyond that mandated by the CF data model,
-including any information about the netCDF encoding of field
-constructs. This core implementation provides the basis for an extended
-implementation, the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package, that allows
-the reading and writing of netCDF datasets, as well as having
-comprehensive inspection capabilities.</p>
+includes no functionality beyond that mandated by the CF data model
+(and therefore excludes any information about the netCDF encoding of
+field constructs). This core implementation provides the basis for an
+extended implementation, the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package,
+that allows the reading and writing of netCDF datasets, as well as
+having comprehensive inspection capabilities.</p>
 <div class="section" id="cf-conventions">
 <span id="id2"></span><h2><strong>CF conventions</strong><a class="headerlink" href="#cf-conventions" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
