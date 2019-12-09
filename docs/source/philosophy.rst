@@ -16,19 +16,19 @@ Version |release| for version |version| of the CF conventions.
 
 The basic requirement of the reference implementation is to represent
 the logical :ref:`CF data model <CF-data-model>` in memory with a
-package of Python classes, with no further features. However, to be
-useful, the implementation must also have the practical functionality
-to read and write netCDF datasets, and inspect CF data model
-constructs.
+package of Python classes, with no further features. However, in order
+to be useful the implementation must also have the practical
+functionality to read and write netCDF datasets, and inspect CF data
+model constructs.
 
 In order to satisfy both needs there is a stand-alone core
 implementation, the :ref:`cfdm.core <class_core>` package, that
-includes no functionality beyond that mandated by the CF data model,
-including any information about the netCDF encoding of field
-constructs. This core implementation provides the basis for an extended
-implementation, the :ref:`cfdm <class_extended>` package, that allows
-the reading and writing of netCDF datasets, as well as having
-comprehensive inspection capabilities.
+includes no functionality beyond that mandated by the CF data model
+(and therefore excludes any information about the netCDF encoding of
+field constructs). This core implementation provides the basis for an
+extended implementation, the :ref:`cfdm <class_extended>` package,
+that allows the reading and writing of netCDF datasets, as well as
+having comprehensive inspection capabilities.
 
 .. _CF-conventions:
 
@@ -67,10 +67,9 @@ arithmetically, etc. It has, however, been designed to be
 packages that build on this cfdm implementation whilst also adding
 extra, higher level functionality.
 
-The `cf-python <https://cfpython.bitbucket.io/>`_ and `cf-plot
-<http://ajheaps.github.io/cf-plot/>`_ packages, that will soon be
-built on top of the cfdm package, include much more higher level
-functionality.
+The `cf-python <https://ncas-cms.github.io/cf-python>`_ and `cf-plot
+<http://ajheaps.github.io/cf-plot/>`_ packages, that are built on top
+of the cfdm package, include much more higher level functionality.
 
 **API**
 -------
