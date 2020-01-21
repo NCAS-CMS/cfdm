@@ -9,13 +9,16 @@ import netCDF4
 
 import cfdm
 
+
+VN = cfdm.CF()
+
 # --------------------------------------------------------------------
 # DSG files
 # --------------------------------------------------------------------
 def _make_contiguous_file(filename):        
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
-    n.Conventions = 'CF-1.7'
+    n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
 
     station = n.createDimension('station', 4)
@@ -104,7 +107,7 @@ def _make_contiguous_file(filename):
 def _make_indexed_file(filename):        
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
-    n.Conventions = 'CF-1.7'
+    n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
     
     station = n.createDimension('station', 4)
@@ -206,7 +209,7 @@ def _make_indexed_file(filename):
 def _make_indexed_contiguous_file(filename):        
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
-    n.Conventions = 'CF-1.6'
+    n.Conventions = 'CF-'+VN
     n.featureType = "timeSeriesProfile"
 
     # 3 stations
@@ -377,7 +380,7 @@ indexed_contiguous_file = _make_indexed_contiguous_file('DSG_timeSeriesProfile_i
 # --------------------------------------------------------------------
 # External variable files
 # --------------------------------------------------------------------
-def _make_files():
+def _make_external_files():
     '''
     '''
     def _pp(filename, parent=False, external=False, combined=False, external_missing=False):
@@ -388,7 +391,7 @@ def _make_files():
         nc.createDimension('grid_latitude', 10)
         nc.createDimension('grid_longitude', 9)
         
-        nc.Conventions = 'CF-1.7'
+        nc.Conventions = 'CF-'+VN
         if parent:
             nc.external_variables = 'areacella'
 
@@ -455,11 +458,6 @@ def _make_files():
     return parent_file, external_file, combined_file, external_missing_file
 
 
-(parent_file,
- external_file,
- combined_file,
- external_missing_file) = _make_files()
-
 # --------------------------------------------------------------------
 # Gathered files
 # --------------------------------------------------------------------
@@ -476,7 +474,7 @@ def _make_gathered_file(filename):
 
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
-    n.Conventions = 'CF-1.6'
+    n.Conventions = 'CF-'+VN
     
     time    = n.createDimension('time'   ,  2)
     height  = n.createDimension('height' ,  3)
@@ -586,10 +584,6 @@ gathered = _make_gathered_file('gathered.nc')
 # --------------------------------------------------------------------
 # Geometry files
 # --------------------------------------------------------------------
-VN = cfdm.CF()
-if LooseVersion(VN) < LooseVersion('1.8'):
-    VN = '1.8'
-
 def _make_geometry_1_file(filename):
     '''See n.comment for details.
 
@@ -1018,12 +1012,76 @@ def _make_interior_ring_file(filename):
     
     return filename
 
+
+def _make_string_char_file(filename):        
+    '''See n.comment for details
+
+    '''
+    n = netCDF4.Dataset(filename, 'w', format='NETCDF4')
+    
+    n.Conventions = 'CF-'+VN
+    n.comment     = "A netCDF file with variables of string and char data types"
+   
+    dim1   = n.createDimension('dim1', 1)
+    time   = n.createDimension('time', 4)
+    lat    = n.createDimension('lat' , 2)
+    lon    = n.createDimension('lon' , 3)
+    strlen8 = n.createDimension('strlen8' , 8)
+    strlen5 = n.createDimension('strlen5' , 5)
+    
+    s_months4 = n.createVariable('s_months4', str, ('time',))
+    s_months4.long_name = "string: Four months"
+    s_months4[:] = numpy.array(['January', 'February', 'March', 'April'])
+
+    s_months1 = n.createVariable('s_months1', str, ('dim1',))
+    s_months1.long_name = "string: One month"
+    s_months1[:] = numpy.array(['December'])
+
+    s_numbers = n.createVariable('s_numbers', str, ('lat', 'lon'))
+    s_numbers.long_name = "string: Two dimensional"
+    s_numbers[...] = numpy.array([['one', 'two', 'three'], ['four', 'five', 'six']])
+
+    c_months4 = n.createVariable('c_months4', 'S1', ('time', 'strlen8'))
+    c_months4.long_name = "char: Four months"
+    d =  numpy.empty((4, 8), dtype='S1')
+    d[0, 0:7] = list('January')
+    d[1, 0:8] = list('February')
+    d[2, 0:5] = list('March')
+    d[3, 0:5] = list('April')
+    c_months4[:, :] = d
+
+    c_months1 = n.createVariable('c_months1', 'S1', ('dim1', 'strlen8'))
+    c_months1.long_name = "char: One month"
+    c_months1[0, :] = list('December')
+
+    c_numbers = n.createVariable('c_numbers', 'S1', ('lat', 'lon', 'strlen5'))
+    c_numbers.long_name = "char: Two dimensional"
+    d =  numpy.empty((2, 3, 5), dtype='S1')
+    d[0, 0, 0:3] = list('one')
+    d[0, 1, 0:3] = list('two')
+    d[0, 2, 0:5] = list('three')
+    d[1, 0, 0:4] = list('four')
+    d[1, 1, 0:4] = list('five')
+    d[1, 2, 0:3] = list('six')
+    c_numbers[...] = d
+
+    n.close()
+    
+    return filename
+
+
+(parent_file,
+ external_file,
+ combined_file,
+ external_missing_file) = _make_external_files()
+
 geometry_1_file    = _make_geometry_1_file('geometry_1.nc')
 geometry_2_file    = _make_geometry_2_file('geometry_2.nc')
 geometry_3_file    = _make_geometry_3_file('geometry_3.nc')
 geometry_4_file    = _make_geometry_4_file('geometry_4.nc')
 interior_ring_file = _make_interior_ring_file('geometry_interior_ring.nc')
 
+string_char_file   = _make_string_char_file('string_char_file.nc')
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.utcnow())
