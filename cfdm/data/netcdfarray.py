@@ -38,7 +38,9 @@ class NetCDFArray(abstract.Array):
             *ncvar* is set.
     
         dtype: `numpy.dtype`
-            The data type of the array in the netCDF file.
+            The data type of the array in the netCDF file. May be
+            `None` if the numpy data-type is not known (which can be
+            the case for netCDF string types, for example).
     
         shape: `tuple`
             The array dimension sizes in the netCDF file.
@@ -74,8 +76,8 @@ class NetCDFArray(abstract.Array):
         if shape is not None:
             self._set_component('shape', shape)
 
-        if dtype is not None:
-            self._set_component('dtype', dtype)
+#        if dtype is not None:
+        self._set_component('dtype', dtype)
 
             
     def __getitem__(self, indices):
@@ -115,19 +117,30 @@ class NetCDFArray(abstract.Array):
                     break
         #--- End: if
 
+        string_type = isinstance(array, str)
+        if string_type:
+            # --------------------------------------------------------
+            # A netCDF string type scalar variable comes out as Python
+            # str object, so convert it to a numpy array.
+            # --------------------------------------------------------
+            array = numpy.array(array, dtype='S{0}'.format(len(array)))
+        
+#        print ('A', type(array), array.shape, array.dtype, indices)
+
         if not self.ndim:
             # Hmm netCDF4 has a thing for making scalar size 1 , 1d
             array = array.squeeze()
 
-        # ------------------------------------------------------------
-        # If approriate, collapse (by concatenation) the outermost
-        # (fastest varying) dimension of string valued array into
-        # memory. E.g. [['a','b','c']] becomes ['abc']
-        # ------------------------------------------------------------
-        if array.dtype.kind in ('S', 'U'): # == 'S' and array.ndim > (self.ndim -
+        kind = array.dtype.kind        
+        if not string_type and kind in 'SU': # == 'S' and array.ndim > (self.ndim -
                                                  #    getattr(self, 'gathered', 0) -
                                                  #    getattr(self, 'ragged', 0)):
-            if array.dtype.kind == 'U':
+            # --------------------------------------------------------
+            # Collapse (by concatenation) the outermost (fastest
+            # varying) dimension of char array into
+            # memory. E.g. [['a','b','c']] becomes ['abc']
+            # --------------------------------------------------------
+            if kind == 'U':
                 array = array.astype('S')
             
             array = netCDF4.chartostring(array)
@@ -153,12 +166,18 @@ class NetCDFArray(abstract.Array):
 #            array = array.reshape(new_shape)
 #            
 #            array = numpy.ma.where(array=='', numpy.ma.masked, array)
-        #--- End: if
-
+        elif not string_type and kind == 'O':
+            # --------------------------------------------------------
+            # A netCDF string type N-d (N>=1) variable comes out as a
+            # numpy object array, so convert it to numpy string array.
+            # --------------------------------------------------------
+            array = array.astype('S', copy=False)
+ 
         if self._get_component('close'):
             # Close the netCDF file
             self.close()
 
+#        print ('B', type(array), array.shape, array.dtype, indices)
         return array
 
 

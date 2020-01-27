@@ -184,7 +184,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `bool`
+        `bool`
 
     **Examples:**
     
@@ -204,7 +204,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `int`
+        `int`
             The new reference count.
         
     **Examples:**
@@ -240,7 +240,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `netCDF4.Dataset`
+        `netCDF4.Dataset`
             A `netCDF4.Dataset` object for the file.
 
         '''
@@ -284,7 +284,7 @@ class NetCDFRead(IORead):
         
     :Returns:
     
-        out: `bool`
+        `bool`
             `True` if the file is netCDF, otherwise `False`    
 
     **Examples:**
@@ -333,7 +333,7 @@ class NetCDFRead(IORead):
 
     :Returns:
     
-        out: `bool`
+        `bool`
             `True` if the file is CDL, otherwise `False`
 
     **Examples:**
@@ -441,7 +441,7 @@ class NetCDFRead(IORead):
             
     :Returns:
     
-        out: `list`
+        `list`
             The fields in the file.
     
     **Examples:**
@@ -1087,7 +1087,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `str`
+        `str`
             The made-up netCDF dimension name of the element dimension.
 
         '''
@@ -1144,7 +1144,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `str`
+        `str`
             An invented netCDF name for the element dimension,
             e.g. ``'timeseriesprofile'``.
 
@@ -1517,7 +1517,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `str`
+        `str`
            The element dimension, possibly modified to make sure that it
            is unique.
 
@@ -1573,7 +1573,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `str`
+        `str`
            The element dimension, possibly modified to make sure that it
            is unique.
 
@@ -1631,7 +1631,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `list`
+        `list`
             The external variable names, less those which are also netCDF
             variables in the file.
 
@@ -1925,7 +1925,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `Field`
+        `Field`
             The new field.
 
         '''
@@ -2141,7 +2141,8 @@ class NetCDFRead(IORead):
                 scalar = False
                 if not dimensions:
                     scalar = True
-                    if g['variables'][ncvar].dtype.kind is 'S':
+#                    if g['variables'][ncvar].dtype.kind is 'S':
+                    if self._is_char_or_string(ncvar):
                         # String valued scalar coordinate. Is this CF
                         # compliant? Don't worry about it - we'll just
                         # turn it into a 1-d, size 1 auxiliary coordinate
@@ -2569,6 +2570,50 @@ class NetCDFRead(IORead):
         return f
 
 
+    def _is_char_or_string(self, ncvar):
+        '''Return True if the netCDf variable has string or char datatype.
+
+    :Parameters:
+        
+        ncvar: str
+            The name of the netCDF variable.
+
+    :Returns:
+        
+        bool        
+
+    **Examples**
+
+        >>> n._is_char_or_string('regions')
+        True
+
+        '''
+        datatype = self.read_vars['variables'][ncvar].dtype
+        return datatype == str or datatype.kind in 'SU'
+    
+    
+    def _is_char(self, ncvar):
+        '''Return True if the netCDf variable has char datatype.
+
+    :Parameters:
+        
+        ncvar: str
+            The name of the netCDF variable.
+
+    :Returns:
+        
+        bool        
+
+    **Examples**
+
+        >>> n._is_char('regions')
+        True
+
+        '''
+        datatype = self.read_vars['variables'][ncvar].dtype
+        return datatype != str and datatype.kind in 'SU'
+    
+    
     def _get_geometry(self, field_ncvar):
         '''Return a geometry container for this field construct.
 
@@ -2986,7 +3031,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `CellMeasure`
+        `CellMeasure`
             The new item.
     
         '''
@@ -3030,7 +3075,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: Count variable instance
+             Count variable instance
 
         '''
         g = self.read_vars
@@ -3080,7 +3125,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: Index variable
+            Index variable instance
 
         '''
         g = self.read_vars
@@ -3137,7 +3182,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: Interior ring variable
+            Interior ring variable instance
 
         '''
         g = self.read_vars
@@ -3171,7 +3216,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `List`
+        `List`
 
         '''
         # Initialise the list variable
@@ -3205,7 +3250,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: Node count variable
+            Node count variable instance
 
         '''
         g = self.read_vars
@@ -3243,7 +3288,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: Part node count variable
+            Part node count variable instance
 
         '''
         g = self.read_vars
@@ -3274,7 +3319,7 @@ class NetCDFRead(IORead):
             
     :Returns:
     
-        out: `CellMethod`
+        `CellMethod`
 
         '''
         return self.implementation.initialise_CellMethod(axes=axes,
@@ -3293,7 +3338,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `NetCDFArray`
+        `NetCDFArray`
         
         '''
         g = self.read_vars
@@ -3303,6 +3348,12 @@ class NetCDFRead(IORead):
             return None
         
         dtype = variable.dtype
+        if dtype is str:
+            # netCDF string types have a dtype of `str`, which needs
+            # to be reset as a numpy.dtype, but we don't know what
+            # withou reading the data, so set it to None for now.
+            dtype = None
+            
         if unpacked_dtype is not False:
             dtype = numpy.result_type(dtype, unpacked_dtype)
     
@@ -3311,8 +3362,10 @@ class NetCDFRead(IORead):
         size  = variable.size
         if size < 2:
             size = int(size)
-    
-        if dtype.kind == 'S' and ndim >= 1: #shape[-1] > 1:
+
+
+#        if dtype.kind == 'S' and ndim >= 1: #shape[-1] > 1:
+        if self._is_char(ncvar) and ndim >= 1:
             # Has a trailing string-length dimension
             strlen = shape[-1]
             shape = shape[:-1]
@@ -3522,7 +3575,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `FieldAncillary`
+        `FieldAncillary`
             The new item.
 
         '''
@@ -3554,7 +3607,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `list` of `dict`
+        `list` of `dict`
     
     **Examples:**
     
@@ -3733,7 +3786,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `CoordinateReference`
+        `CoordinateReference`
 
         '''
         g = self.read_vars
@@ -3817,9 +3870,11 @@ class NetCDFRead(IORead):
      
         ncdimensions = list(g['variable_dimensions'][ncvar])
 
-        # Remove a string-length dimension, if there is one. DCH ALERT
-        if (variable.datatype.kind == 'S' and
-            variable.ndim >= 2): # and variable.shape[-1] > 1):
+#        if (variable.datatype.kind == 'S' and
+#            variable.ndim >= 2): # and variable.shape[-1] > 1):
+#            ncdimensions.pop()
+        if self._is_char(ncvar) and variable.ndim >= 1:
+            # Remove the trailing string-length dimension
             ncdimensions.pop()
     
         # Check for dimensions which have been compressed. If there are
@@ -3883,7 +3938,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `Data`
+        `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -3915,7 +3970,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `Data`
+        `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -3937,7 +3992,7 @@ class NetCDFRead(IORead):
 
     :Returns:
 
-        out: `Data`
+        `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -3961,7 +4016,7 @@ class NetCDFRead(IORead):
 
     :Returns:
 
-        out: `Data`
+        `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -4012,8 +4067,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out:
-        A copy of the construct.
+            A copy of the construct.
 
         '''
         g = self.read_vars
@@ -4063,7 +4117,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `bool`
+        `bool`
 
         '''
         attribute = {parent_ncvar+':'+attribute: bounds_ncvar}
@@ -4133,7 +4187,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `bool`
+        `bool`
 
         '''
         attribute = {field_ncvar+':cell_measures': string}
@@ -4277,7 +4331,7 @@ class NetCDFRead(IORead):
             
     :Returns:
     
-        out: `bool`
+        `bool`
 
         '''
         attribute = {field_ncvar+':coordinates': string}
@@ -4320,7 +4374,9 @@ class NetCDFRead(IORead):
 
         '''
         if not set(dimensions).issubset(parent_dimensions):
-            if not (self.read_vars['variables'][ncvar].datatype.kind == 'S' and
+#            if not (self.read_vars['variables'][ncvar].datatype.kind == 'S' and
+#                    set(dimensions[:-1]).issubset(parent_dimensions)):
+            if not (self._is_char(ncvar) and
                     set(dimensions[:-1]).issubset(parent_dimensions)):
                 return False
 
@@ -4345,7 +4401,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `bool`
+        `bool`
 
         '''
         attribute = {field_ncvar+':grid_mapping': grid_mapping}

@@ -159,7 +159,13 @@ class Data(abstract.Container):
     <type 'numpy.dtype'>
 
         '''
-        return self._get_Array().dtype        
+        datatype = self._get_Array().dtype
+        if datatype is None:
+            # The datatype is not known, so get the numpy array and
+            # get it off that.
+            datatype = self.array.dtype
+            
+        return datatype
 
 
     @property

@@ -1040,11 +1040,11 @@ def _make_string_char_file(filename):
 
     s_months1 = n.createVariable('s_months1', str, ('dim1',))
     s_months1.long_name = "string: One month"
-    s_months1[:] = numpy.array(['December'])
+    s_months1[:] = numpy.array(['December'], dtype='S8')
 
     s_months0 = n.createVariable('s_months0', str, ())
     s_months0.long_name = "string: One month (scalar)"
-    s_months0[:] = numpy.array(['May'])
+    s_months0[:] = numpy.array(['May'], dtype='S8')
 
     s_numbers = n.createVariable('s_numbers', str, ('lat', 'lon'))
     s_numbers.long_name = "string: Two dimensional"
@@ -1083,7 +1083,7 @@ geometry_3_file    = _make_geometry_3_file('geometry_3.nc')
 geometry_4_file    = _make_geometry_4_file('geometry_4.nc')
 interior_ring_file = _make_interior_ring_file('geometry_interior_ring.nc')
 
-string_char_file   = _make_string_char_file('string_char_file.nc')
+string_char_file   = _make_string_char_file('string_char.nc')
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.utcnow())
