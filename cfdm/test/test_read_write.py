@@ -35,13 +35,16 @@ class read_writeTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
 
+    string_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                   'string_char.nc')
+
     test_only = []
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_read_CDL']
 #    test_only = ['test_write_HDF_chunks']
 #    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_read_field']
-#    test_only = ['test_write_datatype']
+    test_only = ['test_read_write_string']
     
     def test_read_field(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -211,6 +214,22 @@ class read_writeTest(unittest.TestCase):
 #        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)
 
             
+    def test_read_write_string(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+                
+#        for fmt in ('NETCDF4', 'NETCDF4_CLASSIC'):
+        f = cfdm.read(self.string_filename)
+        for i in range(0, 4):
+            j = i + int(len(f)/2)
+            self.assertTrue(f[i].data.equals(f[j].data, verbose=1))
+            self.assertTrue(f[j].data.equals(f[i].data, verbose=1))
+        
+
+
+            
+
 #--- End: class
 
 if __name__ == "__main__":
