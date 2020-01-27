@@ -1028,42 +1028,44 @@ def _make_string_char_file(filename):
     lon    = n.createDimension('lon' , 3)
     strlen8 = n.createDimension('strlen8' , 8)
     strlen5 = n.createDimension('strlen5' , 5)
+    strlen3 = n.createDimension('strlen3' , 3)
+
+    months  = numpy.array(['January', 'February', 'March', 'April'], dtype='S8')
     
+    numbers = numpy.array([['one', 'two', 'three'], ['four', 'five', 'six']], dtype='S5')
+
     s_months4 = n.createVariable('s_months4', str, ('time',))
     s_months4.long_name = "string: Four months"
-    s_months4[:] = numpy.array(['January', 'February', 'March', 'April'])
+    s_months4[:] = months
 
     s_months1 = n.createVariable('s_months1', str, ('dim1',))
     s_months1.long_name = "string: One month"
     s_months1[:] = numpy.array(['December'])
 
+    s_months0 = n.createVariable('s_months0', str, ())
+    s_months0.long_name = "string: One month (scalar)"
+    s_months0[:] = numpy.array(['May'])
+
     s_numbers = n.createVariable('s_numbers', str, ('lat', 'lon'))
     s_numbers.long_name = "string: Two dimensional"
-    s_numbers[...] = numpy.array([['one', 'two', 'three'], ['four', 'five', 'six']])
+    s_numbers[...] = numbers
 
     c_months4 = n.createVariable('c_months4', 'S1', ('time', 'strlen8'))
     c_months4.long_name = "char: Four months"
-    d =  numpy.empty((4, 8), dtype='S1')
-    d[0, 0:7] = list('January')
-    d[1, 0:8] = list('February')
-    d[2, 0:5] = list('March')
-    d[3, 0:5] = list('April')
-    c_months4[:, :] = d
+    c_months4[:, :] = netCDF4.stringtochar(months)
 
     c_months1 = n.createVariable('c_months1', 'S1', ('dim1', 'strlen8'))
     c_months1.long_name = "char: One month"
-    c_months1[0, :] = list('December')
+    c_months1[:] = netCDF4.stringtochar(numpy.array(['December'], dtype='S8'))
+
+    c_months0 = n.createVariable('c_months0', 'S1', ('strlen3',))
+    c_months0.long_name = "char: One month (scalar)"
+    c_months0[:] = numpy.array(list('May'))
 
     c_numbers = n.createVariable('c_numbers', 'S1', ('lat', 'lon', 'strlen5'))
     c_numbers.long_name = "char: Two dimensional"
     d =  numpy.empty((2, 3, 5), dtype='S1')
-    d[0, 0, 0:3] = list('one')
-    d[0, 1, 0:3] = list('two')
-    d[0, 2, 0:5] = list('three')
-    d[1, 0, 0:4] = list('four')
-    d[1, 1, 0:4] = list('five')
-    d[1, 2, 0:3] = list('six')
-    c_numbers[...] = d
+    c_numbers[...] = netCDF4.stringtochar(numbers)
 
     n.close()
     
