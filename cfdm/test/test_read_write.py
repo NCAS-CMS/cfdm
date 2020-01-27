@@ -218,17 +218,31 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-                
-#        for fmt in ('NETCDF4', 'NETCDF4_CLASSIC'):
         f = cfdm.read(self.string_filename)
         for i in range(0, 4):
             j = i + int(len(f)/2)
             self.assertTrue(f[i].data.equals(f[j].data, verbose=1))
             self.assertTrue(f[j].data.equals(f[i].data, verbose=1))
-        
 
-
+        for fmt in ('NETCDF3_CLASSIC',
+                    'NETCDF4_CLASSIC',
+                    'NETCDF3_64BIT_OFFSET',
+                    'NETCDF3_64BIT_DATA'):
+            f = cfdm.read(self.string_filename)
+            cfdm.write(f, tmpfile, fmt=fmt)
             
+            j = i + int(len(f)/2)
+            self.assertTrue(f[i].data.equals(f[j].data, verbose=1))
+            self.assertTrue(f[j].data.equals(f[i].data, verbose=1))
+
+        for fmt in ('NETCDF4',):
+            f = cfdm.read(self.string_filename)
+            cfdm.write(f, tmpfile, fmt=fmt)
+                       
+            j = i + int(len(f)/2)
+            self.assertTrue(f[i].data.equals(f[j].data, verbose=1))
+            self.assertTrue(f[j].data.equals(f[i].data, verbose=1))
+
 
 #--- End: class
 

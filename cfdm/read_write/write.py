@@ -125,7 +125,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             4.4.0 or newer of the C library (use `cfdm.environment` to
             see which version if the netCDF-C library is in use). It
             extends the ``'NETCDF3_64BIT_OFFSET'`` binary format to
-            allow for unsigned/64 bit integer data types and 64-bit
+            allow for unsigned 64 bit integer data types and 64-bit
             dimension sizes.
     
             ``'NETCDF4_CLASSIC'`` files use the version 4 disk format
