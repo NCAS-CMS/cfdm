@@ -3201,17 +3201,20 @@ class NetCDFWrite(IOWrite):
         fmt : str, optional
             The format of the output file. One of:
     
-               =====================  ================================================
-               fmt                    Description
-               =====================  ================================================
-               ``'NETCDF3_CLASSIC'``  Output to a CF-netCDF3 classic format file
-               ``'NETCDF3_64BIT'``    Output to a CF-netCDF3 64-bit offset format file
-               ``'NETCDF4_CLASSIC'``  Output to a CF-netCDF4 classic format file
-               ``'NETCDF4'``          Output to a CF-netCDF4 format file
-               =====================  ================================================
+            ==========================  =================================================
+            *fmt*                       Description
+            ==========================  =================================================
+            ``'NETCDF4'``               Output to a CF-netCDF4 format file
+            ``'NETCDF4_CLASSIC'``       Output to a CF-netCDF4 classic format file
+            ``'NETCDF3_CLASSIC'``       Output to a CF-netCDF3 classic format file
+            ``'NETCDF3_64BIT'``         Output to a CF-netCDF3 64-bit offset format file
+            ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format file
+            ``'NETCDF3_64BIT'``         An alias for ``'NETCDF3_64BIT_OFFSET'``
+            ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format file with extensions
+            ==========================  =================================================
     
-            By default the *fmt* is ``'NETCDF3_CLASSIC'``. Note that the
-            netCDF3 formats may be slower than any of the other options.
+            By default the *fmt* is ``'NETCDF4'``. Note that the
+            netCDF3 formats may be slower than netCDF4 options.
     
         overwrite: bool, optional
             If False then raise an exception if the output file
@@ -3355,10 +3358,12 @@ class NetCDFWrite(IOWrite):
         zlib = bool(compress) 
 
         if fmt not in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT',
-                       'NETCDF4', 'NETCDF4_CLASSIC'):
+                       'NETCDF4', 'NETCDF4_CLASSIC',
+                       'NETCDF3_64BIT_OFFSET', 'NETCDF3_64BIT_DATA'):
             raise ValueError("Unknown output file format: {}".format(fmt))
     
-        if compress and fmt in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT'):
+        if compress and fmt in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT',
+                                'NETCDF3_64BIT_OFFSET', 'NETCDF3_64BIT_DATA'):
             raise ValueError("Can't compress {} format file".format(fmt))
         
         # ------------------------------------------------------------

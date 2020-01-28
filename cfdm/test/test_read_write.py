@@ -44,7 +44,8 @@ class read_writeTest(unittest.TestCase):
 #    test_only = ['test_write_HDF_chunks']
 #    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_read_field']
-    test_only = ['test_read_write_string']
+#    test_only = ['test_read_write_string']
+#    test_only = ['test_read_write_format']
     
     def test_read_field(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -91,6 +92,8 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
         for fmt in ('NETCDF3_CLASSIC',
                     'NETCDF3_64BIT',
+                    'NETCDF3_64BIT_OFFSET',
+                    'NETCDF3_64BIT_DATA',
                     'NETCDF4',
                     'NETCDF4_CLASSIC'):
             cfdm.write(f, tmpfile, fmt=fmt)
@@ -125,6 +128,8 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
         for fmt in ('NETCDF3_CLASSIC',
                     'NETCDF3_64BIT',
+                    'NETCDF3_64BIT_OFFSET',
+                    'NETCDF3_64BIT_DATA',
                     'NETCDF4',
                     'NETCDF4_CLASSIC'):
             cfdm.write(f, tmpfile, fmt=fmt)
@@ -151,7 +156,12 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for fmt in ('NETCDF4', 'NETCDF3_CLASSIC'):
+        for fmt in ('NETCDF4',
+                    'NETCDF4_CLASSIC',
+                    'NETCDF3_CLASSIC',
+                    'NETCDF3_64BIT',
+                    'NETCDF3_64BIT_OFFSET',
+                    'NETCDF3_64BIT_DATA'):
             f = cfdm.read(self.filename)[0]
             
             f.domain_axes['domainaxis0'].nc_set_unlimited(True)

@@ -308,8 +308,8 @@ class NetCDFRead(IORead):
             fh.close()
         except:
             pass
-    
-        if magic_number in (21382211, 1128547841, 1178880137, 38159427):
+
+        if magic_number in (21382211, 1128547841, 1178880137, 38159427, 88491075):
             return True
         else:
             return False
