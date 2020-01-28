@@ -125,8 +125,6 @@ class NetCDFArray(abstract.Array):
             # --------------------------------------------------------
             array = numpy.array(array, dtype='S{0}'.format(len(array)))
         
-#        print ('A', type(array), array.shape, array.dtype, indices)
-
         if not self.ndim:
             # Hmm netCDF4 has a thing for making scalar size 1 , 1d
             array = array.squeeze()
@@ -172,12 +170,17 @@ class NetCDFArray(abstract.Array):
             # numpy object array, so convert it to numpy string array.
             # --------------------------------------------------------
             array = array.astype('S', copy=False)
+
+            # --------------------------------------------------------
+            # netCDF4-pytohn does not auto-mask VLEN variable, so do
+            # it here.
+            # --------------------------------------------------------
+            array = numpy.ma.where(array == b'', numpy.ma.masked, array)
  
         if self._get_component('close'):
             # Close the netCDF file
             self.close()
 
-#        print ('B', type(array), array.shape, array.dtype, indices)
         return array
 
 

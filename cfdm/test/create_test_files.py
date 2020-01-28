@@ -1022,16 +1022,19 @@ def _make_string_char_file(filename):
     n.Conventions = 'CF-'+VN
     n.comment     = "A netCDF file with variables of string and char data types"
    
-    dim1   = n.createDimension('dim1', 1)
-    time   = n.createDimension('time', 4)
-    lat    = n.createDimension('lat' , 2)
-    lon    = n.createDimension('lon' , 3)
+    dim1 = n.createDimension('dim1', 1)
+    time = n.createDimension('time', 4)
+    lat  = n.createDimension('lat' , 2)
+    lon  = n.createDimension('lon' , 3)
     strlen8 = n.createDimension('strlen8' , 8)
+    strlen7 = n.createDimension('strlen7' , 7)
     strlen5 = n.createDimension('strlen5' , 5)
     strlen3 = n.createDimension('strlen3' , 3)
 
     months  = numpy.array(['January', 'February', 'March', 'April'], dtype='S8')
     
+    months_m  = numpy.ma.array(months, dtype='S7', mask=[0, 1, 0, 0], fill_value=b'')
+
     numbers = numpy.array([['one', 'two', 'three'], ['four', 'five', 'six']], dtype='S5')
 
     s_months4 = n.createVariable('s_months4', str, ('time',))
@@ -1044,11 +1047,17 @@ def _make_string_char_file(filename):
 
     s_months0 = n.createVariable('s_months0', str, ())
     s_months0.long_name = "string: One month (scalar)"
-    s_months0[:] = numpy.array(['May'], dtype='S8')
+    s_months0[:] = numpy.array(['May'], dtype='S3')
 
     s_numbers = n.createVariable('s_numbers', str, ('lat', 'lon'))
     s_numbers.long_name = "string: Two dimensional"
     s_numbers[...] = numbers
+
+    s_months4m = n.createVariable('s_months4m', str, ('time',))
+    s_months4m.long_name = "string: Four months (masked)"
+    array = months.copy()
+    array[1] = ''
+    s_months4m[...] = array
 
     c_months4 = n.createVariable('c_months4', 'S1', ('time', 'strlen8'))
     c_months4.long_name = "char: Four months"
@@ -1066,6 +1075,11 @@ def _make_string_char_file(filename):
     c_numbers.long_name = "char: Two dimensional"
     d =  numpy.empty((2, 3, 5), dtype='S1')
     c_numbers[...] = netCDF4.stringtochar(numbers)
+
+    c_months4m = n.createVariable('c_months4m', 'S1', ('time', 'strlen7'))
+    c_months4m.long_name = "char: Four months (masked)"
+    array = netCDF4.stringtochar(months_m)
+    c_months4m[:, :] = array
 
     n.close()
     

@@ -17,7 +17,9 @@ warnings = False
 tmpfile  = tempfile.mktemp('.cfdm_test')
 tmpfileh  = tempfile.mktemp('.cfdm_test')
 tmpfilec  = tempfile.mktemp('.cfdm_test')
-tmpfiles = [tmpfile, tmpfileh, tmpfilec]
+tmpfile0  = tempfile.mktemp('.cfdm_test')
+tmpfile1  = tempfile.mktemp('.cfdm_test')
+tmpfiles = [tmpfile, tmpfileh, tmpfilec, tmpfile0, tmpfile1]
 def _remove_tmpfiles():
     '''
     '''
@@ -230,29 +232,33 @@ class read_writeTest(unittest.TestCase):
 
         f = cfdm.read(self.string_filename)
         for i in range(0, 4):
-            j = i + int(len(f)/2)
-            self.assertTrue(f[i].data.equals(f[j].data, verbose=1))
-            self.assertTrue(f[j].data.equals(f[i].data, verbose=1))
 
-        for fmt in ('NETCDF3_CLASSIC',
-                    'NETCDF4_CLASSIC',
-                    'NETCDF3_64BIT_OFFSET',
-                    'NETCDF3_64BIT_DATA'):
-            f = cfdm.read(self.string_filename)
-            cfdm.write(f, tmpfile, fmt=fmt)
-            g = cfdm.read(tmpfile)
-            for i, j in zip(g, f):
-                self.assertTrue(i.equals(j, verbose=1))
+            j = i + int(len(f)/2)
+            self.assertTrue(f[i].data.equals(f[j].data, verbose=1), "{!r} {!r}".format(f[i], f[j]))
+            self.assertTrue(f[j].data.equals(f[i].data, verbose=1), "{!r} {!r}".format(f[j], f[i]))
+
+        for fmt0 in ('NETCDF4',
+                     'NETCDF3_CLASSIC',
+                     'NETCDF4_CLASSIC',
+                     'NETCDF3_64BIT',
+                     'NETCDF3_64BIT_OFFSET',
+                     'NETCDF3_64BIT_DATA'):
+            f0 = cfdm.read(self.string_filename)
+            cfdm.write(f0, tmpfile0, fmt=fmt0)
+            
+            for fmt1 in ('NETCDF4',
+                         'NETCDF3_CLASSIC',
+                         'NETCDF4_CLASSIC',
+                         'NETCDF3_64BIT',
+                         'NETCDF3_64BIT_OFFSET',
+                         'NETCDF3_64BIT_DATA'):
+                f1 = cfdm.read(self.string_filename)
+                cfdm.write(f0, tmpfile1, fmt=fmt1)
+
+                for i, j in zip(cfdm.read(tmpfile1), cfdm.read(tmpfile0)):
+                    self.assertTrue(i.equals(j, verbose=1))
         #--- End: for
         
-        for fmt in ('NETCDF4',):
-            f = cfdm.read(self.string_filename)
-            cfdm.write(f, tmpfile, fmt=fmt)                       
-            g = cfdm.read(tmpfile)
-            for i, j in zip(g, f):
-                self.assertTrue(i.equals(j, verbose=1))
-        #--- End: for
-
                 
 #--- End: class
 
