@@ -234,8 +234,10 @@ class read_writeTest(unittest.TestCase):
         for i in range(0, 4):
 
             j = i + int(len(f)/2)
-            self.assertTrue(f[i].data.equals(f[j].data, verbose=1), "{!r} {!r}".format(f[i], f[j]))
-            self.assertTrue(f[j].data.equals(f[i].data, verbose=1), "{!r} {!r}".format(f[j], f[i]))
+            self.assertTrue(f[i].data.equals(f[j].data, verbose=1),
+                            "{!r} {!r}".format(f[i], f[j]))
+            self.assertTrue(f[j].data.equals(f[i].data, verbose=1),
+                            "{!r} {!r}".format(f[j], f[i]))
 
         for fmt0 in ('NETCDF4',
                      'NETCDF3_CLASSIC',

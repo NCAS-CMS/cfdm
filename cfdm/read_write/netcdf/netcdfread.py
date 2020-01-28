@@ -2960,7 +2960,6 @@ class NetCDFRead(IORead):
             # Store the netCDF bounds dimension name
             self.implementation.nc_set_dimension(bounds,
                                                  g['variable_dimensions'][bounds_ncvar][-1])
-            
             self.implementation.set_bounds(c, bounds, copy=False)
 
             if not domain_ancillary:
