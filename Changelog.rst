@@ -1,3 +1,15 @@
+version 1.8.0
+--------------
+----
+
+**Not yet yeleased**
+
+* New method: `cfdm.Data.any`
+* New keyword parameter to `cfdm.environment`: ``paths``.
+* Fixed bug that prevented the writing of ``'NETCDF3_64BIT_OFFSET'``
+  and ``'NETCDF3_64BIT_DATA'`` format files
+  (https://github.com/NCAS-CMS/cfdm/issues/9)
+  
 version 1.7.11
 --------------
 ----

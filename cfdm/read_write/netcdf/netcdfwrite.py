@@ -361,7 +361,7 @@ class NetCDFWrite(IOWrite):
             Whether or not the data has any masked values.
 
         '''
-        return data.mask.array.any()
+        return data.mask.any()
     
     
     def _string_length_dimension(self, size):

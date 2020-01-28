@@ -34,7 +34,20 @@ class DataTest(unittest.TestCase):
 #    test_only = ['test_dumpd_loadd']
 #    test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
 
+    def test_Data_any(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+                
+        d = cfdm.Data([[0, 0, 0]])
+        self.assertFalse(d.any())
+        d[0, 0] = numpy.ma.masked
+        self.assertFalse(d.any())
+        d[0, 1] = 3
+        self.assertTrue(d.any())
+        d[...] = numpy.ma.masked
+        self.assertFalse(d.any())
 
+        
     def test_Data__repr__str(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

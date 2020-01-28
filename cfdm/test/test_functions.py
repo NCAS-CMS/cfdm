@@ -30,6 +30,8 @@ class FunctionsTest(unittest.TestCase):
         self.assertTrue(cfdm.ATOL() == org)
 
         out = cfdm.environment(display=False)
+        out = cfdm.environment(display=False, paths=False)
+        out = cfdm.environment(display=False, string=True)
 
     
 #--- End: class

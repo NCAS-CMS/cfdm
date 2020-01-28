@@ -832,6 +832,41 @@ class Data(mixin.Container,
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    def any(self):
+        '''Test whether any data array elements evaluate to True.
+
+    Performs a logical or over the data array and returns the
+    result. Masked values are considered as False during computation.
+
+    **Examples:**
+
+    >>> d = Data([[0, 0, 0]])
+    >>> d.any()
+    False
+    >>> d[0, 0] = numpy.ma.masked
+    >>> print(d.array)
+    [[-- 0 0]]
+    >>> d.any()
+    False
+    >>> d[0, 1] = 3
+    >>> print(d.array)
+    [[-- 3 0]]
+    >>> d.any()
+    True
+    >>> d[...] = numpy.ma.masked
+    >>> print(d.array)
+    [[-- -- --]]
+    >>> d.any()
+    False
+
+        '''
+        masked = self.array.any()
+        if masked is numpy.ma.masked:
+            masked = False
+
+        return masked
+
+
     def copy(self, array=True):
         '''Return a deep copy.
 
