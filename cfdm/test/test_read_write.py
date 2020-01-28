@@ -230,20 +230,20 @@ class read_writeTest(unittest.TestCase):
                     'NETCDF3_64BIT_DATA'):
             f = cfdm.read(self.string_filename)
             cfdm.write(f, tmpfile, fmt=fmt)
-            
-            j = i + int(len(f)/2)
-            self.assertTrue(f[i].data.equals(f[j].data, verbose=1))
-            self.assertTrue(f[j].data.equals(f[i].data, verbose=1))
-
+            g = cfdm.read(tmpfile)
+            for i, j in zip(g, f):
+                self.assertTrue(i.equals(j, verbose=1))
+        #--- End: for
+        
         for fmt in ('NETCDF4',):
             f = cfdm.read(self.string_filename)
-            cfdm.write(f, tmpfile, fmt=fmt)
-                       
-            j = i + int(len(f)/2)
-            self.assertTrue(f[i].data.equals(f[j].data, verbose=1))
-            self.assertTrue(f[j].data.equals(f[i].data, verbose=1))
+            cfdm.write(f, tmpfile, fmt=fmt)                       
+            g = cfdm.read(tmpfile)
+            for i, j in zip(g, f):
+                self.assertTrue(i.equals(j, verbose=1))
+        #--- End: for
 
-
+                
 #--- End: class
 
 if __name__ == "__main__":
