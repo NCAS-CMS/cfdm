@@ -30,7 +30,7 @@ class PropertiesDataBounds(PropertiesData):
             `properties` and `set_property` methods.
 
             *Parameter example:*
-               ``properties={'standard_name': 'longitude'}``
+              ``properties={'standard_name': 'longitude'}``
                   
         data: `Data`, optional
             Set the data array. Ignored if the *source* parameter is
@@ -54,7 +54,7 @@ class PropertiesDataBounds(PropertiesData):
             with the `set_geometry` method.
       
             *Parameter example:*
-               ``geometry='polygon'``
+              ``geometry='polygon'``
             
         interior_ring: `InteriorRing`, optional
             Set the interior ring variable. Ignored if the *source*
