@@ -18,39 +18,40 @@ import os
 import re
 
 def _read(fname):
-    """Returns content of a file.
+    '''Returns content of a file.
 
-    """
+    '''
     fpath = os.path.dirname(__file__)
     fpath = os.path.join(fpath, fname)
     with open(fpath, 'r') as file_:
         return file_.read()
-#--- End: def
+
 
 def _get_version():
-    """Returns library version by inspecting core/__init__.py file.
+    '''Returns library version by inspecting core/__init__.py file.
 
-    """
+    '''
     return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                      _read("../../cfdm/core/__init__.py"),
                      re.MULTILINE).group(1)
-#--- End: def
+
 
 def _get_cf_version():
-    """Returns CF version by inspecting core/__init__.py file.
+    '''Returns CF version by inspecting core/__init__.py file.
 
-    """
+    '''
     return re.search(r'^__cf_version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                      _read("../../cfdm/core/__init__.py"),
                      re.MULTILINE).group(1)
-#--- End: def
+
 
 def _get_year():
-    '''
+    '''Get the current calendar year.
+
     '''
     return str(datetime.datetime.now().year)
-#--- End: def
-    
+
+
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory
 # is relative to the documentation root, use os.path.abspath to make
@@ -469,4 +470,4 @@ def linkcode_resolve(domain, info):
     else:
         # Point to local source code relative to this directory
         return "../../../cfdm/{0}{1}".format(fn, linespec)
-#--- End: def
+

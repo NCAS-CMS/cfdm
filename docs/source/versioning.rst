@@ -18,7 +18,7 @@ be found with the `cfdm.CF` function:
 	     
    >>> import cfdm
    >>> cfdm.CF()
-   '1.7'
+   '1.8'
 
 This indicates which version of the CF conventions are represented by
 this release of the cfdm package, and therefore the version can not be

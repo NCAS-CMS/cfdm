@@ -2165,7 +2165,7 @@ class Data(mixin.Container,
 
 
     def uncompress(self, inplace=False):
-        '''Uncompress the underlying array in-place.
+        '''Uncompress the underlying array.
 
     If the data is not compressed, then no change is made.
     

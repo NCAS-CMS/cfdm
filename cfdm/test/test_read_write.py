@@ -231,9 +231,11 @@ class read_writeTest(unittest.TestCase):
             return
 
         f = cfdm.read(self.string_filename)
-        for i in range(0, 4):
 
-            j = i + int(len(f)/2)
+        n = int(len(f)/2)
+        
+        for i in range(0, n):
+            j = i + n
             self.assertTrue(f[i].data.equals(f[j].data, verbose=1),
                             "{!r} {!r}".format(f[i], f[j]))
             self.assertTrue(f[j].data.equals(f[i].data, verbose=1),

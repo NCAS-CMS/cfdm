@@ -155,6 +155,37 @@ class NetCDFWrite(IOWrite):
         return ncvar
 
     
+    def _numpy_compressed(self, array):
+        '''Return all the non-masked data as a 1-D array.
+
+    .. versionadded:: 1.8.0
+
+    :Parameters:
+
+        array: `numpy.ndarray`
+           A numpy array, that may or may not be masked.
+
+    :Returns:
+        
+        `numpy.ndarray`
+            The compressed numpy array.
+
+    **Examples:**
+
+    >>> x = numpy.ma.array(np.arange(5), mask=[0]*2 + [1]*3)
+    >>> c = n._numpy_compressed(x)
+    >>> c
+    array([0, 1])
+    >>> type(c)
+    <type 'numpy.ndarray'>
+
+        '''
+        if numpy.ma.isMA(array):
+            return array.compressed()
+
+        return array.flatten()
+
+    
     def _write_attributes(self, parent, ncvar, extra={}, omit=()):
         '''TODO
 
@@ -1192,7 +1223,8 @@ class NetCDFWrite(IOWrite):
 
         # Create the node coordinates flattened data
         array = self.implementation.get_array(data)
-        array = array.flatten().compressed()
+#        array = array.flatten().compressed()
+        array = self._numpy_compressed(array)    
         data = self.implementation.initialise_Data(array=array, copy=False)
               
         # ------------------------------------------------------------
@@ -1490,7 +1522,7 @@ class NetCDFWrite(IOWrite):
         return {'part_node_count': ncvar,
                 'part_ncdim'     : ncdim}
 
-            
+
     def _write_interior_ring(self, coord, bounds, encodings):
         '''TODO
 
@@ -1514,8 +1546,11 @@ class NetCDFWrite(IOWrite):
 
         g = self.write_vars
         
-        array = self.implementation.get_data(interior_ring).array.compressed() # TODO impl
-
+#        array = self.implementation.get_data(interior_ring).array.compressed()
+        data = self.implementation.get_data(interior_ring)
+        array = self.implementation.get_array(data)
+        array = self._numpy_compressed(array)
+        
         # Replace the data with its compressed, flattened version
         interior_ring = self.implementation.copy_construct(interior_ring)
         data = self.implementation.initialise_Data(array=array, copy=False)
@@ -2199,12 +2234,13 @@ class NetCDFWrite(IOWrite):
             # dimension. Note that for NETCDF4 output files, datatype
             # is str, so this conversion does not happen.
             # --------------------------------------------------------
-            array = self.implementation.get_array(data)
-            if numpy.ma.is_masked(array):
-                array = array.compressed()
-            else:
-                array = array.flatten()
-                
+            array = self.implementation.get_array(data)            
+#            if numpy.ma.is_masked(array):
+#                array = array.compressed()
+#            else:
+#                array = array.flatten()
+            array = self._numpy_compressed(array)
+
             strlen = len(max(array, key=len))
 
             data = self._convert_to_char(data)
@@ -2250,12 +2286,11 @@ class NetCDFWrite(IOWrite):
         # Check that the array doesn't contain any elements
         # which are equal to any of the missing data values
         if unset_values:
-            if numpy.ma.is_masked(array):
-                temp_array = array.compressed()
-            else:
-                temp_array = array
-
-            if numpy.intersect1d(unset_values, temp_array).size:
+#            if numpy.ma.is_masked(array):
+#                temp_array = array.compressed()
+#            else:
+#                temp_array = array                 
+            if numpy.intersect1d(unset_values, self._numpy_compressed(array)).size:
                 raise ValueError(
                     "ERROR: Can't write data that has _FillValue or missing_value at unmasked point: {!r}".format(ncvar))
         #--- End: if
