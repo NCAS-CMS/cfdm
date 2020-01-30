@@ -809,8 +809,8 @@ class NetCDFRead(IORead):
                 geometry_ncvar = attributes['geometry']
                 self._parse_geometry(ncvar, geometry_ncvar, variable_attributes)
                 
-                # Do not attempt to create a field from a geometry
-                # container variable
+                # Do not attempt to create a field contruct from a
+                # geometry container variable
                 g['do_not_create_field'].add(geometry_ncvar)
         #--- End: if
         
@@ -1258,12 +1258,14 @@ class NetCDFRead(IORead):
         field_ncvar: `str`
             The netCDF variable name of the parent data variable.
     
-        ncvar: `str`
+        geometry_ncvar: `str`
             The netCDF variable name of the geometry container
             variable.
     
         attributes: `dict`
-    
+            All attributes of all netCDF variables, keyed by netCDF
+            variable name.
+
     :Returns:
     
         TODO
@@ -1996,7 +1998,8 @@ class NetCDFRead(IORead):
         self.implementation.nc_set_global_attributes(f, x) #g['global_attributes'])
 
         # ----------------------------------------------------------------
-        # Remove the field's "geometry" property, saving its value
+        # Remove the field construct's "geometry" property, saving its
+        # value
         # ----------------------------------------------------------------
         if g['CF>=1.8']:
             geometry = self.implementation.del_property(f, 'geometry', None)

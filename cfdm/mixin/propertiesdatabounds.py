@@ -998,21 +998,40 @@ class PropertiesDataBounds(PropertiesData):
     >>> g.bounds.data.shape
     (19, 73, 1, 96, 4)
 
-        '''    
+        '''
+        if inplace:
+            c = self
+        else:
+            c = self.copy()
+            
+        ndim = None
+        
+        data = c.get_data(None)          
+        if data is not None:
+            ndim = data.ndim 
+        else:
+            bounds_data = c.get_bounds_data(None)
+            if bounds_data is not None:
+                if self.has_geometry():
+                    ndim = bounds_data.ndim - 1
+                else: 
+                    ndim = bounds_data.ndim - 1
+        #--- End: if
+        
+        if ndim is None:
+            return c
+        print (ndim)       
         # Parse position
-        ndim = self.data.ndim 
         if -ndim-1 <= position < 0:
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
                 "Can't insert dimension: Invalid position: {!r}".format(position))
-
-#        position = self._parse_axes([position])[0]
-
+        
         c = super().insert_dimension(position, inplace=inplace)
         if inplace:
             c = self
-        
+                
         # ------------------------------------------------------------
         # Expand the dims of the bounds
         # ------------------------------------------------------------
@@ -1028,8 +1047,7 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring.insert_dimension(position, inplace=True)
 
         if inplace:
-            c = None
-            
+            c = None            
         return c
 
 

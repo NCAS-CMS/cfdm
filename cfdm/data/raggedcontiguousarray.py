@@ -71,9 +71,9 @@ class RaggedContiguousArray(abstract.CompressedArray,
     numpy indexing (given the restrictions on the type of indices
     allowed) is:
     
-      * When two or more dimension's indices are sequences of integers
-        then these indices work independently along each dimension
-        (similar to the way vector subscripts work in Fortran).
+    * When two or more dimension's indices are sequences of integers
+      then these indices work independently along each dimension
+      (similar to the way vector subscripts work in Fortran).
 
         '''
         # ------------------------------------------------------------

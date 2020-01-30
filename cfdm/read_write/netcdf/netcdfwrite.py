@@ -1330,10 +1330,10 @@ class NetCDFWrite(IOWrite):
 
         # Create the node count flattened data
         array = self.implementation.get_array(self.implementation.get_data(bounds))
-        if self.implementation.get_data_ndim(bounds) == 2:
-            array = numpy.ma.count(array, axis=1)
-        else:
-            array = numpy.ma.count(array, axis=2).sum(axis=1)
+        if self.implementation.get_data_ndim(bounds) == 2:    # DCH
+            array = numpy.ma.count(array, axis=1)             # DCH
+        else:                                                 # DCH
+            array = numpy.ma.count(array, axis=2).sum(axis=1) # DCH
             
         data = self.implementation.initialise_Data(array=array, copy=False)
               
@@ -1459,7 +1459,7 @@ class NetCDFWrite(IOWrite):
     {}
 
         '''
-        if self.implementation.get_data_ndim(bounds) < 3:
+        if self.implementation.get_data_ndim(bounds) < 3: # DCH
             # No need for a part node count variable required
             return {}
 
