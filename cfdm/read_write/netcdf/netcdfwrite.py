@@ -1169,7 +1169,7 @@ class NetCDFWrite(IOWrite):
         for clim_axis in f.climatological_time_axes():
             if clim_axis == axes:
                 if g['verbose']:
-                    print ('    Setting climatological bounds') # pragma: no cover
+                    print('    Setting climatological bounds') # pragma: no cover
                     
                 extra['climatology'] = extra.pop('bounds')
                 break

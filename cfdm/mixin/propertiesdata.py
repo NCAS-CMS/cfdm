@@ -36,17 +36,17 @@ class PropertiesData(Properties):
     
     **Examples:**
     
-    >>> f.data.shape
+    >>> f.shape
     (1, 10, 9)
-    >>> f[:, :, 1].data.shape
+    >>> f[:, :, 1].shape
     (1, 10, 1)
-    >>> f[:, 0].data.shape
+    >>> f[:, 0].shape
     (1, 1, 9)
-    >>> f[..., 6:3:-1, 3:6].data.shape
+    >>> f[..., 6:3:-1, 3:6].shape
     (1, 3, 3)
-    >>> f[0, [2, 9], [4, 8]].data.shape
+    >>> f[0, [2, 9], [4, 8]].shape
     (1, 2, 2)
-    >>> f[0, :, -2].data.shape
+    >>> f[0, :, -2].shape
     (1, 10, 1)
 
         '''
@@ -111,12 +111,151 @@ class PropertiesData(Properties):
         if isinstance(axes, int):
             axes = (axes,)
         
-        ndim = self.data.ndim
+#        ndim = self.data.ndim
+        ndim = self.ndim
         
         if isinstance(axes, (int, int)):
             axes = (axes,)
             
         return [(i + ndim if i < 0 else i) for i in axes]
+
+
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
+    @property
+    def ndim(self):
+        '''The number of dimensions in the data array.
+
+    .. seealso:: `data`, `has_data`, `isscalar`, `shape`, `size`
+
+    **Examples:**
+
+    >>> f.shape
+    (73, 96)
+    >>> f.ndim
+    2
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73, 1, 96)
+    >>> f.ndim
+    3
+    >>> f.size
+    7008
+
+    >>>  f.shape
+    (73,)
+    >>> f.ndim
+    1
+    >>> f.size
+    73
+
+    >>> f.shape
+    ()
+    >>> f.ndim
+    0
+    >>> f.size
+    1
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.ndim
+
+        raise AttributeError("{!r} object has no attribute 'ndim'".format(
+            self.__class__.__name__))
+
+    
+    @property
+    def shape(self):
+        '''A tuple of the data array's dimension sizes.
+
+    .. seealso:: `data`, `has_data`, `ndim`, `size`
+
+    **Examples:**
+
+    >>> f.shape
+    (73, 96)
+    >>> f.ndim
+    2
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73, 1, 96)
+    >>> f.ndim
+    3
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73,)
+    >>> f.ndim
+    1
+    >>> f.size
+    73
+
+    >>> f.shape
+    ()
+    >>> f.ndim
+    0
+    >>> f.size
+    1
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.shape
+
+        raise AttributeError("{!r} object has no attribute 'shape'".format(
+            self.__class__.__name__))
+
+
+    @property
+    def size(self):
+        '''The number of elements in the data array.
+
+    .. seealso:: `data`, `has_data`, `ndim`, `shape`
+
+    **Examples:**
+
+    >>> f.shape
+    (73, 96)
+    >>> f.ndim
+    2
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73, 1, 96)
+    >>> f.ndim
+    3
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73,)
+    >>> f.ndim
+    1
+    >>> f.size
+    73
+
+    >>> f.shape
+    ()
+    >>> f.ndim
+    0
+    >>> f.size
+    1
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.size
+
+        raise AttributeError("{!r} object has no attribute 'size'".format(
+            self.__class__.__name__))
 
 
     # ----------------------------------------------------------------
@@ -385,11 +524,11 @@ class PropertiesData(Properties):
     
     **Examples:**
     
-    >>> f.data.shape
+    >>> f.shape
     (19, 73, 96)
-    >>> f.insert_dimension(position=3).data.shape
+    >>> f.insert_dimension(position=3).shape
     (19, 73, 96, 1)
-    >>> f.insert_dimension(position=-1).data.shape
+    >>> f.insert_dimension(position=-1).shape
     (19, 73, 1, 96)
 
         '''       
@@ -444,13 +583,13 @@ class PropertiesData(Properties):
     
     **Examples:**
     
-    >>> f.data.shape
+    >>> f.shape
     (1, 73, 1, 96)
-    >>> f.squeeze().data.shape
+    >>> f.squeeze().shape
     (73, 96)
-    >>> f.squeeze(0).data.shape
+    >>> f.squeeze(0).shape
     (73, 1, 96)
-    >>> f.squeeze([-3, 2]).data.shape
+    >>> f.squeeze([-3, 2]).shape
     (73, 96)
 
         '''
@@ -500,11 +639,11 @@ class PropertiesData(Properties):
     
     **Examples:**
     
-    >>> f.data.shape
+    >>> f.shape
     (19, 73, 96)
-    >>> f.tranpose().data.shape
+    >>> f.tranpose().shape
     (96, 73, 19)
-    >>> f.tranpose([1, 0, 2]).data.shape
+    >>> f.tranpose([1, 0, 2]).shape
     (73, 19, 96)
 
         '''       
