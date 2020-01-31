@@ -1101,6 +1101,7 @@ class NetCDFWrite(IOWrite):
 
         if (g['output_version'] >= g['CF-1.8'] and
             self.implementation.is_geometry(coord)):
+
             # --------------------------------------------------------
             # CF>=1.8 and we have geometry bounds, which are dealt
             # with separately
@@ -1226,7 +1227,7 @@ class NetCDFWrite(IOWrite):
 #        array = array.flatten().compressed()
         array = self._numpy_compressed(array)    
         data = self.implementation.initialise_Data(array=array, copy=False)
-              
+              #ppp
         # ------------------------------------------------------------
         # Create a bounds variable to hold the node coordinates
         # variable. This is what will be written to disk.
@@ -1334,7 +1335,7 @@ class NetCDFWrite(IOWrite):
             array = numpy.ma.count(array, axis=1)             # DCH
         else:                                                 # DCH
             array = numpy.ma.count(array, axis=2).sum(axis=1) # DCH
-            
+
         data = self.implementation.initialise_Data(array=array, copy=False)
               
         # ------------------------------------------------------------
@@ -1450,7 +1451,7 @@ class NetCDFWrite(IOWrite):
     
         `dict`
     
-    ****Examples:****
+    **Examples:**
     
     >>> _write_part_node_count(c, b)
     {'part_node_count': 'pnc'}
@@ -1459,8 +1460,11 @@ class NetCDFWrite(IOWrite):
     {}
 
         '''
-        if self.implementation.get_data_ndim(bounds) < 3: # DCH
-            # No need for a part node count variable required
+#        if self.implementation.get_data_ndim(bounds) < 3: # DCH
+#            # No need for a part node count variable required
+#            return {}
+        if self.implementation.get_data_shape(bounds)[1] == 1:
+            # No part node count variable required
             return {}
 
         g = self.write_vars

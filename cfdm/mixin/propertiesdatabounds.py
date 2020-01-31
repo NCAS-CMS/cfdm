@@ -1056,7 +1056,7 @@ class PropertiesDataBounds(PropertiesData):
 
     .. versionadded:: 1.8.0
     
-    .. seealso: `del_node_count`, `get_node_count`, `has_node_count`
+    .. seealso:: `del_node_count`, `get_node_count`, `has_node_count`
     
     :Parameters:
     
@@ -1087,8 +1087,8 @@ class PropertiesDataBounds(PropertiesData):
 
     .. versionadded:: 1.8.0
     
-    .. seealso: `del_part_node_count`, `get_part_node_count`,
-                `has_part_node_count`
+    .. seealso:: `del_part_node_count`, `get_part_node_count`,
+                 `has_part_node_count`
     
     :Parameters:
     

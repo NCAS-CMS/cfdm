@@ -144,6 +144,23 @@ class CFDMImplementation(Implementation):
         return '<{0}: >'.format(self.__class__.__name__)
 
 
+    def bounds_insert_dimension(self, bounds, position):
+        '''TODO
+
+    :Parameters:
+    
+        bounds: `Bounds`
+    
+        position: `int`
+    
+    :Returns:
+    
+        `Bounds`
+    
+        '''
+        return bounds.insert_dimension(position=position)
+
+
     def conform_geometry_variables(self, field):
         '''TODO
 
@@ -200,7 +217,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: construct
+        construct
     
         '''
         return construct.insert_dimension(position=position)
@@ -211,8 +228,8 @@ class CFDMImplementation(Implementation):
 
     :Returns:
     
-        out:
             The deep copy.
+
         '''
         return construct.copy()
 
@@ -223,6 +240,23 @@ class CFDMImplementation(Implementation):
         '''
         return field.convert(construct_id, full_domain=False)
 
+
+#    def data_insert_dimension_inplace(self, data, position):
+#        '''TODO
+#
+#    :Parameters:
+#    
+#        data: `Data`
+#    
+#        position: `int`
+#
+#    :Returns:
+#
+#        `None`
+#
+#        '''
+#        data.insert_dimension(position=position, inplace=True)
+        
         
     def del_property(self, construct, prop, default):
         '''TODO
@@ -231,7 +265,6 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out:
             The value of the deleted property
     
     **Examples:**
@@ -302,7 +335,8 @@ class CFDMImplementation(Implementation):
 
     :Returns:
     
-        out: `tuple`
+        `tuple`
+
         '''
         return cell_method.get_axes(default=default)
 
@@ -312,7 +346,8 @@ class CFDMImplementation(Implementation):
 
     :Returns:
 
-        out: `str`
+        `str`
+
         '''
         return str(cell_method)
 
@@ -322,7 +357,8 @@ class CFDMImplementation(Implementation):
 
     :Returns:
 
-        out: `str`
+        `str`
+
         '''
         return cell_method.qualifiers()
 
@@ -336,7 +372,8 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `numpy.ndarray`
+        `numpy.ndarray`
+
         '''
         return data.compressed_array
 
@@ -346,8 +383,9 @@ class CFDMImplementation(Implementation):
 
     :Returns:
     
-        out: `list`
-            '''
+        `list`
+
+        '''
         if construct is not None:
             data = self.get_data(construct)
         else:
@@ -417,7 +455,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `set`
+        `set`
 
         '''
         return coordinate_reference.coordinates()
@@ -428,7 +466,7 @@ class CFDMImplementation(Implementation):
 
     :Returns:
 
-        out: `dict`
+        `dict`
 
         '''
         return coordinate_reference.coordinate_conversion.parameters()
@@ -460,7 +498,8 @@ class CFDMImplementation(Implementation):
 
     :Returns:
 
-        out: `list`
+        `list`
+
         '''
         return data.get_compressed_axes()
 
@@ -475,7 +514,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `int`
+        `int`
             The number of dimensions spanned by the data array.
     
     **Examples:**
@@ -493,6 +532,35 @@ class CFDMImplementation(Implementation):
         return parent.data.ndim
 
 
+    def get_data_shape(self, parent):
+        '''Return the shape of the data array.
+
+    :Parameters:
+    
+        parent: 
+            The object containing the data array.
+    
+    :Returns:
+    
+        `tuple`
+            The shape of the data array.
+    
+    **Examples:**
+    
+    >>> d
+    <DimensionCoordinate: latitude(180) degrees_north>
+    >>> w.get_data_shape(d)
+    (180,)
+    
+    >>> b
+    <Bounds: latitude(180, 2) degrees_north>
+    >>> w.get_data_shape(b)
+    (180, 2)
+
+        '''
+        return parent.data.shape
+
+
     def get_data_size(self, parent):
         '''Return the number of elements in the data array.
 
@@ -503,7 +571,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `int`
+        `int`
             The number of elements in the data array.
     
     **Examples:**
@@ -535,7 +603,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: datum object
+        datum object
             
         '''
         return coordinate_reference.datum
@@ -550,7 +618,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `dict`
+        `dict`
     
         '''        
         return ref.datum.parameters()
@@ -649,7 +717,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `set`
+        `set`
             The selection of domain axis construct identifiers that are
             unlimited.
 
@@ -731,7 +799,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `bool`
+        `bool`
 
         '''
         datum0 = coordinate_reference0.datum
@@ -746,7 +814,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `int`
+        `int`
     
         '''
         return construct.data.size
@@ -762,7 +830,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `bool`
+        `bool`
             Whether the construct is external.
     
     `**Examples:**
@@ -784,7 +852,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `dict`
+        `dict`
             A dictionary whose values are field ancillary objects, keyed
             by unique identifiers.
     
@@ -812,7 +880,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `int`
+        `int`
         
         '''
         return parent.data.max()
@@ -825,7 +893,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `int`
+        `int`
             
         '''
         return parent.data.sum()
@@ -841,7 +909,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `str` or `None`
+        `str` or `None`
             The measure property, or `None` if it has not been set.
     
     **Examples:**
@@ -862,8 +930,6 @@ class CFDMImplementation(Implementation):
       
     :Returns:
     
-        out: 
-
         '''
         return construct.get_data().get_index(default=None)
 
@@ -900,7 +966,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `str` or `None`
+        `str` or `None`
             The measure property, or `None` if it has not been set.
     
     **Examples:**
@@ -925,7 +991,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: 
+        `str`
             The netCDF dimension name.
     
     **Examples:**
@@ -993,7 +1059,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `dict`
+        `dict`
             The property names and their values
     
     **Examples:**
@@ -1015,7 +1081,6 @@ class CFDMImplementation(Implementation):
 
     :Returns:
 
-       out:
        '''
        return construct.get_property(prop, default=default)
 
@@ -1027,7 +1092,6 @@ class CFDMImplementation(Implementation):
 
     :Returns:
 
-       out:
        '''
        return construct.get_geometry(default=default)
 
@@ -1304,7 +1368,7 @@ class CFDMImplementation(Implementation):
 
     :Returns:
     
-        out: `bool`
+        `bool`
             The value of the 'climatology' cell extent parameter, or
             False if not set.
 
@@ -1322,7 +1386,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `bool`
+        `bool`
              True if the coordinate bounds are geometries, otherwise
              False.
 
@@ -1358,7 +1422,8 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `str`
+        `str`
+
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
 
@@ -1391,7 +1456,8 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `str`
+        `str`
+
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
 
@@ -1409,7 +1475,8 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `str`
+        `str`
+
         '''
         return field.set_construct(construct, copy=copy)
 
@@ -1451,8 +1518,9 @@ class CFDMImplementation(Implementation):
 
     :Returns:
 
-        out: `str`
-            '''
+        `str`
+
+        '''
         return field.set_construct(construct, copy=copy)
 
 
@@ -1531,7 +1599,8 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `str`
+        `str`
+
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
 
@@ -1552,7 +1621,8 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `str`
+        `str`
+
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
 
@@ -1570,7 +1640,8 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `str`
+        `str`
+
         '''
         return field.set_construct(construct, copy=copy)
 
@@ -1597,7 +1668,8 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `str`
+        `str`
+
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
 
@@ -1753,7 +1825,8 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `bool`
+        `bool`
+
         '''
         return construct.has_bounds()
     
@@ -1767,7 +1840,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `bool`
+        `bool`
     
     **Examples:**
     
@@ -1775,7 +1848,7 @@ class CFDMImplementation(Implementation):
     ...     print ref, 'has a datum'
     ... else:
     ...     print ref, 'does not have a datum'
-    
+
         '''
         return bool(coordinate_reference.datum)
 
@@ -1790,7 +1863,7 @@ class CFDMImplementation(Implementation):
     
     :Returns:
     
-        out: `bool`
+        `bool`
             `True` if the property exists, otherwise `False`.
     
     **Examples:**

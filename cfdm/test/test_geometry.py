@@ -157,9 +157,14 @@ class DSGTest(unittest.TestCase):
 
         f2 = cfdm.read(self.tempfilename, verbose=False)
 
+#        cfdm.write(f, 'delme.nc', Conventions='CF-'+VN, verbose=False)
+#        f2 = cfdm.read('delme.nc', verbose=False)
+
         self.assertTrue(len(f2) == 2, 'f2 = '+repr(f2))
         
         for a, b in zip(f, f2):
+#            a.dump()
+#            b.dump()
             self.assertTrue(a.equals(b, verbose=True))
 
 

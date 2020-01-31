@@ -2921,6 +2921,8 @@ class NetCDFRead(IORead):
 #            if bounds_properties.get('units') is not None:
             bounds_data = self._create_data(bounds_ncvar, bounds,
                                             parent_ncvar=ncvar)
+#                                            geometry_bounds=(geometry is not None))
+            
 #                                            non_compressed_dimensions=nc_dimensions=bounds_dimensions)
 #ppp            
 #            else:
@@ -2983,6 +2985,13 @@ class NetCDFRead(IORead):
 
                 g['node_coordinates_as_bounds'].add(bounds_ncvar)
 
+                if self.implementation.get_data_ndim(bounds) == 2:
+                    # Insert a size 1 part dimension
+                    bounds = self.implementation.bounds_insert_dimension(
+                        bounds=bounds,
+                        position=1)
+                    self.implementation.set_bounds(c, bounds, copy=False)
+                    
                 # Add a node count variable
                 nc = geometry.get('node_count')
                 if nc is not None:
@@ -3388,7 +3397,8 @@ class NetCDFRead(IORead):
     
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None,
-                     parent_ncvar=None, nc_dimensions=None): 
+                     parent_ncvar=None, nc_dimensions=None):
+#                     geometry_bounds=False): 
         '''TODO
 
     :Parameters:
@@ -3401,20 +3411,26 @@ class NetCDFRead(IORead):
         unpacked_dtype: `False` or `numpy.dtype`, optional
     
         uncompress_override: `bool`, optional
-    
+        
+        geometry_boounds: `bool`
+            If True then the data are destined to become simple
+            geometry coordinate bounds.
+
     :Returns:
     
         `Data`
 
         '''
         g = self.read_vars
-
+        
         array = self._create_netcdfarray(ncvar,
                                          unpacked_dtype=unpacked_dtype)
 
         if array is None:
             return None
 
+#        insert_size1_geometry_bounds_part_dimension = geometry_bounds
+                                         
         units    = g['variable_attributes'][ncvar].get('units', None)
         calendar = g['variable_attributes'][ncvar].get('calendar', None)
 
@@ -3466,7 +3482,7 @@ class NetCDFRead(IORead):
                              for dim in self._ncdimensions(ncvar)])
                         compressed_dimension = g['variable_dimensions'][ncvar].index(c['sample_dimension'])
                         array = self._create_gathered_array(
-                            gathered_array=self._create_Data(array), #array,
+                            gathered_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
                             compressed_dimension=compressed_dimension,
                             list_variable=c['list_variable'])
@@ -3489,15 +3505,13 @@ class NetCDFRead(IORead):
                                                      c['element_dimension_2_size']]
                         uncompressed_shape = tuple(uncompressed_shape)
                         
-#                        uncompressed_shape = (c['instance_dimension_size'],
-#                                              c['element_dimension_1_size'],
-#                                              c['element_dimension_2_size'])
                         array = self._create_ragged_indexed_contiguous_array(
-#                            ragged_indexed_contiguous_array=array,
                             ragged_indexed_contiguous_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
                             count_variable=c['count_variable'],
                             index_variable=c['index_variable'])
+
+#                        insert_size1_geometry_bounds_part_dimension = False
                     elif 'ragged_contiguous' in c:                    
                         # --------------------------------------------
                         # Contiguous ragged array
@@ -3513,12 +3527,7 @@ class NetCDFRead(IORead):
                                                      c['element_dimension_size']]
                         uncompressed_shape = tuple(uncompressed_shape)
 
-#                        print('uncompressed_shape=',uncompressed_shape)
-#                        uncompressed_shape=(c['instance_dimension_size'],
-#                                            c['element_dimension_size'])
-
                         array = self._create_ragged_contiguous_array(
-#                            ragged_contiguous_array=array,
                             ragged_contiguous_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
                             count_variable=c['count_variable'])
@@ -3537,18 +3546,19 @@ class NetCDFRead(IORead):
                                                      c['element_dimension_size']]
                         uncompressed_shape = tuple(uncompressed_shape)
 
-#                        uncompressed_shape = (c['instance_dimension_size'],
-#                                              c['element_dimension_size'])
                         array = self._create_ragged_indexed_array(
-                            ragged_indexed_array=self._create_Data(array), #array,
+                            ragged_indexed_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
                             index_variable=c['index_variable'])
                     else:
                         raise ValueError("Bad compression vibes. c.keys()={}".format(list(c.keys())))
         #--- End: if
 
-        return self._create_Data(array, units=units, calendar=calendar) #, ncvar=ncvar)
-
+        return self._create_Data(
+            array, units=units,
+            calendar=calendar)
+#            insert_size1_geometry_bounds_part_dimension=insert_size1_geometry_bounds_part_dimension)
+    
 
     def _create_domain_axis(self, size, ncdim=None):
         '''TODO
@@ -4034,7 +4044,9 @@ class NetCDFRead(IORead):
 
     
     def _create_Data(self, array=None, units=None, calendar=None,
-                     ncvar=None, **kwargs):
+                     ncvar=None,
+#                     insert_size1_geometry_bounds_part_dimension=False,
+                     **kwargs):
         '''TODO
     
     :Parameters:
@@ -4043,15 +4055,20 @@ class NetCDFRead(IORead):
             The netCDF variable from which to get units and calendar
 
         '''
-        g = self.read_vars
+#        g = self.read_vars
 
-        return self.implementation.initialise_Data(array=array,
+        data = self.implementation.initialise_Data(array=array,
                                                    units=units,
                                                    calendar=calendar,
                                                    copy=False,
                                                    **kwargs)
 
+#        if insert_size1_geometry_bounds_part_dimension:
+#            self.implementation.data_insert_dimension_inplace(data, position=1)
 
+        return data
+
+    
     def _copy_construct(self, construct_type, field_ncvar, ncvar):
         '''Return a copy of an existing construct.
 
