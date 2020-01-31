@@ -4,6 +4,7 @@ version 1.8.0
 
 **Not yet yeleased**
 
+* New attributes: `cfdm.Field.ndim`, `cfdm.Field.shape`, `cfdm.Field.size`
 * New method: `cfdm.Data.any`
 * New keyword parameter to `cfdm.environment`: ``paths``.
 * Fixed bug that prevented the writing of ``'NETCDF3_64BIT_OFFSET'``

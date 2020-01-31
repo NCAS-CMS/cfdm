@@ -15,9 +15,10 @@
 ----
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    introduction
+   cf_data_model
    installation
    tutorial
    api_reference

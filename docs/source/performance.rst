@@ -10,11 +10,15 @@
 
 Version |release| for version |version| of the CF conventions.
 
+
+.. contents::
+   :local:
+   :backlinks: entry
+
 .. _Memory:
 
 **Memory**
 ----------
-----
 
 When a dataset is read using `cfdm.read` but `lazy loading
 <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all
@@ -34,11 +38,12 @@ that a copy takes up very little memory, even when the original data
 comprises a very large array in memory, and the copy operation is
 fast.
 
+----
+
 .. _In-place-operations:
 
 **In-place operations**
 -----------------------
-----
 
 Some methods that create new a instance by default have an option to
 perform the operation in-place, rather than creating a new independent
