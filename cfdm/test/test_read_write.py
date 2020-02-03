@@ -97,12 +97,14 @@ class read_writeTest(unittest.TestCase):
                     'NETCDF3_64BIT_OFFSET',
                     'NETCDF3_64BIT_DATA',
                     'NETCDF4',
-                    'NETCDF4_CLASSIC'):
+                    'NETCDF4_CLASSIC',):
             cfdm.write(f, tmpfile, fmt=fmt)
-            g = cfdm.read(tmpfile)[0]
+            g = cfdm.read(tmpfile)
+            self.assertTrue(len(g) == 1, 'g = '+repr(g))
+            g = g[0]
             self.assertTrue(f.equals(g, verbose=True),
                             'Bad read/write of format: {}'.format(fmt))
-
+            
 
     def test_read_write_netCDF4_compress_shuffle(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
