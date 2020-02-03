@@ -105,18 +105,20 @@ class PropertiesData(Properties):
             The conformed axes.
 
         '''
+#        ndim = self.data.ndim
+#        ndim = self.ndim
+        
+#        if axes is None:
+#            return list(range(ndim))
+        
         if axes is None:
             return axes
 
         if isinstance(axes, int):
             axes = (axes,)
-        
-#        ndim = self.data.ndim
+            
         ndim = self.ndim
         
-        if isinstance(axes, (int, int)):
-            axes = (axes,)
-            
         return [(i + ndim if i < 0 else i) for i in axes]
 
 
@@ -604,7 +606,6 @@ class PropertiesData(Properties):
 
         if inplace:
             v = None
-
         return v
 
 

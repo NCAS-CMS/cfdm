@@ -384,7 +384,7 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is not None:
             shape = bounds.shape
             if self.has_geometry():
-               shape = shape[:-2]
+                shape = shape[:-2]
             else:
                 shape = shape[:-1]
 
@@ -1315,8 +1315,9 @@ class PropertiesDataBounds(PropertiesData):
     >>> g.shape
     (73, 96, 4)
 
-        '''     
-        axes = self._parse_axes(axes)
+        '''
+        if axes is None:
+            axes = tuple([i for i, n in enumerate(self.shape) if n == 1])
 
         c = super().squeeze(axes, inplace=inplace)
         if inplace:
@@ -1449,7 +1450,7 @@ class PropertiesDataBounds(PropertiesData):
     functionality nor external appearance.
 
     A construct that is already uncompressed will be returned
-    uncompressed.
+    unchanged.
 
     The following type of compression are available:
 

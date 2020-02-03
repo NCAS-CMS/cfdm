@@ -365,7 +365,7 @@ class NetCDFWrite(IOWrite):
 
         dtype = getattr(data, 'dtype', None)
         if dtype is None or dtype.kind in 'SU':
-            if g['fmt'] == 'NETCDF4' and not self._is_masked(data):
+            if g['fmt'] == 'NETCDF4' and not self.implementation.is_masked(data):
                 return str
             
             return 'S1'            
@@ -376,24 +376,6 @@ class NetCDFWrite(IOWrite):
             
         return '{0}{1}'.format(dtype.kind, dtype.itemsize)
 
-
-    def _is_masked(self, data):
-        '''Whether or not the data has any masked values.
-        
-    .. versionadded:: 1.8.0
-
-    :Parameters:
-    
-        data: `Data`
-    
-    :Returns:
-    
-        `bool`
-            Whether or not the data has any masked values.
-
-        '''
-        return data.mask.any()
-    
     
     def _string_length_dimension(self, size):
         '''Create, if necessary, a netCDF dimension for string variables.

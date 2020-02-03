@@ -1394,6 +1394,24 @@ class CFDMImplementation(Implementation):
         return bool(coordinate.get_geometry(None) in ('point', 'line', 'polygon'))
 
 
+    def is_masked(self, data):
+        '''Whether or not the data has any masked values.
+        
+    .. versionadded:: 1.8.0
+
+    :Parameters:
+    
+        data: `Data`
+    
+    :Returns:
+    
+        `bool`
+            Whether or not the data has any masked values.
+
+        '''
+        return data.mask.any()
+    
+
     def nc_set_instance_dimension(self, variable, ncdim):
         '''TODO
         '''
