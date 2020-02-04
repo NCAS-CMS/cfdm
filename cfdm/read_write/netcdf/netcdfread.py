@@ -630,16 +630,7 @@ class NetCDFRead(IORead):
         # each key's value is a dictionary of that variable's netCDF
         # attributes. E.g. attributes['tas']['units']='K'
         # ------------------------------------------------------------
-
-        # The netCDF attributes for each variable.
-        #
-        # E.g. {'lon': {'standard_name': 'longitude'}}
         variable_attributes = {}
-
-        # The netCDF attributes for each variable.
-        #
-        # E.g. {'lon': {'standard_name': 'longitude'}}
-        
         variable_dimensions = {}
         variable_dataset    = {}
         variable_filename   = {}
@@ -661,13 +652,9 @@ class NetCDFRead(IORead):
             #--- End: for
 
             variable_dimensions[ncvar] = tuple(variable.dimensions)
-
-            variable_dataset[ncvar] = nc
-            
-            variable_filename[ncvar] = g['filename']
-            
-            variables[ncvar] = variable
-        #--- End: for
+            variable_dataset[ncvar]    = nc        
+            variable_filename[ncvar]   = g['filename']            
+            variables[ncvar]           = variable
 
         # The netCDF attributes for each variable
         #
@@ -2030,6 +2017,7 @@ class NetCDFRead(IORead):
 #        unlimited = []
         
         for ncdim in field_ncdimensions:
+#            print (ncdim, 'ncdim=',  g['variable_dimensions'].get(ncdim))
             if g['variable_dimensions'].get(ncdim) == (ncdim,):
                 # There is a Unidata coordinate variable for this
                 # dimension, so create a domain axis and dimension
@@ -2051,7 +2039,7 @@ class NetCDFRead(IORead):
                 if verbose:
                     print('    [1] Inserting', repr(coord)) # pragma: no cover
                 dim = self.implementation.set_dimension_coordinate(field=f, construct=coord,
-                                                   axes=[axis], copy=False)
+                                                                   axes=[axis], copy=False)
                 
                 self._reference(ncdim)
                 if coord.has_bounds():
@@ -2061,7 +2049,6 @@ class NetCDFRead(IORead):
                 # Set unlimited status of axis
                 if nc.dimensions[ncdim].isunlimited():
                     self.implementation.nc_set_unlimited_axis(f, axis)
-#                    unlimited.append(axis)
     
                 ncvar_to_key[ncdim] = dim
                 g['coordinates'].setdefault(field_ncvar, []).append(ncdim)
