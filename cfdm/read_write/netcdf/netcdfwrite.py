@@ -324,9 +324,10 @@ class NetCDFWrite(IOWrite):
     For example, if variable.dtype is 'float32', then 'f4' will be
     returned.
         
-    For a NETCDF4 format file, numpy string data types will return
-    `str` regardless of the numpy string length and a netCDF4 string
-    type variable will be created.
+    For a NETCDF4 or CFA4 format file, numpy string data types will
+    either return `str` regardless of the numpy string length (and a
+    netCDF4 string type variable will be created) or, if
+    `self.write_vars['string']`` is `False`, ``'S1'`` (see below).
 
     For all other output netCDF formats (such NETCDF4_CLASSIC,
     NETCDF3_64BIT, etc.) numpy string data types will return 'S1'
@@ -356,16 +357,15 @@ class NetCDFWrite(IOWrite):
         if not isinstance(variable, numpy.ndarray):        
             data = self.implementation.get_data(variable, None)
             if data is None:
-#                if g['fmt'] == 'NETCDF4':
-#                    return str
-                
                 return 'S1'
         else:
             data = variable
 
         dtype = getattr(data, 'dtype', None)
         if dtype is None or dtype.kind in 'SU':
-            if g['fmt'] == 'NETCDF4' and not self.implementation.is_masked(data):
+#            if g['fmt'] == 'NETCDF4' and not self.implementation.is_masked(data):
+#                return str
+            if g['fmt'] == 'NETCDF4' and g['string']:
                 return str
             
             return 'S1'            
@@ -3207,8 +3207,8 @@ class NetCDFWrite(IOWrite):
               file_descriptors=None, external=None, Conventions=None,
               datatype=None, least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
-              shuffle=True, scalar=True, extra_write_vars=None,
-              verbose=False):
+              shuffle=True, scalar=True, string=True,
+              extra_write_vars=None, verbose=False):
         '''Write fields to a netCDF file.
         
     NetCDF dimension and variable names will be taken from variables'
@@ -3317,12 +3317,15 @@ class NetCDFWrite(IOWrite):
     
              *Parameter example:*
                ``Conventions=['CF-1.7', 'CMIP-6.2']``
-    
+
+        string: `bool`, optional
+            TODO
+
     :Returns:
     
         `None`
     
-    :Examples 2:
+    **Examples:**
     
     >>> f
     [<CF Field: air_pressure(30, 24)>,
@@ -3379,6 +3382,11 @@ class NetCDFWrite(IOWrite):
                                        'leap_year', 'leap_month'),
             # Data type conversions to be applied prior to writing
             'datatype': {},
+
+            # Whether or not to write string data-types to netCDF4
+            # files (as opposed to car data-types).
+            'string': string,
+            
             # Print statements
             'verbose': False,
 

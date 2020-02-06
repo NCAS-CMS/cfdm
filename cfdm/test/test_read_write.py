@@ -243,26 +243,29 @@ class read_writeTest(unittest.TestCase):
             self.assertTrue(f[j].data.equals(f[i].data, verbose=1),
                             "{!r} {!r}".format(f[j], f[i]))
 
-        for fmt0 in ('NETCDF4',
-                     'NETCDF3_CLASSIC',
-                     'NETCDF4_CLASSIC',
-                     'NETCDF3_64BIT',
-                     'NETCDF3_64BIT_OFFSET',
-                     'NETCDF3_64BIT_DATA'):
-            f0 = cfdm.read(self.string_filename)
-            cfdm.write(f0, tmpfile0, fmt=fmt0)
-            
-            for fmt1 in ('NETCDF4',
+
+        for string0 in (True, False):
+            for fmt0 in ('NETCDF4',
                          'NETCDF3_CLASSIC',
                          'NETCDF4_CLASSIC',
                          'NETCDF3_64BIT',
                          'NETCDF3_64BIT_OFFSET',
                          'NETCDF3_64BIT_DATA'):
-                f1 = cfdm.read(self.string_filename)
-                cfdm.write(f0, tmpfile1, fmt=fmt1)
-
-                for i, j in zip(cfdm.read(tmpfile1), cfdm.read(tmpfile0)):
-                    self.assertTrue(i.equals(j, verbose=1))
+                f0 = cfdm.read(self.string_filename)
+                cfdm.write(f0, tmpfile0, fmt=fmt0, string=string0)
+                
+                for string1 in (True, False):
+                    for fmt1 in ('NETCDF4',
+                                 'NETCDF3_CLASSIC',
+                                 'NETCDF4_CLASSIC',
+                                 'NETCDF3_64BIT',
+                                 'NETCDF3_64BIT_OFFSET',
+                                 'NETCDF3_64BIT_DATA'):
+                        f1 = cfdm.read(self.string_filename)
+                        cfdm.write(f0, tmpfile1, fmt=fmt1, string=string1)
+    
+                        for i, j in zip(cfdm.read(tmpfile1), cfdm.read(tmpfile0)):
+                            self.assertTrue(i.equals(j, verbose=1))
         #--- End: for
         
                 

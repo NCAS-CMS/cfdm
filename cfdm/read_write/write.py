@@ -10,8 +10,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           file_descriptors=None, external=None, Conventions=None,
           datatype=None, least_significant_digit=None,
           endian='native', compress=0, fletcher32=False, shuffle=True,
-          verbose=False,
-          _implementation=_implementation):
+          string=True, verbose=False, _implementation=_implementation):
     '''Write field constructs to a netCDF file.
 
     **File format**
@@ -333,7 +332,10 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             <http://unidata.github.io/netcdf4-python>`_ for more
             details.
     
-        verbose: `bool`, optional
+       string: `bool`, optional
+           TODO
+
+       verbose: `bool`, optional
             If True then print a summary of how constructs map to
             output netCDF dimensions, variables and attributes.
     
@@ -371,5 +373,5 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      least_significant_digit=least_significant_digit,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
-                     verbose=verbose, extra_write_vars=None)
-        
+                     string=string, verbose=verbose,
+                     extra_write_vars=None)
