@@ -1539,11 +1539,11 @@ Bounds
 
 A coordinate construct may contain an array of cell bounds that
 provides the extent of each cell by defining the locations of the cell
-vertices. This is in addition to the main data array that contains a
-grid point location for each cell. The cell bounds are stored in a
-`Bounds` class instance that is accessed with the `~Coordinate.bounds`
-attribute, or `~Coordinate.get_bounds` method, of the coordinate
-construct.
+vertices. This is in addition to the main coordinate data array that
+contains a representative grid point location for each cell. The cell
+bounds are stored in a `Bounds` class instance that is accessed with
+the `~Coordinate.bounds` attribute, or `~Coordinate.get_bounds`
+method, of the coordinate construct.
 
 A `Bounds` instance shares the :ref:`the same API as the field
 construct <Data>` for accessing its data.
@@ -1584,6 +1584,63 @@ parent coordinate construct, but it may also have its own properties
     'units': 'degrees'}  
    >>> bounds.properties()
    {}
+
+Geometries
+^^^^^^^^^^
+
+For many geospatial applications, cell bounds can not be repreented by
+a simple line or polygon, and different cells may have different
+numbers of bounds' nodes For example, if each cell describes the areal
+extent of a watershed, then it is likely that some watersheds will
+need require more nodes than others. Such cells are called
+`geometries`_.
+
+If a coordinate construct represents geometries then it will have a
+geometry attribute with one of the values ``'point'``, '``line'`` or
+``'polygon'``.
+
+.. code-block:: python
+   :caption: *TODO*
+
+   >>> read
+   >>> .dump()
+   TODO
+   >>> lon = g.constructs('longitude').value()
+   >>> lon.get_geometry()
+   'TODO'
+
+Bounds for geometry cells are also stored in a `Bounds` instance, but
+one that always has two extra trailing dimensions (rather than
+one). The fist trailing dimension indexes the distinct parts of a
+geometry, and the second indexes the nodes of each part. When a part
+has fewer nodes than another, its nodes dimension is padded with
+missing data.
+
+
+.. code-block:: python
+   :caption: *TODO*
+ 
+   >>> print(lon.bounds.data.array)
+   TODO
+
+If a cell is composed of multiple polygon parts, an individual polygon
+may define an "interior ring", i.e. a region that is to be omitted
+from, as opposed to included in, the cell extent. Such cells also have
+and interior ring array that spans the same domain axes as its
+coordinate array, with the addition of one extra dimension that
+indexes the parts for each cell. This array records whether each
+polygon is to be included or excluded from the cell, with vlaues of
+``1`` or ``0`` respectively.
+
+.. code-block:: python
+   :caption: *TODO*
+ 
+   >>> print(lon.get_interior_ring().data.array)
+   TODO
+
+When a field construct containing geometries is written to disk, a
+CF-netCDF geometry container variable is automatically created, and
+the cells are encoded with prescribed compression techniques.
 
 ----
 
@@ -3784,6 +3841,7 @@ The content of the new file is:
 .. _contiguous:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_contiguous_ragged_array_representation
 .. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_indexed_ragged_array_representation
 .. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
+.. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
 
 .. The code examples in this tutorial are available in an **IPython
    Jupyter notebook** (:download:`download
