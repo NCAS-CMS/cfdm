@@ -2565,14 +2565,14 @@ class NetCDFRead(IORead):
 
     :Parameters:
         
-        ncvar: str
+        ncvar: `str`
             The name of the netCDF variable.
 
     :Returns:
         
-        bool        
+        `bool`
 
-    **Examples**
+    **Examples:**
 
         >>> n._is_char_or_string('regions')
         True
@@ -2587,14 +2587,14 @@ class NetCDFRead(IORead):
 
     :Parameters:
         
-        ncvar: str
+        ncvar: `str`
             The name of the netCDF variable.
 
     :Returns:
         
-        bool        
+        `bool`
 
-    **Examples**
+    **Examples:**
 
         >>> n._is_char('regions')
         True
@@ -3349,10 +3349,10 @@ class NetCDFRead(IORead):
         if dtype is str:
             # netCDF string types have a dtype of `str`, which needs
             # to be reset as a numpy.dtype, but we don't know what
-            # withou reading the data, so set it to None for now.
+            # without reading the data, so set it to None for now.
             dtype = None
             
-        if unpacked_dtype is not False:
+        if dtype is not None and unpacked_dtype is not False:
             dtype = numpy.result_type(dtype, unpacked_dtype)
     
         ndim  = variable.ndim
@@ -3385,7 +3385,6 @@ class NetCDFRead(IORead):
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None,
                      parent_ncvar=None, nc_dimensions=None):
-#                     geometry_bounds=False): 
         '''TODO
 
     :Parameters:
