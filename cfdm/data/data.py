@@ -409,7 +409,6 @@ class Data(mixin.Container,
                 out += ' {0}'.format(calendar)
                
             return out
-        #--- End: try
 
         size  = self.size
         shape = self.shape
@@ -433,9 +432,9 @@ class Data(mixin.Container,
                 except (ValueError, OverflowError):
                     first = '??'
 
-            out = '{0}{1}{2}'.format(open_brackets,
-                                     first,
-                                     close_brackets)
+            out = '{0}{1!s}{2}'.format(open_brackets,
+                                       first,
+                                       close_brackets)
         else:
             last = self.last_element()
             if isreftime:
