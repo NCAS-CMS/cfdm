@@ -16,6 +16,7 @@ import datetime
 import sys
 import os
 import re
+import cfdm
 
 def _read(fname):
     '''Returns content of a file.
@@ -40,9 +41,9 @@ def _get_cf_version():
     '''Returns CF version by inspecting core/__init__.py file.
 
     '''
-    return re.search(r'^__cf_version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                     _read("../../cfdm/core/__init__.py"),
-                     re.MULTILINE).group(1)
+    return cfdm.__cf_version__ #re.search(r'^__cf_version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+#                     _read("../../cfdm/core/__init__.py"),
+#                     re.MULTILINE).group(1)
 
 
 def _get_year():
@@ -62,7 +63,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- General configuration ----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = '1.0'
+needs_sphinx = '2.3.1'
 
 #rst_prolog = """
 #.. |CF| replace:: """+_get_cf_version()+"""
@@ -81,6 +82,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
               'sphinx.ext.doctest',
               'sphinx.ext.githubpages',
+#              'sphinxcontrib.programoutput',  # pip install sphinxcontrib-programoutput
+#              'sphinx_copybutton',
 ]
 
 
@@ -112,6 +115,7 @@ intersphinx_mapping = {
     'python':     ('http://docs.python.org/3', None),
     'numpy':      ('http://docs.scipy.org/doc/numpy', None),
     'netCDF4':    ('http://unidata.github.io/netcdf4-python', None),
+    'cftime' :    ('http://unidata.github.io/cftime', None),
     }
 
 # This extension is meant to help with the common pattern of having
@@ -179,7 +183,7 @@ add_module_names = True
 
 # If true, sectionauthor and moduleauthor directives will be shown in
 # the output. They are ignored by default.
-#show_authors = False
+show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
 #pygments_style = 'sphinx'
@@ -386,15 +390,24 @@ man_pages = [
      'David Hassell', 1)
     ]
 
-# Set up copybutton
-def setup(app):
-    app.add_javascript('copybutton.js')
+# Configurecopybutton
+copybutton_skip_text = ">>> "  # Python prompt for Python code snippets
+# Awaiting extension to sphinx-copybutton to strip out other prompts (see
+# 'https://github.com/choldgraf/sphinx-copybutton/issues/52') and ideally
+# remove lines of output characterised by not having an initial prompt.
+# copybutton_skip_text = "$ "  # shell ('..code-block:: console') prompt
+
+## Set up copybutton
+#def setup(app):
+#    app.add_javascript('copybutton.js')
 
 # This is a function which should return the URL to source code
 # corresponding to the object in given domain with given information.
 
 import inspect, cfdm
 from os.path import relpath, dirname
+
+link_release = re.search('(\d+\.\d+\.\d+)', release).groups()[0]
 
 def linkcode_resolve(domain, info):
     
@@ -452,14 +465,11 @@ def linkcode_resolve(domain, info):
     # NOTE: You need to touch the .rst files to get the change in
     # ----------------------------------------------------------------
     if online_source_code:
-#        commit = '11dddff56c31c24d86c3b83995e503989f90911b'
-#        commit = 'master'
-        commit = 'v'+release
-        print "https://github.com/NCAS-CMS/cfdm/blob/{0}/cfdm/{1}{2}".format(
-            commit, fn, linespec)
-
-        return "https://github.com/NCAS-CMS/cfdm/blob/{0}/cfdm/{1}{2}".format(
-            commit, fn, linespec)
+        url = "https://github.com/NCAS-CMS/cfdm/blob/v{0}/cfdm/{1}{2}".format(
+            link_release, fn, linespec)
+        
+        print(url)
+        return url
     else:
         # Point to local source code relative to this directory
         return "../../../cfdm/{0}{1}".format(fn, linespec)
