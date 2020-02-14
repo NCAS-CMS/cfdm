@@ -42,8 +42,6 @@ class DSGTest(unittest.TestCase):
         os.remove(self.tempfilename)
 
         
-    @unittest.skipIf(cfdm.__version__ < '1.8',
-                     "not supported in this library version")
     def test_node_count(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -92,8 +90,6 @@ class DSGTest(unittest.TestCase):
         self.assertFalse(c.has_node_count())
 
 
-    @unittest.skipIf(cfdm.__version__ < '1.8',
-                     "not supported in this library version")
     def test_geometry_2(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -132,8 +128,6 @@ class DSGTest(unittest.TestCase):
         cfdm.write(f, self.tempfilename, verbose=False)
 
 
-    @unittest.skipIf(cfdm.__version__ < '1.8',
-                     "not supported in this library version")
     def test_geometry_3(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -168,8 +162,6 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(a.equals(b, verbose=True))
 
 
-    @unittest.skipIf(cfdm.__version__ < '1.8',
-                     "not supported in this library version")
     def test_geometry_4(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -207,8 +199,6 @@ class DSGTest(unittest.TestCase):
         cfdm.write(f, self.tempfilename, verbose=False)
 
 
-    @unittest.skipIf(cfdm.__version__ < '1.8',
-                     "not supported in this library version")
     def test_geometry_interior_ring(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -222,7 +212,7 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(len(g.auxiliary_coordinates) == 4)
 
         g = f[0]
-        for axis in ('X', 'Y', 'Z'):
+        for axis in ('X', 'Y'):
             coord = g.construct('axis='+axis)
             self.assertTrue(coord.has_node_count(), 'axis='+axis)
             self.assertTrue(coord.has_part_node_count(), 'axis='+axis)
@@ -275,7 +265,7 @@ class DSGTest(unittest.TestCase):
         cfdm.write(f, self.tempfilename)
 
         # Setting of part node count properties
-        coord = f[0].construct('axis=Z')
+        coord = f[0].construct('axis=X')
         pnc = coord.get_part_node_count()
         pnc.set_property('long_name', 'Part node counts')
         cfdm.write(f, self.tempfilename)
