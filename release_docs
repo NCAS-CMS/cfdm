@@ -32,7 +32,7 @@ cd -
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-rm -fr $dir/.doctrees
+## rm -fr $dir/.doctrees
 
 make html $dir
 
@@ -44,8 +44,7 @@ do
   # where the resources are hosted (GH changes it to something like
   # '_downloads/4cd32e1c6bdf28fb61e15ffab2a8d84e/download_file')
   sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" \
-    $dir/tutorial.html \
-    $dir/analysis.html
+    $dir/tutorial.html
     # all pages referencing these resources must be added to this list
 done
 
@@ -57,7 +56,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
   cd $dir
   git add \
 	  *.html \
-	  classes/*.html \
+	  class/*.html \
 	  function/*.html \
 	  method/*.html \
 	  attribute/*.html \
@@ -65,8 +64,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  *.js \
 	  _sources \
 	  _static \
-	  _downloads/cfdm_tutorial_files.zip \
-	  _downloads/tutorial.py
+	  _downloads/cfdm_tutorial_files.zip
 
   git commit -a -m "v$version documentation"
 fi
