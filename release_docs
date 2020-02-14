@@ -64,7 +64,8 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  *.js \
 	  _sources \
 	  _static \
-	  _downloads/cfdm_tutorial_files.zip
+	  _downloads/cfdm_tutorial_files.zip \
+	  _downloads/tutorial.py
 
   git commit -a -m "v$version documentation"
 fi
