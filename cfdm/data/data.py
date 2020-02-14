@@ -246,7 +246,7 @@ class Data(mixin.Container,
         array = self._get_Array(None)
         if array is None:
             raise ValueError("No array!!")
-            
+
         array = array[indices]
 
         out = self.copy(array=False)

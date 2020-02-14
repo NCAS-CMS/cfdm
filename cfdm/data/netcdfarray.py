@@ -100,10 +100,11 @@ class NetCDFArray(abstract.Array):
 
         '''
         netcdf = self.open()
-        
+
 #        indices = tuple(self.parse_indices(indices))
-        
+
         ncvar = self.get_ncvar()
+
         if ncvar is not None:
             # Get the variable by name
             array = netcdf.variables[ncvar][indices]
@@ -169,7 +170,7 @@ class NetCDFArray(abstract.Array):
             # A netCDF string type N-d (N>=1) variable comes out as a
             # numpy object array, so convert it to numpy string array.
             # --------------------------------------------------------
-            array = array.astype('S', copy=False)
+            array = array.astype('S') #, copy=False)
 
             # --------------------------------------------------------
             # netCDF4-pytohn does not auto-mask VLEN variable, so do
