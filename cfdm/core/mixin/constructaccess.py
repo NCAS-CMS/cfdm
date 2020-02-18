@@ -126,11 +126,12 @@ class ConstructAccess(object):
     False
 
         '''
-        try_get_construct = self.get_construct(key, default=False)
-        if try_get_construct:
-            try_get_construct = True
-
-        return try_get_construct
+        # Assume construct keys can (uncommonly) be Falsy e.g. '' or 0
+        # (this is tested explicitly) but not None (so None untested).
+        try_get_construct = self.get_construct(key, default=None)
+        if try_get_construct is None:
+            return False
+        return True
 
 
     def set_construct(self, construct, key=None, axes=None,
