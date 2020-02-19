@@ -7,9 +7,13 @@ version 1.8.0
 * New attributes: `cfdm.Field.ndim`, `cfdm.Field.shape`, `cfdm.Field.size`
 * New method: `cfdm.Data.any`
 * New keyword parameter to `cfdm.environment`: ``paths``.
+* Implemented simple geometries for CF-1.8
+  (https://github.com/NCAS-CMS/cfdm/issues/11).
+* Implemented string data-types for CF-1.8
+  (https://github.com/NCAS-CMS/cfdm/issues/12).
 * Fixed bug that prevented the writing of ``'NETCDF3_64BIT_OFFSET'``
   and ``'NETCDF3_64BIT_DATA'`` format files
-  (https://github.com/NCAS-CMS/cfdm/issues/9)
+  (https://github.com/NCAS-CMS/cfdm/issues/9).
   
 version 1.7.11
 --------------
