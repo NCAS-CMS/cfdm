@@ -53,6 +53,15 @@ def _get_year():
     return str(datetime.datetime.now().year)
 
 
+def _get_date():
+    '''Get the current calendar year.
+
+    '''
+    return str(datetime.date.today())
+
+
+
+
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory
 # is relative to the documentation root, use os.path.abspath to make
@@ -145,7 +154,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Python cfdm package'
-copyright = _get_year()+', David Hassell'
+copyright = _get_year()+', David Hassell | Page built on '+_get_date()
+author = 'David Hassell'
 
 # The version info for the project you're documenting, acts as
 # replacement for |version| and |release|, also used in various other
@@ -183,7 +193,7 @@ add_module_names = True
 
 # If true, sectionauthor and moduleauthor directives will be shown in
 # the output. They are ignored by default.
-show_authors = False
+show_authors = True #False
 
 # The name of the Pygments (syntax highlighting) style to use.
 #pygments_style = 'sphinx'
@@ -297,7 +307,7 @@ html_use_smartypants = True
 #html_sidebars = {'**': ['my_con.html', 'globaltoc.html', 'sourcelink.html']}
 html_sidebars = { '**': ['about.html',
                          'globaltoc.html',
-                         'relations.html',
+#                         'relations.html',
                          'sourcelink.html',
                          'searchbox.html']
 }
