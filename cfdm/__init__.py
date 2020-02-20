@@ -134,6 +134,8 @@ from .domainaxis          import DomainAxis
 from .field               import Field
 from .fieldancillary      import FieldAncillary
 
+from .examplefield import example_field
+
 from .read_write import (read,
                          write,
                          implementation,

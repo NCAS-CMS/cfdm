@@ -2,15 +2,16 @@ version 1.8.0
 --------------
 ----
 
-**Not yet yeleased**
+**Not yet released**
 
+* First release for CF-1.8
+* Implementation of simple geometries for CF-1.8
+  (https://github.com/NCAS-CMS/cfdm/issues/11).
+* Implementing of string data-types for CF-1.8
+  (https://github.com/NCAS-CMS/cfdm/issues/12).
 * New attributes: `cfdm.Field.ndim`, `cfdm.Field.shape`, `cfdm.Field.size`
 * New method: `cfdm.Data.any`
 * New keyword parameter to `cfdm.environment`: ``paths``.
-* Implemented simple geometries for CF-1.8
-  (https://github.com/NCAS-CMS/cfdm/issues/11).
-* Implemented string data-types for CF-1.8
-  (https://github.com/NCAS-CMS/cfdm/issues/12).
 * Fixed bug that prevented the writing of ``'NETCDF3_64BIT_OFFSET'``
   and ``'NETCDF3_64BIT_DATA'`` format files
   (https://github.com/NCAS-CMS/cfdm/issues/9).
@@ -46,7 +47,7 @@ version 1.7.9
 **2019-11-07**
 
 * Fixed bug relating to setting of parameters on datum and coordinate
-  conversion objects of coordinate conversion constucts
+  conversion objects of coordinate conversion constructs
   (https://github.com/NCAS-CMS/cfdm/issues/6).
 
 version 1.7.8
@@ -154,8 +155,8 @@ version 1.7.3
   the result).
 * Added **kwargs parameter to `CFDMImplementation.initialise_Data`, to
   facilitate subclassing.
-* Added `NetCDFRead._customize_read_vars` to facilitate sublcassing.
-* Added `NetCDFWrite._transform_strings` to facilitate sublcassing.
+* Added `NetCDFRead._customize_read_vars` to facilitate subclassing.
+* Added `NetCDFWrite._transform_strings` to facilitate subclassing.
 
 version 1.7.2
 -------------

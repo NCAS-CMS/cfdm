@@ -76,8 +76,8 @@ instance".
 
 .. _Reading-datasets:
 
-**Reading datasets**
---------------------
+**Reading field constructs from datasets**
+------------------------------------------
 
 The `cfdm.read` function reads a `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
@@ -103,6 +103,13 @@ The following file types can be read:
 * Files in `CDL format
   <https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_utilities_guide.html>`_,
   with or without the data array values.
+
+..
+
+* A future |version|.\ *x* release of cfdm will include support for
+  :ref:`netCDF4 files containing data organised in hierarchical groups
+  <netCDF4_Groups>`, but this is not available in version |release|
+  (even though it is allowed in CF-|version|).
 
 For example, to read the file ``file.nc`` (found in the :ref:`zip file
 of sample files <Sample-datasets>`), which contains two field
@@ -133,7 +140,7 @@ The `cfdm.read` function has optional parameters to
 * request :ref:`extra field constructs to be created from "metadata"
   netCDF variables <Creation-by-reading>`, i.e. those that are
   referenced from CF-netCDF data variables, but which are not regarded
-  by default as data variables in their own right; and 
+  by default as data variables in their own right; and
 
 * display information and warnings about the mapping of the netCDF
   file contents to CF data model constructs.
@@ -3130,6 +3137,19 @@ by setting the *string* keyword of the `cfdm.write` function.
 
 ----
    
+.. _netCDF4_Groups:
+
+**Groups**
+----------
+
+`Groups`_ provide a powerful mechanism to structure data
+hierarchically. A future |version|.\ *x* release of cfdm will include
+support for netCDF4 files containing data organised in hierarchical
+groups, but this is not available in version |release| (even though it
+is allowed in CF-|version|).
+
+----
+   
 .. _External-variables:
 
 **External variables**
@@ -3922,6 +3942,7 @@ The content of the new file is:
 .. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_indexed_ragged_array_representation
 .. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
 .. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
+.. _Groups:                           http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
 
 .. The code examples in this tutorial are available in an **IPython
    Jupyter notebook** (:download:`download
