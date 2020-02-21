@@ -9,7 +9,8 @@ version 1.8.0
   (https://github.com/NCAS-CMS/cfdm/issues/11).
 * Implementing of string data-types for CF-1.8
   (https://github.com/NCAS-CMS/cfdm/issues/12).
-* New attributes: `cfdm.Field.ndim`, `cfdm.Field.shape`, `cfdm.Field.size`
+* New attributes: `cfdm.Field.dtype`, `cfdm.Field.ndim`,
+  `cfdm.Field.shape`, `cfdm.Field.size`
 * New method: `cfdm.Data.any`
 * New keyword parameter to `cfdm.environment`: ``paths``.
 * Fixed bug that prevented the writing of ``'NETCDF3_64BIT_OFFSET'``

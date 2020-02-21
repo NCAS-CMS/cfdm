@@ -285,6 +285,30 @@ class PropertiesDataBounds(PropertiesData):
     # Attributes
     # ----------------------------------------------------------------
     @property
+    def dtype(self):
+        '''Data-type of the data elements.
+
+    **Examples:**
+    
+    >>> d.dtype
+    dtype('float64')
+    >>> type(d.dtype)
+    <type 'numpy.dtype'>
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.dtype
+
+        bounds = self.get_bounds_data(None)
+        if bounds is not None:
+            return bounds.dtype
+        
+        raise AttributeError("{!r} object has no attribute 'dtype'".format(
+            self.__class__.__name__))
+
+    
+    @property
     def ndim(self):
         '''The number of dimensions in the data array.
 
