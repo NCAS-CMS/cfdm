@@ -32,7 +32,9 @@ cd -
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-## rm -fr $dir/.doctrees
+if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
+    rm -fr $dir/.doctrees
+fi
 
 make html $dir
 

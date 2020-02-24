@@ -92,7 +92,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.doctest',
               'sphinx.ext.githubpages',
 #              'sphinxcontrib.programoutput',  # pip install sphinxcontrib-programoutput
-#              'sphinx_copybutton',
+              'sphinx_copybutton',
 ]
 
 

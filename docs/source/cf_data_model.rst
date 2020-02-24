@@ -20,6 +20,7 @@ The `CF data model <https://doi.org/10.5194/gmd-10-4619-2017>`_
 conventions and shows how they relate to each other, independently of
 the netCDF encoding.
 
+
 The **field construct** defined by the CF data model, which
 corresponds to a CF-netCDF data variable with all of its metadata, is
 the central construct that includes all of the other constructs. It
@@ -68,6 +69,12 @@ The physical nature of individual data values are described by
 - **cell method constructs** (corresponding to a CF-netCDF
   cell_methods attribute of data variable).
 
+.. figure:: images/field.png
+   :scale: 35 %
+
+   *The nine constructs of our CF data model described using UML The field construct corresponds to a CF-netCDF data variable. The domain provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is not a construct of the data model but an abstract concept that is useful for understanding it. Similarly, it is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when the their type (dimension or auxiliary coordinate construct) is not an issue.*
+
+   
 ----
 
 .. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
