@@ -135,12 +135,11 @@ from .field               import Field
 from .fieldancillary      import FieldAncillary
 
 from .abstract           import Implementation
-from .cfdmimplementation import CFDMImplementation
+from .cfdmimplementation import (CFDMImplementation,
+                                 implementation)
 
 from .read_write import (read,
                          write)
-#                         implementation,
-#                         CFDMImplementation)
 
 from .examplefield import example_field
 
