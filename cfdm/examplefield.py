@@ -1,6 +1,6 @@
->from .functions import CF
+from .functions import CF
 
-from .read_write import implementation
+from .cfdmimplementation import implementation
 
 
 _implementation = implementation()

@@ -134,18 +134,15 @@ from .domainaxis          import DomainAxis
 from .field               import Field
 from .fieldancillary      import FieldAncillary
 
-#from .examplefield import example_field
-
-from .read_write import (read,
-                         write,
-                         implementation,
-                         CFDMImplementation)
-
-
 from .abstract           import Implementation
 from .cfdmimplementation import CFDMImplementation
 
+from .read_write import (read,
+                         write)
+#                         implementation,
+#                         CFDMImplementation)
 
+from .examplefield import example_field
 
 
     

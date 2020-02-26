@@ -1,4 +1,4 @@
-from . import implementation
+from ..cfdmimplementation import implementation
 
 from .netcdf import NetCDFWrite
 
