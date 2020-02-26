@@ -1,4 +1,4 @@
-from .functions import CF
+>from .functions import CF
 
 from .read_write import implementation
 
@@ -9,8 +9,6 @@ def example_field(n, _implementation=_implementation):
     '''Return an example field construct.
 
     .. versionadded:: 1.8.0
-
-    .. seealso:: `cfdm.Field.creation_commands`
 
     :Parameters:
 
