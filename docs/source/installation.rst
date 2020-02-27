@@ -130,11 +130,12 @@ The cfdm package requires:
 
 * `numpy <http://www.numpy.org/>`_, version 1.15 or newer,
 
-* `netCDF4 <http://unidata.github.io/netcdf4-python/>`_, version 1.4.0
+* `netCDF4 <http://unidata.github.io/netcdf4-python/>`_, version 1.5.3
   or newer,
 
-* `cftime <https://unidata.github.io/cftime/>`_, version 1.0 or newer
-  (note that this is installed with netCDF4), and
+* `cftime <https://unidata.github.io/cftime/>`_, version 1.1.0 or
+  newer (note that this library is usually installed with netCDF4),
+  and
 
 * `future <https://python-future.org/>`_, version 0.16.0 or newer.
 
