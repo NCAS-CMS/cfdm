@@ -16,7 +16,7 @@ https://ncas-cms.github.io/cfdm/tutorial
 Installation
 ============
 
-https://ncas-cms.github.io/cfdm/installation.html
+https://ncas-cms.github.io/cfdm/installation
 
 Functionality
 =============
@@ -50,7 +50,7 @@ inspecting it:
                     : longitude(128) = [0.0, ..., 357.1875] degrees_east
                     : height(1) = [2.0] m
 
-The **cfdm** package can:
+The ``cfdm`` package can:
 
 * read field constructs from netCDF datasets,
 * create new field constructs in memory,
