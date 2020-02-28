@@ -175,6 +175,8 @@ class NetCDFWrite(IOWrite):
     **Examples:**
     
         '''
+        g = self.write_vars
+        
         if parent is None:
             netcdf_attrs = {}
         else:
@@ -196,7 +198,8 @@ class NetCDFWrite(IOWrite):
 
             data = self.implementation.get_data(parent, None)
             if data is not None:
-                netcdf_attrs[attr] = numpy.array(netcdf_attrs[attr], dtype=data.dtype)
+                dtype = g['datatype'].get(data.dtype, data.dtype)
+                netcdf_attrs[attr] = numpy.array(netcdf_attrs[attr], dtype=dtype)
         #--- End: for
         
         self.write_vars['nc'][ncvar].setncatts(netcdf_attrs)
