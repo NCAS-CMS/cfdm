@@ -1295,23 +1295,31 @@ customised exception:
              unique construct that meets the criteria. Alternatively,
              the value of the "default" parameter is returned.*
 
-   >>> t.construct('measure:volume')
+   >>> t.construct('measure:volume')                # Raises Exception
+   Traceback (most recent call last):
+      ...
    ValueError: Can't return zero constructs
    >>> t.construct('measure:volume', False)
    False
    >>> c = t.constructs.filter_by_measure('volume')
    >>> len(c)
    0
-   >>> c.value()
+   >>> c.value()                                    # Raises Exception
+   Traceback (most recent call last):
+      ...
    ValueError: Can't return zero constructs
    >>> c.value(default='No construct')
    'No construct'
-   >>> c.value(default=KeyError('My message'))
+   >>> c.value(default=KeyError('My message'))      # Raises Exception
+   Traceback (most recent call last):
+      ...
    KeyError: 'My message'
    >>> d = t.constructs('units=degrees')
    >>> len(d)
    2
-   >>> d.value()
+   >>> d.value()                                    # Raises Exception
+   Traceback (most recent call last):
+      ...
    ValueError: Can't return 2 constructs 
    >>> print(d.value(default=None))
    None
@@ -1658,6 +1666,7 @@ This is illustrated with the file ``geometry.nc`` (found in the
                    : altitude(cf_role=timeseries_id(2)) = [5000.0, 20.0] m
                    : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b'x1', b'y2']
    Coord references: grid_mapping_name:latitude_longitude
+   >>> lon = f.construct('longitude')
    >>> lon.dump()                     
    Auxiliary coordinate: longitude
       standard_name = 'longitude'
@@ -2038,6 +2047,8 @@ The domain axis constructs spanned by a metadata construct's data may
 be changed after insertion with the `~Field.set_data_axes` method of
 the field construct.
 
+.. Code Block 1
+   
 .. code-block:: python
    :caption: *Create a field construct with properties; data; and
              domain axis, cell method and dimension coordinate
@@ -2183,6 +2194,8 @@ Here is a more complete example which creates a field construct that
 contains every type of metadata construct (again, data arrays have
 been generated with dummy values using `numpy.arange`):
 
+.. Code Block 2
+   
 .. code-block:: python
    :caption: *Create a field construct that contains at least one
              instance of each type of metadata construct.*
@@ -3553,7 +3566,7 @@ create the equivalent uncompressed field construct and then compress
 it with its `~Field.compress` method, which also compresses the
 metadata constructs as required.
    
-.. Code Block 4
+.. Code Block 3
 
 .. code-block:: python
    :caption: *Create a field construct and then compress it.*
@@ -3641,6 +3654,8 @@ array is created by initialising a `cf.Data` instance with a ragged
 array that is stored in one of three special array objects:
 `RaggedContiguousArray`, `RaggedIndexedArray` or
 `RaggedIndexedContiguousArray`.
+
+.. Code Block 4
 
 .. code-block:: python
    :caption: *Create a field construct with compressed data.*
@@ -3800,6 +3815,8 @@ A construct with an underlying gathered array is created by
 initializing a `Data` instance with a gathered array that is stored in
 the special `GatheredArray` array object. The following code creates a
 simple field construct with an underlying gathered array:
+
+.. Code Block 5
 
 .. code-block:: python
    :caption: *Create a field construct with compressed data.*

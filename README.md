@@ -77,4 +77,4 @@ Tests
 
 Tests are run from within the ``cfdm/test`` directory:
 
-    python run_tests.py
+    $ python run_tests.py
