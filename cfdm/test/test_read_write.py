@@ -149,6 +149,9 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0] 
         self.assertTrue(f.data.dtype == numpy.dtype(float))
 
+        f.set_property('_FillValue'   , numpy.float64(-999.))
+        f.set_property('missing_value', numpy.float64(-999.))
+        
         cfdm.write(f, tmpfile, fmt='NETCDF4', 
                  datatype={numpy.dtype(float): numpy.dtype('float32')})
         g = cfdm.read(tmpfile)[0]

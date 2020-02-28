@@ -51,10 +51,9 @@ do
 done
 
 # --------------------------------------------------------------------
-# Add and commit the latest
+# Add and commit the latest or archive
 # --------------------------------------------------------------------
 if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
-    echo "d2=$2"
   cd $dir
   git add \
 	  *.html \
@@ -69,7 +68,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  _downloads/cfdm_tutorial_files.zip \
 	  _downloads/tutorial.py
 
-  git commit -a -m "v$version documentation"
+  git commit -a -m "v$version $2 documentation"
 fi
 
 set +x

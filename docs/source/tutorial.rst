@@ -11,6 +11,8 @@
 
 Version |release| for version |version| of the CF conventions.
 
+All of the Python code in this tutorial is available in an executable
+script (:download:`download <../source/tutorial.py>`, 12kB).
 
 .. contents::
    :local:
@@ -3906,11 +3908,6 @@ The content of the new file is:
 .. [#dap] Requires the netCDF4 python package to have been built with
           OPeNDAP support enabled. See
           http://unidata.github.io/netcdf4-python for details.
-
-.. [#files] The tutorial files may be also found in the `downloads
-            directory
-            <https://github.com/NCAS-CMS/cfdm/tree/master/docs/_downloads>`_
-            of the on-line code repository.
 
 .. .. [#notebook] The Jupyter notebook is quite long. To aid navigation
                   it has been written so that it may optionally be used

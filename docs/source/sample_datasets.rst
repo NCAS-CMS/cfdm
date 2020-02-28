@@ -28,8 +28,4 @@ The tutorial examples assume that the Python session is being run from
 the directory that contains the zip file and its unpacked contents,
 and no other files.
    
-The tutorial files may be also found in the `downloads directory
-<https://github.com/NCAS-CMS/cfdm/tree/master/docs/_downloads>`_
-of the on-line code repository.
-
 ----
