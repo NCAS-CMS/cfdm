@@ -664,6 +664,12 @@ The `Data` instance provides access to the full array of values, as
 well as attributes to describe the array and methods for describing
 any :ref:`data compression <Compression>`.
 
+The `Data` instance provides access to the full array of values, as
+well as attributes to describe the array and methods for describing
+any data compression. However, the field construct (and any other
+construct that contains data) also provides attributes for direct
+access.
+
 .. code-block:: python
    :caption: *Retrieve a numpy array of the data.*
       
@@ -678,20 +684,28 @@ any :ref:`data compression <Compression>`.
      [267.9 273.5 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
      [270.9 278.7 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
      [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]
-   
+
 .. code-block:: python
    :caption: *Inspect the data type, number of dimensions, dimension
              sizes and number of elements of the data.*
 	     
-   >>> t.data.dtype
+   >>> t.dtype
    dtype('float64')
-   >>> t.data.ndim
+   >>> t.ndim
    3
-   >>> t.data.shape
+   >>> t.shape
    (1, 10, 9)
+   >>> t.size
+   90
    >>> t.data.size
    90
 
+Note it is preferable to access the data type, number of dimensions,
+dimension sizes and number of elements of the data via the parent
+construct, rather than from the `Data` instance, as there are
+:ref:`particular circumstances <Geometry-cells>` when there is no
+`Data` instance, but the construct nonetheless has data descriptors.
+   
 The field construct also has a `~Field.get_data` method as an
 alternative means of retrieving the data instance, which allows for a
 default to be returned if no data have been set; as well as a
@@ -725,7 +739,7 @@ the field construct. For example, the data of the field construct
     'domainaxis3': <DomainAxis: size(1)>}
    >>> t
    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
-   >>> t.data.shape
+   >>> t.shape
    (1, 10, 9)
    >>> t.get_data_axes()
    ('domainaxis0', 'domainaxis1', 'domainaxis2')
@@ -1634,8 +1648,10 @@ parent coordinate construct, but it may also have its own properties
    >>> bounds.properties()
    {}
 
-Geometries
-^^^^^^^^^^
+.. _Geometry-cells:   
+
+Geometry cells
+^^^^^^^^^^^^^^
 
 For many geospatial applications, cell bounds can not be represented
 by a simple line or polygon, and different cells may have different
@@ -1660,7 +1676,7 @@ This is illustrated with the file ``geometry.nc`` (found in the
    >>> print(f)
    Field: precipitation_amount (ncvar%pr)
    --------------------------------------
-   Data            : preciptitation_amount(cf_role=timeseries_id(2), time(4))
+   Data            : precipitation_amount(cf_role=timeseries_id(2), time(4))
    Dimension coords: time(4) = [2000-01-02 00:00:00, ..., 2000-01-05 00:00:00]
    Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
                    : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
@@ -1718,6 +1734,14 @@ polygon is to be included or excluded from the cell, with values of
    [[0  1  0]
     [0 -- --]]
 
+Note it is preferable to access the data type, number of dimensions,
+dimension sizes and number of elements of the coordinate construct via
+the construct's attributes, rather than the attributes of the `Data`
+instance that provides representative values for each cell. This is
+because the representative cell values for geometries are optional,
+and if they are missing then the construct attributes are able to
+infer these attributes from the bounds.
+  
 When a field construct containing geometries is written to disk, a
 CF-netCDF geometry container variable is automatically created, and
 the cells encoded with the :ref:`compression <Compression>` techniques
