@@ -988,7 +988,7 @@ def _make_interior_ring_file(filename):
     datum.longitude_of_prime_meridian = 0.
     
     pr = n.createVariable('pr', 'f8', ('instance', 'time'))
-    pr.standard_name = "preciptitation_amount"
+    pr.standard_name = "precipitation_amount"
     pr.standard_units = "kg m-2"
     pr.coordinates = "time lat lon z instance_id"
     pr.grid_mapping = "datum"

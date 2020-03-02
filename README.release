@@ -8,6 +8,10 @@
 
 * Make sure that Changelog.rst is up to date.
 
+* Make sure that any new attributes and methods (as listed in the
+  change log) have on-line documentation. This may require additions
+  to the .rst files in docs/source/class/
+
 * Create a link to the new documentation in docs/source/releases.rst
 
 * Create a source tarball using `python setup.py sdist`
@@ -23,11 +27,11 @@ cd docs/source
 cd test_tutorial
 python ../tutorial.py
 
-* Update the latest documentation using `./release_latest_docs <vn>`
-  (e.g. ./release_latest_docs 1.8.0)
+* Update the latest documentation using `./release_docs <vn> latest`
+  (e.g. ./release_docs 1.8.0 latest)
 
 * Create an archived copy of the documentation using
-  `./release_archive_docs <vn>` (e.g. ./release_archive_docs 1.8.0)
+  `./release_docs <vn> archive` (e.g. ./release_docs 1.8.0 archive)
 
 * Push recent commits using `git push origin master`
 

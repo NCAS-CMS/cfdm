@@ -837,6 +837,12 @@ class Data(mixin.Container,
     Performs a logical or over the data array and returns the
     result. Masked values are considered as False during computation.
 
+    :Returns:
+
+        `bool`
+            `True` if any data array elements evaluate to True,
+            otherwise `False`.
+
     **Examples:**
 
     >>> d = Data([[0, 0, 0]])

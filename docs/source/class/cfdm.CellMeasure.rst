@@ -82,6 +82,10 @@ Data
    :template: attribute.rst
 
    ~cfdm.CellMeasure.data
+   ~cfdm.CellMeasure.dtype
+   ~cfdm.CellMeasure.ndim
+   ~cfdm.CellMeasure.shape
+   ~cfdm.CellMeasure.size
 
 Miscellaneous
 -------------

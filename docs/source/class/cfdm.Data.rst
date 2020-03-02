@@ -54,8 +54,8 @@ Units
    ~cfdm.Data.set_calendar 
    ~cfdm.Data.get_calendar
 
-Fill value
-----------
+Missing data
+------------
 
 .. rubric:: Methods
 
@@ -64,6 +64,7 @@ Fill value
    :toctree: ../method/
    :template: method.rst
    
+   ~cfdm.Data.any
    ~cfdm.Data.get_fill_value
    ~cfdm.Data.set_fill_value
 

@@ -1639,7 +1639,7 @@ Geometries
 
 For many geospatial applications, cell bounds can not be represented
 by a simple line or polygon, and different cells may have different
-numbers of nodes decribing their bounds. For example, if each cell
+numbers of nodes describing their bounds. For example, if each cell
 describes the areal extent of a watershed, then it is likely that some
 watersheds will require more nodes than others. Such cells are called
 `geometries`_.
@@ -1658,8 +1658,8 @@ This is illustrated with the file ``geometry.nc`` (found in the
 
    >>> f = cfdm.read('geometry.nc')[0]
    >>> print(f)
-   Field: preciptitation_amount (ncvar%pr)
-   ---------------------------------------
+   Field: precipitation_amount (ncvar%pr)
+   --------------------------------------
    Data            : preciptitation_amount(cf_role=timeseries_id(2), time(4))
    Dimension coords: time(4) = [2000-01-02 00:00:00, ..., 2000-01-05 00:00:00]
    Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
@@ -1708,7 +1708,7 @@ from, as opposed to included in, the cell extent. Such cells also have
 an interior ring array that spans the same domain axes as the
 coordinate cells, with the addition of one extra dimension that
 indexes the parts for each cell. This array records whether each
-polygon is to be included or excluded from the cell, with vlaues of
+polygon is to be included or excluded from the cell, with values of
 ``1`` or ``0`` respectively.
 
 .. code-block:: python
@@ -3009,7 +3009,7 @@ attribute from the file.
 
 NetCDF global attributes defined with the *file_descriptors* keyword
 of the `cfdm.write` function will always be written as requested,
-independently of the netCDF data variable attributes, and superceding
+independently of the netCDF data variable attributes, and superseding
 any global attributes that may have been defined with the
 *global_attributes* keyword, or set on the individual field
 constructs.
@@ -3565,7 +3565,7 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    ''
 
-Perhaps the easist way to create a compressed field construct is to
+Perhaps the easiest way to create a compressed field construct is to
 create the equivalent uncompressed field construct and then compress
 it with its `~Field.compress` method, which also compresses the
 metadata constructs as required.

@@ -77,6 +77,10 @@ Data
    :template: attribute.rst
 
    ~cfdm.FieldAncillary.data
+   ~cfdm.FieldAncillary.dtype
+   ~cfdm.FieldAncillary.ndim
+   ~cfdm.FieldAncillary.shape
+   ~cfdm.FieldAncillary.size
 
 Miscellaneous
 -------------
