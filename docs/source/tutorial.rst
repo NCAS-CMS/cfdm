@@ -113,8 +113,8 @@ The following file types can be read:
   <netCDF4_Groups>`, but this is not available in version |release|
   (even though it is allowed in CF-|version|).
 
-For example, to read the file ``file.nc`` (found in the :ref:`zip file
-of sample files <Sample-datasets>`), which contains two field
+For example, to read the file ``file.nc`` (found in the :ref:`sample
+datasets <Sample-datasets>`), which contains two field
 constructs:
 
 .. code-block:: python
@@ -985,8 +985,8 @@ Method                            Filter criteria
 `~Constructs.filter_by_method`    Method value (for cell method constructs)	
 `~Constructs.filter_by_data`      Whether or not there could be be data.
 `~Constructs.filter_by_key`       Construct key			
-`~Constructs.filter_by_ncvar`     Netcdf variable name (see the :ref:`netCDF interface <NetCDF-interface>`)
-`~Constructs.filter_by_ncdim`     Netcdf dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)
+`~Constructs.filter_by_ncvar`     NetCDF variable name (see the :ref:`netCDF interface <NetCDF-interface>`)
+`~Constructs.filter_by_ncdim`     NetCDF dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)
 ================================  ==========================================================================  
 
 Each of these methods returns a new `Constructs` instance that
@@ -1637,19 +1637,20 @@ parent coordinate construct, but it may also have its own properties
 Geometries
 ^^^^^^^^^^
 
-For many geospatial applications, cell bounds can not be repreented by
-a simple line or polygon, and different cells may have different
-numbers of bounds' nodes For example, if each cell describes the areal
-extent of a watershed, then it is likely that some watersheds will
-need require more nodes than others. Such cells are called
+For many geospatial applications, cell bounds can not be represented
+by a simple line or polygon, and different cells may have different
+numbers of nodes decribing their bounds. For example, if each cell
+describes the areal extent of a watershed, then it is likely that some
+watersheds will require more nodes than others. Such cells are called
 `geometries`_.
 
 If a coordinate construct represents geometries then it will have a
-"geometry" attribute with one of the values ``'point'``, '``line'`` or
-``'polygon'``.
+"geometry" attribute (not a :ref:`CF property
+<Metadata-construct-properties>`) with one of the values ``'point'``,
+'``line'`` or ``'polygon'``.
 
 This is illustrated with the file ``geometry.nc`` (found in the
-:ref:`zip file of sample files <Sample-datasets>`):
+:ref:`sample datasets <Sample-datasets>`):
 
 .. code-block:: python
    :caption: *Read and inspect a dataset containing geometry cell
@@ -1704,8 +1705,8 @@ missing data.
 If a cell is composed of multiple polygon parts, an individual polygon
 may define an "interior ring", i.e. a region that is to be omitted
 from, as opposed to included in, the cell extent. Such cells also have
-and interior ring array that spans the same domain axes as its
-coordinate array, with the addition of one extra dimension that
+an interior ring array that spans the same domain axes as the
+coordinate cells, with the addition of one extra dimension that
 indexes the parts for each cell. This array records whether each
 polygon is to be included or excluded from the cell, with vlaues of
 ``1`` or ``0`` respectively.
@@ -2551,11 +2552,14 @@ independent of the original field.
    <Data(1, 1, 1): [[[-1e+30]]] K>
    >>> t.data[0, 0, 0]
    <Data(1, 1, 1): [[[-1.0]]] K>
-   >>> u.del_construct('grid_latitude')
+   >>> key = u.construct_key('grid_latitude')    
+   >>> u.del_construct(key)
    <DimensionCoordinate: grid_latitude(10) degrees>
    >>> u.constructs('grid_latitude')
+   Constructs:
    {}
    >>> t.constructs('grid_latitude')
+   Constructs:
    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
 
 Equivalently, the `copy.deepcopy` function may be used:
@@ -3003,7 +3007,7 @@ attribute from the file.
     'project': None}
    >>> cfdm.write(f, 'f_file.nc')
 
-Netcdf global attributes defined with the *file_descriptors* keyword
+NetCDF global attributes defined with the *file_descriptors* keyword
 of the `cfdm.write` function will always be written as requested,
 independently of the netCDF data variable attributes, and superceding
 any global attributes that may have been defined with the
@@ -3014,12 +3018,12 @@ constructs.
    :caption: *Insist that the "history" property is written as netCDF
              a global attribute, with the "file_descriptors" keyword.*
 	     
-   >>> cfdm.write(f, file_descriptors={'history': 'created in 2019'})
-   >>> f_file = cfdm.read('f_file')[0]
+   >>> cfdm.write(f, 'f_file_nc', file_descriptors={'history': 'created in 2020'})
+   >>> f_file = cfdm.read('f_file.nc')[0]
    >>> f_file.nc_global_attributes()
    >>> f_file.properties()
    {'Conventions': 'CF-1.7',
-    'history': 'created in 2019',
+    'history': 'created in 2020',
     'information': 'variable information',
     'model': 'model_A',
     'project': 'research',
@@ -3178,7 +3182,7 @@ if they had actually been stored in the same file, simply by providing
 the external file names to the `cfdm.read` function.
 
 This is illustrated with the files ``parent.nc`` (found in the
-:ref:`zip file of sample files <Sample-datasets>`):
+:ref:`sample datasets <Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the parent dataset with the ncdump command line
@@ -3206,7 +3210,7 @@ This is illustrated with the files ``parent.nc`` (found in the
    		:external_variables = "areacella" ;
    }
 
-and ``external.nc`` (found in the :ref:`zip file of sample files
+and ``external.nc`` (found in the :ref:`sample datasets
 <Sample-datasets>`):
 
 .. code-block:: console
@@ -3279,7 +3283,7 @@ variable had been present in the parent dataset:
    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : cell_area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2
-   >>> area = u.constructs('measure:area').value()
+   >>> area = g.constructs('measure:area').value()
    >>> area
    <CellMeasure: cell_area(9, 10) m2>
    >>> area.nc_get_external()
@@ -3447,7 +3451,7 @@ indexed contiguous, ragged array is stored in an `Index` instance and
 is accessed with the `~Data.get_index` method of the `Data` instance.
 
 The contiguous case is is illustrated with the file ``contiguous.nc``
-(found in the :ref:`zip file of sample files <Sample-datasets>`):
+(found in the :ref:`sample datasets <Sample-datasets>`):
      
 .. code-block:: console
    :caption: *Inspect the compressed dataset with the ncdump command
@@ -3709,7 +3713,7 @@ stored in a `List` object and is retrieved with the `~Data.get_list`
 method of the `Data` instance.
 
 This is illustrated with the file ``gathered.nc`` (found in the
-:ref:`zip file of sample files <Sample-datasets>`):
+:ref:`sample datasets <Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the compressed dataset with the ncdump command
@@ -3867,7 +3871,7 @@ The new field construct can now be inspected and written a netCDF file:
    
    >>> P
    <Field: precipitation_flux(key%domainaxis0(2), key%domainaxis1(3), key%domainaxis2(2)) kg m-2 s-1>
-   >>> print(P.data.rray)
+   >>> print(P.data.array)
    [[[ -- 2.0]
      [ --  --]
      [1.0 3.0]]
