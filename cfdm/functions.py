@@ -54,6 +54,8 @@ def ATOL(*atol):
     >>> ATOL()
     2.220446049250313e-16
     >>> old = ATOL(1e-10)
+    >>> ATOL()
+    1e-10
     >>> ATOL(old)
     1e-10
     >>> ATOL()
@@ -100,6 +102,8 @@ def RTOL(*rtol):
     >>> RTOL()
     2.220446049250313e-16
     >>> old = RTOL(1e-10)
+    >>> RTOL()
+    1e-10
     >>> RTOL(old)
     1e-10
     >>> RTOL()
@@ -127,6 +131,9 @@ def environment(display=True, paths=True, string=True):
         paths: `bool`, optional
             If False then do not output the locations of each package.
 
+        string:
+            Deprecated.
+
     :Returns:
     
         `None` or `str`
@@ -143,8 +150,8 @@ def environment(display=True, paths=True, string=True):
     future: 0.17.1 /home/user/anaconda3/lib/python3.7/site-packages/future/__init__.py
     HDF5 library: 1.10.2
     netcdf library: 4.6.1
-    netCDF4: 1.4.2 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
-    cftime: 1.0.4.2 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
+    netCDF4: 1.5.3 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
+    cftime: 1.1.0 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
     numpy: 1.16.2 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
     cfdm: 1.8.0
     
@@ -155,8 +162,8 @@ def environment(display=True, paths=True, string=True):
     future: 0.17.1 /home/user/anaconda3/lib/python3.7/site-packages/future/__init__.py
     HDF5 library: 1.10.2
     netcdf library: 4.6.1
-    netCDF4: 1.4.2
-    cftime: 1.0.4.2
+    netCDF4: 1.5.3
+    cftime: 1.1.0
     numpy: 1.16.2
     cfdm: 1.8.0
 
