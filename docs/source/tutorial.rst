@@ -3187,9 +3187,9 @@ by setting the *string* keyword of the `cfdm.write` function.
 
 `Groups`_ provide a powerful mechanism to structure data
 hierarchically. A future |version|.\ *x* release of cfdm will include
-support for netCDF4 files containing data organised in hierarchical
-groups, but this is not available in version |release| (even though it
-is allowed in CF-|version|).
+support for netCDF4 files containing data organised in groups, but
+this is not available in version |release| (even though it is allowed
+in CF-|version|).
 
 ----
    

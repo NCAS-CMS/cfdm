@@ -40,8 +40,8 @@ example:
 
    import functools
 
-   # Define an implementation that is the same as cfdm, but with the
-   # my_Field class to represent field constructs
+   # Define an implementation that is the same as cfdm, but which uses
+   # the my_Field class to represent field constructs
    my_implementation = cfdm.implementation()
    my_implementation.set_class('Field', my_Field)
 
@@ -103,6 +103,8 @@ example:
      [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]
 
 
-Customisation of the actual functionality used by `cfdm.read` and
-`cfdm.write` is possible by subclassing the `CFDMImplementation`,
-`NetCDFRead` and `NetCDFWrite` classes.
+Modification and extension of the implementation functionality used by
+`cfdm.read` and `cfdm.write` is possible by subclassing the
+`CFDMImplementation`, `NetCDFRead` and `NetCDFWrite` classes. See
+`cf-python <https://github.com/NCAS-CMS/cf-python>` for an example of
+this customisation.

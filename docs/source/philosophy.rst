@@ -14,6 +14,13 @@
 
 Version |release| for version |version| of the CF conventions.
 
+.. contents::
+   :local:
+   :backlinks: entry
+
+**Core and extended implementations**
+-------------------------------------
+	       
 The basic requirement of the reference implementation is to represent
 the logical :ref:`CF data model <CF-data-model>` in memory with a
 package of Python classes, with no further features. However, in order
@@ -30,12 +37,12 @@ extended implementation, the :ref:`cfdm <class_extended>` package,
 that allows the reading and writing of netCDF datasets, as well as
 having comprehensive inspection capabilities.
 
+----
+
 .. _CF-conventions:
 
 **CF conventions**
 ------------------
-
-----
 
 The CF data model does not enforce the CF conventions. CF-compliance
 is the responsibility of the user. For example, a "units" property
@@ -49,11 +56,10 @@ attribute to create an unambiguous CF data model construct; or create
 an unambiguous netCDF variable or attribute from a non-CF-compliant CF
 data model construct.
 
+----
 
 **Functionality**
 -----------------
-
-----
 
 The cfdm package has, with few exceptions, only the functionality
 required to read and write datasets, and to create, modify and inspect
@@ -71,10 +77,10 @@ The `cf-python <https://ncas-cms.github.io/cf-python>`_ and `cf-plot
 <http://ajheaps.github.io/cf-plot/>`_ packages, that are built on top
 of the cfdm package, include much more higher level functionality.
 
+----
+
 **API**
 -------
-
-----
 
 The design of an application programming interface (API) needs to
 strike a balance between being verbose and terse. A verbose API is
@@ -85,8 +91,8 @@ verbose end of the spectrum: in general it does not use abbreviations
 for method and parameter names, and each method performs a sole
 function.
 
-Here is an example of a simple field created with the :ref:`cfdm.core
-<class_core>` package:
+Here is an example of a simple field construct created with the
+:ref:`cfdm.core <class_core>` package:
 
 .. code:: python
 
@@ -101,8 +107,8 @@ Here is an example of a simple field created with the :ref:`cfdm.core
    >>> print(f)
    <cfdm.core.field.Field object at 0x7faf6ac23510>
 
-The same field may be created with the :ref:`cfdm <class_extended>`
-package:
+The same field construct may be created with the :ref:`cfdm
+<class_extended>` package:
 
 .. code:: python
 
