@@ -110,8 +110,8 @@ The following file types can be read:
 
 * A future |version|.\ *x* release of cfdm will include support for
   :ref:`netCDF4 files containing data organised in hierarchical groups
-  <netCDF4_Groups>`, but this is not available in version |release|
-  (even though it is allowed in CF-|version|).
+  <Hierarchical-groups>`, but this is not available in version
+  |release| (even though it is allowed in CF-|version|).
 
 For example, to read the file ``file.nc`` (found in the :ref:`sample
 datasets <Sample-datasets>`), which contains two field
@@ -3179,17 +3179,17 @@ used. Alternatively, netCDF character arrays can be used in all cases
 by setting the *string* keyword of the `cfdm.write` function.
 
 ----
-   
-.. _netCDF4_Groups:
+      
+.. _Hierarchical-groups:
 
-**Groups**
-----------
+**Hierarchical groups**
+-----------------------
 
-`Groups`_ provide a powerful mechanism to structure data
-hierarchically. A future |version|.\ *x* release of cfdm will include
-support for netCDF4 files containing data organised in groups, but
-this is not available in version |release| (even though it is allowed
-in CF-|version|).
+`Hierarchical groups`_ provide a powerful mechanism to structure
+variables within datasets. A future |version|.\ *x* release of cfdm
+will include support for netCDF4 files containing data organised in
+hierarchical groups, but this is not available in version |release|
+(even though it is allowed in CF-|version|).
 
 ----
    
@@ -3954,13 +3954,6 @@ The content of the new file is:
           OPeNDAP support enabled. See
           http://unidata.github.io/netcdf4-python for details.
 
-.. .. [#notebook] The Jupyter notebook is quite long. To aid navigation
-                  it has been written so that it may optionally be used
-                  with the "Collapsible Headings" Jupyter notebook
-                  extension. See
-                  https://jupyter-contrib-nbextensions.readthedocs.io/en/latest
-                  for details.
-
 .. .. [#language] In the terminology of the CF data model, a "construct"
                   is an abstract concept which is distinct from its
                   realization, e.g. a `Field` instance is not, strictly
@@ -3984,7 +3977,7 @@ The content of the new file is:
 .. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_indexed_ragged_array_representation
 .. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
 .. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
-.. _Groups:                           http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
+.. _Hierarchical groups:              http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
 
 .. The code examples in this tutorial are available in an **IPython
    Jupyter notebook** (:download:`download
