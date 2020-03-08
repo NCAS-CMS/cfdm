@@ -27,10 +27,11 @@ classes is straight forward. For example:
    f = my_Field()
    f.set_property('standard_name', 'air_pressure')
    
-It is also possible use `cfdm.read` to read a dataset into field
-constructs defined by the new implementation, and `cfdm.write` to
-write to disk field constructs defined by the new implementation. For
-example:
+   
+It is also possible use `cfdm.read` and `cfdm.write` to read and write
+respectively field constructs defined by the new implementation; and
+`cfdm.example_field` to return example field constructs defined by the
+new implementation. For example:
 
 .. code-block:: python
    :caption: *Encapsulate the new implementation in a
