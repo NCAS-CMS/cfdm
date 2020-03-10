@@ -36,6 +36,9 @@ def example_field(n, _implementation=_implementation):
 
             ``5``  A field construct that contains a 12 hourly time
                    series at each latitude-longitude location.
+
+            ``6``  A field construct that has polygon geometry
+                   coordinate cells with interior ring variables.
             =====  ===================================================
 
             See the examples for details.
@@ -136,14 +139,25 @@ def example_field(n, _implementation=_implementation):
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : air_pressure(1) = [850.0] hPa
 
+    >>> f = example_field(6)
+    >>> print(f)
+    Field: preciptitation_amount (ncvar%pr)
+    ---------------------------------------
+    Data            : preciptitation_amount(cf_role=timeseries_id(2), time(4))
+    Dimension coords: time(4) = [2000-01-02 00:00:00, ..., 2000-01-05 00:00:00]
+    Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
+                    : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
+                    : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b'x1', b'y2']
+                    : altitude(cf_role=timeseries_id(2), 3, 4) = [[[1.0, ..., --]]] m
+    Coord references: grid_mapping_name:latitude_longitude
+
     '''
-    if not 0 <= n <= 5:
+    if not 0 <= n <= 6:
         raise ValueError(
-            "Must select an example field construct with an integer argument between 0 and 5 inclusive. Got {!r}".format(
+            "Must select an example field construct with an integer argument between 0 and 6 inclusive. Got {!r}".format(
                 n))
 
     AuxiliaryCoordinate = _implementation.get_class('AuxiliaryCoordinate')
-    Bounds              = _implementation.get_class('Bounds')
     CellMeasure         = _implementation.get_class('CellMeasure')
     CellMethod          = _implementation.get_class('CellMethod')
     CoordinateReference = _implementation.get_class('CoordinateReference')
@@ -152,6 +166,9 @@ def example_field(n, _implementation=_implementation):
     DomainAxis          = _implementation.get_class('DomainAxis')   
     FieldAncillary      = _implementation.get_class('FieldAncillary')   
     Field               = _implementation.get_class('Field')    
+
+    Bounds              = _implementation.get_class('Bounds')
+    InteriorRing        = _implementation.get_class('InteriorRing')
 
     Data                = _implementation.get_class('Data')    
 
@@ -742,6 +759,111 @@ def example_field(n, _implementation=_implementation):
         c = CellMethod()
         c.set_method('mean')
         c.set_axes('area')
+        f.set_construct(c)
+
+    elif n == 6:
+        # field: preciptitation_amount
+        f = Field()
+        f.set_properties({'Conventions': 'CF-1.8', 'featureType': 'timeSeries', 'comment': 'TODO', 'standard_name': 'preciptitation_amount', 'standard_units': 'kg m-2'})
+        d = Data([[1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0]], dtype='f8')
+        f.set_data(d)
+        f.nc_set_variable('pr')
+        
+        # netCDF global attributes
+        f.nc_set_global_attributes({'Conventions': None, 'featureType': None, 'comment': None})
+        
+        # domain_axis: ncdim%instance
+        c = DomainAxis()
+        c.set_size(2)
+        c.nc_set_dimension('instance')
+        f.set_construct(c, key='domainaxis0', copy=False)
+        
+        # domain_axis: ncdim%time
+        c = DomainAxis()
+        c.set_size(4)
+        c.nc_set_dimension('time')
+        f.set_construct(c, key='domainaxis1', copy=False)
+        
+        # field data axes
+        f.set_data_axes(('domainaxis0', 'domainaxis1'))
+        
+        # auxiliary_coordinate: latitude
+        c = AuxiliaryCoordinate()
+        c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+        d = Data([25.0, 7.0], units='degrees_north', dtype='f8')
+        c.set_data(d)
+        c.nc_set_variable('lat')
+        b = Bounds()
+        b.set_properties({'units': 'degrees_north', 'standard_name': 'latitude', 'axis': 'Y'})
+        d = Data([[[0.0, 15.0, 0.0, 9.969209968386869e+36], [5.0, 10.0, 5.0, 5.0], [20.0, 35.0, 20.0, 9.969209968386869e+36]], [[0.0, 15.0, 0.0, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]]], units='degrees_north', dtype='f8', mask=Data([[[False, False, False, True], [False, False, False, False], [False, False, False, True]], [[False, False, False, True], [True, True, True, True], [True, True, True, True]]], dtype='b1'))
+        b.set_data(d)
+        b.nc_set_variable('y')
+        c.set_bounds(b)
+        i = InteriorRing()
+        d = Data([[0, 1, 0], [0, -2147483647, -2147483647]], dtype='i4', mask=Data([[False, False, False], [False, True, True]], dtype='b1'))
+        i.set_data(d)
+        i.nc_set_variable('interior_ring')
+        c.set_interior_ring(i)
+        f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate0', copy=False)
+        
+        # auxiliary_coordinate: longitude
+        c = AuxiliaryCoordinate()
+        c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+        d = Data([10.0, 40.0], units='degrees_east', dtype='f8')
+        c.set_data(d)
+        c.nc_set_variable('lon')
+        b = Bounds()
+        b.set_properties({'units': 'degrees_east', 'standard_name': 'longitude', 'axis': 'X'})
+        d = Data([[[20.0, 10.0, 0.0, 9.969209968386869e+36], [5.0, 10.0, 15.0, 10.0], [20.0, 10.0, 0.0, 9.969209968386869e+36]], [[50.0, 40.0, 30.0, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]]], units='degrees_east', dtype='f8', mask=Data([[[False, False, False, True], [False, False, False, False], [False, False, False, True]], [[False, False, False, True], [True, True, True, True], [True, True, True, True]]], dtype='b1'))
+        b.set_data(d)
+        b.nc_set_variable('x')
+        c.set_bounds(b)
+        i = InteriorRing()
+        d = Data([[0, 1, 0], [0, -2147483647, -2147483647]], dtype='i4', mask=Data([[False, False, False], [False, True, True]], dtype='b1'))
+        i.set_data(d)
+        i.nc_set_variable('interior_ring')
+        c.set_interior_ring(i)
+        f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate1', copy=False)
+        
+        # auxiliary_coordinate: cf_role=timeseries_id
+        c = AuxiliaryCoordinate()
+        c.set_properties({'cf_role': 'timeseries_id'})
+        d = Data([b'x1', b'y2'], dtype='S2')
+        c.set_data(d)
+        c.nc_set_variable('instance_id')
+        f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate2', copy=False)
+        
+        # auxiliary_coordinate: Z
+        c = AuxiliaryCoordinate()
+        b = Bounds()
+        b.set_properties({'units': 'm', 'standard_name': 'altitude', 'axis': 'Z'})
+        d = Data([[[1.0, 2.0, 4.0, 9.969209968386869e+36], [2.0, 3.0, 4.0, 5.0], [5.0, 1.0, 4.0, 9.969209968386869e+36]], [[3.0, 2.0, 1.0, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]]], units='m', dtype='f8', mask=Data([[[False, False, False, True], [False, False, False, False], [False, False, False, True]], [[False, False, False, True], [True, True, True, True], [True, True, True, True]]], dtype='b1'))
+        b.set_data(d)
+        b.nc_set_variable('z')
+        c.set_bounds(b)
+        i = InteriorRing()
+        d = Data([[0, 1, 0], [0, -2147483647, -2147483647]], dtype='i4', mask=Data([[False, False, False], [False, True, True]], dtype='b1'))
+        i.set_data(d)
+        i.nc_set_variable('interior_ring')
+        c.set_interior_ring(i)
+        f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate3', copy=False)
+        
+        # dimension_coordinate: time
+        c = DimensionCoordinate()
+        c.set_properties({'standard_name': 'time', 'units': 'days since 2000-01-01'})
+        d = Data([1, 2, 3, 4], units='days since 2000-01-01', dtype='i4')
+        c.set_data(d)
+        c.nc_set_variable('time')
+        f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate0', copy=False)
+        
+        # coordinate_reference
+        c = CoordinateReference()
+        c.nc_set_variable('datum')
+        c.set_coordinates({'auxiliarycoordinate0', 'auxiliarycoordinate1'})
+        c.datum.set_parameter('semi_major_axis', 6378137.0)
+        c.datum.set_parameter('inverse_flattening', 298.257223563)
+        c.datum.set_parameter('longitude_of_prime_meridian', 0.0)
+        c.coordinate_conversion.set_parameter('grid_mapping_name', 'latitude_longitude')
         f.set_construct(c)
 
     return f
