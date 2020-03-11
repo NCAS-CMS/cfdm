@@ -87,7 +87,7 @@ To install from source:
 
        $ python setup.py install --user
 
-  * To install the cfdm package in the <directory> of your choice:
+  * To install the cfdm package in the ``<directory>`` of your choice:
 
     .. code:: console
 

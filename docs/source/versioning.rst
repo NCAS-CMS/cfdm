@@ -37,4 +37,4 @@ was cfdm version ``1.8.0``.
    :caption: *Retrieve the version of the cfdm package.*
 	     	     
    >>> cfdm.__version__
-   '1.8.12'
+   '1.8.2'

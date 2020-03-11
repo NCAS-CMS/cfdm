@@ -10,6 +10,7 @@ version 1.8.0
 * Implementing of string data-types for CF-1.8
   (https://github.com/NCAS-CMS/cfdm/issues/12).
 * New function: `cfdm.example_field`
+  (https://github.com/NCAS-CMS/cfdm/issues/18)
 * New attributes: `cfdm.Field.dtype`, `cfdm.Field.ndim`,
   `cfdm.Field.shape`, `cfdm.Field.size`
 * New method: `cfdm.Data.any`

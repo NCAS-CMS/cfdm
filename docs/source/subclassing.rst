@@ -107,5 +107,5 @@ new implementation. For example:
 Modification and extension of the implementation functionality used by
 `cfdm.read` and `cfdm.write` is possible by subclassing the
 `CFDMImplementation`, `NetCDFRead` and `NetCDFWrite` classes. See
-`cf-python <https://github.com/NCAS-CMS/cf-python>` for an example of
+`cf-python <https://github.com/NCAS-CMS/cf-python>`_ for an example of
 this customisation.

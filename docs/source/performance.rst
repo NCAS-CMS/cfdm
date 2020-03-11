@@ -53,8 +53,8 @@ in-place operation can be considerably faster. These methods have the
 `~Field.uncompress` methods of a field construct.
   
 For example, in one particular test using a dataset from the
-:ref:`Tutorial`, transposing the data dimensions of the field
-construct was ~10 times faster when done in-place, compared with
+:ref:`tutorial <Tutorial>`, transposing the data dimensions of the
+field construct was ~10 times faster when done in-place, compared with
 creating a new independent field construct:
 
 .. code-block:: python
