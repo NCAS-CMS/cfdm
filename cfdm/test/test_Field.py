@@ -381,7 +381,26 @@ class FieldTest(unittest.TestCase):
         a = f.del_construct('auxiliarycoordinate1', default=None)
         self.assertTrue(a == None)        
 
-    
+
+    def test_Field_has_construct(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+
+        b = f.has_construct('auxiliarycoordinate1')
+        self.assertTrue(b)
+
+        f.del_construct('auxiliarycoordinate1')
+        c = f.has_construct('auxiliarycoordinate1')
+        self.assertTrue(not c)  # now expect False as we deleted the construct
+
+        # Test edge case whereby constructs have Falsy values as key names:
+        f.set_construct(cfdm.DomainAxis(0), key='')
+        d = f.has_construct('')
+        self.assertTrue(d)
+
+
     def test_Field_squeeze_transpose_insert_dimension(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

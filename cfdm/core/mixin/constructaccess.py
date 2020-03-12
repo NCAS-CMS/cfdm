@@ -97,7 +97,7 @@ class ConstructAccess(object):
 
 
     def has_construct(self, key):
-        '''Whather a metadata construct exisits.
+        '''Whether a metadata construct exists.
 
     .. versionadded:: 1.7.0
     
@@ -115,7 +115,7 @@ class ConstructAccess(object):
     :Returns:
     
         `bool` 
-            True if the construct exisits, otherwise False.
+            True if the construct exists, otherwise False.
     
     **Examples:**
     
@@ -126,7 +126,12 @@ class ConstructAccess(object):
     False
 
         '''
-        return self.constructs._del_construct(key, default=default)
+        # Assume construct keys can (uncommonly) be Falsy e.g. '' or 0
+        # (this is tested explicitly) but not None (so None untested).
+        try_get_construct = self.get_construct(key, default=None)
+        if try_get_construct is None:
+            return False
+        return True
 
 
     def set_construct(self, construct, key=None, axes=None,
@@ -146,7 +151,7 @@ class ConstructAccess(object):
         key: `str`, optional
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
-            automatically. If the identifier already exisits then the
+            automatically. If the identifier already exists then the
             exisiting construct will be replaced.
     
             *Parameter example:*

@@ -2475,7 +2475,7 @@ class NetCDFRead(IORead):
         
                     if ncvar in g['cell_measure']:
                         # Copy the cell measure from one that already
-                        # exisits
+                        # exists
                         cell = g['cell_measure'][ncvar].copy()
                     else:
                         cell = self._create_cell_measure(measure, ncvar)
