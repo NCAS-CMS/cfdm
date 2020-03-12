@@ -13,6 +13,7 @@ fi
 
 vn=$1
 
+mkdir -p ~/tmp
 cp dist/cfdm-$vn.tar.gz ~/tmp
 cd ~/tmp
 rm -fr ~/tmp/test ~/tmp/bin ~/tmp/lib ~/tmp/cfdm-$vn

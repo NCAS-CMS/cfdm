@@ -60,9 +60,9 @@ disk.
 **Field construct**
 -------------------
 
-The central construct (i.e. element) to CF is the :ref:`field
-construct <CF-data-model>`. The field construct, that corresponds to a
-CF-netCDF data variable, includes all of the metadata to describe it:
+The central construct (i.e. element) to CF is the :term:`field
+construct`. The field construct, that corresponds to a CF-netCDF data
+variable, includes all of the metadata to describe it:
 
     * descriptive properties that apply to field construct as a whole
       (e.g. the standard name),

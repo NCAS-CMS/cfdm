@@ -4,10 +4,8 @@ standard_library.install_aliases()
 from builtins import str
 
 import os
+import platform
 import sys
-
-from platform import platform, python_version
-from os.path import abspath as _os_path_abspath
 
 import netCDF4
 import cftime
@@ -145,11 +143,11 @@ def environment(display=True, paths=True, string=True):
 
     >>> environment()                                                                  
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
+    HDF5 library: 1.10.2
+    netcdf library: 4.6.1
     python: 3.7.3 /home/user/anaconda3/bin/python
     python: 3.7.3 /home/user/anaconda3/bin/python
     future: 0.17.1 /home/user/anaconda3/lib/python3.7/site-packages/future/__init__.py
-    HDF5 library: 1.10.2
-    netcdf library: 4.6.1
     netCDF4: 1.5.3 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
     cftime: 1.1.0 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
     numpy: 1.16.2 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
@@ -157,11 +155,10 @@ def environment(display=True, paths=True, string=True):
     
     >>> environment(paths=False)                                                       
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
-    python: 3.7.3
-    python: 3.7.3 /home/user/anaconda3/bin/python
-    future: 0.17.1 /home/user/anaconda3/lib/python3.7/site-packages/future/__init__.py
     HDF5 library: 1.10.2
     netcdf library: 4.6.1
+    python: 3.7.3
+    future: 0.17.1
     netCDF4: 1.5.3
     cftime: 1.1.0
     numpy: 1.16.2
@@ -169,32 +166,34 @@ def environment(display=True, paths=True, string=True):
 
     '''
     out = []
-    out.append('Platform: ' + str(platform()))
-    out.append('python: ' + str(python_version()))
-    if paths:
-        out[-1] += ' ' + str(sys.executable)
-        
-    out.append('python: ' + str(python_version() + ' ' + str(sys.executable)))
-    out.append('future: ' + str(future.__version__) + ' ' + str(os.path.abspath(future.__file__)))
 
+    out.append('Platform: ' + str(platform.platform()))
     out.append('HDF5 library: ' + str(netCDF4. __hdf5libversion__))
     out.append('netcdf library: ' + str(netCDF4.__netcdf4libversion__))
 
+    out.append('python: ' + str(platform.python_version()))
+    if paths:
+        out[-1] += ' ' + str(sys.executable)
+        
+    out.append('future: ' + str(future.__version__))
+    if paths:
+        out[-1] += ' ' + str(os.path.abspath(future.__file__))
+
     out.append('netCDF4: ' + str(netCDF4.__version__))
     if paths:
-        out[-1] += ' ' + str(_os_path_abspath(netCDF4.__file__))
+        out[-1] += ' ' + str(os.path.abspath(netCDF4.__file__))
 
     out.append('cftime: ' + str(cftime.__version__))
     if paths:
-        out[-1] += ' ' + str(_os_path_abspath(cftime.__file__))
+        out[-1] += ' ' + str(os.path.abspath(cftime.__file__))
         
     out.append('numpy: ' + str(numpy.__version__))
     if paths:
-        out[-1] += ' ' + str(_os_path_abspath(numpy.__file__))
+        out[-1] += ' ' + str(os.path.abspath(numpy.__file__))
 
     out.append('cfdm: ' + str(__version__))
     if paths:
-        out[-1] += ' ' + str(_os_path_abspath(__file__))
+        out[-1] += ' ' + str(os.path.abspath(__file__))
 
     out = '\n'.join(out)
 

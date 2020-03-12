@@ -1,6 +1,12 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
+.. raw:: html
+
+    <style> .small {font-size:small} </style>
+
+.. role:: small
+
 **Introduction**
 ================
 
@@ -43,7 +49,7 @@ partially conformant may nonetheless be modified in memory.
 
 The cfdm package can
 
-* read field constructs from netCDF datasets,
+* read field constructs from netCDF and CDL datasets,
 
 * create new field constructs in memory,
 
@@ -63,7 +69,8 @@ The cfdm package can
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form, and
 
-* read, write, and create coordinates defined by geometry cells.
+* read, write, and create coordinates defined by geometry cells (new
+  in version 1.8.0).
 
 Note that cfdm enables the creation of CF field constructs, but it's
 :ref:`up to the user to use them in a CF-compliant way
@@ -76,15 +83,18 @@ field constructs in memory.
 Additional functionality
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-The `cf-python <https://ncas-cms.github.io>`_ and `cf-plot
+The `cf-python <https://ncas-cms.github.io/cf-python>`_ and `cf-plot
 <http://ajheaps.github.io/cf-plot/>`_ packages, which are both are
-built on top of the cfdm package, include much more higher level
-functionality.
+built on top of the cfdm package, include higher level functionality,
+such as regridding, statistical operations and comprehensive
+visualisation.
 
 ----
 
-.. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
-           Taylor, K. E.: A data model of the Climate and Forecast
-           metadata conventions (CF-1.6) with a software
-           implementation (cf-python v2.1), Geosci. Model Dev., 10,
-           4619-4646, https://doi.org/10.5194/gmd-10-4619-2017, 2017.
+.. [#cfdm] :small:`Hassell, D., Gregory, J., Blower, J.,
+           Lawrence, B. N., and Taylor, K. E.: A data model of the
+           Climate and Forecast metadata conventions (CF-1.6) with a
+           software implementation (cf-python v2.1), Geosci. Model
+           Dev., 10, 4619-4646,
+           https://doi.org/10.5194/gmd-10-4619-2017, 2017.`
+
