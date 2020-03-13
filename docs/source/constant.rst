@@ -17,8 +17,10 @@ Version |release| for version |version| of the CF conventions.
     assignment. This is consistent with the :ref:`behaviour of numpy
     masked arrays <numpy:maskedarray.generic.constructing>`.
 
-    For example, masking every element of a field construct's data
-    array could be done as follows:
+    **Examples:**
+
+    Masking every element of a field construct's data could be done as
+    follows:
 
     >>> f[...] = cfdm.masked
     

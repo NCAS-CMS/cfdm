@@ -1,9 +1,9 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-#######################
-**cfdm python package**
-#######################
+################
+**cfdm package**
+################
 
 ----
 
