@@ -24,11 +24,11 @@ When a dataset is read using `cfdm.read`, `lazy loading
 <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all
 data arrays, which means that no data is read into memory until the
 data is required for inspection or to modify the array contents. This
-maximises the number of field constructs that may be read within a
-session, and makes the read operation fast. If a :ref:`subspace
-<Subspacing>` of the data in the file is requested then only that
-subspace is read into memory. These behaviours are inherited from the
-`netCDF4 python package
+maximises the number of :term:`field constructs <field construct>`
+that may be read within a session, and makes the read operation
+fast. If a :ref:`subspace <Subspacing>` of the data in the file is
+requested then only that subspace is read into memory. These
+behaviours are inherited from the `netCDF4 python package
 <http://unidata.github.io/netcdf4-python/netCDF4/index.html>`_.
 
 When an instance is copied with its `!copy` method, any data are

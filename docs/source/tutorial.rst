@@ -512,21 +512,21 @@ The metadata constructs describe the field construct that contains
 them. Each :ref:`CF data model metadata construct <CF-data-model>` has
 a corresponding cfdm class:
 
-=====================  =======================  ==============================
-Class                  CF data model construct  Description                     
-=====================  =======================  ==============================
-`DomainAxis`           Domain axis              Independent axes of the domain
-`DimensionCoordinate`  Dimension coordinate     Domain cell locations         
-`AuxiliaryCoordinate`  Auxiliary coordinate     Domain cell locations         
-`CoordinateReference`  Coordinate reference     Domain coordinate systems     
-`DomainAncillary`      Domain ancillary         Cell locations in alternative 
-                                                coordinate systems	       
-`CellMeasure`          Cell measure             Domain cell size or shape     
-`FieldAncillary`       Field ancillary          Ancillary metadata which vary 
-                                                within the domain	       
-`CellMethod`           Cell method              Describes how data represent  
-                                                variation within cells	       
-=====================  =======================  ==============================
+=====================  ==============================================================  ==============================
+Class                  CF data model construct                                         Description                     
+=====================  ==============================================================  ==============================
+`DomainAxis`           :term:`Domain axis <domain axis constructs>`                    Independent axes of the domain
+`DimensionCoordinate`  :term:`Dimension coordinate <dimension coordinate constructs>`  Domain cell locations         
+`AuxiliaryCoordinate`  :term:`Auxiliary coordinate <auxiliary coordinate constructs>`  Domain cell locations         
+`CoordinateReference`  :term:`Coordinate reference <coordinate reference constructs>`  Domain coordinate systems     
+`DomainAncillary`      :term:`Domain ancillary <domain ancillary constructs>`          Cell locations in alternative 
+                                                                                       coordinate systems	       
+`CellMeasure`          :term:`Cell measure <cell measure constructs>`                  Domain cell size or shape     
+`FieldAncillary`       :term:`Field ancillary <field ancillary constructs>`            Ancillary metadata which vary 
+                                                                                       within the domain	       
+`CellMethod`           :term:`Cell method <cell method constructs>`                    Describes how data represent  
+                                                                                       variation within cells	       
+=====================  ==============================================================  ==============================
 
 Metadata constructs of a particular type can be retrieved with the
 following attributes of the field construct:
@@ -719,8 +719,8 @@ All of the methods and attributes related to the data are listed
 Data axes
 ^^^^^^^^^
 
-The data array of the field construct spans all the domain axis
-constructs with the possible exception of size one domain axis
+The data array of the field construct spans all the :term:`domain axis
+constructs` with the possible exception of size one domain axis
 constructs. The domain axis constructs spanned by the field
 construct's data are found with the `~Field.get_data_axes` method of
 the field construct. For example, the data of the field construct
@@ -947,11 +947,11 @@ Creation of a new field construct which spans a subspace of the domain
 of an existing field construct is achieved by indexing the field
 itself, rather than its `Data` instance. This is because the operation
 must also subspace any metadata constructs of the field construct
-(e.g. coordinate metadata constructs) which span any of the domain
-axis constructs that are affected. The new field construct is created
-with the same properties as the original field. Subspacing uses the
-same :ref:`cfdm indexing rules <Indexing>` that apply to the `Data`
-class.
+(e.g. coordinate metadata constructs) which span any of the
+:term:`domain axis constructs` that are affected. The new field
+construct is created with the same properties as the original
+field. Subspacing uses the same :ref:`cfdm indexing rules <Indexing>`
+that apply to the `Data` class.
 
 .. code-block:: python
   :caption: *Create a new field whose domain spans the first longitude
@@ -992,9 +992,9 @@ Method                            Filter criteria
 `~Constructs.filter_by_identity`  Metadata construct identity                
 `~Constructs.filter_by_type`      Metadata construct type                       
 `~Constructs.filter_by_property`  Property values                                     
-`~Constructs.filter_by_axis`      The domain axis constructs spanned by the data
-`~Constructs.filter_by_naxes`     The number of domain axis constructs spanned by the data
-`~Constructs.filter_by_size`      The size domain axis constructs
+`~Constructs.filter_by_axis`      The :term:`domain axis constructs` spanned by the data
+`~Constructs.filter_by_naxes`     The number of :term:`domain axis constructs` spanned by the data
+`~Constructs.filter_by_size`      The size :term:`domain axis constructs`
 `~Constructs.filter_by_measure`   Measure value (for cell measure constructs)
 `~Constructs.filter_by_method`    Method value (for cell method constructs)	
 `~Constructs.filter_by_data`      Whether or not there could be be data.
@@ -1401,7 +1401,7 @@ construct <Data>` as the field construct for accessing their data:
    >>> print(lon.data.array)
    [22.5 67.5 133.33 157.5 202.5 247.5 292.5 337.5]
 
-The domain axis constructs spanned by a particular metadata
+The :term:`domain axis constructs` spanned by a particular metadata
 construct's data are found with the `~Constructs.get_data_axes` method
 of the field construct:
 
@@ -1576,8 +1576,9 @@ the `~cfdm.DomainAxis.get_size` method of the domain axis construct.
 **Coordinates**
 ---------------
 
-There are two types of coordinate construct, dimension and auxiliary
-coordinate constructs, which can be retrieved together with the
+There are two types of coordinate construct, :term:`dimension
+<dimension coordinate constructs>` and :term:`auxiliary coordinate
+constructs`, which can be retrieved together with the
 `~cfdm.Field.coordinates` method of the field construct, as well as
 individually with the `~cfdm.Field.auxiliary_coordinates` and
 `~cfdm.Field.dimension_coordinates` methods.
@@ -1754,11 +1755,12 @@ defined in the CF conventions.
 **Domain ancillaries**
 ----------------------
 
-A domain ancillary construct provides information which is needed for
-computing the location of cells in an alternative :ref:`coordinate
-system <Coordinate-systems>`. If a domain ancillary construct provides
-extra coordinates then it may contain cell bounds in addition to its
-main data array.
+A :term:`domain ancillary <domain ancillary constructs>` construct
+provides information which is needed for computing the location of
+cells in an alternative :ref:`coordinate system
+<Coordinate-systems>`. If a domain ancillary construct provides extra
+coordinates then it may contain cell bounds in addition to its main
+data array.
 
 .. code-block:: python
    :caption: *Get the data and bounds data of a domain ancillary
@@ -1781,11 +1783,12 @@ main data array.
 ----------------------
 
 A field construct may contain various coordinate systems. Each
-coordinate system is either defined by a coordinate reference
-construct that relates dimension coordinate, auxiliary coordinate and
-domain ancillary constructs (as is the case for the field construct
-``t``), or is inferred from dimension and auxiliary coordinate
-constructs alone (as is the case for the field construct ``q``).
+coordinate system is either defined by a :term:`coordinate reference
+construct <coordinate reference constructs>` that relates dimension
+coordinate, auxiliary coordinate and domain ancillary constructs (as
+is the case for the field construct ``t``), or is inferred from
+dimension and auxiliary coordinate constructs alone (as is the case
+for the field construct ``q``).
 
 A coordinate reference construct contains
 
@@ -1920,11 +1923,12 @@ methods of the cell method construct.
 **Field ancillaries**
 ---------------------
 
-A field ancillary construct provides metadata which are distributed
-over the same domain as the field construct itself. For example, if a
-field construct holds a data retrieved from a satellite instrument, a
-field ancillary construct might provide the uncertainty estimates for
-those retrievals (varying over the same spatiotemporal domain).
+A :term:`field ancillary construct <field ancillary constructs>`
+provides metadata which are distributed over the same domain as the
+field construct itself. For example, if a field construct holds a data
+retrieved from a satellite instrument, a field ancillary construct
+might provide the uncertainty estimates for those retrievals (varying
+over the same spatiotemporal domain).
 
 .. code-block:: python
    :caption: *Get the properties and data of a field ancillary
@@ -1982,7 +1986,7 @@ constructs.
 **Stage 3:** The metadata constructs are inserted into the field
 construct with cross-references to other, related metadata constructs
 if required. For example, an auxiliary coordinate construct is related
-to an ordered list of the domain axis constructs which correspond to
+to an ordered list of the :term:`domain axis constructs` which correspond to
 its data array dimensions.
 
 There are two equivalent approaches to **stages 1** and **2**.
@@ -2459,9 +2463,9 @@ An independent field construct may be created from an existing
 metadata construct using `~Field.convert` method of the field
 construct, which identifies a unique metadata construct and returns a
 new field construct based on its properties and data. The new field
-construct always has domain axis constructs corresponding to the data,
-and (by default) any other metadata constructs that further define its
-domain.
+construct always has :term:`domain axis constructs` corresponding to
+the data, and (by default) any other metadata constructs that further
+define its domain.
 
 .. code-block:: python
    :caption: *Create an independent field construct from the "surface
@@ -3391,12 +3395,12 @@ unwanted missing data.  Such compression techniques store the data
 more efficiently and result in no precision loss. The CF data model,
 however, views compressed arrays in their uncompressed form.
 
-Therefore, the field construct contains domain axis constructs for the
-compressed dimensions and presents a view of compressed data in its
-uncompressed form, even though the "underlying array" (i.e. the actual
-array on disk or in memory that is contained in a `Data` instance) is
-compressed. This means that the cfdm package includes algorithms for
-uncompressing each type of compressed array.
+Therefore, the field construct contains :term:`domain axis constructs`
+for the compressed dimensions and presents a view of compressed data
+in its uncompressed form, even though the "underlying array" (i.e. the
+actual array on disk or in memory that is contained in a `Data`
+instance) is compressed. This means that the cfdm package includes
+algorithms for uncompressing each type of compressed array.
 
 There are two basic types of compression supported by the CF
 conventions: ragged arrays (as used by :ref:`discrete sampling

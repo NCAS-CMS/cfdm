@@ -49,7 +49,8 @@ partially conformant may nonetheless be modified in memory.
 
 The cfdm package can
 
-* read field constructs from netCDF and CDL datasets,
+* read :term:`field constructs <field construct>` from netCDF and CDL
+  datasets,
 
 * create new field constructs in memory,
 

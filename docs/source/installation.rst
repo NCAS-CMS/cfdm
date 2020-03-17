@@ -101,8 +101,8 @@ To install from source:
 ------------------
 
 During installation the :ref:`cfdump command line utility <cfdump>` is
-also installed, which generates text descriptions of the field
-constructs contained in a netCDF dataset.
+also installed, which generates text descriptions of the :term:`field
+constructs <field construct>` contained in a netCDF dataset.
 
 ----
 

@@ -25,8 +25,8 @@ The basic requirement of the reference implementation is to represent
 the logical :ref:`CF data model <CF-data-model>` in memory with a
 package of Python classes, with no further features. However, in order
 to be useful the implementation must also have the practical
-functionality to read and write netCDF datasets, and inspect CF data
-model constructs.
+functionality to read and write netCDF datasets, and inspect :ref:`CF
+data model constructs <CF-data-model>`.
 
 In order to satisfy both needs there is a stand-alone core
 implementation, the :ref:`cfdm.core <class_core>` package, that
