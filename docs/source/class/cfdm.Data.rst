@@ -11,6 +11,8 @@ cfdm.Data
 Inspection
 ----------
 
+.. rubric:: Attributes
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
@@ -42,6 +44,15 @@ Units
 Data creation routines
 ----------------------
 
+Ones and zeros
+^^^^^^^^^^^^^^
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.empty
+
 From existing data
 ^^^^^^^^^^^^^^^^^^
 
@@ -54,6 +65,17 @@ From existing data
 
 Data manipulation routines
 --------------------------
+
+Changing data shape
+^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.flatten
+
 
 Transpose-like operations
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -93,9 +115,12 @@ Date-time support
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Data.datetime_as_string
+   ~cfdm.Data.del_calendar
+   ~cfdm.Data.get_calendar
+   ~cfdm.Data.has_calendar
+   ~cfdm.Data.set_calendar
 
-**Attributes**
+.. rubric:: Attributes
 
 .. autosummary::
    :nosignatures:
@@ -103,6 +128,7 @@ Date-time support
    :template: attribute.rst
 
    ~cfdm.Data.datetime_array
+   ~cfdm.Data.datetime_as_string
  
 Indexing routines
 -----------------
@@ -154,7 +180,7 @@ Mask support
    ~cfdm.Data.has_fill_value
    ~cfdm.Data.set_fill_value
    
-**Attributes**
+.. rubric:: Attributes
 
 .. autosummary::
    :nosignatures:
@@ -202,8 +228,8 @@ Order statistics
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Data.max
-   ~cfdm.Data.min
+   ~cfdm.Data.maximum
+   ~cfdm.Data.minimum
 
 Sums
 ^^^^
@@ -274,7 +300,7 @@ Special
    ~cfdm.Data.__array__
    ~cfdm.Data.__deepcopy__
    ~cfdm.Data.__getitem__ 
-   ~cfdm.Data.__hash__
+   ~cfdm.Data.__int__
    ~cfdm.Data.__iter__ 
    ~cfdm.Data.__repr__
    ~cfdm.Data.__setitem__ 

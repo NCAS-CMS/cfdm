@@ -194,7 +194,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue((a2 == b).all())
         self.assertFalse((a2 == a).all())
 
-
     def test_Data_datetime_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -217,7 +216,6 @@ class DataTest(unittest.TestCase):
         dt = d.datetime_array
         self.assertTrue(dt[()] is numpy.ma.masked)
         
-
     def test_Data_flatten(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -251,7 +249,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue(e.shape == tuple(shape))
             self.assertTrue(e.ndim == d.ndim-len(axes)+1)
             self.assertTrue(e.size == d.size)
-
         
     def test_Data_transpose(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -271,7 +268,6 @@ class DataTest(unittest.TestCase):
             #--- End: for
         #--- End: for
 
-        
     def test_Data_unique(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -280,13 +276,11 @@ class DataTest(unittest.TestCase):
         u = d.unique()
         self.assertTrue(u.shape == (4,))
         self.assertTrue((u.array == cfdm.Data([1, 2, 3, 4], 'metre').array).all())
-        
 
         d[1, -1] = cfdm.masked
         u = d.unique()
         self.assertTrue(u.shape == (3,))        
         self.assertTrue((u.array == cfdm.Data([1, 2, 4], 'metre').array).all())
-
 
     def test_Data_equals(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -301,12 +295,10 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.equals(d, verbose=True))
         self.assertTrue(d.equals(e, verbose=True))
         self.assertTrue(e.equals(d, verbose=True))    
-
         
     def test_Data_max_min_sum_squeeze(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-
         
         a = numpy.ma.arange(10*15*19).reshape(10, 1, 15, 19)
         a[0, 0, 0, 0] = numpy.ma.masked
@@ -315,27 +307,27 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(a)
 
         b = a.max()
-        x = d.max().squeeze()
+        x = d.maximum().squeeze()
         self.assertTrue(x.shape == b.shape)
         self.assertTrue((x.array == b).all())
 
         b = a.max(axis=0)
-        x = d.max(axes=0).squeeze(0)
+        x = d.maximum(axes=0).squeeze(0)
         self.assertTrue(x.shape == b.shape)
         self.assertTrue((x.array == b).all())
 
         b = a.max(axis=(0, 3))
-        x = d.max(axes=[0, 3]).squeeze([0, 3])
+        x = d.maximum(axes=[0, 3]).squeeze([0, 3])
         self.assertTrue(x.shape == b.shape)
         self.assertTrue((x.array == b).all())
 
         b = a.min()
-        x = d.min().squeeze()
+        x = d.minimum().squeeze()
         self.assertTrue(x.shape == b.shape)
         self.assertTrue((x.array == b).all())
 
         b = a.min(axis=(0, 3))
-        x = d.min(axes=[0, 3]).squeeze([0, 3])
+        x = d.minimum(axes=[0, 3]).squeeze([0, 3])
         self.assertTrue(x.shape == b.shape)
         self.assertTrue((x.array == b).all(), (x.shape, b.shape))
 

@@ -843,7 +843,6 @@ class CFDMImplementation(Implementation):
             return False
         
         return parent.nc_get_external()
-
     
     def get_field_ancillaries(self, field):
         '''Return the field ancillaries of a field.
@@ -867,16 +866,21 @@ class CFDMImplementation(Implementation):
 
         '''
         return field.field_ancillaries
-
                   
     def get_field_data_axes(self, field):
         '''TODO
 
         '''
         return field.get_data_axes()
-
          
     def get_data_max(self, parent):
+        '''Use `get_data_maximum` instead (since cfdm version 1.8.0).
+        
+        '''
+        raise NotImplementedError(
+            "Use `get_data_maximum` instead (since cfdm version 1.8.0).")
+   
+    def get_data_maximum(self, parent):
         '''TODO
 
     :Parameters:
@@ -886,8 +890,7 @@ class CFDMImplementation(Implementation):
         `int`
         
         '''
-        return parent.data.max()
-
+        return parent.data.maximum()
     
     def get_data_sum(self, parent):
         '''TODO

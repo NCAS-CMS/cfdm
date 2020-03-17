@@ -1208,7 +1208,7 @@ class NetCDFRead(IORead):
     
         instance_dimension_size  = indexed['instance_dimension_size']
         element_dimension_1_size = int(profiles_per_instance.max())
-        element_dimension_2_size = int(self.implementation.get_data_max(elements_per_profile)) #int(elements_per_profile.max())
+        element_dimension_2_size = int(self.implementation.get_data_maximum(elements_per_profile)) #int(elements_per_profile.max())
         
         if verbose:
             print("    Creating g['compression'][{!r}]['ragged_indexed_contiguous']".format(
@@ -1514,7 +1514,7 @@ class NetCDFRead(IORead):
         g = self.read_vars
         
         instance_dimension_size = self.implementation.get_data_size(elements_per_instance)
-        element_dimension_size  = int(self.implementation.get_data_max(elements_per_instance))
+        element_dimension_size  = int(self.implementation.get_data_maximum(elements_per_instance))
         
         # Make sure that the element dimension name is unique
         base = element_dimension
