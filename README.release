@@ -8,9 +8,9 @@
 
 * Make sure that Changelog.rst is up to date.
 
-* Make sure that any new attributes and methods (as listed in the
-  change log) have on-line documentation. This may require additions
-  to the .rst files in docs/source/class/
+* Make sure that any new attributes, methods and keyword arguments (as
+  listed in the change log) have on-line documentation. This may
+  require additions to the .rst files in docs/source/class/
 
 * Create a link to the new documentation in docs/source/releases.rst
 
