@@ -15,6 +15,8 @@ version 1.8.0
   `cfdm.Field.shape`, `cfdm.Field.size`
 * New method: `cfdm.Data.any`
 * New ``paths`` keyword parameter to `cfdm.environment`
+* Changed minimum netCDF4 dependency to version 1.5.3.
+* Changed minimum cftime dependency to version 1.1.1.
 * Fixed bug that prevented the writing of ``'NETCDF3_64BIT_OFFSET'``
   and ``'NETCDF3_64BIT_DATA'`` format files
   (https://github.com/NCAS-CMS/cfdm/issues/9).

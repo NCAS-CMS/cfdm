@@ -54,7 +54,7 @@ except ImportError as error1:
     raise ImportError(_error0+str(error1))
 
 # Check the version of cftime
-_minimum_vn = '1.1.0'
+_minimum_vn = '1.1.1'
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad cftime version: cfdm requires cftime version {} or later. Got {} at {}".format(

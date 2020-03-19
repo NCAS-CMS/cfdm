@@ -128,7 +128,6 @@ setup(name = "cfdm",
                       'cfdm.read_write.netcdf',
                       'cfdm.test',],
       scripts      = ['scripts/cfdump'],
-      python_requires='>=2.7',
       install_requires = [
           'future>=0.16.0',
           'netcdf4>=1.5.3',

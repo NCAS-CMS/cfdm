@@ -133,7 +133,7 @@ The cfdm package requires:
 * `netCDF4 <http://unidata.github.io/netcdf4-python/>`_, version 1.5.3
   or newer,
 
-* `cftime <https://unidata.github.io/cftime/>`_, version 1.1.0 or
+* `cftime <https://unidata.github.io/cftime/>`_, version 1.1.1 or
   newer (note that this library is usually installed with netCDF4),
   and
 
