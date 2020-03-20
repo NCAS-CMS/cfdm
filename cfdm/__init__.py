@@ -58,7 +58,7 @@ _minimum_vn = '1.1.1'
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad cftime version: cfdm requires cftime version {} or later. Got {} at {}".format(
-            minimum_vn, cftime.__version__, cftime.__file__))
+            _minimum_vn, cftime.__version__, cftime.__file__))
 
 from .constants  import masked
 
