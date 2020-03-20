@@ -29,7 +29,7 @@ class ConstructAccess(object):
     
     :Parameters:
     
-        key: `str`, optional
+        key: `str`
             The key of the metadata construct to be removed.
     
             *Parameter example:*
@@ -106,7 +106,7 @@ class ConstructAccess(object):
     
     :Parameters:
     
-        key: `str`, optional
+        key: `str`
             The key of the metadata construct.
     
             *Parameter example:*
@@ -204,7 +204,7 @@ class ConstructAccess(object):
     
     :Parameters:
     
-        key: `str`, optional
+        key: `str`
             Specify a metadata construct.
     
             *Parameter example:*
@@ -249,7 +249,7 @@ class ConstructAccess(object):
     
     :Parameters:
     
-        key: `str`, optional
+        key: `str`
             Specify a metadata construct, instead of the field construct.
     
             *Parameter example:*
@@ -353,7 +353,7 @@ class ConstructAccess(object):
             *Parameter example:*
               ``axes=['domainaxis1', 'domainaxis0']``
     
-         key: `str`, optional
+         key: `str`
             Specify a metadata construct.
     
             *Parameter example:*
