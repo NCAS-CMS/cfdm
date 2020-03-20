@@ -112,7 +112,7 @@ class NetCDFWrite(IOWrite):
     
     :Returns:
     
-        out: `str`
+        `str`
             NetCDF dimension name or netCDF variable name.
 
         '''
@@ -155,6 +155,37 @@ class NetCDFWrite(IOWrite):
         return ncvar
 
     
+    def _numpy_compressed(self, array):
+        '''Return all the non-masked data as a 1-D array.
+
+    .. versionadded:: 1.8.0
+
+    :Parameters:
+
+        array: `numpy.ndarray`
+           A numpy array, that may or may not be masked.
+
+    :Returns:
+        
+        `numpy.ndarray`
+            The compressed numpy array.
+
+    **Examples:**
+
+    >>> x = numpy.ma.array(np.arange(5), mask=[0]*2 + [1]*3)
+    >>> c = n._numpy_compressed(x)
+    >>> c
+    array([0, 1])
+    >>> type(c)
+    <type 'numpy.ndarray'>
+
+        '''
+        if numpy.ma.isMA(array):
+            return array.compressed()
+
+        return array.flatten()
+
+    
     def _write_attributes(self, parent, ncvar, extra={}, omit=()):
         '''TODO
 
@@ -171,10 +202,10 @@ class NetCDFWrite(IOWrite):
     :Returns:
     
         `None`
-    
-    **Examples:**
-    
+        
         '''
+        g = self.write_vars
+
         if parent is None:
             netcdf_attrs = {}
         else:
@@ -195,10 +226,11 @@ class NetCDFWrite(IOWrite):
                 continue
 
             data = self.implementation.get_data(parent, None)
-            if data is not None:
-                netcdf_attrs[attr] = numpy.array(netcdf_attrs[attr], dtype=data.dtype)
+            if data is not None:                
+                dtype = g['datatype'].get(data.dtype, data.dtype)
+                netcdf_attrs[attr] = numpy.array(netcdf_attrs[attr], dtype=dtype)
         #--- End: for
-        
+
         self.write_vars['nc'][ncvar].setncatts(netcdf_attrs)
 
     
@@ -212,21 +244,21 @@ class NetCDFWrite(IOWrite):
     
     :Returns:
     
-        out: `numpy.ndarray`
+        `numpy.ndarray`
     
     **Examples:**
     
-    >>> print a, a.shape, a.dtype.itemsize
+    >>> print(a, a.shape, a.dtype.itemsize)
     ['fu' 'bar'] (2,) 3
     >>> b = _character_array(a)
-    >>> print b, b.shape, b.dtype.itemsize
+    >>> print(b, b.shape, b.dtype.itemsize)
     [['f' 'u' ' ']
      ['b' 'a' 'r']] (2, 3) 1
     
-    >>> print a, a.shape, a.dtype.itemsize
+    >>> print(a, a.shape, a.dtype.itemsize)
     [-- 'bar'] (2,) 3
     >>> b = _character_array(a)
-    >>> print b, b.shape, b.dtype.itemsize
+    >>> print(b, b.shape, b.dtype.itemsize)
     [[-- -- --]
      ['b' 'a' 'r']] (2, 3) 1
 
@@ -263,8 +295,6 @@ class NetCDFWrite(IOWrite):
 #            array = array.astype('S')
 #            
 #        new = netCDF4.stringtochar(array, encoding='none')
-#        print('new=', repr(new))
-##        print('AAAAAAAAAAAAAAAAAA new.shape=', new.shape, repr(new))
         
         if masked:
             array = numpy.ma.masked_where(array=='', array)
@@ -285,7 +315,6 @@ class NetCDFWrite(IOWrite):
 #                new[index] = tuple(value.ljust(strlen, ' ')) 
 #        #--- End: for
 
-#        print('new=', repr(new))
         return array
 
     
@@ -296,26 +325,32 @@ class NetCDFWrite(IOWrite):
     For example, if variable.dtype is 'float32', then 'f4' will be
     returned.
         
-    Numpy string data types will return 'S1' regardless of the numpy
-    string length. This means that the required conversion of
-    multi-character datatype numpy arrays into single-character
-    datatype numpy arrays (with an extra trailing dimension) is
-    expected to be done elsewhere (currently in the
+    For a NETCDF4 or CFA4 format file, numpy string data types will
+    either return `str` regardless of the numpy string length (and a
+    netCDF4 string type variable will be created) or, if
+    `self.write_vars['string']`` is `False`, ``'S1'`` (see below).
+
+    For all other output netCDF formats (such NETCDF4_CLASSIC,
+    NETCDF3_64BIT, etc.) numpy string data types will return 'S1'
+    regardless of the numpy string length. This means that the
+    required conversion of multi-character datatype numpy arrays into
+    single-character datatype numpy arrays (with an extra trailing
+    dimension) is expected to be done elsewhere (currently in the
     _write_netcdf_variable method).
         
     If the input variable has no `!dtype` attribute (or it is None)
-    then 'S1' is returned.
+    then 'S1' is returned, or `str` for NETCDF files.
         
-     :Parameters:
+    :Parameters:
      
-         variable: 
-             A numpy array or an object with a `get_data` method.
+        variable: 
+            A numpy array or an object with a `get_data` method.
      
-     :Returns:
+    :Returns:
      
-         out: `str`
-            The `netCDF4.createVariable` data type corresponding to the
-            datatype of the array of the input variable.
+       `str` or str
+           The `netCDF4.createVariable` data type corresponding to the
+           datatype of the array of the input variable.
 
         '''
         g = self.write_vars
@@ -328,7 +363,12 @@ class NetCDFWrite(IOWrite):
             data = variable
 
         dtype = getattr(data, 'dtype', None)
-        if dtype is None or dtype.char == 'S' or dtype.char == 'U':
+        if dtype is None or dtype.kind in 'SU':
+#            if g['fmt'] == 'NETCDF4' and not self.implementation.is_masked(data):
+#                return str
+            if g['fmt'] == 'NETCDF4' and g['string']:
+                return str
+            
             return 'S1'            
     
         new_dtype = g['datatype'].get(dtype, None)
@@ -347,7 +387,7 @@ class NetCDFWrite(IOWrite):
     
     :Returns:
     
-        out: `str`
+        `str`
             The netCDF dimension name.
 
         '''
@@ -381,7 +421,7 @@ class NetCDFWrite(IOWrite):
     
     :Returns:
     
-        out: `tuple` or `None`
+        `tuple` or `None`
             The netCDF dimension names, or `None` if there are no
             data.
 
@@ -403,7 +443,6 @@ class NetCDFWrite(IOWrite):
             sample_dimension_position = self.implementation.get_sample_dimension_position(construct)
             compressed_axes = tuple(self.implementation.get_compressed_axes(field, key, construct))
             compressed_ncdims = tuple([g['axis_to_ncdim'][axis] for axis in compressed_axes])
-#            print ('compressed_ncdims=', compressed_ncdims, end=""  )
 
             sample_ncdim = g['sample_ncdim'].get(compressed_ncdims)
             
@@ -489,7 +528,7 @@ class NetCDFWrite(IOWrite):
         if axis is not None:        
             if verbose:
                 domain_axis = self.implementation.get_domain_axes(f)[axis]
-                print('    Writing', repr(domain_axis), 'to netCDF dimension:', ncdim)
+                print('    Writing', repr(domain_axis), 'to netCDF dimension:', ncdim) # pragma: no cover
 
             size = self.implementation.get_domain_axis_size(f, axis)
             g['axis_to_ncdim'][axis] = ncdim
@@ -538,7 +577,7 @@ class NetCDFWrite(IOWrite):
     
     :Returns:
     
-        out: `str`
+        `str`
             The netCDF name of the dimension coordinate.
 
         '''
@@ -975,8 +1014,8 @@ class NetCDFWrite(IOWrite):
         ncvar = self._netcdf_name(ncvar)
         
         if g['verbose']:
-            print('    Writing geometry container variable: {}'.format(ncvar))
-            print('        ', geometry_container)
+            print('    Writing geometry container variable: {}'.format(ncvar)) # pragma: no cover
+            print('        ', geometry_container) # pragma: no cover
             
         kwargs = {'varname': ncvar,
                   'datatype': 'S1',
@@ -1045,6 +1084,7 @@ class NetCDFWrite(IOWrite):
 
         if (g['output_version'] >= g['CF-1.8'] and
             self.implementation.is_geometry(coord)):
+
             # --------------------------------------------------------
             # CF>=1.8 and we have geometry bounds, which are dealt
             # with separately
@@ -1078,7 +1118,7 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
                 if g['verbose']:
-                    print('    Writing size', size, 'netCDF dimension for bounds:', ncdim)
+                    print('    Writing size', size, 'netCDF dimension for bounds:', ncdim) # pragma: no cover
                     
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
@@ -1112,7 +1152,7 @@ class NetCDFWrite(IOWrite):
         for clim_axis in f.climatological_time_axes():
             if clim_axis == axes:
                 if g['verbose']:
-                    print ('    Setting climatological bounds')
+                    print('    Setting climatological bounds') # pragma: no cover
                     
                 extra['climatology'] = extra.pop('bounds')
                 break
@@ -1167,9 +1207,10 @@ class NetCDFWrite(IOWrite):
 
         # Create the node coordinates flattened data
         array = self.implementation.get_array(data)
-        array = array.flatten().compressed()
+#        array = array.flatten().compressed()
+        array = self._numpy_compressed(array)    
         data = self.implementation.initialise_Data(array=array, copy=False)
-              
+              #ppp
         # ------------------------------------------------------------
         # Create a bounds variable to hold the node coordinates
         # variable. This is what will be written to disk.
@@ -1200,7 +1241,7 @@ class NetCDFWrite(IOWrite):
             if ncdim not in ncdim_to_size:
                 size = self.implementation.get_data_size(nodes)
                 if g['verbose']:
-                    print('    Writing size', size, 'netCDF node dimension: {}'.format(ncdim))
+                    print('    Writing size', size, 'netCDF node dimension: {}'.format(ncdim)) # pragma: no cover
                     
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
@@ -1273,11 +1314,11 @@ class NetCDFWrite(IOWrite):
 
         # Create the node count flattened data
         array = self.implementation.get_array(self.implementation.get_data(bounds))
-        if self.implementation.get_data_ndim(bounds) == 2:
-            array = numpy.ma.count(array, axis=1)
-        else:
-            array = numpy.ma.count(array, axis=2).sum(axis=1)
-            
+        if self.implementation.get_data_ndim(bounds) == 2:    # DCH
+            array = numpy.ma.count(array, axis=1)             # DCH
+        else:                                                 # DCH
+            array = numpy.ma.count(array, axis=2).sum(axis=1) # DCH
+
         data = self.implementation.initialise_Data(array=array, copy=False)
               
         # ------------------------------------------------------------
@@ -1393,7 +1434,7 @@ class NetCDFWrite(IOWrite):
     
         `dict`
     
-    ****Examples:****
+    **Examples:**
     
     >>> _write_part_node_count(c, b)
     {'part_node_count': 'pnc'}
@@ -1402,8 +1443,11 @@ class NetCDFWrite(IOWrite):
     {}
 
         '''
-        if self.implementation.get_data_ndim(bounds) < 3:
-            # No need for a part node count variable required
+#        if self.implementation.get_data_ndim(bounds) < 3: # DCH
+#            # No need for a part node count variable required
+#            return {}
+        if self.implementation.get_data_shape(bounds)[1] == 1:
+            # No part node count variable required
             return {}
 
         g = self.write_vars
@@ -1449,7 +1493,7 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
                 if g['verbose']:
-                    print('    Writing size', size, 'netCDF part dimension', ncdim)
+                    print('    Writing size', size, 'netCDF part dimension', ncdim) # pragma: no cover
                         
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
@@ -1465,7 +1509,7 @@ class NetCDFWrite(IOWrite):
         return {'part_node_count': ncvar,
                 'part_ncdim'     : ncdim}
 
-            
+
     def _write_interior_ring(self, coord, bounds, encodings):
         '''TODO
 
@@ -1489,8 +1533,11 @@ class NetCDFWrite(IOWrite):
 
         g = self.write_vars
         
-        array = self.implementation.get_data(interior_ring).array.compressed() # TODO impl
-
+#        array = self.implementation.get_data(interior_ring).array.compressed()
+        data = self.implementation.get_data(interior_ring)
+        array = self.implementation.get_array(data)
+        array = self._numpy_compressed(array)
+        
         # Replace the data with its compressed, flattened version
         interior_ring = self.implementation.copy_construct(interior_ring)
         data = self.implementation.initialise_Data(array=array, copy=False)
@@ -1515,7 +1562,7 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
                 if g['verbose']:
-                    print('    Writing size', size, 'netCDF part dimension', ncdim)
+                    print('    Writing size', size, 'netCDF part dimension', ncdim) # pragma: no cover
                         
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
@@ -1754,7 +1801,7 @@ class NetCDFWrite(IOWrite):
     
     :Returns:
     
-        out: `str`
+        `str`
             The netCDF variable name of the field ancillary object.
     
     **Examples:**
@@ -1800,7 +1847,7 @@ class NetCDFWrite(IOWrite):
     
     :Returns:
     
-        out: `str`
+        `str`
             The 'measure: ncvar'.
 
         '''
@@ -1937,7 +1984,7 @@ class NetCDFWrite(IOWrite):
             ncvar = self._create_netcdf_variable_name(ref, default=default)
 
             if verbose:
-                print('    Writing', repr(ref), 'to netCDF variable:', ncvar)
+                print('    Writing', repr(ref), 'to netCDF variable:', ncvar) # pragma: no cover
 
             kwargs = {'varname': ncvar,
                       'datatype': 'S1',
@@ -2018,7 +2065,7 @@ class NetCDFWrite(IOWrite):
         verbose = g['verbose']
         
         if verbose:
-            print('    Writing {!r}'.format(cfvar), end='')
+            print('    Writing {!r}'.format(cfvar), end='') # pragma: no cover
      
         # ------------------------------------------------------------
         # Set the netCDF4.createVariable datatype
@@ -2026,10 +2073,10 @@ class NetCDFWrite(IOWrite):
         datatype = self._datatype(cfvar)
         data = self.implementation.get_data(cfvar, None)
 
-        original_ncdimensions = ncdimensions 
-
+        original_ncdimensions = ncdimensions
+        
         data, ncdimensions = self._transform_strings(cfvar, data,
-                                                     ncdimensions)
+                                                     ncdimensions) # pragma: no cover
 
         # ------------------------------------------------------------
         # Find the fill value - the value that the variable's data get
@@ -2040,7 +2087,11 @@ class NetCDFWrite(IOWrite):
         #    fill_value = self.implementation.get_property(cfvar, '_FillValue', None)
         #else:
 #        fill_value = None #False
-    
+
+#        fill_value = None        
+#        if g['fmt'] == 'NETCDF4' and datatype == str:
+#            fill_value = '\x00'
+
         if data_variable:
             lsd = g['least_significant_digit']
         else:
@@ -2052,7 +2103,7 @@ class NetCDFWrite(IOWrite):
             chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
 
         if verbose and chunksizes is not None:
-            print('      HDF5 chunksizes:', chunksizes)
+            print('      HDF5 chunksizes:', chunksizes) # pragma: no cover
         
         # ------------------------------------------------------------
         # Create a new netCDF variable
@@ -2073,7 +2124,7 @@ class NetCDFWrite(IOWrite):
         
         if verbose:
             print(' to netCDF variable: {}({})'.format(
-                ncvar, ', '.join(ncdimensions)))
+                ncvar, ', '.join(ncdimensions))) # pragma: no cover
 
         try:
             self._createVariable(**kwargs)
@@ -2156,21 +2207,27 @@ class NetCDFWrite(IOWrite):
     
         ncdimensions: `tuple`
             
+    :Returns:
+
+        `Data`, `tuple`
+
         '''
         datatype = self._datatype(construct)                
     
         if data is not None and datatype == 'S1':
             # --------------------------------------------------------
-            # Convert a string data type numpy array into a
-            # character data type ('S1') numpy array with an extra
-            # trailing dimension.
+            # Convert a string data type numpy array into a character
+            # data type ('S1') numpy array with an extra trailing
+            # dimension. Note that for NETCDF4 output files, datatype
+            # is str, so this conversion does not happen.
             # --------------------------------------------------------
-            array = self.implementation.get_array(data)
-            if numpy.ma.is_masked(array):
-                array = array.compressed()
-            else:
-                array = array.flatten()
-                
+            array = self.implementation.get_array(data)            
+#            if numpy.ma.is_masked(array):
+#                array = array.compressed()
+#            else:
+#                array = array.flatten()
+            array = self._numpy_compressed(array)
+
             strlen = len(max(array, key=len))
 
             data = self._convert_to_char(data)
@@ -2216,15 +2273,20 @@ class NetCDFWrite(IOWrite):
         # Check that the array doesn't contain any elements
         # which are equal to any of the missing data values
         if unset_values:
-            if numpy.ma.is_masked(array):
-                temp_array = array.compressed()
-            else:
-                temp_array = array
-
-            if numpy.intersect1d(unset_values, temp_array).size:
+#            if numpy.ma.is_masked(array):
+#                temp_array = array.compressed()
+#            else:
+#                temp_array = array                 
+            if numpy.intersect1d(unset_values, self._numpy_compressed(array)).size:
                 raise ValueError(
                     "ERROR: Can't write data that has _FillValue or missing_value at unmasked point: {!r}".format(ncvar))
         #--- End: if
+
+        if (g['fmt'] == 'NETCDF4' and array.dtype.kind in 'SU' and
+            numpy.ma.isMA(array)):
+            # VLEN variables can not be assigned to by masked arrays
+            # https://github.com/Unidata/netcdf4-python/pull/465
+            array = array.filled('')
 
         # Copy the array into the netCDF variable
         g['nc'][ncvar][...] = array
@@ -2253,7 +2315,7 @@ class NetCDFWrite(IOWrite):
     
     :Returns:
     
-        out: Data instance
+        Data instance
 
         '''
         strlen = data.dtype.itemsize
@@ -2291,7 +2353,7 @@ class NetCDFWrite(IOWrite):
         
         verbose = g['verbose']
         if verbose:
-            print('  Writing', repr(f)+':')
+            print('  Writing', repr(f)+':') # pragma: no cover
 
         xxx = []
             
@@ -2339,7 +2401,7 @@ class NetCDFWrite(IOWrite):
         compression_type = self.implementation.get_compression_type(f)
         g['compression_type'] = compression_type
         if verbose:
-            print('    Compression = {!r}'.format(g['compression_type']))
+            print('    Compression = {!r}'.format(g['compression_type'])) # pragma: no cover
         # 
         g['sample_ncdim']     = {}
         
@@ -2556,13 +2618,12 @@ class NetCDFWrite(IOWrite):
 
         field_data_axes = tuple(self.implementation.get_field_data_axes(f))
         data_ncdimensions = [g['axis_to_ncdim'][axis] for axis in field_data_axes]
-#        print ('data_ncdimensions=', data_ncdimensions)
+
         # ------------------------------------------------------------
         # Now that we've dealt with all of the axes, deal with
         # compression
         # ------------------------------------------------------------
         if compression_type:
-#            print ( 'compression_type=',compression_type)
             compressed_axes = tuple(self.implementation.get_compressed_axes(f))
             g['compressed_axes'] = compressed_axes
             compressed_ncdims = tuple([g['axis_to_ncdim'][axis]
@@ -2649,8 +2710,6 @@ class NetCDFWrite(IOWrite):
         #--- End: if
         
         data_ncdimensions = tuple(data_ncdimensions)
-#        print ('data_ncdimensions=', data_ncdimensions)
-     
        
         # ----------------------------------------------------------------
         # Create auxiliary coordinate variables, except those which might
@@ -2752,7 +2811,7 @@ class NetCDFWrite(IOWrite):
             
                 if g['verbose']:
                     print('    Writing formula_terms attribute to netCDF variable',
-                          ncvar+':', repr(formula_terms))
+                          ncvar+':', repr(formula_terms)) # pragma: no cover
     
                 # Add the formula_terms attribute to the parent
                 # coordinate bounds variable
@@ -2763,7 +2822,7 @@ class NetCDFWrite(IOWrite):
 
                     if g['verbose']:
                         print('    Writing formula_terms to netCDF bounds variable',
-                              bounds_ncvar+':', repr(bounds_formula_terms))
+                              bounds_ncvar+':', repr(bounds_formula_terms)) # pragma: no cover
             #--- End: if
                         
             # Deal with a vertical datum
@@ -2803,7 +2862,7 @@ class NetCDFWrite(IOWrite):
             cell_measures = ' '.join(cell_measures)
             if verbose:
                 print('    Writing cell_measures attribute to netCDF variable {}: {!r}'.format(
-                    ncvar, cell_measures))
+                    ncvar, cell_measures)) # pragma: no cover
                 
             extra['cell_measures'] = cell_measures
             
@@ -2812,7 +2871,7 @@ class NetCDFWrite(IOWrite):
             coordinates = ' '.join(coordinates)
             if verbose:
                 print('    Writing coordinates attribute to netCDF variable {}: {!r}'.format(
-                    ncvar, coordinates))
+                    ncvar, coordinates)) # pragma: no cover
                 
             extra['coordinates'] = coordinates
     
@@ -2821,7 +2880,7 @@ class NetCDFWrite(IOWrite):
             grid_mapping = ' '.join(grid_mapping)
             if verbose:
                 print('    Writing grid_mapping attribute to netCDF variable {}: {!r}'.format(
-                    ncvar, grid_mapping))
+                    ncvar, grid_mapping)) # pragma: no cover
                 
             extra['grid_mapping'] = grid_mapping
     
@@ -2830,7 +2889,7 @@ class NetCDFWrite(IOWrite):
             ancillary_variables = ' '.join(ancillary_variables)
             if verbose:
                 print('    Writing ancillary_variables attribute to netCDF variable {}: {!r}'.format(
-                ncvar, ancillary_variables))
+                ncvar, ancillary_variables)) # pragma: no cover
 
             extra['ancillary_variables'] = ancillary_variables
             
@@ -2856,7 +2915,7 @@ class NetCDFWrite(IOWrite):
 
             cell_methods = ' '.join(cell_methods_strings)
             if verbose:
-                print('    Writing cell_methods attribute to netCDF variable', ncvar+':', cell_methods)
+                print('    Writing cell_methods attribute to netCDF variable', ncvar+':', cell_methods) # pragma: no cover
 
             extra['cell_methods'] = cell_methods
 
@@ -2908,7 +2967,7 @@ class NetCDFWrite(IOWrite):
             # Add the vertical coordinate to an existing
             # horizontal coordinate reference
             if g['verbose']:
-                print('      Adding {!r} to {!r}'.format(coord_key, grid_mapping))
+                print('      Adding {!r} to {!r}'.format(coord_key, grid_mapping)) # pragma: no cover
                 
             grid_mapping = count[1]
             self.implementation.set_coordinate_reference_coordinate(grid_mapping,
@@ -2917,7 +2976,7 @@ class NetCDFWrite(IOWrite):
             # Create a new horizontal coordinate reference for the
             # vertical datum
             if g['verbose']:
-                print('    Creating a new horizontal coordinate reference for the vertical datum')
+                print('    Creating a new horizontal coordinate reference for the vertical datum') # pragma: no cover
                 
             new_grid_mapping = self.implementation.initialise_CoordinateReference()
 
@@ -3133,7 +3192,7 @@ class NetCDFWrite(IOWrite):
         
     :Returns:
             
-        out: `netCDF.Dataset`
+        `netCDF.Dataset`
             
         '''
         try:        
@@ -3149,8 +3208,8 @@ class NetCDFWrite(IOWrite):
               file_descriptors=None, external=None, Conventions=None,
               datatype=None, least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
-              shuffle=True, scalar=True, extra_write_vars=None,
-              verbose=False):
+              shuffle=True, scalar=True, string=True,
+              extra_write_vars=None, verbose=False):
         '''Write fields to a netCDF file.
         
     NetCDF dimension and variable names will be taken from variables'
@@ -3259,12 +3318,23 @@ class NetCDFWrite(IOWrite):
     
              *Parameter example:*
                ``Conventions=['CF-1.7', 'CMIP-6.2']``
-    
+
+        string: `bool`, optional
+           By default string-valued construct data are written as
+           netCDF arrays of type string if the output file format is
+           ``'NETCDF4'``, or of type char with an extra dimension
+           denoting the maximum string length for any other output
+           file format (see the *fmt* parameter). If *string* is False
+           then string-valued construct data are written as netCDF
+           arrays of type char with an extra dimension denoting the
+           maximum string length, regardless of the selected output
+           file format.
+
     :Returns:
     
         `None`
     
-    :Examples 2:
+    **Examples:**
     
     >>> f
     [<CF Field: air_pressure(30, 24)>,
@@ -3283,7 +3353,7 @@ class NetCDFWrite(IOWrite):
 
         '''    
         if verbose:
-            print('Writing to', fmt)
+            print('Writing to', fmt) # pragma: no cover
 
         # ------------------------------------------------------------
         # Initialise netCDF write parameters
@@ -3321,6 +3391,11 @@ class NetCDFWrite(IOWrite):
                                        'leap_year', 'leap_month'),
             # Data type conversions to be applied prior to writing
             'datatype': {},
+
+            # Whether or not to write string data-types to netCDF4
+            # files (as opposed to car data-types).
+            'string': string,
+            
             # Print statements
             'verbose': False,
 

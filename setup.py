@@ -1,4 +1,6 @@
 from distutils.core import setup
+#from setuptools import setup
+
 import os
 import fnmatch
 import sys
@@ -10,7 +12,6 @@ def find_package_data_files(directory):
             if fnmatch.fnmatch(basename, '*'):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cfdm/', '', 1)
-
 
 def _read(fname):
     """Returns content of a file.
@@ -28,8 +29,6 @@ def _get_version():
     return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                      _read("cfdm/core/__init__.py"),
                      re.MULTILINE).group(1)
-
-
 
 version      = _get_version()
 packages     = ['cfdm']
@@ -54,10 +53,11 @@ The **cfdm** package can
 * modify field construct metadata and data,
 * create subspaces of field constructs,
 * write field constructs to netCDF datasets on disk,
-* incorporate, and create, metadata stored in external files, and
+* incorporate, and create, metadata stored in external files,
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
-  data in its uncompressed form.
+  data in its uncompressed form, and
+* read, write, and create coordinates defined by geometry cells.
 
 Documentation
 =============
@@ -111,6 +111,7 @@ setup(name = "cfdm",
                       "Programming Language :: Python :: 3",
                       ],
       packages     = ['cfdm',
+                      'cfdm.abstract',
                       'cfdm.core',
                       'cfdm.core.abstract',
                       'cfdm.core.data',
@@ -125,9 +126,11 @@ setup(name = "cfdm",
                       'cfdm.read_write.netcdf',
                       'cfdm.test',],
       scripts      = ['scripts/cfdump'],
+#      python_requires = '>= 2.7',
       install_requires = [
           'future>=0.16.0',
-          'netcdf4>=1.4.0',
+          'netcdf4>=1.5.3',
+          'cftime>=1.1.1',
           'numpy>=1.15',
       ],
 )

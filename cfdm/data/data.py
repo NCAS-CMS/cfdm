@@ -246,7 +246,7 @@ class Data(mixin.Container,
         array = self._get_Array(None)
         if array is None:
             raise ValueError("No array!!")
-            
+
         array = array[indices]
 
         out = self.copy(array=False)
@@ -258,9 +258,10 @@ class Data(mixin.Container,
         
         return out
 
-
     def __int__(self):
-        '''x.__int__() <==> int(x)
+        '''Called by the `int` built-in function.
+
+    x.__int__() <==> int(x)
 
         '''
         if self.size != 1:
@@ -269,7 +270,6 @@ class Data(mixin.Container,
                     self))
 
         return int(self.array)
-
 
     def __iter__(self):
         '''Called when an iterator is required.
@@ -384,7 +384,6 @@ class Data(mixin.Container,
 
         self._set_Array(array, copy=False)
 
-
     def __str__(self):
         '''Called by the `str` built-in function.
 
@@ -409,7 +408,6 @@ class Data(mixin.Container,
                 out += ' {0}'.format(calendar)
                
             return out
-        #--- End: try
 
         size  = self.size
         shape = self.shape
@@ -433,9 +431,9 @@ class Data(mixin.Container,
                 except (ValueError, OverflowError):
                     first = '??'
 
-            out = '{0}{1}{2}'.format(open_brackets,
-                                     first,
-                                     close_brackets)
+            out = '{0}{1!s}{2}'.format(open_brackets,
+                                       first,
+                                       close_brackets)
         else:
             last = self.last_element()
             if isreftime:
@@ -733,7 +731,7 @@ class Data(mixin.Container,
     @property
     def datetime_array(self):
         '''Return an independent numpy array containing the date-time objects
-    corresponding to time since a reference date.
+    corresponding to times since a reference date.
     
     Only applicable for reference time units.
     
@@ -745,16 +743,21 @@ class Data(mixin.Container,
     
     .. versionadded:: 1.7.0
     
-    .. seealso:: `array`
-    
+    .. seealso:: `array`, `datetime_as_string`
+
+    :Returns:
+
+        `numpy.ndarray`
+            An independent numpy array of the date-time objects.
+
     **Examples:**
     
     >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
     >>> a = d.datetime_array
     >>> print(a)
-    [cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0, 1, 1)
-     cftime.DatetimeGregorian(2019, 2, 1, 0, 0, 0, 0, 4, 32)
-     cftime.DatetimeGregorian(2019, 3, 1, 0, 0, 0, 0, 4, 60)]
+    [cftime.DatetimeGregorian(2019-01-01 00:00:00)
+     cftime.DatetimeGregorian(2019-02-01 00:00:00)
+     cftime.DatetimeGregorian(2019-03-01 00:00:00)]
     >>> print(a[1])
     2019-02-01 00:00:00
     
@@ -762,9 +765,9 @@ class Data(mixin.Container,
     ...               calendar='360_day')
     >>> a = d.datetime_array
     >>> print(a)
-    [cftime.Datetime360Day(2019, 1, 2, 0, 0, 0, 0, 3, 2)
-     cftime.Datetime360Day(2019, 2, 3, 0, 0, 0, 0, 6, 33)
-     cftime.Datetime360Day(2019, 3, 1, 0, 0, 0, 0, 6, 61)]
+    [cftime.Datetime360Day(2019-01-02 00:00:00)
+     cftime.Datetime360Day(2019-02-03 00:00:00)
+     cftime.Datetime360Day(2019-03-01 00:00:00)]
     >>> print(a[1])
     2019-02-03 00:00:00
 
@@ -795,6 +798,41 @@ class Data(mixin.Container,
 
         return array
 
+    @property
+    def datetime_as_string(self):
+        '''Return an independent numpy array containing string representations
+    of times since a reference date.
+    
+    Only applicable for reference time units.
+    
+    If the calendar has not been set then the CF default calendar of
+    "standard" (i.e. the mixed Gregorian/Julian calendar as defined by
+    Udunits) will be used.
+    
+    Conversions are carried out with the `netCDF4.num2date` function.
+    
+    .. versionadded:: 1.8.0
+    
+    .. seealso:: `array`, `datetime_array`
+    
+    :Returns:
+
+        `numpy.ndarray`
+            An independent numpy array of the date-time strings.
+
+    **Examples:**
+    
+    >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
+    >>> print(d.datetime_as_string)
+    ['2019-01-01 00:00:00' '2019-02-01 00:00:00' '2019-03-01 00:00:00']
+  
+    >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01',
+    ...               calendar='360_day')
+    >>> print(d.datetime_as_string)
+    ['2019-01-02 00:00:00' '2019-02-03 00:00:00' '2019-03-01 00:00:00']
+
+        '''
+        return self.datetime_array.astype(str)
     
     @property
     def mask(self):
@@ -832,6 +870,47 @@ class Data(mixin.Container,
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    def any(self):
+        '''Test whether any data array elements evaluate to True.
+
+    Performs a logical or over the data array and returns the
+    result. Masked values are considered as False during computation.
+
+    :Returns:
+
+        `bool`
+            `True` if any data array elements evaluate to True,
+            otherwise `False`.
+
+    **Examples:**
+
+    >>> d = Data([[0, 0, 0]])
+    >>> d.any()
+    False
+    >>> d[0, 0] = numpy.ma.masked
+    >>> print(d.array)
+    [[-- 0 0]]
+    >>> d.any()
+    False
+    >>> d[0, 1] = 3
+    >>> print(d.array)
+    [[-- 3 0]]
+    >>> d.any()
+    True
+    >>> d[...] = numpy.ma.masked
+    >>> print(d.array)
+    [[-- -- --]]
+    >>> d.any()
+    False
+
+        '''
+        masked = self.array.any()
+        if masked is numpy.ma.masked:
+            masked = False
+
+        return masked
+
+
     def copy(self, array=True):
         '''Return a deep copy.
 
@@ -1159,13 +1238,14 @@ class Data(mixin.Container,
     
         return parsed_indices
 
-
-    def max(self, axes=None):
+    def maximum(self, axes=None):
         '''Return the maximum of an array or the maximum along axes.
 
     Missing data array elements are omitted from the calculation.
     
-    .. seealso:: `min`
+    .. versionadded:: 1.8.0
+
+    .. seealso:: `minimum`
     
     :Parameters:
     
@@ -1198,12 +1278,14 @@ class Data(mixin.Container,
         return out
 
 
-    def min(self, axes=None):
+    def minimum(self, axes=None):
         '''Return the minimum of an array or minimum along axes.
 
     Missing data array elements are omitted from the calculation.
     
-    .. seealso:: `max`
+    .. versionadded:: 1.8.0
+
+    .. seealso:: `maximum`
     
     :Parameters:
     
@@ -2130,7 +2212,7 @@ class Data(mixin.Container,
 
 
     def uncompress(self, inplace=False):
-        '''Uncompress the underlying array in-place.
+        '''Uncompress the underlying array.
 
     If the data is not compressed, then no change is made.
     
@@ -2213,7 +2295,21 @@ class Data(mixin.Container,
 
         return d
 
+    # ----------------------------------------------------------------
+    # Aliases
+    # ----------------------------------------------------------------
+    def max(self, axes=None):
+        '''Alias for `maximum`
 
+        '''
+        return self.maximum(axes=axes)
+
+    def min(self, axes=None):
+        '''Alias for `minimum`
+
+        '''
+        return self.minimum(axes=axes)
+    
 #--- End: class
 
 # --------------------------------------------------------------------

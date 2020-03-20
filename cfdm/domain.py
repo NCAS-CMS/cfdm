@@ -64,19 +64,18 @@ class Domain(mixin.ConstructAccess,
                 x.append(shape)
             elif (variable.construct_type in ('auxiliary_coordinate', 'domain_ancillary') and
                   variable.has_bounds() and variable.bounds.has_data()):                
-                # Construct has no data but it does have bounds data
+                # Construct has no data but it does have bounds
                 shape = [axis_names[axis] for axis in axes]
                 shape.extend([str(n) for n in variable.bounds.data.shape[len(axes):]])
                 shape = str(tuple(shape)).replace("'", "")
                 shape = shape.replace(',)', ')')
                 x.append(shape)
-            elif hasattr(variable, 'nc_get_external'):
-                if variable.nc_get_external():
-                    ncvar = variable.nc_get_variable(None)
-                    if ncvar is not None:
-                        x.append(' (external variable: ncvar%{})'.format(ncvar))
-                    else:
-                        x.append(' (external variable)')
+            elif hasattr(variable, 'nc_get_external') and variable.nc_get_external():
+                ncvar = variable.nc_get_variable(None)
+                if ncvar is not None:
+                    x.append(' (external variable: ncvar%{})'.format(ncvar))
+                else:
+                    x.append(' (external variable)')
             #--- End: if
                 
             if variable.has_data():

@@ -169,7 +169,7 @@ class Field(mixin.NetCDFVariable,
             c = ' '.join(x)
             
             string.append('Cell methods    : {0}'.format(c))
-        #--- End: if
+            
         
         def _print_item(self, key, variable, axes):
             '''Private function called by __str__
@@ -183,13 +183,12 @@ class Field(mixin.NetCDFVariable,
                 shape = str(tuple(shape)).replace("'", "")
                 shape = shape.replace(',)', ')')
                 x.append(shape)
-            elif hasattr(variable, 'nc_get_external'):
-                if variable.nc_get_external():
-                    ncvar = variable.nc_get_variable(None)
-                    if ncvar is not None:
-                        x.append(' (external variable: ncvar%{})'.format(ncvar))
-                    else:
-                        x.append(' (external variable)')
+            elif hasattr(variable, 'nc_get_external') and variable.nc_get_external():
+                ncvar = variable.nc_get_variable(None)
+                if ncvar is not None:
+                    x.append(' (external variable: ncvar%{})'.format(ncvar))
+                else:
+                    x.append(' (external variable)')
             #--- End: if
                 
             if variable.has_data():

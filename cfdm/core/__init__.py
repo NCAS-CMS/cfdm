@@ -3,10 +3,9 @@
 '''
 
 __author__       = 'David Hassell'
-__date__         = '2019-11-27'
-__cf_version__   = '1.7'
-#__cf_version__   = '1.8'
-__version__      = '1.7.11'
+__date__         = '2020-??-??'
+__cf_version__   = '1.8'
+__version__      = '1.8.0'
 
 from distutils.version import LooseVersion
 import platform
@@ -40,7 +39,7 @@ if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
             _minimum_vn,  platform.python_version()))
 
 # Check the version of netCDF4
-minimum_vn = '1.4.0'
+minimum_vn = '1.5.3'
 if LooseVersion(netCDF4.__version__) < LooseVersion(minimum_vn):
     raise ValueError(
         "Bad netCDF4 version: cfdm.core requires netCDF4 version {} or later. Got {} at {}".format(

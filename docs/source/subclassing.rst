@@ -27,10 +27,11 @@ classes is straight forward. For example:
    f = my_Field()
    f.set_property('standard_name', 'air_pressure')
    
-It is also possible use `cfdm.read` to read a dataset into field
-constructs defined by the new implementation, and `cfdm.write` to
-write to disk field constructs defined by the new implementation. For
-example:
+   
+It is also possible use `cfdm.read` and `cfdm.write` to read and write
+respectively field constructs defined by the new implementation; and
+`cfdm.example_field` to return example field constructs defined by the
+new implementation. For example:
 
 .. code-block:: python
    :caption: *Encapsulate the new implementation in a
@@ -40,8 +41,8 @@ example:
 
    import functools
 
-   # Define an implementation that is the same as cfdm, but with the
-   # my_Field class to represent field constructs
+   # Define an implementation that is the same as cfdm, but which uses
+   # the my_Field class to represent field constructs
    my_implementation = cfdm.implementation()
    my_implementation.set_class('Field', my_Field)
 
@@ -103,6 +104,8 @@ example:
      [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]
 
 
-Customisation of the actual functionality used by `cfdm.read` and
-`cfdm.write` is possible by subclassing the `CFDMImplementation`,
-`NetCDFRead` and `NetCDFWrite` classes.
+Modification and extension of the implementation functionality used by
+`cfdm.read` and `cfdm.write` is possible by subclassing the
+`CFDMImplementation`, `NetCDFRead` and `NetCDFWrite` classes. See
+`cf-python <https://github.com/NCAS-CMS/cf-python>`_ for an example of
+this customisation.

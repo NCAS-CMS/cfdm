@@ -16,41 +16,51 @@ import datetime
 import sys
 import os
 import re
+import cfdm
 
 def _read(fname):
-    """Returns content of a file.
+    '''Returns content of a file.
 
-    """
+    '''
     fpath = os.path.dirname(__file__)
     fpath = os.path.join(fpath, fname)
     with open(fpath, 'r') as file_:
         return file_.read()
-#--- End: def
+
 
 def _get_version():
-    """Returns library version by inspecting core/__init__.py file.
+    '''Returns library version by inspecting core/__init__.py file.
 
-    """
+    '''
     return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                      _read("../../cfdm/core/__init__.py"),
                      re.MULTILINE).group(1)
-#--- End: def
+
 
 def _get_cf_version():
-    """Returns CF version by inspecting core/__init__.py file.
+    '''Returns CF version by inspecting core/__init__.py file.
 
-    """
-    return re.search(r'^__cf_version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                     _read("../../cfdm/core/__init__.py"),
-                     re.MULTILINE).group(1)
-#--- End: def
+    '''
+    return cfdm.__cf_version__ #re.search(r'^__cf_version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+#                     _read("../../cfdm/core/__init__.py"),
+#                     re.MULTILINE).group(1)
+
 
 def _get_year():
-    '''
+    '''Get the current calendar year.
+
     '''
     return str(datetime.datetime.now().year)
-#--- End: def
-    
+
+
+def _get_date():
+    '''Get the current calendar year.
+
+    '''
+    return str(datetime.date.today())
+
+
+
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory
 # is relative to the documentation root, use os.path.abspath to make
@@ -61,7 +71,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- General configuration ----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = '1.0'
+needs_sphinx = '2.3.1'
 
 #rst_prolog = """
 #.. |CF| replace:: """+_get_cf_version()+"""
@@ -80,6 +90,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
               'sphinx.ext.doctest',
               'sphinx.ext.githubpages',
+#              'sphinxcontrib.programoutput',  # pip install sphinxcontrib-programoutput
+              'sphinx_copybutton',
 ]
 
 
@@ -111,6 +123,7 @@ intersphinx_mapping = {
     'python':     ('http://docs.python.org/3', None),
     'numpy':      ('http://docs.scipy.org/doc/numpy', None),
     'netCDF4':    ('http://unidata.github.io/netcdf4-python', None),
+    'cftime' :    ('http://unidata.github.io/cftime', None),
     }
 
 # This extension is meant to help with the common pattern of having
@@ -140,7 +153,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Python cfdm package'
-copyright = _get_year()+', David Hassell'
+copyright = _get_year()+', David Hassell | Page built on '+_get_date()
+author = 'David Hassell'
 
 # The version info for the project you're documenting, acts as
 # replacement for |version| and |release|, also used in various other
@@ -178,7 +192,7 @@ add_module_names = True
 
 # If true, sectionauthor and moduleauthor directives will be shown in
 # the output. They are ignored by default.
-#show_authors = False
+show_authors = True #False
 
 # The name of the Pygments (syntax highlighting) style to use.
 #pygments_style = 'sphinx'
@@ -225,35 +239,28 @@ html_theme = 'alabaster' #'default' #'haiku' #'default'
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
 html_theme_options = {
-#    "page_width"      : "auto",
     "show_related"    : 'true',
-#    "show_relbars"    : 'true',
     "sidebar_collapse": 'true',
-#    "link"            : '#ED1010', #'#5682AD', # light blue
-#    "link_hover"      : '#46DD6c',
-#    "sidebar_search_button" :  '#ED1010',
-
-    'fixed_sidebar': 'true',
-#    'sidebar_width': '15%',
-    'page_width': '85%',
-
-    'github_user': 'davidhassell',
-    'github_repo': 'https://github.com/NCAS-CMS/cfdm',
-    'github_button': 'true',
-
-    'seealso_bg'     : 'transparent',
-    'seealso_border' : 'transparent',
-    
-#    'table_border': '#FFFFFF', #'#000000',
-    'shadow'      : 'false',
-
-    
-    'show_powered_by' : 'true',
+    'fixed_sidebar'   : 'true',
+    'page_width'      : '85%',
+    'seealso_bg'      : 'transparent',
+    'seealso_border'  : 'transparent',
+    'shadow'          : 'false',
+     'show_powered_by': 'true',
     'font_size'       : '13pt',
     'code_font_size'  : '10pt',
-    "font_family"     : 'Arial',
+    'font_family'     : 'Arial',
     'head_font_family': 'Arial',
-    
+    'link_hover'      : '#6b0000',
+    'github_button'   : 'true',
+    'github_type'     : 'star',
+    'github_repo'     : 'cfdm',
+    'github_user'     : 'NCAS-CMS',
+    'pre_bg'          : '#ecf2f9',
+    'code_bg'         : '#ecf2f9',
+    'description'     : 'A complete implementation of the CF data model',
+}
+#    'table_border': '#FFFFFF', #'#000000',
 #    'sidebartextcolor': '#777777',
 #    'sidebarbgcolor'  : '#F2F2F2',
 #    'sidebartextcolor': '#777777',
@@ -263,7 +270,6 @@ html_theme_options = {
 #    'relbarlinkcolor' : '#ffffff',
 #    'headbgcolor'     : '#FFFFFF',
 #    'headtextcolor'   : '#000000',
-                      }
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -298,10 +304,12 @@ html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {'**': ['my_con.html', 'globaltoc.html', 'sourcelink.html']}
-html_sidebars = { '**': ['globaltoc.html',
+html_sidebars = { '**': ['about.html',
+                         'searchbox.html',
+                         'globaltoc.html',
                          'relations.html',
                          'sourcelink.html',
-                         'searchbox.html']
+                         ]
 }
 
 # Additional templates that should be rendered to pages, maps page
@@ -392,15 +400,24 @@ man_pages = [
      'David Hassell', 1)
     ]
 
-# Set up copybutton
-def setup(app):
-    app.add_javascript('copybutton.js')
+# Configurecopybutton
+copybutton_skip_text = ">>> "  # Python prompt for Python code snippets
+# Awaiting extension to sphinx-copybutton to strip out other prompts (see
+# 'https://github.com/choldgraf/sphinx-copybutton/issues/52') and ideally
+# remove lines of output characterised by not having an initial prompt.
+# copybutton_skip_text = "$ "  # shell ('..code-block:: console') prompt
+
+## Set up copybutton
+#def setup(app):
+#    app.add_javascript('copybutton.js')
 
 # This is a function which should return the URL to source code
 # corresponding to the object in given domain with given information.
 
 import inspect, cfdm
 from os.path import relpath, dirname
+
+link_release = re.search('(\d+\.\d+\.\d+)', release).groups()[0]
 
 def linkcode_resolve(domain, info):
     
@@ -458,15 +475,12 @@ def linkcode_resolve(domain, info):
     # NOTE: You need to touch the .rst files to get the change in
     # ----------------------------------------------------------------
     if online_source_code:
-#        commit = '11dddff56c31c24d86c3b83995e503989f90911b'
-#        commit = 'master'
-        commit = 'v'+release
-        print "https://github.com/NCAS-CMS/cfdm/blob/{0}/cfdm/{1}{2}".format(
-            commit, fn, linespec)
-
-        return "https://github.com/NCAS-CMS/cfdm/blob/{0}/cfdm/{1}{2}".format(
-            commit, fn, linespec)
+        url = "https://github.com/NCAS-CMS/cfdm/blob/v{0}/cfdm/{1}{2}".format(
+            link_release, fn, linespec)
+        
+        print(url)
+        return url
     else:
         # Point to local source code relative to this directory
         return "../../../cfdm/{0}{1}".format(fn, linespec)
-#--- End: def
+

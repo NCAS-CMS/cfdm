@@ -549,7 +549,7 @@ class ConstructAccess(object):
 
         # Select 1-d coordinate constructs with the given identity
         c = constructs.filter_by_type('dimension_coordinate',
-                                      'auxiliary_coordinates')
+                                      'auxiliary_coordinate')
         c = c.filter_by_naxes(1)
         c = c.filter_by_identity(identity)
         

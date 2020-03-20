@@ -77,6 +77,10 @@ Data
    :template: attribute.rst
 
    ~cfdm.DomainAncillary.data
+   ~cfdm.DomainAncillary.dtype
+   ~cfdm.DomainAncillary.ndim
+   ~cfdm.DomainAncillary.shape
+   ~cfdm.DomainAncillary.size
 
 Bounds
 ------
