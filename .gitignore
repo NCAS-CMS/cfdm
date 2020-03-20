@@ -1,0 +1,21 @@
+# Exclude from git version control staging for commits...
+# (unless a listed file, e.g. `gitignored-filename`, is forcibly staged, via:
+#  $ git add --force -- gitignored-filename
+# )
+
+
+# ... any '__pycache__' directory anywhere under the root directory:
+**/__pycache__/
+
+# all Python compiled bytecode files:
+*.py[cdo]
+
+# test files that change if & when the test suite (or a subset of it) is run:
+cfdm/test/*.nc
+cfdm/test/*.nca
+
+# packaging-related files changing with environment adjustments:
+*.egg-info/
+
+# backup files generated during documentation source changes and builds:
+docs/source/*.rst.bak
