@@ -159,7 +159,13 @@ class Data(abstract.Container):
     <type 'numpy.dtype'>
 
         '''
-        return self._get_Array().dtype        
+        datatype = self._get_Array().dtype
+        if datatype is None:
+            # The datatype is not known, so get the numpy array and
+            # get it off that.
+            datatype = self.array.dtype
+            
+        return datatype
 
 
     @property
@@ -287,11 +293,11 @@ class Data(abstract.Container):
 
     
     def _del_Array(self, default=ValueError()):
-        '''Delete the data.
+        '''Delete the underlying array.
 
     :Returns:
     
-            TODO
+            The array.
     
     **Examples:**
     
@@ -304,7 +310,8 @@ class Data(abstract.Container):
     def del_calendar(self, default=ValueError()):
         '''Delete the calendar.
 
-    .. seealso:: `get_calendar`, `set_calendar`
+    .. seealso:: `get_calendar`, `has_calendar`, `set_calendar`,
+                 `del_units`
     
     :Parameters:
     
@@ -319,13 +326,19 @@ class Data(abstract.Container):
     
     **Examples:**
     
-    >>> d.set_calendar('proleptic_gregorian')
-    >>> d.get_calendar
-    'proleptic_gregorian'
+    >>> d.set_calendar('360_day')
+    >>> d.has_calendar()
+    True 
+    >>> d.get_calendar()
+    '360_day'
     >>> d.del_calendar()
+    >>> d.has_calendar()
+    False
     >>> d.get_calendar()
     ValueError: Can't get non-existent calendar
     >>> print(d.get_calendar(None))
+    None
+    >>> print(d.del_calendar(None))
     None
 
         '''
@@ -336,11 +349,10 @@ class Data(abstract.Container):
                                  "{!r} has no calendar".format(
                                      self.__class__.__name__))
 
-
     def del_fill_value(self, default=ValueError()):
         '''Delete the fill value.
 
-    .. seealso:: `get_fill_value`, `set_fill_value`
+    .. seealso:: `get_fill_value`, `has_fill_value`, `set_fill_value`
     
     :Parameters:
     
@@ -356,6 +368,8 @@ class Data(abstract.Container):
     **Examples:**
     
     >>> f.set_fill_value(-9999)
+    >>> f.has_fill_value()
+    True
     >>> f.get_fill_value()
     -9999
     >>> print(f.del_fill_value())
@@ -369,6 +383,8 @@ class Data(abstract.Container):
     >>> f.set_fill_value(None)
     >>> print(f.get_fill_value())
     None
+    >>> f.has_fill_value()
+    False
 
         '''
         try:
@@ -382,7 +398,7 @@ class Data(abstract.Container):
     def del_units(self, default=ValueError()):
         '''Delete the units.
 
-    .. seealso:: `get_units`, `set_units`
+    .. seealso:: `get_units`, `has_units`, `set_units`, `del_calendar`
     
     :Parameters:
     
@@ -396,14 +412,20 @@ class Data(abstract.Container):
             The value of the deleted units.
     
     **Examples:**
-    
+
     >>> d.set_units('metres')
+    >>> d.has_units()
+    True
     >>> d.get_units()
     'metres'
     >>> d.del_units()
+    >>> d.has_units()
+    False
     >>> d.get_units()
     ValueError: Can't get non-existent units
     >>> print(d.get_units(None))
+    None
+    >>> print(d.del_units(None))
     None
 
         '''
@@ -418,7 +440,8 @@ class Data(abstract.Container):
     def get_calendar(self, default=ValueError()):
         '''Return the calendar.
 
-    .. seealso:: `del_calendar`, `set_calendar`
+    .. seealso:: `del_calendar`, `has_calendar`, `set_calendar`,
+                 `get_units`
     
     :Parameters:
     
@@ -433,13 +456,19 @@ class Data(abstract.Container):
     
     **Examples:**
     
-    >>> d.set_calendar('julian')
-    >>> d.get_calendar
-    'metres'
+    >>> d.set_calendar('360_day')
+    >>> d.has_calendar()
+    True 
+    >>> d.get_calendar()
+    '360_day'
     >>> d.del_calendar()
+    >>> d.has_calendar()
+    False
     >>> d.get_calendar()
     ValueError: Can't get non-existent calendar
     >>> print(d.get_calendar(None))
+    None
+    >>> print(d.del_calendar(None))
     None
 
         '''
@@ -481,7 +510,7 @@ class Data(abstract.Container):
     def get_fill_value(self, default=ValueError()):
         '''Return the missing data value.
 
-    .. seealso:: `del_fill_value`, `set_fill_vlaue`
+    .. seealso:: `del_fill_value`, `has_fill_value`, `set_fill_vlaue`
     
     :Parameters:
     
@@ -496,7 +525,9 @@ class Data(abstract.Container):
     
     **Examples:**
     
-    >>> f.set_fill_value(-9999)
+    >>> f.set_fill_value(-9999) 
+    >>> f.has_fill_value()
+    True
     >>> f.get_fill_value()
     -9999
     >>> print(f.del_fill_value())
@@ -510,6 +541,8 @@ class Data(abstract.Container):
     >>> f.set_fill_value(None)
     >>> print(f.get_fill_value())
     None
+    >>> f.has_fill_value()
+    False
 
         '''
         try:
@@ -523,7 +556,7 @@ class Data(abstract.Container):
     def get_units(self, default=ValueError()):
         '''Return the units.
 
-    .. seealso:: `del_units`, `set_units`
+    .. seealso:: `del_units`, `has_units`, `set_units`, `get_calendar`
     
     :Parameters:
     
@@ -537,14 +570,20 @@ class Data(abstract.Container):
             The units.
     
     **Examples:**
-    
+
     >>> d.set_units('metres')
+    >>> d.has_units()
+    True
     >>> d.get_units()
     'metres'
     >>> d.del_units()
+    >>> d.has_units()
+    False
     >>> d.get_units()
     ValueError: Can't get non-existent units
     >>> print(d.get_units(None))
+    None
+    >>> print(d.del_units(None))
     None
 
         '''
@@ -555,104 +594,106 @@ class Data(abstract.Container):
                                  "{!r} has no units".format(
                                      self.__class__.__name__))
 
-
     def has_units(self):
-        '''TODO Return the units.
+        '''Whether units have been set.
 
-    .. seealso:: `del_units`, `set_units`
-    
-    :Parameters:
-    
-        default: optional
-            Return the value of the *default* parameter if the units
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
-    
+    .. seealso:: `del_units`, `get_units`, `set_units`, `has_calendar`
+  
     :Returns:
     
-            The units.
+        `bool`
+            True if units have been set, otherwise False.
     
     **Examples:**
-    
+
     >>> d.set_units('metres')
+    >>> d.has_units()
+    True
     >>> d.get_units()
     'metres'
     >>> d.del_units()
+    >>> d.has_units()
+    False
     >>> d.get_units()
     ValueError: Can't get non-existent units
     >>> print(d.get_units(None))
+    None
+    >>> print(d.del_units(None))
     None
 
         '''
         return self._has_component('units')
 
-
     def has_calendar(self):
-        '''TODO Return the units.
+        '''Whether a calendar has been set.
 
-    .. seealso:: `del_units`, `set_units`
-    
-    :Parameters:
-    
-        default: optional
-            Return the value of the *default* parameter if the units
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
-    
+    .. seealso:: `del_calendar`, `get_calendar`, `set_calendar`,
+                 `has_units`
+   
     :Returns:
-    
-            The units.
+
+        `bool`
+            True if the calendar has been set, otherwise False.
     
     **Examples:**
     
-    >>> d.set_units('metres')
-    >>> d.get_units()
-    'metres'
-    >>> d.del_units()
-    >>> d.get_units()
-    ValueError: Can't get non-existent units
-    >>> print(d.get_units(None))
+    >>> d.set_calendar('360_day')
+    >>> d.has_calendar()
+    True 
+    >>> d.get_calendar()
+    '360_day'
+    >>> d.del_calendar()
+    >>> d.has_calendar()
+    False
+    >>> d.get_calendar()
+    ValueError: Can't get non-existent calendar
+    >>> print(d.get_calendar(None))
+    None
+    >>> print(d.del_calendar(None))
     None
 
         '''
         return self._has_component('calendar')
 
-
     def has_fill_value(self):
-        '''TODO Return the units.
+        '''Whether a fill value has been set.
 
-    .. seealso:: `del_units`, `set_units`
-    
-    :Parameters:
-    
-        default: optional
-            Return the value of the *default* parameter if the units
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
-    
+    .. seealso:: `del_fill_value`, `get_fill_value`, `set_fill_vlaue`
+
     :Returns:
-    
-            The units.
+
+        `bool`
+            True if a fill value has been set, otherwise False.
     
     **Examples:**
     
-    >>> d.set_units('metres')
-    >>> d.get_units()
-    'metres'
-    >>> d.del_units()
-    >>> d.get_units()
-    ValueError: Can't get non-existent units
-    >>> print(d.get_units(None))
+    >>> f.set_fill_value(-9999) 
+    >>> f.has_fill_value()
+    True
+    >>> f.get_fill_value()
+    -9999
+    >>> print(f.del_fill_value())
+    -9999
+    >>> f.get_fill_value()
+    ValueError: Can't get non-existent fill value
+    >>> f.get_fill_value(10**10)
+    10000000000
+    >>> print(f.get_fill_value(None))
     None
+    >>> f.set_fill_value(None)
+    >>> print(f.get_fill_value())
+    None
+    >>> f.has_fill_value()
+    False
 
         '''
         return self._has_component('fill_value')
 
-
-    def set_calendar(self, calendar):
+    def set_calendar(self, value):
         '''Set the calendar.
 
-    .. seealso:: `del_calendar`, `get_calendar`
+    .. seealso:: `del_calendar`, `get_calendar`, `has_calendar`,
+                 `set_units`
     
     :Parameters:
     
@@ -664,19 +705,24 @@ class Data(abstract.Container):
         `None`
     
     **Examples:**
-    
-    >>> d.set_calendar('none')
-    >>> d.get_calendar
-    'none'
+        
+    >>> d.set_calendar('360_day')
+    >>> d.has_calendar()
+    True 
+    >>> d.get_calendar()
+    '360_day'
     >>> d.del_calendar()
+    >>> d.has_calendar()
+    False
     >>> d.get_calendar()
     ValueError: Can't get non-existent calendar
     >>> print(d.get_calendar(None))
     None
+    >>> print(d.del_calendar(None))
+    None
 
         '''
-        return self._set_component('calendar', calendar, copy=False)
-
+        return self._set_component('calendar', value, copy=False)
 
     def _set_Array(self, array, copy=True):
         '''Set the array.
@@ -704,7 +750,7 @@ class Data(abstract.Container):
     def set_fill_value(self, value):
         '''Set the missing data value.
 
-    .. seealso:: `del_fill_value`, `get_fill_vlaue`
+    .. seealso:: `del_fill_value`, `has_fill_vlaue`, `get_fill_vlaue`
     
     :Parameters:
     
@@ -718,6 +764,8 @@ class Data(abstract.Container):
     **Examples:**
     
     >>> f.set_fill_value(-9999)
+    >>> f.has_fill_value()
+    True
     >>> f.get_fill_value()
     -9999
     >>> print(f.del_fill_value())
@@ -731,6 +779,8 @@ class Data(abstract.Container):
     >>> f.set_fill_value(None)
     >>> print(f.get_fill_value())
     None
+    >>> f.has_fill_value()
+    False
 
         '''
         if value is None:
@@ -742,7 +792,7 @@ class Data(abstract.Container):
     def set_units(self, value):
         '''Set the units.
 
-    .. seealso:: `del_units`, `get_units`
+    .. seealso:: `del_units`, `get_units`, `has_units`, `set_calendar`
     
     :Parameters:
     
@@ -755,13 +805,19 @@ class Data(abstract.Container):
     
     **Examples:**
     
-    >>> d.set_units('watt')
+    >>> d.set_units('metres')
+    >>> d.has_units()
+    True
     >>> d.get_units()
-    'watt'
+    'metres'
     >>> d.del_units()
+    >>> d.has_units()
+    False
     >>> d.get_units()
     ValueError: Can't get non-existent units
     >>> print(d.get_units(None))
+    None
+    >>> print(d.del_units(None))
     None
 
         '''
@@ -785,7 +841,7 @@ class Data(abstract.Container):
     
     **Examples:**
     
-    >>> TODO
+    TODO
 
         '''
         return  self._get_component('array', default=default)

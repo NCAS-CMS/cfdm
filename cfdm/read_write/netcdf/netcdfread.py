@@ -184,7 +184,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `bool`
+        `bool`
 
     **Examples:**
     
@@ -204,7 +204,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `int`
+        `int`
             The new reference count.
         
     **Examples:**
@@ -240,7 +240,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `netCDF4.Dataset`
+        `netCDF4.Dataset`
             A `netCDF4.Dataset` object for the file.
 
         '''
@@ -333,7 +333,7 @@ class NetCDFRead(IORead):
 
     :Returns:
     
-        out: `bool`
+        `bool`
             `True` if the file is CDL, otherwise `False`
 
     **Examples:**
@@ -441,7 +441,7 @@ class NetCDFRead(IORead):
             
     :Returns:
     
-        out: `list`
+        `list`
             The fields in the file.
     
     **Examples:**
@@ -578,8 +578,8 @@ class NetCDFRead(IORead):
         g['nc'] = nc
         
         if verbose:
-            print('Reading netCDF file:', filename)
-            print('    Input netCDF dataset =',nc)
+            print('Reading netCDF file:', filename) # pragma: no cover
+            print('    Input netCDF dataset =',nc) # pragma: no cover
     
         # ----------------------------------------------------------------
         # Put the file's global attributes into the global
@@ -602,7 +602,7 @@ class NetCDFRead(IORead):
         
         g['global_attributes'] = global_attributes
         if verbose:
-            print('    Global attributes:', g['global_attributes'])
+            print('    Global attributes:', g['global_attributes']) # pragma: no cover
 
         # ------------------------------------------------------------
         # Find the CF version for the file
@@ -630,16 +630,7 @@ class NetCDFRead(IORead):
         # each key's value is a dictionary of that variable's netCDF
         # attributes. E.g. attributes['tas']['units']='K'
         # ------------------------------------------------------------
-
-        # The netCDF attributes for each variable.
-        #
-        # E.g. {'lon': {'standard_name': 'longitude'}}
         variable_attributes = {}
-
-        # The netCDF attributes for each variable.
-        #
-        # E.g. {'lon': {'standard_name': 'longitude'}}
-        
         variable_dimensions = {}
         variable_dataset    = {}
         variable_filename   = {}
@@ -661,13 +652,9 @@ class NetCDFRead(IORead):
             #--- End: for
 
             variable_dimensions[ncvar] = tuple(variable.dimensions)
-
-            variable_dataset[ncvar] = nc
-            
-            variable_filename[ncvar] = g['filename']
-            
-            variables[ncvar] = variable
-        #--- End: for
+            variable_dataset[ncvar]    = nc        
+            variable_filename[ncvar]   = g['filename']            
+            variables[ncvar]           = variable
 
         # The netCDF attributes for each variable
         #
@@ -704,7 +691,7 @@ class NetCDFRead(IORead):
         g['internal_dimension_sizes'] = internal_dimension_sizes
 
         if verbose:
-            print('    netCDF dimensions:', internal_dimension_sizes)
+            print('    netCDF dimensions:', internal_dimension_sizes) # pragma: no cover
             
         # ------------------------------------------------------------
         # List variables
@@ -809,8 +796,8 @@ class NetCDFRead(IORead):
                 geometry_ncvar = attributes['geometry']
                 self._parse_geometry(ncvar, geometry_ncvar, variable_attributes)
                 
-                # Do not attempt to create a field from a geometry
-                # container variable
+                # Do not attempt to create a field contruct from a
+                # geometry container variable
                 g['do_not_create_field'].add(geometry_ncvar)
         #--- End: if
         
@@ -837,8 +824,8 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         if g['CF>=1.7']:
             if verbose:
-                print('    External variables:', sorted(g['external_variables']))
-                print('    External files    :', g['external_files'])
+                print('    External variables:', sorted(g['external_variables'])) # pragma: no cover
+                print('    External files    :', g['external_files']) # pragma: no cover
 
             if g['external_files'] and g['external_variables']:
                 self._get_variables_from_external_files(netcdf_external_variables)
@@ -879,13 +866,13 @@ class NetCDFRead(IORead):
         #--- End: for
         
         if verbose:
-            print('Referenced netCDF variables:\n   ', end=' ')
+            print('Referenced netCDF variables:\n   ', end=' ') # pragma: no cover
             print('\n    '.join([ncvar for  ncvar in all_fields
-                                 if not self._is_unreferenced(ncvar)]))
+                                 if not self._is_unreferenced(ncvar)])) # pragma: no cover
 
-            print('Unreferenced netCDF variables:\n   ', end=' ')
+            print('Unreferenced netCDF variables:\n   ', end=' ') # pragma: no cover
             print('\n    '.join([ncvar for ncvar in all_fields
-                                 if self._is_unreferenced(ncvar)]))
+                                 if self._is_unreferenced(ncvar)])) # pragma: no cover
         
         # ------------------------------------------------------------
         # If requested, reinstate fields created from netCDF variables
@@ -975,14 +962,14 @@ class NetCDFRead(IORead):
             
         for external_file in external_files: 
             if verbose:
-                print('\nScanning external file:')
-                print('-----------------------')
+                print('\nScanning external file:') # pragma: no cover
+                print('-----------------------') # pragma: no cover
 
             external_read_vars = self.read(external_file, _scan_only=True,
-                                           verbose=verbose)
+                                           verbose=verbose) # pragma: no cover
 
             if verbose:
-                print('Finished scanning external file\n')
+                print('Finished scanning external file\n') # pragma: no cover
 
             # Reset self.read_vars
             self.read_vars = read_vars
@@ -1054,7 +1041,7 @@ class NetCDFRead(IORead):
         g = self.read_vars
         verbose = g['verbose']
         if verbose:
-            print('        List variable: compress =', compress)
+            print('        List variable: compress =', compress) # pragma: no cover
     
         gathered_ncdimension = g['variable_dimensions'][ncvar][0]
 
@@ -1087,7 +1074,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `str`
+        `str`
             The made-up netCDF dimension name of the element dimension.
 
         '''
@@ -1095,7 +1082,7 @@ class NetCDFRead(IORead):
 
         verbose = g['verbose']
         if verbose:
-            print('    count variable: sample_dimension =', sample_dimension)
+            print('    count variable: sample_dimension =', sample_dimension) # pragma: no cover
 
         instance_dimension = g['variable_dimensions'][ncvar][0] 
         
@@ -1113,7 +1100,7 @@ class NetCDFRead(IORead):
         else:
             element_dimension = 'element'
         if verbose:        
-            print('    featureType =', g['featureType'])
+            print('    featureType =', g['featureType']) # pragma: no cover
 
         element_dimension = self._set_ragged_contiguous_parameters(
                 elements_per_instance=elements_per_instance,
@@ -1144,7 +1131,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `str`
+        `str`
             An invented netCDF name for the element dimension,
             e.g. ``'timeseriesprofile'``.
 
@@ -1153,7 +1140,7 @@ class NetCDFRead(IORead):
                 
         verbose = g['verbose']
         if verbose:
-            print('    index variable: instance_dimension =', instance_dimension)
+            print('    index variable: instance_dimension =', instance_dimension) # pragma: no cover
 
         # Read the data of the index variable
         ncdim = g['variable_dimensions'][ncvar][0]
@@ -1171,7 +1158,7 @@ class NetCDFRead(IORead):
         else:
             element_dimension = 'element'
         if verbose:        
-            print('    featureType =', g['featureType'])
+            print('    featureType =', g['featureType']) # pragma: no cover
 
         element_dimension = self._set_ragged_indexed_parameters(
             index=index,
@@ -1200,14 +1187,14 @@ class NetCDFRead(IORead):
                 
         verbose = g['verbose']
         if verbose:
-            print('Pre-processing indexed and contiguous compression')
-            print(g['compression'])
+            print('Pre-processing indexed and contiguous compression') # pragma: no cover
+            print(g['compression']) # pragma: no cover
         profile_dimension = g['compression'][sample_dimension]['ragged_contiguous']['profile_dimension']
     
         if verbose:
-            print('    sample_dimension  :', sample_dimension)
-            print('    instance_dimension:', instance_dimension)
-            print('    profile_dimension :', profile_dimension)
+            print('    sample_dimension  :', sample_dimension) # pragma: no cover
+            print('    instance_dimension:', instance_dimension) # pragma: no cover
+            print('    profile_dimension :', profile_dimension) # pragma: no cover
             
         contiguous = g['compression'][sample_dimension]['ragged_contiguous']
         indexed    = g['compression'][profile_dimension]['ragged_indexed']
@@ -1221,11 +1208,11 @@ class NetCDFRead(IORead):
     
         instance_dimension_size  = indexed['instance_dimension_size']
         element_dimension_1_size = int(profiles_per_instance.max())
-        element_dimension_2_size = int(self.implementation.get_data_max(elements_per_profile)) #int(elements_per_profile.max())
+        element_dimension_2_size = int(self.implementation.get_data_maximum(elements_per_profile)) #int(elements_per_profile.max())
         
         if verbose:
             print("    Creating g['compression'][{!r}]['ragged_indexed_contiguous']".format(
-                sample_dimension))
+                sample_dimension)) # pragma: no cover
             
         g['compression'][sample_dimension]['ragged_indexed_contiguous'] = {
             'count_variable'          : elements_per_profile,
@@ -1241,9 +1228,9 @@ class NetCDFRead(IORead):
         if verbose:
             print('    Implied dimensions: {} -> {}'.format(
                 sample_dimension,
-                g['compression'][sample_dimension]['ragged_indexed_contiguous']['implied_ncdimensions']))
+                g['compression'][sample_dimension]['ragged_indexed_contiguous']['implied_ncdimensions'])) # pragma: no cover
             print("    Removing g['compression'][{!r}]['ragged_contiguous']".format(
-                sample_dimension))
+                sample_dimension)) # pragma: no cover
             
         del g['compression'][sample_dimension]['ragged_contiguous']
 
@@ -1258,12 +1245,14 @@ class NetCDFRead(IORead):
         field_ncvar: `str`
             The netCDF variable name of the parent data variable.
     
-        ncvar: `str`
+        geometry_ncvar: `str`
             The netCDF variable name of the geometry container
             variable.
     
         attributes: `dict`
-    
+            All attributes of all netCDF variables, keyed by netCDF
+            variable name.
+
     :Returns:
     
         TODO
@@ -1273,8 +1262,8 @@ class NetCDFRead(IORead):
         
         verbose = g['verbose']
         if verbose:
-            print('    Geometry container =', repr(geometry_ncvar))
-            print('        netCDF attributes:', attributes[geometry_ncvar])
+            print('    Geometry container =', repr(geometry_ncvar))         # pragma: no cover
+            print('        netCDF attributes:', attributes[geometry_ncvar]) # pragma: no cover
 
         if geometry_ncvar in g['geometries']:
             # We've already parsed this geometry container
@@ -1297,10 +1286,10 @@ class NetCDFRead(IORead):
         parsed_part_node_count    = self._split_string_by_white_space(geometry_ncvar, part_node_count)
 
         if verbose:
-            print('        parsed_node_coordinates =', parsed_node_coordinates)
-            print('        parsed_interior_ring    =', parsed_interior_ring)
-            print('        parsed_node_count       =', parsed_node_count)
-            print('        parsed_part_node_count  =', parsed_part_node_count)
+            print('        parsed_node_coordinates =', parsed_node_coordinates) # pragma: no cover
+            print('        parsed_interior_ring    =', parsed_interior_ring)    # pragma: no cover
+            print('        parsed_node_count       =', parsed_node_count)       # pragma: no cover
+            print('        parsed_part_node_count  =', parsed_part_node_count)  # pragma: no cover
 
         cf_compliant = True
         
@@ -1342,7 +1331,7 @@ class NetCDFRead(IORead):
         # Find the netCDF dimension for the total number of nodes
         node_dimension = g['variable_dimensions'][parsed_node_coordinates[0]][0]
         if verbose:
-            print('        node_dimension =', repr(node_dimension))
+            print('        node_dimension =', repr(node_dimension)) # pragma: no cover
             
         if node_count is None:
             # --------------------------------------------------------
@@ -1517,7 +1506,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `str`
+        `str`
            The element dimension, possibly modified to make sure that it
            is unique.
 
@@ -1525,7 +1514,7 @@ class NetCDFRead(IORead):
         g = self.read_vars
         
         instance_dimension_size = self.implementation.get_data_size(elements_per_instance)
-        element_dimension_size  = int(self.implementation.get_data_max(elements_per_instance))
+        element_dimension_size  = int(self.implementation.get_data_maximum(elements_per_instance))
         
         # Make sure that the element dimension name is unique
         base = element_dimension
@@ -1550,7 +1539,7 @@ class NetCDFRead(IORead):
         
         if g['verbose']:
             print("    Creating g['compression'][{!r}]['ragged_contiguous']".format(
-                sample_dimension))
+                sample_dimension)) # pragma: no cover
 
         return element_dimension
 
@@ -1573,7 +1562,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `str`
+        `str`
            The element dimension, possibly modified to make sure that it
            is unique.
 
@@ -1611,7 +1600,7 @@ class NetCDFRead(IORead):
         
         if g['verbose']:
             print("    Created g['compression'][{!r}]['ragged_indexed']".format(
-                indexed_sample_dimension))
+                indexed_sample_dimension)) # pragma: no cover
     
         return element_dimension
 
@@ -1631,7 +1620,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `list`
+        `list`
             The external variable names, less those which are also netCDF
             variables in the file.
 
@@ -1925,7 +1914,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `Field`
+        `Field`
             The new field.
 
         '''
@@ -1944,7 +1933,7 @@ class NetCDFRead(IORead):
         verbose = g['verbose']
         if verbose:
             print('Converting netCDF variable {}({}) to a Field:'.format(
-                field_ncvar, ', '.join(dimensions)))
+                field_ncvar, ', '.join(dimensions))) # pragma: no cover
 
         # Combine the global properties with the data variable
         # properties, giving precedence to those of the data variable.
@@ -1952,7 +1941,7 @@ class NetCDFRead(IORead):
         field_properties.update(g['variable_attributes'][field_ncvar])
 
         if verbose:
-            print('    netCDF attributes:', field_properties)
+            print('    netCDF attributes:', field_properties) # pragma: no cover
         
         # Take cell_methods out of the data variable's properties
         # since it will need special processing once the domain has
@@ -1996,8 +1985,8 @@ class NetCDFRead(IORead):
         self.implementation.nc_set_global_attributes(f, x) #g['global_attributes'])
 
         # ----------------------------------------------------------------
-        # Remove the field's "geometry" property, saving its value
-        # (CF>=1.8)
+        # Remove the field construct's "geometry" property, saving its
+        # value
         # ----------------------------------------------------------------
         if g['CF>=1.8']:
             geometry = self.implementation.del_property(f, 'geometry', None)
@@ -2028,6 +2017,7 @@ class NetCDFRead(IORead):
 #        unlimited = []
         
         for ncdim in field_ncdimensions:
+#            print (ncdim, 'ncdim=',  g['variable_dimensions'].get(ncdim))
             if g['variable_dimensions'].get(ncdim) == (ncdim,):
                 # There is a Unidata coordinate variable for this
                 # dimension, so create a domain axis and dimension
@@ -2042,14 +2032,14 @@ class NetCDFRead(IORead):
                     self.implementation.get_construct_data_size(coord),
                     ncdim)
                 if verbose:
-                    print('    [0] Inserting', repr(domain_axis))
+                    print('    [0] Inserting', repr(domain_axis)) # pragma: no cover
                 axis = self.implementation.set_domain_axis(field=f, construct=domain_axis,
                                            copy=False)
 
                 if verbose:
-                    print('    [1] Inserting', repr(coord))
+                    print('    [1] Inserting', repr(coord)) # pragma: no cover
                 dim = self.implementation.set_dimension_coordinate(field=f, construct=coord,
-                                                   axes=[axis], copy=False)
+                                                                   axes=[axis], copy=False)
                 
                 self._reference(ncdim)
                 if coord.has_bounds():
@@ -2059,7 +2049,6 @@ class NetCDFRead(IORead):
                 # Set unlimited status of axis
                 if nc.dimensions[ncdim].isunlimited():
                     self.implementation.nc_set_unlimited_axis(f, axis)
-#                    unlimited.append(axis)
     
                 ncvar_to_key[ncdim] = dim
                 g['coordinates'].setdefault(field_ncvar, []).append(ncdim)
@@ -2075,7 +2064,7 @@ class NetCDFRead(IORead):
 
                 domain_axis = self._create_domain_axis(size, ncdim)
                 if verbose:
-                    print('    [2] Inserting', repr(domain_axis))
+                    print('    [2] Inserting', repr(domain_axis)) # pragma: no cover
                 axis = self.implementation.set_domain_axis(field=f, construct=domain_axis,
                                            copy=False)
                 
@@ -2103,7 +2092,7 @@ class NetCDFRead(IORead):
         data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)
 
         if verbose:
-            print('    [3] Inserting', repr(data))
+            print('    [3] Inserting', repr(data)) # pragma: no cover
 
         self.implementation.set_data(f, data, axes=data_axes, copy=False)
 
@@ -2142,14 +2131,15 @@ class NetCDFRead(IORead):
                 scalar = False
                 if not dimensions:
                     scalar = True
-                    if g['variables'][ncvar].dtype.kind is 'S':
+#                    if g['variables'][ncvar].dtype.kind is 'S':
+                    if self._is_char_or_string(ncvar):
                         # String valued scalar coordinate. Is this CF
                         # compliant? Don't worry about it - we'll just
                         # turn it into a 1-d, size 1 auxiliary coordinate
                         # construct.
                         domain_axis = self._create_domain_axis(1)
                         if verbose:
-                            print('    [4] Inserting', repr(domain_axis))
+                            print('    [4] Inserting', repr(domain_axis)) # pragma: no cover
                         dim = self.implementation.set_domain_axis(f, domain_axis)
                         dimensions = [dim]
                     else:  
@@ -2171,13 +2161,13 @@ class NetCDFRead(IORead):
                     domain_axis = self._create_domain_axis(
                         self.implementation.get_construct_data_size(coord))
                     if verbose:
-                        print('    [5] Inserting', repr(domain_axis))
+                        print('    [5] Inserting', repr(domain_axis)) # pragma: no cover
                     axis = self.implementation.set_domain_axis(field=f,
                                                                construct=domain_axis,
                                                                copy=False)
                     
                     if verbose:
-                        print('    [5] Inserting', repr(coord))
+                        print('    [5] Inserting', repr(coord)) # pragma: no cover
                     dim = self.implementation.set_dimension_coordinate(f, coord,
                                                                        axes=[axis],
                                                                        copy=False)
@@ -2195,7 +2185,7 @@ class NetCDFRead(IORead):
                 else:
                     # Insert auxiliary coordinate
                     if verbose:
-                        print('    [6] Inserting', repr(coord))
+                        print('    [6] Inserting', repr(coord)) # pragma: no cover
                         
                     aux = self.implementation.set_auxiliary_coordinate(
                         f, coord, axes=dimensions, copy=False)
@@ -2246,7 +2236,7 @@ class NetCDFRead(IORead):
                     
                 # Insert auxiliary coordinate
                 if verbose:
-                    print('    [6] Inserting', repr(coord))
+                    print('    [6] Inserting', repr(coord)) # pragma: no cover
 
                 # TODO check that geometry_dimension is a dimension of the data variable
                 aux = self.implementation.set_auxiliary_coordinate(
@@ -2326,7 +2316,7 @@ class NetCDFRead(IORead):
             # Still here? Create a formula terms coordinate reference.
             for ncvar, domain_anc, axes in domain_ancillaries:
                 if verbose:
-                    print('    [7] Inserting', repr(domain_anc))
+                    print('    [7] Inserting', repr(domain_anc)) # pragma: no cover
                     
                 da_key = self.implementation.set_domain_ancillary(field=f,
                                                   construct=domain_anc,
@@ -2369,7 +2359,7 @@ class NetCDFRead(IORead):
                                                     parsed_grid_mapping)
             if not cf_compliant:
                 if verbose:
-                    print('        Bad grid_mapping:', grid_mapping)
+                    print('        Bad grid_mapping:', grid_mapping) # pragma: no cover
             else:
                 for x in parsed_grid_mapping:
                     grid_mapping_ncvar, coordinates = list(x.items())[0]
@@ -2421,7 +2411,7 @@ class NetCDFRead(IORead):
                                 # Add the datum to an already existing
                                 # vertical coordinate reference
                                 if verbose:
-                                    print('    [ ] Inserting {!r} into {!r}'.format(datum, vcr))
+                                    print('    [ ] Inserting {!r} into {!r}'.format(datum, vcr)) # pragma: no cover
                                 self.implementation.set_datum(coordinate_reference=vcr,
                                                               datum=datum)
                                 coordinates.remove(vcoord)
@@ -2482,7 +2472,7 @@ class NetCDFRead(IORead):
                         g['cell_measure'][ncvar] = cell
         
                     if verbose:
-                        print('    [8] Inserting', repr(cell))
+                        print('    [8] Inserting', repr(cell)) # pragma: no cover
 
                     key = self.implementation.set_cell_measure(
                         field=f, construct=cell,
@@ -2513,7 +2503,7 @@ class NetCDFRead(IORead):
 
                 cell_method = self._create_cell_method(axes, method, properties)
                 if verbose:
-                    print('    [ ] Inserting', repr(cell_method))
+                    print('    [ ] Inserting', repr(cell_method)) # pragma: no cover
                         
                 self.implementation.set_cell_method(field=f, construct=cell_method,
                                        copy=False)
@@ -2544,7 +2534,7 @@ class NetCDFRead(IORead):
                         
                     # Insert the field ancillary
                     if verbose:
-                        print('    [9] Inserting', repr(field_anc))
+                        print('    [9] Inserting', repr(field_anc)) # pragma: no cover
                     key = self.implementation.set_field_ancillary(field=f,
                                                      construct=field_anc,
                                                      axes=axes, copy=False)
@@ -2554,7 +2544,7 @@ class NetCDFRead(IORead):
         #--- End: if
 
         if verbose:
-            print('    Field properties:', self.implementation.get_properties(f))
+            print('    Field properties:', self.implementation.get_properties(f)) # pragma: no cover
         
         # Add the structural read report to the field
         dataset_compliance = g['dataset_compliance'][field_ncvar]
@@ -2570,6 +2560,50 @@ class NetCDFRead(IORead):
         return f
 
 
+    def _is_char_or_string(self, ncvar):
+        '''Return True if the netCDf variable has string or char datatype.
+
+    :Parameters:
+        
+        ncvar: `str`
+            The name of the netCDF variable.
+
+    :Returns:
+        
+        `bool`
+
+    **Examples:**
+
+        >>> n._is_char_or_string('regions')
+        True
+
+        '''
+        datatype = self.read_vars['variables'][ncvar].dtype
+        return datatype == str or datatype.kind in 'SU'
+    
+    
+    def _is_char(self, ncvar):
+        '''Return True if the netCDf variable has char datatype.
+
+    :Parameters:
+        
+        ncvar: `str`
+            The name of the netCDF variable.
+
+    :Returns:
+        
+        `bool`
+
+    **Examples:**
+
+        >>> n._is_char('regions')
+        True
+
+        '''
+        datatype = self.read_vars['variables'][ncvar].dtype
+        return datatype != str and datatype.kind in 'SU'
+    
+    
     def _get_geometry(self, field_ncvar):
         '''Return a geometry container for this field construct.
 
@@ -2656,13 +2690,13 @@ class NetCDFRead(IORead):
         e.setdefault(ncvar, []).append(d)
 
         if g['verbose']:
-            if dimensions is None:
-                dimensions = ''
-            else:
-                dimensions = '(' + ', '.join(dimensions) + ')'
+            if dimensions is None: # pragma: no cover
+                dimensions = '' # pragma: no cover
+            else: # pragma: no cover
+                dimensions = '(' + ', '.join(dimensions) + ')' # pragma: no cover
                 
-            print('    Error processing netCDF variable {}{}: {}'.format(
-                ncvar, dimensions, d['reason']))
+            print('    Error processing netCDF variable {}{}: {}'.format( # pragma: no cover
+                ncvar, dimensions, d['reason'])) # pragma: no cover
         
         return d
 
@@ -2874,6 +2908,8 @@ class NetCDFRead(IORead):
 #            if bounds_properties.get('units') is not None:
             bounds_data = self._create_data(bounds_ncvar, bounds,
                                             parent_ncvar=ncvar)
+#                                            geometry_bounds=(geometry is not None))
+            
 #                                            non_compressed_dimensions=nc_dimensions=bounds_dimensions)
 #ppp            
 #            else:
@@ -2916,7 +2952,6 @@ class NetCDFRead(IORead):
             # Store the netCDF bounds dimension name
             self.implementation.nc_set_dimension(bounds,
                                                  g['variable_dimensions'][bounds_ncvar][-1])
-            
             self.implementation.set_bounds(c, bounds, copy=False)
 
             if not domain_ancillary:
@@ -2937,6 +2972,13 @@ class NetCDFRead(IORead):
 
                 g['node_coordinates_as_bounds'].add(bounds_ncvar)
 
+                if self.implementation.get_data_ndim(bounds) == 2:
+                    # Insert a size 1 part dimension
+                    bounds = self.implementation.bounds_insert_dimension(
+                        bounds=bounds,
+                        position=1)
+                    self.implementation.set_bounds(c, bounds, copy=False)
+                    
                 # Add a node count variable
                 nc = geometry.get('node_count')
                 if nc is not None:
@@ -2987,7 +3029,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `CellMeasure`
+        `CellMeasure`
             The new item.
     
         '''
@@ -3031,7 +3073,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: Count variable instance
+             Count variable instance
 
         '''
         g = self.read_vars
@@ -3081,7 +3123,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: Index variable
+            Index variable instance
 
         '''
         g = self.read_vars
@@ -3138,7 +3180,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: Interior ring variable
+            Interior ring variable instance
 
         '''
         g = self.read_vars
@@ -3172,7 +3214,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `List`
+        `List`
 
         '''
         # Initialise the list variable
@@ -3206,7 +3248,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: Node count variable
+            Node count variable instance
 
         '''
         g = self.read_vars
@@ -3244,7 +3286,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: Part node count variable
+            Part node count variable instance
 
         '''
         g = self.read_vars
@@ -3275,7 +3317,7 @@ class NetCDFRead(IORead):
             
     :Returns:
     
-        out: `CellMethod`
+        `CellMethod`
 
         '''
         return self.implementation.initialise_CellMethod(axes=axes,
@@ -3294,7 +3336,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `NetCDFArray`
+        `NetCDFArray`
         
         '''
         g = self.read_vars
@@ -3304,7 +3346,13 @@ class NetCDFRead(IORead):
             return None
         
         dtype = variable.dtype
-        if unpacked_dtype is not False:
+        if dtype is str:
+            # netCDF string types have a dtype of `str`, which needs
+            # to be reset as a numpy.dtype, but we don't know what
+            # without reading the data, so set it to None for now.
+            dtype = None
+            
+        if dtype is not None and unpacked_dtype is not False:
             dtype = numpy.result_type(dtype, unpacked_dtype)
     
         ndim  = variable.ndim
@@ -3312,8 +3360,10 @@ class NetCDFRead(IORead):
         size  = variable.size
         if size < 2:
             size = int(size)
-    
-        if dtype.kind == 'S' and ndim >= 1: #shape[-1] > 1:
+
+
+#        if dtype.kind == 'S' and ndim >= 1: #shape[-1] > 1:
+        if self._is_char(ncvar) and ndim >= 1:
             # Has a trailing string-length dimension
             strlen = shape[-1]
             shape = shape[:-1]
@@ -3334,7 +3384,7 @@ class NetCDFRead(IORead):
     
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None,
-                     parent_ncvar=None, nc_dimensions=None): 
+                     parent_ncvar=None, nc_dimensions=None):
         '''TODO
 
     :Parameters:
@@ -3347,20 +3397,26 @@ class NetCDFRead(IORead):
         unpacked_dtype: `False` or `numpy.dtype`, optional
     
         uncompress_override: `bool`, optional
-    
+        
+        geometry_boounds: `bool`
+            If True then the data are destined to become simple
+            geometry coordinate bounds.
+
     :Returns:
     
         `Data`
 
         '''
         g = self.read_vars
-
+        
         array = self._create_netcdfarray(ncvar,
                                          unpacked_dtype=unpacked_dtype)
 
         if array is None:
             return None
 
+#        insert_size1_geometry_bounds_part_dimension = geometry_bounds
+                                         
         units    = g['variable_attributes'][ncvar].get('units', None)
         calendar = g['variable_attributes'][ncvar].get('calendar', None)
 
@@ -3412,7 +3468,7 @@ class NetCDFRead(IORead):
                              for dim in self._ncdimensions(ncvar)])
                         compressed_dimension = g['variable_dimensions'][ncvar].index(c['sample_dimension'])
                         array = self._create_gathered_array(
-                            gathered_array=self._create_Data(array), #array,
+                            gathered_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
                             compressed_dimension=compressed_dimension,
                             list_variable=c['list_variable'])
@@ -3435,15 +3491,13 @@ class NetCDFRead(IORead):
                                                      c['element_dimension_2_size']]
                         uncompressed_shape = tuple(uncompressed_shape)
                         
-#                        uncompressed_shape = (c['instance_dimension_size'],
-#                                              c['element_dimension_1_size'],
-#                                              c['element_dimension_2_size'])
                         array = self._create_ragged_indexed_contiguous_array(
-#                            ragged_indexed_contiguous_array=array,
                             ragged_indexed_contiguous_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
                             count_variable=c['count_variable'],
                             index_variable=c['index_variable'])
+
+#                        insert_size1_geometry_bounds_part_dimension = False
                     elif 'ragged_contiguous' in c:                    
                         # --------------------------------------------
                         # Contiguous ragged array
@@ -3459,12 +3513,7 @@ class NetCDFRead(IORead):
                                                      c['element_dimension_size']]
                         uncompressed_shape = tuple(uncompressed_shape)
 
-#                        print('uncompressed_shape=',uncompressed_shape)
-#                        uncompressed_shape=(c['instance_dimension_size'],
-#                                            c['element_dimension_size'])
-
                         array = self._create_ragged_contiguous_array(
-#                            ragged_contiguous_array=array,
                             ragged_contiguous_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
                             count_variable=c['count_variable'])
@@ -3483,18 +3532,19 @@ class NetCDFRead(IORead):
                                                      c['element_dimension_size']]
                         uncompressed_shape = tuple(uncompressed_shape)
 
-#                        uncompressed_shape = (c['instance_dimension_size'],
-#                                              c['element_dimension_size'])
                         array = self._create_ragged_indexed_array(
-                            ragged_indexed_array=self._create_Data(array), #array,
+                            ragged_indexed_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
                             index_variable=c['index_variable'])
                     else:
                         raise ValueError("Bad compression vibes. c.keys()={}".format(list(c.keys())))
         #--- End: if
 
-        return self._create_Data(array, units=units, calendar=calendar) #, ncvar=ncvar)
-
+        return self._create_Data(
+            array, units=units,
+            calendar=calendar)
+#            insert_size1_geometry_bounds_part_dimension=insert_size1_geometry_bounds_part_dimension)
+    
 
     def _create_domain_axis(self, size, ncdim=None):
         '''TODO
@@ -3523,7 +3573,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `FieldAncillary`
+        `FieldAncillary`
             The new item.
 
         '''
@@ -3555,7 +3605,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `list` of `dict`
+        `list` of `dict`
     
     **Examples:**
     
@@ -3734,7 +3784,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `CoordinateReference`
+        `CoordinateReference`
 
         '''
         g = self.read_vars
@@ -3818,9 +3868,11 @@ class NetCDFRead(IORead):
      
         ncdimensions = list(g['variable_dimensions'][ncvar])
 
-        # Remove a string-length dimension, if there is one. DCH ALERT
-        if (variable.datatype.kind == 'S' and
-            variable.ndim >= 2): # and variable.shape[-1] > 1):
+#        if (variable.datatype.kind == 'S' and
+#            variable.ndim >= 2): # and variable.shape[-1] > 1):
+#            ncdimensions.pop()
+        if self._is_char(ncvar) and variable.ndim >= 1:
+            # Remove the trailing string-length dimension
             ncdimensions.pop()
     
         # Check for dimensions which have been compressed. If there are
@@ -3884,7 +3936,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `Data`
+        `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -3916,7 +3968,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `Data`
+        `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -3938,7 +3990,7 @@ class NetCDFRead(IORead):
 
     :Returns:
 
-        out: `Data`
+        `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -3962,7 +4014,7 @@ class NetCDFRead(IORead):
 
     :Returns:
 
-        out: `Data`
+        `Data`
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -3978,7 +4030,9 @@ class NetCDFRead(IORead):
 
     
     def _create_Data(self, array=None, units=None, calendar=None,
-                     ncvar=None, **kwargs):
+                     ncvar=None,
+#                     insert_size1_geometry_bounds_part_dimension=False,
+                     **kwargs):
         '''TODO
     
     :Parameters:
@@ -3987,15 +4041,20 @@ class NetCDFRead(IORead):
             The netCDF variable from which to get units and calendar
 
         '''
-        g = self.read_vars
+#        g = self.read_vars
 
-        return self.implementation.initialise_Data(array=array,
+        data = self.implementation.initialise_Data(array=array,
                                                    units=units,
                                                    calendar=calendar,
                                                    copy=False,
                                                    **kwargs)
 
+#        if insert_size1_geometry_bounds_part_dimension:
+#            self.implementation.data_insert_dimension_inplace(data, position=1)
 
+        return data
+
+    
     def _copy_construct(self, construct_type, field_ncvar, ncvar):
         '''Return a copy of an existing construct.
 
@@ -4013,8 +4072,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out:
-        A copy of the construct.
+            A copy of the construct.
 
         '''
         g = self.read_vars
@@ -4064,7 +4122,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `bool`
+        `bool`
 
         '''
         attribute = {parent_ncvar+':'+attribute: bounds_ncvar}
@@ -4134,7 +4192,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `bool`
+        `bool`
 
         '''
         attribute = {field_ncvar+':cell_measures': string}
@@ -4235,7 +4293,7 @@ class NetCDFRead(IORead):
 
             if verbose:
                 print('    Error processing netCDF variable {}: {}'.format(
-                    field_ncvar, d['reason']))                
+                    field_ncvar, d['reason'])) # pragma: no cover
 
             return False
 
@@ -4278,7 +4336,7 @@ class NetCDFRead(IORead):
             
     :Returns:
     
-        out: `bool`
+        `bool`
 
         '''
         attribute = {field_ncvar+':coordinates': string}
@@ -4321,7 +4379,9 @@ class NetCDFRead(IORead):
 
         '''
         if not set(dimensions).issubset(parent_dimensions):
-            if not (self.read_vars['variables'][ncvar].datatype.kind == 'S' and
+#            if not (self.read_vars['variables'][ncvar].datatype.kind == 'S' and
+#                    set(dimensions[:-1]).issubset(parent_dimensions)):
+            if not (self._is_char(ncvar) and
                     set(dimensions[:-1]).issubset(parent_dimensions)):
                 return False
 
@@ -4346,7 +4406,7 @@ class NetCDFRead(IORead):
     
     :Returns:
     
-        out: `bool`
+        `bool`
 
         '''
         attribute = {field_ncvar+':grid_mapping': grid_mapping}

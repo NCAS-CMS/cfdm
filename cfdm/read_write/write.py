@@ -1,4 +1,4 @@
-from . import implementation
+from ..cfdmimplementation import implementation
 
 from .netcdf import NetCDFWrite
 
@@ -10,8 +10,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           file_descriptors=None, external=None, Conventions=None,
           datatype=None, least_significant_digit=None,
           endian='native', compress=0, fletcher32=False, shuffle=True,
-          verbose=False,
-          _implementation=_implementation):
+          string=True, verbose=False, _implementation=_implementation):
     '''Write field constructs to a netCDF file.
 
     **File format**
@@ -93,28 +92,28 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
         fmt: `str`, optional
             The format of the output file. One of:
     
-              ==========================  ================================
-              *fmt*                       Output file type                
-              ==========================  ================================ 
-              ``'NETCDF4'``               NetCDF4 format file. This is the   
-                                          default.                    
-                                                                          
-              ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see    
-                                          below)                     
-                                                                          
-              ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file 
-                                          (limited to file sizes less     
-                                          than 2GB).                      
-                                                                          
-              ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
-                                          file                            
-                                                                          
-              ``'NETCDF3_64BIT'``         An alias for
-                                          ``'NETCDF3_64BIT_OFFSET'``      
-                                                                          
-              ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format    
-                                          file with extensions (see below)      
-              ==========================  ================================
+            ==========================  ================================
+            *fmt*                       Output file type                
+            ==========================  ================================ 
+            ``'NETCDF4'``               NetCDF4 format file. This is the   
+                                        default.                    
+                                                                        
+            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see    
+                                        below)                     
+                                                                        
+            ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file 
+                                        (limited to file sizes less     
+                                        than 2GB).                      
+                                                                        
+            ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
+                                        file                            
+                                                                        
+            ``'NETCDF3_64BIT'``         An alias for
+                                        ``'NETCDF3_64BIT_OFFSET'``      
+                                                                        
+            ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format    
+                                        file with extensions (see below)      
+            ==========================  ================================
     
             By default the format is ``'NETCDF4'``.
     
@@ -125,7 +124,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             4.4.0 or newer of the C library (use `cfdm.environment` to
             see which version if the netCDF-C library is in use). It
             extends the ``'NETCDF3_64BIT_OFFSET'`` binary format to
-            allow for unsigned/64 bit integer data types and 64-bit
+            allow for unsigned 64 bit integer data types and 64-bit
             dimension sizes.
     
             ``'NETCDF4_CLASSIC'`` files use the version 4 disk format
@@ -333,7 +332,18 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             <http://unidata.github.io/netcdf4-python>`_ for more
             details.
     
-        verbose: `bool`, optional
+       string: `bool`, optional
+           By default string-valued construct data are written as
+           netCDF arrays of type string if the output file format is
+           ``'NETCDF4'``, or of type char with an extra dimension
+           denoting the maximum string length for any other output
+           file format (see the *fmt* parameter). If *string* is False
+           then string-valued construct data are written as netCDF
+           arrays of type char with an extra dimension denoting the
+           maximum string length, regardless of the selected output
+           file format.
+
+       verbose: `bool`, optional
             If True then print a summary of how constructs map to
             output netCDF dimensions, variables and attributes.
     
@@ -371,5 +381,5 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      least_significant_digit=least_significant_digit,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
-                     verbose=verbose, extra_write_vars=None)
-        
+                     string=string, verbose=verbose,
+                     extra_write_vars=None)

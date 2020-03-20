@@ -213,7 +213,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
     
     :Returns:
     
-         `bool`
+        `bool`
             True if the property has been set, otherwise False.
     
     **Examples:**

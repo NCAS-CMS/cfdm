@@ -1,6 +1,9 @@
 from __future__ import print_function
 from builtins import (range, super)
 
+from functools import reduce
+from operator  import mul    
+
 from . import PropertiesData
 
 from ..functions import RTOL, ATOL
@@ -30,7 +33,7 @@ class PropertiesDataBounds(PropertiesData):
             `properties` and `set_property` methods.
 
             *Parameter example:*
-               ``properties={'standard_name': 'longitude'}``
+              ``properties={'standard_name': 'longitude'}``
                   
         data: `Data`, optional
             Set the data array. Ignored if the *source* parameter is
@@ -54,7 +57,7 @@ class PropertiesDataBounds(PropertiesData):
             with the `set_geometry` method.
       
             *Parameter example:*
-               ``geometry='polygon'``
+              ``geometry='polygon'``
             
         interior_ring: `InteriorRing`, optional
             Set the interior ring variable. Ignored if the *source*
@@ -143,17 +146,17 @@ class PropertiesDataBounds(PropertiesData):
     
     **Examples:**
     
-    >>> f.data.shape
+    >>> f.shape
     (1, 10, 9)
-    >>> f[:, :, 1].data.shape
+    >>> f[:, :, 1].shape
     (1, 10, 1)
-    >>> f[:, 0].data.shape
+    >>> f[:, 0].shape
     (1, 1, 9)
-    >>> f[..., 6:3:-1, 3:6].data.shape
+    >>> f[..., 6:3:-1, 3:6].shape
     (1, 3, 3)
-    >>> f[0, [2, 9], [4, 8]].data.shape
+    >>> f[0, [2, 9], [4, 8]].shape
     (1, 2, 2)
-    >>> f[0, :, -2].data.shape
+    >>> f[0, :, -2].shape
     (1, 10, 1)
 
         '''
@@ -165,6 +168,12 @@ class PropertiesDataBounds(PropertiesData):
  
         new = super().__getitem__(indices) 
 
+        # Subspace the interior ring array, if there is one. 
+        interior_ring = self.get_interior_ring(None) 
+        if interior_ring is not None: 
+            new.set_interior_ring(interior_ring[indices], copy=False) 
+            
+
         # Subspace the bounds, if there are any. 
         self_bounds = self.get_bounds(None) 
         if self_bounds is not None: 
@@ -172,11 +181,16 @@ class PropertiesDataBounds(PropertiesData):
             if data is not None: 
                 # There is a bounds array 
                 bounds_indices = list(data._parse_indices(indices))
-                bounds_indices[-1] = Ellipsis
-                if data.ndim <= 1 and not self.has_geometry(): 
+#                if self_bounds.has_geometry():
+#                    bounds_indices[-2] = [Ellipsis]
+#                else:
+#                    bounds_indices[-1] = Ellipsis
+                
+#                if data.ndim <= 1 and not self.has_geometry(): 
+                if data.ndim <= 2:
                     index = bounds_indices[0] 
                     if isinstance(index, slice): 
-                        if index.step < 0: 
+                        if index.step and index.step < 0: 
                             # This scalar or 1-d variable has been 
                             # reversed so reverse its bounds (as per 
                             # 7.1 of the conventions) 
@@ -190,11 +204,6 @@ class PropertiesDataBounds(PropertiesData):
  
                 new.set_bounds(self_bounds[tuple(bounds_indices)], copy=False) 
         #--- End: if 
- 
-        # Subspace the interior ring array, if there are one. 
-        interior_ring = self.get_interior_ring(None) 
-        if interior_ring is not None: 
-            new.set_interior_ring(interior_ring[indices], copy=False) 
  
         # Return the new bounded variable 
         return new 
@@ -272,6 +281,186 @@ class PropertiesDataBounds(PropertiesData):
         return '{0}{1} {2}'.format(self.identity(''), dims, units)
 
     
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
+    @property
+    def dtype(self):
+        '''Data-type of the data elements.
+
+    **Examples:**
+    
+    >>> d.dtype
+    dtype('float64')
+    >>> type(d.dtype)
+    <type 'numpy.dtype'>
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.dtype
+
+        bounds = self.get_bounds_data(None)
+        if bounds is not None:
+            return bounds.dtype
+        
+        raise AttributeError("{!r} object has no attribute 'dtype'".format(
+            self.__class__.__name__))
+
+    
+    @property
+    def ndim(self):
+        '''The number of dimensions in the data array.
+
+    .. seealso:: `data`, `has_data`, `isscalar`, `shape`, `size`
+
+    **Examples:**
+
+    >>> f.shape
+    (73, 96)
+    >>> f.ndim
+    2
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73, 1, 96)
+    >>> f.ndim
+    3
+    >>> f.size
+    7008
+
+    >>>  f.shape
+    (73,)
+    >>> f.ndim
+    1
+    >>> f.size
+    73
+
+    >>> f.shape
+    ()
+    >>> f.ndim
+    0
+    >>> f.size
+    1
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.ndim
+
+        bounds = self.get_bounds_data(None)
+        if bounds is not None:
+            ndim = bounds.ndim
+            if self.has_geometry():
+               ndim -= 2
+            else:
+               ndim -= 1
+
+            return ndim
+        
+        raise AttributeError("{!r} object has no attribute 'ndim'".format(
+            self.__class__.__name__))
+
+    
+    @property
+    def shape(self):
+        '''A tuple of the data array's dimension sizes.
+
+    .. seealso:: `data`, `has_data`, `ndim`, `size`
+
+    **Examples:**
+
+    >>> f.shape
+    (73, 96)
+    >>> f.ndim
+    2
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73, 1, 96)
+    >>> f.ndim
+    3
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73,)
+    >>> f.ndim
+    1
+    >>> f.size
+    73
+
+    >>> f.shape
+    ()
+    >>> f.ndim
+    0
+    >>> f.size
+    1
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.shape
+
+        bounds = self.get_bounds_data(None)
+        if bounds is not None:
+            shape = bounds.shape
+            if self.has_geometry():
+                shape = shape[:-2]
+            else:
+                shape = shape[:-1]
+
+            return shape
+       
+        raise AttributeError("{!r} object has no attribute 'shape'".format(
+            self.__class__.__name__))
+
+
+    @property
+    def size(self):
+        '''The number of elements in the data array.
+
+    .. seealso:: `data`, `has_data`, `ndim`, `shape`
+
+    **Examples:**
+
+    >>> f.shape
+    (73, 96)
+    >>> f.ndim
+    2
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73, 1, 96)
+    >>> f.ndim
+    3
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73,)
+    >>> f.ndim
+    1
+    >>> f.size
+    73
+
+    >>> f.shape
+    ()
+    >>> f.ndim
+    0
+    >>> f.size
+    1
+
+        '''
+        return reduce(mul, self.shape, 1)
+
+
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def del_node_count(self, default=ValueError()):
         '''Remove the node count variable for geometry bounds.
 
@@ -576,7 +765,7 @@ class PropertiesDataBounds(PropertiesData):
         self_has_interior_ring = self.has_interior_ring()
         if self_has_interior_ring != other.has_interior_ring():
             if verbose:
-                print("{0}: Different interior ring".format(self.__class__.__name__))
+                print("{0}: Different interior ring".format(self.__class__.__name__)) # pragma: no coer
             return False
                 
         if self_has_interior_ring:            
@@ -588,7 +777,7 @@ class PropertiesDataBounds(PropertiesData):
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
                 if verbose:
-                    print("{0}: Different interior ring".format(self.__class__.__name__))
+                    print("{0}: Different interior ring".format(self.__class__.__name__)) # pragma: no cover
                 return False
         #--- End: if
 
@@ -986,33 +1175,36 @@ class PropertiesDataBounds(PropertiesData):
     
     **Examples:**
     
-    >>> f.data.shape
+    >>> f.shape
     (19, 73, 96)
-    >>> f.insert_dimension(position=3).data.shape
+    >>> f.insert_dimension(position=3).shape
     (96, 73, 19, 1)
     >>> g = f.insert_dimension(position=-1)
-    >>> g.data.shape
+    >>> g.shape
     (19, 73, 1, 96)
-    >>> f.bounds.data.shape
+    >>> f.bounds.shape
     (19, 73, 96, 4)
-    >>> g.bounds.data.shape
+    >>> g.bounds.shape
     (19, 73, 1, 96, 4)
 
-        '''    
+        '''
+        if inplace:
+            c = self
+        else:
+            c = self.copy()
+
         # Parse position
-        ndim = self.data.ndim 
+        ndim = c.ndim        
         if -ndim-1 <= position < 0:
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
                 "Can't insert dimension: Invalid position: {!r}".format(position))
-
-#        position = self._parse_axes([position])[0]
-
+        
         c = super().insert_dimension(position, inplace=inplace)
         if inplace:
             c = self
-        
+                
         # ------------------------------------------------------------
         # Expand the dims of the bounds
         # ------------------------------------------------------------
@@ -1028,8 +1220,7 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring.insert_dimension(position, inplace=True)
 
         if inplace:
-            c = None
-            
+            c = None            
         return c
 
 
@@ -1038,7 +1229,7 @@ class PropertiesDataBounds(PropertiesData):
 
     .. versionadded:: 1.8.0
     
-    .. seealso: `del_node_count`, `get_node_count`, `has_node_count`
+    .. seealso:: `del_node_count`, `get_node_count`, `has_node_count`
     
     :Parameters:
     
@@ -1069,8 +1260,8 @@ class PropertiesDataBounds(PropertiesData):
 
     .. versionadded:: 1.8.0
     
-    .. seealso: `del_part_node_count`, `get_part_node_count`,
-                `has_part_node_count`
+    .. seealso:: `del_part_node_count`, `get_part_node_count`,
+                 `has_part_node_count`
     
     :Parameters:
     
@@ -1134,22 +1325,23 @@ class PropertiesDataBounds(PropertiesData):
     
     **Examples:**
     
-    >>> f.data.shape
+    >>> f.shape
     (1, 73, 1, 96)
-    >>> f.squeeze().data.shape
+    >>> f.squeeze().shape
     (73, 96)
-    >>> f.squeeze(0).data.shape
+    >>> f.squeeze(0).shape
     (73, 1, 96)
     >>> g = f.squeeze([-3, 2])
-    >>> g.data.shape
+    >>> g.shape
     (73, 96)
-    >>> f.bounds.data.shape
+    >>> f.bounds.shape
     (1, 73, 1, 96, 4)
-    >>> g.data.shape
+    >>> g.shape
     (73, 96, 4)
 
-        '''     
-        axes = self._parse_axes(axes)
+        '''
+        if axes is None:
+            axes = tuple([i for i, n in enumerate(self.shape) if n == 1])
 
         c = super().squeeze(axes, inplace=inplace)
         if inplace:
@@ -1170,8 +1362,7 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring.squeeze(axes, inplace=True)
 
         if inplace:
-            c = None
-                
+            c = None                
         return c
 
     
@@ -1213,20 +1404,20 @@ class PropertiesDataBounds(PropertiesData):
     
     **Examples:**
     
-    >>> f.data.shape
+    >>> f.shape
     (19, 73, 96)
-    >>> f.tranpose().data.shape
+    >>> f.tranpose().shape
     (96, 73, 19)
     >>> g = f.tranpose([1, 0, 2])
-    >>> g.data.shape
+    >>> g.shape
     (73, 19, 96)
-    >>> f.bounds.data.shape
+    >>> f.bounds.shape
     (19, 73, 96, 4)
-    >>> g.bounds.data.shape
+    >>> g.bounds.shape
     (73, 19, 96, 4)
 
         '''
-        ndim = self.data.ndim 
+        ndim = self.ndim 
         if axes is None: 
             axes = list(range(ndim-1, -1, -1)) 
         else: 
@@ -1253,12 +1444,9 @@ class PropertiesDataBounds(PropertiesData):
             if data is not None:
                 if (ndim == 2 and data.ndim == 3 and data.shape[-1] == 4 and 
                     b_axes[0:2] == [1, 0]):
-#                    print ('UUUUUUUUUUUUUUUUU')
                     # Swap elements 1 and 3 of the trailing dimension so 
                     # that the values are still contiguous (if they ever 
                     # were). See section 7.1 of the CF conventions. 
-#                    print (data[2 ,3, slice(1, 4, 2)].array)
-#                    print (data[2, 3, slice(3, 0, -2)].array)
                     data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)]
                     bounds.set_data(data, copy=False) 
         #--- End: if 
@@ -1271,8 +1459,7 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring.transpose(axes + [-1], inplace=True)
 
         if inplace:
-            c = None
-            
+            c = None            
         return c
 
     
@@ -1287,7 +1474,7 @@ class PropertiesDataBounds(PropertiesData):
     functionality nor external appearance.
 
     A construct that is already uncompressed will be returned
-    uncompressed.
+    unchanged.
 
     The following type of compression are available:
 

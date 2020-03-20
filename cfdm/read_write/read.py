@@ -3,7 +3,7 @@ from past.builtins import basestring
 
 import os
 
-from . import implementation
+from ..cfdmimplementation import implementation
 
 from .netcdf import NetCDFRead
 

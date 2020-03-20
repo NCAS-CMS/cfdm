@@ -466,7 +466,7 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
 
     .. versionadded:: 1.7.0
     
-    .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
+    .. seealso:: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
     
     :Parameters:
     
@@ -512,7 +512,7 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
 
     .. versionadded:: 1.8.0
     
-    .. seealso: TODO
+    .. seealso:: TODO
     
     :Parameters:
     
@@ -535,8 +535,8 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
     
     .. versionadded:: 1.8.0
     
-    .. seealso: `del_interior_ring`, `get_interior_ring`,
-                `interior_ring`, `has_interior_ring`
+    .. seealso:: `del_interior_ring`, `get_interior_ring`,
+                 `interior_ring`, `has_interior_ring`
     
     :Parameters:
     

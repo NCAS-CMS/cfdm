@@ -29,7 +29,7 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
     :Returns:
         
         `dict`
-            The classes, keyed by their class name.
+            The class objects, keyed by their class name.
     
     **Examples:**
     
@@ -40,6 +40,7 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
      'CellMethod',
      'CoordinateConversion',
      'CoordinateReference',
+     'Count',
      'Data',
      'Datum',
      'DimensionCoordinate',
@@ -47,7 +48,16 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
      'DomainAxis',
      'Field',
      'FieldAncillary',
-     'InteriorRing']
+     'GatheredArray',
+     'Index',
+     'InteriorRing',
+     'List',
+     'NetCDFArray',
+     'NodeCountProperties',
+     'PartNodeCountProperties',
+     'RaggedContiguousArray',
+     'RaggedIndexedArray',
+     'RaggedIndexedContiguousArray']
 
         '''
         return self._class.copy()
@@ -122,6 +132,13 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
     :Returns:
     
         `None`
+
+    **Examples:**
+
+    >>> from . import Field
+    >>> i.set_class('Field', Field)
+    >>> field_class = i.get_class('Field')
+    >>> f = field_class()
 
         '''
         self._class[name] = cls

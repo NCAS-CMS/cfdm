@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -x
+mkdir -p test_tutorial
+
+sample_files=sample_files
+test_tutorial=test_tutorial
+
+rm $test_tutorial/*
+
+cp $sample_files/* $test_tutorial
+
+cd $test_tutorial
+
+zip cfdm_tutorial_files.zip *.nc
+set +x

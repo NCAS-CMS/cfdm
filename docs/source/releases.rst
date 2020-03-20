@@ -6,11 +6,23 @@
 
 ----
 
-**CF-1.7**
+.. contents::
+   :local:
+   :backlinks: entry
+
+**CF-1.8**
 ----------
+
+* `Version 1.8.0 <https://ncas-cms.github.io/cfdm/1.8.0>`_
+
 
 ----
 
+**CF-1.7**
+----------
+
+* `Version 1.7.11 <https://ncas-cms.github.io/cfdm/1.7.11>`_
+* `Version 1.7.10 <https://ncas-cms.github.io/cfdm/1.7.10>`_
 * `Version 1.7.9 <https://ncas-cms.github.io/cfdm/1.7.9>`_
 * `Version 1.7.8 <https://ncas-cms.github.io/cfdm/1.7.8>`_
 * `Version 1.7.7 <https://ncas-cms.github.io/cfdm/1.7.7>`_
