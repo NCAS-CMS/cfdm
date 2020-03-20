@@ -153,8 +153,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Python cfdm package'
-copyright = _get_year()+', David Hassell | Page built on '+_get_date()
-author = 'David Hassell'
+copyright = _get_year()+', NCAS | Page built on '+_get_date()
+author = 'David Hassell, Sadie Bartholomew'
 
 # The version info for the project you're documenting, acts as
 # replacement for |version| and |release|, also used in various other
@@ -361,7 +361,7 @@ htmlhelp_basename = 'cfdmdoc'
 # [howto/manual]).
 latex_documents = [
     ('index', 'cfdm.tex', 'cfdm Documentation',
-     'David Hassell', 'manual'),
+     'NCAS', 'manual'),
     ]
 
 # The name of an image file (relative to this directory) to place at
@@ -397,7 +397,7 @@ latex_elements = {'papersize': 'a4paper'}
 # description, authors, manual section).
 man_pages = [
     ('index', 'cfdm', 'cfdm Documentation',
-     'David Hassell', 1)
+     'NCAS', 1)
     ]
 
 # Configurecopybutton

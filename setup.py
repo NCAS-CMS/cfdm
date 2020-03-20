@@ -72,7 +72,7 @@ https://ncas-cms.github.io/cfdm/tutorial
 Installation
 ============
 
-https://ncas-cms.github.io/cfdm/installation.html
+https://ncas-cms.github.io/cfdm/installation
 
 Command line utility
 ====================
@@ -84,7 +84,7 @@ in a netCDF dataset.
 Source code
 ===========
 
-This project is hosted on a `GitHub repository
+This project is hosted in a `GitHub repository
 <https://github.com/NCAS-CMS/cfdm>`_ where you may access the most
 up-to-date source."""
 
