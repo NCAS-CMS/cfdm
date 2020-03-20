@@ -1,5 +1,5 @@
 version 1.8.0
---------------
+-------------
 ----
 
 **2020-??-??**
@@ -25,7 +25,9 @@ version 1.8.0
   "missing_value" property is set and data type conversions are
   specified with the ``datatype`` keyword to `cfdm.write`
   (https://github.com/NCAS-CMS/cfdm/issues/16).
-  
+* Fixed bug whereby `cfdm.Field.has_construct` would try to delete the
+  construct rather than check whether it existed.
+
 version 1.7.11
 --------------
 ----
