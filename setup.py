@@ -1,4 +1,5 @@
 from distutils.core import setup
+#from setuptools import setup
 
 import os
 import fnmatch
@@ -11,7 +12,6 @@ def find_package_data_files(directory):
             if fnmatch.fnmatch(basename, '*'):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cfdm/', '', 1)
-
 
 def _read(fname):
     """Returns content of a file.
@@ -29,8 +29,6 @@ def _get_version():
     return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                      _read("cfdm/core/__init__.py"),
                      re.MULTILINE).group(1)
-
-
 
 version      = _get_version()
 packages     = ['cfdm']
@@ -128,10 +126,11 @@ setup(name = "cfdm",
                       'cfdm.read_write.netcdf',
                       'cfdm.test',],
       scripts      = ['scripts/cfdump'],
+#      python_requires = '>= 2.7',
       install_requires = [
           'future>=0.16.0',
           'netcdf4>=1.5.3',
-          'cftime>=1.1.0',
+          'cftime>=1.1.1',
           'numpy>=1.15',
       ],
 )

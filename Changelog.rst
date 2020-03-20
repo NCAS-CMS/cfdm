@@ -2,9 +2,10 @@ version 1.8.0
 --------------
 ----
 
-**Not yet released**
+**2020-??-??**
 
-* First release for CF-1.8
+* First release for CF-1.8 (does not include netCDF hierarchical
+  groups functionality).
 * Implementation of simple geometries for CF-1.8
   (https://github.com/NCAS-CMS/cfdm/issues/11).
 * Implementing of string data-types for CF-1.8
