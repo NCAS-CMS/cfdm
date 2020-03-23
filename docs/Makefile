@@ -11,15 +11,14 @@ PAPER         =
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 #ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
-#ALLSPHINXOPTS   = -j 3 source
-ALLSPHINXOPTS   = source
+ALLSPHINXOPTS   = -j 3 source
+#ALLSPHINXOPTS   = source
 BUILDDIR        = $(filter-out $@, $(MAKECMDGOALS))
 
-VERSION    = $(shell grep "^__version__" ../cfdm/__init__.py | cut -d "=" -f 2 | sed "s/[' ]//g")
-CF_VERSION = $(shell grep "^__cf_version__" ../cfdm/__init__.py | cut -d "=" -f 2 | sed "s/[' ]//g")
+VERSION    = $(shell grep "^__version__" ../cfdm/core/__init__.py | cut -d "=" -f 2 | sed "s/[' ]//g")
+CF_VERSION = $(shell grep "^__cf_version__" ../cfdm/core/__init__.py | cut -d "=" -f 2 | sed "s/[' ]//g")
 ID         = $(shell echo $$$$)
-X          = Version $(VERSION) for version $(CF_VERSION) of the CF conventions.
-NOTEBOOK   = $(BUILDDIR)/_downloads/tutorial.ipynb
+X          = Library version $(VERSION) for CF-$(CF_VERSION)
 
 .PHONY: help html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest
 
@@ -48,24 +47,9 @@ help:
 
 
 html:
-#	rm -f $(NOTEBOOK)
-#	@echo "Removed old Jupyter notebook file: $(NOTEBOOK)"
-
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
-
-#	@echo "Jupyter notebook file: $(NOTEBOOK)" 
-#	sed 's/Version .* for version .* of the CF conventions./$(X)/' $(NOTEBOOK) > $(NOTEBOOK).tmp0
-#	sed 's/ncas-cms.github.io\/cfdm\//&$(VERSION)\//g' $(NOTEBOOK).tmp0 > $(NOTEBOOK).tmp
-#	rm $(NOTEBOOK).tmp0
-#	mv $(NOTEBOOK).tmp $(NOTEBOOK) 
-
 	@echo
 	@echo "$(X)"
-
-#        # Update the version numbers in the Jupyter notebook#
-#	N="$(shell ./notebook_version $(BUILDDIR))"
-#	@echo "$(N)"
-
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)"
 
 dirhtml:

@@ -1909,7 +1909,6 @@ class Data(mixin.Container,
         '''
         return self._item((slice(0, 1),)*self.ndim)
 
-
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
 
@@ -1921,7 +1920,7 @@ class Data(mixin.Container,
     example, the array ``[[1, 2], [3, 4]]`` would be flattened across
     both dimensions to ``[1 2 3 4]``.
 
-    .. versionaddedd:: 1.7.11
+    .. versionadded:: 1.7.11
 
     .. seealso:: `insert_dimension`, `squeeze`, `transpose`
 
@@ -1932,6 +1931,7 @@ class Data(mixin.Container,
             *axes* argument may be one, or a sequence, of:
     
               * An internal axis identifier. Selects this axis.
+
             ..
     
               * An integer. Selects the axis coresponding to the given

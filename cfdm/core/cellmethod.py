@@ -6,7 +6,6 @@ from copy import deepcopy
 from . import abstract
 
 
-#class CellMethod(abstract.Properties):
 class CellMethod(abstract.Container):
     '''A cell method construct of the CF data model.
 
@@ -121,7 +120,6 @@ class CellMethod(abstract.Container):
 
         self._set_component('qualifiers', qualifiers, copy=copy)
 
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -144,7 +142,6 @@ class CellMethod(abstract.Container):
         '''
         return 'cell_method'
 
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -165,7 +162,6 @@ class CellMethod(abstract.Container):
 
         '''
         return type(self)(source=self, copy=True)
-
 
     def del_axes(self, default=ValueError()):
         '''Remove the axes of the cell method.
@@ -209,8 +205,7 @@ class CellMethod(abstract.Container):
             return self._default(default,
                                  "{!r} has no axes".format(
                                      self.__class__.__name__))
-
-    
+   
     def del_method(self, default=ValueError()):
         '''Remove the method of the cell method.
 
@@ -253,7 +248,6 @@ class CellMethod(abstract.Container):
                                  "{!r} has no method".format(
                                      self.__class__.__name__))
 
-    
     def del_qualifier(self, qualifier, default=ValueError()):
         '''Remove a qualifier of the cell method.
 
@@ -298,7 +292,6 @@ class CellMethod(abstract.Container):
             return self._default(default, "{!r} has no {!r} qualifier".format(
                 self.__class__.__name__, qualifier))
 
-
     def get_axes(self, default=ValueError()):
         '''Return the axes of the cell method.
 
@@ -341,7 +334,6 @@ class CellMethod(abstract.Container):
                                  "{!r} has no axes".format(
                                      self.__class__.__name__))
 
-
     def get_method(self, default=ValueError()):
         '''Return the method of the cell method.
 
@@ -383,7 +375,6 @@ class CellMethod(abstract.Container):
             return self._default(default,
                                  "{!r} has no method".format(
                                      self.__class__.__name__))
-
 
     def get_qualifier(self, qualifier, default=ValueError()):
         '''Return a qualifier of the cell method.
@@ -429,7 +420,6 @@ class CellMethod(abstract.Container):
             return self._default(default, "{!r} has no {!r} qualifier".format(
                 self.__class__.__name__, qualifier))
 
-
     def has_axes(self):
         '''Whether the axes of the cell method have been set.
 
@@ -460,7 +450,6 @@ class CellMethod(abstract.Container):
         '''
         return self._has_component('axes')
 
-
     def has_method(self):
         '''Whether the method of the cell method has been set.
 
@@ -490,7 +479,6 @@ class CellMethod(abstract.Container):
 
         '''
         return self._has_component('method')
-
 
     def has_qualifier(self, qualifier):
         '''Whether a qualifier of the cell method has been set.
@@ -523,7 +511,6 @@ class CellMethod(abstract.Container):
         '''
         return qualifier in self._get_component('qualifiers')
 
-
     def qualifiers(self):
         '''Return all qualifiers of the cell method.
 
@@ -548,7 +535,6 @@ class CellMethod(abstract.Container):
 
         '''
         return self._get_component('qualifiers').copy()
-
 
     def set_axes(self, value, copy=True):
         '''Set the axes of the cell method.
@@ -618,7 +604,6 @@ class CellMethod(abstract.Container):
             
         return self._set_component('axes', value, copy=False)
 
-
     def set_method(self, value, copy=True):
         '''Set the method of the cell method.
 
@@ -655,7 +640,6 @@ class CellMethod(abstract.Container):
 
         '''
         return self._set_component('method', value, copy=copy)
-
 
     def set_qualifier(self, qualifier, value, copy=True):
         '''Set a qualifier of the cell method.

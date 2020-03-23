@@ -2,7 +2,7 @@ version 1.8.0
 -------------
 ----
 
-**2020-??-??**
+**2020-03-23**
 
 * First release for CF-1.8 (does not include netCDF hierarchical
   groups functionality).

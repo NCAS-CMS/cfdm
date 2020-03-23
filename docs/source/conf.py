@@ -18,15 +18,19 @@ import os
 import re
 import cfdm
 
+print('\ncfdm environment:')
+print('-----------------')
+cfdm.environment()
+print()
+
 def _read(fname):
     '''Returns content of a file.
 
     '''
     fpath = os.path.dirname(__file__)
     fpath = os.path.join(fpath, fname)
-    with open(fpath, 'r') as file_:
-        return file_.read()
-
+    with open(fpath, 'r') as _file:
+        return _file.read()
 
 def _get_version():
     '''Returns library version by inspecting core/__init__.py file.
@@ -36,15 +40,11 @@ def _get_version():
                      _read("../../cfdm/core/__init__.py"),
                      re.MULTILINE).group(1)
 
-
 def _get_cf_version():
     '''Returns CF version by inspecting core/__init__.py file.
 
     '''
-    return cfdm.__cf_version__ #re.search(r'^__cf_version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-#                     _read("../../cfdm/core/__init__.py"),
-#                     re.MULTILINE).group(1)
-
+    return cfdm.__cf_version__
 
 def _get_year():
     '''Get the current calendar year.
@@ -52,14 +52,11 @@ def _get_year():
     '''
     return str(datetime.datetime.now().year)
 
-
 def _get_date():
     '''Get the current calendar year.
 
     '''
     return str(datetime.date.today())
-
-
 
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory
@@ -115,7 +112,11 @@ autodoc_member_order = 'groupwise'
 # This value is a list of autodoc directive flags that should be
 # automatically applied to all autodoc
 # directives. (http://sphinx-doc.org/latest/ext/autodoc.html)
-autodoc_default_flags = ['members', 'inherited-members', 'show-inheritance']
+#autodoc_default_flags = ['members', 'inherited-members', 'show-inheritance'] # deprecated
+autodoc_default_options = {'members': True,
+                           'inherited-members': True,
+                           'show-inheritance': True,
+}
 
 intersphinx_cache_limit = 5     # days to keep the cached inventories
 intersphinx_mapping = {
@@ -414,7 +415,7 @@ copybutton_skip_text = ">>> "  # Python prompt for Python code snippets
 # This is a function which should return the URL to source code
 # corresponding to the object in given domain with given information.
 
-import inspect, cfdm
+import inspect
 from os.path import relpath, dirname
 
 link_release = re.search('(\d+\.\d+\.\d+)', release).groups()[0]

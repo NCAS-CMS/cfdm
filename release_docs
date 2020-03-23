@@ -35,6 +35,8 @@ cd docs
 if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
     rm -fr $dir/.doctrees
 fi
+pwd
+echo PYTTHONPATH=$PYTHONPATH
 
 make html $dir
 

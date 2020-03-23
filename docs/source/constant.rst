@@ -8,9 +8,6 @@
 
 Version |release| for version |version| of the CF conventions.
 
-**Data**
---------
-
 .. data:: cfdm.masked
 
     A constant that allows data values to be masked by direct

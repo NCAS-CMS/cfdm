@@ -66,7 +66,6 @@ def ATOL(*atol):
 
     return old
 
-
 def RTOL(*rtol):    
     '''The tolerance on relative differences when testing for numerically
     tolerant equality.
@@ -114,8 +113,7 @@ def RTOL(*rtol):
 
     return old
 
-
-def environment(display=True, paths=True, string=True):
+def environment(display=True, paths=True):
     '''Return the names, versions and paths of all dependencies.
     
     .. versionadded:: 1.7.0
@@ -129,15 +127,12 @@ def environment(display=True, paths=True, string=True):
         paths: `bool`, optional
             If False then do not output the locations of each package.
 
-        string:
-            Deprecated.
-
     :Returns:
     
-        `None` or `str`
+        `None` or `list`
             If *display* is True then the description of the
             environment is printed and `None` is returned. Otherwise
-            the description is returned as a string.
+            the description is returned as in a `list`.
     
     **Examples:**
 
@@ -195,13 +190,10 @@ def environment(display=True, paths=True, string=True):
     if paths:
         out[-1] += ' ' + str(os.path.abspath(__file__))
 
-    out = '\n'.join(out)
-
     if display:
-        print(out)
+        print('\n'.join(out))
     else:
         return out
-
     
 def CF():
     '''The version of the CF conventions.
@@ -221,7 +213,7 @@ def CF():
     **Examples:**
     
     >>> CF()
-    '1.7'
+    '1.8'
 
     '''
     return __cf_version__

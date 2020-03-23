@@ -15,13 +15,19 @@
 * Create a link to the new documentation in docs/source/releases.rst
 
 * If groups are ready then remove the Hierarchical Groups placeholders
-  in the documentation files: setup.py, docs/source/introduction.rst,
-  docs/source/tutorial.rst (and delete this instruction).
+  in the documentation files: setup.py, README.md,
+  docs/source/introduction.rst, docs/source/tutorial.rst (and delete
+  this instruction).
 
 * Create a source tarball using `python setup.py sdist`
 
 * Test the tarball release using `./test_release <vn>`
   (e.g. ./test_release 1.8.0). Do this for python2.7 and python3.
+
+* Make sure that the correct path to the cfdm library is in the
+  PYTHONPATH environment variable:
+
+export PYTHONPATH=$PWD:$PYTHONPATH
 
 * Test tutorial code:
 
@@ -32,8 +38,8 @@ cd test_tutorial
 python ../tutorial.py
 
 * Update the latest documentation using `./release_docs <vn> latest`
-  (e.g. ./release_docs 1.8.0 latest)
-
+  (e.g. ./release_docs 1.8.0 latest).
+  
 * Create an archived copy of the documentation using
   `./release_docs <vn> archive` (e.g. ./release_docs 1.8.0 archive)
 
