@@ -14,6 +14,10 @@
 
 * Create a link to the new documentation in docs/source/releases.rst
 
+* If groups are ready then remove the Hierarchical Groups placeholders
+  in the documentation files: setup.py, docs/source/introduction.rst,
+  docs/source/tutorial.rst (and delete this instruction).
+
 * Create a source tarball using `python setup.py sdist`
 
 * Test the tarball release using `./test_release <vn>`

@@ -81,6 +81,15 @@ The cfdm package has, with few exceptions, only the functionality
 required to read and write datasets, and to create, modify and inspect
 field constructs in memory.
 
+Hierarchical groups
+^^^^^^^^^^^^^^^^^^^
+
+Hierarchical groups provide a powerful mechanism to structure
+variables within datasets. A future |version|.\ *x* release of cfdm
+will include support for netCDF4 files containing data organised in
+hierarchical groups, but this is not available in version |release|
+(even though it is allowed in CF-|version|).
+
 Additional functionality
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
