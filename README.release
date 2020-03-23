@@ -19,11 +19,6 @@
   docs/source/introduction.rst, docs/source/tutorial.rst (and delete
   this instruction).
 
-* Create a source tarball using `python setup.py sdist`
-
-* Test the tarball release using `./test_release <vn>`
-  (e.g. ./test_release 1.8.0). Do this for python2.7 and python3.
-
 * Make sure that the correct path to the cfdm library is in the
   PYTHONPATH environment variable:
 
@@ -44,6 +39,11 @@ python ../tutorial.py
   `./release_docs <vn> archive` (e.g. ./release_docs 1.8.0 archive)
 
 * Push recent commits using `git push origin master`
+
+* Create a source tarball using `python setup.py sdist`
+
+* Test the tarball release using `./test_release <vn>`
+  (e.g. ./test_release 1.8.0). Do this for python2.7 and python3.
 
 * Tag the release using `./tag <vn>` (e.g. ./tag 1.8.0)
 
