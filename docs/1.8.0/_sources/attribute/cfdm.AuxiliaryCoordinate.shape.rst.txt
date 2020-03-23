@@ -1,0 +1,7 @@
+cfdm.AuxiliaryCoordinate.shape
+==============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.AuxiliaryCoordinate.shape

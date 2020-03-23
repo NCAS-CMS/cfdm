@@ -1,0 +1,7 @@
+cfdm.DimensionCoordinate.dump
+=============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.DimensionCoordinate.dump

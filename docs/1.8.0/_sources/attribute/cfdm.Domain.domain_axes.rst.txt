@@ -1,0 +1,7 @@
+cfdm.Domain.domain_axes
+=======================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.Domain.domain_axes

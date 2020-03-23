@@ -1,0 +1,7 @@
+cfdm.FieldAncillary.dtype
+=========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.FieldAncillary.dtype
