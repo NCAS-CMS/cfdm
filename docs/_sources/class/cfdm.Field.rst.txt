@@ -87,7 +87,11 @@ Data
    :template: attribute.rst
 
    ~cfdm.Field.data
-
+   ~cfdm.Field.dtype
+   ~cfdm.Field.ndim
+   ~cfdm.Field.shape
+   ~cfdm.Field.size
+   
 .. _Field-Metadata-constructs:   
    
 Metadata constructs

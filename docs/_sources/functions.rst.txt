@@ -42,5 +42,6 @@ Version |release| for version |version| of the CF conventions.
    :template: function.rst
 
    cfdm.environment
+   cfdm.example_field
    cfdm.implementation
 

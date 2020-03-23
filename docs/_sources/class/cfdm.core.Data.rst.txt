@@ -4,17 +4,15 @@
 cfdm.core.Data
 ==============
 
-----
-
 .. autoclass:: cfdm.core.Data
    :no-members:
    :no-inherited-members:
 
 Inspection
------------
+----------
 
 .. rubric:: Attributes
-
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
@@ -25,39 +23,29 @@ Inspection
    ~cfdm.core.Data.ndim
    ~cfdm.core.Data.shape
    ~cfdm.core.Data.size
- 
+   
 Units
 -----
 
-.. rubric:: Methods
-
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
+   ~cfdm.core.Data.del_units
    ~cfdm.core.Data.get_units
+   ~cfdm.core.Data.has_units
    ~cfdm.core.Data.set_units
-   ~cfdm.core.Data.set_calendar 
+   ~cfdm.core.Data.del_calendar
    ~cfdm.core.Data.get_calendar
+   ~cfdm.core.Data.has_calendar
+   ~cfdm.core.Data.set_calendar
 
-Fill value
-----------
+Data creation routines
+----------------------
 
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-   
-   ~cfdm.core.Data.get_fill_value
-   ~cfdm.core.Data.set_fill_value
-
-      
-Miscellaneous
--------------
-.. rubric:: Methods
+From existing data
+^^^^^^^^^^^^^^^^^^
 
 .. autosummary::
    :nosignatures:
@@ -65,11 +53,45 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.core.Data.copy
+
+Date-time support
+-----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Data.del_calendar
+   ~cfdm.core.Data.get_calendar
+   ~cfdm.core.Data.has_calendar
+   ~cfdm.core.Data.set_calendar
  
+Mask support
+------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Data.del_fill_value
+   ~cfdm.core.Data.get_fill_value
+   ~cfdm.core.Data.has_fill_value
+   ~cfdm.core.Data.set_fill_value
+
+Miscellaneous
+-------------
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Data.source
+
 Special
 -------
-
-.. rubric:: Methods
 
 .. autosummary::
    :nosignatures:
@@ -77,5 +99,5 @@ Special
    :template: method.rst
 
    ~cfdm.core.Data.__deepcopy__
-
-   
+   ~cfdm.core.Data.__repr__
+   ~cfdm.core.Data.__str__

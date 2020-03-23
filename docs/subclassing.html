@@ -1,21 +1,22 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Subclassing &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -32,11 +33,43 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cfdm 1.7.11</a></b></h3>
+
+
+
+<h1 class="logo"><a href="index.html">cfdm 1.8.0</a></h1>
+
+
+
+<p class="blurb">A complete implementation of the CF data model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cfdm&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>cfdm tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
@@ -61,18 +94,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -84,7 +105,7 @@
   <div class="section" id="subclassing">
 <span id="id1"></span><h1><strong>Subclassing</strong><a class="headerlink" href="#subclassing" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.7.11 for version 1.7 of the CF conventions.</p>
+<p>Version 1.8.0 for version 1.8 of the CF conventions.</p>
 <p>Creating a new implementation of the CF data model by subclassing cfdm
 classes is straight forward. For example:</p>
 <div class="literal-block-wrapper docutils container" id="id2">
@@ -101,10 +122,10 @@ class.</em></span><a class="headerlink" href="#id2" title="Permalink to this cod
 </pre></div>
 </div>
 </div>
-<p>It is also possible use <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> to read a dataset into field
-constructs defined by the new implementation, and <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> to
-write to disk field constructs defined by the new implementation. For
-example:</p>
+<p>It is also possible use <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> and <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> to read and write
+respectively field constructs defined by the new implementation; and
+<a class="reference internal" href="function/cfdm.example_field.html#cfdm.example_field" title="cfdm.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_field</span></code></a> to return example field constructs defined by the
+new implementation. For example:</p>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text"><em>Encapsulate the new implementation in a
 CFDMImplementation class instance and define new read and
@@ -112,8 +133,8 @@ write functions that pass the new implementation to the the
 appropriate cfdm function.</em></span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
 
-<span class="c1"># Define an implementation that is the same as cfdm, but with the</span>
-<span class="c1"># my_Field class to represent field constructs</span>
+<span class="c1"># Define an implementation that is the same as cfdm, but which uses</span>
+<span class="c1"># the my_Field class to represent field constructs</span>
 <span class="n">my_implementation</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">implementation</span><span class="p">()</span>
 <span class="n">my_implementation</span><span class="o">.</span><span class="n">set_class</span><span class="p">(</span><span class="s1">&#39;Field&#39;</span><span class="p">,</span> <span class="n">my_Field</span><span class="p">)</span>
 
@@ -176,9 +197,11 @@ of a cfdm.Field instance.</em></span><a class="headerlink" href="#id4" title="Pe
 </pre></div>
 </div>
 </div>
-<p>Customisation of the actual functionality used by <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> and
-<a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> is possible by subclassing the <code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFRead</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFWrite</span></code> classes.</p>
+<p>Modification and extension of the implementation functionality used by
+<a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> and <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> is possible by subclassing the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFRead</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFWrite</span></code> classes. See
+<a class="reference external" href="https://github.com/NCAS-CMS/cf-python">cf-python</a> for an example of
+this customisation.</p>
 </div>
 
 
@@ -189,10 +212,10 @@ of a cfdm.Field instance.</em></span><a class="headerlink" href="#id4" title="Pe
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2019, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-03-23.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
