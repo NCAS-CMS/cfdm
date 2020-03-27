@@ -70,8 +70,8 @@ The cfdm package can
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form, and
 
-* read, write, and create coordinates defined by geometry cells (new
-  in version 1.8.0).
+* read, write, and create coordinates defined by geometry cells (**new
+  in version 1.8.0**).
 
 Note that cfdm enables the creation of CF field constructs, but it's
 :ref:`up to the user to use them in a CF-compliant way
