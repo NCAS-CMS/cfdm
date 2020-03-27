@@ -36,7 +36,6 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
     rm -fr $dir/.doctrees
 fi
 pwd
-echo PYTTHONPATH=$PYTHONPATH
 
 make html $dir
 
@@ -73,5 +72,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 
   git commit -a -m "v$version $2 documentation"
 fi
+
+echo PYTTHONPATH=$PYTHONPATH
 
 set +x
