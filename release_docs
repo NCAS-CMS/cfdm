@@ -65,10 +65,11 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  attribute/*.html \
 	  *.inv \
 	  *.js \
-	  _sources \
+	  _sources \	  
 	  _static \
 	  _downloads/cfdm_tutorial_files.zip \
-	  _downloads/tutorial.py
+	  _downloads/tutorial.py \
+	  _images/*.png
 
   git commit -a -m "v$version $2 documentation"
 fi
