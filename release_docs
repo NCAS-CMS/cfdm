@@ -32,9 +32,9 @@ cd -
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
-    rm -fr $dir/.doctrees
-fi
+#if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
+#    rm -fr $dir/.doctrees
+#fi
 pwd
 echo PYTTHONPATH=$PYTHONPATH
 
@@ -65,7 +65,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  attribute/*.html \
 	  *.inv \
 	  *.js \
-	  _sources \	  
+	  _sources \
 	  _static \
 	  _downloads/cfdm_tutorial_files.zip \
 	  _downloads/tutorial.py \
