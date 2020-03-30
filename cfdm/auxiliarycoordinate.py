@@ -244,4 +244,4 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
                               ignore_type=ignore_type)
 
         
-#--- End: class
+# --- End: class

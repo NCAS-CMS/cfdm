@@ -142,7 +142,6 @@ class Data(mixin.Container,
 
         self._initialise_netcdf(source)
         
-                 
     def __array__(self, *dtype):
         '''The numpy array interface.
 
@@ -178,8 +177,7 @@ class Data(mixin.Container,
             return array
         else:
             return array.astype(dtype[0], copy=False)
-
-              
+      
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -196,7 +194,6 @@ class Data(mixin.Container,
             
         return '<{0}{1}: {2}>'.format(self.__class__.__name__, shape, str(self))
 
-   
     def __getitem__(self, indices):
         '''Return a subspace of the data defined by indices
 
@@ -319,7 +316,6 @@ class Data(mixin.Container,
                 out = self[n, ...]
                 out.squeeze(0, inplace=True)
                 yield out
-
 
     def __setitem__(self, indices, value):
         '''Assign to data elements defined by indices.
@@ -479,7 +475,7 @@ class Data(mixin.Container,
                 out = '{0}{1!s}, {2!s}{3}'.format(open_brackets,
                                                   first, last,
                                                   close_brackets)
-        #--- End: if
+        # --- End: if
         
         if isreftime:
             if calendar:
@@ -488,7 +484,6 @@ class Data(mixin.Container,
             out += ' {0}'.format(units)
             
         return out
-
 
     # ----------------------------------------------------------------
     # Private methods
@@ -532,7 +527,6 @@ class Data(mixin.Container,
             return array.item()
 
         return numpy.ma.masked
-
     
     def _parse_axes(self, axes):
         '''TODO
@@ -572,7 +566,7 @@ class Data(mixin.Container,
             else:
                 raise ValueError(
                     "Invalid axis: {!r}".format(axis))
-        #--- End: for
+        # --- End: for
             
         # Check for duplicate axes
         n = len(axes2)
@@ -580,7 +574,6 @@ class Data(mixin.Container,
             raise ValueError("Duplicate axis: {}".format(axes2))
         
         return tuple(axes2)
-
 
     def _set_Array(self, array, copy=True):
         '''Set the array.
@@ -609,7 +602,6 @@ class Data(mixin.Container,
 
         super()._set_Array(array, copy=copy)
 
-
     def _set_CompressedArray(self, array, copy=True):
         '''Set the compressed array.
 
@@ -632,7 +624,6 @@ class Data(mixin.Container,
 
         '''
         self._set_Array(array, copy=copy)
-
 
     @classmethod
     def _set_subspace(cls, array, indices, value):
@@ -665,11 +656,11 @@ class Data(mixin.Container,
                             step = stop - start
                             stop += 1
                             y.append(slice(start, stop, step))
-                    #--- End: for
+                    # --- End: for
                     indices1[i] = y
                 else:
                     indices1[i] = (x,)
-            #--- End: for
+            # --- End: for
 
             if numpy.size(value) == 1:
                 for i in itertools.product(*indices1):
@@ -688,19 +679,18 @@ class Data(mixin.Container,
                             stop = start + 2
                             y.append(slice(start, stop))
                             start = stop
-                        #--- End: while
+                        # --- End: while
                         indices2.append(y)
                     else:
                         indices2.append((slice(None),))
-                #--- End: for
+                # --- End: for
 
                 for i, j in zip(itertools.product(*indices1), itertools.product(*indices2)):
                     array[i] = value[j]
 
-
-    #-----------------------------------------------------------------
+    # -----------------------------------------------------------------
     # Attributes
-    #-----------------------------------------------------------------
+    # -----------------------------------------------------------------
     @property
     def compressed_array(self):
         '''Return an independent numpy array containing the compressed data.
@@ -726,7 +716,6 @@ class Data(mixin.Container,
             raise ValueError("not compressed: can't get compressed array")
 
         return ca.compressed_array
-
 
     @property
     def datetime_array(self):
@@ -781,7 +770,7 @@ class Data(mixin.Container,
             if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
                 mask = None
                 array = array.view(numpy.ndarray)
-        #--- End: if
+        # --- End: if
         
         array = netCDF4.num2date(array, units=self.get_units(None),
                                  calendar=self.get_calendar('standard'),
@@ -866,7 +855,6 @@ class Data(mixin.Container,
         '''
         return type(self)(numpy.ma.getmaskarray(self.array))
     
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -910,7 +898,6 @@ class Data(mixin.Container,
 
         return masked
 
-
     def copy(self, array=True):
         '''Return a deep copy.
 
@@ -933,7 +920,6 @@ class Data(mixin.Container,
 
         '''
         return super().copy(array=array)
-
     
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
@@ -1005,7 +991,6 @@ class Data(mixin.Container,
             d = None
         return d
 
-
     def get_count(self, default=ValueError()):
         '''Return the count variable for a compressed array.
 
@@ -1035,7 +1020,6 @@ class Data(mixin.Container,
             return self._default(default,
                                  "{!r} has no count variable".format(
                                  self.__class__.__name__))
-
 
     def get_index(self, default=ValueError()):
         '''Return the index variable for a compressed array.
@@ -1070,7 +1054,6 @@ class Data(mixin.Container,
                                  "{!r} has no index variable".format(
                                  self.__class__.__name__))
 
-
     def get_list(self, default=ValueError()):
         '''Return the list variable for a compressed array.
 
@@ -1100,7 +1083,6 @@ class Data(mixin.Container,
             return self._default(default,
                                  "{!r} has no list variable".format(
                                      self.__class__.__name__))        
-
 
     def get_compressed_dimension(self, default=ValueError()):
         '''Return the position of the compressed dimension in the compressed
@@ -1137,7 +1119,6 @@ class Data(mixin.Container,
                                  "{!r} has no compressed dimension".format(
                                      self.__class__.__name__))
 
-    
     def _parse_indices(self, indices):
         '''TODO
     
@@ -1212,7 +1193,7 @@ class Data(mixin.Container,
                                 shape, parsed_indices))
 
                     index = numpy.where(index)[0]
-                #--- End: if
+                # --- End: if
     
                 if not numpy.ndim(index):
                     if index < 0:
@@ -1231,10 +1212,10 @@ class Data(mixin.Container,
                     else:
                         # E.g. [1, 3, 4] -> [1, 3, 4]
                         pass
-            #--- End: if
+            # --- End: if
             
             parsed_indices[i] = index    
-        #--- End: for
+        # --- End: for
     
         return parsed_indices
 
@@ -1277,7 +1258,6 @@ class Data(mixin.Container,
         
         return out
 
-
     def minimum(self, axes=None):
         '''Return the minimum of an array or minimum along axes.
 
@@ -1317,7 +1297,6 @@ class Data(mixin.Container,
 
         return out
 
-
 #    def get_HDF_chunks(self, dddd):
 #        '''Set HDF5 chunks for the data array.
 #    
@@ -1352,7 +1331,6 @@ class Data(mixin.Container,
 #file.
 #
 #        '''
-
 
     def squeeze(self, axes=None, inplace=False):
         '''Remove size 1 axes from the data.
@@ -1437,7 +1415,7 @@ class Data(mixin.Container,
                     raise ValueError(
                         "Can't squeeze data: Can't remove axis of size {}".format(
                             shape[i]))
-        #--- End: if
+        # --- End: if
 
         if not axes:
             if inplace:
@@ -1456,7 +1434,6 @@ class Data(mixin.Container,
         if inplace:
             d = None        
         return d
-
 
     def sum(self, axes=None):
         '''Return the sum of an array or the sum along axes.
@@ -1494,7 +1471,6 @@ class Data(mixin.Container,
             d.nc_clear_hdf5_chunksizes()
         
         return d
-
 
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
@@ -1565,7 +1541,7 @@ class Data(mixin.Container,
                 raise ValueError(
                     "Can't transpose data: Axes don't match array: {}".format(
                         axes))
-        #--- End: if
+        # --- End: if
 
         # Return unchanged if axes are in the same order as the data
         if axes == tuple(range(ndim)):            
@@ -1582,7 +1558,6 @@ class Data(mixin.Container,
         if inplace:
             d = None
         return d
-
 
     def get_compressed_axes(self):
         '''Return the dimensions that have compressed in the underlying array.
@@ -1621,7 +1596,6 @@ class Data(mixin.Container,
 
         return ca.get_compressed_axes()
 
-
     def get_compression_type(self):
         '''Return the type of compression applied to the underlying array.
 
@@ -1654,7 +1628,6 @@ class Data(mixin.Container,
 
         return ma.get_compression_type()
 
-    
     @classmethod
     def empty(cls, shape, dtype=None, units=None, calendar=None):
         '''Create a new data array without initializing the elements.
@@ -1689,7 +1662,6 @@ class Data(mixin.Container,
         '''
         return cls(numpy.empty(shape=shape, dtype=dtype), units=units,
                    calendar=calendar)
-
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -1830,7 +1802,7 @@ class Data(mixin.Container,
                     print("{0}: Different {1}: {2!r} != {3!r}".format(
                         self.__class__.__name__, attr, x, y))
                 return False
-        #--- End: for
+        # --- End: for
            
         if not ignore_compression:
             # --------------------------------------------------------
@@ -1856,7 +1828,7 @@ class Data(mixin.Container,
                         print("{0}: Different compressed array values".format(
                             self.__class__.__name__))
                     return False
-        #--- End: if
+        # --- End: if
         
         # ------------------------------------------------------------
         # Check for equal (uncompressed) array values
@@ -1872,7 +1844,6 @@ class Data(mixin.Container,
         # Still here? Then the two data arrays are equal.
         # ------------------------------------------------------------
         return True            
-
 
     def first_element(self):
         '''Return the first element of the data as a scalar.
@@ -2049,7 +2020,6 @@ class Data(mixin.Container,
                   
         return out
     
-        
     def last_element(self):
         '''Return the last element of the data as a scalar.
 
@@ -2085,7 +2055,6 @@ class Data(mixin.Container,
         '''        
         return self._item((slice(-1, None),)*self.ndim)
 
-
     def second_element(self):
         '''Return the second element of the data as a scalar.
 
@@ -2116,12 +2085,10 @@ class Data(mixin.Container,
         '''
         return self._item((slice(0, 1),)*(self.ndim-1) + (slice(1, 2),))
 
-
     def to_memory(self):
         '''
         '''
         self._set_Array(self.source().to_memory())
-
 
 #    def astype(self, dtype, casting='unsafe'):
 #        '''Cast the data to a specified type.
@@ -2183,7 +2150,6 @@ class Data(mixin.Container,
 #            array = self.array.astype(dtype, casting=casting)
 #            self._set_Array(array, copy=False)
 
-
 #    def underlying(self, default=ValueError()):
 #        '''Return the array object.
 #
@@ -2209,7 +2175,6 @@ class Data(mixin.Container,
 #            return underlying_array.underlying_array(default=default)
 #
 #        return underlying_array        
-
 
     def uncompress(self, inplace=False):
         '''Uncompress the underlying array.
@@ -2256,7 +2221,6 @@ class Data(mixin.Container,
             d = None
         return d
 
-    
     def unique(self):
         '''The unique elements of the data.
 
@@ -2310,7 +2274,7 @@ class Data(mixin.Container,
         '''
         return self.minimum(axes=axes)
     
-#--- End: class
+# --- End: class
 
 # --------------------------------------------------------------------
 # Register the Data class as a "virtual subclass" of abstract.Array

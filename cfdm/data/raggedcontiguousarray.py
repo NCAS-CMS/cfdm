@@ -54,7 +54,6 @@ class RaggedContiguousArray(abstract.CompressedArray,
                          compression_type='ragged contiguous',
                          compressed_dimension=0)
        
-        
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
@@ -107,13 +106,11 @@ class RaggedContiguousArray(abstract.CompressedArray,
 
         return self.get_subspace(uarray, indices, copy=True)
 
-
     def to_memory(self):
         '''
         '''
         super().to_memory()
         self.get_count().data.to_memory()
         return self
-
     
-#--- End: class
+# --- End: class

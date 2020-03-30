@@ -10,7 +10,6 @@ class Parameters(Container):
     .. versionadded:: 1.7.0
 
     '''
-
     def __bool__(self):
         '''Called by the `bool` built-in function.
 
@@ -20,7 +19,6 @@ class Parameters(Container):
 
         '''
         return bool(self.parameters())
-
         
     def __nonzero__(self):
         '''Called by the `bool` built-in function.
@@ -32,7 +30,6 @@ class Parameters(Container):
         '''
         return bool(self.parameters())
 
-        
     def __str__(self):
         '''Called by the `str` built-in function.
 
@@ -42,7 +39,6 @@ class Parameters(Container):
 
         '''
         return 'Parameters: {0}'.format(', '.join(sorted(self.parameters())))
-
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -150,10 +146,9 @@ class Parameters(Container):
                     print("{}: Unequal {!r} terms ({!r} != {!r})".format( 
                         self.__class__.__name__, term, value0, value1))
                 return False
-        #--- End: for
+        # --- End: for
 
         # Still here? Then the two parameter collections are equal
         return True
 
-
-#--- End: class
+# --- End: class

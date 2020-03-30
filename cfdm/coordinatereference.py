@@ -387,7 +387,7 @@ class CoordinateReference(mixin.NetCDFVariable,
             n = self.coordinate_conversion.get_parameter(prop, None)
             if n is not None:
                 return '{0}:{1}'.format(prop, n)
-        #--- End: for
+        # --- End: for
         
         n = self.nc_get_variable(None)
         if n is not None:
@@ -439,7 +439,7 @@ class CoordinateReference(mixin.NetCDFVariable,
             n = self.coordinate_conversion.get_parameter(prop, None)
             if n is not None:
                 out.append('{0}:{1}'.format(prop, n))
-        #--- End: for
+        # --- End: for
 
         n = self.nc_get_variable(None)
         if n is not None:
@@ -447,5 +447,4 @@ class CoordinateReference(mixin.NetCDFVariable,
 
         return out
 
-
-#--- End: class
+# --- End: class

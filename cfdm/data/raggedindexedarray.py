@@ -56,7 +56,6 @@ class RaggedIndexedArray(mixin.RaggedIndexed,
                          compressed_dimension=0,
                          compression_type='ragged indexed')
 
-
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
@@ -102,10 +101,8 @@ class RaggedIndexedArray(mixin.RaggedIndexed,
                          slice(0, len(sample_dimension_indices)))
             
             uarray[u_indices] = compressed_array[(sample_dimension_indices,)]
-        #--- End: for
 
         return self.get_subspace(uarray, indices, copy=True)
-
 
     def to_memory(self):
         '''TODO
@@ -116,4 +113,4 @@ class RaggedIndexedArray(mixin.RaggedIndexed,
         return self
 
     
-#--- End: class
+# --- End: class

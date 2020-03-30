@@ -108,7 +108,7 @@ class PropertiesDataBounds(PropertiesData):
                 part_node_count = source.get_part_node_count(None)
             except AttributeError:
                 part_node_count = None
-        #--- End: if
+        # --- End: if
 
         # Initialise node count
         if node_count is not None:
@@ -117,7 +117,6 @@ class PropertiesDataBounds(PropertiesData):
         # Initialise part node count
         if part_node_count is not None:
             self.set_part_node_count(part_node_count, copy=copy)
-
 
     def __getitem__(self, indices):
         '''Return a subspace of the construct defined by indices
@@ -200,14 +199,13 @@ class PropertiesDataBounds(PropertiesData):
                         # reverse its bounds (as per 7.1 of the 
                         # conventions) 
                         bounds_indices[-1] = slice(None, None, -1)
-                #--- End: if
+                # --- End: if
  
                 new.set_bounds(self_bounds[tuple(bounds_indices)], copy=False) 
-        #--- End: if 
+        # --- End: if 
  
         # Return the new bounded variable 
         return new 
-
 
     def __str__(self):
         '''Called by the `str` built-in function.
@@ -229,7 +227,7 @@ class PropertiesDataBounds(PropertiesData):
 #            bounds_data = bounds.get_data(None)
 #            if bounds_data is not None:
 #                shape = bounds_data.shape[:-1] # geometry TODO
-        #--- End: if
+        # --- End: if
         
         if shape is not None:        
             dims = ', '.join([str(x) for x in shape])
@@ -252,7 +250,7 @@ class PropertiesDataBounds(PropertiesData):
 #                    dims = ''
 #            else:
 #                dims = ''
-#        #--- End: if
+#        # --- End: if
 
         # ------------------------------------------------------------
         # Units and calendar
@@ -279,7 +277,6 @@ class PropertiesDataBounds(PropertiesData):
             units += ' ' + calendar
             
         return '{0}{1} {2}'.format(self.identity(''), dims, units)
-
     
     # ----------------------------------------------------------------
     # Attributes
@@ -306,7 +303,6 @@ class PropertiesDataBounds(PropertiesData):
         
         raise AttributeError("{!r} object has no attribute 'dtype'".format(
             self.__class__.__name__))
-
     
     @property
     def ndim(self):
@@ -362,7 +358,6 @@ class PropertiesDataBounds(PropertiesData):
         raise AttributeError("{!r} object has no attribute 'ndim'".format(
             self.__class__.__name__))
 
-    
     @property
     def shape(self):
         '''A tuple of the data array's dimension sizes.
@@ -417,7 +412,6 @@ class PropertiesDataBounds(PropertiesData):
         raise AttributeError("{!r} object has no attribute 'shape'".format(
             self.__class__.__name__))
 
-
     @property
     def size(self):
         '''The number of elements in the data array.
@@ -456,7 +450,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return reduce(mul, self.shape, 1)
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -498,7 +491,6 @@ class PropertiesDataBounds(PropertiesData):
         except ValueError:
             return self._default(default,
                                  "{!r} has no node count variable".format(self.__class__.__name__))
-
     
     def del_part_node_count(self, default=ValueError()):
         '''Remove the part node count variable for geometry bounds.
@@ -538,7 +530,6 @@ class PropertiesDataBounds(PropertiesData):
         except ValueError:
             return self._default(default,
                                  "{!r} has no part node count variable".format(self.__class__.__name__))
-
 
     def dump(self, display=True, _key=None, _omit_properties=None,
              _prefix='', _title=None, _create_title=True, _level=0,
@@ -590,7 +581,7 @@ class PropertiesDataBounds(PropertiesData):
                                       _level=_level, _axes=_axes,
                                       _axis_names=_axis_names))
 
-        #-------------------------------------------------------------
+        # -------------------------------------------------------------
         # Interior ring
         # ------------------------------------------------------------
         interior_ring = self.get_interior_ring(None)
@@ -607,7 +598,6 @@ class PropertiesDataBounds(PropertiesData):
             print(string)
         else:
             return string
-
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -757,7 +747,7 @@ class PropertiesDataBounds(PropertiesData):
                 if verbose:
                     print("{0}: Different bounds".format(self.__class__.__name__))
                 return False
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Check the interior ring
@@ -779,10 +769,9 @@ class PropertiesDataBounds(PropertiesData):
                 if verbose:
                     print("{0}: Different interior ring".format(self.__class__.__name__)) # pragma: no cover
                 return False
-        #--- End: if
+        # --- End: if
 
         return True
-
 
     def get_node_count(self, default=ValueError()):
         '''Return the node count variable for geometry bounds.
@@ -822,7 +811,6 @@ class PropertiesDataBounds(PropertiesData):
             return self._default(default,
                     "{!r} has no node count variable".format(
                         self.__class__.__name__))
-
 
     def get_part_node_count(self, default=ValueError()):
         '''Return the part node count variable for geometry bounds.
@@ -864,7 +852,6 @@ class PropertiesDataBounds(PropertiesData):
                     "{!r} has no part node count variable".format(
                         self.__class__.__name__))
 
-
     def has_node_count(self):
         '''Whether or not there is a node count variable for geometry bounds..
         
@@ -893,7 +880,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._has_component('node_count')
-
 
     def has_part_node_count(self):
         '''Whether or not there is a part node count variable for geometry
@@ -925,7 +911,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._has_component('part_node_count')
-
 
     def identities(self):
         '''Return all possible identities.
@@ -979,7 +964,6 @@ class PropertiesDataBounds(PropertiesData):
                                if i not in identities])
             
         return identities
-
 
     def identity(self, default=''):
         '''Return the canonical identity.
@@ -1054,7 +1038,6 @@ class PropertiesDataBounds(PropertiesData):
             return bounds.identity(default=default)
         
         return default
-
     
     def get_bounds(self, default=ValueError()):
         '''Return the bounds.
@@ -1109,7 +1092,6 @@ class PropertiesDataBounds(PropertiesData):
         
         return bounds
 
-
     def get_bounds_data(self, default=ValueError()):
         '''Return the bounds data.
 
@@ -1139,7 +1121,6 @@ class PropertiesDataBounds(PropertiesData):
             return self.get_bounds(default=default)
 
         return bounds.get_data(default=default)
-
 
     def insert_dimension(self, position, inplace=False):
         '''Expand the shape of the data array.
@@ -1223,7 +1204,6 @@ class PropertiesDataBounds(PropertiesData):
             c = None            
         return c
 
-
     def set_node_count(self, node_count, copy=True):
         '''Set the node count variable for geometry bounds.
 
@@ -1253,7 +1233,6 @@ class PropertiesDataBounds(PropertiesData):
             node_count = node_count.copy()
 
         self._set_component('node_count', node_count, copy=False)
-
 
     def set_part_node_count(self, part_node_count, copy=True):
         '''Set the part node count variable for geometry bounds.
@@ -1285,7 +1264,6 @@ class PropertiesDataBounds(PropertiesData):
             part_node_count = part_node_count.copy()
 
         self._set_component('part_node_count', part_node_count, copy=False)
-
 
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
@@ -1364,7 +1342,6 @@ class PropertiesDataBounds(PropertiesData):
         if inplace:
             c = None                
         return c
-
     
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
@@ -1449,7 +1426,7 @@ class PropertiesDataBounds(PropertiesData):
                     # were). See section 7.1 of the CF conventions. 
                     data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)]
                     bounds.set_data(data, copy=False) 
-        #--- End: if 
+        # --- End: if 
  
         # ------------------------------------------------------------ 
         # Transpose the interior ring 
@@ -1461,7 +1438,6 @@ class PropertiesDataBounds(PropertiesData):
         if inplace:
             c = None            
         return c
-
     
     def uncompress(self, inplace=False):
         '''Uncompress the construct.
@@ -1520,6 +1496,5 @@ class PropertiesDataBounds(PropertiesData):
         if inplace:
             v = None            
         return v
-
     
-#--- End: class
+# --- End: class

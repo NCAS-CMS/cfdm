@@ -66,7 +66,6 @@ class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
                          compression_type='ragged indexed contiguous',
                          compressed_dimension=0)    
 
-
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
     
@@ -134,11 +133,10 @@ class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
                              slice(0, stop-start)) #slice(0, sample_indices.stop - sample_indices.start))
                 
                 uarray[u_indices] = compressed_array[(sample_indices,)]
-            #--- End: for
-        #--- End: for
+            # --- End: for
+        # --- End: for
 
         return self.get_subspace(uarray, indices, copy=True)
-
     
     def to_memory(self):
         '''TODO
@@ -157,6 +155,5 @@ class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
         self.get_count().data.to_memory()
         self.get_index().data.to_memory()
         return self
-
     
-#--- End: class
+# --- End: class

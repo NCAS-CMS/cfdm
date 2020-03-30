@@ -246,4 +246,4 @@ class DomainAncillary(mixin.NetCDFVariable,
                               ignore_compression=ignore_compression,
                               ignore_type=ignore_type)
 
-#--- End: class
+# --- End: class

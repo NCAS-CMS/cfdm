@@ -219,6 +219,5 @@ class DomainAxis(mixin.NetCDFDimension,
             out.append('ncdim%{0}'.format(n))
             
         return out
-
     
-#--- End: class
+# --- End: class

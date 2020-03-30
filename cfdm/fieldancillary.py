@@ -221,6 +221,5 @@ class FieldAncillary(mixin.NetCDFVariable,
                               ignore_properties=ignore_properties,
                               ignore_compression=ignore_compression,
                               ignore_type=ignore_type)
-
-    
-#--- End: class
+  
+# --- End: class

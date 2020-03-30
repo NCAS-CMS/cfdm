@@ -56,6 +56,5 @@ class Datum(mixin.Parameters,
                          copy=copy)
         
         self._initialise_netcdf(source)
-
-   
-#--- End: class
+ 
+# --- End: class

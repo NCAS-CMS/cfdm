@@ -24,7 +24,6 @@ class Properties(Container):
         '''
         return '{0}'.format(self.identity(''))
 
-
     def _dump_properties(self, _prefix='', _level=0,
                          _omit_properties=None):
         '''Dump the properties.
@@ -51,7 +50,7 @@ class Properties(Container):
         if _omit_properties:
             for prop in _omit_properties:
                  properties.pop(prop, None)
-        #--- End: if
+        # --- End: if
  
         for prop, value in sorted(properties.items()):
             name   = '{0}{1}{2} = '.format(indent0, _prefix, prop)
@@ -65,7 +64,6 @@ class Properties(Container):
                               subsequent_indent=subsequent_indent))
         
         return '\n'.join(string)
-
 
     def dump(self, display=True, _key=None, _omit_properties=(),
              _prefix='', _title=None, _create_title=True, _level=0):
@@ -106,7 +104,7 @@ class Properties(Container):
                                                    self.identity(default=default)))
             else:
                 string.append(indent0 + _title)
-        #--- End: if
+        # --- End: if
         
         # ------------------------------------------------------------
         # Properties
@@ -123,7 +121,6 @@ class Properties(Container):
             print(string)
         else:
             return string
-
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -231,7 +228,7 @@ class Properties(Container):
             for prop in ignore_properties:
                 self_properties.pop(prop, None)
                 other_properties.pop(prop, None)
-        #--- End: if
+        # --- End: if
                 
         if set(self_properties) != set(other_properties):
             if verbose:
@@ -252,10 +249,9 @@ class Properties(Container):
                     print("{0}: Different {1!r} property values: {2!r}, {3!r}".format(
                         self.__class__.__name__, prop, x, y))
                 return False
-        #--- End: for
+        # --- End: for
 
         return True
-
 
     def identity(self, default=''):
         '''Return the canonical identity.
@@ -320,14 +316,13 @@ class Properties(Container):
             n = self.get_property(prop, None)
             if n is not None:
                 return '{0}={1}'.format(prop, n)
-        #--- End: for
+        # --- End: for
         
         n = self.nc_get_variable(None)
         if n is not None:
             return 'ncvar%{0}'.format(n)
         
         return default
-
 
     def identities(self):
         '''Return all possible identities.
@@ -396,5 +391,4 @@ class Properties(Container):
             
         return out
 
-
-#--- End: class
+# --- End: class

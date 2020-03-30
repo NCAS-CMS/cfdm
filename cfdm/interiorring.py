@@ -111,6 +111,5 @@ class InteriorRing(mixin.NetCDFDimension,
                             _title=_title,
                             _create_title=_create_title, _axes=_axes,
                             _axis_names=_axis_names)
-
     
-#--- End: class
+# --- End: class

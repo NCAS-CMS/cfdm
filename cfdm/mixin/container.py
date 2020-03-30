@@ -24,7 +24,6 @@ class Container(object):
         return '<{0}: {1}>'.format(self.__class__.__name__,
                                    str(self))
 
-
     def __str__(self):
         '''Called by the `str` built-in function.
 
@@ -36,20 +35,17 @@ class Container(object):
         out = sorted(self._components)
         return ', '.join(out)
 
-
     @property
     def _ATOL(self):
         '''TODO
         '''
         return ATOL()
 
-    
     @property
     def _RTOL(self):
         '''TODO
         '''
         return RTOL()
-
     
 #    @classmethod
     def _equals(self, x, y, rtol=None, atol=None,
@@ -160,7 +156,6 @@ class Container(object):
                 else:
                     return bool(out)
 
-
     def _equals_preprocess(self, other, verbose=False,
                            ignore_type=False):
         '''Common preprocessing prior to testing of equality.
@@ -194,5 +189,4 @@ class Container(object):
 
         return other
 
-   
-#--- End: class
+# --- End: class

@@ -123,7 +123,7 @@ class CellMeasure(mixin.NetCDFVariable,
                 else:
                     ncvar = ''
                 _title += ' (external variable: {0})'.format(ncvar)
-        #--- End: if
+        # --- End: if
         
         return super().dump( display=display, _key=_key,
                              _omit_properties=_omit_properties,
@@ -326,7 +326,7 @@ class CellMeasure(mixin.NetCDFVariable,
             n = self.get_property(prop, None)
             if n is not None:
                 return '{0}={1}'.format(prop, n)
-        #--- End: for
+        # --- End: for
         
         n = self.nc_get_variable(None)
         if n is not None:
@@ -380,5 +380,4 @@ The identities comprise:
 
         return out
 
-
-#--- End: class
+# --- End: class

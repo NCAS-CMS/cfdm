@@ -22,7 +22,6 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
             if value is None:
                 del self._class[key]
 
-
     def classes(self):
         '''Return all the classes of the implmeentation.
 
@@ -62,14 +61,12 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         '''
         return self._class.copy()
 
-
     def copy(self):
         '''Copy 
         
         '''
         return type(self)(cf_version=self.get_cf_version(),
                           **self._class)
-
 
     def get_class(self, name):
         '''Return a class of the implementation.
@@ -97,7 +94,6 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         except KeyError:
             raise ValueError("Implementation does not have class {!r}".format(name))
 
-
     def get_cf_version(self):
         '''Return the CF version of the implementation.
 
@@ -113,7 +109,6 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
 
         '''
         return self._cf_version
-
 
     def set_class(self, name, cls):
         '''Set a class of the implementation.
@@ -143,5 +138,4 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         '''
         self._class[name] = cls
 
-
-#--- End: class
+# --- End: class

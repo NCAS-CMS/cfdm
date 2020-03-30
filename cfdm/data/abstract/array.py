@@ -44,7 +44,6 @@ class Array(with_metaclass(abc.ABCMeta, core_Array)):
         else:
             return array.astype(dtype[0], copy=False)
 
-
     @abc.abstractmethod
     def __getitem__(self, indices):
         '''Return a subspace as an independent numpy array.
@@ -70,7 +69,6 @@ class Array(with_metaclass(abc.ABCMeta, core_Array)):
         '''
         raise NotImplementedError() # pragma: no cover
 
-
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -81,7 +79,6 @@ class Array(with_metaclass(abc.ABCMeta, core_Array)):
         '''      
         return "<{0}{1}: >".format(self.__class__.__name__, self.shape)
 
-        
     def __str__(self):
         '''Called by the `str` built-in function.
 
@@ -91,7 +88,6 @@ class Array(with_metaclass(abc.ABCMeta, core_Array)):
 
         '''
         return "shape={0}, dtype={1}".format(self.shape, self.dtype)
-
 
     def get_compression_type(self):
         '''The type of compression that has been applied to the underlying
@@ -118,7 +114,6 @@ class Array(with_metaclass(abc.ABCMeta, core_Array)):
 
         '''
         return self._get_component('compression_type', '')
-
     
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
@@ -209,7 +204,7 @@ class Array(with_metaclass(abc.ABCMeta, core_Array)):
                 if n_axes_with_list_indices < len(indices):
                     # Apply subspace defined by slices
                     array = array[tuple(indices)]
-        #--- End: if
+        # --- End: if
 
         if copy:
             if numpy.ma.isMA(array) and not array.ndim:
@@ -220,9 +215,8 @@ class Array(with_metaclass(abc.ABCMeta, core_Array)):
                 array = ma_array
             else:
                 array = array.copy()
-        #--- End: if
+        # --- End: if
         
         return array                
 
-
-#--- End: class
+# --- End: class

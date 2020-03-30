@@ -31,11 +31,9 @@ class NumpyArray(abstract.Array, core_NumpyArray):
         return self.get_subspace(self._get_component('array'), indices,
                                  copy=True)
 
-
     def to_memory(self):
         '''TODO
         '''
         return self
-
     
-#--- End: class
+# --- End: class

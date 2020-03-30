@@ -193,7 +193,7 @@ class CFDMImplementation(Implementation):
                         out[variable][k] = v
                     elif v != out[variable][k]:
                         return False
-        #--- End: for
+        # --- End: for
         
         for coord in self.get_auxiliary_coordinates(field).values():
             for variable in out:
@@ -202,7 +202,7 @@ class CFDMImplementation(Implementation):
                     continue
 
                 x.set_properties(out[variable])
-        #--- End: for
+        # --- End: for
 
         return True
 
@@ -1909,9 +1909,8 @@ class CFDMImplementation(Implementation):
         '''TODO
         '''
         return construct.squeeze(axes=axes)
-
-        
-#--- End: class
+       
+# --- End: class
 
 
 _implementation = CFDMImplementation(

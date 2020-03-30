@@ -43,12 +43,12 @@ class NetCDF(object):
                     netcdf = deepcopy(netcdf)
                 else:
                     netcdf = {}
-        #--- End: if
+        # --- End: if
         
         self._set_component('netcdf', netcdf, copy=False)
 
 
-#--- End: class
+# --- End: class
 
 
 class NetCDFDimension(NetCDF):
@@ -101,7 +101,6 @@ class NetCDFDimension(NetCDF):
                    "{!r} has no netCDF dimension name".format(
                        self.__class__.__name__))
 
-
     def nc_get_dimension(self, default=ValueError()):
         '''Return the netCDF dimension name.
 
@@ -146,7 +145,6 @@ class NetCDFDimension(NetCDF):
                    "{!r} has no netCDF dimension name".format(
                        self.__class__.__name__))
 
-
     def nc_has_dimension(self):
         '''Whether the netCDF dimension name has been set.
 
@@ -179,7 +177,6 @@ class NetCDFDimension(NetCDF):
 
         '''
         return 'dimension' in self._get_component('netcdf')
-
 
     def nc_set_dimension(self, value):
         '''Set the netCDF dimension name.
@@ -218,7 +215,7 @@ class NetCDFDimension(NetCDF):
         self._get_component('netcdf')['dimension'] = value
 
 
-#--- End: class
+# --- End: class
 
 
 class NetCDFVariable(NetCDF):
@@ -271,7 +268,6 @@ class NetCDFVariable(NetCDF):
                    "{!r} has no netCDF variable name".format(
                        self.__class__.__name__))
 
-        
     def nc_get_variable(self, default=ValueError()):
         '''Return the netCDF variable name.
 
@@ -317,7 +313,6 @@ class NetCDFVariable(NetCDF):
                    "{!r} has no netCDF variable name".format(
                        self.__class__.__name__))
 
-
     def nc_has_variable(self):
         '''Whether the netCDF variable name has been set.
 
@@ -350,7 +345,6 @@ class NetCDFVariable(NetCDF):
 
         '''
         return 'variable' in self._get_component('netcdf')
-
 
     def nc_set_variable(self, value):
         '''Set the netCDF variable name.
@@ -389,7 +383,7 @@ class NetCDFVariable(NetCDF):
         self._get_component('netcdf')['variable'] = value
 
 
-#--- End: class
+# --- End: class
 
 
 class NetCDFSampleDimension(NetCDF):
@@ -442,7 +436,6 @@ class NetCDFSampleDimension(NetCDF):
                    "{!r} has no netCDF sample dimension name".format(
                        self.__class__.__name__))
 
-
     def nc_get_sample_dimension(self, default=ValueError()):
         '''Return the netCDF sample dimension name.
 
@@ -487,7 +480,6 @@ class NetCDFSampleDimension(NetCDF):
                    "{!r} has no netCDF sample dimension name".format(
                        self.__class__.__name__))
 
-
     def nc_has_sample_dimension(self):
         '''Whether the netCDF sample dimension name has been set.
 
@@ -520,7 +512,6 @@ class NetCDFSampleDimension(NetCDF):
 
         '''
         return 'sample_dimension' in self._get_component('netcdf')
-
 
     def nc_set_sample_dimension(self, value):
         '''Set the netCDF sample dimension name.
@@ -559,7 +550,7 @@ class NetCDFSampleDimension(NetCDF):
         self._get_component('netcdf')['sample_dimension'] = value
 
 
-#--- End: class
+# --- End: class
 
 
 class NetCDFGlobalAttributes(NetCDF):
@@ -619,7 +610,6 @@ class NetCDFGlobalAttributes(NetCDF):
         
         return out.copy()
 
-    
     def nc_clear_global_attributes(self):
         '''Remove the selection of properties to be written as netCDF global
     attributes.
@@ -673,7 +663,6 @@ class NetCDFGlobalAttributes(NetCDF):
 
         return out
 
-    
     def nc_set_global_attribute(self, prop, value=None):
         '''Select a property to be written as a netCDF global attribute.
 
@@ -739,7 +728,6 @@ class NetCDFGlobalAttributes(NetCDF):
         
         self._get_component('netcdf')['global_attributes'] = out
 
-    
     def nc_set_global_attributes(self, properties, copy=True):
         '''Set properties to be written as netCDF global attributes.
 
@@ -814,7 +802,7 @@ class NetCDFGlobalAttributes(NetCDF):
         self._get_component('netcdf')['global_attributes'] = out
 
     
-#--- End: class
+# --- End: class
 
 
 class NetCDFUnlimitedDimensions(NetCDF):
@@ -866,7 +854,6 @@ class NetCDFUnlimitedDimensions(NetCDF):
             return set()
 
         return set(out)
-
 
     def nc_set_unlimited_dimensions(self, axes):
         '''Select domain axis constructs to be written as netCDF unlimited
@@ -925,7 +912,6 @@ class NetCDFUnlimitedDimensions(NetCDF):
             
         self._get_component('netcdf')['unlimited_dimensions'] = tuple(out)
 
-
     def nc_clear_unlimited_dimensions(self):
         '''Remove the selection of domain axis constructs to be written as
     netCDF unlimited dimensions.
@@ -972,7 +958,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
         return out
 
     
-#--- End: class
+# --- End: class
 
 
 class NetCDFExternal(NetCDF):
@@ -1003,7 +989,6 @@ class NetCDFExternal(NetCDF):
 
         '''
         return self._get_component('netcdf').get('external', False)
-
 
     def nc_set_external(self, external):
         '''Set external status of a netCDF variable.
@@ -1036,7 +1021,7 @@ class NetCDFExternal(NetCDF):
         self._get_component('netcdf')['external'] = bool(external)
 
 
-#--- End: class
+# --- End: class
 
 class NetCDFGeometry(NetCDF):
     '''Mixin class for accessing the netCDF geometry container variable
@@ -1090,7 +1075,6 @@ class NetCDFGeometry(NetCDF):
                    "{!r} has no netCDF geometry variable name".format(
                        self.__class__.__name__))
 
-
     def nc_get_geometry_variable(self, default=ValueError()):
         '''Return the netCDF geometry container variable name.
 
@@ -1136,7 +1120,6 @@ class NetCDFGeometry(NetCDF):
                    "{!r} has no netCDF geometry variable name".format(
                        self.__class__.__name__))
 
-
     def nc_has_geometry_variable(self):
         '''Whether the netCDF geometry container variable name has been set.
 
@@ -1170,7 +1153,6 @@ class NetCDFGeometry(NetCDF):
         '''
         return 'geometry_variable' in self._get_component('netcdf')
 
-    
     def nc_set_geometry_variable(self, value):
         '''Set the netCDF geometry container variable name.
         
@@ -1208,7 +1190,7 @@ class NetCDFGeometry(NetCDF):
         self._get_component('netcdf')['geometry_variable'] = value
 
 
-#--- End: class
+# --- End: class
 
 class NetCDFHDF5(NetCDF):
     '''Mixin class for TODO
@@ -1250,7 +1232,6 @@ class NetCDFHDF5(NetCDF):
         '''
         return self._get_component('netcdf').get('hdf5_chunksizes', ())
 
-
     def nc_clear_hdf5_chunksizes(self):
         '''TODO
 
@@ -1283,7 +1264,6 @@ class NetCDFHDF5(NetCDF):
 
         '''
         return self._get_component('netcdf').pop('hdf5_chunksizes', ())
-
 
     def nc_set_hdf5_chunksizes(self, chunksizes):
         '''TODO
@@ -1335,12 +1315,12 @@ class NetCDFHDF5(NetCDF):
                     raise ValueError("chunksize cannot be negative")
                 if i > j:
                     raise ValueError("chunksize cannot exceed dimension size")
-        #--- End: try
+        # --- End: try
         
         self._get_component('netcdf')['hdf5_chunksizes'] = tuple(chunksizes)
 
 
-#--- End: class
+# --- End: class
 
 class NetCDFHDF5_exp(NetCDF):
     '''Mixin class for TODO
@@ -1381,7 +1361,6 @@ class NetCDFHDF5_exp(NetCDF):
         '''
         return 'hdf5_chunksize' in self._get_component('netcdf')
 
-
     def nc_get_hdf5_chunksize(self, default=ValueError()):
         '''TODO
 
@@ -1420,7 +1399,6 @@ class NetCDFHDF5_exp(NetCDF):
             return self._default(default,
                    "{!r} has no HDF5 chunksize".format(self.__class__.__name__))
 
-
     def nc_has_hdf5_chunksize(self):
         '''TODO
 
@@ -1455,7 +1433,6 @@ class NetCDFHDF5_exp(NetCDF):
 
         '''
         return 'hdf5_chunksize' in self._get_component('netcdf')
-
 
     def nc_set_hdf5_chunksize(self, value):
         '''TODO
@@ -1496,7 +1473,7 @@ class NetCDFHDF5_exp(NetCDF):
         self._get_component('netcdf')['hdf5_chunksize'] = int(value)
 
 
-#--- End: class
+# --- End: class
 
 class NetCDFUnlimitedDimension(NetCDF):
     '''Mixin class for accessing a netCDF unlimited dimension.
@@ -1536,7 +1513,6 @@ class NetCDFUnlimitedDimension(NetCDF):
         '''
         return self._get_component('netcdf').get('unlimited', False)
 
-
     def nc_set_unlimited(self, value):
         '''Set the unlimited status of the a netCDF dimension.
     
@@ -1573,6 +1549,5 @@ class NetCDFUnlimitedDimension(NetCDF):
         '''
         self._get_component('netcdf')['unlimited'] = bool(value)
 
-
-#--- End: class
+# --- End: class
 

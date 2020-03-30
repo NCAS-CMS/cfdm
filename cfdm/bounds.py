@@ -179,20 +179,20 @@ class Bounds(mixin.NetCDFVariable,
                 units = self.inherited_properties().get('units')
                 if units is not None:
                     data.set_units(units)
-            #--- End: if
+            # --- End: if
             
             if not data.has_calendar():
                 calendar = self.inherited_properties().get('calendar')
                 if calendar is not None:
                     data.set_calendar(calendar)
-        #--- End: if
+        # --- End: if
 
         if _fill_value:
             if not data.has_fill_value():
                 _ = self.inherited_properties().get('fill_value') # TODO
                 if _ is not None:
                     data.set_fill_value(_)
-        #--- End: if
+        # --- End: if
         
         return data
 
@@ -273,5 +273,4 @@ class Bounds(mixin.NetCDFVariable,
             
         return super().identity(default=default)
 
-
-#--- End: class
+# --- End: class

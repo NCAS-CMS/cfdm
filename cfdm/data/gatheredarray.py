@@ -55,7 +55,6 @@ class GatheredArray(abstract.CompressedArray):
                          list_variable=list_variable,
                          compression_type='gathered')
 
-
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
@@ -116,7 +115,7 @@ class GatheredArray(abstract.CompressedArray):
                 if b >= z:
                     (a, b) = divmod(b, z)
                     u_indices[i] = a
-            #--- End: for                    
+            # --- End: for                    
             u_indices[compressed_axes[-1]] = b
 
             compressed = compressed_array[tuple(sample_indices)]
@@ -126,7 +125,6 @@ class GatheredArray(abstract.CompressedArray):
             uarray[tuple(u_indices)] = compressed
 
         return self.get_subspace(uarray, indices, copy=True)
-
 
     def get_list(self, default=ValueError()):
         '''Return the list variable for a compressed array.
@@ -154,7 +152,6 @@ class GatheredArray(abstract.CompressedArray):
         '''
         return self._get_component('list_variable', default=default)
 
-
     def to_memory(self):
         '''TODO
     
@@ -170,6 +167,5 @@ class GatheredArray(abstract.CompressedArray):
         super().to_memory()
         self.get_list().data.to_memory()
         return self
-
     
-#--- End: class
+# --- End: class

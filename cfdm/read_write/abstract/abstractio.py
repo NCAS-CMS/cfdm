@@ -34,8 +34,7 @@ class IO(with_metaclass(abc.ABCMeta, object)):
         '''
         raise NotImplementedError() # pragma: no cover
 
-
-#--- End: class
+# --- End: class
 
 
 class IORead(with_metaclass(abc.ABCMeta, IO)):
@@ -49,8 +48,7 @@ class IORead(with_metaclass(abc.ABCMeta, IO)):
         '''
         raise NotImplementedError() # pragma: no cover
 
-
-#--- End: class
+# --- End: class
 
 
 class IOWrite(with_metaclass(abc.ABCMeta, IO)):
@@ -63,6 +61,5 @@ class IOWrite(with_metaclass(abc.ABCMeta, IO)):
 
         '''
         raise NotImplementedError() # pragma: no cover
-
     
-#--- End: class
+# --- End: class

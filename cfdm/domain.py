@@ -76,7 +76,7 @@ class Domain(mixin.ConstructAccess,
                     x.append(' (external variable: ncvar%{})'.format(ncvar))
                 else:
                     x.append(' (external variable)')
-            #--- End: if
+            # --- End: if
                 
             if variable.has_data():
                 x.append(' = {0}'.format(variable.data))
@@ -86,7 +86,7 @@ class Domain(mixin.ConstructAccess,
                 x.append(' = {0}'.format(variable.bounds.data))
                
             return ''.join(x)
-        #--- End: def
+        # --- End: def
                           
         string = []
         
@@ -106,7 +106,7 @@ class Domain(mixin.ConstructAccess,
                         y += ' = {0}'.format(dim.get_data())
                         
                     x.append(y)
-        #--- End: for
+        # --- End: for
         if x:
             string.append('Dimension coords: {}'.format('\n                : '.join(x)))
 
@@ -317,6 +317,5 @@ class Domain(mixin.ConstructAccess,
             return False
 
         return True
-
         
-#--- End: class
+# --- End: class

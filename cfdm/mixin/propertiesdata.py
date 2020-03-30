@@ -58,7 +58,6 @@ class PropertiesData(Properties):
         
         return new
 
-
     def __str__(self):
         '''Called by the `str` built-in function.
 
@@ -87,7 +86,6 @@ class PropertiesData(Properties):
             units += ' '+self.get_property('calendar', '')
             
         return '{0}{1} {2}'.format(self.identity(''), dims, units)
-
 
     # ----------------------------------------------------------------
     # Private methods
@@ -121,7 +119,6 @@ class PropertiesData(Properties):
         
         return [(i + ndim if i < 0 else i) for i in axes]
 
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -143,7 +140,6 @@ class PropertiesData(Properties):
 
         raise AttributeError("{!r} object has no attribute 'dtype'".format(
             self.__class__.__name__))
-
 
     @property
     def ndim(self):
@@ -188,7 +184,6 @@ class PropertiesData(Properties):
 
         raise AttributeError("{!r} object has no attribute 'ndim'".format(
             self.__class__.__name__))
-
     
     @property
     def shape(self):
@@ -234,7 +229,6 @@ class PropertiesData(Properties):
         raise AttributeError("{!r} object has no attribute 'shape'".format(
             self.__class__.__name__))
 
-
     @property
     def size(self):
         '''The number of elements in the data array.
@@ -278,7 +272,6 @@ class PropertiesData(Properties):
 
         raise AttributeError("{!r} object has no attribute 'size'".format(
             self.__class__.__name__))
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -346,7 +339,6 @@ class PropertiesData(Properties):
             print(string)
         else:
             return string
-
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -508,10 +500,9 @@ class PropertiesData(Properties):
                 if verbose:
                     print("{0}: Different data".format(self.__class__.__name__))
                 return False
-        #--- End: if
+        # --- End: if
 
         return True
-
 
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
@@ -566,7 +557,6 @@ class PropertiesData(Properties):
         if inplace:
             v = None            
         return v
-
     
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
@@ -628,7 +618,6 @@ class PropertiesData(Properties):
             v = None
         return v
 
-
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
@@ -681,7 +670,6 @@ class PropertiesData(Properties):
             v = None
 
         return v
-
     
     def uncompress(self, inplace=False):
         '''Uncompress the construct.
@@ -742,5 +730,4 @@ class PropertiesData(Properties):
             f = None
         return f    
 
-
-#--- End: class
+# --- End: class

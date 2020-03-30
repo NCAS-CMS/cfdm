@@ -50,11 +50,10 @@ class ConstructAccess(object):
                     key_to_name[key] = '{0}{{{1}}}'.format(
                         name,
                         re.findall('\d+$', key)[0])
-        #--- End: for
+        # --- End: for
         
         return key_to_name
 
-    
     def _unique_domain_axis_identities(self):
         '''Return unique domain axis construct names.
 
@@ -85,10 +84,9 @@ class ConstructAccess(object):
                     key_to_name[key] = '{0}{{{1}}}({2})'.format(name,
                                                                 re.findall('\d+$', key)[0],
                                                                 size)
-        #--- End: for
+        # --- End: for
         
         return key_to_name
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -121,7 +119,6 @@ class ConstructAccess(object):
         '''
         return self.constructs.filter_by_type('coordinate_reference')
 
-
     @property
     def domain_axes(self):
         '''Return domain axis constructs.
@@ -151,7 +148,6 @@ class ConstructAccess(object):
         '''
         return self.constructs.filter_by_type('domain_axis')
 
-
     @property
     def auxiliary_coordinates(self):
         '''Return auxiliary coordinate constructs.
@@ -180,7 +176,6 @@ class ConstructAccess(object):
 
         '''
         return self.constructs.filter_by_type('auxiliary_coordinate')
-
 
     @property
     def dimension_coordinates(self):
@@ -212,7 +207,6 @@ class ConstructAccess(object):
         '''
         return self.constructs.filter_by_type('dimension_coordinate')
 
-    
     @property
     def coordinates(self):
         '''Return dimension and auxiliary coordinate constructs.
@@ -249,7 +243,6 @@ class ConstructAccess(object):
         out._update(self.auxiliary_coordinates)        
         return out
 
-
     @property
     def domain_ancillaries(self):
         '''Return domain ancillary constructs.
@@ -278,7 +271,6 @@ class ConstructAccess(object):
         '''
         return self.constructs.filter_by_type('domain_ancillary')
 
-
     @property
     def cell_measures(self):
         '''Return cell measure constructs.
@@ -304,7 +296,6 @@ class ConstructAccess(object):
 
         '''
         return self.constructs.filter_by_type('cell_measure')
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -400,7 +391,6 @@ class ConstructAccess(object):
         return self._default(default,
                              "Can't return {0} constructs".format(len(c)))
 
-
     def construct_key(self, identity, default=ValueError()):
         '''Select the key of a metadata construct by its identity.
 
@@ -495,7 +485,6 @@ class ConstructAccess(object):
             default,
             "Can't return the keys of {0} constructs".format(len(c)))
 
-
     def domain_axis_key(self, identity, default=ValueError()):
         '''Return the key of the domain axis construct that is spanned by 1-d
     coordinate constructs.
@@ -570,7 +559,7 @@ class ConstructAccess(object):
             key = axes[0]
             if domain_axes.get(key):
                 keys.append(key)
-        #--- End: for
+        # --- End: for
         
         keys = set(keys)
             
@@ -587,6 +576,5 @@ class ConstructAccess(object):
                     identity, keys))
 
         return keys.pop()
-
         
-#--- End: class
+# --- End: class

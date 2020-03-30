@@ -50,7 +50,7 @@ class CellMethod(mixin.Container,
             q = self.get_qualifier(portion, None)
             if q is not None:
                 string.extend((portion, q))
-        #--- End: for
+        # --- End: for
 
         interval = self.get_qualifier('interval', ())
         comment  = self.get_qualifier('comment', None)
@@ -178,7 +178,7 @@ class CellMethod(mixin.Container,
 #                axis = cell_methods.pop(0)[:-1]
 #
 #                axes.append(axis)
-#            #--- End: while
+#            # --- End: while
 #            cm.set_axes(axes)
 #
 #            if not cell_methods:
@@ -199,7 +199,7 @@ class CellMethod(mixin.Container,
 #                cm.set_property(attr, cell_methods.pop(0))
 #                if not cell_methods:
 #                    break
-#            #--- End: while
+#            # --- End: while
 #            if not cell_methods: 
 #                out.append(cm)
 #                break
@@ -233,7 +233,7 @@ class CellMethod(mixin.Container,
 #                                return [out]
 #                            else:
 #                                raise ValueError("{}: {}".format(message, string))
-#                        #---End: try
+#                        # ---End: try
 #
 #                        try:
 #                            interval.append(cm._Data(parsed_interval, units=units))
@@ -246,10 +246,10 @@ class CellMethod(mixin.Container,
 #                                return [cm]
 #                            else:
 #                                raise ValueError("{}: {}".format(message, string))
-#                        #---End: try
+#                        # ---End: try
 #
 #                        continue
-#                    #--- End: if
+#                    # --- End: if
 #
 #                    if term == 'comment':
 #                        comment = []
@@ -259,15 +259,15 @@ class CellMethod(mixin.Container,
 #                            if cell_methods[0].endswith(':'):
 #                                break
 #                            comment.append(cell_methods.pop(0))
-#                        #--- End: while
+#                        # --- End: while
 #                        cm.set_property('comment', ' '.join(comment))
-#                    #--- End: if
+#                    # --- End: if
 #
-#                #--- End: while 
+#                # --- End: while 
 #
 #                if cell_methods[0].endswith(')'):
 #                    cell_methods.pop(0)
-#            #--- End: if
+#            # --- End: if
 #
 #            n_intervals = len(interval)          
 #            if n_intervals > 1 and n_intervals != len(axes):
@@ -279,13 +279,13 @@ class CellMethod(mixin.Container,
 #                    return [out]
 #                else:
 #                    raise ValueError("{}: {}".format(message, string))
-#            #---End: if
+#            # ---End: if
 #
 #            if interval:
 #                cm.set_property('interval', tuple(interval))
 #
 #            out.append(cm)
-#        #--- End: while
+#        # --- End: while
 #
 #        return out
 
@@ -409,7 +409,7 @@ class CellMethod(mixin.Container,
                     print("{0}: Different {1} qualifiers: {2!r}, {3!r}".format(
                         self.__class__.__name__, prop, x, y))
                 return False
-        #--- End: for
+        # --- End: for
 
         if 'interval' in ignore_qualifiers:
             return True
@@ -423,7 +423,7 @@ class CellMethod(mixin.Container,
                         "{0}: Different interval qualifiers: {1!r} != {2!r}".format(
                             self.__class__.__name__, intervals0, intervals1))
                 return False
-            #--- End: if
+            # --- End: if
             
             if len(intervals0) != len(intervals1):
                 if verbose:
@@ -431,7 +431,7 @@ class CellMethod(mixin.Container,
                         "{0}: Different numbers of interval qualifiers: {1!r} != {2!r}".format(
                             self.__class__.__name__, intervals0, intervals1))
                     return False
-            #--- End: if
+            # --- End: if
 
             for data0, data1 in zip(intervals0, intervals1):
                 if not self._equals(data0, data1,
@@ -450,7 +450,7 @@ class CellMethod(mixin.Container,
                 print("{}: Different intervals: {!r} != {!r}".format(
                     self.__class__.__name__, intervals0, intervals1))
             return False
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Do NOT check the axes
@@ -494,7 +494,7 @@ class CellMethod(mixin.Container,
 #                print("{0}: Different types: {0} != {1}".format(
 #                    self.__class__.__name__, other.__class__.__name__))
 #            return False
-#        #--- End: if
+#        # --- End: if
 #
 #        axes0 = self.axes
 #        axes1 = other.axes
@@ -504,7 +504,7 @@ class CellMethod(mixin.Container,
 #                print("{}: Nonequivalent axes: {!r}, {!r}".format(
 #                    self.__class__.__name__, axes0, axes1))
 #            return False
-#        #--- End: if
+#        # --- End: if
 #
 #        argsort = [axes1.index(axis0) for axis0 in axes0]
 #        other1 = other.sorted(argsort=argsort)
@@ -515,7 +515,7 @@ class CellMethod(mixin.Container,
 #                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
 #                    self.__class__.__name__, self, other))
 #            return False
-#        #--- End: if
+#        # --- End: if
 #
 #        self_interval  = self1.get_property('interval', ())
 #        other_interval = other1.get_property('interval', ())
@@ -533,7 +533,7 @@ class CellMethod(mixin.Container,
 #"{0}: Different numbers of intervals: {1!r} != {2!r}".format(
 #    self.__class__.__name__, self_interval, other_interval))
 #                return False
-#        #--- End: if
+#        # --- End: if
 #
 ##        intervals0 = self1.interval
 #        if self_interval:
@@ -544,7 +544,7 @@ class CellMethod(mixin.Container,
 #"{0}: Different interval data: {1!r} != {2!r}".format(
 #    self.__class__.__name__, self_interval, other_interval))
 #                    return False
-#        #--- End: if
+#        # --- End: if
 #
 #        # Still here? Then they are equivalent
 #        return True
@@ -702,5 +702,4 @@ class CellMethod(mixin.Container,
 
         return new
 
-
-#--- End: class
+# --- End: class

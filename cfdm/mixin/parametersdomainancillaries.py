@@ -10,7 +10,6 @@ class ParametersDomainAncillaries(Parameters):
     .. versionadded:: 1.7.0
 
     '''
-
     def __bool__(self):
         '''Called by the `bool` built-in function.
 
@@ -21,7 +20,6 @@ class ParametersDomainAncillaries(Parameters):
         '''
         return (super().__bool__() or bool(self.domain_ancillaries()))
 
-        
     def __nonzero__(self):
         '''Called by the `bool` built-in function.
 
@@ -31,7 +29,6 @@ class ParametersDomainAncillaries(Parameters):
 
         '''
         return self.__bool__()
-
         
     def __str__(self):
         '''Called by the `str` built-in function.
@@ -44,7 +41,6 @@ class ParametersDomainAncillaries(Parameters):
         out.append('Ancillaries: {0}'.format(', '.join(sorted(self.domain_ancillaries()))))
             
         return '; '.join(out)
-
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -141,11 +137,10 @@ class ParametersDomainAncillaries(Parameters):
                         self.__class__.__name__, term, 
                         value0, value1))
                 return False
-        #--- End: for
+        # --- End: for
      
         # Still here? Then the two instances are as equal as can be
         # ascertained in the absence of domains.
         return True
 
-
-#--- End: class
+# --- End: class

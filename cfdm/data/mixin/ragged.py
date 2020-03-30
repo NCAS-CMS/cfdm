@@ -35,8 +35,7 @@ class RaggedContiguous(object):
                                  "{!r} has no count variable".format(
                                      self.__class__.__name__))
 
-
-#--- End: class
+# --- End: class
 
 
 class RaggedIndexed(object):
@@ -70,6 +69,5 @@ class RaggedIndexed(object):
             return self._default(default,
                                  "{!r} has no index variable".format(
                                      self.__class__.__name__))
-
     
-#--- End: class
+# --- End: class

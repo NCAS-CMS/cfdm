@@ -95,7 +95,7 @@ class Constructs(core.Constructs):
                     first = False
                 else:
                     out.append('{!r}: {!r},'.format(key, value))
-        #--- End: for
+        # --- End: for
         
         if first:
             out[0] = out[0] + '\n{}'
@@ -168,7 +168,7 @@ class Constructs(core.Constructs):
                  if construct_type not in self._ignore}
 
             out[axes] = d
-        #--- End: for
+        # --- End: for
 
         for cid, construct in self.filter_by_data().items():
             axes = data_axes.get(cid)
@@ -243,7 +243,7 @@ class Constructs(core.Constructs):
                             print("{0}: Different cell methods (mismatched axes):\n  {1}\n  {2}".format(
                                 cm0.__class__.__name__, cell_methods0, cell_methods1))
                         return False
-            #--- End: for
+            # --- End: for
 
             if len(cm1.get_axes(())) != len(indices):
                 if verbose:
@@ -261,7 +261,7 @@ class Constructs(core.Constructs):
                     print("Verbose: Different cell methods: {0!r}, {1!r}".format(
                         cell_methods0, cell_methods1))
                 return False                
-        #--- End: for
+        # --- End: for
 
         return True
 
@@ -329,15 +329,15 @@ class Constructs(core.Constructs):
                     found_match = True
                     del refs1[key1]                                       
                     break
-                #--- End: for
+                # --- End: for
     
                 if not found_match:
                     if verbose:
                         print("{0}: No match for {1!r})".format(
                             self.__class__.__name__, ref0))
                     return False
-            #--- End: for
-        #--- End: if
+            # --- End: for
+        # --- End: if
 
         return True
 
@@ -475,7 +475,7 @@ class Constructs(core.Constructs):
 #            key = axes[0]
 #            if domain_axes.get(key):
 #                keys.append(key)
-#        #--- End: for
+#        # --- End: for
 #        
 #        keys = set(keys)
 #            
@@ -550,7 +550,7 @@ class Constructs(core.Constructs):
                     identity = ''
                 
                 break
-        #--- End: for
+        # --- End: for
         if identity:
             return identity
 
@@ -561,7 +561,7 @@ class Constructs(core.Constructs):
                 identity = aux.identity()
                 if not identity.startswith('ncvar%'):
                     identities.append(identity)
-        #--- End: for
+        # --- End: for
 
         if len(identities) == 1:
             return identities[0]
@@ -573,14 +573,14 @@ class Constructs(core.Constructs):
                     axis.append(i)
                 elif i.startswith('cf_role='):
                     cf_role.append(i)
-            #--- End: for
+            # --- End: for
             
             if len(cf_role) == 1:
                 return cf_role[0]
             
             if len(axis) == 1:
                 return axis[0]
-        #--- End: if
+        # --- End: if
 
         # Try to get the identity from an netCDF dimension name
         ncdim = domain_axes[key].nc_get_dimension(None)
@@ -755,13 +755,13 @@ class Constructs(core.Constructs):
                                 key1_to_key0[key1] = key0
                                 matched_construct = True
                                 break
-                        #--- End: for
+                        # --- End: for
 
                         if not matched_construct:
                             log.append("{0}: Can't match {1!r}".format(
                                 self.__class__.__name__, item0))
                             break
-                    #--- End: for
+                    # --- End: for
 
                     if role_constructs1:
                         # At least one construct in other is not equal
@@ -772,13 +772,13 @@ class Constructs(core.Constructs):
                     # that spanning these axes match
 #                    del constructs1[construct_type]
                     constructs1.pop(construct_type, None)
-                #--- End: for
+                # --- End: for
 
                 matched_all_constructs_with_these_axes = not constructs1
                 if matched_all_constructs_with_these_axes:
                     del axes_to_constructs1[axes1]
                     break
-            #--- End: for
+            # --- End: for
 
             if not matched_all_constructs_with_these_axes:
                 if verbose:
@@ -792,7 +792,7 @@ class Constructs(core.Constructs):
             else:
                 # Map item axes in the two instances
                 axes0_to_axes1[axes0] = axes1
-        #--- End: for
+        # --- End: for
 
         for axes0, axes1 in axes0_to_axes1.items():
             for axis0, axis1 in zip(axes0, axes1):
@@ -819,7 +819,7 @@ class Constructs(core.Constructs):
 
                 axis0_to_axis1[axis0] = axis1
                 axis1_to_axis0[axis1] = axis0
-        #--- End: for
+        # --- End: for
 
         if _return_axis_map:
             return axis0_to_axis1
@@ -955,7 +955,7 @@ class Constructs(core.Constructs):
             for cid in tuple(out):
                 if cid not in data_contructs:
                     out._pop(cid)
-            #--- End: for
+            # --- End: for
             
             return out
         
@@ -989,12 +989,12 @@ class Constructs(core.Constructs):
                             break
                     elif not ok:
                         break
-            #--- End: if
+            # --- End: if
 
             if not ok:
                 # This construct ..
                 out._pop(cid)
-        #--- End: for
+        # --- End: for
         
         return out
 
@@ -1036,7 +1036,7 @@ class Constructs(core.Constructs):
             if out._construct_type[cid] not in self._array_constructs:
                 # This construct can not have data
                 out._pop(cid)
-        #--- End: for
+        # --- End: for
                 
         return out
 
@@ -1128,16 +1128,16 @@ class Constructs(core.Constructs):
                     ok = self._matching_values(value0, construct, value1)
                     if ok:
                         break
-                #--- End: for
+                # --- End: for
 
                 if ok:
                     break
-            #--- End: for
+            # --- End: for
 
             if not ok:
                 # This construct does not match any of the identities
                 out._pop(cid)
-        #--- End: for
+        # --- End: for
 
         return out
 
@@ -1193,7 +1193,7 @@ class Constructs(core.Constructs):
         for cid in tuple(out):
             if cid not in keys:
                 out._pop(cid)
-        #--- End: for
+        # --- End: for
 
         return out
 
@@ -1290,12 +1290,12 @@ class Constructs(core.Constructs):
                 ok = self._matching_values(value0, construct, value1)
                 if ok:
                     break
-            #--- End: for
+            # --- End: for
             
             if not ok:
                 # This construct does not match any of the measures
                 out._pop(cid)
-        #--- End: for
+        # --- End: for
         
         return out
 
@@ -1392,12 +1392,12 @@ class Constructs(core.Constructs):
                 ok = self._matching_values(value0, construct, value1)
                 if ok:
                     break
-            #--- End: for
+            # --- End: for
             
             if not ok:
                 # This construct does not match any of the methods
                 out._pop(cid)
-        #--- End: for
+        # --- End: for
         
         return out
 
@@ -1476,7 +1476,7 @@ class Constructs(core.Constructs):
             if not ok:
                 # This construct does not have the right number of axes
                 out._pop(key)
-        #--- End: for
+        # --- End: for
         
         return out
 
@@ -1553,13 +1553,13 @@ class Constructs(core.Constructs):
                 ok = self._matching_values(value0, construct, value1)
                 if ok:
                     break
-            #--- End: for
+            # --- End: for
             
             if not ok:
                 # This construct does not match any of the netCDF
                 # dimension names
                 out._pop(cid)
-        #--- End: for
+        # --- End: for
         
         return out
 
@@ -1633,13 +1633,13 @@ class Constructs(core.Constructs):
                 ok = self._matching_values(value0, construct, value1)
                 if ok:
                     break
-            #--- End: for
+            # --- End: for
 
             if not ok:
                 # This construct does not match any of the netCDF
                 # variable names
                 out._pop(cid)
-        #--- End: for
+        # --- End: for
         
         return out
 
@@ -1742,7 +1742,7 @@ class Constructs(core.Constructs):
                 _or = True
             elif x != 'and':
                 raise ValueError("Positional argument, if provided, must 'or' or 'and'")
-        #--- End: if
+        # --- End: if
 
         for cid, construct in tuple(out.items()):
             try:
@@ -1767,13 +1767,13 @@ class Constructs(core.Constructs):
                         break
                 elif not ok:
                     break
-            #--- End: for
+            # --- End: for
             
             if not ok:
                 # This construct does not match any of the sets of
                 # properties
                 out._pop(cid)
-        #--- End: for
+        # --- End: for
 
         return out
 
@@ -1842,12 +1842,12 @@ class Constructs(core.Constructs):
                 ok = self._matching_values(value1, construct, value0)
                 if ok:
                     break
-            #--- End: for
+            # --- End: for
             
             if not ok:
                 # This construct does not match any of the sizes
                 out._pop(cid)
-        #--- End: for
+        # --- End: for
         
         return out
 
@@ -2128,7 +2128,7 @@ class Constructs(core.Constructs):
                     out = self.unfilter(depth=depth + d - 1)
 
                 return out
-        #--- End: if
+        # --- End: if
         
         for key in self:
             out._pop(key)
@@ -2266,9 +2266,8 @@ class Constructs(core.Constructs):
                     out = prefiltered
                 else:
                     break
-        #--- End: if
+        # --- End: if
         
         return out.shallow_copy()
 
-    
-#--- End: class
+# --- End: class

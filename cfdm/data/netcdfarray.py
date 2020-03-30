@@ -78,7 +78,6 @@ class NetCDFArray(abstract.Array):
 
 #        if dtype is not None:
         self._set_component('dtype', dtype)
-
             
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
@@ -116,7 +115,7 @@ class NetCDFArray(abstract.Array):
                 if value._varid == varid:
                     array = value[indices]
                     break
-        #--- End: if
+        # --- End: if
 
         string_type = isinstance(array, str)
         if string_type:
@@ -184,7 +183,6 @@ class NetCDFArray(abstract.Array):
 
         return array
 
-
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
 
@@ -192,7 +190,6 @@ class NetCDFArray(abstract.Array):
         return "<{0}{1}: {2}>".format(
             self.__class__.__name__, self.shape, str(self))
 
-     
     def __str__(self):
         '''x.__str__() <==> str(x)
 
@@ -205,7 +202,6 @@ class NetCDFArray(abstract.Array):
 
         return "file={0} {1}".format(self.get_filename(), name)
 
- 
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -223,7 +219,6 @@ class NetCDFArray(abstract.Array):
         '''
         return self._get_component('dtype')
 
-    
     @property
     def ndim(self):
         '''Number of array dimensions
@@ -253,7 +248,6 @@ class NetCDFArray(abstract.Array):
         '''
         return self._get_component('ndim')
 
-    
     @property
     def shape(self):
         '''Tuple of array dimension sizes.
@@ -283,7 +277,6 @@ class NetCDFArray(abstract.Array):
         '''
         return self._get_component('shape')
 
-    
     @property
     def size(self):        
         '''Number of elements in the array.
@@ -313,7 +306,6 @@ class NetCDFArray(abstract.Array):
 
         '''
         return self._get_component('size')
-
     
     def get_filename(self):
         '''The name of the netCDF file containing the array.
@@ -326,7 +318,6 @@ class NetCDFArray(abstract.Array):
         '''
         return self._get_component('filename')
 
-    
     def get_ncvar(self):
         '''The name of the netCDF variable containing the array.
 
@@ -344,7 +335,6 @@ class NetCDFArray(abstract.Array):
 
         '''
         return self._get_component('ncvar')
-
     
     def get_varid(self):
         '''The UNIDATA netCDF interface ID of the variable containing the
@@ -365,7 +355,6 @@ class NetCDFArray(abstract.Array):
         '''
         return self._get_component('varid')
 
-    
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -388,7 +377,6 @@ class NetCDFArray(abstract.Array):
         netcdf.close()    
         self._set_component('netcdf', None, copy=False)
 
-
     @property
     def array(self):
         '''Return an independent numpy array containing the data.
@@ -406,7 +394,6 @@ class NetCDFArray(abstract.Array):
 
         '''
         return self[...]
-
     
     def open(self):
         '''Return an open `netCDF4.Dataset` for the file containing the array.
@@ -421,7 +408,7 @@ class NetCDFArray(abstract.Array):
     >>> variable = netcdf.variables[a.get_ncvar()]
     >>> variable.getncattr('standard_name')
     'eastward_wind'
-    
+
         '''
         if self._get_component('netcdf') is None:
             try:        
@@ -433,12 +420,10 @@ class NetCDFArray(abstract.Array):
             
         return netcdf
 
-
     def to_memory(self):
         '''TODO
 
         '''
         return NumpyArray(self[...])
-
     
-#--- End: class
+# --- End: class

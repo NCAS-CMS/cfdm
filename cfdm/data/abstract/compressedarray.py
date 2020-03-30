@@ -54,7 +54,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
 
         self._set_compressed_Array(compressed_array, copy=False)
 
-
     @abc.abstractmethod
     def __getitem__(self, indices):
         '''Return an uncompressed subspace as an independent numpy array.
@@ -82,7 +81,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
 
         '''
         raise NotImplementedError() # pragma: no cover
-
     
     def _get_compressed_Array(self, default=ValueError()):
         '''TODO
@@ -104,7 +102,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
 
         '''
         return self._get_component('compressed_Array', default)
-
 
     def _set_compressed_Array(self, array, copy=True):
         '''Set the compressed array.
@@ -130,7 +127,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
 
         self._set_component('compressed_Array', array, copy=False)
 
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -152,7 +148,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
         '''
         return self[...]
 
-
     @property
     def dtype(self):
         '''Data-type of the data elements.
@@ -166,7 +161,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
 
         '''
         return self._get_compressed_Array().dtype
-
 
     @property
     def ndim(self):
@@ -198,7 +192,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
         '''
         return self._get_component('ndim')
 
-
     @property
     def shape(self):
         '''Shape of the uncompressed data.
@@ -228,7 +221,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
 
         '''
         return self._get_component('shape')
-
 
     @property
     def size(self):
@@ -260,7 +252,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
         '''
         return self._get_component('size')
 
-
     @property
     def compressed_array(self):
         '''Return an independent numpy array containing the compressed data.
@@ -283,7 +274,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
             raise ValueError("There is no underlying compressed array")
         
         return ca.array
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -310,7 +300,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
         compressed_ndim = self._get_compressed_Array().ndim
         
         return list(range(compressed_dimension, self.ndim - (compressed_ndim - compressed_dimension - 1)))
-
 
     def get_compressed_dimension(self, *default):
         '''Return the position of the compressed dimension in the compressed
@@ -341,7 +330,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
         '''
         return self._get_component('compressed_dimension', *default)
 
-
     @abc.abstractmethod
     def to_memory(self):
         '''TODO
@@ -354,7 +342,6 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
         '''
         self._set_compressed_Array(self._get_compressed_Array().to_memory())
         return self
-
     
     def source(self, default=ValueError()):
         '''TODO Return the underlying array object.
@@ -378,5 +365,4 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
         '''
         return self._get_compressed_Array(default=default)
 
-        
-#--- End: class
+# --- End: class
