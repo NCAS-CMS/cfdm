@@ -259,7 +259,7 @@ html_theme_options = {
     'github_user'     : 'NCAS-CMS',
     'pre_bg'          : '#ecf2f9',
     'code_bg'         : '#ecf2f9',
-    'description'     : 'A complete implementation of the CF data model',
+    'description'     : 'A complete Python implementation of the CF data model',
 }
 #    'table_border': '#FFFFFF', #'#000000',
 #    'sidebartextcolor': '#777777',
