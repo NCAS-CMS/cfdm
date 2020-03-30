@@ -59,7 +59,8 @@ class Field(mixin.NetCDFVariable,
 
     '''
     def __new__(cls, *args, **kwargs):
-        '''
+        '''This must be overridden in subclasses.
+
         '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs

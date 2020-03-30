@@ -31,7 +31,6 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
         for key, value in kwargs.items():
             self._set_component(key, value, copy=False)
 
-
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` function.
 
@@ -50,7 +49,6 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
 
         '''
         return self.copy()
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -71,7 +69,6 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
     
         '''
         raise NotImplementedError() # pragma: no cover
-
 
     @property
     @abc.abstractmethod
@@ -106,7 +103,6 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
         '''
         raise NotImplementedError() # pragma: no cover
 
-    
     @property
     @abc.abstractmethod
     def shape(self):
@@ -140,7 +136,6 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
         '''
         raise NotImplementedError() # pragma: no cover
 
-    
     @property
     @abc.abstractmethod
     def size(self):
@@ -173,8 +168,7 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
 
         '''
         raise NotImplementedError() # pragma: no cover
-
-
+    
     @property
     @abc.abstractmethod
     def array(self):
@@ -195,7 +189,6 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
 
         '''
         raise NotImplementedError() # pragma: no cover
-
     
     # ----------------------------------------------------------------
     # Methods
@@ -225,5 +218,4 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
         new.__dict__ = self.__dict__.copy()
         return new
 
-
-#--- End: class
+# --- End: class

@@ -47,11 +47,10 @@ class DomainAxis(abstract.Container):
                 size = source.get_size(None)
             except AttributeError:
                 size = None
-        #--- End: if
+        # --- End: if
         
         if size is not None:
             self.set_size(size)        
-
 
     @property
     def construct_type(self):
@@ -90,7 +89,6 @@ class DomainAxis(abstract.Container):
 #
 #        '''
 #        return type(self)(source=self, copy=True)
-
 
     def del_size(self, default=ValueError()):
         '''Remove the size.
@@ -133,7 +131,6 @@ class DomainAxis(abstract.Container):
             return self._default(default,
               "{!r} has no size".format(self.__class__.__name__))
 
-
     def has_size(self):
         '''Whether the size has been set.
 
@@ -164,7 +161,6 @@ class DomainAxis(abstract.Container):
 
         '''
         return self._has_component('size')
-
 
     def get_size(self, default=ValueError()):
         '''Return the size.
@@ -207,7 +203,6 @@ class DomainAxis(abstract.Container):
             return self._default(default,
               "{!r} has no size".format(self.__class__.__name__))
 
-
     def set_size(self, size, copy=True):
         '''Set the size.
     
@@ -245,5 +240,4 @@ class DomainAxis(abstract.Container):
         '''
         self._set_component('size', size, copy=copy)
 
-
-#--- End: class
+# --- End: class

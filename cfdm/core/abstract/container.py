@@ -38,8 +38,7 @@ class Container(with_metaclass(abc.ABCMeta, object)):
             custom = {}
 
         self._set_component('custom', custom, copy=False)
-
-        
+    
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` function.
 
@@ -54,7 +53,6 @@ class Container(with_metaclass(abc.ABCMeta, object)):
 
         '''
         return self.copy()
-
 
     # ----------------------------------------------------------------
     # Private methods
@@ -90,7 +88,6 @@ class Container(with_metaclass(abc.ABCMeta, object)):
         
         return default
 
-    
     def _del_component(self, component, default=ValueError()):
         '''Remove a component.
 
@@ -131,7 +128,6 @@ class Container(with_metaclass(abc.ABCMeta, object)):
                                   "{!r} has no {!r} component".format(
                                       self.__class__.__name__, component))
 
-
     @property
     def _custom(self):
         '''Storage for additional attributes.
@@ -157,7 +153,6 @@ class Container(with_metaclass(abc.ABCMeta, object)):
     
     '''
         return self._get_component('custom')
-
     
     def _get_component(self, component, default=ValueError()):
         '''Return a component
@@ -199,7 +194,6 @@ class Container(with_metaclass(abc.ABCMeta, object)):
                                  "{!r} has no {!r} component".format(
                                      self.__class__.__name__, component))
 
-
     def _has_component(self, component):
         '''Whether a component has been set.
 
@@ -231,7 +225,6 @@ class Container(with_metaclass(abc.ABCMeta, object)):
 
         '''
         return component in self._components
-
 
     def _set_component(self, component, value, copy=True):
         '''Set a component.
@@ -270,7 +263,6 @@ class Container(with_metaclass(abc.ABCMeta, object)):
             
         self._components[component] = value
 
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -291,6 +283,5 @@ class Container(with_metaclass(abc.ABCMeta, object)):
 
         '''
         return type(self)(source=self, copy=True)
-
     
-#--- End: class
+# --- End: class

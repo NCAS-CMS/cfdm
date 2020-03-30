@@ -51,10 +51,12 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     }
     
     def __new__(cls, *args, **kwargs):
+        '''This must be overridden in subclasses.
+
+        '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         return instance
-
 
     def __init__(self, properties={}, source=None, copy=True,
                  _use_data=True):
@@ -119,7 +121,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             self.set_data(data, data_axes, copy=copy)
         elif data_axes is not None:
             self.set_data_axes(data_axes)
-
     
     # ----------------------------------------------------------------
     # Attributes
@@ -142,7 +143,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         '''
         return 'field'
-
 
     @property
     def constructs(self):
@@ -170,7 +170,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         '''
         return self._get_component('constructs')
 
-
     @property
     def domain(self):
         '''Return the domain.
@@ -195,7 +194,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
  
         '''
         return self.get_domain()
-
     
     # ----------------------------------------------------------------
     # Methods
@@ -251,7 +249,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             return self._default(default,
               "{!r} has no data axes".format(self.__class__.__name__))
 
-
     def get_domain(self):
         '''Return the domain.
 
@@ -270,7 +267,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         '''
         return self._Domain.fromconstructs(self.constructs)
-
 
     def get_data_axes(self, key=None, default=ValueError()):
         '''Return the keys of the domain axis constructs spanned by the data
@@ -323,7 +319,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             return self._default(default,
               "{!r} has no data axes".format(self.__class__.__name__))
 
-
     def has_data_axes(self, key=None):
         '''Whether the domain axis constructs spanned by the data of the field
     or of a metadata construct have been set.
@@ -361,7 +356,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             return False
 
         return True
-
     
     def del_construct(self, key, default=ValueError()):
         '''Remove a metadata construct.
@@ -412,7 +406,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
                     key))
 
         return super().del_construct(key, default=default)
-
 
     def set_data(self, data, axes=None, copy=True):
         '''Set the data of the field construct.
@@ -476,7 +469,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         super().set_data(data, copy=copy)
 
-
     def set_data_axes(self, axes, key=None, _shape=None):
         '''Set the domain axis constructs spanned by the data of the field or
     of a metadata construct.
@@ -535,7 +527,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 _shape = data.shape
-        #--- End: if
+        # --- End: if
             
         if _shape is not None:
             domain_axes = self.constructs.filter_by_type('domain_axis')
@@ -552,12 +544,11 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
                 raise ValueError(
                     "Can't set field construct data axes: Data array shape of {!r} does not match the shape of the given domain axes {}: {}".format(
                         _shape, tuple(axes), tuple(axes_shape)))
-        #--- End: if
+        # --- End: if
         
         axes = tuple(axes)
         self._set_component('data_axes', axes, copy=False)
 
         self.constructs._field_data_axes = axes
 
-
-#--- End: class
+# --- End: class

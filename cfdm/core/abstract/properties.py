@@ -45,13 +45,12 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
                 properties = source.properties()
             except AttributeError:
                 properties = None
-        #--- End: if
+        # --- End: if
 
         self._set_component('properties', {}, copy=False)
         
         if properties is not None:
             self.set_properties(properties, copy=copy)
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -93,7 +92,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         out = self._get_component('properties')
         self._set_component('properties', {})
         return out.copy()
-
     
     def del_property(self, prop, default=ValueError()):
         '''Remove a property.
@@ -144,7 +142,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
                                  "{!r} has no {!r} property".format(
                                  self.__class__.__name__, prop))
 
-
     def get_property(self, prop, default=ValueError()):
         '''Return a property.
 
@@ -194,7 +191,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
                                  "{!r} has no {!r} property".format(
                                      self.__class__.__name__, prop))
 
-
     def has_property(self, prop):
         '''Whether a property has been set.
 
@@ -235,7 +231,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         '''
         return prop in self._get_component('properties')
 
-
     def properties(self):
         '''Return all properties.
 
@@ -272,7 +267,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
 
         '''
         return self._get_component('properties').copy()
-
 
     def set_properties(self, properties, copy=True):
         '''Set properties.
@@ -328,7 +322,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         
         self._get_component('properties').update(properties)
 
-
     def set_property(self, prop, value, copy=True):
         '''Set a property.
 
@@ -374,5 +367,4 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
             
         self._get_component('properties')[prop] = value
 
-
-#--- End: class
+# --- End: class

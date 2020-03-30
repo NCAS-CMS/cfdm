@@ -32,10 +32,12 @@ class Domain(mixin.ConstructAccess, abstract.Container):
     }
     
     def __new__(cls, *args, **kwargs):
+        '''This must be overridden in subclasses.
+
+        '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         return instance
-
     
     def __init__(self, source=None, copy=True, _use_data=True):
         '''**Initialization**
@@ -74,7 +76,6 @@ class Domain(mixin.ConstructAccess, abstract.Container):
             constructs = constructs.copy(data=_use_data)
             
         self._set_component('constructs', constructs, copy=False)
-
         
     # ----------------------------------------------------------------
     # Attributes
@@ -104,7 +105,6 @@ class Domain(mixin.ConstructAccess, abstract.Container):
         '''
         return self._get_component('constructs')
 
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -133,7 +133,6 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
         '''
         return type(self)(source=self, copy=True, _use_data=data)
-
 
     @classmethod
     def fromconstructs(cls, constructs, copy=False):
@@ -175,6 +174,5 @@ class Domain(mixin.ConstructAccess, abstract.Container):
         domain.constructs._field_data_axes = None
         
         return domain
-
             
-#--- End: class
+# --- End: class

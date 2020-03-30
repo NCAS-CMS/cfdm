@@ -51,5 +51,4 @@ class DimensionCoordinate(abstract.Coordinate):
         '''
         return 'dimension_coordinate'
 
-
-#--- End: class
+# --- End: class

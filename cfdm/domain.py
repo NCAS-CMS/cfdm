@@ -26,10 +26,12 @@ class Domain(mixin.ConstructAccess,
 
     '''
     def __new__(cls, *args, **kwargs):
+        '''This must be overridden in subclasses.
+
+        '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         return instance
-
     
     def __repr__(self):
         '''Called by the `repr` built-in function.
@@ -43,7 +45,6 @@ class Domain(mixin.ConstructAccess,
         shape = shape[1:-1]
         
         return '<{0}: {{{1}}}>'.format(self.__class__.__name__, shape)
-
 
     def __str__(self):
         '''Called by the `str` built-in function.
@@ -140,7 +141,6 @@ class Domain(mixin.ConstructAccess,
 #        string.append('')
 
         return '\n'.join(string)
-
                           
     def _dump_axes(self, axis_names, display=True, _level=0):
         '''Return a string containing a description of the domain axes of the
@@ -176,7 +176,6 @@ class Domain(mixin.ConstructAccess,
             print(string)
         else:
             return string
-
     
     def dump(self, display=True, _level=0, _title=None):
         '''A full description of the domain.
@@ -278,7 +277,6 @@ class Domain(mixin.ConstructAccess,
             print(string)
         else:
             return string
-
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,

@@ -54,11 +54,10 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
                     data = source.get_data(None)
                 except AttributeError:
                     data = None
-        #--- End: if
+        # --- End: if
 
         if _use_data and data is not None:
             self.set_data(data, copy=copy)
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -100,7 +99,6 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         '''
         return self.get_data()
 
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -135,7 +133,6 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 
         '''
         return type(self)(source=self, copy=True, _use_data=data)
-
 
     def del_data(self, default=ValueError()):
         '''Remove the data.
@@ -176,7 +173,6 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         data = self.get_data(None)
         self._del_component('data', default=default)
         return data
-
 
     def get_data(self, default=ValueError(), _units=True,
                  _fill_value=True):
@@ -242,7 +238,7 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
                 data.set_calendar(calendar)
             else:
                 data.del_calendar(default=None)
-        #--- End: if
+        # --- End: if
         
         if _fill_value:
             # Copy the fill_value to the data
@@ -251,10 +247,9 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
                 data.set_fill_value(fill_value)
             else:
                 data.del_fill_value(default=None)
-        #--- End: if
+        # --- End: if
         
         return data        
-
 
     def has_bounds(self):
         '''Whether or not there are cell bounds.
@@ -277,7 +272,6 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 
         '''
         return False
-
 
     def has_data(self):
         '''Whether a data has been set.
@@ -310,7 +304,6 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 
         '''     
         return self._has_component('data')
-
 
     def set_data(self, data, copy=True):
         '''Set the data.
@@ -361,5 +354,4 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         
         self._set_component('data', data, copy=False)
 
-
-#--- End: class
+# --- End: class

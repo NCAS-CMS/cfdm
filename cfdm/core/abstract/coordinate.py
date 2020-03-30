@@ -12,4 +12,4 @@ class Coordinate(with_metaclass(abc.ABCMeta, PropertiesDataBounds)):
     .. versionadded:: 1.7.0
 
     '''
-#--- End: class
+# --- End: class

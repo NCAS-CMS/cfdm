@@ -94,7 +94,7 @@ class Data(abstract.Container):
                 fill_value = source.get_fill_value(None)
             except AttributeError:
                 fill_value = None
-        #--- End: if
+        # --- End: if
 
         if units is not None:
             self.set_units(units)
@@ -107,7 +107,6 @@ class Data(abstract.Container):
 
         if _use_array and array is not None:
             self._set_Array(array, copy=copy)
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -146,7 +145,6 @@ class Data(abstract.Container):
 
         return array
 
-
     @property
     def dtype(self):
         '''Data-type of the data elements.
@@ -166,7 +164,6 @@ class Data(abstract.Container):
             datatype = self.array.dtype
             
         return datatype
-
 
     @property
     def ndim(self):
@@ -198,7 +195,6 @@ class Data(abstract.Container):
         '''
         return self._get_Array().ndim
 
-
     @property
     def shape(self):
         '''Tuple of data dimension sizes.
@@ -228,7 +224,6 @@ class Data(abstract.Container):
 
         '''
         return self._get_Array().shape
-
 
     @property
     def size(self):
@@ -260,7 +255,6 @@ class Data(abstract.Container):
         '''
         return self._get_Array().size
 
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -291,7 +285,6 @@ class Data(abstract.Container):
         '''
         return type(self)(source=self, copy=True, _use_array=array)
 
-    
     def _del_Array(self, default=ValueError()):
         '''Delete the underlying array.
 
@@ -305,7 +298,6 @@ class Data(abstract.Container):
 
         '''
         return self._del_component('array', default=default)
-
 
     def del_calendar(self, default=ValueError()):
         '''Delete the calendar.
@@ -394,7 +386,6 @@ class Data(abstract.Container):
                                  "{!r} has no fill value".format(
                                      self.__class__.__name__))
 
-
     def del_units(self, default=ValueError()):
         '''Delete the units.
 
@@ -435,7 +426,6 @@ class Data(abstract.Container):
             return self._default(default,
                                  "{!r} has no units".format(
                                      self.__class__.__name__))
-
 
     def get_calendar(self, default=ValueError()):
         '''Return the calendar.
@@ -479,7 +469,6 @@ class Data(abstract.Container):
                                  "{!r} has no calendar".format(
                                      self.__class__.__name__))
 
-
     def _get_Array(self, default=ValueError()):
         '''Return the array object.
 
@@ -505,7 +494,6 @@ class Data(abstract.Container):
             return self._default(default,
                                  "{!r} has no array".format(
                                      self.__class__.__name__))
-
 
     def get_fill_value(self, default=ValueError()):
         '''Return the missing data value.
@@ -551,7 +539,6 @@ class Data(abstract.Container):
             return self._default(default,
                                  "{!r} has no fill value".format(
                                      self.__class__.__name__))
-
 
     def get_units(self, default=ValueError()):
         '''Return the units.
@@ -746,7 +733,6 @@ class Data(abstract.Container):
             
         self._set_component('array', array, copy=False)
 
-
     def set_fill_value(self, value):
         '''Set the missing data value.
 
@@ -788,7 +774,6 @@ class Data(abstract.Container):
 
         self._set_component('fill_value', value, copy=False)
 
-
     def set_units(self, value):
         '''Set the units.
 
@@ -823,7 +808,6 @@ class Data(abstract.Container):
         '''
         self._set_component('units', value, copy=False)
 
-
     def source(self, default=ValueError()):
         '''Return the underlying array object.
 
@@ -845,7 +829,6 @@ class Data(abstract.Container):
 
         '''
         return  self._get_component('array', default=default)
-
         
-#--- End: class
+# --- End: class
 

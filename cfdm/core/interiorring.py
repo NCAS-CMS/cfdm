@@ -21,4 +21,4 @@ class InteriorRing(abstract.PropertiesData):
     .. versionadded:: 1.8.0
 
     '''
-#--- End: class
+# --- End: class

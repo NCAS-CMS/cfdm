@@ -64,7 +64,7 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
                 domain_ancillaries = source.domain_ancillaries()
             except AttributeError:
                 domain_ancillaries = None
-        #--- End: if
+        # --- End: if
         
         if domain_ancillaries is None:
             domain_ancillaries = {}
@@ -72,10 +72,9 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
             domain_ancillaries = domain_ancillaries.copy()
             for key, value in list(domain_ancillaries.items()):
                 domain_ancillaries[key] = deepcopy(value)
-        #--- End: if
+        # --- End: if
             
         self.set_domain_ancillaries(domain_ancillaries, copy=False)
-
 
     def clear_domain_ancillaries(self):
         '''Remove all domain_ancillaries.
@@ -107,7 +106,6 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
         out = self._get_component('domain_ancillaries')
         self._set_component('domain_ancillaries', {})
         return out.copy()
-
 
     def del_domain_ancillary(self, domain_ancillary,
                              default=ValueError()):
@@ -160,7 +158,6 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
                                  "{!r} has no {!r} domain ancillary".format(
                                      self.__class__.__name__, domain_ancillary))
 
-
     def domain_ancillaries(self):
         '''Return all domain_ancillaries.
 
@@ -189,7 +186,6 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
 
         '''
         return self._get_component('domain_ancillaries').copy()
-
 
     def get_domain_ancillary(self, domain_ancillary,
                              default=ValueError()):
@@ -237,7 +233,6 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
             return self._default(default,
                                  "{!r} has no {!r} domain ancillary".format(
                                      self.__class__.__name__, domain_ancillary))
-
     
     def has_domain_ancillary(self, domain_ancillary):
         '''Whether a domain ancillary has been set.
@@ -279,7 +274,6 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
 
         '''
         return domain_ancillary in self._get_component('domain_ancillaries')
-
     
     def set_domain_ancillaries(self, domain_ancillaries, copy=True):
         '''Set domain_ancillaries.
@@ -327,7 +321,6 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
         
         self._get_component('domain_ancillaries').update(domain_ancillaries)
 
-
     def set_domain_ancillary(self, term, value, copy=True):
         '''Set an domain ancillary-valued term.
 
@@ -372,6 +365,5 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
             value = deepcopy(value)
             
         self._get_component('domain_ancillaries')[term] = value
-
         
-#--- End: class
+# --- End: class

@@ -92,7 +92,7 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
                 interior_ring = source.get_interior_ring(None)
             except AttributeError:
                 interior_ring = None
-        #--- End: if
+        # --- End: if
 
         # Initialise bounds
         if bounds is not None:
@@ -111,7 +111,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
                 interior_ring = interior_ring.copy(data=_use_data)
                 
             self.set_interior_ring(interior_ring, copy=False)
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -150,7 +149,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
         '''
         return self.get_bounds()
 
-
     @property
     def interior_ring(self):
         '''Return the interior ring variable for polygon geometries.
@@ -184,7 +182,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
 
         '''
         return self.get_interior_ring()
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -233,7 +230,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
             return self._default(default,
                            "{!r} has no bounds".format(self.__class__.__name__))
 
-
     def del_geometry(self, default=ValueError()):
         '''TODO
 
@@ -262,7 +258,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
         except ValueError:
             return self._default(default,
                            "{!r} has no geometry type".format(self.__class__.__name__))
-
 
     def get_bounds(self, default=ValueError()):
         '''Return the bounds.
@@ -309,7 +304,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
             return self._default(default,
                            "{!r} has no bounds".format(self.__class__.__name__))
 
-
     def get_geometry(self, default=ValueError()):
         '''Return the geometry type.
 
@@ -338,7 +332,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
         except ValueError:
             return self._default(default,
                     "{!r} has no geometry type".format(self.__class__.__name__))
-
 
     def get_interior_ring(self, default=ValueError()):
         '''Return the interior ring variable for polygon geometries.
@@ -383,7 +376,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
             return self._default(default,
                     "{!r} has no interior ring variable".format(self.__class__.__name__))
 
-
     def has_bounds(self):
         '''Whether or not there are bounds.
             
@@ -418,7 +410,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
         '''
         return self._has_component('bounds')
 
-
     def has_geometry(self):
         '''True if there is a goemetry type. TODO
             
@@ -436,7 +427,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
     
             '''
         return self._has_component('geometry')
-
 
     def has_interior_ring(self):
         '''Whether or not there is an interior ring variable.
@@ -459,7 +449,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
 
         '''
         return self._has_component('interior_ring')
-
 
     def set_bounds(self, bounds, copy=True):
         '''Set the bounds.
@@ -506,7 +495,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
 
         self._set_component('bounds', bounds, copy=False)
 
-
     def set_geometry(self, value, copy=True):
         '''Set the geometry type.
 
@@ -528,7 +516,6 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
     TODO
         '''
         self._set_component('geometry', value, copy=copy)
-
 
     def set_interior_ring(self, interior_ring, copy=True):
         '''Set the interior_ring.
@@ -561,5 +548,4 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
 
         self._set_component('interior_ring', interior_ring, copy=False)
 
-
-#--- End: class
+# --- End: class

@@ -83,11 +83,10 @@ class CellMeasure(abstract.PropertiesData):
                 measure = source.get_measure(None)
             except AttributeError:
                 measure = None
-        #--- End: if
+        # --- End: if
                 
         if measure is not None:
             self.set_measure(measure)
-
     
     @property
     def construct_type(self):
@@ -107,7 +106,6 @@ class CellMeasure(abstract.PropertiesData):
     
         '''
         return 'cell_measure'
-
         
     def del_measure(self, default=ValueError()):
         '''Remove the measure.
@@ -150,7 +148,6 @@ class CellMeasure(abstract.PropertiesData):
             return self._default(default,
               "{!r} has no measure".format(self.__class__.__name__))
 
-
     def has_measure(self):
         '''Whether the measure has been set.
     
@@ -180,7 +177,6 @@ class CellMeasure(abstract.PropertiesData):
     None
         '''
         return self._has_component('measure')
-
 
     def get_measure(self, default=ValueError()):
         '''Return the measure.
@@ -223,7 +219,6 @@ class CellMeasure(abstract.PropertiesData):
             return self._default(default,
               "{!r} has no measure".format(self.__class__.__name__))
 
-
     def set_measure(self, measure, copy=True):
         '''Set the measure.
 
@@ -261,5 +256,4 @@ class CellMeasure(abstract.PropertiesData):
         '''
         return self._set_component('measure', measure, copy=copy)
 
-
-#--- End: class
+# --- End: class

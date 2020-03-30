@@ -50,5 +50,4 @@ class AuxiliaryCoordinate(abstract.Coordinate):
         '''
         return 'auxiliary_coordinate'
 
-
-#--- End: class
+# --- End: class

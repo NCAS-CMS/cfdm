@@ -41,5 +41,4 @@ class DomainAncillary(abstract.PropertiesDataBounds):
     '''
         return 'domain_ancillary' 
 
-
-#--- End: class
+# --- End: class

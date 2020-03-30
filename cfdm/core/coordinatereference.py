@@ -56,14 +56,15 @@ class CoordinateReference(abstract.Container):
     
     .. versionadded:: 1.7.0
 
-    '''
-    
+    '''    
     def __new__(cls, *args, **kwargs):
+        '''This must be overridden in subclasses.
+
+        '''
         instance = super().__new__(cls)
         instance._CoordinateConversion = CoordinateConversion
         instance._Datum                = Datum
         return instance
-
 
     def __init__(self, coordinates=None, datum=None,
                  coordinate_conversion=None, source=None, copy=True):
@@ -129,7 +130,7 @@ class CoordinateReference(abstract.Container):
                 datum = source.get_datum()
             except AttributeError:
                 datum = None
-        #--- End: if
+        # --- End: if
             
         if coordinates is not None:
             self.set_coordinates(coordinates)
@@ -139,7 +140,6 @@ class CoordinateReference(abstract.Container):
 
         if datum is not None:
             self.set_datum(datum, copy=copy)
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -163,7 +163,6 @@ class CoordinateReference(abstract.Container):
         '''
         return 'coordinate_reference'
     
-
     @property
     def coordinate_conversion(self):
         '''Return the coordinate conversion component.
@@ -184,7 +183,6 @@ class CoordinateReference(abstract.Container):
 
         '''
         return self.get_coordinate_conversion()
-
         
     @property
     def datum(self):
@@ -206,7 +204,6 @@ class CoordinateReference(abstract.Container):
 
         '''
         return self.get_datum()
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -237,7 +234,6 @@ class CoordinateReference(abstract.Container):
         out = self._get_component('coordinates')
         self._set_component('coordinates', set())
         return out.copy()
-
     
     def coordinates(self):
         '''Return all references to coordinate constructs.
@@ -263,7 +259,6 @@ class CoordinateReference(abstract.Container):
 
         '''
         return self._get_component('coordinates').copy()
-
             
     def copy(self):
         '''Return a deep copy.
@@ -282,7 +277,6 @@ class CoordinateReference(abstract.Container):
 
         '''
         return type(self)(source=self, copy=True)
-
 
     def del_coordinate(self, key, default=ValueError()):
         '''Remove a reference to a coordinate construct.
@@ -332,7 +326,6 @@ class CoordinateReference(abstract.Container):
         return self._default(default,
               "{!r} has no {!r} coordinate".format(
                   self.__class__.__name__, key))
-
     
     def del_coordinate_conversion(self):
         '''Remove the coordinate conversion component.
@@ -359,7 +352,6 @@ class CoordinateReference(abstract.Container):
         out = self._del_component('coordinate_conversion', new)
         self.set_coordinate_conversion(new)
         return out
-
     
     def del_datum(self):
         '''Remove the datum component.
@@ -386,7 +378,6 @@ class CoordinateReference(abstract.Container):
         self.set_datum(new)
         return out
 
-
     def get_coordinate_conversion(self):
         '''Get the coordinate conversion component.
 
@@ -412,7 +403,6 @@ class CoordinateReference(abstract.Container):
             self.set_coordinate_conversion(out, copy=False)
 
         return out
-
     
     def get_datum(self):
         '''Return the datum component.
@@ -438,7 +428,6 @@ class CoordinateReference(abstract.Container):
             self.set_datum(out, copy=False)
             
         return out
-
     
     def has_coordinate(self, key):
         '''Whether a reference to a coordinate construct has been set.
@@ -476,7 +465,6 @@ class CoordinateReference(abstract.Container):
 
         '''
         return key in self._get_component('coordinates')
-
     
     def set_coordinate(self, key):
         '''Set a reference to a coordinate construct.
@@ -514,7 +502,6 @@ class CoordinateReference(abstract.Container):
         '''
         c = self._get_component('coordinates')
         c.add(key)
-
 
     def set_coordinates(self, coordinates):
         '''Set references to coordinate constructs.
@@ -560,7 +547,6 @@ class CoordinateReference(abstract.Container):
             coordinates = (coordinates,)
             
         self._get_component('coordinates').update(coordinates)
-
             
     def set_coordinate_conversion(self, coordinate_conversion, copy=True):
         '''Set the coordinate conversion component.
@@ -597,7 +583,6 @@ class CoordinateReference(abstract.Container):
         self._set_component('coordinate_conversion',
                             coordinate_conversion, copy=False)
 
-
     def set_datum(self, datum, copy=True):
         '''Set the datum component.
 
@@ -630,5 +615,4 @@ class CoordinateReference(abstract.Container):
             
         self._set_component('datum', datum, copy=False)
 
-
-#--- End: class
+# --- End: class

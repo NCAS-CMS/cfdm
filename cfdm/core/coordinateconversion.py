@@ -19,4 +19,4 @@ class CoordinateConversion(abstract.ParametersDomainAncillaries):
     .. versionadded:: 1.7.0
 
     '''
-#--- End: class
+# --- End: class

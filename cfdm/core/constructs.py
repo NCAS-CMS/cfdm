@@ -122,7 +122,7 @@ class Constructs(object):
                     for cid in source._constructs.get(construct_type, ()):
                         self._construct_axes.pop(cid, None)
                         self._construct_type.pop(cid, None)
-                    #--- End: for
+                    # --- End: for
                     
                     continue
 
@@ -141,7 +141,7 @@ class Constructs(object):
                     new_v = source._constructs[construct_type].copy()
                     
                 d[construct_type] = new_v
-            #--- End: for
+            # --- End: for
             
             for construct_type in source._non_array_constructs:
                 if construct_type in self._ignore:
@@ -167,14 +167,14 @@ class Constructs(object):
                     new_v = source._constructs[construct_type].copy()
 
                 d[construct_type] = new_v
-            #--- End: for
+            # --- End: for
         
             self._constructs = d
 
             self._ignore = ()
             
             return
-        #--- End: if
+        # --- End: if
                 
         self._field_data_axes = None
         
@@ -235,7 +235,6 @@ class Constructs(object):
         for x in self._ordered_constructs:
             self._constructs[x] = OrderedDict()
 
-
     def __contains__(self, key):
         '''Called to implement membership test operators for construct keys.
 
@@ -246,7 +245,6 @@ class Constructs(object):
         '''
         return key in self._construct_type        
 
-    
     def __copy__(self):
         '''Called by the `copy.copy` standard library function.
 
@@ -254,7 +252,6 @@ class Constructs(object):
 
         '''
         return self.shallow_copy()
-
    
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` standard library function.
@@ -263,7 +260,6 @@ class Constructs(object):
 
         '''
         return self.copy()
-
    
     def __getitem__(self, key):
         '''Return a construct with the given key.
@@ -283,7 +279,6 @@ class Constructs(object):
             
         return d[key]
 
-
     def __iter__(self):
         '''Called when an iterator is required.
 
@@ -293,7 +288,6 @@ class Constructs(object):
 
         '''
         return iter(self._dictionary().keys())
-
             
     def __len__(self):
         '''Return the number of constructs.
@@ -305,7 +299,6 @@ class Constructs(object):
         '''
         return len(self._dictionary())
 
-    
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -340,7 +333,6 @@ class Constructs(object):
         
         return default
 
-
     def _del_data_axes(self, k, *d):
         '''Remove and return a construct's axes, if any.
 
@@ -350,7 +342,6 @@ class Constructs(object):
         '''
         return self._construct_axes.pop(k, *d)
 
-    
     # ----------------------------------------------------------------
     # Private dictionary-like methods    
     # ----------------------------------------------------------------
@@ -377,7 +368,6 @@ class Constructs(object):
         # Remove and return the construct
         return self._constructs[construct_type].pop(k, *d)
 
-
     def _update(self, other):
         '''D.update(E) -> None. Update D from E.
 
@@ -392,7 +382,6 @@ class Constructs(object):
         self._construct_type.update      (other._construct_type)
         self._constructs.update          (other._constructs)
 
-
     def construct_type(self, key):
         '''TODO
         '''
@@ -401,7 +390,6 @@ class Constructs(object):
             return
         
         return x
-
 
     # ----------------------------------------------------------------
     # Private methods    
@@ -439,12 +427,10 @@ class Constructs(object):
 
         return construct_type    
 
-
     def _construct_type_description(self, construct_type):
         '''TODO
         '''
         return construct_type.replace('_', ' ')
-
 
     def _dictionary(self, copy=False):
         '''
@@ -454,15 +440,14 @@ class Constructs(object):
         for key, value in self._constructs.items():
             if key not in ignore:
                 out.update(value)
-        #--- End: if
+        # --- End: if
 
         if copy:
             for key, construct in list(out.items()):
                 out[key] = construct.copy()
-        #--- End: if
+        # --- End: if
 
         return out
-
 
     def _del_construct(self, key, default=ValueError()):
         '''Remove a metadata construct.
@@ -535,10 +520,10 @@ class Constructs(object):
                 for term, value in coordinate_conversion.domain_ancillaries().items():
                     if key == value:
                         coordinate_conversion.set_domain_ancillary(term, None)
-                #--- End: for
+                # --- End: for
                     
                 ref.del_coordinate(key, None)
-        #--- End: if
+        # --- End: if
 
         out = self._pop(key, None)
 
@@ -546,7 +531,6 @@ class Constructs(object):
             return self._default(default, "Can't get remove non-existent construct")
 
         return out    
-
 
     def _set_construct(self, construct, key=None, axes=None,
                        copy=True):
@@ -624,9 +608,9 @@ class Constructs(object):
             key = self.new_identifier(construct_type)
 
         if construct_type in self._array_constructs:
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             # The construct could have a data array
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
 #            if axes is None:
 #                raise ValueError(
 #"Can't set {} construct: Must specify the domain axes for the data array".format(
@@ -652,7 +636,6 @@ class Constructs(object):
 
         # Return the identifier of the construct
         return key
-
 
     def _set_construct_data_axes(self, key, axes, construct=None):
         '''TODO
@@ -734,10 +717,9 @@ class Constructs(object):
                     raise ValueError(
                         "Can't set {!r}: Bounds data shape of {!r} does not match the shape required by domain axes {}: {}".format(
                             construct, data.shape, tuple(axes), axes_shape))
-        #--- End: try
+        # --- End: try
         
         self._construct_axes[key] = tuple(axes)
-
 
     # ----------------------------------------------------------------
     # Dictionary-like methods    
@@ -752,7 +734,6 @@ class Constructs(object):
         '''
         return self._dictionary().get(key, *default)
 
-
     def items(self):
         '''Return the items as (construct key, construct) pairs.
     
@@ -762,7 +743,6 @@ class Constructs(object):
     
         '''
         return self._dictionary().items()
-
     
     def keys(self):
         '''Return all of the construct keys, in arbitrary order.
@@ -773,7 +753,6 @@ class Constructs(object):
 
         '''
         return self._construct_type.keys()
-
     
     def values(self):
         '''Returns all of the metadata constructs, in arbitrary order.
@@ -784,7 +763,6 @@ class Constructs(object):
 
         '''
         return self._dictionary().values()
-
     
     def construct_types(self):
         '''TODO
@@ -794,10 +772,9 @@ class Constructs(object):
         if self._ignore:
             for x in self._ignore:
                 del out[x]
-        #--- End: if
+        # --- End: if
 
         return out
-
 
     def value(self, default=ValueError()):
         '''Return the sole metadata construct.
@@ -838,7 +815,6 @@ class Constructs(object):
         _, construct = self._dictionary().popitem()
             
         return construct
-
     
     def key(self, default=ValueError()):
         '''Return the construct key of the sole metadata construct.
@@ -880,7 +856,6 @@ class Constructs(object):
         key, _ = self._dictionary().popitem()
             
         return key
-
         
     def data_axes(self):
         '''Return the domain axis constructs spanned by metadata construct
@@ -923,10 +898,9 @@ class Constructs(object):
                         _ = self._construct_axes.get(key)
                         if _ is not None:
                             out[key] = _
-            #--- End: for
+            # --- End: for
 
             return out
-
 
     def copy(self, data=True):
         '''Return a deep copy.
@@ -953,7 +927,6 @@ class Constructs(object):
         '''
         return type(self)(source=self, copy=True, _view=False,
                           _use_data=data, _ignore=self._ignore)
-
 
     def new_identifier(self, construct_type):
         '''Return a new, unsed construct key.
@@ -1004,7 +977,6 @@ class Constructs(object):
             key = '{0}{1}'.format(key_base, n)
 
         return key
-
 
     def replace(self, key, construct, axes=None, copy=True):
         '''TODO
@@ -1059,7 +1031,6 @@ class Constructs(object):
                 "Can't order un-orderable construct type: {!r}".format(self))
 
         return self._constructs[tuple(self._ordered_constructs)[0]].copy()
-
     
     def filter_by_type(self, *types):
         '''Select metadata constructs by type.
@@ -1116,7 +1087,6 @@ class Constructs(object):
 
         return self.shallow_copy(_ignore=ignore)
 
-
     def shallow_copy(self, _ignore=None):
         '''Return a shallow copy.
 
@@ -1139,7 +1109,6 @@ class Constructs(object):
         return type(self)(source=self, copy=False, _ignore=_ignore,
                           _view=False)
 
-
     def _view(self, ignore=()):
         '''Return a new view the container with the same metadata constructs.
 
@@ -1159,6 +1128,5 @@ class Constructs(object):
     
         '''
         return type(self)(source=self, _view=True, _ignore=ignore)
-
     
-#--- End: class
+# --- End: class

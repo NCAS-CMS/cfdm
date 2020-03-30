@@ -22,7 +22,6 @@ class NumpyArray(abstract.Array):
         '''
         super().__init__(array=array)
 
-    
     @property
     def dtype(self):
         '''Data-type of the data elements.
@@ -38,7 +37,6 @@ class NumpyArray(abstract.Array):
 
         '''
         return self._get_component('array').dtype
-
 
     @property
     def ndim(self):
@@ -72,7 +70,6 @@ class NumpyArray(abstract.Array):
         '''
         return self._get_component('array').ndim
 
-    
     @property
     def shape(self):
         '''Tuple of array dimension sizes.
@@ -105,7 +102,6 @@ class NumpyArray(abstract.Array):
     '''
         return self._get_component('array').shape
 
-    
     @property
     def size(self):
         '''Number of elements in the array.
@@ -136,7 +132,6 @@ class NumpyArray(abstract.Array):
     1
         '''
         return self._get_component('array').size
-
 
     @property
     def array(self):
@@ -169,5 +164,4 @@ class NumpyArray(abstract.Array):
 
         return array
 
-
-#--- End: class
+# --- End: class

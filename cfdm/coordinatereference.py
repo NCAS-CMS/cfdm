@@ -69,11 +69,13 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     '''
     def __new__(cls, *args, **kwargs):
+        '''This must be overridden in subclasses.
+
+        '''
         instance = super().__new__(cls)
         instance._CoordinateConversion = CoordinateConversion
         instance._Datum                = Datum
         return instance
-
 
     def __init__(self, coordinates=None, datum=None,
                  coordinate_conversion=None,
@@ -130,7 +132,6 @@ class CoordinateReference(mixin.NetCDFVariable,
         
         self._initialise_netcdf(source)
 
-   
     def __str__(self):
         '''Called by the `str` built-in function.
 
@@ -140,7 +141,6 @@ class CoordinateReference(mixin.NetCDFVariable,
 
         '''    
         return self.identity(default=self.nc_get_variable(''))
-
 
     def dump(self, display=True, _omit_properties=None, field=None,
              key='', _level=0, _title=None, _construct_names=None,
@@ -222,7 +222,6 @@ class CoordinateReference(mixin.NetCDFVariable,
             print(string)
         else:
             return string
-
             
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_type=False):
@@ -338,7 +337,6 @@ class CoordinateReference(mixin.NetCDFVariable,
         # as can be ascertained in the absence of domains.
         return True
 
-
     def identity(self, default=''):
         '''Return the canonical identity.
 
@@ -394,7 +392,6 @@ class CoordinateReference(mixin.NetCDFVariable,
             return 'ncvar%{0}'.format(n)
 
         return default
-
 
     def identities(self):
         '''Return all possible identities.

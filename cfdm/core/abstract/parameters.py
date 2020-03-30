@@ -47,14 +47,13 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
                 parameters = source.parameters()
             except AttributeError:
                 parameters = None
-        #--- End: if
+        # --- End: if
         
         if parameters is None:
             parameters = {}
             copy = False
 
         self.set_parameters(parameters, copy=copy)
-
 
     def clear_parameters(self):
         '''Remove all parameters.
@@ -87,7 +86,6 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         out = self._get_component('parameters')
         self._set_component('parameters', {})
         return out.copy()
-
     
     def del_parameter(self, parameter, default=ValueError()):
         '''Delete a parameter.
@@ -136,7 +134,6 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
                                  "{!r} has no {!r} parameter".format(
                                      self.__class__.__name__, parameter))
 
-
     def get_parameter(self, parameter, default=ValueError()):
         '''Get a parameter value.
 
@@ -179,7 +176,6 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
             return self._default(default,
                                  "{!r} has no {!r} parameter".format(
                                      self.__class__.__name__, parameter))
-
     
     def has_parameter(self, parameter):
         '''Whether a parameter has been set.
@@ -221,7 +217,6 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         '''
         return parameter in self._get_component('parameters')
 
-
     def parameters(self):
         '''Return all parameters.
 
@@ -252,7 +247,6 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
 
         '''
         return self._get_component('parameters').copy()
-
 
     def set_parameters(self, parameters, copy=True):
         '''Set parameters.
@@ -301,7 +295,6 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         
         self._get_component('parameters').update(parameters)
 
-
     def set_parameter(self, term, value, copy=True):
         '''Set a parameter-valued term.
 
@@ -334,6 +327,5 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
             value = deepcopy(value)
             
         self._get_component('parameters')[term] = value
-
     
-#--- End: class
+# --- End: class

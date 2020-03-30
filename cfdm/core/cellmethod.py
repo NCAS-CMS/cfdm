@@ -107,7 +107,7 @@ class CellMethod(abstract.Container):
                 qualifiers = source.qualifiers()
             except AttributeError:
                 qualifiers = None
-        #--- End: if
+        # --- End: if
 
         if axes is not None:                
             axes = self.set_axes(axes)
@@ -675,6 +675,5 @@ class CellMethod(abstract.Container):
             value = deepcopy(value)
         
         self._get_component('qualifiers')[qualifier] = value
-
     
-#--- End: class
+# --- End: class

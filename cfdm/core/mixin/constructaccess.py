@@ -52,7 +52,6 @@ class ConstructAccess(object):
         '''
         return self.constructs._del_construct(key, default=default)
 
-
     def get_construct(self, key, default=ValueError()):
         '''Return a metadata construct.
 
@@ -95,7 +94,6 @@ class ConstructAccess(object):
         '''
         return self.constructs.filter_by_key(key).value(default=default)
 
-
     def has_construct(self, key):
         '''Whether a metadata construct exists.
 
@@ -132,7 +130,6 @@ class ConstructAccess(object):
         if try_get_construct is None:
             return False
         return True
-
 
     def set_construct(self, construct, key=None, axes=None,
                       copy=True):
@@ -193,7 +190,6 @@ class ConstructAccess(object):
         return self.constructs._set_construct(construct, key=key,
                                               axes=axes, copy=copy)
 
-
     def get_data_axes(self, key, default=ValueError):
         '''Return the keys of the domain axis constructs spanned by the data
     of a metadata construct.
@@ -237,7 +233,6 @@ class ConstructAccess(object):
             return self.constructs.data_axes()[key]
         except KeyError:
             return self._default(default, message='2736492783 e28037 TODO')
-
 
     def del_data_axes(self, key, default=ValueError()):
         '''Remove the keys of the domain axis constructs spanned by the data
@@ -285,7 +280,6 @@ class ConstructAccess(object):
             self.constructs._del_data_axes(key)
                 
         return data_axes
-
     
     def has_data_axes(self, key=None):
         '''Whether the domain axis constructs spanned by the data of a
@@ -327,7 +321,6 @@ class ConstructAccess(object):
             return False
 
         return True
-
     
     def set_data_axes(self, axes, key):
         '''Set the domain axis constructs spanned by the data of a metadata
@@ -377,6 +370,5 @@ class ConstructAccess(object):
 
         '''
         self.constructs._set_construct_data_axes(key=key, axes=axes)
-
         
-#--- End: class
+# --- End: class
