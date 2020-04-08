@@ -37,7 +37,7 @@ class DSGTest(unittest.TestCase):
        
         self.test_only = []
 #        self.test_only = ['test_node_count']
-#        self.test_only = ['test_geometry_interior_ring']
+#        self.test_only = ['test_geometry_3']
 
  
     def tearDown(self):
