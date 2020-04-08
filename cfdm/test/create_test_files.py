@@ -624,7 +624,6 @@ def _make_geometry_1_file(filename):
     geometry_container.geometry_type = "line"
     geometry_container.node_count = "node_count"
     geometry_container.node_coordinates = "x y"
-    geometry_container.geometry_dimension = "instance"
     
     node_count = n.createVariable('node_count', 'i4', ('instance',))
     node_count[...] = [3, 2]
@@ -702,7 +701,6 @@ def _make_geometry_2_file(filename):
     geometry_container.geometry_type = "line"
     geometry_container.node_count = "node_count"
     geometry_container.node_coordinates = "x y z"
-    geometry_container.geometry_dimension = "instance"
     
     node_count = n.createVariable('node_count', 'i4', ('instance',))
     node_count[...] = [3, 2]
@@ -757,7 +755,7 @@ def _make_geometry_3_file(filename):
    
     time     = n.createDimension('time'    , 4)
     instance = n.createDimension('instance', 3)
-    node     = n.createDimension('node'    , 3)
+#    node     = n.createDimension('node'    , 3)
     
     t =  n.createVariable('time', 'i4', ('time',))
     t.units = "seconds since 2016-11-07 20:00 UTC" 
@@ -784,21 +782,20 @@ def _make_geometry_3_file(filename):
     geometry_container = n.createVariable('geometry_container', 'i4', ());
     geometry_container.geometry_type = "point"
     geometry_container.node_coordinates = "x y z"
-    geometry_container.geometry_dimension = "instance"
     
-    x = n.createVariable('x', 'f8', ('node',))
+    x = n.createVariable('x', 'f8', ('instance',))
     x.units = "degrees_east"
     x.standard_name = "longitude"
     x.axis = "X"
     x[...] = [30, 10, 40]
     
-    y = n.createVariable('y', 'f8', ('node',))
+    y = n.createVariable('y', 'f8', ('instance',))
     y.units = "degrees_north"
     y.standard_name = "latitude"
     y.axis = "Y"
     y[...] = [10, 30, 40]
     
-    z = n.createVariable('z', 'f8', ('node',))
+    z = n.createVariable('z', 'f8', ('instance',))
     z.units = "m"
     z.standard_name = "altitude"
     z.axis = "Z"
@@ -860,7 +857,6 @@ def _make_geometry_4_file(filename):
     geometry_container.geometry_type = "line"
     geometry_container.node_count = "node_count"
     geometry_container.node_coordinates = "x y"
-    geometry_container.geometry_dimension = "instance"
     
     node_count = n.createVariable('node_count', 'i4', ('instance',))
     node_count[...] = [3, 2]
@@ -969,7 +965,6 @@ def _make_interior_ring_file(filename):
     geometry_container.coordinates = "lat lon"
     geometry_container.part_node_count = "part_node_count"
     geometry_container.interior_ring = "interior_ring"
-    geometry_container.geometry_dimension = "instance"
     
     node_count = n.createVariable('node_count', 'i4', ('instance'))
     node_count[...] = [10, 3]
@@ -1083,7 +1078,6 @@ def _make_interior_ring_file_2(filename):
     geometry_container.coordinates = "lat lon"
     geometry_container.part_node_count = "part_node_count"
     geometry_container.interior_ring = "interior_ring"
-    geometry_container.geometry_dimension = "instance"
     
     node_count = n.createVariable('node_count', 'i4', ('instance'))
     node_count[...] = [10, 3]
@@ -1211,6 +1205,6 @@ string_char_file   = _make_string_char_file('string_char.nc')
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.utcnow())
-    print(cfdm.environment(display=False))
+    cfdm.environment()
     print()
     unittest.main(verbosity=2)
