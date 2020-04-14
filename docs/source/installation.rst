@@ -134,8 +134,8 @@ The cfdm package requires:
   or newer,
 
 * `cftime <https://unidata.github.io/cftime/>`_, version 1.1.1 or
-  newer (note that this library is istalled with netCDF4, but possibly
-  not a new enough version), and
+  newer (note that this library is installed with netCDF4, but
+  possibly not a new enough version), and
 
 * `future <https://python-future.org/>`_, version 0.16.0 or newer.
 

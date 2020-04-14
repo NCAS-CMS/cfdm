@@ -9,6 +9,6 @@ Version |release| for version |version| of the CF conventions.
    :maxdepth: 2
 
    functions
-   constant
    class
+   constant
    class_core
