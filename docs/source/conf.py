@@ -470,15 +470,20 @@ def linkcode_resolve(domain, info):
     
     try:
         source, lineno = inspect.findsource(obj)
-        nlines = len(inspect.getsourcelines(obj)[0])
     except:
         lineno = None
-    
+
+    try:
+        nlines = len(inspect.getsourcelines(obj)[0])
+    except:
+        nlines = None
+        
     fn = relpath(fn, start=dirname(cfdm.__file__))
     
     if lineno:
-        linespec = "#L{0}".format(lineno+1)
-        # Can add range when jump-to feature is enable in bitbucket
+        linespec = "#L{}".format(lineno + 1)
+        if nlines:
+            linespec += "-L{}".format(lineno + nlines)
     else:
         linespec = ""
     
