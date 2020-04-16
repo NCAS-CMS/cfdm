@@ -1,0 +1,7 @@
+cfdm.core.Domain.constructs
+===========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.core.Domain.constructs

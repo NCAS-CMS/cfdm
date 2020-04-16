@@ -1,0 +1,7 @@
+cfdm.CellMeasure.properties
+===========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CellMeasure.properties

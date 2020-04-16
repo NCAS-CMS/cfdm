@@ -1,3 +1,14 @@
+version 1.8.1
+-------------
+----
+
+**2020-04-16**
+
+* Improved source code highlighting in links from the documentation
+  (https://github.com/NCAS-CMS/cfdm/issues/21).
+* Fixed bug that erroneously required netCDF geometry container
+  variables to have a ``geometry_dimension`` netCDF attribute.
+  
 version 1.8.0
 -------------
 ----
