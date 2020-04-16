@@ -1,0 +1,7 @@
+cfdm.Field.has_construct
+========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Field.has_construct

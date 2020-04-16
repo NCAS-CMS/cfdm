@@ -1,0 +1,7 @@
+cfdm.Field.field_ancillaries
+============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.Field.field_ancillaries

@@ -1,0 +1,7 @@
+cfdm.core.CoordinateConversion.del_parameter
+============================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.core.CoordinateConversion.del_parameter

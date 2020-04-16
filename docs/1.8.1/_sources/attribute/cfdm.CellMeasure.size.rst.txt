@@ -1,0 +1,7 @@
+cfdm.CellMeasure.size
+=====================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.CellMeasure.size

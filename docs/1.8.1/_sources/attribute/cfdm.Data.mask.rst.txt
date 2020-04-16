@@ -1,0 +1,7 @@
+cfdm.Data.mask
+==============
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.Data.mask

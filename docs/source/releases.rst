@@ -13,6 +13,7 @@
 **CF-1.8**
 ----------
 
+* `Version 1.8.1 <https://ncas-cms.github.io/cfdm/1.8.1>`_
 * `Version 1.8.0 <https://ncas-cms.github.io/cfdm/1.8.0>`_
 
 
