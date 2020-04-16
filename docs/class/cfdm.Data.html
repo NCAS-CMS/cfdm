@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
 
 
 
@@ -110,7 +111,7 @@
 <h1>cfdm.Data<a class="headerlink" href="#cfdm-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.0/cfdm/data/data.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/data/data.py#L18-L2275"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFHDF5</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.data.Data</span></code></p>
 <p>An orthogonal multidimensional array with masked values and units.</p>
 <div class="versionadded">
@@ -385,7 +386,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Data.datetime_array.html#cfdm.Data.datetime_array" title="cfdm.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
 <td><p>Return an independent numpy array containing the date-time objects corresponding to times since a reference date.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.Data.datetime_as_string.html#cfdm.Data.datetime_as_string" title="cfdm.Data.datetime_as_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_as_string</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.datetime_as_string.html#cfdm.Data.datetime_as_string" title="cfdm.Data.datetime_as_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_as_string</span></code></a></p></td>
 <td><p>Return an independent numpy array containing string representations of times since a reference date.</p></td>
 </tr>
 </tbody>
@@ -677,11 +678,11 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-03-30.
+      &copy;2020, NCAS | Page built on 2020-04-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/class/cfdm.Data.rst.txt"

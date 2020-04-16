@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
 
 
 
@@ -111,7 +112,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CoordinateReference">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CoordinateReference</code><span class="sig-paren">(</span><em class="sig-param">coordinates=None</em>, <em class="sig-param">datum=None</em>, <em class="sig-param">coordinate_conversion=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.0/cfdm/coordinatereference.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CoordinateReference</code><span class="sig-paren">(</span><em class="sig-param">coordinates=None</em>, <em class="sig-param">datum=None</em>, <em class="sig-param">coordinate_conversion=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/coordinatereference.py#L11-L445"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.coordinatereference.CoordinateReference</span></code></p>
 <p>A coordinate reference construct of the CF data model.</p>
 <p>A coordinate reference construct relates the coordinate values of
@@ -403,11 +404,11 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-03-30.
+      &copy;2020, NCAS | Page built on 2020-04-16.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/class/cfdm.CoordinateReference.rst.txt"
