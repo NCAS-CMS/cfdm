@@ -1,3 +1,12 @@
+version 1.8.2
+-------------
+----
+
+**2020-??-??**
+
+* Added time coordinate bounds to the polygon geometry example field
+  returned by ``cfdm.example_field(6)``.
+
 version 1.8.1
 -------------
 ----
