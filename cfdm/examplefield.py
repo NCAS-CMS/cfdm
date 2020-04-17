@@ -793,6 +793,7 @@ def example_field(n, _implementation=_implementation):
         d = Data([25.0, 7.0], units='degrees_north', dtype='f8')
         c.set_data(d)
         c.nc_set_variable('lat')
+        c.set_geometry('polygon')
         b = Bounds()
         b.set_properties({'units': 'degrees_north', 'standard_name': 'latitude', 'axis': 'Y'})
         d = Data([[[0.0, 15.0, 0.0, 9.969209968386869e+36], [5.0, 10.0, 5.0, 5.0], [20.0, 35.0, 20.0, 9.969209968386869e+36]], [[0.0, 15.0, 0.0, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]]], units='degrees_north', dtype='f8', mask=Data([[[False, False, False, True], [False, False, False, False], [False, False, False, True]], [[False, False, False, True], [True, True, True, True], [True, True, True, True]]], dtype='b1'))
@@ -812,6 +813,7 @@ def example_field(n, _implementation=_implementation):
         d = Data([10.0, 40.0], units='degrees_east', dtype='f8')
         c.set_data(d)
         c.nc_set_variable('lon')
+        c.set_geometry('polygon')
         b = Bounds()
         b.set_properties({'units': 'degrees_east', 'standard_name': 'longitude', 'axis': 'X'})
         d = Data([[[20.0, 10.0, 0.0, 9.969209968386869e+36], [5.0, 10.0, 15.0, 10.0], [20.0, 10.0, 0.0, 9.969209968386869e+36]], [[50.0, 40.0, 30.0, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]]], units='degrees_east', dtype='f8', mask=Data([[[False, False, False, True], [False, False, False, False], [False, False, False, True]], [[False, False, False, True], [True, True, True, True], [True, True, True, True]]], dtype='b1'))
@@ -851,9 +853,16 @@ def example_field(n, _implementation=_implementation):
         # dimension_coordinate: time
         c = DimensionCoordinate()
         c.set_properties({'standard_name': 'time', 'units': 'days since 2000-01-01'})
-        d = Data([1, 2, 3, 4], units='days since 2000-01-01', dtype='i4')
+        d = Data([15.5, 45, 74.5, 105], units='days since 2000-01-01', calendar='gregorian', dtype='f8')
         c.set_data(d)
         c.nc_set_variable('time')
+        b = Bounds()
+        b.set_properties({'units': 'days since 2000-01-01', 'calendar': 'gregorian'})
+        d = Data([[0.0, 31.0], [31.0, 60.0], [60.0, 91.0], [91.0, 121.0]], units='days since 2000-01-01', calendar='gregorian', dtype='f8')
+        b.set_data(d)
+        b.nc_set_variable('time_bounds')
+        c.set_bounds(b)
+
         f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate0', copy=False)
         
         # coordinate_reference
