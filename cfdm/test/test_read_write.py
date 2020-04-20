@@ -212,16 +212,23 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(OSError):
             x = cfdm.read('test_read_write.py')
 
-        for regex in [
+        for number, regex in enumerate([
             r'"1 i\ \ "',
             r'"1 i\// comment"',
             r'"1 i\ // comment"',
             r'"1 i\ \t// comment"'
-        ]:
-            subprocess.run(
-                ' '.join(['sed', '-i".bak"', '-e', regex, tmpfileh]),
-                shell=True, check=True
-            )
+        ]):
+            # Empty string is an effective extension option needed w/ BSD sed:
+            try:  # for GNU (Linux OS) and older BSD variants (older Mac OS)
+                subprocess.run(
+                    ' '.join(['sed', '-i', '', regex, tmpfileh]),
+                    shell=True, check=True
+                )
+            except subprocess.CalledProcessError:  # for newer BSD i.e. Mac OS
+                subprocess.run(
+                    ' '.join(['sed', "-i''", regex, tmpfileh]),
+                    shell=True, check=True
+                )
             h = cfdm.read(tmpfileh)[0]
 
 #        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)
