@@ -14,8 +14,7 @@ on:
 
 # Note a workflow can have 1+ jobs that can run sequentially or in parallel.
 jobs:
-  # TODO: setup parallel runs (-job-2 etc.) of sub-tests for speed-up
-  test-suite-job-0:
+  run-test-suite-job:
 
     # Set-up the build matrix. We run on different distros and Python versions.
     strategy:
@@ -44,10 +43,32 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    # Setup conda, which is the simplest way to access all dependencies,
+    # especially as some are C-based so otherwise difficult to setup.
+    - name: Setup Miniconda
+      uses: goanpeca/setup-miniconda@v1.1.2
+      with:
+        miniconda-version: 'latest'
+        activate-environment: cfdm-latest
+        python-version: ${{ matrix.python-version }}
+        channels: anaconda
+
+    # Ensure shell is configured with conda activated:
+    - name: Check conda config
+      shell: bash -l {0}
+      run: |
+        conda info
+        conda list
+        conda config --show-sources
+        conda config --show
     # Install cfdm dependencies pre-testing
     # We do so with conda which was setup in a previous step.
     - name: Install cfdm with its dependencies
+      shell: bash -l {0}
       run: |
+        conda install -c anaconda libnetcdf
+        # (The other, Python-based, deps are installed during the below command)
+        # Important! Must install our development version of cfdm to test:
         pip install -e .
 
     # Provide another notification message
@@ -56,10 +77,10 @@ jobs:
 
     # Finally run the test suite!
     - name: Run test suite
+      shell: bash -l {0}
       run: |
         cd cfdm/test
         python run_tests.py
-
     # End with a message indicating the suite has completed its run
     - name: Notify about a completed run
       run: |
