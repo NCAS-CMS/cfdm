@@ -1255,14 +1255,17 @@ class CFDMImplementation(Implementation):
 
     def initialise_NetCDFArray(self, filename=None, ncvar=None,
                                dtype=None, ndim=None, shape=None,
-                               size=None):
+                               size=None, mask=True):
         '''TODO
+
+    :Returns:
+    
+        `NetCDFArray`
 
         '''
         cls = self.get_class('NetCDFArray')
         return cls(filename=filename, ncvar=ncvar, dtype=dtype,
-                   ndim=ndim, shape=shape, size=size)
-
+                   ndim=ndim, shape=shape, size=size, mask=mask)
 
     def initialise_NodeCount(self):
         '''
@@ -1271,14 +1274,12 @@ class CFDMImplementation(Implementation):
         cls = self.get_class('NodeCountProperties')
         return cls()
 
-
     def initialise_PartNodeCount(self):
         '''TODO
 
         '''
         cls = self.get_class('PartNodeCountProperties')
         return cls()
-
 
     def initialise_RaggedContiguousArray(self, compressed_array=None,
                                          ndim=None, shape=None,
@@ -1291,7 +1292,6 @@ class CFDMImplementation(Implementation):
                    shape=shape, size=size,
                    count_variable=count_variable)
 
-
     def initialise_RaggedIndexedArray(self, compressed_array=None,
                                       ndim=None, shape=None,
                                       size=None, index_variable=None):
@@ -1301,7 +1301,6 @@ class CFDMImplementation(Implementation):
         return cls(compressed_array=compressed_array, ndim=ndim,
                    shape=shape, size=size,
                    index_variable=index_variable)
-
 
     def initialise_RaggedIndexedContiguousArray(self,
                                                 compressed_array=None,
@@ -1317,7 +1316,6 @@ class CFDMImplementation(Implementation):
                    count_variable=count_variable,
                    index_variable=index_variable)
 
-
     def is_climatology(self, coordinate):
         '''TODO
 
@@ -1329,7 +1327,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return bool(coordinate.get_geometry(None) == 'climatology')
-
 
     def is_geometry(self, coordinate):
         '''Return True if the coordinate bounds are geometries.
@@ -1769,7 +1766,7 @@ class CFDMImplementation(Implementation):
         '''
         construct.set_properties(properties, copy=copy)
 
-     def has_bounds(self, construct):
+    def has_bounds(self, construct):
         '''TODO 
 
     :Parameters:

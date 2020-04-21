@@ -225,7 +225,7 @@ class NetCDFRead(IORead):
         for nc in self.read_vars['datasets']:
             nc.close()
 
-    def file_open(self, filename, auto_mask=True):
+    def file_open(self, filename):
         '''Open the netCDf file for reading.
 
     :Paramters:
@@ -369,8 +369,8 @@ class NetCDFRead(IORead):
 
     def read(self, filename, extra=None, default_version=None,
              external=None, extra_read_vars=None, _scan_only=False,
-             verbose=False, warnings=True,
-             supplementary_read_vars=None):
+             verbose=False, warnings=True, mask=True):
+#             supplementary_read_vars=None):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
     location.
             
@@ -434,6 +434,17 @@ class NetCDFRead(IORead):
             not controlled vocabularies have been adhered to is not
             checked.
             
+        mask: `bool`, optional
+            If False then do not mask by convention when reading data
+            from disk. By default data is masked by convention.
+
+            A netCDF array is masked depending on the values of any of
+            the netCDF variable attributes ``valid_min``,
+            ``valid_max``, ``valid_range``, ``_FillValue`` and
+            ``missing_value``.
+
+            .. versionadded:: 1.8.2
+          
     :Returns:
     
         `list`
@@ -508,6 +519,9 @@ class NetCDFRead(IORead):
             
             # 
             'version': {},
+
+            # Auto mask?
+            'mask': bool(mask),
         }
         
         g = self.read_vars
@@ -3407,10 +3421,21 @@ class NetCDFRead(IORead):
     
         unpacked_dtype: `False` or `numpy.dtype`, optional
     
+        mask: `bool`
+            If False then do not mask by convention when reading data
+            from disk. By default data is masked by convention.
+
+            A netCDF array is masked depending on the values of any of
+            the netCDF variable attributes ``valid_min``,
+            ``valid_max``, ``valid_range``, ``_FillValue`` and
+            ``missing_value``.
+
+            .. versionadded:: 1.8.2
+
     :Returns:
     
         `NetCDFArray`
-        
+
         '''
         g = self.read_vars
         
@@ -3450,7 +3475,8 @@ class NetCDFRead(IORead):
             dtype=dtype,
             ndim=ndim,
             shape=shape,
-            size=size)
+            size=size,
+            mask=g['mask'])
 
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None,

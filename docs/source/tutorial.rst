@@ -98,7 +98,7 @@ All formats of netCDF3 and netCDF4 files can be read.
 The following file types can be read:
 
 * All formats of netCDF3 and netCDF4 files can be read, containing
-  datasets for any version of CF up to and including CF-|version|.
+  datasets for versions of CF up to and including CF-|version|.
 
 ..
 
@@ -142,7 +142,10 @@ The `cfdm.read` function has optional parameters to
 * request :ref:`extra field constructs to be created from "metadata"
   netCDF variables <Creation-by-reading>`, i.e. those that are
   referenced from CF-netCDF data variables, but which are not regarded
-  by default as data variables in their own right; and
+  by default as data variables in their own right;
+
+* request that masking is not applied by convention to data elements;
+  and
 
 * display information and warnings about the mapping of the netCDF
   file contents to CF data model constructs.

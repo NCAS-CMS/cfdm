@@ -12,7 +12,7 @@ _implementation = implementation()
        
 
 def read(filename, external=None, extra=None, verbose=False,
-         warnings=False, _implementation=_implementation):
+         warnings=False, mask=True, _implementation=_implementation):
     '''Read field constructs from a dataset.
 
     The dataset may be a netCDF file on disk or on an OPeNDAP server,
@@ -34,7 +34,7 @@ def read(filename, external=None, extra=None, verbose=False,
     deleted. The CDL file may omit data array values (as would be the
     case, for example, if the file was created with the ``-h`` or
     ``-c`` option to ``ncdump``), in which case the the relevant
-    constructs in memory will be created with data containing missing
+    constructs in memory will be created with data with all missing
     values.
 
    
@@ -164,6 +164,17 @@ def read(filename, external=None, extra=None, verbose=False,
             is incomplete due to structural non-compliance of the
             dataset. By default such warnings are not displayed.
             
+        mask: `bool`, optional
+            If False then do not mask by convention when reading data
+            from disk. By default data is masked by convention.
+
+            A netCDF array is masked depending on the values of any of
+            the netCDF variable attributes ``valid_min``,
+            ``valid_max``, ``valid_range``, ``_FillValue`` and
+            ``missing_value``.
+    
+            .. versionadded:: 1.8.2
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
@@ -176,9 +187,7 @@ def read(filename, external=None, extra=None, verbose=False,
     
     **Examples:**
     
-    >>> x = cfdm.rea
-
-    d('file.nc')
+    >>> x = cfdm.read('file.nc')
     >>> print(type(x))
     <type 'list'>
     
@@ -229,10 +238,11 @@ def read(filename, external=None, extra=None, verbose=False,
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
-                             extra_read_vars=None)
+                             mask=mask, extra_read_vars=None)
     elif cdl:
         raise IOError(
-            "Can't determine format of file {} generated from CDL file {}".format(
+            "Can't determine format of file {} "
+            "generated from CDL file {}".format(
                 filename, cdl_filename))
     else:
         raise IOError("Can't determine format of file {}".format(filename))
