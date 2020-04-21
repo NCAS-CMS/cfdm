@@ -213,8 +213,8 @@ constructs, which include the first and last values of their data
 arrays:
 
 .. code-block:: python
-  :caption: *Inspect the contents of the two field constructs with
-            medium detail.*
+   :caption: *Inspect the contents of the two field constructs with
+             medium detail.*
    
    >>> print(q)
    Field: specific_humidity (ncvar%q)
@@ -258,8 +258,8 @@ properties of all constructs, including metadata constructs and their
 components, and shows the first and last values of all data arrays:
 
 .. code-block:: python
-  :caption: *Inspect the contents of the two field constructs with
-            full detail.*
+   :caption: *Inspect the contents of the two field constructs with
+             full detail.*
 
    >>> q.dump()
    ----------------------------------
@@ -954,8 +954,8 @@ field. Subspacing uses the same :ref:`cfdm indexing rules <Indexing>`
 that apply to the `Data` class.
 
 .. code-block:: python
-  :caption: *Create a new field whose domain spans the first longitude
-            of the original, and with a reversed latitude axis.*
+   :caption: *Create a new field whose domain spans the first longitude
+             of the original, and with a reversed latitude axis.*
 
    >>> print(q)
    Field: specific_humidity (ncvar%q)
