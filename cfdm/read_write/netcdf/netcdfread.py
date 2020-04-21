@@ -225,7 +225,7 @@ class NetCDFRead(IORead):
         for nc in self.read_vars['datasets']:
             nc.close()
 
-    def file_open(self, filename):
+    def file_open(self, filename, auto_mask=True):
         '''Open the netCDf file for reading.
 
     :Paramters:
@@ -245,10 +245,6 @@ class NetCDFRead(IORead):
         except RuntimeError as error:
             raise RuntimeError("{}: {}".format(error, filename))
 
-        if False:
-            # Turn off auto masking
-            nc.set_auto_mask(False)
-            
         return nc
         
     @classmethod
@@ -1441,7 +1437,8 @@ class NetCDFRead(IORead):
             
             instance_index = 0
             i = 0
-            for cell_no in range(self.implementation.get_data_size(nodes_per_geometry)):
+            for cell_no in range(self.implementation.get_data_size(
+                    nodes_per_geometry)):
                 n_nodes_in_this_cell = int(nodes_per_geometry_data[cell_no])
 
                 # Initiailize partial_node_count, a running count
@@ -2009,7 +2006,7 @@ class NetCDFRead(IORead):
         for k, v in g['global_attributes'].items():
             if k not in g['variable_attributes'][field_ncvar]:
                 x[k] = None
-        #-- End: for
+        # --- End: for
 
         self.implementation.nc_set_global_attributes(f, x)
 
@@ -2449,7 +2446,7 @@ class NetCDFRead(IORead):
                             datum_parameters[parameter] = value
                         else:
                             coordinate_conversion_parameters[parameter] = value
-                    #-- End: for
+                    # --- End: for
 
                     datum = self.implementation.initialise_Datum(
                         parameters=datum_parameters)
@@ -3437,7 +3434,6 @@ class NetCDFRead(IORead):
         if size < 2:
             size = int(size)
 
-
 #        if dtype.kind == 'S' and ndim >= 1: #shape[-1] > 1:
         if self._is_char(ncvar) and ndim >= 1:
             # Has a trailing string-length dimension
@@ -3446,7 +3442,6 @@ class NetCDFRead(IORead):
             size /= strlen
             ndim -= 1
             dtype = numpy.dtype('S{0}'.format(strlen))
-
 
         filename = g['variable_filename'][ncvar]
         
@@ -3626,9 +3621,8 @@ class NetCDFRead(IORead):
                                              list(c.keys())))
         # --- End: if
 
-        return self._create_Data(
-            array, units=units,
-            calendar=calendar)
+        return self._create_Data(array, units=units,
+                                 calendar=calendar)
     
     def _create_domain_axis(self, size, ncdim=None):
         '''TODO
@@ -3684,7 +3678,7 @@ class NetCDFRead(IORead):
     :Parameters:
     
         cell_methods_string: `str`
-            A CF cell_methods string.
+            A CF cell methods string.
     
     :Returns:
     
@@ -3893,7 +3887,7 @@ class NetCDFRead(IORead):
                 datum_parameters[x] = value
             else:
                 coordinate_conversion_parameters[x] = value
-        #-- End: for
+        # --- End: for
         
         datum = self.implementation.initialise_Datum(
             parameters=datum_parameters)
@@ -4117,7 +4111,7 @@ class NetCDFRead(IORead):
     :Parameters:
     
         ncvar: `str`
-            The netCDF variable from which to get units and calendar
+            The netCDF variable from which to get units and calendar.
 
         '''
 #        g = self.read_vars

@@ -137,7 +137,6 @@ class CFDMImplementation(Implementation):
             PartNodeCountProperties=PartNodeCountProperties,        
         )
 
-
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -145,7 +144,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return '<{0}: >'.format(self.__class__.__name__)
-
 
     def bounds_insert_dimension(self, bounds, position):
         '''TODO
@@ -162,7 +160,6 @@ class CFDMImplementation(Implementation):
     
         '''
         return bounds.insert_dimension(position=position)
-
 
     def conform_geometry_variables(self, field):
         '''TODO
@@ -206,7 +203,6 @@ class CFDMImplementation(Implementation):
 
         return True
 
-    
     def construct_insert_dimension(self, construct, position):
         '''TODO
 
@@ -225,7 +221,6 @@ class CFDMImplementation(Implementation):
         '''
         return construct.insert_dimension(position=position)
 
-
     def copy_construct(self, construct):
         '''TODO
 
@@ -236,13 +231,11 @@ class CFDMImplementation(Implementation):
         '''
         return construct.copy()
 
-
     def convert(self, field=None, construct_id=None):
         '''TODO
 
         '''
         return field.convert(construct_id, full_domain=False)
-
 
 #    def data_insert_dimension_inplace(self, data, position):
 #        '''TODO
@@ -259,8 +252,7 @@ class CFDMImplementation(Implementation):
 #
 #        '''
 #        data.insert_dimension(position=position, inplace=True)
-        
-        
+                
     def del_property(self, construct, prop, default):
         '''TODO
 
@@ -281,12 +273,10 @@ class CFDMImplementation(Implementation):
         '''
         return construct.del_property(prop, default)
 
-
     def field_insert_dimension(self, field, position=0, axis=None):
         '''TODO
         '''
         return field.insert_dimension(axis, position=position)
-
 
     def get_array(self, data):
         '''TODO
@@ -298,19 +288,16 @@ class CFDMImplementation(Implementation):
         '''
         return data.array
 
-
     def get_auxiliary_coordinates(self, field):
         '''TODO
         '''
         return field.auxiliary_coordinates
-
 
     def get_bounds(self, parent, default=None):
         '''TODO
         '''
         return parent.get_bounds(default=default)
 
-    
     def get_bounds_ncvar(self, parent, default=None):
         '''TODO
         '''
@@ -319,7 +306,6 @@ class CFDMImplementation(Implementation):
             return default
 
         return self.nc_get_variable(bounds, default=default)
-
     
     def get_cell_measures(self, field):
        '''TODO
@@ -331,7 +317,6 @@ class CFDMImplementation(Implementation):
         '''TODO
         '''
         return field.cell_methods.ordered()
-
        
     def get_cell_method_axes(self, cell_method, default=None):
         '''TODO
@@ -342,7 +327,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return cell_method.get_axes(default=default)
-
     
     def get_cell_method_string(self, cell_method):
         '''TODO
@@ -354,7 +338,6 @@ class CFDMImplementation(Implementation):
         '''
         return str(cell_method)
 
-
     def get_cell_method_qualifiers(self, cell_method):
         '''TODO
 
@@ -364,7 +347,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return cell_method.qualifiers()
-
 
     def get_compressed_array(self, data):
         '''TODO
@@ -379,7 +361,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return data.compressed_array
-
 
     def get_compressed_axes(self, field, key=None, construct=None):
         '''TODO
@@ -401,7 +382,6 @@ class CFDMImplementation(Implementation):
             
         return [data_axes[i] for i in self.get_data_compressed_axes(data)]
 
-
     def get_compression_type(self, construct):
         '''TODO
  
@@ -421,13 +401,11 @@ class CFDMImplementation(Implementation):
             return ''
         
         return data.get_compression_type()
-
         
     def get_construct_data_axes(self, field, key):
         '''TODO
         '''
         return field.constructs.data_axes()[key]
-
     
     def get_constructs(self, field, axes=[]):
         '''Return constructs that span particular axes.
@@ -447,7 +425,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return dict(field.constructs.filter_by_axis('and', *axes))
-
     
     def get_coordinate_reference_coordinates(self, coordinate_reference):
         '''Return the coordinates of a coordinate reference object.
@@ -462,7 +439,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return coordinate_reference.coordinates()
-
     
     def get_coordinate_conversion_parameters(self, coordinate_reference):
         '''TODO
@@ -474,12 +450,10 @@ class CFDMImplementation(Implementation):
         '''
         return coordinate_reference.coordinate_conversion.parameters()
 
-
     def get_coordinate_references(self, field):
         '''TODO
         '''
         return field.coordinate_references
-
 
     def get_coordinates(self, field):
        '''TODO
@@ -488,13 +462,11 @@ class CFDMImplementation(Implementation):
 
        '''
        return field.coordinates
-
     
     def get_data_calendar(self, data, default=None):
         '''TODO
         '''
         return data.get_calendar(default=default)
-
 
     def get_data_compressed_axes(self, data):
         '''TODO
@@ -505,7 +477,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return data.get_compressed_axes()
-
 
     def get_data_ndim(self, parent):
         '''Return the number of dimensions spanned by the data array.
@@ -533,7 +504,6 @@ class CFDMImplementation(Implementation):
     2
         '''
         return parent.data.ndim
-
 
     def get_data_shape(self, parent):
         '''Return the shape of the data array.
@@ -563,7 +533,6 @@ class CFDMImplementation(Implementation):
         '''
         return parent.data.shape
 
-
     def get_data_size(self, parent):
         '''Return the number of elements in the data array.
 
@@ -591,13 +560,11 @@ class CFDMImplementation(Implementation):
         '''
         return parent.data.size
 
-
     def get_data_units(self, data, default=None):
         '''TODO
 
         '''
         return data.get_units(default=default)
-
 
     def get_datum(self, coordinate_reference):
         '''TODO
@@ -610,7 +577,6 @@ class CFDMImplementation(Implementation):
             
         '''
         return coordinate_reference.datum
-
             
     def get_datum_parameters(self, ref):
         '''Return the parameter-valued terms of a coordinate reference datum.
@@ -626,12 +592,10 @@ class CFDMImplementation(Implementation):
         '''        
         return ref.datum.parameters()
 
-
     def get_dimension_coordinates(self, field):
         '''TODO
         '''
         return field.dimension_coordinates
-
 
     def get_domain_ancillaries(self, field):
        '''TODO
@@ -652,13 +616,11 @@ class CFDMImplementation(Implementation):
         '''
         return field.domain_axes[axis].get_size()
 
-
     def get_sample_dimension_position(self, construct):
         '''TODO
 
         '''
         return construct.get_data().get_compressed_dimension()
-
 
     def nc_get_geometry_variable(self, field, default=None):
         '''TODO
@@ -673,7 +635,6 @@ class CFDMImplementation(Implementation):
     
         '''
         return field.nc_get_geometry_variable(default)
-
 
     def nc_get_hdf5_chunksizes(self, data):
         '''Return the HDF5 chunksizes for the data. 
@@ -696,7 +657,6 @@ class CFDMImplementation(Implementation):
 
         return out
 
-
     def nc_get_sample_dimension(self, count, default=None):
         '''Return the name of the netCDF sample dimension.
 
@@ -707,7 +667,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return count.nc_get_sample_dimension(default=default)
-
 
     def nc_is_unlimited_axis(self, field, axis):
         '''Whether a domain axis corresponds to a netCDF unlimited dimension.
@@ -730,7 +689,6 @@ class CFDMImplementation(Implementation):
             return False
 
         return domain_axis.nc_is_unlimited()
-
     
     def nc_set_unlimited_axis(self, field, axis):
         '''Set a domain axis to correspond to a netCDF unlimited dimension.
@@ -754,14 +712,12 @@ class CFDMImplementation(Implementation):
             return
 
         domain_axis.nc_set_unlimited(True)
-
     
     def nc_get_global_attributes(self, field):
         '''TODO
 
         '''
         return field.nc_global_attributes()
-
     
     def nc_set_global_attributes(self, field, attributes):
         '''TODO
@@ -773,7 +729,6 @@ class CFDMImplementation(Implementation):
         '''
         for attr, value in attributes.items():
             field.nc_set_global_attribute(attr, value)
-
     
     def equal_constructs(self, construct0, construct1,
                          ignore_type=False):
@@ -782,14 +737,12 @@ class CFDMImplementation(Implementation):
         '''    
         return construct0.equals(construct1, ignore_type=ignore_type)
 
-
     def equal_properties(self, property_value0, property_value1):
         '''TODO
 
         '''
         field = self.get_class('Field')()
         return field._equals(property_value0, property_value1)
-
 
     def equal_datums(self, coordinate_reference0, coordinate_reference1):
         '''TODO
@@ -809,7 +762,6 @@ class CFDMImplementation(Implementation):
         datum1 = coordinate_reference1.datum
         return datum0.equals(datum1)
 
-
     def get_construct_data_size(self, construct):
         '''TODO
 
@@ -821,7 +773,6 @@ class CFDMImplementation(Implementation):
     
         '''
         return construct.data.size
-
    
     def nc_get_external(self, parent):
         '''Return whether a construct is external.
@@ -835,8 +786,6 @@ class CFDMImplementation(Implementation):
     
         `bool`
             Whether the construct is external.
-    
-    `**Examples:**
 
         '''
         if not hasattr(parent, 'nc_get_external'):
@@ -1504,7 +1453,6 @@ class CFDMImplementation(Implementation):
         '''
         return field.set_construct(construct, copy=copy)
 
-
     def set_cell_method_axes(self, cell_method, axes):
         '''TODO
         '''
@@ -1515,9 +1463,9 @@ class CFDMImplementation(Implementation):
         '''TODO
         '''
         cell_method.set_method(method)
-
     
-    def set_coordinate_conversion(self, coordinate_reference, coordinate_conversion):
+    def set_coordinate_conversion(self, coordinate_reference,
+                                  coordinate_conversion):
         '''TODO
 
     :Parameters:
@@ -1528,7 +1476,6 @@ class CFDMImplementation(Implementation):
     
         '''
         coordinate_reference.set_coordinate_conversion(coordinate_conversion)
-
 
     def set_coordinate_reference(self, field, construct, copy=True):
         '''Insert a coordinate reference object into a field.
@@ -1547,7 +1494,6 @@ class CFDMImplementation(Implementation):
         '''
         return field.set_construct(construct, copy=copy)
 
-
     def set_coordinate_reference_coordinates(self,
                                              coordinate_reference,
                                              coordinates):
@@ -1561,14 +1507,12 @@ class CFDMImplementation(Implementation):
         '''
         coordinate_reference.set_coordinates(coordinates)
 
-
     def set_coordinate_reference_coordinate(self,
                                             coordinate_reference,
                                             coordinate):
         '''TODO
         '''
         coordinate_reference.set_coordinate(coordinate)
-
 
     def set_data(self, construct, data, axes=None, copy=True):
         '''If the construct is a Field then the corresponding domain axes must
@@ -1594,9 +1538,8 @@ class CFDMImplementation(Implementation):
         else:
             construct.set_data(data, axes=axes, copy=copy)
 
-
     def set_datum(self, coordinate_reference, datum):
-        '''
+        '''Insert a datum object into a coordinate reference construct.
 
     :Parameters:
     
@@ -1607,8 +1550,8 @@ class CFDMImplementation(Implementation):
         '''
         coordinate_reference.set_datum(datum)
 
-
-    def set_dimension_coordinate(self, field, construct, axes, copy=True):
+    def set_dimension_coordinate(self, field, construct, axes,
+                                 copy=True):
         '''Insert a dimension coordinate object into a field.
         
     :Parameters:
@@ -1627,7 +1570,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
-
 
     def set_domain_ancillary(self, field, construct, axes, copy=True):
 #                             extra_axes=0, copy=True):
@@ -1650,7 +1592,6 @@ class CFDMImplementation(Implementation):
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
 
-
     def set_domain_axis(self, field, construct, copy=True):
         '''Insert a domain_axis object into a field.
 
@@ -1669,13 +1610,11 @@ class CFDMImplementation(Implementation):
         '''
         return field.set_construct(construct, copy=copy)
 
-
     def nc_set_external(self, construct):
         '''TODO
 
         '''
         construct.nc_set_external(True)
-
 
     def set_field_ancillary(self, field, construct, axes, copy=True):
         '''Insert a field ancillary object into a field.
@@ -1697,7 +1636,6 @@ class CFDMImplementation(Implementation):
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
 
-
     def set_geometry(self, coordinate, value):
         '''TODO
 
@@ -1705,7 +1643,6 @@ class CFDMImplementation(Implementation):
 
         '''
         coordinate.set_geometry(value)
-
 
     def set_node_count(self, parent, node_count, copy=True):
         '''Insert TODO
@@ -1719,7 +1656,6 @@ class CFDMImplementation(Implementation):
        `None`
         '''
         parent.set_node_count(node_count, copy=copy)
-
 
     def set_part_node_count(self, parent, part_node_count, copy=True):
         '''Insert TODO
@@ -1735,7 +1671,6 @@ class CFDMImplementation(Implementation):
         `None`
         '''
         parent.set_part_node_count(part_node_count, copy=copy)
-
 
     def set_interior_ring(self, parent, interior_ring, copy=True):
         '''Insert an interior ring array into a coordiante.
@@ -1753,7 +1688,6 @@ class CFDMImplementation(Implementation):
         '''
         parent.set_interior_ring(interior_ring, copy=copy)
 
-
     def set_dataset_compliance(self, field, report):
         '''TODO
 
@@ -1762,7 +1696,6 @@ class CFDMImplementation(Implementation):
         '''
         field._set_dataset_compliance(report)
 
-    
     def nc_set_dimension(self, construct, ncdim):
         '''TODO
 
@@ -1775,7 +1708,6 @@ class CFDMImplementation(Implementation):
         '''
         construct.nc_set_dimension(ncdim)
 
-
     def nc_set_geometry_variable(self, field, ncvar):
         '''TODO
 
@@ -1787,7 +1719,6 @@ class CFDMImplementation(Implementation):
 
         '''
         field.nc_set_geometry_variable(ncvar)
-
     
     def nc_set_variable(self, parent, ncvar):
         '''TODO
@@ -1799,7 +1730,6 @@ class CFDMImplementation(Implementation):
         `None`
         '''
         parent.nc_set_variable(ncvar)
-
 
     def nc_get_datum_variable(self, ref):
         '''TODO
@@ -1814,7 +1744,6 @@ class CFDMImplementation(Implementation):
         '''
         return ref.nc_get_datum_variable(default=None)
 
-
     def nc_set_datum_variable(self, ref, ncvar):
         '''TODO
 
@@ -1828,7 +1757,6 @@ class CFDMImplementation(Implementation):
         '''
         ref.nc_set_datum_variable(ncvar)
 
-
     def set_properties(self, construct, properties, copy=True):
         '''TODO
 
@@ -1841,8 +1769,7 @@ class CFDMImplementation(Implementation):
         '''
         construct.set_properties(properties, copy=copy)
 
- 
-    def has_bounds(self, construct):
+     def has_bounds(self, construct):
         '''TODO 
 
     :Parameters:
@@ -1853,8 +1780,7 @@ class CFDMImplementation(Implementation):
 
         '''
         return construct.has_bounds()
-    
-    
+        
     def has_datum(self, coordinate_reference):
         '''Return True if a coordinate reference has a datum.
 
@@ -1876,7 +1802,6 @@ class CFDMImplementation(Implementation):
         '''
         return bool(coordinate_reference.datum)
 
-    
     def has_property(self, parent, prop):
         '''Return True if a property exists.
 
@@ -1903,7 +1828,6 @@ class CFDMImplementation(Implementation):
     False
         '''
         return parent.has_property(prop)
-
     
     def squeeze(self, construct, axes=None):
         '''TODO
@@ -1945,7 +1869,6 @@ _implementation = CFDMImplementation(
     RaggedIndexedArray           = RaggedIndexedArray,
     RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
 )
-
 
 def implementation():
     '''Return a container for the CF data model implementation.

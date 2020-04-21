@@ -93,7 +93,7 @@ class NetCDFWrite(IOWrite):
                 
         return self._netcdf_name(ncvar)
 
-        def _netcdf_name(self, base, dimsize=None, role=None):
+    def _netcdf_name(self, base, dimsize=None, role=None):
         '''Return a new netCDF variable or dimension name.
     
     .. versionadded:: 1.7.0
@@ -3216,16 +3216,31 @@ class NetCDFWrite(IOWrite):
     def file_open(self, filename, mode, fmt):
         '''Open the netCDF file for writing.
         
+    :Parameters:
+
+        filename: `str`
+            As for the *filename* parameter for initialising a
+            `netCDF.Dataset` instance.
+
+        mode: `str`
+            As for the *mode* parameter for initialising a
+            `netCDF.Dataset` instance.
+
+        fmt: `str`
+            As for the *format* parameter for initialising a
+            `netCDF.Dataset` instance.
+
     :Returns:
             
         `netCDF.Dataset`
-            
+            A `netCDF4.Dataset` object for the file.
+
         '''
         try:        
             nc = netCDF4.Dataset(filename, mode, format=fmt)
         except RuntimeError as error:
             raise RuntimeError("{}: {}".format(error, filename))        
-
+        
         return nc
 
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
