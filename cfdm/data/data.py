@@ -903,14 +903,32 @@ class Data(mixin.Container,
 
         return masked
 
-    def apply_masking(self, inplace=False):
-        '''TODO
+    def apply_masking(self, valid_min=None, valid_max=None,
+                      valid_range=None, inplace=False):
+        '''TODO DCH
 
     .. versionadded:: 1.8.2
 
     .. seealso:: `get_fill_value`,`set_fill_value`, `mask`
                  
     :Parameters:
+
+        valid_min: number, optional
+            A scalar specifying the minimum valid value. Values
+            strictly less than this number will be set to missing
+            data.
+
+        valid_max: number, optional
+            A scalar specifying the maximum valid value. Values
+            strictly greater than this number will be set to missing
+            data.
+
+        valid_range: (number, number), optional
+            A vector of two numbers specifying the minimum and maximum
+            valid values, equivalent to specifying values for both
+            *valid_min* and *valid_max* parameters. The *valid_range*
+            parameter must not be set if either *valid_min* or
+            *valid_max* is defined.
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -923,23 +941,51 @@ class Data(mixin.Container,
 
     **Examples:**
 
-        TODO
+        TODO DCH
 
         '''
+        if valid_range is not None:
+            if valid_min is not None or valid_max is not None:
+                raise ValueError(
+                    "Can't set 'valid_range' parameter with either the "
+                    "'valid_min' nor 'valid_max' parameters")
+
+            try:
+                if len(valid_range) != 2:
+                    raise ValueError(
+                        "'valid_range' parameter must be a vector of "
+                        "two elements")
+            except TypeError:                
+                raise ValueError(
+                    "'valid_range' parameter must be a vector of "
+                    "two elements")
+            
+            valid_min, valid_max = valid_range
+            
         if inplace:
             d = self
         else:
             d = self.copy()
+
+        array = None
             
         fill_value = self.get_fill_value(None)
         if fill_value is None:
-            if inplace:
-                d = None
-            return d
+            array = d.array
+            array = numpy.ma.where(array==fill_value, numpy.ma.masked, array)
 
-        array = self.array
-        array = numpy.ma.where(array==fill_value, numpy.ma.masked, array)
+        if valid_min is not None:
+            if array is None:
+                array = d.array
+                
+            array = numpy.ma.where(array<valid_min, numpy.ma.masked, array)
 
+        if valid_max is not None:
+            if array is None:
+                array = d.array
+                
+            array = numpy.ma.where(array>valid_max, numpy.ma.masked, array)
+        
         d._set_Array(array, copy=False)
 
         if inplace:

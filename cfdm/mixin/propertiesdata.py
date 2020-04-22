@@ -276,6 +276,70 @@ class PropertiesData(Properties):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    def apply_masking(self, inplace=False):
+        '''TODO DCH
+
+        valid_min: number, optional
+            A scalar specifying the minimum valid value. Values
+            strictly less than this number will be set to missing
+            data.
+
+        valid_max: number, optional
+            A scalar specifying the maximum valid value. Values
+            strictly greater than this number will be set to missing
+            data.
+
+        valid_range: (number, number), optional
+            A vector of two numbers specifying the minimum and maximum
+            valid values, equivalent to specifying values for both
+            *valid_min* and *valid_max* parameters. The *valid_range*
+            parameter must not be set if either *valid_min* or
+            *valid_max* is defined.
+
+    .. versionadded:: 1.8.2
+
+    .. seealso:: `mask`
+               
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+            A new instance with masked values, or `None` if the
+            operation was in-place.
+    
+    **Examples:**
+
+        TODO DCH
+
+        '''             
+        if inplace:
+            v = self
+        else:
+            v = self.copy()
+       
+        data = v.get_data(None)
+        if data is not None:
+            valid_min = v.get_property('valid_min', None)
+            valid_max = v.get_property('valid_max', None)
+            valid_range = v.get_property('valid_range', None)
+            if (valid_range is not None
+                and (valid_min is not None or valid_max is not None)):
+                raise ValueError(
+                    "Can't apply masking when the 'valid_range' property "
+                    "has been set as well as either the "
+                    "'valid_min' or 'valid_max' properties")
+
+            data.apply_masking(valid_min=valid_min,
+                               valid_max=valid_max,
+                               valid_range=valid_range, inplace=True)
+
+        if inplace:
+            v = None            
+        return v
+    
     def dump(self, display=True, _key=None, _omit_properties=(),
              _prefix='', _title=None, _create_title=True, _level=0,
              _axes=None, _axis_names=None):
@@ -460,7 +524,8 @@ class PropertiesData(Properties):
             if self.nc_get_variable(None) != other.nc_get_variable(None):
                 if verbose:
                     print(
-                        "{0}: External variable have different netCDF variable names: {} != {})".format(
+                        "{0}: External variable have different "
+                        "netCDF variable names: {} != {})".format(
                             self.__class__.__name__,
                             self.nc_get_variable(None),
                             other.nc_get_variable(None)))
@@ -498,7 +563,8 @@ class PropertiesData(Properties):
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
                 if verbose:
-                    print("{0}: Different data".format(self.__class__.__name__))
+                    print("{0}: Different data".format(
+                        self.__class__.__name__))
                 return False
         # --- End: if
 
