@@ -489,8 +489,10 @@ class PropertiesDataBounds(PropertiesData):
         try:
             return self._del_component('node_count')
         except ValueError:
-            return self._default(default,
-                                 "{!r} has no node count variable".format(self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no node count variable".format(
+                    self.__class__.__name__))
     
     def del_part_node_count(self, default=ValueError()):
         '''Remove the part node count variable for geometry bounds.
@@ -528,8 +530,10 @@ class PropertiesDataBounds(PropertiesData):
         try:
             return self._del_component('part_node_count')
         except ValueError:
-            return self._default(default,
-                                 "{!r} has no part node count variable".format(self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no part node count variable".format(
+                    self.__class__.__name__))
 
     def dump(self, display=True, _key=None, _omit_properties=None,
              _prefix='', _title=None, _create_title=True, _level=0,
@@ -745,7 +749,9 @@ class PropertiesDataBounds(PropertiesData):
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
                 if verbose:
-                    print("{0}: Different bounds".format(self.__class__.__name__))
+                    print("{0}: Different bounds".format(
+                        self.__class__.__name__)) # pragma: no cover
+                    
                 return False
         # --- End: if
 
@@ -755,11 +761,14 @@ class PropertiesDataBounds(PropertiesData):
         self_has_interior_ring = self.has_interior_ring()
         if self_has_interior_ring != other.has_interior_ring():
             if verbose:
-                print("{0}: Different interior ring".format(self.__class__.__name__)) # pragma: no coer
+                print("{0}: Different interior ring".format(
+                    self.__class__.__name__)) # pragma: no cover
+                
             return False
                 
         if self_has_interior_ring:            
-            if not self._equals(self.get_interior_ring(), other.get_interior_ring(),
+            if not self._equals(self.get_interior_ring(),
+                                other.get_interior_ring(),
                                 rtol=rtol, atol=atol,
                                 verbose=verbose,
                                 ignore_data_type=ignore_data_type,
@@ -767,7 +776,9 @@ class PropertiesDataBounds(PropertiesData):
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
                 if verbose:
-                    print("{0}: Different interior ring".format(self.__class__.__name__)) # pragma: no cover
+                    print("{0}: Different interior ring".format(
+                        self.__class__.__name__)) # pragma: no cover
+                    
                 return False
         # --- End: if
 
@@ -1180,7 +1191,8 @@ class PropertiesDataBounds(PropertiesData):
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
-                "Can't insert dimension: Invalid position: {!r}".format(position))
+                "Can't insert dimension: Invalid position: {!r}".format(
+                    position))
         
         c = super().insert_dimension(position, inplace=inplace)
         if inplace:

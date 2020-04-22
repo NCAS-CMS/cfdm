@@ -279,22 +279,25 @@ class PropertiesData(Properties):
     def apply_masking(self, inplace=False):
         '''TODO DCH
 
-        valid_min: number, optional
-            A scalar specifying the minimum valid value. Values
-            strictly less than this number will be set to missing
-            data.
+    Masking is applied according to any of the following criteria that
+    are applicable:
 
-        valid_max: number, optional
-            A scalar specifying the maximum valid value. Values
-            strictly greater than this number will be set to missing
-            data.
+    * where values are equal to the value of the "missing_value"
+      property;
 
-        valid_range: (number, number), optional
-            A vector of two numbers specifying the minimum and maximum
-            valid values, equivalent to specifying values for both
-            *valid_min* and *valid_max* parameters. The *valid_range*
-            parameter must not be set if either *valid_min* or
-            *valid_max* is defined.
+    * where values are equal to the value of the "_FillValue"
+      property;
+
+    * where values are strictly less than the value of the "valid_min"
+      property;
+
+    * where values are within the inclusive range specified by the two
+      values of "valid_range" property.
+
+    If any of the above properties have not been set the no masking is
+    applied for that method.
+
+    Elements that are already masked remain so.
 
     .. versionadded:: 1.8.2
 
