@@ -222,10 +222,11 @@ class read_writeTest(unittest.TestCase):
             # Note that really we just want to do an in-place sed ('sed -i')
             # but because of subtle differences between the GNU (Linux OS) and
             # BSD (some Mac OS) command variants a safe portable one-liner may
-            # not be possible. This will do, overwriting the intermediate file:
+            # not be possible. This will do, overwriting the intermediate file.
+            # The '-E' to mark as an extended regex is also for portability.
             subprocess.run(
-                ' '.join(['sed', '-e', regex, tmpfileh, '>' + tmpfileh2, '&&',
-                          'mv', tmpfileh2, tmpfileh]),
+                ' '.join(['sed', '-E', '-e', regex, tmpfileh, '>' + tmpfileh2,
+                          '&&', 'mv', tmpfileh2, tmpfileh]),
                 shell=True, check=True
             )
             h = cfdm.read(tmpfileh)[0]
