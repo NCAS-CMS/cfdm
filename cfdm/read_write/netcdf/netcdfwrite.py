@@ -2367,7 +2367,7 @@ class NetCDFWrite(IOWrite):
         # terrible things to it (or are we? should review this)
         f = self.implementation.copy_construct(org_f)
 
-        data_axes = self.implementation.get_field_data_axes(f)
+        data_axes = list(self.implementation.get_field_data_axes(f))
     
         # Mapping of domain axis identifiers to netCDF dimension
         # names. This gets reset for each new field that is written to

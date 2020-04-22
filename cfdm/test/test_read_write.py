@@ -16,6 +16,7 @@ warnings = False
 
 tmpfile  = tempfile.mktemp('.cfdm_test')
 tmpfileh  = tempfile.mktemp('.cfdm_test')
+tmpfileh2 = tempfile.mktemp('.cfdm_test')
 tmpfilec  = tempfile.mktemp('.cfdm_test')
 tmpfile0  = tempfile.mktemp('.cfdm_test')
 tmpfile1  = tempfile.mktemp('.cfdm_test')
@@ -212,23 +213,23 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(OSError):
             x = cfdm.read('test_read_write.py')
 
-        for number, regex in enumerate([
+        for regex in [
             r'"1 i\ \ "',
             r'"1 i\// comment"',
             r'"1 i\ // comment"',
             r'"1 i\ \t// comment"'
-        ]):
-            # Empty string is an effective extension option needed w/ BSD sed:
-            try:  # for GNU (Linux OS) and older BSD variants (older Mac OS)
-                subprocess.run(
-                    ' '.join(['sed', '-i', '', regex, tmpfileh]),
-                    shell=True, check=True
-                )
-            except subprocess.CalledProcessError:  # for newer BSD i.e. Mac OS
-                subprocess.run(
-                    ' '.join(['sed', "-i''", regex, tmpfileh]),
-                    shell=True, check=True
-                )
+        ]:
+            # Note that really we just want to do an in-place sed ('sed -i')
+            # but because of subtle differences between the GNU (Linux OS) and
+            # BSD (some Mac OS) command variants a safe portable one-liner may
+            # not be possible. This will do, overwriting the intermediate file.
+            # The '-E' to mark as an extended regex is also for portability.
+            subprocess.run(
+                ' '.join(['sed', '-E', '-e', regex, tmpfileh, '>' + tmpfileh2,
+                          '&&', 'mv', tmpfileh2, tmpfileh]),
+                shell=True, check=True
+            )
+
             h = cfdm.read(tmpfileh)[0]
 
 #        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)
