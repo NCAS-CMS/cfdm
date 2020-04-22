@@ -21,6 +21,7 @@ def read(filename, external=None, extra=None, verbose=False,
     The returned field constructs are sorted by the netCDF variable
     names of their corresponding data variables.
     
+
     **CDL files**
 
     A file is considered to be a CDL representation of a netCDF
@@ -46,6 +47,7 @@ def read(filename, external=None, extra=None, verbose=False,
     `~cf.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
 
+
     **CF-compliance**
     
     If the dataset is partially CF-compliant to the extent that it is
@@ -66,6 +68,7 @@ def read(filename, external=None, extra=None, verbose=False,
     well as optionally displayed when the dataset is read by setting
     the *warnings* parameter.
     
+
     **Performance**
     
     Descriptive properties are always read into memory, but lazy
@@ -168,10 +171,11 @@ def read(filename, external=None, extra=None, verbose=False,
             If False then do not mask by convention when reading data
             from disk. By default data is masked by convention.
 
-            A netCDF array is masked depending on the values of any of
-            the netCDF variable attributes ``valid_min``,
-            ``valid_max``, ``valid_range``, ``_FillValue`` and
-            ``missing_value``.
+            The masking by convention of a netCDF array depends on the
+            values of any of the netCDF variable attributes
+            ``valid_min``, ``valid_max``, ``valid_range``,
+            ``_FillValue`` and ``missing_value``. See the CF
+            conventions for details.
     
             .. versionadded:: 1.8.2
 

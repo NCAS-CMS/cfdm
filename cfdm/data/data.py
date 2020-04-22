@@ -192,7 +192,8 @@ class Data(mixin.Container,
             shape = str(shape)
             shape = shape.replace(',)', ')')
             
-        return '<{0}{1}: {2}>'.format(self.__class__.__name__, shape, str(self))
+        return '<{0}{1}: {2}>'.format(
+            self.__class__.__name__, shape, str(self))
 
     def __getitem__(self, indices):
         '''Return a subspace of the data defined by indices
@@ -263,7 +264,8 @@ class Data(mixin.Container,
         '''
         if self.size != 1:
             raise TypeError(
-                "only length-1 arrays can be converted to Python scalars. Got {}".format(
+                "only length-1 arrays can be converted to "
+                "Python scalars. Got {}".format(
                     self))
 
         return int(self.array)
@@ -440,7 +442,8 @@ class Data(mixin.Container,
                 # Convert reference times to date-times
                 try:
                     first, last = type(self)(
-                        numpy.ma.array([first, last], mask=(mask[0], mask[-1])),
+                        numpy.ma.array([first, last],
+                                       mask=(mask[0], mask[-1])),
                         units, calendar).datetime_array
                 except (ValueError, OverflowError):
                     first, last = ('??', '??')
@@ -633,16 +636,16 @@ class Data(mixin.Container,
                                   if not isinstance(x, slice)]
 
         if len(axes_with_list_indices) < 2: 
-            # ------------------------------------------------------------
-            # At most one axis has a list-of-integers index so we can do a
-            # normal numpy assignment
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
+            # At most one axis has a list-of-integers index so we can
+            # do a normal numpy assignment
+            # --------------------------------------------------------
             array[tuple(indices)] = value
         else:
-            # ------------------------------------------------------------
-            # At least two axes have list-of-integers indices so we can't
-            # do a normal numpy assignment
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
+            # At least two axes have list-of-integers indices so we
+            # can't do a normal numpy assignment
+            # --------------------------------------------------------
             indices1 = indices[:]
             for i, x in enumerate(indices):
                 if i in axes_with_list_indices:
@@ -685,9 +688,11 @@ class Data(mixin.Container,
                         indices2.append((slice(None),))
                 # --- End: for
 
-                for i, j in zip(itertools.product(*indices1), itertools.product(*indices2)):
+                for i, j in zip(itertools.product(*indices1),
+                                itertools.product(*indices2)):
                     array[i] = value[j]
-
+        # --- End: if
+        
     # -----------------------------------------------------------------
     # Attributes
     # -----------------------------------------------------------------
@@ -978,7 +983,8 @@ class Data(mixin.Container,
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
-                "Can't insert dimension: Invalid position: {!r}".format(position))
+                "Can't insert dimension: "
+                "Invalid position: {!r}".format(position))
 
         array = numpy.expand_dims(self.array, position)
 
@@ -1189,7 +1195,8 @@ class Data(mixin.Container,
                     # has a size attribute.
                     if index.size != size:
                         raise IndexError(
-                            "Invalid indices for data with shape {}: {} ".format(
+                            "Invalid indices for data "
+                            "with shape {}: {} ".format(
                                 shape, parsed_indices))
 
                     index = numpy.where(index)[0]
@@ -1391,7 +1398,8 @@ class Data(mixin.Container,
         if not d.ndim:
             if axes:
                 raise ValueError(
-                    "Can't squeeze data: axes {} is not allowed data with shape {}".format(
+                    "Can't squeeze data: axes {} can not be used for "
+                    "data with shape {}".format(
                         axes, d.shape))
 
             if inplace:
@@ -1413,7 +1421,8 @@ class Data(mixin.Container,
             for i in axes:
                 if shape[i] > 1:
                     raise ValueError(
-                        "Can't squeeze data: Can't remove axis of size {}".format(
+                        "Can't squeeze data: "
+                        "Can't remove axis of size {}".format(
                             shape[i]))
         # --- End: if
 
@@ -1536,12 +1545,10 @@ class Data(mixin.Container,
                 return d
             
             axes = tuple(range(ndim-1, -1, -1))
-        else:
-            if len(axes) != ndim:
-                raise ValueError(
-                    "Can't transpose data: Axes don't match array: {}".format(
-                        axes))
-        # --- End: if
+        elif len(axes) != ndim:
+            raise ValueError(
+                "Can't transpose data: Axes don't match array: {}".format(
+                    axes))
 
         # Return unchanged if axes are in the same order as the data
         if axes == tuple(range(ndim)):            
@@ -1811,10 +1818,12 @@ class Data(mixin.Container,
             compression_type = self.get_compression_type()
             if compression_type != other.get_compression_type():
                 if verbose:
-                    print("{0}: Different compression types: {1} != {2}".format(
-                        self.__class__.__name__,
-                        compression_type,
-                        other.get_compression_type()))
+                    print("{0}: Different compression types: "
+                          "{1} != {2}".format(
+                              self.__class__.__name__,
+                              compression_type,
+                              other.get_compression_type()))
+                    
                 return False
             
             # --------------------------------------------------------
@@ -1836,8 +1845,11 @@ class Data(mixin.Container,
         if not self._equals(self.array, other.array,
                             rtol=rtol, atol=atol):
             if verbose:
-                print("{0}: Different array values (atol={1}, rtol={2})".format(
-                    self.__class__.__name__, atol, rtol))
+                print(
+                    "{0}: Different array values (atol={1}, rtol={2})".format(
+                        self.__class__.__name__,
+                        atol, rtol)) # pragma: no cover
+                
             return False
 
         # ------------------------------------------------------------
@@ -1978,7 +1990,8 @@ class Data(mixin.Container,
         if not ndim:
             if axes or axes == 0:
                 raise ValueError(
-                    "Can't flatten: Can't remove an axis from scalar {}".format(
+                    "Can't flatten: "
+                    "Can't remove an axis from scalar {}".format(
                         self.__class__.__name__))
             
             if inplace:
