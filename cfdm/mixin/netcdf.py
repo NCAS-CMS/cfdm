@@ -846,7 +846,10 @@ class NetCDFUnlimitedDimensions(NetCDF):
     set()
 
         '''
-        raise DeprecationError("Field.nc_unlimited_dimensions was deprecated at v1.7.4 and is no longer available. Use DomainAxis.nc_is_unlimited instead")
+        raise DeprecationError(
+            "Field.nc_unlimited_dimensions was deprecated at v1.7.4 "
+            "and is no longer available. Use DomainAxis.nc_is_unlimited "
+            "instead")
     
         out = self._get_component('netcdf').get('unlimited_dimensions')
         
@@ -899,7 +902,10 @@ class NetCDFUnlimitedDimensions(NetCDF):
     set()
 
         '''
-        raise DeprecationError("Field.nc_set_unlimited_dimensions was deprecated at v1.7.4  and is no longer available. Use DomainAxis.nc_set_unlimited instead")
+        raise DeprecationError(
+            "Field.nc_set_unlimited_dimensions was deprecated at v1.7.4 "
+            "and is no longer available. Use DomainAxis.nc_set_unlimited "
+            "instead")
                 
         out = self._get_component('netcdf').get('unlimited_dimensions')
         
@@ -944,7 +950,10 @@ class NetCDFUnlimitedDimensions(NetCDF):
     set()
 
         '''
-        raise DeprecationError("Field.nc_clear_unlimited_dimensions was deprecated at v1.7.4 and is no longer available. Use DomainAxis.nc_set_unlimited instead")                
+        raise DeprecationError(
+            "Field.nc_clear_unlimited_dimensions was deprecated at v1.7.4 "
+            "and is no longer available. Use DomainAxis.nc_set_unlimited "
+            "instead")                
 
         out = self._get_component('netcdf').get('unlimited_dimensions')
         
@@ -1189,7 +1198,6 @@ class NetCDFGeometry(NetCDF):
         '''
         self._get_component('netcdf')['geometry_variable'] = value
 
-
 # --- End: class
 
 class NetCDFHDF5(NetCDF):
@@ -1397,7 +1405,8 @@ class NetCDFHDF5_exp(NetCDF):
             return self._get_component('netcdf')['hdf5_chunksize']
         except KeyError:
             return self._default(default,
-                   "{!r} has no HDF5 chunksize".format(self.__class__.__name__))
+                   "{!r} has no HDF5 chunksize".format(
+                       self.__class__.__name__))
 
     def nc_has_hdf5_chunksize(self):
         '''TODO

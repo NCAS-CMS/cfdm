@@ -38,7 +38,8 @@ class PartNodeCountProperties(mixin.NetCDFVariable,
             `set_properties` and `set_property` methods.
 
             *Parameter example:*
-              ``properties={'long_name': 'number of obs for this station'}``
+              ``properties={'long_name': 'number of obs for this
+              station'}``
     
         source: optional
             Initialize the properties from those of *source*.

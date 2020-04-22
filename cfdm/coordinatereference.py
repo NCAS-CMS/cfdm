@@ -184,16 +184,20 @@ class CoordinateReference(mixin.NetCDFVariable,
 
         # Coordinate conversion domain ancillary-valued terms
         if _construct_names:
-            for term, key in sorted(coordinate_conversion.domain_ancillaries().items()):
+            for term, key in sorted(
+                    coordinate_conversion.domain_ancillaries().items()):
                 if key in _construct_names:
-                    construct_name = 'Domain Ancillary: '+_construct_names.get(key, 'key:{}'.format(key))
+                    construct_name = 'Domain Ancillary: ' \
+                                     + _construct_names.get(
+                                         key, 'key:{}'.format(key))
                 else:
                     construct_name = ''
                     
                 string.append('{0}Coordinate conversion:{1} = {2}'.format(
                     indent1, term, construct_name))
         else:
-            for term, value in sorted(coordinate_conversion.domain_ancillaries().items()):
+            for term, value in sorted(
+                    coordinate_conversion.domain_ancillaries().items()):
                 string.append("{0}Coordinate conversion:{1} = {2}".format(
                     indent1, term, str(value)))
 
@@ -205,7 +209,8 @@ class CoordinateReference(mixin.NetCDFVariable,
         # Coordinates 
         if _construct_names:
             for key in sorted(self.coordinates(), reverse=True):
-                coord = '{}'.format(_construct_names.get(key, 'key:{}'.format(key)))
+                coord = '{}'.format(
+                    _construct_names.get(key, 'key:{}'.format(key)))
                 if key in _dimension_coordinates:
                     coord = 'Dimension Coordinate: '+coord
                 elif key in _auxiliary_coordinates:
@@ -309,8 +314,10 @@ class CoordinateReference(mixin.NetCDFVariable,
         if len(coords0) != len(coords1):
             if verbose:
                 print(
-"{}: Different sized collections of coordinates ({}, {})".format(
-    self.__class__.__name__, coords0, coords1))
+                    "{}: Different sized collections of coordinates "
+                    "({}, {})".format(                        
+                        self.__class__.__name__, coords0, coords1))
+                
             return False
 
         if not self.coordinate_conversion.equals(
@@ -320,7 +327,9 @@ class CoordinateReference(mixin.NetCDFVariable,
                 ignore_type=ignore_type):
             if verbose:
                 print(
-"{}: Different coordinate conversions".format(self.__class__.__name__))
+                    "{}: Different coordinate conversions".format(
+                        self.__class__.__name__))
+                
             return False
         
         if not self.datum.equals(
@@ -330,7 +339,8 @@ class CoordinateReference(mixin.NetCDFVariable,
                 ignore_type=ignore_type):
             if verbose:
                 print(
-"{}: Different datums".format(self.__class__.__name__))
+                    "{}: Different datums".format(self.__class__.__name__))
+                
             return False
 
         # Still here? Then the two coordinate references are as equal
@@ -342,9 +352,9 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     By default the identity is the first found of the following:
     
-    * The "standard_name" coordinate conversion parameter, preceeded
+    * The ``standard_name`` coordinate conversion parameter, preceeded
       by ``'standard_name:'``.
-    * The "grid_mapping_name" coordinate conversion parameter,
+    * The ``grid_mapping_name`` coordinate conversion parameter,
       preceeded by ``'grid_mapping_name:'``.
     * The netCDF variable name (corresponding to a netCDF grid mapping
       variable), preceeded by ``'ncvar%'``.
@@ -398,9 +408,9 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     The identities comprise:
     
-    * The "standard_name" coordinate conversion parameter, preceeded
+    * The ``standard_name`` coordinate conversion parameter, preceeded
       by ``'standard_name:'``.
-    * The "grid_mapping_name" coordinate conversion parameter,
+    * The ``grid_mapping_name`` coordinate conversion parameter,
       preceeded by ``'grid_mapping_name:'``.
     * The netCDF variable name (corresponding to a netCDF grid mapping
       variable), preceeded by ``'ncvar%'``.

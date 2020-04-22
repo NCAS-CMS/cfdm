@@ -102,7 +102,7 @@ def read(filename, external=None, extra=None, verbose=False,
             attributes, but are not present, in the parent file given
             by the *filename* parameter) from the given external
             files. Ignored if the parent file does not contain a
-            global "external_variables" attribute. Multiple external
+            global ``external_variables`` attribute. Multiple external
             files may be provided, which are searched in random order
             for the required external variables.
            

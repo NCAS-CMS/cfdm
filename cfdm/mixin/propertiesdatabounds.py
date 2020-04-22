@@ -454,6 +454,90 @@ class PropertiesDataBounds(PropertiesData):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    def apply_masking(self, inplace=False):
+        '''Apply masking as defined by the CF conventions.
+
+    Masking is applied according to any of the following criteria that
+    are applicable:
+
+    * where values are equal to the value of the ``missing_value``
+      property;
+
+    * where values are equal to the value of the ``_FillValue``
+      property;
+
+    * where values are strictly less than the value of the
+      ``valid_min`` property;
+
+    * where values are strictly greater than the value of the
+      ``valid_max`` property;
+
+    * where values are within the inclusive range specified by the two
+      values of ``valid_range`` property.
+
+    If any of the above properties have not been set the no masking is
+    applied for that method.
+
+    The cell bounds, if any, are also masked according to the same
+    criteria. If any of the relevant properties are explicitly set on
+    the bounds instance then their values will be used in preference
+    to those of the parent contsruct.
+
+    Elements that are already masked remain so.
+
+    .. versionadded:: 1.8.2
+
+    .. seealso:: `mask`
+               
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+   
+    :Returns:
+
+            A new instance with masked values, or `None` if the
+            operation was in-place.
+    
+    **Examples:**
+
+        TODO DCH
+
+        '''
+        c = super().apply_masking(inplace=inplace)
+        if inplace:
+            c = self
+
+        b = c.get_bounds(None)
+        if b is not None:
+            _FillValue = b.get_property(
+                '_FillValue',
+                c.get_property('_FillValue', None))
+            missing_value = b.get_property(
+                'missing_value',
+                c.get_property('missing_value', None))
+
+            fill_values = [x
+                           for x in (_FillValue, missing_value)
+                           if x is not None]
+                        
+            valid_min = b.get_property('valid_min',
+                                       c.get_property('valid_min', None))
+            valid_max = b.get_property('valid_max',
+                                       c.get_property('valid_max', None))
+            valid_range = b.get_property('valid_range',
+                                         c.get_property('valid_range', None))
+
+            b.data.apply_masking(fill_values=fill_values,
+                                 valid_min=valid_min,
+                                 valid_max=valid_max,
+                                 valid_range=valid_range,
+                                 inplace=True)
+
+        if inplace:
+            c = None            
+        return c
+
     def del_node_count(self, default=ValueError()):
         '''Remove the node count variable for geometry bounds.
 
@@ -666,7 +750,7 @@ class PropertiesDataBounds(PropertiesData):
             function.
     
         ignore_fill_value: `bool`, optional
-            If True then the "_FillValue" and "missing_value"
+            If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison.
     
         verbose: `bool`, optional
@@ -928,7 +1012,7 @@ class PropertiesDataBounds(PropertiesData):
 
     The identities comprise:
     
-    * The "standard_name" property.
+    * The ``standard_name`` property.
     * All properties, preceeded by the property name and a colon,
       e.g. ``'long_name:Air temperature'``.
     * The netCDF variable name, preceeded by ``'ncvar%'``.
@@ -981,10 +1065,10 @@ class PropertiesDataBounds(PropertiesData):
 
     By default the identity is the first found of the following:
     
-    1. The "standard_name" property.
-    2. The "cf_role" property, preceeded by ``'cf_role='``.
-    3. The "axis" property, preceeded by ``'axis='``.
-    4. The "long_name" property, preceeded by ``'long_name='``.
+    1. The ``standard_name`` property.
+    2. The ``cf_role`` property, preceeded by ``'cf_role='``.
+    3. The ``axis`` property, preceeded by ``'axis='``.
+    4. The ``long_name`` property, preceeded by ``'long_name='``.
     5. The netCDF variable name, preceeded by ``'ncvar%'``.
     6. The identity of the bounds, if any.
     7. The value of the *default* parameter.

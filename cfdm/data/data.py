@@ -9,7 +9,7 @@ import netCDF4
 from .. import core
 from .. import mixin
 
-from ..constants  import masked
+from ..constants  import masked as cfdm_masked
 
 from . import abstract
 from . import NumpyArray
@@ -344,8 +344,8 @@ class Data(mixin.Container,
     **Missing data**
     
     Data array elements may be set to missing values by assigning them
-    to `numpy.ma.masked`. Missing values may be unmasked by assigning
-    them to any other value.
+    to `cfdm.masked`. Missing values may be unmasked by assigning them
+    to any other value.
     
     .. versionadded:: 1.7.0
     
@@ -365,14 +365,14 @@ class Data(mixin.Container,
     >>> d[:, 0] = range(9)
     >>> d[..., 6:3:-1, 3:6] = numpy.arange(-18, -9).reshape(3, 3)
     >>> d[0, [2, 9], [4, 8]] =  cfdm.Data([[-2, -3]])
-    >>> d[0, :, -2] = numpy.ma.masked
+    >>> d[0, :, -2] = cfdm.masked
 
         '''
         indices = self._parse_indices(indices)
                 
         array = self.array
 
-        if value is masked or numpy.ma.isMA(value):
+        if value is cfdm_masked or numpy.ma.isMA(value):
             # The data is not masked but the assignment is masking
             # elements, so turn the non-masked array into a masked
             # one.
@@ -515,7 +515,7 @@ class Data(mixin.Container,
     >>> x = d._item(1)
     >>> print(x, type(x))
     2 <type 'int'>
-    >>> d[0, 1] = numpy.ma.masked
+    >>> d[0, 1] = cfdm.masked
     >>> d._item((slice(None), slice(1, 2)))
     masked
 
@@ -880,7 +880,7 @@ class Data(mixin.Container,
     >>> d = Data([[0, 0, 0]])
     >>> d.any()
     False
-    >>> d[0, 0] = numpy.ma.masked
+    >>> d[0, 0] = cfdm.masked
     >>> print(d.array)
     [[-- 0 0]]
     >>> d.any()
@@ -890,7 +890,7 @@ class Data(mixin.Container,
     [[-- 3 0]]
     >>> d.any()
     True
-    >>> d[...] = numpy.ma.masked
+    >>> d[...] = cfdm.masked
     >>> print(d.array)
     [[-- -- --]]
     >>> d.any()
@@ -903,8 +903,8 @@ class Data(mixin.Container,
 
         return masked
 
-    def apply_masking(self, valid_min=None, valid_max=None,
-                      valid_range=None, inplace=False):
+    def apply_masking(self, fill_values=None, valid_min=None,
+                      valid_max=None, valid_range=None, inplace=False):
         '''TODO DCH
 
     .. versionadded:: 1.8.2
@@ -913,6 +913,22 @@ class Data(mixin.Container,
                  
     :Parameters:
 
+        fill_values: sequence of scalars, optional
+            Specify non-valid values. If the sequence is empty then no
+            values are used. By default the value returned by the
+            `get_fill_value` method, if such a value exists, is used
+            as the only non-valid value.
+        
+            Values exactly equal to any of the fill values are set to
+            missing data.
+
+            :Parameter example:
+              Specify a fill values of 999: ``fill_values=[999]``
+         
+            :Parameter example:
+              Specify fill values of 999 and -1e30:
+              ``fill_values=[999, -1e30]``
+         
         valid_min: number, optional
             A scalar specifying the minimum valid value. Values
             strictly less than this number will be set to missing
@@ -967,26 +983,43 @@ class Data(mixin.Container,
         else:
             d = self.copy()
 
-        array = None
-            
-        fill_value = self.get_fill_value(None)
-        if fill_value is not None:
-            array = d.array
-            array = numpy.ma.where(array==fill_value, numpy.ma.masked, array)
+        if fill_values is None:
+            fill_value = self.get_fill_value(None)
+            if fill_value is not None:
+                fill_values = (fill_value,)
+            else:
+                fill_values = ()
+        # --- End: if
 
-        if valid_min is not None:
-            if array is None:
-                array = d.array
+        mask = None
+        
+        if fill_values:
+            array = self.array
+            mask = (array == fill_value[0])
                 
-            array = numpy.ma.where(array<valid_min, numpy.ma.masked, array)
+            for fill_value in fill_values[1:]:
+                mask |= (array == fill_value)
+        # --- End: for
+            
+        if valid_min is not None:
+            if mask is None:
+                array = self.array
+                mask = (array < valid_min)
+            else:
+                mask |= (array < valid_min)
+        # --- End: if
 
         if valid_max is not None:
-            if array is None:
-                array = d.array
-                
-            array = numpy.ma.where(array>valid_max, numpy.ma.masked, array)
-        
-        d._set_Array(array, copy=False)
+            if mask is None:
+                array = self.array
+                mask = (array > valid_max)
+            else:
+                mask |= (array > valid_max)
+        # --- End: if
+
+        if mask is not None:            
+            array = numpy.ma.where(mask, cfdm_masked, array)
+            d._set_Array(array, copy=False)
 
         if inplace:
             d = None
@@ -1968,7 +2001,7 @@ class Data(mixin.Container,
     >>> x = d.first_element()
     >>> print(x, type(x))
     (1, <type 'int'>)
-    >>> d[0, 0] = numpy.ma.masked
+    >>> d[0, 0] = cfdm.masked
     >>> y = d.first_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
@@ -2144,7 +2177,7 @@ class Data(mixin.Container,
     >>> x = d.last_element()
     >>> print(x, type(x))
     (4, <type 'int'>)
-    >>> d[-1, -1] = numpy.ma.masked
+    >>> d[-1, -1] = cfdm.masked
     >>> y = d.last_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
@@ -2174,7 +2207,7 @@ class Data(mixin.Container,
     >>> x = d.second_element()
     >>> print(x, type(x))
     (2, <type 'int'>)
-    >>> d[0, 1] = numpy.ma.masked
+    >>> d[0, 1] = cfdm.masked
     >>> y = d.second_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)

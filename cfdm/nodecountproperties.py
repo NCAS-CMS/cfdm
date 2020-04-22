@@ -32,7 +32,8 @@ class NodeCountProperties(mixin.NetCDFVariable,
             `set_properties` and `set_property` methods.
     
             *Parameter example:*
-              ``properties={'long_name': 'number of nodes for each geometry'}``
+              ``properties={'long_name': 'number of nodes for each
+              geometry'}``
     
         source: optional
             Initialize the properties from those of *source*.

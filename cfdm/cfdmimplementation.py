@@ -24,7 +24,6 @@ from .data import (Data,
                    RaggedIndexedArray,
                    RaggedIndexedContiguousArray)
 
-
 from .abstract import Implementation
 
 from . import CF
@@ -818,6 +817,10 @@ class CFDMImplementation(Implementation):
                   
     def get_field_data_axes(self, field):
         '''TODO
+
+    :Returns:
+
+        `list`
 
         '''
         return field.get_data_axes()

@@ -48,7 +48,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     **External variables**
     
     Metadata constructs marked as external are omitted from the file
-    and referred to via the netCDF "external_variables" global
+    and referred to via the netCDF ``external_variables`` global
     attribute. However, omitted constructs may be written to an
     external file (see the *external* parameter for details).
     
@@ -143,7 +143,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     
         Conventions: (sequence of) `str`, optional
              Specify conventions to be recorded by the netCDF global
-             "Conventions" attribute. By default the current
+             ``Conventions`` attribute. By default the current
              conventions are always included, but if an older CF
              conventions is defined then this is used instead.
     
@@ -162,8 +162,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
              *Parameter example:*
                ``Conventions=['CF-1.7', 'UGRID-1.0']``
     
-             Note that if the "Conventions" property is set on a field
-             construct then it is ignored.
+             Note that if the ``Conventions`` property is set on a
+             field construct then it is ignored.
     
         file_descriptors: `dict`, optional
              Create description of file contents netCDF global
@@ -185,7 +185,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                ``file_attributes={'title': 'my data'}``
     
              *Parameter example:*
-               ``file_attributes={'history': 'created 2019-01-01', 'foo': 'bar'}``
+               ``file_attributes={'history': 'created 2019-01-01',
+               'foo': 'bar'}``
     
         global_attributes: (sequence of) `str`, optional
              Create netCDF global attributes from the specified field

@@ -242,7 +242,7 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         
         if _fill_value:
             # Copy the fill_value to the data
-            fill_value = self.get_property('fill_value', None) # TODO
+            fill_value = self.get_property('fill_value', None) # TODO DCH
             if fill_value is not None:
                 data.set_fill_value(fill_value)
             else:

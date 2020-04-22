@@ -7,6 +7,7 @@ import numpy
 
 from ..functions import ATOL, RTOL
 
+
 class Container(object):
     '''Mixin class for storing object components.
 
@@ -21,8 +22,7 @@ class Container(object):
     .. versionadded:: 1.7.0
 
         '''
-        return '<{0}: {1}>'.format(self.__class__.__name__,
-                                   str(self))
+        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
 
     def __str__(self):
         '''Called by the `str` built-in function.
@@ -128,7 +128,8 @@ class Container(object):
         # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
 
         if not ignore_data_type and x.dtype != y.dtype:
-            if x.dtype.kind not in ('S', 'U') and y.dtype.kind not in ('S', 'U'):
+            if (x.dtype.kind not in ('S', 'U')
+                and y.dtype.kind not in ('S', 'U')):
                 return False
         
         x_is_masked = numpy.ma.isMA(x)

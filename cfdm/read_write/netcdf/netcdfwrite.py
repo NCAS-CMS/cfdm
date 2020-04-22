@@ -2420,7 +2420,8 @@ class NetCDFWrite(IOWrite):
         compression_type = self.implementation.get_compression_type(f)
         g['compression_type'] = compression_type
         if verbose:
-            print('    Compression = {!r}'.format(g['compression_type'])) # pragma: no cover
+            print("    Compression = {!r}".format(
+                g['compression_type'])) # pragma: no cover
         # 
         g['sample_ncdim']     = {}
         
@@ -2837,7 +2838,8 @@ class NetCDFWrite(IOWrite):
                 g['nc'][ncvar].setncattr('formula_terms', formula_terms)
             
                 if g['verbose']:
-                    print('    Writing formula_terms attribute to netCDF variable',
+                    print("    Writing formula_terms attribute to "
+                          "netCDF variable",
                           ncvar+':', repr(formula_terms)) # pragma: no cover
     
                 # Add the formula_terms attribute to the parent
@@ -2845,11 +2847,14 @@ class NetCDFWrite(IOWrite):
                 bounds_ncvar = g['bounds'].get(ncvar)
                 if bounds_ncvar is not None:
                     bounds_formula_terms = ' '.join(bounds_formula_terms)
-                    g['nc'][bounds_ncvar].setncattr('formula_terms', bounds_formula_terms)
+                    g['nc'][bounds_ncvar].setncattr(
+                        'formula_terms', bounds_formula_terms)
 
                     if g['verbose']:
-                        print('    Writing formula_terms to netCDF bounds variable',
-                              bounds_ncvar+':', repr(bounds_formula_terms)) # pragma: no cover
+                        print("    Writing formula_terms to netCDF "
+                              "bounds variable",
+                              bounds_ncvar+':',
+                              repr(bounds_formula_terms)) # pragma: no cover
             # --- End: if
                         
             # Deal with a vertical datum
@@ -2889,8 +2894,9 @@ class NetCDFWrite(IOWrite):
         if cell_measures:
             cell_measures = ' '.join(cell_measures)
             if verbose:
-                print('    Writing cell_measures attribute to netCDF variable {}: {!r}'.format(
-                    ncvar, cell_measures)) # pragma: no cover
+                print("    Writing cell_measures attribute to "
+                      "netCDF variable {}: {!r}".format(
+                          ncvar, cell_measures)) # pragma: no cover
                 
             extra['cell_measures'] = cell_measures
             
@@ -2898,8 +2904,9 @@ class NetCDFWrite(IOWrite):
         if coordinates:
             coordinates = ' '.join(coordinates)
             if verbose:
-                print('    Writing coordinates attribute to netCDF variable {}: {!r}'.format(
-                    ncvar, coordinates)) # pragma: no cover
+                print("    Writing coordinates attribute to "
+                      "netCDF variable {}: {!r}".format(
+                          ncvar, coordinates)) # pragma: no cover
                 
             extra['coordinates'] = coordinates
     
@@ -2907,8 +2914,9 @@ class NetCDFWrite(IOWrite):
         if grid_mapping:
             grid_mapping = ' '.join(grid_mapping)
             if verbose:
-                print('    Writing grid_mapping attribute to netCDF variable {}: {!r}'.format(
-                    ncvar, grid_mapping)) # pragma: no cover
+                print("    Writing grid_mapping attribute to "
+                      "netCDF variable {}: {!r}".format(
+                          ncvar, grid_mapping)) # pragma: no cover
                 
             extra['grid_mapping'] = grid_mapping
     
@@ -2916,8 +2924,9 @@ class NetCDFWrite(IOWrite):
         if ancillary_variables:
             ancillary_variables = ' '.join(ancillary_variables)
             if verbose:
-                print('    Writing ancillary_variables attribute to netCDF variable {}: {!r}'.format(
-                ncvar, ancillary_variables)) # pragma: no cover
+                print("    Writing ancillary_variables attribute to "
+                      "netCDF variable {}: {!r}".format(
+                          ncvar, ancillary_variables)) # pragma: no cover
 
             extra['ancillary_variables'] = ancillary_variables
             
@@ -2933,17 +2942,22 @@ class NetCDFWrite(IOWrite):
                 if not self.cf_cell_method_qualifiers().issuperset(
                         self.implementation.get_cell_method_qualifiers(cm)):
                     raise ValueError(
-"Can't write {!r}: Unknown cell method property: {!r}".format(
-    org_f, cm.properties()))
+                        "Can't write {!r}: Unknown cell method "
+                        "property: {!r}".format(
+                            org_f, cm.properties()))
                 
                 axes = [axis_map.get(axis, axis)
-                        for axis in self.implementation.get_cell_method_axes(cm, ())]
+                        for axis in self.implementation.get_cell_method_axes(
+                                cm, ())]
                 self.implementation.set_cell_method_axes(cm, axes)
-                cell_methods_strings.append(self.implementation.get_cell_method_string(cm))
+                cell_methods_strings.append(
+                    self.implementation.get_cell_method_string(cm))
 
             cell_methods = ' '.join(cell_methods_strings)
             if verbose:
-                print('    Writing cell_methods attribute to netCDF variable', ncvar+':', cell_methods) # pragma: no cover
+                print("    Writing cell_methods attribute to "
+                      "netCDF variable",
+                      ncvar+':', cell_methods) # pragma: no cover
 
             extra['cell_methods'] = cell_methods
 
@@ -3005,7 +3019,8 @@ class NetCDFWrite(IOWrite):
             # Create a new horizontal coordinate reference for the
             # vertical datum
             if g['verbose']:
-                print('    Creating a new horizontal coordinate reference for the vertical datum') # pragma: no cover
+                print("    Creating a new horizontal coordinate reference "
+                      "for the vertical datum") # pragma: no cover
                 
             new_grid_mapping = self.implementation.initialise_CoordinateReference()
 
@@ -3074,14 +3089,16 @@ class NetCDFWrite(IOWrite):
         # Add in the standard "description of file contents"
         # attributes
         # ------------------------------------------------------------
-        global_attributes.update(self.cf_description_of_file_contents_attributes())
+        global_attributes.update(
+            self.cf_description_of_file_contents_attributes())
 
         # ------------------------------------------------------------
         # Add properties that have been marked as global on each field
         # ------------------------------------------------------------
         force_global = {}
         for f in fields:
-            for attr, v in self.implementation.nc_get_global_attributes(f).items():
+            for attr, v in self.implementation.nc_get_global_attributes(
+                    f).items():
                 if v is None:
                     global_attributes.add(attr)
                 else:
@@ -3090,7 +3107,8 @@ class NetCDFWrite(IOWrite):
 
         if 'Conventions' not in force_global:
             for f in fields:
-                v = self.implementation.nc_get_global_attributes(f).get('Conventions')
+                v = self.implementation.nc_get_global_attributes(f).get(
+                    'Conventions')
                 if v is not None:
                     force_global.setdefault('Conventions', []).append(v)
         # --- End: if
@@ -3173,7 +3191,8 @@ class NetCDFWrite(IOWrite):
                     g['Conventions']))
         
         g['output_version'] = g['latest_version']
-        g['Conventions'] = ['CF-'+str(g['output_version'])] + list(g['Conventions'])
+        g['Conventions'] = ['CF-'+str(g['output_version'])] \
+                           + list(g['Conventions'])
             
         if [x for x in g['Conventions'] if ' ' in x]:
             # At least one of the conventions contains blanks
@@ -3455,7 +3474,8 @@ class NetCDFWrite(IOWrite):
             
             'dimensions_with_role': {},
 
-            'latest_version': LooseVersion(self.implementation.get_cf_version()),
+            'latest_version': LooseVersion(
+                self.implementation.get_cf_version()),
             'version': {},
         }
         g = self.write_vars
@@ -3494,8 +3514,9 @@ class NetCDFWrite(IOWrite):
     
             if 'Conventions' in  variable_attributes:
                 raise ValueError(
-"Can't prevent the 'Conventions' property from being a netCDF global variable: {0}".format(
-    variable_attributes))
+                    "Can't prevent the 'Conventions' property from being "
+                    "a netCDF global variable: {0}".format(
+                        variable_attributes))
 
         if global_attributes:
             if isinstance(global_attributes, basestring):
@@ -3508,7 +3529,8 @@ class NetCDFWrite(IOWrite):
         if file_descriptors:
             if 'Conventions' in file_descriptors:
                 raise ValueError(
-"Use the Conventions parameter to specify conventions, rather than a file descriptor.")
+                    "Use the Conventions parameter to specify conventions, "
+                    "rather than a file descriptor.")
 
             g['file_descriptors'] = file_descriptors
     
@@ -3546,7 +3568,8 @@ class NetCDFWrite(IOWrite):
             try:
                 fields = tuple(fields)
             except TypeError:
-                raise TypeError("'fields' parameter must be a (sequence of) Field instances")
+                raise TypeError("'fields' parameter must be a (sequence of) "
+                                "Field instances")
             
         # -------------------------------------------------------
         # Scalar coordinate variables
@@ -3561,12 +3584,14 @@ class NetCDFWrite(IOWrite):
         if os.path.isfile(filename):
             if not overwrite:
                 raise IOError(
-                    "Can't write to an existing file unless overwrite=True: {}".format(
+                    "Can't write to an existing file unless "
+                    "overwrite=True: {}".format(
                         os.path.abspath(filename)))
                     
             if not os.access(filename, os.W_OK):
                 raise IOError(
-                    "Can't overwrite an existing file without permission: {}".format(
+                    "Can't overwrite an existing file without "
+                    "permission: {}".format(
                         os.path.abspath(filename)))
                 
             os.remove(filename)
@@ -3596,12 +3621,14 @@ class NetCDFWrite(IOWrite):
         if external is not None:
             if g['output_version'] < g['CF-1.7']:
                 raise ValueError(
-                    "Can't create external variables at CF-{} (version too old)".format(
+                    "Can't create external variables at CF-{} "
+                    "(version too old)".format(
                         g['output_version']))
                 
             external = os.path.expanduser(os.path.expandvars(external))
             if os.path.realpath(external) == os.path.realpath(filename):
-                raise ValueError("Can't set filename and external to the same path")
+                raise ValueError("Can't set filename and external to the "
+                                 "same path")
         # --- End: if
         g['external_file'] = external
 

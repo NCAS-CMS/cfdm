@@ -81,9 +81,10 @@ class ConstructAccess(object):
                 key_to_name[keys[0]] = '{0}({1})'.format(name, size)
             else:
                 for key in keys:                    
-                    key_to_name[key] = '{0}{{{1}}}({2})'.format(name,
-                                                                re.findall('\d+$', key)[0],
-                                                                size)
+                    key_to_name[key] = '{0}{{{1}}}({2})'.format(
+                        name,
+                        re.findall('\d+$', key)[0],
+                        size)
         # --- End: for
         
         return key_to_name
@@ -545,7 +546,8 @@ class ConstructAccess(object):
         if not len(c) :
             return self._default(
                 default,
-                "No 1-d coordinate constructs have identity {!r}".format(identity))
+                "No 1-d coordinate constructs have identity {!r}".format(
+                    identity))
 
         data_axes = constructs.data_axes()
         domain_axes = constructs.filter_by_type('domain_axis')
@@ -566,13 +568,15 @@ class ConstructAccess(object):
         if not keys:
             return self._default(
                 default,
-                "1-d coordinate constructs selected with identity {!r} have not been assigned a domain axis contructs".format(
+                "1-d coordinate constructs selected with identity "
+                "{!r} have not been assigned a domain axis contructs".format(
                     coord))                       
         
         if len(keys) > 1:
             return self._default(
                 default,
-                "Multiple 1-d coordinate constructs selected with identity {!r} span multiple domain axes: {!r}".format(
+                "Multiple 1-d coordinate constructs selected "
+                "with identity {!r} span multiple domain axes: {!r}".format(
                     identity, keys))
 
         return keys.pop()

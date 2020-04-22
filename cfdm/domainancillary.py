@@ -135,28 +135,28 @@ class DomainAncillary(mixin.NetCDFVariable,
     Equality is strict by default. This means that:
     
     * the same descriptive properties must be present, with the same
-      values and data types, and vector-valued properties must also have
-      same the size and be element-wise equal (see the *ignore_properties*
-      and *ignore_data_type* parameters), and
+      values and data types, and vector-valued properties must also
+      have same the size and be element-wise equal (see the
+      *ignore_properties* and *ignore_data_type* parameters), and
     
     ..
     
     * if there are data arrays then they must have same shape and data
-      type, the same missing data mask, and be element-wise equal (see the
-      *ignore_data_type* parameter).
+      type, the same missing data mask, and be element-wise equal (see
+      the *ignore_data_type* parameter).
     
     ..
     
-    * if there are bounds then their descriptive properties (if any) must
-      be the same and their data arrays must have same shape and data
-      type, the same missing data mask, and be element-wise equal (see the
-      *ignore_properties* and *ignore_data_type* parameters).
+    * if there are bounds then their descriptive properties (if any)
+      must be the same and their data arrays must have same shape and
+      data type, the same missing data mask, and be element-wise equal
+      (see the *ignore_properties* and *ignore_data_type* parameters).
     
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences) are
-    positive, typically very small numbers. See the *atol* and *rtol*
-    parameters.
+    differences) and ``rtol`` (the tolerance on relative differences)
+    are positive, typically very small numbers. See the *atol* and
+    *rtol* parameters.
     
     Any compression is ignored by default, with only the arrays in
     their uncompressed forms being compared. See the
@@ -166,8 +166,8 @@ class DomainAncillary(mixin.NetCDFVariable,
     possible with another domain ancillary construct, or a subclass of
     one. See the *ignore_type* parameter.
     
-    NetCDF elements, such as netCDF variable and dimension names, do not
-    constitute part of the CF data model and so are not checked.
+    NetCDF elements, such as netCDF variable and dimension names, do
+    not constitute part of the CF data model and so are not checked.
     
     .. versionadded:: 1.7.0
     
@@ -178,28 +178,30 @@ class DomainAncillary(mixin.NetCDFVariable,
     
         atol: float, optional
             The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.ATOL` function.
+            numbers. The default value is set by the `cfdm.ATOL`
+            function.
             
         rtol: float, optional
             The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.RTOL` function.
+            numbers. The default value is set by the `cfdm.RTOL`
+            function.
     
         ignore_fill_value: `bool`, optional
-            If True then the "_FillValue" and "missing_value" properties
-            are omitted from the comparison.
+            If True then the ``_FillValue`` and ``missing_value``
+            properties are omitted from the comparison.
     
         verbose: `bool`, optional
-            If True then print information about differences that lead to
-            inequality.
+            If True then print information about differences that lead
+            to inequality.
     
         ignore_properties: sequence of `str`, optional
             The names of properties to omit from the comparison.
     
         ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical 
-            comparisons. By default different numerical data types imply
-            inequality, regardless of whether the elements are within the
-            tolerance for equality.
+            If True then ignore the data types in all numerical
+            comparisons. By default different numerical data types
+            imply inequality, regardless of whether the elements are
+            within the tolerance for equality.
     
         ignore_compression: `bool`, optional
             If False then the compression type and, if applicable, the
@@ -208,11 +210,11 @@ class DomainAncillary(mixin.NetCDFVariable,
             the arrays in their uncompressed forms are compared.
     
         ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality is
-            only possible with another domain ancillary construct, or a
-            subclass of one. If *ignore_type* is True then
-            ``DomainAncillary(source=other)`` is tested, rather than the
-            ``other`` defined by the *other* parameter.
+            Any type of object may be tested but, in general, equality
+            is only possible with another domain ancillary construct,
+            or a subclass of one. If *ignore_type* is True then
+            ``DomainAncillary(source=other)`` is tested, rather than
+            the ``other`` defined by the *other* parameter.
     
     :Returns: 
       

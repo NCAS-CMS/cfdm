@@ -69,12 +69,11 @@ class Field(mixin.NetCDFVariable,
         instance._RaggedContiguousArray        = RaggedContiguousArray         
         instance._RaggedIndexedArray           = RaggedIndexedArray            
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray  
-        instance._GatheredArray                = GatheredArray                  
+        instance._GatheredArray                = GatheredArray
         instance._Count = Count
         instance._Index = Index
         instance._List  = List
         return instance
-
 
     def __init__(self, properties=None, source=None, copy=True,
                  _use_data=True):
@@ -109,7 +108,6 @@ class Field(mixin.NetCDFVariable,
         
         self._initialise_netcdf(source)
 
-
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -120,7 +118,6 @@ class Field(mixin.NetCDFVariable,
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__,
                                    self._one_line_description())
-
 
     def __str__(self):
         '''Called by the `str` built-in function.
@@ -170,8 +167,7 @@ class Field(mixin.NetCDFVariable,
             c = ' '.join(x)
             
             string.append('Cell methods    : {0}'.format(c))
-            
-        
+                
         def _print_item(self, key, variable, axes):
             '''Private function called by __str__
 
@@ -184,7 +180,8 @@ class Field(mixin.NetCDFVariable,
                 shape = str(tuple(shape)).replace("'", "")
                 shape = shape.replace(',)', ')')
                 x.append(shape)
-            elif hasattr(variable, 'nc_get_external') and variable.nc_get_external():
+            elif (hasattr(variable, 'nc_get_external')
+                  and variable.nc_get_external()):
                 ncvar = variable.nc_get_variable(None)
                 if ncvar is not None:
                     x.append(' (external variable: ncvar%{})'.format(ncvar))
@@ -209,7 +206,6 @@ class Field(mixin.NetCDFVariable,
         string.append(str(self.domain))
         
         return '\n'.join(string)
-
 
     def __getitem__(self, indices):
         '''Return a subspace of the field defined by indices.
@@ -288,7 +284,8 @@ class Field(mixin.NetCDFVariable,
         new_constructs_data_axes = new.constructs.data_axes()
         
         if data_axes:
-            for key, construct in new.constructs.filter_by_axis('or', *data_axes).items():
+            for key, construct in new.constructs.filter_by_axis(
+                    'or', *data_axes).items():
                 needs_slicing = False
                 dice = []
                 for axis in new_constructs_data_axes[key]:
@@ -300,13 +297,13 @@ class Field(mixin.NetCDFVariable,
                 # --- End: for
     
                 if needs_slicing:
-                    new.set_construct(construct[tuple(dice)], key=key, copy=False)
+                    new.set_construct(construct[tuple(dice)],
+                                      key=key, copy=False)
         # --- End: if
 
         new.set_data(new_data, copy=False)
        
         return new
-
 
     # ----------------------------------------------------------------
     # Private methods
@@ -335,7 +332,6 @@ class Field(mixin.NetCDFVariable,
             
         return "{0}{1}{2}".format(self.identity(''), axis_names, units)
 
-
     def _set_dataset_compliance(self, value):
         '''Set the report of problems encountered whilst reading the field
     construct from a dataset.
@@ -357,7 +353,6 @@ class Field(mixin.NetCDFVariable,
 
         '''
         self._set_component('dataset_compliance', value, copy=True)
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -397,7 +392,6 @@ class Field(mixin.NetCDFVariable,
 
         '''
         return self.constructs.filter_by_type('field_ancillary')
-
 
     @property
     def cell_methods(self):
@@ -440,7 +434,6 @@ class Field(mixin.NetCDFVariable,
         '''
         return self.constructs.filter_by_type('cell_method')
 
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -480,7 +473,6 @@ class Field(mixin.NetCDFVariable,
             out.append((axis,))
 
         return out
-
 
     def compress(self, method,axes=None, count_properties=None,
                  index_properties=None, list_properties=None,
@@ -657,12 +649,13 @@ class Field(mixin.NetCDFVariable,
         def _RaggedIndexedContiguousArray(self, compressed_data, data,
                                           count_variable,
                                           index_variable):
-            return self._RaggedIndexedContiguousArray(compressed_data,
-                                                      shape=data.shape,
-                                                      size=data.size,
-                                                      ndim=data.ndim,
-                                                      count_variable=count_variable,
-                                                      index_variable=index_variable)
+            return self._RaggedIndexedContiguousArray(
+                compressed_data,
+                shape=data.shape,
+                size=data.size,
+                ndim=data.ndim,
+                count_variable=count_variable,
+                index_variable=index_variable)
         # --- End: def
 
         def _compress_metadata(f, method, count, N, axes, Array_func,
@@ -703,14 +696,15 @@ class Field(mixin.NetCDFVariable,
                 # construct
                 data = c.get_data(None)
                 if data is not None:
-                    compressed_data = _empty_compressed_data(data, (N,))                
+                    compressed_data = _empty_compressed_data(data, (N,))
                     
                     # Populate the compressed data for the metadata
                     # construct
                     start = 0            
                     if method == 'indexed_contiguous' and c.data.ndim == 2:
                         c_start = 0
-                        for i, d in enumerate(data.flatten(range(data.ndim-1))):
+                        for i, d in enumerate(
+                                data.flatten(range(data.ndim-1))):
                             c_start = shape1 * i
                             c_end = c_start + shape1
                             last = sum(n > 0 for n in count[c_start:c_end])
@@ -719,7 +713,8 @@ class Field(mixin.NetCDFVariable,
                             compressed_data[start:end] = d[:last]
                             start += last
                     else:                        
-                        for last, d in zip(count, data.flatten(range(data.ndim-1))):
+                        for last, d in zip(count,
+                                           data.flatten(range(data.ndim-1))):
                             if not last:
                                 continue
                             
@@ -740,14 +735,16 @@ class Field(mixin.NetCDFVariable,
                         continue
 
                     b_shape = data.shape[c.data.ndim:]
-                    compressed_data = _empty_compressed_data(data, (N,) + b_shape)
+                    compressed_data = _empty_compressed_data(
+                        data, (N,) + b_shape)
                 
                     # Populate the compressed data for the metadata
                     # construct
                     start = 0            
                     if method == 'indexed_contiguous' and c.data.ndim == 2:
                         c_start = 0
-                        for i, d in enumerate(data.flatten(range(c.data.ndim-1))):
+                        for i, d in enumerate(
+                                data.flatten(range(c.data.ndim-1))):
                             c_start = shape1 * i
                             c_end = c_start + shape1
                             last = sum(n > 0 for n in count[c_start:c_end])
@@ -756,7 +753,8 @@ class Field(mixin.NetCDFVariable,
                             compressed_data[start:end] = d[:last]
                             start += last
                     else:                        
-                        for last, d in zip(count, data.flatten(range(c.data.ndim-1))):
+                        for last, d in zip(count,
+                                           data.flatten(range(c.data.ndim-1))):
                             if not last:
                                 continue
                             
@@ -783,8 +781,10 @@ class Field(mixin.NetCDFVariable,
                 f = None
             return f
             
-        current_compression_type = data.get_compression_type().replace(' ', '_')
-        if current_compression_type and current_compression_type == 'ragged_'+method:
+        current_compression_type = data.get_compression_type().replace(
+            ' ', '_')
+        if (current_compression_type
+            and current_compression_type == 'ragged_'+method):
             # The field is already compressed by the correct method
             if inplace:
                 f = None
@@ -793,17 +793,20 @@ class Field(mixin.NetCDFVariable,
         if method == 'contiguous':
             if self.data.ndim != 2:
                 raise ValueError(
-                    "The field data must have exactly 2 dimensions for DSG ragged contiguous compression. Got {}".format(
+                    "The field data must have exactly 2 dimensions for "
+                    "DSG ragged contiguous compression. Got {}".format(
                         self.data.ndim))
         elif method == 'indexed':
             if self.data.ndim != 2:
                 raise ValueError(
-                    "The field data must have exactly 2 dimensions for DSG ragged indexed compression. Got {}".format(
+                    "The field data must have exactly 2 dimensions for "
+                    "DSG ragged indexed compression. Got {}".format(
                         self.data.ndim))                            
         elif method == 'indexed_contiguous':
             if self.data.ndim != 3:
                 raise ValueError(
-                    "The field data must have exactly 3 dimensions for DSG ragged indexed contiguous compression. Got {}".format(
+                    "The field data must have exactly 3 dimensions for "
+                    "DSG ragged indexed contiguous compression. Got {}".format(
                         self.data.ndim))
         # --- End: if
 
@@ -814,7 +817,7 @@ class Field(mixin.NetCDFVariable,
         if method == 'gathered':
             # --------------------------------------------------------
             # Compression by gathering
-            # --------------------------------------------------------            
+            # --------------------------------------------------------
             pass
         else:
             # --------------------------------------------------------
@@ -851,8 +854,9 @@ class Field(mixin.NetCDFVariable,
             # --------------------------------------------------------
             # Ragged contiguous
             # --------------------------------------------------------
-            count_variable = self._Count(properties=count_properties,
-                                         data=self._Data([n for n in count if n]))
+            count_variable = self._Count(
+                properties=count_properties,
+                data=self._Data([n for n in count if n]))
 
             x = _RaggedContiguousArray(self, compressed_field_data,
                                        data,
@@ -897,8 +901,9 @@ class Field(mixin.NetCDFVariable,
                 end = start + shape1
                 index.extend([i] * sum(n > 0 for n in count[start:end]))
 
-            count_variable = self._Count(properties=count_properties,
-                                         data=self._Data([n for n in count if n]))
+            count_variable = self._Count(
+                properties=count_properties,
+                data=self._Data([n for n in count if n]))
             index_variable = self._Index(properties=index_properties,
                                          data=self._Data(index))
 
@@ -930,7 +935,7 @@ class Field(mixin.NetCDFVariable,
 #                # Initialize the compressed data for the metadata
 #                # construct
 #                data = c.data
-#                compressed_data = _empty_compressed_data(data, len(index))                
+#                compressed_data = _empty_compressed_data(data, len(index))
 #                
 #                # Populate the compressed data for the metadata
 #                # construct
@@ -948,7 +953,7 @@ class Field(mixin.NetCDFVariable,
 #                # Insert the compressed data into the metadata
 #                # construct
 #                y = _RaggedIndexedArray(compressed_data, data,
-#                                        index_variable=index_variable)                
+#                                        index_variable=index_variable)   
 #                data._create_partition_matrix_for_compressed_array(y)
         # --- End: if
 
@@ -956,7 +961,8 @@ class Field(mixin.NetCDFVariable,
             # --------------------------------------------------------
             # Gathered
             # --------------------------------------------------------
-            raise ValueError("Compression by gathering is not yet available - sorry!")
+            raise ValueError(
+                "Compression by gathering is not yet available - sorry!")
             
         else:
             raise ValueError("Unknown compression method: {!r}".format(method))
@@ -967,7 +973,6 @@ class Field(mixin.NetCDFVariable,
             f = None
         return f
 
-    
     def copy(self, data=True):
         '''Return a deep copy of the field construct.
 
@@ -1004,7 +1009,6 @@ class Field(mixin.NetCDFVariable,
         new._set_dataset_compliance(self.dataset_compliance())
 
         return new
-
 
     def dump(self, display=True, _level=0, _title=None):
         '''A full description of the field construct.
@@ -1113,7 +1117,6 @@ class Field(mixin.NetCDFVariable,
         else:
             return string
 
-
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=True,
@@ -1171,7 +1174,7 @@ class Field(mixin.NetCDFVariable,
             function.
     
         ignore_fill_value: `bool`, optional
-            If True then the "_FillValue" and "missing_value"
+            If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison, for the field
             construct and metadata constructs.
     
@@ -1182,7 +1185,7 @@ class Field(mixin.NetCDFVariable,
         ignore_properties: sequence of `str`, optional
             The names of properties of the field construct (not the
             metadata constructs) to omit from the comparison. Note
-            that the "Conventions" property is always omitted by
+            that the ``Conventions`` property is always omitted by
             default.
     
         ignore_data_type: `bool`, optional
@@ -1261,7 +1264,6 @@ class Field(mixin.NetCDFVariable,
 
         return True
 
-        
     def insert_dimension(self, axis, position=0, inplace=False):
         '''Expand the shape of the data array.
 
@@ -1323,8 +1325,9 @@ class Field(mixin.NetCDFVariable,
             
         domain_axis = f.domain_axes.get(axis, None)
         if domain_axis is None:
-            raise ValueError("Can't insert non-existent domain axis: {}".format(
-                axis))
+            raise ValueError(
+                "Can't insert non-existent domain axis: {}".format(
+                    axis))
         
         if domain_axis.get_size() != 1:
             raise ValueError(
@@ -1335,7 +1338,8 @@ class Field(mixin.NetCDFVariable,
         if data_axes is not None:
             if axis in data_axes:
                 raise ValueError(
-                    "Can't insert a duplicate data array axis: {!r}".format(axis))
+                    "Can't insert a duplicate data array axis: {!r}".format(
+                        axis))
 
             data_axes = list(data_axes)
             data_axes.insert(position, axis)
@@ -1349,7 +1353,6 @@ class Field(mixin.NetCDFVariable,
         if inplace:
             f = None
         return f
-
 
     def convert(self, key, full_domain=True):
         '''Convert a metadata construct into a new field construct.
@@ -1504,14 +1507,14 @@ class Field(mixin.NetCDFVariable,
                     for dakey in ref.coordinate_conversion.domain_ancillaries().values():
                         construct = self.constructs.get(dakey)
                         if construct is not None:
-                            axes = constructs_data_axes.get(dakey)                        
-                            f.set_construct(construct, key=dakey, axes=axes, copy=True)
+                            axes = constructs_data_axes.get(dakey)
+                            f.set_construct(construct,
+                                            key=dakey, axes=axes, copy=True)
             # --- End: for
         # --- End: if
               
         return f
 
-   
     def dataset_compliance(self, display=False):
         '''A report of problems encountered whilst reading the field construct
     from a dataset.
@@ -1522,7 +1525,7 @@ class Field(mixin.NetCDFVariable,
     still returned by the `read` function, but may be incomplete.
     
     Such "structural" non-compliance would occur, for example, if the
-    "coordinates" attribute of a CF-netCDF data variable refers to
+    ``coordinates`` attribute of a CF-netCDF data variable refers to
     another variable that does not exist, or refers to a variable that
     spans a netCDF dimension that does not apply to the data variable.
     
@@ -1580,7 +1583,6 @@ class Field(mixin.NetCDFVariable,
             print('    },')
             print('}\n')
 
-     
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
@@ -1658,7 +1660,6 @@ class Field(mixin.NetCDFVariable,
             f = None
 
         return f
-
 
     def transpose(self, axes=None, constructs=False, inplace=False):
         '''Permute the axes of the data array.
@@ -1752,7 +1753,8 @@ class Field(mixin.NetCDFVariable,
                         new_construct_axes.insert(i, axis)
                 # --- End: for
                 
-                iaxes = [construct_axes.index(axis) for axis in new_construct_axes]
+                iaxes = [construct_axes.index(axis)
+                         for axis in new_construct_axes]
     
                 # Transpose the construct
                 construct.transpose(iaxes, inplace=True)
@@ -1764,7 +1766,6 @@ class Field(mixin.NetCDFVariable,
             f = None
         
         return f
-
 
     def uncompress(self, inplace=False):
         '''Uncompress the construct.

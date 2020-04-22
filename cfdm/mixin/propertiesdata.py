@@ -277,27 +277,37 @@ class PropertiesData(Properties):
     # Methods
     # ----------------------------------------------------------------
     def apply_masking(self, inplace=False):
-        '''TODO DCH
+        '''Apply masking as defined by the CF conventions.
 
     Masking is applied according to any of the following criteria that
     are applicable:
 
-    * where values are equal to the value of the "missing_value"
+    * where values are equal to the value of the ``missing_value``
       property;
 
-    * where values are equal to the value of the "_FillValue"
+    * where values are equal to the value of the ``_FillValue``
       property;
 
-    * where values are strictly less than the value of the "valid_min"
-      property;
+    * where values are strictly less than the value of the
+      ``valid_min`` property;
+
+    * where values are strictly greater than the value of the
+      ``valid_max`` property;
 
     * where values are within the inclusive range specified by the two
-      values of "valid_range" property.
+      values of ``valid_range`` property.
 
     If any of the above properties have not been set the no masking is
     applied for that method.
 
     Elements that are already masked remain so.
+
+    .. note:: Masking is **not** applied to cell bounds, if they
+              exist. Masking may applied to the bounds in a separate
+              operation, for example:
+
+              >>> c.apply_masking(inplace=True)
+              >>> c.bounds.apply_masking(inplace=True)
 
     .. versionadded:: 1.8.2
 
@@ -335,7 +345,13 @@ class PropertiesData(Properties):
                     "has been set as well as either the "
                     "'valid_min' or 'valid_max' properties")
 
-            data.apply_masking(valid_min=valid_min,
+            fill_values = [v
+                           for k, v in self.properties()
+                           if k in ('_FillValue', 'missing_value')
+            ]
+                
+            data.apply_masking(fill_values=fill_values,
+                               valid_min=valid_min,
                                valid_max=valid_max,
                                valid_range=valid_range, inplace=True)
 
@@ -461,7 +477,7 @@ class PropertiesData(Properties):
             function.
     
         ignore_fill_value: `bool`, optional
-            If True then the "_FillValue" and "missing_value"
+            If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison.
     
         verbose: `bool`, optional
