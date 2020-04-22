@@ -970,7 +970,7 @@ class Data(mixin.Container,
         array = None
             
         fill_value = self.get_fill_value(None)
-        if fill_value is None:
+        if fill_value is not None:
             array = d.array
             array = numpy.ma.where(array==fill_value, numpy.ma.masked, array)
 
