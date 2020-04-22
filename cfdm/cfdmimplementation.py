@@ -298,12 +298,31 @@ class CFDMImplementation(Implementation):
         '''
         return data.array
 
+    def get_auxiliary_coordinates(self, field, axes=[], exact=False):
+        '''Return auxiliary coordinate constructs that span particular axes.
 
-    def get_auxiliary_coordinates(self, field):
-        '''TODO
+    If no axes are specified then all auxiliary coordinate constructs
+    are returned.
+    
+    If axes are specified then auxiliary coordinate constructs whose
+    data arrays span those axes, and possibly other axes, are
+    returned.
+    
+    :Parameters:
+    
+        axes: sequence of `str`
+    
+    :Returns:
+    
+        `dict`
+
         '''
-        return field.auxiliary_coordinates
+        if exact:
+            return dict(field.auxiliary_coordinates.filter_by_axis(
+                'exact', *axes))
 
+        return dict(field.auxiliary_coordinates.filter_by_axis(
+            'and', *axes))
 
     def get_bounds(self, parent, default=None):
         '''TODO
@@ -447,7 +466,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return dict(field.constructs.filter_by_axis('and', *axes))
-
     
     def get_coordinate_reference_coordinates(self, coordinate_reference):
         '''Return the coordinates of a coordinate reference object.

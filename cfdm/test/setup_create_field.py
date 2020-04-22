@@ -8,7 +8,7 @@ import numpy
 
 import cfdm
 
-verbose  =  False
+verbose  = True # False
 warnings = False
 
 
@@ -195,7 +195,8 @@ class create_fieldTest(unittest.TestCase):
 
         if verbose:
             print("####################################################")
-            
+
+        print (f)
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
 
         g = cfdm.read(self.filename, verbose=verbose)

@@ -22,6 +22,7 @@ class FieldTest(unittest.TestCase):
                                                'DSG_timeSeriesProfile_indexed_contiguous.nc')
 
         f = cfdm.read(self.filename)
+        print(f)
         self.assertTrue(len(f)==1, 'f={}'.format(f))
         self.f = f[0]
 
