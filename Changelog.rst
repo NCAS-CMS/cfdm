@@ -6,11 +6,9 @@ version 1.8.2
 
 * Added time coordinate bounds to the polygon geometry example field
   returned by ``cfdm.example_field(6)``.
-* Fixed bug that caused failure when, in `cf.write`, the data array of
-  the field construct doesn't span the a particular domain axis but an
-  auxiliary coordinate, cell measure, domain ancillary or field
-  ancillary construct does, thereby requiring the data array to have a
-  dimension inserted to include it.
+* Fixed bug in `cfdm.write` that caused (what are effectively)
+  string-valued scalar auxiliary coordinates to not be written to disk
+  as such, or even a an exception to be raised.
   
 version 1.8.1
 -------------

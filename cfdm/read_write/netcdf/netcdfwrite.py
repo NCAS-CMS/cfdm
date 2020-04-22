@@ -2751,8 +2751,7 @@ class NetCDFWrite(IOWrite):
         for key, aux_coord in sorted(
                 self.implementation.get_auxiliary_coordinates(f).items()):
             axes = self.implementation.get_construct_data_axes(f, key)
-            print (axes, data_axes)
-            if len(axes) > 1 or axis[0] in data_axes:
+            if len(axes) > 1 or axes[0] in data_axes:
                 # This auxiliary coordinate construct spans at least
                 # one of the dimensions of the field constuct's data
                 # array.
