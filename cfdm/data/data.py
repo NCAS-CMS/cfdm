@@ -693,9 +693,9 @@ class Data(mixin.Container,
                     array[i] = value[j]
         # --- End: if
         
-    # -----------------------------------------------------------------
+    # ----------------------------------------------------------------
     # Attributes
-    # -----------------------------------------------------------------
+    # ----------------------------------------------------------------
     @property
     def compressed_array(self):
         '''Return an independent numpy array containing the compressed data.
@@ -902,6 +902,49 @@ class Data(mixin.Container,
             masked = False
 
         return masked
+
+    def apply_masking(self, inplace=False):
+        '''TODO
+
+    .. versionadded:: 1.8.2
+
+    .. seealso:: `get_fill_value`,`set_fill_value`, `mask`
+                 
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data` or `None`
+            The data with masked values. If the operation was in-place
+            then `None` is returned.
+
+    **Examples:**
+
+        TODO
+
+        '''
+        if inplace:
+            d = self
+        else:
+            d = self.copy()
+            
+        fill_value = self.get_fill_value(None)
+        if fill_value is None:
+            if inplace:
+                d = None
+            return d
+
+        array = self.array
+        array = numpy.ma.where(array==fill_value, numpy.ma.masked, array)
+
+        d._set_Array(array, copy=False)
+
+        if inplace:
+            d = None
+        return d
 
     def copy(self, array=True):
         '''Return a deep copy.
@@ -1641,7 +1684,7 @@ class Data(mixin.Container,
 
     Note that the mask of the returned empty data is hard.
 
-    .. seealso:: `full`, `hardmask`, `ones`, `zeros`
+    .. seealso:: `full`, `ones`, `zeros`
     
     :Parameters:
     
@@ -2192,7 +2235,7 @@ class Data(mixin.Container,
     def uncompress(self, inplace=False):
         '''Uncompress the underlying array.
 
-    If the data is not compressed, then no change is made.
+
     
     .. versionadded:: 1.7.3
     
