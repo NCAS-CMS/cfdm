@@ -454,7 +454,7 @@ class PropertiesDataBounds(PropertiesData):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def apply_masking(self, inplace=False):
+    def apply_masking(self, bounds=True, inplace=False):
         '''Apply masking as defined by the CF conventions.
 
     Masking is applied according to any of the following criteria that
@@ -479,9 +479,10 @@ class PropertiesDataBounds(PropertiesData):
     applied for that method.
 
     The cell bounds, if any, are also masked according to the same
-    criteria. If any of the relevant properties are explicitly set on
-    the bounds instance then their values will be used in preference
-    to those of the parent contsruct.
+    criteria as the parent constuct. If, however, any of the relevant
+    properties are explicitly set on the bounds instance then their
+    values will be used in preference to those of the parent
+    contsruct.
 
     Elements that are already masked remain so.
 
@@ -508,32 +509,26 @@ class PropertiesDataBounds(PropertiesData):
         if inplace:
             c = self
 
-        b = c.get_bounds(None)
-        if b is not None:
-            _FillValue = b.get_property(
-                '_FillValue',
-                c.get_property('_FillValue', None))
-            missing_value = b.get_property(
-                'missing_value',
-                c.get_property('missing_value', None))
+        data = c.get_bounds_data(None)
+        if data is not None:
+            b = c.get_bounds()
 
-            fill_values = [x
-                           for x in (_FillValue, missing_value)
-                           if x is not None]
-                        
-            valid_min = b.get_property('valid_min',
-                                       c.get_property('valid_min', None))
-            valid_max = b.get_property('valid_max',
-                                       c.get_property('valid_max', None))
-            valid_range = b.get_property('valid_range',
-                                         c.get_property('valid_range', None))
+            fill_values = []
+            for prop in ('_FillValue', 'missing_value'):
+                x = b.get_property(prop, c.get_property(prop, None))
+                if x is not None:
+                    fill_values.append(x)
+            # --- End: for
 
-            b.data.apply_masking(fill_values=fill_values,
-                                 valid_min=valid_min,
-                                 valid_max=valid_max,
-                                 valid_range=valid_range,
-                                 inplace=True)
-
+            kwargs = {'inplace': True,
+                      'fill_values': fill_values}
+            
+            for prop in ('valid_min', 'valid_max', 'valid_range'):
+                kwargs[prop] = b.get_property(prop,
+                                              c.get_property(prop, None))
+            
+            data.apply_masking(**kwargs)
+ 
         if inplace:
             c = None            
         return c

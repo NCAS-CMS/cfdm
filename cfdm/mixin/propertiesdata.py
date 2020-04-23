@@ -302,13 +302,6 @@ class PropertiesData(Properties):
 
     Elements that are already masked remain so.
 
-    .. note:: Masking is **not** applied to cell bounds, if they
-              exist. Masking may applied to the bounds in a separate
-              operation, for example:
-
-              >>> c.apply_masking(inplace=True)
-              >>> c.bounds.apply_masking(inplace=True)
-
     .. versionadded:: 1.8.2
 
     .. seealso:: `mask`
@@ -335,25 +328,28 @@ class PropertiesData(Properties):
        
         data = v.get_data(None)
         if data is not None:
-            valid_min = v.get_property('valid_min', None)
-            valid_max = v.get_property('valid_max', None)
-            valid_range = v.get_property('valid_range', None)
-            if (valid_range is not None
-                and (valid_min is not None or valid_max is not None)):
+            fill_values = []
+            for prop in ('_FillValue', 'missing_value'):
+                x = v.get_property(prop, None)
+                if x is not None:
+                    fill_values.append(x)
+            # --- End: for
+            
+            kwargs = {'inplace': True,
+                      'fill_values': fill_values}
+            
+            for prop in ('valid_min', 'valid_max', 'valid_range'):
+                kwargs[prop] = v.get_property(prop, None)
+
+            if (kwargs['valid_range'] is not None
+                and (kwargs['valid_min'] is not None
+                     or kwargs['valid_max'] is not None)):
                 raise ValueError(
                     "Can't apply masking when the 'valid_range' property "
-                    "has been set as well as either the "
+                    "has been set as well as either of the "
                     "'valid_min' or 'valid_max' properties")
 
-            fill_values = [v
-                           for k, v in self.properties()
-                           if k in ('_FillValue', 'missing_value')
-            ]
-                
-            data.apply_masking(fill_values=fill_values,
-                               valid_min=valid_min,
-                               valid_max=valid_max,
-                               valid_range=valid_range, inplace=True)
+            data.apply_masking(**kwargs)
 
         if inplace:
             v = None            
