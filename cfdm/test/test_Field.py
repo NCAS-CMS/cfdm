@@ -172,6 +172,8 @@ class FieldTest(unittest.TestCase):
 
         x = 0.11        
         f.set_property('_FillValue', x)
+        d = f.data.copy()
+        
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x])
         self.assertTrue(e.equals(g.data, verbose=1))
@@ -180,6 +182,7 @@ class FieldTest(unittest.TestCase):
         y = 0.1
         z = 0.2
         f.set_property('valid_range', [y, z])
+        d = f.data.copy()
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_range=[y, z])
         self.assertTrue(e.equals(g.data, verbose=1))

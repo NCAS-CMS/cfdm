@@ -66,6 +66,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.CellMeasure.apply_masking
    ~cfdm.CellMeasure.del_data
    ~cfdm.CellMeasure.get_data
    ~cfdm.CellMeasure.has_data

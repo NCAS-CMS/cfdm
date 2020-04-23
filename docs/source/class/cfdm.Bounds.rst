@@ -53,6 +53,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Bounds.apply_masking
    ~cfdm.Bounds.del_data
    ~cfdm.Bounds.get_data
    ~cfdm.Bounds.has_data

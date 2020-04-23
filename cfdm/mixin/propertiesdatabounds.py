@@ -460,20 +460,20 @@ class PropertiesDataBounds(PropertiesData):
     Masking is applied according to any of the following criteria that
     are applicable:
 
-    * where values are equal to the value of the ``missing_value``
+    * where data elements are equal to the value of the
+      ``missing_value`` property;
+
+    * where data elements are equal to the value of the ``_FillValue``
       property;
 
-    * where values are equal to the value of the ``_FillValue``
-      property;
-
-    * where values are strictly less than the value of the
+    * where data elements are strictly less than the value of the
       ``valid_min`` property;
 
-    * where values are strictly greater than the value of the
+    * where data elements are strictly greater than the value of the
       ``valid_max`` property;
 
-    * where values are within the inclusive range specified by the two
-      values of ``valid_range`` property.
+    * where data elements are within the inclusive range specified by
+      the two values of ``valid_range`` property.
 
     If any of the above properties have not been set the no masking is
     applied for that method.
