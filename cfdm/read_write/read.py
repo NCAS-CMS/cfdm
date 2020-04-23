@@ -170,12 +170,12 @@ def read(filename, external=None, extra=None, verbose=False,
         mask: `bool`, optional
             If False then do not mask by convention when reading data
             from disk. By default data is masked by convention.
-
+           
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
-            ``valid_min``, ``valid_max``, ``valid_range``,
-            ``_FillValue`` and ``missing_value``. See the CF
-            conventions for details.
+            ``_FillValue`` and ``missing_value``,``valid_min``,
+            ``valid_max``, ``valid_range``. See the CF conventions for
+            details.
     
             .. versionadded:: 1.8.2
 

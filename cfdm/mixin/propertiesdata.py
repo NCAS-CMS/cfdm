@@ -302,6 +302,14 @@ class PropertiesData(Properties):
 
     Elements that are already masked remain so.
 
+    .. note:: If using the `apply_masking` method on a construct that
+              has been read from a dataset with the ``mask=False``
+              parameter to the `read` function, then the mask defined
+              in the dataset can only be recreated if the
+              ``missing_value``, ``_FillValue``, ``valid_min``,
+              ``valid_max``, and ``valid_range`` properties have not
+              been updated.
+
     .. versionadded:: 1.8.2
 
     .. seealso:: `mask`

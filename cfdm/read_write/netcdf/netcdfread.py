@@ -191,7 +191,7 @@ class NetCDFRead(IORead):
         '''
         return self.read_vars['references'].get(ncvar, 0) <= 0
 
-    def  _reference(self, ncvar):
+    def _reference(self, ncvar):
         '''Increment by one the reference count to a netCDF variable.
 
     :Parameters:
@@ -367,6 +367,27 @@ class NetCDFRead(IORead):
     
         return cdl
 
+    def default_netCDF_fill_value(self, ncvar):
+        '''The default netCDF fill value for a variable.
+        
+    :Parameters:
+
+        ncvar: `str`
+            The netCDF variable name of the variable.
+        
+    :Returns:
+
+            The default fill value for the netCDF variable.
+
+    **Examples:**
+
+    >>> n.default_netCDF_fill_value('ua')
+    9.969209968386869e+36
+
+        '''
+        data_type = self.read_vars['variables'][ncvar].dtype.str[-2:]
+        return netCDF4.default_fillvals[data_type]
+
     def read(self, filename, extra=None, default_version=None,
              external=None, extra_read_vars=None, _scan_only=False,
              verbose=False, warnings=True, mask=True):
@@ -438,10 +459,11 @@ class NetCDFRead(IORead):
             If False then do not mask by convention when reading data
             from disk. By default data is masked by convention.
 
-            A netCDF array is masked depending on the values of any of
-            the netCDF variable attributes ``valid_min``,
-            ``valid_max``, ``valid_range``, ``_FillValue`` and
-            ``missing_value``.
+            The masking by convention of a netCDF array depends on the
+            values of any of the netCDF variable attributes
+            ``_FillValue`` and ``missing_value``,``valid_min``,
+            ``valid_max``, ``valid_range``. See the CF conventions for
+            details.
 
             .. versionadded:: 1.8.2
           
@@ -2020,6 +2042,19 @@ class NetCDFRead(IORead):
 
         self.implementation.set_properties(f, field_properties, copy=True)
 
+        if not g['mask']:
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded so that masking may later be
+            # applied manually, if required.
+            _FillValue = self.implementation.get_property(f, '_FillValue',
+                                                          None)
+            if _FillValue is None:
+                self.implementation.set_properties(
+                    f, {'_FillValue':
+                        self.default_netCDF_fill_value(field_ncvar)}
+                )
+        # --- End: if            
+            
         # Store the field's netCDF variable name
         self.implementation.nc_set_variable(f, field_ncvar)
 
@@ -3431,17 +3466,6 @@ class NetCDFRead(IORead):
     
         unpacked_dtype: `False` or `numpy.dtype`, optional
     
-        mask: `bool`
-            If False then do not mask by convention when reading data
-            from disk. By default data is masked by convention.
-
-            A netCDF array is masked depending on the values of any of
-            the netCDF variable attributes ``valid_min``,
-            ``valid_max``, ``valid_range``, ``_FillValue`` and
-            ``missing_value``.
-
-            .. versionadded:: 1.8.2
-
     :Returns:
     
         `NetCDFArray`

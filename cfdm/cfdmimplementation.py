@@ -1762,6 +1762,10 @@ class CFDMImplementation(Implementation):
 
     :Parameters:
 
+        construct: 
+
+        properties: `dict`
+
     :Returns:
 
         `None`
