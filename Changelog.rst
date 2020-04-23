@@ -6,6 +6,12 @@ version 1.8.2
 
 * Added time coordinate bounds to the polygon geometry example field
   returned by ``cfdm.example_field(6)``.
+* New method: `cfdm.Field.apply_masking`
+  (https://github.com/NCAS-CMS/cfdm/issues/??)
+* New method: `cfdm.Data.apply_masking`
+  (https://github.com/NCAS-CMS/cfdm/issues/??)
+* New keyword parameter to `cfdm.read`: ``mask``
+  (https://github.com/NCAS-CMS/cfdm/issues/??)
 
 version 1.8.1
 -------------

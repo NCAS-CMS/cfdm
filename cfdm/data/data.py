@@ -224,7 +224,7 @@ class Data(mixin.Container,
     **Examples:**
     
     >>> import numpy
-    >>> d = cfdm.Data(numpy.arange(100, 190).reshape(1, 10, 9))
+    >>> d = Data(numpy.arange(100, 190).reshape(1, 10, 9))
     >>> d.shape
     (1, 10, 9)
     >>> d[:, :, 1].shape
@@ -277,7 +277,7 @@ class Data(mixin.Container,
     
     **Examples:**
     
-    >>> d = cfdm.Data([1, 2, 3], 'metres')
+    >>> d = Data([1, 2, 3], 'metres')
     >>> for e in d:
     ...    print repr(e)
     ...
@@ -285,14 +285,14 @@ class Data(mixin.Container,
     2
     3
     
-    >>> d = cfdm.Data([[1, 2], [4, 5]], 'metres')
+    >>> d = Data([[1, 2], [4, 5]], 'metres')
     >>> for e in d:
     ...    print repr(e)
     ...
     <CF Data: [1, 2] metres>
     <CF Data: [4, 5] metres>
     
-    >>> d = cfdm.Data(34, 'metres')
+    >>> d = Data(34, 'metres')
     >>> for e in d:
     ...     print repr(e)
     ..
@@ -344,8 +344,8 @@ class Data(mixin.Container,
     **Missing data**
     
     Data array elements may be set to missing values by assigning them
-    to `cfdm.masked`. Missing values may be unmasked by assigning them
-    to any other value.
+    to `masked`. Missing values may be unmasked by assigning them to
+    any other value.
     
     .. versionadded:: 1.7.0
     
@@ -358,14 +358,14 @@ class Data(mixin.Container,
     **Examples:**
     
     >>> import numpy
-    >>> d = cfdm.Data(numpy.arange(100, 190).reshape(1, 10, 9))
+    >>> d = Data(numpy.arange(100, 190).reshape(1, 10, 9))
     >>> d.shape
     (10, 9)
     >>> d[:, :, 1] = -10
     >>> d[:, 0] = range(9)
     >>> d[..., 6:3:-1, 3:6] = numpy.arange(-18, -9).reshape(3, 3)
-    >>> d[0, [2, 9], [4, 8]] =  cfdm.Data([[-2, -3]])
-    >>> d[0, :, -2] = cfdm.masked
+    >>> d[0, [2, 9], [4, 8]] =  Data([[-2, -3]])
+    >>> d[0, :, -2] = masked
 
         '''
         indices = self._parse_indices(indices)
@@ -515,7 +515,7 @@ class Data(mixin.Container,
     >>> x = d._item(1)
     >>> print(x, type(x))
     2 <type 'int'>
-    >>> d[0, 1] = cfdm.masked
+    >>> d[0, 1] = masked
     >>> d._item((slice(None), slice(1, 2)))
     masked
 
@@ -746,7 +746,7 @@ class Data(mixin.Container,
 
     **Examples:**
     
-    >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
+    >>> d = Data([31, 62, 90], units='days since 2018-12-01')
     >>> a = d.datetime_array
     >>> print(a)
     [cftime.DatetimeGregorian(2019-01-01 00:00:00)
@@ -755,8 +755,8 @@ class Data(mixin.Container,
     >>> print(a[1])
     2019-02-01 00:00:00
     
-    >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01',
-    ...               calendar='360_day')
+    >>> d = Data([31, 62, 90], units='days since 2018-12-01',
+    ...          calendar='360_day')
     >>> a = d.datetime_array
     >>> print(a)
     [cftime.Datetime360Day(2019-01-02 00:00:00)
@@ -816,12 +816,12 @@ class Data(mixin.Container,
 
     **Examples:**
     
-    >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
+    >>> d = Data([31, 62, 90], units='days since 2018-12-01')
     >>> print(d.datetime_as_string)
     ['2019-01-01 00:00:00' '2019-02-01 00:00:00' '2019-03-01 00:00:00']
   
-    >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01',
-    ...               calendar='360_day')
+    >>> d = Data([31, 62, 90], units='days since 2018-12-01',
+    ...          calendar='360_day')
     >>> print(d.datetime_as_string)
     ['2019-01-02 00:00:00' '2019-02-03 00:00:00' '2019-03-01 00:00:00']
 
@@ -880,7 +880,7 @@ class Data(mixin.Container,
     >>> d = Data([[0, 0, 0]])
     >>> d.any()
     False
-    >>> d[0, 0] = cfdm.masked
+    >>> d[0, 0] = masked
     >>> print(d.array)
     [[-- 0 0]]
     >>> d.any()
@@ -890,7 +890,7 @@ class Data(mixin.Container,
     [[-- 3 0]]
     >>> d.any()
     True
-    >>> d[...] = cfdm.masked
+    >>> d[...] = masked
     >>> print(d.array)
     [[-- -- --]]
     >>> d.any()
@@ -905,37 +905,52 @@ class Data(mixin.Container,
 
     def apply_masking(self, fill_values=None, valid_min=None,
                       valid_max=None, valid_range=None, inplace=False):
-        '''TODO DCH
+        '''Apply masking.
+
+    Masking is applied according to the values of the keyword
+    parameters.
+
+    Elements that are already masked remain so.
 
     .. versionadded:: 1.8.2
 
-    .. seealso:: `get_fill_value`,`set_fill_value`, `mask`
+    .. seealso:: `get_fill_value`, `mask`
                  
     :Parameters:
 
-        fill_values: sequence of scalars, optional
-            Specify non-valid values. If the sequence is empty then no
-            values are used. By default the value returned by the
-            `get_fill_value` method, if such a value exists, is used
-            as the only non-valid value.
-        
-            Values exactly equal to any of the fill values are set to
+        fill_values: `bool` or sequence of scalars, optional
+            Specify values that will be set to missing data. Data
+            elements exactly equal to any of the values are set to
             missing data.
 
-            :Parameter example:
-              Specify a fill values of 999: ``fill_values=[999]``
+            If True then the value returned by the `get_fill_value`
+            method, if such a value exists, is used.
+
+            Zero or more values may be provided in a sequence of
+            scalars.
+
+            *Parameter example:*
+              Specify a fill value of 999: ``fill_values=[999]``
          
-            :Parameter example:
-              Specify fill values of 999 and -1e30:
-              ``fill_values=[999, -1e30]``
+            *Parameter example:*
+              Specify fill values of 999 and -1.0e30:
+              ``fill_values=[999, -1.0e30]``
+         
+            *Parameter example:*
+              Use the fill value already set for the data:
+              ``fill_values=True``
+         
+            *Parameter example:*
+              Use no fill values: ``fill_values=False`` or
+              ``fill_value=[]``
          
         valid_min: number, optional
-            A scalar specifying the minimum valid value. Values
+            A scalar specifying the minimum valid value. Data elements
             strictly less than this number will be set to missing
             data.
 
         valid_max: number, optional
-            A scalar specifying the maximum valid value. Values
+            A scalar specifying the maximum valid value. Data elements
             strictly greater than this number will be set to missing
             data.
 
@@ -945,6 +960,10 @@ class Data(mixin.Container,
             *valid_min* and *valid_max* parameters. The *valid_range*
             parameter must not be set if either *valid_min* or
             *valid_max* is defined.
+
+            *Parameter example:*
+              ``valid_range=[-999, 10000]`` is equivalent to setting
+              ``valid_min=-999, valid_max=10000``
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -957,7 +976,50 @@ class Data(mixin.Container,
 
     **Examples:**
 
-        TODO DCH
+    >>> import numpy
+    >>> d = Data(numpy.arange(12).reshape(3, 4), 'm')
+    >>> d[1, 1] = masked
+    >>> print(d.array)
+    [[0  1  2  3]
+     [4 --  6  7]
+     [8  9 10 11]]
+
+    >>>  print(d.apply_masking().array)
+    [[0  1  2  3]
+     [4 --  6  7]
+     [8  9 10 11]]
+    >>> print(d.apply_masking(fill_values=[0]).array)
+    [[--  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 11]]    
+    >>> print(d.apply_masking(fill_values=[0, 11]).array)
+    [[--  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 --]]
+    
+    >>> print(d.apply_masking(valid_min=3).array)
+    [[-- -- --  3]
+     [ 4 --  6  7]
+     [ 8  9 10 11]]
+    >>> print(d.apply_masking(valid_max=6).array)
+    [[ 0  1  2  3]
+     [ 4 --  6 --]
+     [-- -- -- --]]
+    >>> print(d.apply_masking(valid_range=[2, 8]).array)
+    [[-- --  2  3]
+     [ 4 --  6  7]
+     [ 8 -- -- --]]
+    
+    >>> d.set_fill_value(7)
+    >>> print(d.apply_masking(fill_values=True).array)
+    [[0  1  2  3]
+     [4 --  6 --]
+     [8  9 10 11]]
+    >>> print(d.apply_masking(fill_values=True,
+    ...                       valid_range=[2, 8]).array)
+    [[-- --  2  3]
+     [ 4 --  6 --]
+     [ 8 -- -- --]]
 
         '''
         if valid_range is not None:
@@ -984,18 +1046,36 @@ class Data(mixin.Container,
             d = self.copy()
 
         if fill_values is None:
-            fill_value = self.get_fill_value(None)
-            if fill_value is not None:
-                fill_values = (fill_value,)
+            fill_values = False
+        
+        if isinstance(fill_values, bool):
+            if fill_values:
+                fill_value = self.get_fill_value(None)
+                if fill_value is not None:
+                    fill_values = (fill_value,)
+                else:
+                    fill_values = ()
             else:
                 fill_values = ()
+        else:            
+            try:
+                _ = iter(fill_values)
+            except TypeError:
+                raise TypeError(
+                    "'fill_values' parameter must be a sequence or "
+                    "of type bool. Got type {}".format(type(fill_values)))
+            else:
+                if isinstance(fill_values, str):
+                    raise TypeError(
+                        "'fill_values' parameter must be a sequence or "
+                        "of type bool. Got type {}".format(type(fill_values)))
         # --- End: if
-
+        
         mask = None
         
         if fill_values:
             array = self.array
-            mask = (array == fill_value[0])
+            mask = (array == fill_values[0])
                 
             for fill_value in fill_values[1:]:
                 mask |= (array == fill_value)
@@ -1786,7 +1866,7 @@ class Data(mixin.Container,
     
     **Examples:**
     
-    >>> d = cfdm.Data.empty((96, 73))
+    >>> d = Data.empty((96, 73))
 
         '''
         return cls(numpy.empty(shape=shape, dtype=dtype), units=units,
@@ -1837,13 +1917,11 @@ class Data(mixin.Container,
     
         atol: float, optional
             The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.ATOL`
-            function.
+            numbers. The default value is set by the `ATOL` function.
             
         rtol: float, optional
             The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.RTOL`
-            function.
+            numbers. The default value is set by the `RTOL` function.
     
         ignore_fill_value: `bool`, optional
             If True then the fill value is omitted from the
@@ -1992,21 +2070,21 @@ class Data(mixin.Container,
     
     **Examples:**
     
-    >>> d = cfdm.Data(9.0)
+    >>> d = Data(9.0)
     >>> x = d.first_element()
     >>> print(x, type(x))
     (9.0, <type 'float'>)
     
-    >>> d = cfdm.Data([[1, 2], [3, 4]])
+    >>> d = Data([[1, 2], [3, 4]])
     >>> x = d.first_element()
     >>> print(x, type(x))
     (1, <type 'int'>)
-    >>> d[0, 0] = cfdm.masked
+    >>> d[0, 0] = masked
     >>> y = d.first_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
     
-    >>> d = cfdm.Data(['foo', 'bar'])
+    >>> d = Data(['foo', 'bar'])
     >>> x = d.first_element()
     >>> print(x, type(x))
     ('foo', <type 'str'>)
@@ -2055,7 +2133,7 @@ class Data(mixin.Container,
 
     **Examples**
 
-    >>> d = cfdm.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+    >>> d = Data(numpy.arange(24).reshape(1, 2, 3, 4))
     >>> d
     <Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
     >>> print(d.array)
@@ -2168,21 +2246,21 @@ class Data(mixin.Container,
     
     **Examples:**
     
-    >>> d = cfdm.Data(9.0)
+    >>> d = Data(9.0)
     >>> x = d.last_element()
     >>> print(x, type(x))
     (9.0, <type 'float'>)
     
-    >>> d = cfdm.Data([[1, 2], [3, 4]])
+    >>> d = Data([[1, 2], [3, 4]])
     >>> x = d.last_element()
     >>> print(x, type(x))
     (4, <type 'int'>)
-    >>> d[-1, -1] = cfdm.masked
+    >>> d[-1, -1] = masked
     >>> y = d.last_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
     
-    >>> d = cfdm.Data(['foo', 'bar'])
+    >>> d = Data(['foo', 'bar'])
     >>> x = d.last_element()
     >>> print(x, type(x))
     ('bar', <type 'str'>)
@@ -2203,16 +2281,16 @@ class Data(mixin.Container,
     
     **Examples:**
     
-    >>> d = cfdm.Data([[1, 2], [3, 4]])
+    >>> d = Data([[1, 2], [3, 4]])
     >>> x = d.second_element()
     >>> print(x, type(x))
     (2, <type 'int'>)
-    >>> d[0, 1] = cfdm.masked
+    >>> d[0, 1] = masked
     >>> y = d.second_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
     
-    >>> d = cfdm.Data(['foo', 'bar'])
+    >>> d = Data(['foo', 'bar'])
     >>> x = d.second_element()
     >>> print(x, type(x))
     ('bar', <type 'str'>)
@@ -2259,7 +2337,7 @@ class Data(mixin.Container,
 #
 #**Examples:**
 #
-#>>> d = cfdm.Data([1.5, 2, 2.5])
+#>>> d = Data([1.5, 2, 2.5])
 #>>> d.dtype
 #dtype('float64')
 #>>> print(d.array)
@@ -2273,7 +2351,7 @@ class Data(mixin.Container,
 #>>> print(d.array)
 #[1. 2. 2.]
 #
-#>>> d = cfdm.Data([1.5, 2, 2.5])
+#>>> d = Data([1.5, 2, 2.5])
 #>>> d.dtype
 #dtype('float64')
 #>>> d.astype('int', casting='safe')
