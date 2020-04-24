@@ -588,7 +588,7 @@ class NetCDFGlobalAttributes(NetCDF):
             attribute that has, by definition, the same value as a
             construct property.
 
-           .. versionadded:: 1.8.2
+            .. versionadded:: 1.8.2
     
     :Returns:
     
