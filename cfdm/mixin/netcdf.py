@@ -559,7 +559,7 @@ class NetCDFGlobalAttributes(NetCDF):
     .. versionadded:: 1.7.0
 
     '''
-    def nc_global_attributes(self):
+    def nc_global_attributes(self, values=False):
         '''Return the selection of properties to be written as netCDF global
     attributes.
     
@@ -578,9 +578,13 @@ class NetCDFGlobalAttributes(NetCDF):
     
     .. versionadded:: 1.7.0
     
-    .. seealso:: `cfdm.write`, `nc_clear_global_attributes`,
+    .. seealso:: `write`, `nc_clear_global_attributes`,
                  `nc_set_global_attribute`, `nc_set_global_attributes`
     
+    :Parameters:
+
+        values: `bool`, optional
+
     :Returns:
     
         `dict`
@@ -597,6 +601,8 @@ class NetCDFGlobalAttributes(NetCDF):
     >>> f.nc_set_global_attribute('comment', 'global comment')
     >>> f.nc_global_attributes()
     {'Conventions': None, 'comment': 'global_comment', 'foo': None}
+    >>> f.nc_global_attributes(values=True)
+    {'Conventions': 'CF-1.8', 'comment': 'global_comment', 'foo': 'bar'}
     >>> f.nc_clear_global_attributes()
     {'Conventions': None, 'comment': 'global_comment', 'foo': None}
     >>> f.nc_global_attributes()
@@ -607,8 +613,20 @@ class NetCDFGlobalAttributes(NetCDF):
         
         if out is None:
             return {}
+
+        out = out.copy()
+
+        if values:
+            # Replace a None value with the value from the variable
+            # properties
+            properties = self.properties()
+            if properties:
+                for prop, value in out.items():
+                    if value is None and prop in properties:
+                        out[prop] = properties[prop]
+        # --- End: if
         
-        return out.copy()
+        return out
 
     def nc_clear_global_attributes(self):
         '''Remove the selection of properties to be written as netCDF global
@@ -629,7 +647,7 @@ class NetCDFGlobalAttributes(NetCDF):
     
     .. versionadded:: 1.7.0
     
-    .. seealso:: `cfdm.write`, `nc_global_attributes`,
+    .. seealso:: `write`, `nc_global_attributes`,
                  `nc_set_global_attribute`, `nc_set_global_attributes`
     
     :Returns:
@@ -681,7 +699,7 @@ class NetCDFGlobalAttributes(NetCDF):
     
     .. versionadded:: 1.7.0
     
-    .. seealso:: `cfdm.write`, `nc_global_attributes`,
+    .. seealso:: `write`, `nc_global_attributes`,
                  `nc_clear_global_attributes`,
                  `nc_set_global_attributes`
     
@@ -746,7 +764,7 @@ class NetCDFGlobalAttributes(NetCDF):
     
     .. versionadded:: 1.7.10
     
-    .. seealso:: `cfdm.write`, `nc_clear_global_attributes`,
+    .. seealso:: `write`, `nc_clear_global_attributes`,
                  `nc_global_attributes`, `nc_set_global_attribute`
     
     :Parameters:
@@ -823,7 +841,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
     
     Deprecated at version 1.7.4
     
-    .. seealso:: `cfdm.write`, `nc_clear_unlimited_dimensions`,
+    .. seealso:: `write`, `nc_clear_unlimited_dimensions`,
                  `nc_set_unlimited_dimensions`
     
     :Returns:
@@ -846,7 +864,10 @@ class NetCDFUnlimitedDimensions(NetCDF):
     set()
 
         '''
-        raise DeprecationError("Field.nc_unlimited_dimensions was deprecated at v1.7.4 and is no longer available. Use DomainAxis.nc_is_unlimited instead")
+        raise DeprecationError(
+            "Field.nc_unlimited_dimensions was deprecated at v1.7.4 "
+            "and is no longer available. Use DomainAxis.nc_is_unlimited "
+            "instead")
     
         out = self._get_component('netcdf').get('unlimited_dimensions')
         
@@ -865,7 +886,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
     
     Deprecated at version 1.7.4
     
-    .. seealso:: `cfdm.write`, `nc_unlimited_dimensions`,
+    .. seealso:: `write`, `nc_unlimited_dimensions`,
                  `nc_clear_unlimited_dimensions`
     
     :Parameters:
@@ -899,7 +920,10 @@ class NetCDFUnlimitedDimensions(NetCDF):
     set()
 
         '''
-        raise DeprecationError("Field.nc_set_unlimited_dimensions was deprecated at v1.7.4  and is no longer available. Use DomainAxis.nc_set_unlimited instead")
+        raise DeprecationError(
+            "Field.nc_set_unlimited_dimensions was deprecated at v1.7.4 "
+            "and is no longer available. Use DomainAxis.nc_set_unlimited "
+            "instead")
                 
         out = self._get_component('netcdf').get('unlimited_dimensions')
         
@@ -922,7 +946,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
     
     Deprecated at version 1.7.4
     
-    .. seealso:: `cfdm.write`, `nc_unlimited_dimensions`,
+    .. seealso:: `write`, `nc_unlimited_dimensions`,
                  `nc_set_unlimited_dimensions`
     
     :Returns:
@@ -944,7 +968,10 @@ class NetCDFUnlimitedDimensions(NetCDF):
     set()
 
         '''
-        raise DeprecationError("Field.nc_clear_unlimited_dimensions was deprecated at v1.7.4 and is no longer available. Use DomainAxis.nc_set_unlimited instead")                
+        raise DeprecationError(
+            "Field.nc_clear_unlimited_dimensions was deprecated at v1.7.4 "
+            "and is no longer available. Use DomainAxis.nc_set_unlimited "
+            "instead")                
 
         out = self._get_component('netcdf').get('unlimited_dimensions')
         
@@ -1189,7 +1216,6 @@ class NetCDFGeometry(NetCDF):
         '''
         self._get_component('netcdf')['geometry_variable'] = value
 
-
 # --- End: class
 
 class NetCDFHDF5(NetCDF):
@@ -1397,7 +1423,8 @@ class NetCDFHDF5_exp(NetCDF):
             return self._get_component('netcdf')['hdf5_chunksize']
         except KeyError:
             return self._default(default,
-                   "{!r} has no HDF5 chunksize".format(self.__class__.__name__))
+                   "{!r} has no HDF5 chunksize".format(
+                       self.__class__.__name__))
 
     def nc_has_hdf5_chunksize(self):
         '''TODO
@@ -1550,4 +1577,3 @@ class NetCDFUnlimitedDimension(NetCDF):
         self._get_component('netcdf')['unlimited'] = bool(value)
 
 # --- End: class
-

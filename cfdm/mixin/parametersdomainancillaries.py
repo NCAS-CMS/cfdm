@@ -38,7 +38,8 @@ class ParametersDomainAncillaries(Parameters):
         '''
         out = [super().__str__()]
 
-        out.append('Ancillaries: {0}'.format(', '.join(sorted(self.domain_ancillaries()))))
+        out.append('Ancillaries: {0}'.format(', '.join(
+            sorted(self.domain_ancillaries()))))
             
         return '; '.join(out)
 
@@ -121,9 +122,11 @@ class ParametersDomainAncillaries(Parameters):
         domain_ancillaries1 = other.domain_ancillaries()
         if set(domain_ancillaries0) != set(domain_ancillaries1):
             if verbose:
-                print("{0}: Different domain ancillary terms ({1} != {2})".format(
-                    self.__class__.__name__,
-                    set(domain_ancillaries0), set(domain_ancillaries1)))
+                print(
+                    "{0}: Different domain ancillary terms "
+                    "({1} != {2})".format(
+                        self.__class__.__name__,
+                        set(domain_ancillaries0), set(domain_ancillaries1)))
             return False
 
         for term, value0 in domain_ancillaries0.items():
@@ -133,9 +136,10 @@ class ParametersDomainAncillaries(Parameters):
 
             if value0 is None or value1 is None:
                 if verbose:
-                    print("{}: Unequal {!r} domain ancillary terms ({!r} != {!r})".format( 
-                        self.__class__.__name__, term, 
-                        value0, value1))
+                    print("{}: Unequal {!r} domain ancillary terms "
+                          "({!r} != {!r})".format( 
+                              self.__class__.__name__, term, 
+                              value0, value1))
                 return False
         # --- End: for
      

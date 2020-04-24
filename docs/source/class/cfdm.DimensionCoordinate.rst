@@ -61,6 +61,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.DimensionCoordinate.apply_masking
    ~cfdm.DimensionCoordinate.del_data
    ~cfdm.DimensionCoordinate.get_data
    ~cfdm.DimensionCoordinate.has_data

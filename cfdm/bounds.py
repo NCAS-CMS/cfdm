@@ -88,9 +88,8 @@ class Bounds(mixin.NetCDFVariable,
 
         self._initialise_netcdf(source)
 
-
     # ----------------------------------------------------------------
-    # Public methods
+    # Methods
     # ----------------------------------------------------------------    
     def dump(self, display=True, _key=None, _title=None,
              _create_title=True, _prefix='', _level=0,
@@ -125,7 +124,6 @@ class Bounds(mixin.NetCDFVariable,
                             _title=_title,
                             _create_title=_create_title, _axes=_axes,
                             _axis_names=_axis_names)
-
     
     def get_data(self, default=ValueError(), _units=True,
                  _fill_value=True):
@@ -196,7 +194,6 @@ class Bounds(mixin.NetCDFVariable,
         
         return data
 
-
     def inherited_properties(self):
         '''Return the properties inherited from a coordinate construct.
 
@@ -220,15 +217,14 @@ class Bounds(mixin.NetCDFVariable,
         '''
         return deepcopy(self._get_component('inherited_properties', {}))
 
-
     def identity(self, default=''):
         '''Return the canonical identity.
 
     By default the identity is the first found of the following:
     
-    1. The "standard_name" property.
-    2. The "cf_role" property, preceeded by ``'cf_role='``.
-    3. The "long_name" property, preceeded by ``'long_name='``.
+    1. The ``standard_name`` property.
+    2. The ``cf_role`` property, preceeded by ``'cf_role='``.
+    3. The ``long_name`` property, preceeded by ``'long_name='``.
     4. The netCDF variable name, preceeded by ``'ncvar%'``.
     5. The value of the *default* parameter.
     

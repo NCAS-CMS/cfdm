@@ -47,8 +47,8 @@ class DataTest(unittest.TestCase):
         d[...] = numpy.ma.masked
         self.assertFalse(d.any())
 
-        
     def test_Data__repr__str(self):
+        '''Check cf.Data.__repr__, cf.Data.__str__'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -67,13 +67,12 @@ class DataTest(unittest.TestCase):
             _ = repr(d)
             _ = str(d)
 
-
 #    def test_Data__getitem__(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
 #            return
-                
 
     def test_Data__setitem__(self):        
+        '''Check cf.Data.__setitem__'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -87,16 +86,20 @@ class DataTest(unittest.TestCase):
                                     (slice(None), Ellipsis),
                                   )):
             n = -n-1
-            for dvalue, avalue in ((n, n), (cfdm.masked, numpy.ma.masked), (n, n)):
-                message = "cfdm.Data[{}, {}]={}={} failed".format(j, i, dvalue, avalue)
+            for dvalue, avalue in ((n, n),
+                                   (cfdm.masked, numpy.ma.masked),
+                                   (n, n)):
+                message = "cfdm.Data[{}, {}]={}={} failed".format(
+                    j, i, dvalue, avalue)
                 d[j, i] = dvalue
                 a[j, i] = avalue
                 x = d.array
-                self.assertTrue((x == a).all() in (True, numpy.ma.masked), message)
+                self.assertTrue((x == a).all() in (True, numpy.ma.masked),
+                                message)
                 m = numpy.ma.getmaskarray(x)
                 self.assertTrue((m == numpy.ma.getmaskarray(a)).all(), 
                                 'd.mask.array='+repr(m)+'\nnumpy.ma.getmaskarray(a)='+repr(numpy.ma.getmaskarray(a)))
-        #--- End: for
+        # --- End: for
     
         a = numpy.ma.arange(3000).reshape(50, 60)
         
@@ -115,7 +118,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((x == a).all() in (True, numpy.ma.masked), message)
             m = numpy.ma.getmaskarray(x)
             self.assertTrue((m == numpy.ma.getmaskarray(a)).all(), message)
-        #--- End: for
+        # --- End: for
         
         # Scalar numeric array
         d = cfdm.Data(9, units='km')
@@ -124,7 +127,61 @@ class DataTest(unittest.TestCase):
         self.assertTrue(a.shape == ())
         self.assertTrue(a[()] is numpy.ma.masked)
 
+    def test_Data_apply_masking(self):
+        '''Check cf.Data.apply_masking'''
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
 
+        a = numpy.ma.arange(12).reshape(3, 4)
+        a[1, 1] = numpy.ma.masked
+        
+        d = cfdm.Data(a, units='m')
+
+        self.assertTrue((a == d.array).all())
+        self.assertTrue((a.mask == d.mask.array).all())
+
+        b = a.copy()
+        e = d.apply_masking()
+        self.assertTrue((b == e.array).all())
+        self.assertTrue((b.mask == e.mask.array).all())
+
+        b = numpy.ma.where(a==0, numpy.ma.masked, a)
+        e = d.apply_masking(fill_values=[0])
+        self.assertTrue((b == e.array).all())
+        self.assertTrue((b.mask == e.mask.array).all())
+
+        b = numpy.ma.where((a==0) | (a==11), numpy.ma.masked, a)
+        e = d.apply_masking(fill_values=[0, 11])
+        self.assertTrue((b == e.array).all())
+        self.assertTrue((b.mask == e.mask.array).all())
+
+        b = numpy.ma.where(a<3, numpy.ma.masked, a)
+        e = d.apply_masking(valid_min=3)
+        self.assertTrue((b == e.array).all())
+        self.assertTrue((b.mask == e.mask.array).all())
+
+        b = numpy.ma.where(a>6, numpy.ma.masked, a)
+        e = d.apply_masking(valid_max=6)
+        self.assertTrue((b == e.array).all())
+        self.assertTrue((b.mask == e.mask.array).all())
+
+        b = numpy.ma.where((a<2) | (a>8), numpy.ma.masked, a)
+        e = d.apply_masking(valid_range=[2, 8])
+        self.assertTrue((b == e.array).all())
+        self.assertTrue((b.mask == e.mask.array).all())
+
+        d.set_fill_value(7)
+
+        b = numpy.ma.where(a==7, numpy.ma.masked, a)
+        e = d.apply_masking(fill_values=True)
+        self.assertTrue((b == e.array).all())
+        self.assertTrue((b.mask == e.mask.array).all())
+
+        b = numpy.ma.where((a==7) | (a<2) | (a>8), numpy.ma.masked, a)
+        e = d.apply_masking(fill_values=True, valid_range=[2, 8])
+        self.assertTrue((b == e.array).all())
+        self.assertTrue((b.mask == e.mask.array).all())
+    
 #    def test_Data_astype(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
 #            return
@@ -148,8 +205,8 @@ class DataTest(unittest.TestCase):
 #        except TypeError:
 #            pass
 
-
     def test_Data_array(self):
+        '''Check cf.Data.array'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -195,6 +252,7 @@ class DataTest(unittest.TestCase):
         self.assertFalse((a2 == a).all())
 
     def test_Data_datetime_array(self):
+        '''Check cf.Data.datetime_array'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -217,6 +275,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(dt[()] is numpy.ma.masked)
         
     def test_Data_flatten(self):
+        '''Check cf.Data.flatten'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -244,13 +303,17 @@ class DataTest(unittest.TestCase):
                 shape  = d.shape
             else:                    
                 shape = [n for i, n in enumerate(d.shape) if i not in axes]
-                shape.insert(sorted(axes)[0], numpy.prod([n for i, n in enumerate(d.shape) if i in axes]))
+                shape.insert(
+                    sorted(axes)[0],
+                    numpy.prod([n
+                                for i, n in enumerate(d.shape) if i in axes]))
                 
             self.assertTrue(e.shape == tuple(shape))
             self.assertTrue(e.ndim == d.ndim-len(axes)+1)
             self.assertTrue(e.size == d.size)
         
-    def test_Data_transpose(self):        
+    def test_Data_transpose(self):
+        '''Check cf.Data.transpose'''        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -261,14 +324,14 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(indices):
                 a = numpy.transpose(a, axes)
                 d = d.transpose(axes)
-                message = 'cfdm.Data.transpose({}) failed: d.shape={}, a.shape={}'.format(
+                message = "cfdm.Data.transpose({}) failed: d.shape={}, a.shape={}".format(
                     axes, d.shape, a.shape)
                 self.assertTrue(d.shape == a.shape, message)
                 self.assertTrue((d.array == a).all(), message)
-            #--- End: for
-        #--- End: for
+        # --- End: for
 
     def test_Data_unique(self):
+        '''Check cf.Data.unique'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
             
@@ -282,7 +345,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue(u.shape == (3,))        
         self.assertTrue((u.array == cfdm.Data([1, 2, 4], 'metre').array).all())
 
-    def test_Data_equals(self):        
+    def test_Data_equals(self):  
+        '''Check cf.Data.equals'''      
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -296,7 +360,9 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.equals(e, verbose=True))
         self.assertTrue(e.equals(d, verbose=True))    
         
-    def test_Data_max_min_sum_squeeze(self):
+    def test_Data_max_min_sum_squeeze(self):  
+        '''Check cf.Data.maximum, cf.Data.minumum, cf.Data.sum,
+    cf.Data.squeeze'''  
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
         
@@ -341,8 +407,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue(x.shape == b.shape)
         self.assertTrue((x.array == b).all(), (x.shape, b.shape))
 
-        
     def test_Data_dtype_mask(self):
+        '''Check cf.Data.dtype, cf.Data.mask'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -382,7 +448,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.mask.array==numpy.ma.getmaskarray(a)).all())
 
         
-#--- End: class
+# --- End: class
 
 
 if __name__ == "__main__":

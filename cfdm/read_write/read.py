@@ -12,7 +12,7 @@ _implementation = implementation()
        
 
 def read(filename, external=None, extra=None, verbose=False,
-         warnings=False, _implementation=_implementation):
+         warnings=False, mask=True, _implementation=_implementation):
     '''Read field constructs from a dataset.
 
     The dataset may be a netCDF file on disk or on an OPeNDAP server,
@@ -21,6 +21,7 @@ def read(filename, external=None, extra=None, verbose=False,
     The returned field constructs are sorted by the netCDF variable
     names of their corresponding data variables.
     
+
     **CDL files**
 
     A file is considered to be a CDL representation of a netCDF
@@ -34,7 +35,7 @@ def read(filename, external=None, extra=None, verbose=False,
     deleted. The CDL file may omit data array values (as would be the
     case, for example, if the file was created with the ``-h`` or
     ``-c`` option to ``ncdump``), in which case the the relevant
-    constructs in memory will be created with data containing missing
+    constructs in memory will be created with data with all missing
     values.
 
    
@@ -45,6 +46,7 @@ def read(filename, external=None, extra=None, verbose=False,
     `~cf.DomainAxis.nc_is_unlimited` and
     `~cf.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
+
 
     **CF-compliance**
     
@@ -66,6 +68,7 @@ def read(filename, external=None, extra=None, verbose=False,
     well as optionally displayed when the dataset is read by setting
     the *warnings* parameter.
     
+
     **Performance**
     
     Descriptive properties are always read into memory, but lazy
@@ -99,7 +102,7 @@ def read(filename, external=None, extra=None, verbose=False,
             attributes, but are not present, in the parent file given
             by the *filename* parameter) from the given external
             files. Ignored if the parent file does not contain a
-            global "external_variables" attribute. Multiple external
+            global ``external_variables`` attribute. Multiple external
             files may be provided, which are searched in random order
             for the required external variables.
            
@@ -164,6 +167,18 @@ def read(filename, external=None, extra=None, verbose=False,
             is incomplete due to structural non-compliance of the
             dataset. By default such warnings are not displayed.
             
+        mask: `bool`, optional
+            If False then do not mask by convention when reading data
+            from disk. By default data is masked by convention.
+           
+            The masking by convention of a netCDF array depends on the
+            values of any of the netCDF variable attributes
+            ``_FillValue`` and ``missing_value``,``valid_min``,
+            ``valid_max``, ``valid_range``. See the CF conventions for
+            details.
+    
+            .. versionadded:: 1.8.2
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
@@ -176,9 +191,7 @@ def read(filename, external=None, extra=None, verbose=False,
     
     **Examples:**
     
-    >>> x = cfdm.rea
-
-    d('file.nc')
+    >>> x = cfdm.read('file.nc')
     >>> print(type(x))
     <type 'list'>
     
@@ -229,10 +242,11 @@ def read(filename, external=None, extra=None, verbose=False,
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
-                             extra_read_vars=None)
+                             mask=mask, extra_read_vars=None)
     elif cdl:
         raise IOError(
-            "Can't determine format of file {} generated from CDL file {}".format(
+            "Can't determine format of file {} "
+            "generated from CDL file {}".format(
                 filename, cdl_filename))
     else:
         raise IOError("Can't determine format of file {}".format(filename))

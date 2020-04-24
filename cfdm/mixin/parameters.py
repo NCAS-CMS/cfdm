@@ -124,9 +124,11 @@ class Parameters(Container):
         parameters1 = other.parameters()
         if set(parameters0) != set(parameters1):
             if verbose:
-                print("{0}: Different parameter-valued terms ({1} != {2})".format(
-                    self.__class__.__name__,
-                    set(parameters0), set(parameters1)))
+                print(
+                    "{0}: Different parameter-valued terms "
+                    "({1} != {2})".format(
+                        self.__class__.__name__,
+                        set(parameters0), set(parameters1)))
             return False
 
         # Check that the parameter values are equal

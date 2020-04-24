@@ -276,6 +276,93 @@ class PropertiesData(Properties):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    def apply_masking(self, inplace=False):
+        '''Apply masking as defined by the CF conventions.
+
+    Masking is applied according to any of the following criteria that
+    are applicable:
+
+    * where data elements are equal to the value of the
+      ``missing_value`` property;
+
+    * where data elements are equal to the value of the ``_FillValue``
+      property;
+
+    * where data elements are strictly less than the value of the
+      ``valid_min`` property;
+
+    * where data elements are strictly greater than the value of the
+      ``valid_max`` property;
+
+    * where data elements are within the inclusive range specified by
+      the two values of ``valid_range`` property.
+
+    If any of the above properties have not been set the no masking is
+    applied for that method.
+
+    Elements that are already masked remain so.
+
+    .. note:: If using the `apply_masking` method on a construct that
+              has been read from a dataset with the ``mask=False``
+              parameter to the `read` function, then the mask defined
+              in the dataset can only be recreated if the
+              ``missing_value``, ``_FillValue``, ``valid_min``,
+              ``valid_max``, and ``valid_range`` properties have not
+              been updated.
+
+    .. versionadded:: 1.8.2
+
+    .. seealso:: `Data.apply_masking`
+               
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+            A new instance with masked values, or `None` if the
+            operation was in-place.
+    
+    **Examples:**
+
+                TODO DCH
+
+        '''             
+        if inplace:
+            v = self
+        else:
+            v = self.copy()
+       
+        data = v.get_data(None)
+        if data is not None:
+            fill_values = []
+            for prop in ('_FillValue', 'missing_value'):
+                x = v.get_property(prop, None)
+                if x is not None:
+                    fill_values.append(x)
+            # --- End: for
+            
+            kwargs = {'inplace': True,
+                      'fill_values': fill_values}
+            
+            for prop in ('valid_min', 'valid_max', 'valid_range'):
+                kwargs[prop] = v.get_property(prop, None)
+
+            if (kwargs['valid_range'] is not None
+                and (kwargs['valid_min'] is not None
+                     or kwargs['valid_max'] is not None)):
+                raise ValueError(
+                    "Can't apply masking when the 'valid_range' property "
+                    "has been set as well as either of the "
+                    "'valid_min' or 'valid_max' properties")
+
+            data.apply_masking(**kwargs)
+
+        if inplace:
+            v = None            
+        return v
+    
     def dump(self, display=True, _key=None, _omit_properties=(),
              _prefix='', _title=None, _create_title=True, _level=0,
              _axes=None, _axis_names=None):
@@ -394,7 +481,7 @@ class PropertiesData(Properties):
             function.
     
         ignore_fill_value: `bool`, optional
-            If True then the "_FillValue" and "missing_value"
+            If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison.
     
         verbose: `bool`, optional
@@ -460,7 +547,8 @@ class PropertiesData(Properties):
             if self.nc_get_variable(None) != other.nc_get_variable(None):
                 if verbose:
                     print(
-                        "{0}: External variable have different netCDF variable names: {} != {})".format(
+                        "{0}: External variable have different "
+                        "netCDF variable names: {} != {})".format(
                             self.__class__.__name__,
                             self.nc_get_variable(None),
                             other.nc_get_variable(None)))
@@ -498,7 +586,8 @@ class PropertiesData(Properties):
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
                 if verbose:
-                    print("{0}: Different data".format(self.__class__.__name__))
+                    print("{0}: Different data".format(
+                        self.__class__.__name__))
                 return False
         # --- End: if
 

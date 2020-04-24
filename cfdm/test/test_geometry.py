@@ -49,7 +49,7 @@ class DSGTest(unittest.TestCase):
             return
                 
         f = cfdm.read(self.geometry_1_file, verbose=False)
-
+        
         self.assertTrue(len(f) == 2, 'f = '+repr(f))
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=True))

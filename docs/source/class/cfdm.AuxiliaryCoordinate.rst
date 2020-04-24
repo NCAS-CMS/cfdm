@@ -61,6 +61,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.AuxiliaryCoordinate.apply_masking
    ~cfdm.AuxiliaryCoordinate.del_data
    ~cfdm.AuxiliaryCoordinate.get_data
    ~cfdm.AuxiliaryCoordinate.has_data

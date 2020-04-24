@@ -63,15 +63,19 @@ class Domain(mixin.ConstructAccess,
                 shape = str(tuple(shape)).replace("'", "")
                 shape = shape.replace(',)', ')')
                 x.append(shape)
-            elif (variable.construct_type in ('auxiliary_coordinate', 'domain_ancillary') and
-                  variable.has_bounds() and variable.bounds.has_data()):                
+            elif (variable.construct_type in ('auxiliary_coordinate',
+                                              'domain_ancillary')
+                  and variable.has_bounds()
+                  and variable.bounds.has_data()):
                 # Construct has no data but it does have bounds
                 shape = [axis_names[axis] for axis in axes]
-                shape.extend([str(n) for n in variable.bounds.data.shape[len(axes):]])
+                shape.extend([str(n)
+                              for n in variable.bounds.data.shape[len(axes):]])
                 shape = str(tuple(shape)).replace("'", "")
                 shape = shape.replace(',)', ')')
                 x.append(shape)
-            elif hasattr(variable, 'nc_get_external') and variable.nc_get_external():
+            elif (hasattr(variable, 'nc_get_external')
+                  and variable.nc_get_external()):
                 ncvar = variable.nc_get_variable(None)
                 if ncvar is not None:
                     x.append(' (external variable: ncvar%{})'.format(ncvar))
@@ -81,8 +85,10 @@ class Domain(mixin.ConstructAccess,
                 
             if variable.has_data():
                 x.append(' = {0}'.format(variable.data))
-            elif (variable.construct_type in ('auxiliary_coordinate', 'domain_ancillary') and
-                  variable.has_bounds() and variable.bounds.has_data()):
+            elif (variable.construct_type in ('auxiliary_coordinate',
+                                              'domain_ancillary')
+                  and variable.has_bounds()
+                  and variable.bounds.has_data()):
                 # Construct has no data but it does have bounds data
                 x.append(' = {0}'.format(variable.bounds.data))
                
@@ -109,7 +115,8 @@ class Domain(mixin.ConstructAccess,
                     x.append(y)
         # --- End: for
         if x:
-            string.append('Dimension coords: {}'.format('\n                : '.join(x)))
+            string.append('Dimension coords: {}'.format(
+                '\n                : '.join(x)))
 
         # Auxiliary coordinates
         x = [_print_item(self, cid, v, constructs_data_axes[cid]) 
@@ -126,7 +133,8 @@ class Domain(mixin.ConstructAccess,
                 '\n                : '.join(x)))
             
         # Coordinate references
-        x = sorted([str(ref) for ref in list(self.coordinate_references.values())])
+        x = sorted([str(ref)
+                    for ref in list(self.coordinate_references.values())])
         if x:
             string.append('Coord references: {}'.format(
                 '\n                : '.join(x)))
@@ -252,23 +260,24 @@ class Domain(mixin.ConstructAccess,
         for cid, value in sorted(self.coordinate_references.items()):
             string.append('')
             string.append(
-                value.dump(display=False, _level=_level,
-                           _title='Coordinate reference: {0}'.format(
-                               construct_name[cid]),
-                           _construct_names=construct_name,
-                           _auxiliary_coordinates=tuple(self.auxiliary_coordinates),
-                           _dimension_coordinates=tuple(self.dimension_coordinates)))
+                value.dump(
+                    display=False, _level=_level,
+                    _title='Coordinate reference: {0}'.format(
+                        construct_name[cid]),
+                    _construct_names=construct_name,
+                    _auxiliary_coordinates=tuple(self.auxiliary_coordinates),
+                    _dimension_coordinates=tuple(self.dimension_coordinates)))
             
         # Cell measures
         for cid, value in sorted(self.cell_measures.items()):
             string.append('')
             string.append( value.dump(
                 display=False, _key=cid,
-                _level=_level, _title='Cell measure: {0}'.format(construct_name[cid]),
+                _level=_level, _title='Cell measure: {0}'.format(
+                    construct_name[cid]),
                 _axes=constructs_data_axes[cid],
                 _axis_names=axis_to_name))
             
-
         string.append('')
         
         string = '\n'.join(string)

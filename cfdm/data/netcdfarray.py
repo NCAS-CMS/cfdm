@@ -20,7 +20,8 @@ class NetCDFArray(abstract.Array):
 
     '''
     def __init__(self, filename=None, ncvar=None, varid=None,
-                 dtype=None, ndim=None, shape=None, size=None):
+                 dtype=None, ndim=None, shape=None, size=None,
+                 mask=True):
         '''**Initialization**
 
     :Parameters:
@@ -50,6 +51,17 @@ class NetCDFArray(abstract.Array):
     
         ndim: `int`
             The number of array dimensions in the netCDF file.
+        
+        mask: `bool`             
+            If False then do not mask by convention when reading data
+            from disk. By default data is masked by convention.
+
+            A netCDF array is masked depending on the values of any of
+            the netCDF variable attributes ``valid_min``,
+            ``valid_max``, ``valid_range``, ``_FillValue`` and
+            ``missing_value``.
+    
+            .. versionadded:: 1.8.2
     
     **Examples:**
     
@@ -76,8 +88,8 @@ class NetCDFArray(abstract.Array):
         if shape is not None:
             self._set_component('shape', shape)
 
-#        if dtype is not None:
         self._set_component('dtype', dtype)
+        self._set_component('mask', mask)
             
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
@@ -103,19 +115,30 @@ class NetCDFArray(abstract.Array):
 #        indices = tuple(self.parse_indices(indices))
 
         ncvar = self.get_ncvar()
+        mask = self.get_mask()
 
         if ncvar is not None:
-            # Get the variable by name
-            array = netcdf.variables[ncvar][indices]
+            # Get the variable by netCDF name
+            variable = netcdf.variables[ncvar]
+#            print (mask, variable.mask)
+            variable.set_auto_mask(mask)
+#            print (mask, variable.mask)
+            array = variable[indices]
+#            print(array.max())
         else:
             # Get the variable by netCDF ID
             varid = self.get_varid()
             
-            for value in netcdf.variables.values():
-                if value._varid == varid:
-                    array = value[indices]
+            for variable in netcdf.variables.values():
+                if variable._varid == varid:
+                    variable.set_auto_mask(mask)
+                    array = variable[indices]
                     break
         # --- End: if
+
+        if self._get_component('close'):
+            # Close the netCDF file
+            self.close()
 
         string_type = isinstance(array, str)
         if string_type:
@@ -144,7 +167,7 @@ class NetCDFArray(abstract.Array):
             array = netCDF4.chartostring(array)
             shape = array.shape
 #            array.resize((array.size,))
-            array = numpy.array([x.rstrip() for x in array.flat], dtype='S') #array.dtype)
+            array = numpy.array([x.rstrip() for x in array.flat], dtype='S')
             array = numpy.reshape(array, shape)
             array = numpy.ma.masked_where(array==b'', array)
 
@@ -177,10 +200,6 @@ class NetCDFArray(abstract.Array):
             # --------------------------------------------------------
             array = numpy.ma.where(array == b'', numpy.ma.masked, array)
  
-        if self._get_component('close'):
-            # Close the netCDF file
-            self.close()
-
         return array
 
     def __repr__(self):
@@ -318,6 +337,18 @@ class NetCDFArray(abstract.Array):
         '''
         return self._get_component('filename')
 
+    def get_mask(self):
+        '''TODO
+
+    .. versionadded:: 1.8.2
+
+    **Examples:**
+    
+        TODO
+
+        '''
+        return self._get_component('mask')
+    
     def get_ncvar(self):
         '''The name of the netCDF variable containing the array.
 
