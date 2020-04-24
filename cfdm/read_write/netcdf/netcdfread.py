@@ -2161,9 +2161,9 @@ class NetCDFRead(IORead):
                                         
                         dimensions = [dim]
 
-#                        coord = self.implementation.construct_insert_dimension#(
-#                            construct=coord, position=0)
-#                        g['auxiliary_coordinate'][ncvar] = coord
+                        coord = self.implementation.construct_insert_dimension(
+                            construct=coord, position=0)
+                        g['auxiliary_coordinate'][ncvar] = coord
                     else:  
                         # Numeric valued scalar coordinate
                         is_scalar_dimension_coordinate = True
