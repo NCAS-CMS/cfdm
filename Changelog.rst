@@ -5,7 +5,7 @@ version 1.8.2
 **2020-04-24**
 
 * Added time coordinate bounds to the polygon geometry example field
-  returned by ``cfdm.example_field(6)``.
+  ``6`` returned by `cfdm.example_field`.
 * New method: `cfdm.Field.apply_masking`
 * New method: `cfdm.Data.apply_masking`
 * New keyword parameter to `cfdm.read`: ``mask``
