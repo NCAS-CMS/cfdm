@@ -584,8 +584,9 @@ class NetCDFGlobalAttributes(NetCDF):
     :Parameters:
 
         values: `bool`, optional
-            Return values (rather than `None`) for global attributes
-            that have the same value as a construct property.
+            Return the value (rather than `None`) for any global
+            attribute that has, by definition, the same value as a
+            construct property.
 
            .. versionadded:: 1.8.2
     
