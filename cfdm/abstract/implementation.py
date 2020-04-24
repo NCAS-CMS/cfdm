@@ -92,7 +92,8 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         try:
             return self._class[name]
         except KeyError:
-            raise ValueError("Implementation does not have class {!r}".format(name))
+            raise ValueError(
+                "Implementation does not have class {!r}".format(name))
 
     def get_cf_version(self):
         '''Return the CF version of the implementation.

@@ -454,6 +454,93 @@ class PropertiesDataBounds(PropertiesData):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    def apply_masking(self, bounds=True, inplace=False):
+        '''Apply masking as defined by the CF conventions.
+
+    Masking is applied according to any of the following criteria that
+    are applicable:
+
+    * where data elements are equal to the value of the
+      ``missing_value`` property;
+
+    * where data elements are equal to the value of the ``_FillValue``
+      property;
+
+    * where data elements are strictly less than the value of the
+      ``valid_min`` property;
+
+    * where data elements are strictly greater than the value of the
+      ``valid_max`` property;
+
+    * where data elements are within the inclusive range specified by
+      the two values of ``valid_range`` property.
+
+    If any of the above properties have not been set the no masking is
+    applied for that method.
+
+    The cell bounds, if any, are also masked according to the same
+    criteria as the parent constuct. If, however, any of the relevant
+    properties are explicitly set on the bounds instance then their
+    values will be used in preference to those of the parent
+    contsruct.
+
+    Elements that are already masked remain so.
+
+    .. note:: If using the `apply_masking` method on a construct that
+              has been read from a dataset with the ``mask=False``
+              parameter to the `read` function, then the mask defined
+              in the dataset can only be recreated if the
+              ``missing_value``, ``_FillValue``, ``valid_min``,
+              ``valid_max``, and ``valid_range`` properties have not
+              been updated.
+
+    .. versionadded:: 1.8.2
+
+    .. seealso:: `Data.apply_masking`
+               
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+   
+    :Returns:
+
+            A new instance with masked values, or `None` if the
+            operation was in-place.
+    
+    **Examples:**
+
+        TODO DCH
+
+        '''
+        c = super().apply_masking(inplace=inplace)
+        if inplace:
+            c = self
+
+        data = c.get_bounds_data(None)
+        if data is not None:
+            b = c.get_bounds()
+
+            fill_values = []
+            for prop in ('_FillValue', 'missing_value'):
+                x = b.get_property(prop, c.get_property(prop, None))
+                if x is not None:
+                    fill_values.append(x)
+            # --- End: for
+
+            kwargs = {'inplace': True,
+                      'fill_values': fill_values}
+            
+            for prop in ('valid_min', 'valid_max', 'valid_range'):
+                kwargs[prop] = b.get_property(prop,
+                                              c.get_property(prop, None))
+            
+            data.apply_masking(**kwargs)
+ 
+        if inplace:
+            c = None            
+        return c
+
     def del_node_count(self, default=ValueError()):
         '''Remove the node count variable for geometry bounds.
 
@@ -489,8 +576,10 @@ class PropertiesDataBounds(PropertiesData):
         try:
             return self._del_component('node_count')
         except ValueError:
-            return self._default(default,
-                                 "{!r} has no node count variable".format(self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no node count variable".format(
+                    self.__class__.__name__))
     
     def del_part_node_count(self, default=ValueError()):
         '''Remove the part node count variable for geometry bounds.
@@ -528,8 +617,10 @@ class PropertiesDataBounds(PropertiesData):
         try:
             return self._del_component('part_node_count')
         except ValueError:
-            return self._default(default,
-                                 "{!r} has no part node count variable".format(self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no part node count variable".format(
+                    self.__class__.__name__))
 
     def dump(self, display=True, _key=None, _omit_properties=None,
              _prefix='', _title=None, _create_title=True, _level=0,
@@ -662,7 +753,7 @@ class PropertiesDataBounds(PropertiesData):
             function.
     
         ignore_fill_value: `bool`, optional
-            If True then the "_FillValue" and "missing_value"
+            If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison.
     
         verbose: `bool`, optional
@@ -745,7 +836,9 @@ class PropertiesDataBounds(PropertiesData):
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
                 if verbose:
-                    print("{0}: Different bounds".format(self.__class__.__name__))
+                    print("{0}: Different bounds".format(
+                        self.__class__.__name__)) # pragma: no cover
+                    
                 return False
         # --- End: if
 
@@ -755,11 +848,14 @@ class PropertiesDataBounds(PropertiesData):
         self_has_interior_ring = self.has_interior_ring()
         if self_has_interior_ring != other.has_interior_ring():
             if verbose:
-                print("{0}: Different interior ring".format(self.__class__.__name__)) # pragma: no coer
+                print("{0}: Different interior ring".format(
+                    self.__class__.__name__)) # pragma: no cover
+                
             return False
                 
         if self_has_interior_ring:            
-            if not self._equals(self.get_interior_ring(), other.get_interior_ring(),
+            if not self._equals(self.get_interior_ring(),
+                                other.get_interior_ring(),
                                 rtol=rtol, atol=atol,
                                 verbose=verbose,
                                 ignore_data_type=ignore_data_type,
@@ -767,7 +863,9 @@ class PropertiesDataBounds(PropertiesData):
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
                 if verbose:
-                    print("{0}: Different interior ring".format(self.__class__.__name__)) # pragma: no cover
+                    print("{0}: Different interior ring".format(
+                        self.__class__.__name__)) # pragma: no cover
+                    
                 return False
         # --- End: if
 
@@ -917,7 +1015,7 @@ class PropertiesDataBounds(PropertiesData):
 
     The identities comprise:
     
-    * The "standard_name" property.
+    * The ``standard_name`` property.
     * All properties, preceeded by the property name and a colon,
       e.g. ``'long_name:Air temperature'``.
     * The netCDF variable name, preceeded by ``'ncvar%'``.
@@ -970,10 +1068,10 @@ class PropertiesDataBounds(PropertiesData):
 
     By default the identity is the first found of the following:
     
-    1. The "standard_name" property.
-    2. The "cf_role" property, preceeded by ``'cf_role='``.
-    3. The "axis" property, preceeded by ``'axis='``.
-    4. The "long_name" property, preceeded by ``'long_name='``.
+    1. The ``standard_name`` property.
+    2. The ``cf_role`` property, preceeded by ``'cf_role='``.
+    3. The ``axis`` property, preceeded by ``'axis='``.
+    4. The ``long_name`` property, preceeded by ``'long_name='``.
     5. The netCDF variable name, preceeded by ``'ncvar%'``.
     6. The identity of the bounds, if any.
     7. The value of the *default* parameter.
@@ -1180,7 +1278,8 @@ class PropertiesDataBounds(PropertiesData):
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
-                "Can't insert dimension: Invalid position: {!r}".format(position))
+                "Can't insert dimension: Invalid position: {!r}".format(
+                    position))
         
         c = super().insert_dimension(position, inplace=inplace)
         if inplace:

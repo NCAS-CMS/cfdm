@@ -99,9 +99,10 @@ class Properties(Container):
                 else:
                     default = ''
                     
-                string.append('{0}{1}: {2}'.format(indent0,
-                                                   self.__class__.__name__,
-                                                   self.identity(default=default)))
+                string.append('{0}{1}: {2}'.format(
+                    indent0,
+                    self.__class__.__name__,
+                    self.identity(default=default)))
             else:
                 string.append(indent0 + _title)
         # --- End: if
@@ -162,7 +163,7 @@ class Properties(Container):
             function.
     
         ignore_fill_value: `bool`, optional
-            If True then the "_FillValue" and "missing_value"
+            If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison.
     
         verbose: `bool`, optional
@@ -246,7 +247,8 @@ class Properties(Container):
                                 ignore_data_type=True, #ignore_data_type,
                                 verbose=verbose):
                 if verbose:
-                    print("{0}: Different {1!r} property values: {2!r}, {3!r}".format(
+                    print("{0}: Different {1!r} property values: "
+                          "{2!r}, {3!r}".format(
                         self.__class__.__name__, prop, x, y))
                 return False
         # --- End: for
@@ -258,10 +260,10 @@ class Properties(Container):
 
     By default the identity is the first found of the following:
     
-    * The "standard_name" property.
-    * The "cf_role" property, preceeded by ``'cf_role='``.
-    * The "axis" property, preceeded by ``'axis='``.
-    * The "long_name" property, preceeded by ``'long_name='``.
+    * The ``standard_name`` property.
+    * The ``cf_role`` property, preceeded by ``'cf_role='``.
+    * The ``axis`` property, preceeded by ``'axis='``.
+    * The ``long_name`` property, preceeded by ``'long_name='``.
     * The netCDF variable name, preceeded by ``'ncvar%'``.
     * The value of the *default* parameter.
     
@@ -329,7 +331,7 @@ class Properties(Container):
 
     The identities comprise:
     
-    * The "standard_name" property.
+    * The ``standard_name`` property.
     * All properties, preceeded by the property name and a colon,
       e.g. ``'long_name:Air temperature'``.
     * The netCDF variable name, preceeded by ``'ncvar%'``.

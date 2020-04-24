@@ -73,7 +73,6 @@ class CellMethod(mixin.Container,
 
         return ' '.join(string)
 
-
     def dump(self, display=True, _title=None, _level=0):
         '''A full description of the cell method construct.
 
@@ -103,7 +102,6 @@ class CellMethod(mixin.Container,
 
         return indent0 + _title + str(self)
 
-
 #    def expand_intervals(self):
 #        '''
 #        '''
@@ -116,7 +114,6 @@ class CellMethod(mixin.Container,
 #                c.set_property('interval', interval*n_axes)
 #
 #        return c
-
 
 #    @classmethod
 #    def parse(cls, string, allow_error=False):
@@ -289,7 +286,6 @@ class CellMethod(mixin.Container,
 #
 #        return out
 
-
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_qualifiers=(), ignore_type=False):
         '''Whether two cell method constructs are the same.
@@ -378,7 +374,8 @@ class CellMethod(mixin.Container,
         if self.get_method(None) != other.get_method(None):
             if verbose:
                 print("{0}: Different methods: {1!r} != {2!r}".format(
-                    cm0.__class__.__name__, self.get_method(None), other.get_method(None)))
+                    cm0.__class__.__name__,
+                    self.get_method(None), other.get_method(None)))
             return False
 
         # ------------------------------------------------------------
@@ -420,7 +417,8 @@ class CellMethod(mixin.Container,
             if not intervals1:
                 if verbose:
                     print(
-                        "{0}: Different interval qualifiers: {1!r} != {2!r}".format(
+                        "{0}: Different interval qualifiers: "
+                        "{1!r} != {2!r}".format(
                             self.__class__.__name__, intervals0, intervals1))
                 return False
             # --- End: if
@@ -428,7 +426,8 @@ class CellMethod(mixin.Container,
             if len(intervals0) != len(intervals1):
                 if verbose:
                     print(
-                        "{0}: Different numbers of interval qualifiers: {1!r} != {2!r}".format(
+                        "{0}: Different numbers of interval qualifiers: "
+                        "{1!r} != {2!r}".format(
                             self.__class__.__name__, intervals0, intervals1))
                     return False
             # --- End: if
@@ -441,8 +440,10 @@ class CellMethod(mixin.Container,
                                     ignore_fill_value=True):
                     if verbose:
                         print(
-                            "{0}: Different interval qualifiers: {1!r} != {2!r}".format(
-                                self.__class__.__name__, intervals0, intervals1))
+                            "{0}: Different interval qualifiers: "
+                            "{1!r} != {2!r}".format(
+                                self.__class__.__name__,
+                                intervals0, intervals1))
                     return False
 
         elif intervals1:
@@ -457,7 +458,6 @@ class CellMethod(mixin.Container,
         # ------------------------------------------------------------
 
         return True
-
 
 #    def equivalent(self, other, rtol=None, atol=None, verbose=False):
 #        '''True if two cell methods are equivalent, False otherwise.
@@ -549,7 +549,6 @@ class CellMethod(mixin.Container,
 #        # Still here? Then they are equivalent
 #        return True
 
-
     def identity(self, default=''):
         '''Return the canonical identity for the cell method construct.
 
@@ -594,7 +593,6 @@ class CellMethod(mixin.Container,
             
         return default
 
-
     def identities(self):
         '''Return all possible identities.
 
@@ -630,7 +628,6 @@ class CellMethod(mixin.Container,
             out.append('method:{0}'.format(n))
             
         return out
-
 
     def sorted(self, indices=None):
         '''Return a new cell method construct with sorted axes.
@@ -681,7 +678,8 @@ class CellMethod(mixin.Container,
             indices = numpy.argsort(axes)
         elif len(indices) != len(axes):
             raise ValueError(
-                "Can't sort cell method axes. The given indices ({}) do not correspond to the number of axes ({})".format(
+                "Can't sort cell method axes. The given indices ({}) "
+                "do not correspond to the number of axes ({})".format(
                     indices, axes))
 
         axes2 = []

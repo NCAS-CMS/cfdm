@@ -183,8 +183,8 @@ class CellMeasure(mixin.NetCDFVariable,
             numbers. The default value is set by the `cfdm.RTOL` function.
     
         ignore_fill_value: `bool`, optional
-            If True then the "_FillValue" and "missing_value" properties
-            are omitted from the comparison.
+            If True then the ``_FillValue`` and ``missing_value``
+            properties are omitted from the comparison.
     
         verbose: `bool`, optional
             If True then print information about differences that lead to
@@ -262,10 +262,10 @@ class CellMeasure(mixin.NetCDFVariable,
 
     By default the identity is the first found of the following:
     
-    * The measure property, preceeded by ``'measure:'``.
-    * The "standard_name" property.
-    * The "cf_role" property, preceeded by 'cf_role='.
-    * The "long_name" property, preceeded by 'long_name='.
+    * The measure, preceeded by ``'measure:'``.
+    * The ``standard_name`` property.
+    * The ``cf_role`` property, preceeded by 'cf_role='.
+    * The ``long_name`` property, preceeded by 'long_name='.
     * The netCDF variable name, preceeded by 'ncvar%'.
     * The value of the default parameter.
     
@@ -341,7 +341,7 @@ class CellMeasure(mixin.NetCDFVariable,
 The identities comprise:
 
 * The measure property, preceeded by ``'measure:'``.
-* The "standard_name" property.
+* The ``standard_name`` property.
 * All properties, preceeded by the property name and a colon,
   e.g. ``'long_name:Air temperature'``.
 * The netCDF variable name, preceeded by ``'ncvar%'``.

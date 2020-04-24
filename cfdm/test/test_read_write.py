@@ -47,7 +47,7 @@ class read_writeTest(unittest.TestCase):
 #    test_only = ['test_write_HDF_chunks']
 #    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_read_field']
-#    test_only = ['test_read_write_string']
+#    test_only = ['test_read_mask']
 #    test_only = ['test_read_write_format']
     
     def test_read_field(self):
@@ -142,6 +142,43 @@ class read_writeTest(unittest.TestCase):
             self.assertTrue(f.equals(g, verbose=True),
                             'Bad read/write of format: {}'.format(fmt))
 
+    def test_read_mask(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return        
+
+        f = cfdm.example_field(0)
+
+        N = f.size
+        
+        f.data[1, 1] = cfdm.masked
+        f.data[2, 2] = cfdm.masked
+
+        f.del_property('_FillValue', None)
+        f.del_property('missing_value', None)
+        
+        cfdm.write(f, tmpfile)
+
+        g = cfdm.read(tmpfile)[0]
+        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        
+        g = cfdm.read(tmpfile, mask=False)[0]
+        self.assertTrue(numpy.ma.count(g.data.array) == N)
+
+        g.apply_masking(inplace=True)
+        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        
+        f.set_property('_FillValue', 999)
+        f.set_property('missing_value', -111)
+        cfdm.write(f, tmpfile)
+        
+        g = cfdm.read(tmpfile)[0]
+        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        
+        g = cfdm.read(tmpfile, mask=False)[0]
+        self.assertTrue(numpy.ma.count(g.data.array) == N)
+
+        g.apply_masking(inplace=True)
+        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
 
     def test_write_datatype(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

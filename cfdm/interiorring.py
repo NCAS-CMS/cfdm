@@ -54,7 +54,8 @@ class InteriorRing(mixin.NetCDFDimension,
             `set_properties` and `set_property` methods.
     
             *Parameter example:*
-              ``properties={'long_name': 'which station this obs is for'}``
+              ``properties={'long_name': 'which station this obs is
+              for'}``
     
         data: `Data`, optional
             Set the data array. Ignored if the *source* parameter is

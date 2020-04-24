@@ -9,7 +9,7 @@ import netCDF4
 from .. import core
 from .. import mixin
 
-from ..constants  import masked
+from ..constants  import masked as cfdm_masked
 
 from . import abstract
 from . import NumpyArray
@@ -192,7 +192,8 @@ class Data(mixin.Container,
             shape = str(shape)
             shape = shape.replace(',)', ')')
             
-        return '<{0}{1}: {2}>'.format(self.__class__.__name__, shape, str(self))
+        return '<{0}{1}: {2}>'.format(
+            self.__class__.__name__, shape, str(self))
 
     def __getitem__(self, indices):
         '''Return a subspace of the data defined by indices
@@ -223,7 +224,7 @@ class Data(mixin.Container,
     **Examples:**
     
     >>> import numpy
-    >>> d = cfdm.Data(numpy.arange(100, 190).reshape(1, 10, 9))
+    >>> d = Data(numpy.arange(100, 190).reshape(1, 10, 9))
     >>> d.shape
     (1, 10, 9)
     >>> d[:, :, 1].shape
@@ -263,7 +264,8 @@ class Data(mixin.Container,
         '''
         if self.size != 1:
             raise TypeError(
-                "only length-1 arrays can be converted to Python scalars. Got {}".format(
+                "only length-1 arrays can be converted to "
+                "Python scalars. Got {}".format(
                     self))
 
         return int(self.array)
@@ -275,7 +277,7 @@ class Data(mixin.Container,
     
     **Examples:**
     
-    >>> d = cfdm.Data([1, 2, 3], 'metres')
+    >>> d = Data([1, 2, 3], 'metres')
     >>> for e in d:
     ...    print repr(e)
     ...
@@ -283,14 +285,14 @@ class Data(mixin.Container,
     2
     3
     
-    >>> d = cfdm.Data([[1, 2], [4, 5]], 'metres')
+    >>> d = Data([[1, 2], [4, 5]], 'metres')
     >>> for e in d:
     ...    print repr(e)
     ...
     <CF Data: [1, 2] metres>
     <CF Data: [4, 5] metres>
     
-    >>> d = cfdm.Data(34, 'metres')
+    >>> d = Data(34, 'metres')
     >>> for e in d:
     ...     print repr(e)
     ..
@@ -342,8 +344,8 @@ class Data(mixin.Container,
     **Missing data**
     
     Data array elements may be set to missing values by assigning them
-    to `numpy.ma.masked`. Missing values may be unmasked by assigning
-    them to any other value.
+    to `masked`. Missing values may be unmasked by assigning them to
+    any other value.
     
     .. versionadded:: 1.7.0
     
@@ -356,21 +358,21 @@ class Data(mixin.Container,
     **Examples:**
     
     >>> import numpy
-    >>> d = cfdm.Data(numpy.arange(100, 190).reshape(1, 10, 9))
+    >>> d = Data(numpy.arange(100, 190).reshape(1, 10, 9))
     >>> d.shape
     (10, 9)
     >>> d[:, :, 1] = -10
     >>> d[:, 0] = range(9)
     >>> d[..., 6:3:-1, 3:6] = numpy.arange(-18, -9).reshape(3, 3)
-    >>> d[0, [2, 9], [4, 8]] =  cfdm.Data([[-2, -3]])
-    >>> d[0, :, -2] = numpy.ma.masked
+    >>> d[0, [2, 9], [4, 8]] =  Data([[-2, -3]])
+    >>> d[0, :, -2] = masked
 
         '''
         indices = self._parse_indices(indices)
                 
         array = self.array
 
-        if value is masked or numpy.ma.isMA(value):
+        if value is cfdm_masked or numpy.ma.isMA(value):
             # The data is not masked but the assignment is masking
             # elements, so turn the non-masked array into a masked
             # one.
@@ -440,7 +442,8 @@ class Data(mixin.Container,
                 # Convert reference times to date-times
                 try:
                     first, last = type(self)(
-                        numpy.ma.array([first, last], mask=(mask[0], mask[-1])),
+                        numpy.ma.array([first, last],
+                                       mask=(mask[0], mask[-1])),
                         units, calendar).datetime_array
                 except (ValueError, OverflowError):
                     first, last = ('??', '??')
@@ -512,7 +515,7 @@ class Data(mixin.Container,
     >>> x = d._item(1)
     >>> print(x, type(x))
     2 <type 'int'>
-    >>> d[0, 1] = numpy.ma.masked
+    >>> d[0, 1] = masked
     >>> d._item((slice(None), slice(1, 2)))
     masked
 
@@ -633,16 +636,16 @@ class Data(mixin.Container,
                                   if not isinstance(x, slice)]
 
         if len(axes_with_list_indices) < 2: 
-            # ------------------------------------------------------------
-            # At most one axis has a list-of-integers index so we can do a
-            # normal numpy assignment
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
+            # At most one axis has a list-of-integers index so we can
+            # do a normal numpy assignment
+            # --------------------------------------------------------
             array[tuple(indices)] = value
         else:
-            # ------------------------------------------------------------
-            # At least two axes have list-of-integers indices so we can't
-            # do a normal numpy assignment
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
+            # At least two axes have list-of-integers indices so we
+            # can't do a normal numpy assignment
+            # --------------------------------------------------------
             indices1 = indices[:]
             for i, x in enumerate(indices):
                 if i in axes_with_list_indices:
@@ -685,12 +688,14 @@ class Data(mixin.Container,
                         indices2.append((slice(None),))
                 # --- End: for
 
-                for i, j in zip(itertools.product(*indices1), itertools.product(*indices2)):
+                for i, j in zip(itertools.product(*indices1),
+                                itertools.product(*indices2)):
                     array[i] = value[j]
-
-    # -----------------------------------------------------------------
+        # --- End: if
+        
+    # ----------------------------------------------------------------
     # Attributes
-    # -----------------------------------------------------------------
+    # ----------------------------------------------------------------
     @property
     def compressed_array(self):
         '''Return an independent numpy array containing the compressed data.
@@ -741,7 +746,7 @@ class Data(mixin.Container,
 
     **Examples:**
     
-    >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
+    >>> d = Data([31, 62, 90], units='days since 2018-12-01')
     >>> a = d.datetime_array
     >>> print(a)
     [cftime.DatetimeGregorian(2019-01-01 00:00:00)
@@ -750,8 +755,8 @@ class Data(mixin.Container,
     >>> print(a[1])
     2019-02-01 00:00:00
     
-    >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01',
-    ...               calendar='360_day')
+    >>> d = Data([31, 62, 90], units='days since 2018-12-01',
+    ...          calendar='360_day')
     >>> a = d.datetime_array
     >>> print(a)
     [cftime.Datetime360Day(2019-01-02 00:00:00)
@@ -811,12 +816,12 @@ class Data(mixin.Container,
 
     **Examples:**
     
-    >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01')
+    >>> d = Data([31, 62, 90], units='days since 2018-12-01')
     >>> print(d.datetime_as_string)
     ['2019-01-01 00:00:00' '2019-02-01 00:00:00' '2019-03-01 00:00:00']
   
-    >>> d = cfdm.Data([31, 62, 90], units='days since 2018-12-01',
-    ...               calendar='360_day')
+    >>> d = Data([31, 62, 90], units='days since 2018-12-01',
+    ...          calendar='360_day')
     >>> print(d.datetime_as_string)
     ['2019-01-02 00:00:00' '2019-02-03 00:00:00' '2019-03-01 00:00:00']
 
@@ -875,7 +880,7 @@ class Data(mixin.Container,
     >>> d = Data([[0, 0, 0]])
     >>> d.any()
     False
-    >>> d[0, 0] = numpy.ma.masked
+    >>> d[0, 0] = masked
     >>> print(d.array)
     [[-- 0 0]]
     >>> d.any()
@@ -885,7 +890,7 @@ class Data(mixin.Container,
     [[-- 3 0]]
     >>> d.any()
     True
-    >>> d[...] = numpy.ma.masked
+    >>> d[...] = masked
     >>> print(d.array)
     [[-- -- --]]
     >>> d.any()
@@ -897,6 +902,208 @@ class Data(mixin.Container,
             masked = False
 
         return masked
+
+    def apply_masking(self, fill_values=None, valid_min=None,
+                      valid_max=None, valid_range=None, inplace=False):
+        '''Apply masking.
+
+    Masking is applied according to the values of the keyword
+    parameters.
+
+    Elements that are already masked remain so.
+
+    .. versionadded:: 1.8.2
+
+    .. seealso:: `get_fill_value`, `mask`
+                 
+    :Parameters:
+
+        fill_values: `bool` or sequence of scalars, optional
+            Specify values that will be set to missing data. Data
+            elements exactly equal to any of the values are set to
+            missing data.
+
+            If True then the value returned by the `get_fill_value`
+            method, if such a value exists, is used.
+
+            Zero or more values may be provided in a sequence of
+            scalars.
+
+            *Parameter example:*
+              Specify a fill value of 999: ``fill_values=[999]``
+         
+            *Parameter example:*
+              Specify fill values of 999 and -1.0e30:
+              ``fill_values=[999, -1.0e30]``
+         
+            *Parameter example:*
+              Use the fill value already set for the data:
+              ``fill_values=True``
+         
+            *Parameter example:*
+              Use no fill values: ``fill_values=False`` or
+              ``fill_value=[]``
+         
+        valid_min: number, optional
+            A scalar specifying the minimum valid value. Data elements
+            strictly less than this number will be set to missing
+            data.
+
+        valid_max: number, optional
+            A scalar specifying the maximum valid value. Data elements
+            strictly greater than this number will be set to missing
+            data.
+
+        valid_range: (number, number), optional
+            A vector of two numbers specifying the minimum and maximum
+            valid values, equivalent to specifying values for both
+            *valid_min* and *valid_max* parameters. The *valid_range*
+            parameter must not be set if either *valid_min* or
+            *valid_max* is defined.
+
+            *Parameter example:*
+              ``valid_range=[-999, 10000]`` is equivalent to setting
+              ``valid_min=-999, valid_max=10000``
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data` or `None`
+            The data with masked values. If the operation was in-place
+            then `None` is returned.
+
+    **Examples:**
+
+    >>> import numpy
+    >>> d = Data(numpy.arange(12).reshape(3, 4), 'm')
+    >>> d[1, 1] = masked
+    >>> print(d.array)
+    [[0  1  2  3]
+     [4 --  6  7]
+     [8  9 10 11]]
+
+    >>>  print(d.apply_masking().array)
+    [[0  1  2  3]
+     [4 --  6  7]
+     [8  9 10 11]]
+    >>> print(d.apply_masking(fill_values=[0]).array)
+    [[--  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 11]]    
+    >>> print(d.apply_masking(fill_values=[0, 11]).array)
+    [[--  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 --]]
+    
+    >>> print(d.apply_masking(valid_min=3).array)
+    [[-- -- --  3]
+     [ 4 --  6  7]
+     [ 8  9 10 11]]
+    >>> print(d.apply_masking(valid_max=6).array)
+    [[ 0  1  2  3]
+     [ 4 --  6 --]
+     [-- -- -- --]]
+    >>> print(d.apply_masking(valid_range=[2, 8]).array)
+    [[-- --  2  3]
+     [ 4 --  6  7]
+     [ 8 -- -- --]]
+    
+    >>> d.set_fill_value(7)
+    >>> print(d.apply_masking(fill_values=True).array)
+    [[0  1  2  3]
+     [4 --  6 --]
+     [8  9 10 11]]
+    >>> print(d.apply_masking(fill_values=True,
+    ...                       valid_range=[2, 8]).array)
+    [[-- --  2  3]
+     [ 4 --  6 --]
+     [ 8 -- -- --]]
+
+        '''
+        if valid_range is not None:
+            if valid_min is not None or valid_max is not None:
+                raise ValueError(
+                    "Can't set 'valid_range' parameter with either the "
+                    "'valid_min' nor 'valid_max' parameters")
+
+            try:
+                if len(valid_range) != 2:
+                    raise ValueError(
+                        "'valid_range' parameter must be a vector of "
+                        "two elements")
+            except TypeError:                
+                raise ValueError(
+                    "'valid_range' parameter must be a vector of "
+                    "two elements")
+            
+            valid_min, valid_max = valid_range
+            
+        if inplace:
+            d = self
+        else:
+            d = self.copy()
+
+        if fill_values is None:
+            fill_values = False
+        
+        if isinstance(fill_values, bool):
+            if fill_values:
+                fill_value = self.get_fill_value(None)
+                if fill_value is not None:
+                    fill_values = (fill_value,)
+                else:
+                    fill_values = ()
+            else:
+                fill_values = ()
+        else:            
+            try:
+                _ = iter(fill_values)
+            except TypeError:
+                raise TypeError(
+                    "'fill_values' parameter must be a sequence or "
+                    "of type bool. Got type {}".format(type(fill_values)))
+            else:
+                if isinstance(fill_values, str):
+                    raise TypeError(
+                        "'fill_values' parameter must be a sequence or "
+                        "of type bool. Got type {}".format(type(fill_values)))
+        # --- End: if
+        
+        mask = None
+        
+        if fill_values:
+            array = self.array
+            mask = (array == fill_values[0])
+                
+            for fill_value in fill_values[1:]:
+                mask |= (array == fill_value)
+        # --- End: for
+            
+        if valid_min is not None:
+            if mask is None:
+                array = self.array
+                mask = (array < valid_min)
+            else:
+                mask |= (array < valid_min)
+        # --- End: if
+
+        if valid_max is not None:
+            if mask is None:
+                array = self.array
+                mask = (array > valid_max)
+            else:
+                mask |= (array > valid_max)
+        # --- End: if
+
+        if mask is not None:            
+            array = numpy.ma.where(mask, cfdm_masked, array)
+            d._set_Array(array, copy=False)
+
+        if inplace:
+            d = None
+        return d
 
     def copy(self, array=True):
         '''Return a deep copy.
@@ -978,7 +1185,8 @@ class Data(mixin.Container,
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
-                "Can't insert dimension: Invalid position: {!r}".format(position))
+                "Can't insert dimension: "
+                "Invalid position: {!r}".format(position))
 
         array = numpy.expand_dims(self.array, position)
 
@@ -1189,7 +1397,8 @@ class Data(mixin.Container,
                     # has a size attribute.
                     if index.size != size:
                         raise IndexError(
-                            "Invalid indices for data with shape {}: {} ".format(
+                            "Invalid indices for data "
+                            "with shape {}: {} ".format(
                                 shape, parsed_indices))
 
                     index = numpy.where(index)[0]
@@ -1391,7 +1600,8 @@ class Data(mixin.Container,
         if not d.ndim:
             if axes:
                 raise ValueError(
-                    "Can't squeeze data: axes {} is not allowed data with shape {}".format(
+                    "Can't squeeze data: axes {} can not be used for "
+                    "data with shape {}".format(
                         axes, d.shape))
 
             if inplace:
@@ -1413,7 +1623,8 @@ class Data(mixin.Container,
             for i in axes:
                 if shape[i] > 1:
                     raise ValueError(
-                        "Can't squeeze data: Can't remove axis of size {}".format(
+                        "Can't squeeze data: "
+                        "Can't remove axis of size {}".format(
                             shape[i]))
         # --- End: if
 
@@ -1536,12 +1747,10 @@ class Data(mixin.Container,
                 return d
             
             axes = tuple(range(ndim-1, -1, -1))
-        else:
-            if len(axes) != ndim:
-                raise ValueError(
-                    "Can't transpose data: Axes don't match array: {}".format(
-                        axes))
-        # --- End: if
+        elif len(axes) != ndim:
+            raise ValueError(
+                "Can't transpose data: Axes don't match array: {}".format(
+                    axes))
 
         # Return unchanged if axes are in the same order as the data
         if axes == tuple(range(ndim)):            
@@ -1634,7 +1843,7 @@ class Data(mixin.Container,
 
     Note that the mask of the returned empty data is hard.
 
-    .. seealso:: `full`, `hardmask`, `ones`, `zeros`
+    .. seealso:: `full`, `ones`, `zeros`
     
     :Parameters:
     
@@ -1657,7 +1866,7 @@ class Data(mixin.Container,
     
     **Examples:**
     
-    >>> d = cfdm.Data.empty((96, 73))
+    >>> d = Data.empty((96, 73))
 
         '''
         return cls(numpy.empty(shape=shape, dtype=dtype), units=units,
@@ -1708,13 +1917,11 @@ class Data(mixin.Container,
     
         atol: float, optional
             The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.ATOL`
-            function.
+            numbers. The default value is set by the `ATOL` function.
             
         rtol: float, optional
             The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.RTOL`
-            function.
+            numbers. The default value is set by the `RTOL` function.
     
         ignore_fill_value: `bool`, optional
             If True then the fill value is omitted from the
@@ -1811,10 +2018,12 @@ class Data(mixin.Container,
             compression_type = self.get_compression_type()
             if compression_type != other.get_compression_type():
                 if verbose:
-                    print("{0}: Different compression types: {1} != {2}".format(
-                        self.__class__.__name__,
-                        compression_type,
-                        other.get_compression_type()))
+                    print("{0}: Different compression types: "
+                          "{1} != {2}".format(
+                              self.__class__.__name__,
+                              compression_type,
+                              other.get_compression_type()))
+                    
                 return False
             
             # --------------------------------------------------------
@@ -1836,8 +2045,11 @@ class Data(mixin.Container,
         if not self._equals(self.array, other.array,
                             rtol=rtol, atol=atol):
             if verbose:
-                print("{0}: Different array values (atol={1}, rtol={2})".format(
-                    self.__class__.__name__, atol, rtol))
+                print(
+                    "{0}: Different array values (atol={1}, rtol={2})".format(
+                        self.__class__.__name__,
+                        atol, rtol)) # pragma: no cover
+                
             return False
 
         # ------------------------------------------------------------
@@ -1858,21 +2070,21 @@ class Data(mixin.Container,
     
     **Examples:**
     
-    >>> d = cfdm.Data(9.0)
+    >>> d = Data(9.0)
     >>> x = d.first_element()
     >>> print(x, type(x))
     (9.0, <type 'float'>)
     
-    >>> d = cfdm.Data([[1, 2], [3, 4]])
+    >>> d = Data([[1, 2], [3, 4]])
     >>> x = d.first_element()
     >>> print(x, type(x))
     (1, <type 'int'>)
-    >>> d[0, 0] = numpy.ma.masked
+    >>> d[0, 0] = masked
     >>> y = d.first_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
     
-    >>> d = cfdm.Data(['foo', 'bar'])
+    >>> d = Data(['foo', 'bar'])
     >>> x = d.first_element()
     >>> print(x, type(x))
     ('foo', <type 'str'>)
@@ -1921,7 +2133,7 @@ class Data(mixin.Container,
 
     **Examples**
 
-    >>> d = cfdm.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+    >>> d = Data(numpy.arange(24).reshape(1, 2, 3, 4))
     >>> d
     <Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
     >>> print(d.array)
@@ -1978,7 +2190,8 @@ class Data(mixin.Container,
         if not ndim:
             if axes or axes == 0:
                 raise ValueError(
-                    "Can't flatten: Can't remove an axis from scalar {}".format(
+                    "Can't flatten: "
+                    "Can't remove an axis from scalar {}".format(
                         self.__class__.__name__))
             
             if inplace:
@@ -2033,21 +2246,21 @@ class Data(mixin.Container,
     
     **Examples:**
     
-    >>> d = cfdm.Data(9.0)
+    >>> d = Data(9.0)
     >>> x = d.last_element()
     >>> print(x, type(x))
     (9.0, <type 'float'>)
     
-    >>> d = cfdm.Data([[1, 2], [3, 4]])
+    >>> d = Data([[1, 2], [3, 4]])
     >>> x = d.last_element()
     >>> print(x, type(x))
     (4, <type 'int'>)
-    >>> d[-1, -1] = numpy.ma.masked
+    >>> d[-1, -1] = masked
     >>> y = d.last_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
     
-    >>> d = cfdm.Data(['foo', 'bar'])
+    >>> d = Data(['foo', 'bar'])
     >>> x = d.last_element()
     >>> print(x, type(x))
     ('bar', <type 'str'>)
@@ -2068,16 +2281,16 @@ class Data(mixin.Container,
     
     **Examples:**
     
-    >>> d = cfdm.Data([[1, 2], [3, 4]])
+    >>> d = Data([[1, 2], [3, 4]])
     >>> x = d.second_element()
     >>> print(x, type(x))
     (2, <type 'int'>)
-    >>> d[0, 1] = numpy.ma.masked
+    >>> d[0, 1] = masked
     >>> y = d.second_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
     
-    >>> d = cfdm.Data(['foo', 'bar'])
+    >>> d = Data(['foo', 'bar'])
     >>> x = d.second_element()
     >>> print(x, type(x))
     ('bar', <type 'str'>)
@@ -2124,7 +2337,7 @@ class Data(mixin.Container,
 #
 #**Examples:**
 #
-#>>> d = cfdm.Data([1.5, 2, 2.5])
+#>>> d = Data([1.5, 2, 2.5])
 #>>> d.dtype
 #dtype('float64')
 #>>> print(d.array)
@@ -2138,7 +2351,7 @@ class Data(mixin.Container,
 #>>> print(d.array)
 #[1. 2. 2.]
 #
-#>>> d = cfdm.Data([1.5, 2, 2.5])
+#>>> d = Data([1.5, 2, 2.5])
 #>>> d.dtype
 #dtype('float64')
 #>>> d.astype('int', casting='safe')
@@ -2179,7 +2392,7 @@ class Data(mixin.Container,
     def uncompress(self, inplace=False):
         '''Uncompress the underlying array.
 
-    If the data is not compressed, then no change is made.
+
     
     .. versionadded:: 1.7.3
     

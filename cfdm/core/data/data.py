@@ -498,7 +498,7 @@ class Data(abstract.Container):
     def get_fill_value(self, default=ValueError()):
         '''Return the missing data value.
 
-    .. seealso:: `del_fill_value`, `has_fill_value`, `set_fill_vlaue`
+    .. seealso:: `del_fill_value`, `has_fill_value`, `set_fill_value`
     
     :Parameters:
     
@@ -645,7 +645,7 @@ class Data(abstract.Container):
     def has_fill_value(self):
         '''Whether a fill value has been set.
 
-    .. seealso:: `del_fill_value`, `get_fill_value`, `set_fill_vlaue`
+    .. seealso:: `del_fill_value`, `get_fill_value`, `set_fill_value`
 
     :Returns:
 
@@ -736,7 +736,7 @@ class Data(abstract.Container):
     def set_fill_value(self, value):
         '''Set the missing data value.
 
-    .. seealso:: `del_fill_value`, `has_fill_vlaue`, `get_fill_vlaue`
+    .. seealso:: `del_fill_value`, `has_fill_value`, `get_fill_value`
     
     :Parameters:
     

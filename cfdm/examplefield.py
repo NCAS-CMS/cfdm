@@ -154,7 +154,8 @@ def example_field(n, _implementation=_implementation):
     '''
     if not 0 <= n <= 6:
         raise ValueError(
-            "Must select an example field construct with an integer argument between 0 and 6 inclusive. Got {!r}".format(
+            "Must select an example field construct with an "
+            "integer argument between 0 and 6 inclusive. Got {!r}".format(
                 n))
 
     AuxiliaryCoordinate = _implementation.get_class('AuxiliaryCoordinate')

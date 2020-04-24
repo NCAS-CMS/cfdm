@@ -182,8 +182,8 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
             numbers. The default value is set by the `cfdm.RTOL` function.
     
         ignore_fill_value: `bool`, optional
-            If True then the "_FillValue" and "missing_value" properties
-            are omitted from the comparison.
+            If True then the ``_FillValue`` and ``missing_value``
+            properties are omitted from the comparison.
     
         verbose: `bool`, optional
             If True then print information about differences that lead to
