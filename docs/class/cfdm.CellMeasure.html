@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.2</a></h1>
 
 
 
@@ -112,7 +112,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CellMeasure">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CellMeasure</code><span class="sig-paren">(</span><em class="sig-param">measure=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/cellmeasure.py#L8-L381"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CellMeasure</code><span class="sig-paren">(</span><em class="sig-param">measure=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.2/cfdm/cellmeasure.py#L8-L381"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFExternal</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.cellmeasure.CellMeasure</span></code></p>
 <p>A cell measure construct of the CF data model.</p>
 <p>A cell measure construct provides information that is needed about
@@ -264,25 +264,28 @@ initialization. By default arguments are deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.del_data.html#cfdm.CellMeasure.del_data" title="cfdm.CellMeasure.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.apply_masking.html#cfdm.CellMeasure.apply_masking" title="cfdm.CellMeasure.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.del_data.html#cfdm.CellMeasure.del_data" title="cfdm.CellMeasure.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
 <td><p>Remove the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.get_data.html#cfdm.CellMeasure.get_data" title="cfdm.CellMeasure.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.get_data.html#cfdm.CellMeasure.get_data" title="cfdm.CellMeasure.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
 <td><p>Return the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.has_data.html#cfdm.CellMeasure.has_data" title="cfdm.CellMeasure.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.has_data.html#cfdm.CellMeasure.has_data" title="cfdm.CellMeasure.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
 <td><p>Whether a data has been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.set_data.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.set_data.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
 <td><p>Set the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.insert_dimension.html#cfdm.CellMeasure.insert_dimension" title="cfdm.CellMeasure.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.insert_dimension.html#cfdm.CellMeasure.insert_dimension" title="cfdm.CellMeasure.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
 <td><p>Expand the shape of the data array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.squeeze.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.squeeze.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
 <td><p>Remove size one axes from the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.transpose.html#cfdm.CellMeasure.transpose" title="cfdm.CellMeasure.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.transpose.html#cfdm.CellMeasure.transpose" title="cfdm.CellMeasure.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
 <td><p>Permute the axes of the data array.</p></td>
 </tr>
 </tbody>
@@ -397,7 +400,7 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-16.
+      &copy;2020, NCAS | Page built on 2020-04-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

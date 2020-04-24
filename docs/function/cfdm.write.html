@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.2</a></h1>
 
 
 
@@ -111,7 +111,7 @@
 <h1>cfdm.write<a class="headerlink" href="#cfdm-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.write">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">string=True</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/read_write/write.py#L8-L385"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">string=True</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.2/cfdm/read_write/write.py#L8-L386"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -139,7 +139,7 @@ attributes and/or netCDF data variable attributes. See the
 parameters for details.</p>
 <p><strong>External variables</strong></p>
 <p>Metadata constructs marked as external are omitted from the file
-and referred to via the netCDF “external_variables” global
+and referred to via the netCDF <code class="docutils literal notranslate"><span class="pre">external_variables</span></code> global
 attribute. However, omitted constructs may be written to an
 external file (see the <em>external</em> parameter for details).</p>
 <p><strong>NetCDF unlimited dimensions</strong></p>
@@ -239,7 +239,7 @@ pre-exists. By default a pre-existing output file is
 overwritten.</p>
 </dd>
 <dt>Conventions: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify conventions to be recorded by the netCDF global
-“Conventions” attribute. By default the current
+<code class="docutils literal notranslate"><span class="pre">Conventions</span></code> attribute. By default the current
 conventions are always included, but if an older CF
 conventions is defined then this is used instead.</p>
 <dl class="simple">
@@ -254,8 +254,8 @@ conventions is defined then this is used instead.</p>
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions=['CF-1.7',</span> <span class="pre">'UGRID-1.0']</span></code></p>
 </dd>
 </dl>
-<p>Note that if the “Conventions” property is set on a field
-construct then it is ignored.</p>
+<p>Note that if the <code class="docutils literal notranslate"><span class="pre">Conventions</span></code> property is set on a
+field construct then it is ignored.</p>
 </dd>
 <dt>file_descriptors: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Create description of file contents netCDF global
 attributes from the specified attributes and their
@@ -272,7 +272,8 @@ file are not specified as a file descriptor, but by the
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">file_attributes={'title':</span> <span class="pre">'my</span> <span class="pre">data'}</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">file_attributes={'history':</span> <span class="pre">'created</span> <span class="pre">2019-01-01',</span> <span class="pre">'foo':</span> <span class="pre">'bar'}</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">file_attributes={'history':</span> <span class="pre">'created</span> <span class="pre">2019-01-01',</span>
+<span class="pre">'foo':</span> <span class="pre">'bar'}</span></code></p>
 </dd>
 </dl>
 </dd>
@@ -457,7 +458,7 @@ and metadata constructs and their components.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-16.
+      &copy;2020, NCAS | Page built on 2020-04-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

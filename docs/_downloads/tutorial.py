@@ -64,18 +64,46 @@ print("\n**Data**\n")
 
 t.data
 print(t.data.array)
-t.data.dtype
-t.data.ndim
-t.data.shape
+t.dtype
+t.ndim
+t.shape
+t.size
 t.data.size
 print(t.domain_axes)
 t
-t.data.shape
+t.shape
 t.get_data_axes()
 data = t.del_data()
 t.has_data()
 t.set_data(data, axes=None)
 t.data
+d = cfdm.Data([1, 2, 3], units='days since 2004-2-28')
+print(d.array)   
+print(d.datetime_array)
+e = cfdm.Data([1, 2, 3], units='days since 2004-2-28',
+               calendar='360_day')
+print(e.array)   
+print(e.datetime_array)
+q, t = cfdm.read('file.nc')
+t
+t2 = t.squeeze()
+t2
+print(t2.dimension_coordinates)
+t3 = t2.insert_dimension(axis='domainaxis3', position=1)
+t3
+t3.transpose([2, 0, 1])
+t4 = t.transpose([0, 2, 1], constructs=True)
+print(q)
+print(q.data.mask)
+print(q.data.mask.array)
+q.data[[0, 4], :] = cfdm.masked            
+print(q.data.mask.array)
+q.data.mask.any()
+cfdm.write(q, 'masked_q.nc')
+no_mask_q = cfdm.read('masked_q.nc', mask=False)[0]
+print(no_mask_q.data.array)
+masked_q = no_mask_q.apply_masking()
+print(masked_q.data.array)
 data = t.data
 data.shape
 data[:, :, 1].shape
@@ -342,7 +370,8 @@ import numpy
 import cfdm
 
 # Initialise the field construct with properties
-Q = cfdm.Field(properties={'project': 'research',
+Q = cfdm.Field(
+          properties={'project': 'research',
                            'standard_name': 'specific_humidity',
                            'units': '1'})
      		      
@@ -641,13 +670,14 @@ cfdm.write(f, 'f_file.nc', global_attributes='model')
 f.nc_global_attributes()
 f.nc_set_global_attribute('model')
 f.nc_global_attributes()
+f.nc_global_attributes(values=True)
 cfdm.write(f, 'f_file.nc')
 f.set_property('information', 'variable information')
 f.properties()
 f.nc_set_global_attribute('information', 'global information')
 f.nc_global_attributes()
 cfdm.write(f, 'f_file.nc')
-cfdm.write(f, 'f_file.nc', file_descriptors={'history': 'created in 2019'})
+cfdm.write(f, 'f_file_nc', file_descriptors={'history': 'created in 2020'})
 f_file = cfdm.read('f_file.nc')[0]
 f_file.nc_global_attributes()
 f_file.properties()
@@ -662,7 +692,7 @@ q2 = q.insert_dimension(axis=axes[0])
 q2
 cfdm.write(q2, 'q2_file.nc')
 
-print("\n**Groups**\n")
+print("\n**Hierarchical groups**\n")
 
 
 print("\n**External variables**\n")
@@ -774,7 +804,6 @@ Y = T.set_construct(cfdm.DomainAxis(2))
 
 # Set the data for the field
 T.set_data(cfdm.Data(array), axes=[Y, X])
-
 
 p = cfdm.read('gathered.nc')[0]
 print(p)

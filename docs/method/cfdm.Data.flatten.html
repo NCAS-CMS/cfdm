@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.2</a></h1>
 
 
 
@@ -113,7 +113,7 @@
 <h1>cfdm.Data.flatten<a class="headerlink" href="#cfdm-data-flatten" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.flatten">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">flatten</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/data/data.py#L1883-L2021"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.flatten" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">flatten</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.2/cfdm/data/data.py#L2095-L2234"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.flatten" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flatten axes of the data</p>
 <p>Any subset of the axes may be flattened.</p>
 <p>The shape of the data may change, but the size will not.</p>
@@ -158,7 +158,7 @@ in-place.</p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
 <span class="go">&lt;Data(1, 2, 3, 4): [[[[0, ..., 23]]]]&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
@@ -222,7 +222,7 @@ in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-16.
+      &copy;2020, NCAS | Page built on 2020-04-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

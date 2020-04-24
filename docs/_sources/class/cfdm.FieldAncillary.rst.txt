@@ -61,6 +61,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.FieldAncillary.apply_masking
    ~cfdm.FieldAncillary.del_data
    ~cfdm.FieldAncillary.get_data
    ~cfdm.FieldAncillary.has_data

@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.2</a></h1>
 
 
 
@@ -126,7 +126,7 @@ Udunits) will be used.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cfdm.Data.array.html#cfdm.Data.array" title="cfdm.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>, <a class="reference internal" href="../method/cfdm.Data.datetime_as_string.html#cfdm.Data.datetime_as_string" title="cfdm.Data.datetime_as_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_as_string</span></code></a></p>
+<p><a class="reference internal" href="cfdm.Data.array.html#cfdm.Data.array" title="cfdm.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>, <a class="reference internal" href="cfdm.Data.datetime_as_string.html#cfdm.Data.datetime_as_string" title="cfdm.Data.datetime_as_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_as_string</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -137,7 +137,7 @@ Udunits) will be used.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2018-12-01&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2018-12-01&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">datetime_array</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="go">[cftime.DatetimeGregorian(2019-01-01 00:00:00)</span>
@@ -147,8 +147,8 @@ Udunits) will be used.</p>
 <span class="go">2019-02-01 00:00:00</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2018-12-01&#39;</span><span class="p">,</span>
-<span class="gp">... </span>              <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2018-12-01&#39;</span><span class="p">,</span>
+<span class="gp">... </span>         <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">datetime_array</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="go">[cftime.Datetime360Day(2019-01-02 00:00:00)</span>
@@ -170,7 +170,7 @@ Udunits) will be used.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-16.
+      &copy;2020, NCAS | Page built on 2020-04-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

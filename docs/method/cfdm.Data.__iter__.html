@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.2</a></h1>
 
 
 
@@ -113,11 +113,11 @@
 <h1>cfdm.Data.__iter__<a class="headerlink" href="#cfdm-data-iter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.__iter__">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/data/data.py#L271-L318"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.__iter__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.2/cfdm/data/data.py#L273-L320"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.__iter__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when an iterator is required.</p>
 <p>x.__iter__() &lt;==&gt; iter(x)</p>
 <p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;metres&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;metres&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
 <span class="gp">... </span>   <span class="nb">print</span> <span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -126,7 +126,7 @@
 <span class="go">3</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]],</span> <span class="s1">&#39;metres&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]],</span> <span class="s1">&#39;metres&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
 <span class="gp">... </span>   <span class="nb">print</span> <span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -134,7 +134,7 @@
 <span class="go">&lt;CF Data: [4, 5] metres&gt;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">34</span><span class="p">,</span> <span class="s1">&#39;metres&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="mi">34</span><span class="p">,</span> <span class="s1">&#39;metres&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="nb">print</span> <span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 <span class="go">..</span>
@@ -153,7 +153,7 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-16.
+      &copy;2020, NCAS | Page built on 2020-04-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.2</a></h1>
 
 
 
@@ -112,7 +112,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Field">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/field.py#L21-L1827"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.2/cfdm/field.py#L21-L1828"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
@@ -242,37 +242,40 @@ initialization. By default arguments are deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.del_data.html#cfdm.Field.del_data" title="cfdm.Field.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.apply_masking.html#cfdm.Field.apply_masking" title="cfdm.Field.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.del_data.html#cfdm.Field.del_data" title="cfdm.Field.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
 <td><p>Remove the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.get_data.html#cfdm.Field.get_data" title="cfdm.Field.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.get_data.html#cfdm.Field.get_data" title="cfdm.Field.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
 <td><p>Return the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.has_data.html#cfdm.Field.has_data" title="cfdm.Field.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.has_data.html#cfdm.Field.has_data" title="cfdm.Field.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
 <td><p>Whether a data has been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.set_data.html#cfdm.Field.set_data" title="cfdm.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.set_data.html#cfdm.Field.set_data" title="cfdm.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
 <td><p>Set the data of the field construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.del_data_axes.html#cfdm.Field.del_data_axes" title="cfdm.Field.del_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data_axes</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.del_data_axes.html#cfdm.Field.del_data_axes" title="cfdm.Field.del_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data_axes</span></code></a></p></td>
 <td><p>Remove the keys of the domain axis constructs spanned by the data of the field or of a metadata construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.get_data_axes.html#cfdm.Field.get_data_axes" title="cfdm.Field.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.get_data_axes.html#cfdm.Field.get_data_axes" title="cfdm.Field.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a></p></td>
 <td><p>Return the keys of the domain axis constructs spanned by the data of the field or of a metadata construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.has_data_axes.html#cfdm.Field.has_data_axes" title="cfdm.Field.has_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data_axes</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.has_data_axes.html#cfdm.Field.has_data_axes" title="cfdm.Field.has_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data_axes</span></code></a></p></td>
 <td><p>Whether the domain axis constructs spanned by the data of the field or of a metadata construct have been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.set_data_axes.html#cfdm.Field.set_data_axes" title="cfdm.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.set_data_axes.html#cfdm.Field.set_data_axes" title="cfdm.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a></p></td>
 <td><p>Set the domain axis constructs spanned by the data of the field or of a metadata construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.insert_dimension.html#cfdm.Field.insert_dimension" title="cfdm.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.insert_dimension.html#cfdm.Field.insert_dimension" title="cfdm.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
 <td><p>Expand the shape of the data array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.squeeze.html#cfdm.Field.squeeze" title="cfdm.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.squeeze.html#cfdm.Field.squeeze" title="cfdm.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
 <td><p>Remove size one axes from the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.transpose.html#cfdm.Field.transpose" title="cfdm.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.transpose.html#cfdm.Field.transpose" title="cfdm.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
 <td><p>Permute the axes of the data array.</p></td>
 </tr>
 </tbody>
@@ -513,7 +516,7 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-16.
+      &copy;2020, NCAS | Page built on 2020-04-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

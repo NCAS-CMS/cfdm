@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.2</a></h1>
 
 
 
@@ -113,7 +113,7 @@
 <h1>cfdm.Field.equals<a class="headerlink" href="#cfdm-field-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.equals">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_properties=()</em>, <em class="sig-param">ignore_compression=True</em>, <em class="sig-param">ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/field.py#L1117-L1262"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_properties=()</em>, <em class="sig-param">ignore_compression=True</em>, <em class="sig-param">ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.2/cfdm/field.py#L1120-L1265"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two field constructs are the same.</p>
 <p>Equality is strict by default. This means that for two field
 constructs to be considered equal they must have corresponding
@@ -159,7 +159,7 @@ function.</p>
 numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a>
 function.</p>
 </dd>
-<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the “_FillValue” and “missing_value”
+<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> and <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>
 properties are omitted from the comparison, for the field
 construct and metadata constructs.</p>
 </dd>
@@ -168,7 +168,7 @@ to inequality.</p>
 </dd>
 <dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The names of properties of the field construct (not the
 metadata constructs) to omit from the comparison. Note
-that the “Conventions” property is always omitted by
+that the <code class="docutils literal notranslate"><span class="pre">Conventions</span></code> property is always omitted by
 default.</p>
 </dd>
 <dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore the data types in all numerical
@@ -229,7 +229,7 @@ subclass of one. If <em>ignore_type</em> is True then
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-16.
+      &copy;2020, NCAS | Page built on 2020-04-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

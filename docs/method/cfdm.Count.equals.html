@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.2</a></h1>
 
 
 
@@ -113,7 +113,7 @@
 <h1>cfdm.Count.equals<a class="headerlink" href="#cfdm-count-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Count.equals">
-<code class="sig-prename descclassname">Count.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_properties=()</em>, <em class="sig-param">ignore_compression=True</em>, <em class="sig-param">ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/mixin/propertiesdata.py#L343-L505"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Count.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_properties=()</em>, <em class="sig-param">ignore_compression=True</em>, <em class="sig-param">ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.2/cfdm/mixin/propertiesdata.py#L430-L594"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -156,7 +156,7 @@ function.</p>
 numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a>
 function.</p>
 </dd>
-<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the “_FillValue” and “missing_value”
+<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> and <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>
 properties are omitted from the comparison.</p>
 </dd>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print information about differences that lead
@@ -209,7 +209,7 @@ is possible for any object with a compatible API.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-16.
+      &copy;2020, NCAS | Page built on 2020-04-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

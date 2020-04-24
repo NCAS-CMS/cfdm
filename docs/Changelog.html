@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.1</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.2</a></h1>
 
 
 
@@ -103,6 +103,23 @@
             
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-1-8-2">
+<h2>version 1.8.2<a class="headerlink" href="#version-1-8-2" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2020-04-24</strong></p>
+<ul class="simple">
+<li><p>Added time coordinate bounds to the polygon geometry example field
+<code class="docutils literal notranslate"><span class="pre">6</span></code> returned by <a class="reference internal" href="function/cfdm.example_field.html#cfdm.example_field" title="cfdm.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_field</span></code></a>.</p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.apply_masking.html#cfdm.Field.apply_masking" title="cfdm.Field.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.apply_masking</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.apply_masking.html#cfdm.Data.apply_masking" title="cfdm.Data.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.apply_masking</span></code></a></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a>: <code class="docutils literal notranslate"><span class="pre">mask</span></code></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="method/cfdm.Field.nc_global_attributes.html#cfdm.Field.nc_global_attributes" title="cfdm.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_global_attributes</span></code></a>:
+<code class="docutils literal notranslate"><span class="pre">values</span></code></p></li>
+<li><p>Fixed bug in <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> that caused (what are effectively)
+string-valued scalar auxiliary coordinates to not be written to disk
+as such, or even an exception to be raised.</p></li>
+</ul>
+</div>
 <div class="section" id="version-1-8-1">
 <h2>version 1.8.1<a class="headerlink" href="#version-1-8-1" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -334,7 +351,7 @@ default.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-16.
+      &copy;2020, NCAS | Page built on 2020-04-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

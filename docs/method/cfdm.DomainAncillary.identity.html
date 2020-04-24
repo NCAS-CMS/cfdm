@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.2</a></h1>
 
 
 
@@ -113,14 +113,14 @@
 <h1>cfdm.DomainAncillary.identity<a class="headerlink" href="#cfdm-domainancillary-identity" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.DomainAncillary.identity">
-<code class="sig-prename descclassname">DomainAncillary.</code><code class="sig-name descname">identity</code><span class="sig-paren">(</span><em class="sig-param">default=''</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/mixin/propertiesdatabounds.py#L968-L1040"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.identity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">DomainAncillary.</code><code class="sig-name descname">identity</code><span class="sig-paren">(</span><em class="sig-param">default=''</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.2/cfdm/mixin/propertiesdatabounds.py#L1066-L1138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.identity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the canonical identity.</p>
 <p>By default the identity is the first found of the following:</p>
 <ol class="arabic simple">
-<li><p>The “standard_name” property.</p></li>
-<li><p>The “cf_role” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'cf_role='</span></code>.</p></li>
-<li><p>The “axis” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'axis='</span></code>.</p></li>
-<li><p>The “long_name” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'long_name='</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> property.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">cf_role</span></code> property, preceeded by <code class="docutils literal notranslate"><span class="pre">'cf_role='</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">axis</span></code> property, preceeded by <code class="docutils literal notranslate"><span class="pre">'axis='</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">long_name</span></code> property, preceeded by <code class="docutils literal notranslate"><span class="pre">'long_name='</span></code>.</p></li>
 <li><p>The netCDF variable name, preceeded by <code class="docutils literal notranslate"><span class="pre">'ncvar%'</span></code>.</p></li>
 <li><p>The identity of the bounds, if any.</p></li>
 <li><p>The value of the <em>default</em> parameter.</p></li>
@@ -193,7 +193,7 @@ default parameter.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-16.
+      &copy;2020, NCAS | Page built on 2020-04-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

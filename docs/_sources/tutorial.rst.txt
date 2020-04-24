@@ -98,7 +98,7 @@ All formats of netCDF3 and netCDF4 files can be read.
 The following file types can be read:
 
 * All formats of netCDF3 and netCDF4 files can be read, containing
-  datasets for any version of CF up to and including CF-|version|.
+  datasets for versions of CF up to and including CF-|version|.
 
 ..
 
@@ -142,7 +142,10 @@ The `cfdm.read` function has optional parameters to
 * request :ref:`extra field constructs to be created from "metadata"
   netCDF variables <Creation-by-reading>`, i.e. those that are
   referenced from CF-netCDF data variables, but which are not regarded
-  by default as data variables in their own right; and
+  by default as data variables in their own right;
+
+* request that masking is *not* applied by convention to data
+  elements; and
 
 * display information and warnings about the mapping of the netCDF
   file contents to CF data model constructs.
@@ -213,8 +216,8 @@ constructs, which include the first and last values of their data
 arrays:
 
 .. code-block:: python
-  :caption: *Inspect the contents of the two field constructs with
-            medium detail.*
+   :caption: *Inspect the contents of the two field constructs with
+             medium detail.*
    
    >>> print(q)
    Field: specific_humidity (ncvar%q)
@@ -258,8 +261,8 @@ properties of all constructs, including metadata constructs and their
 components, and shows the first and last values of all data arrays:
 
 .. code-block:: python
-  :caption: *Inspect the contents of the two field constructs with
-            full detail.*
+   :caption: *Inspect the contents of the two field constructs with
+             full detail.*
 
    >>> q.dump()
    ----------------------------------
@@ -763,6 +766,191 @@ case, the data axes may be set at any time with the
 
 See the section :ref:`field construct creation <Field-creation>` for
 more examples.
+
+.. _Date-time:
+
+Date-time
+^^^^^^^^^
+
+Data representing date-times is defined as elapsed times since a
+reference date-time in a particular calendar (Gregorian, by
+default). The `~cfdm.Data.array` attribute of the `Data` instance
+(and any construct that contains it) returns the elapsed times, and
+the `~cfdm.Data.datetime_array` (and any construct that contains it)
+returns the data as an array of date-time objects.
+
+.. code-block:: python
+   :caption: *View date-times aas elapsed time or as date-time
+             objects.*
+	     
+   >>> d = cfdm.Data([1, 2, 3], units='days since 2004-2-28')
+   >>> print(d.array)   
+   [1 2 3]
+   >>> print(d.datetime_array)
+   [cftime.DatetimeGregorian(2004-02-29 00:00:00)
+    cftime.DatetimeGregorian(2004-03-01 00:00:00)
+    cftime.DatetimeGregorian(2004-03-02 00:00:00)]
+   >>> e = cfdm.Data([1, 2, 3], units='days since 2004-2-28',
+   ...               calendar='360_day')
+   >>> print(e.array)   
+   [1 2 3]
+   >>> print(e.datetime_array)
+   [cftime.Datetime360Day(2004-02-29 00:00:00)
+    cftime.Datetime360Day(2004-02-30 00:00:00)
+    cftime.Datetime360Day(2004-03-01 00:00:00)]
+
+    
+.. _Manipulating-dimensions:
+
+Manipulating dimensions
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The dimensions of a field construct's data may be reordered, have size
+one dimensions removed and have new new size one dimensions included
+by using the following field construct methods:
+
+=========================  ===========================================
+Method                     Description
+=========================  ===========================================
+`~Field.insert_dimension`  Insert a new size one data dimension. The
+                           new dimension must correspond to an
+                           existing size one domain axis construct.
+
+`~Field.squeeze`           Remove size one data dimensions
+	   
+`~Field.transpose`         Reorder data dimensions
+=========================  ===========================================
+
+.. code-block:: python
+   :caption: *Remove all size one dimensions from the data, noting
+             that metadata constructs which span the corresponding
+             domain axis construct are not affected.*
+
+   >>> q, t = cfdm.read('file.nc')
+   >>> t
+   <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+   >>> t2 = t.squeeze()
+   >>> t2
+   <CF Field: air_temperature(grid_latitude(10), grid_longitude(9)) K>
+   >>> print(t2.dimension_coordinates)
+   Constructs:
+   {'dimensioncoordinate0': <CF DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+    'dimensioncoordinate1': <CF DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <CF DimensionCoordinate: grid_longitude(9) degrees>,
+    'dimensioncoordinate3': <CF DimensionCoordinate: time(1) days since 2018-12-01 >}
+
+.. code-block:: python
+   :caption: *Insert a new size one dimension, corresponding to a size
+             one domain axis construct, and then reorder the
+             dimensions.*
+
+   >>> t3 = t2.insert_dimension(axis='domainaxis3', position=1)
+   >>> t3
+   <CF Field: air_temperature(grid_latitude(10), time(1), grid_longitude(9)) K>
+   >>> t3.transpose([2, 0, 1])
+   <CF Field: air_temperature(grid_longitude(9), grid_latitude(10), time(1)) K>
+
+When transposing the data dimensions, the dimensions of metadata
+construct data are, by default, unchanged. It is also possible to
+permute the data dimensions of the metadata constructs so that they
+have the same relative order as the field construct:
+
+.. code-block:: python
+   :caption: *Also permute the data dimension of metadata constructs
+             using the 'contructs' keyword.*
+
+   >>> t4 = t.transpose([0, 2, 1], constructs=True)
+
+.. _Data-mask:
+   
+Data mask
+^^^^^^^^^
+
+There is always a data mask, which may be thought of as a separate
+data array of booleans with the same shape as the original data. The
+data mask is `False` where the the data has values, and `True` where
+the data is missing. The data mask may be inspected with the
+`~cfdm.Data.mask` attribute of the data instance, which returns the
+data mask in a field construct with the same metadata constructs as
+the original field construct.
+
+
+.. code-block:: python
+   :caption: *Inspect the data mask of a field constuct.*
+
+   >>> print(q)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(q.data.mask)
+   <Data(5, 8): [[False, ..., False]]>
+   >>> print(q.data.mask.array)
+   [[False False False False False False False False]
+    [False False False False False False False False]
+    [False False False False False False False False]
+    [False False False False False False False False]
+    [False False False False False False False False]]
+
+.. code-block:: python
+   :caption: *Mask the polar rows (see the "Assignment by index"
+             section) and inspect the new data mask.*
+	  
+   >>> q.data[[0, 4], :] = cfdm.masked            
+   >>> print(q.data.mask.array)
+   [[ True  True  True  True  True  True  True  True]
+    [False False False False False False False False]
+    [False False False False False False False False]
+    [False False False False False False False False]
+    [ True  True  True  True  True  True  True  True]]
+
+The ``_FillValue`` and ``missing_value`` attributes of the field
+construct are *not* stored as values of the field construct's
+data. They are only used when :ref:`writing the data to a netCDF
+dataset <Writing-to-a-netCDF-dataset>`. Therefore testing for missing
+data by testing for equality to one of these property values will
+produce incorrect results; the `~Data.any` method of the `Data`
+instance should be used instead.
+
+.. code-block:: python
+   :caption: *See if any data points are masked.*
+	     
+   >>> q.data.mask.any()
+   True
+
+The mask of a netCDF dataset array is implied by array values that
+meet the criteria implied by the ``missing_value``, ``_FillValue``,
+``valid_min``, ``valid_max``, and ``valid_range`` properties, and is
+usually applied automatically. However, this automatic masking may be
+bypassed by setting the *mask* keyword of the `cfdm.read` function to
+`False`. The mask, as defined in the dataset, may subsequently be
+applied manually with the `~Field.apply_masking` mthod of the field
+construct.
+   
+.. code-block:: python
+   :caption: *Read a dataset from disk without automatic masking, and
+             then manually apply the mask*
+
+   >>> cfdm.write(q, 'masked_q.nc')
+   >>> no_mask_q = cfdm.read('masked_q.nc', mask=False)[0]
+   >>> print(no_mask_q.data.array)
+   [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
+    9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36],
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+   [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
+    9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36]])
+   >>> masked_q = no_mask_q.apply_masking()
+   >>> print(masked_q.data.array)
+   [[   --    --    --    --    --    --    --    --]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [   --    --    --    --    --    --    --    --]]
    
 .. _Indexing:
 
@@ -954,8 +1142,8 @@ field. Subspacing uses the same :ref:`cfdm indexing rules <Indexing>`
 that apply to the `Data` class.
 
 .. code-block:: python
-  :caption: *Create a new field whose domain spans the first longitude
-            of the original, and with a reversed latitude axis.*
+   :caption: *Create a new field whose domain spans the first longitude
+             of the original, and with a reversed latitude axis.*
 
    >>> print(q)
    Field: specific_humidity (ncvar%q)
@@ -2088,7 +2276,8 @@ the field construct.
    import cfdm
 
    # Initialise the field construct with properties
-   Q = cfdm.Field(properties={'project': 'research',
+   Q = cfdm.Field(
+	     properties={'project': 'research',
                               'standard_name': 'specific_humidity',
                               'units': '1'})
 			      
@@ -3002,6 +3191,8 @@ netCDF data variable.
    >>> f.nc_set_global_attribute('model')
    >>> f.nc_global_attributes()
    {'Conventions': None, 'model': None, 'project': None}
+   >>> f.nc_global_attributes(values=True)
+   {'Conventions': 'CF-1.7', 'project': 'research', 'model': 'model_A'}
    >>> cfdm.write(f, 'f_file.nc')
 
 It is possible to create both a netCDF global attribute and a netCDF
@@ -3682,7 +3873,7 @@ The content of the new file is:
 
 Exactly the same field construct may be also created explicitly with
 underlying compressed data. A construct with an underlying ragged
-array is created by initialising a `cf.Data` instance with a ragged
+array is created by initialising a `Data` instance with a ragged
 array that is stored in one of three special array objects:
 `RaggedContiguousArray`, `RaggedIndexedArray` or
 `RaggedIndexedContiguousArray`.

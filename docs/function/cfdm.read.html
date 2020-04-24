@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.2</a></h1>
 
 
 
@@ -111,7 +111,7 @@
 <h1>cfdm.read<a class="headerlink" href="#cfdm-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.read">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">external=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/read_write/read.py#L14-L242"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">external=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.2/cfdm/read_write/read.py#L14-L257"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read field constructs from a dataset.</p>
 <p>The dataset may be a netCDF file on disk or on an OPeNDAP server,
 or a CDL file on disk (see below).</p>
@@ -119,17 +119,18 @@ or a CDL file on disk (see below).</p>
 names of their corresponding data variables.</p>
 <p><strong>CDL files</strong></p>
 <p>A file is considered to be a CDL representation of a netCDF
-dataset
-(<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html">https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html</a>)
-if it is a text file that starts with the seven characters “netcdf
-” (six letters followed by a space). It is converted to a
-temporary netCDF4 file using the external <code class="docutils literal notranslate"><span class="pre">ncgen</span></code> command, and
-the temporary file persists until the end of the Python session,
-at which time it is automatically deleted. The CDL file may omit
-data array values (as would be the case, for example, if the file
-was created with the <code class="docutils literal notranslate"><span class="pre">-h</span></code> or <code class="docutils literal notranslate"><span class="pre">-c</span></code> option to <code class="docutils literal notranslate"><span class="pre">ncdump</span></code>), in
-which case the the relevant constructs in memory will be created
-with data containing missing values.</p>
+dataset if it is a text file whose first non-comment line starts
+with the seven characters “netcdf ” (six letters followed by a
+space). A comment line is identified as one which starts with any
+amount white space (including none) followed by “//” (two
+slashes). It is converted to a temporary netCDF4 file using the
+external <code class="docutils literal notranslate"><span class="pre">ncgen</span></code> command, and the temporary file persists until
+the end of the Python session, at which time it is automatically
+deleted. The CDL file may omit data array values (as would be the
+case, for example, if the file was created with the <code class="docutils literal notranslate"><span class="pre">-h</span></code> or
+<code class="docutils literal notranslate"><span class="pre">-c</span></code> option to <code class="docutils literal notranslate"><span class="pre">ncdump</span></code>), in which case the the relevant
+constructs in memory will be created with data with all missing
+values.</p>
 <p><strong>NetCDF unlimited dimensions</strong></p>
 <p>Domain axis constructs that correspond to NetCDF unlimited
 dimensions may be accessed with the
@@ -186,7 +187,7 @@ be described by any of the following:
 attributes, but are not present, in the parent file given
 by the <em>filename</em> parameter) from the given external
 files. Ignored if the parent file does not contain a
-global “external_variables” attribute. Multiple external
+global <code class="docutils literal notranslate"><span class="pre">external_variables</span></code> attribute. Multiple external
 files may be provided, which are searched in random order
 for the required external variables.</p>
 <p>If an external variable is not found in any external
@@ -265,6 +266,17 @@ constructs.</p>
 is incomplete due to structural non-compliance of the
 dataset. By default such warnings are not displayed.</p>
 </dd>
+<dt>mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not mask by convention when reading data
+from disk. By default data is masked by convention.</p>
+<p>The masking by convention of a netCDF array depends on the
+values of any of the netCDF variable attributes
+<code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> and <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>,``valid_min``,
+<code class="docutils literal notranslate"><span class="pre">valid_max</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_range</span></code>. See the CF conventions for
+details.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.8.2.</span></p>
+</div>
+</dd>
 <dt>_implementation: (subclass of) <code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code>, optional</dt><dd><p>Define the CF data model implementation that provides the
 returned field constructs.</p>
 </dd>
@@ -279,12 +291,11 @@ empty.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">rea</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="go">&lt;type &#39;list&#39;&gt;</span>
 </pre></div>
 </div>
-<p>d(‘file.nc’)
-&gt;&gt;&gt; print(type(x))
-&lt;type ‘list’&gt;</p>
 <p>Read a file and create field constructs from CF-netCDF data
 variables as well as from the netCDF variables that correspond to
 particular types metadata constructs:</p>
@@ -311,7 +322,7 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-16.
+      &copy;2020, NCAS | Page built on 2020-04-24.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
