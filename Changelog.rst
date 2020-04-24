@@ -9,6 +9,8 @@ version 1.8.2
 * New method: `cfdm.Field.apply_masking`
 * New method: `cfdm.Data.apply_masking`
 * New keyword parameter to `cfdm.read`: ``mask``
+* New keyword parameter to `cfdm.Field.nc_global_attributes`:
+  ``values``
 
 version 1.8.1
 -------------
