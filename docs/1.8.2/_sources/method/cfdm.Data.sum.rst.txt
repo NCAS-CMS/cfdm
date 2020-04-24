@@ -1,0 +1,7 @@
+cfdm.Data.sum
+=============
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Data.sum

@@ -1,0 +1,7 @@
+cfdm.CompressedArray.__repr__
+=============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CompressedArray.__repr__

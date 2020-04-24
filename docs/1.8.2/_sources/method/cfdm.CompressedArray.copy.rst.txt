@@ -1,0 +1,7 @@
+cfdm.CompressedArray.copy
+=========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CompressedArray.copy

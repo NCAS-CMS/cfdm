@@ -1,0 +1,7 @@
+cfdm.Data.__int__
+=================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Data.__int__

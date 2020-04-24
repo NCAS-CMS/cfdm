@@ -1,0 +1,7 @@
+cfdm.Constructs.__len__
+=======================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Constructs.__len__
