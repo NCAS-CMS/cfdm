@@ -266,6 +266,7 @@ class read_writeTest(unittest.TestCase):
                           '&&', 'mv', tmpfileh2, tmpfileh]),
                 shell=True, check=True
             )
+
             h = cfdm.read(tmpfileh)[0]
 
 #        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)

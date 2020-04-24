@@ -2218,7 +2218,7 @@ class NetCDFRead(IORead):
                     coord = self._create_auxiliary_coordinate(
                         field_ncvar, ncvar, f)
                     g['auxiliary_coordinate'][ncvar] = coord
-     
+
                 # --------------------------------------------------------
                 # Turn a 
                 # --------------------------------------------------------
@@ -2228,17 +2228,20 @@ class NetCDFRead(IORead):
                     scalar = True
 #                    if g['variables'][ncvar].dtype.kind is 'S':
                     if self._is_char_or_string(ncvar):
-                        # String valued scalar coordinate. Is this CF
-                        # compliant? Don't worry about it - we'll just
-                        # turn it into a 1-d, size 1 auxiliary coordinate
-                        # construct.
+                        # String valued scalar coordinate. T turn it
+                        # into a 1-d auxiliary coordinate construct.
                         domain_axis = self._create_domain_axis(1)
                         if verbose:
                             print("    [4] Inserting",
                                   repr(domain_axis)) # pragma: no cover
                         dim = self.implementation.set_domain_axis(
                             f, domain_axis)
+                                        
                         dimensions = [dim]
+
+                        coord = self.implementation.construct_insert_dimension(
+                            construct=coord, position=0)
+                        g['auxiliary_coordinate'][ncvar] = coord
                     else:  
                         # Numeric valued scalar coordinate
                         is_scalar_dimension_coordinate = True
