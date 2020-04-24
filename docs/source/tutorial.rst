@@ -912,8 +912,8 @@ construct are *not* stored as values of the field construct's
 data. They are only used when :ref:`writing the data to a netCDF
 dataset <Writing-to-a-netCDF-dataset>`. Therefore testing for missing
 data by testing for equality to one of these property values will
-produce incorrect results; the `~cfdm.Data.any` method of the
-`~cfdm.Data` instance should be used instead.
+produce incorrect results; the `~Data.any` method of the `Data`
+instance should be used instead.
 
 .. code-block:: python
    :caption: *See if any data points are masked.*
@@ -944,6 +944,7 @@ construct.
     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
    [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
     9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36]])
+   >>> masked_q = no_mask_q.apply_masking()
    >>> print(masked_q.data.array)
    [[   --    --    --    --    --    --    --    --]
     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]

@@ -312,7 +312,7 @@ class PropertiesData(Properties):
 
     .. versionadded:: 1.8.2
 
-    .. seealso:: `mask`
+    .. seealso:: `Data.apply_masking`
                
     :Parameters:
 

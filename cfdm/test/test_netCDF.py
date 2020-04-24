@@ -67,6 +67,7 @@ class NetCDFTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Global attributes
         # ------------------------------------------------------------
+        # values keyword
         f = cfdm.Field()
         
         f.nc_set_global_attribute('Conventions', 'CF-1.8')
