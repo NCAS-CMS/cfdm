@@ -287,10 +287,32 @@ class CFDMImplementation(Implementation):
         '''
         return data.array
 
-    def get_auxiliary_coordinates(self, field):
-        '''TODO
+    def get_auxiliary_coordinates(self, field, axes=[], exact=False):
+        '''Return auxiliary coordinate constructs that span particular axes.
+
+    If no axes are specified then all auxiliary coordinate constructs
+    are returned.
+    
+    If axes are specified then auxiliary coordinate constructs whose
+    data arrays span those axes, and possibly other axes, are
+    returned.
+    
+    :Parameters:
+    
+        axes: sequence of `str`
+    
+    :Returns:
+    
+        `dict`
+
         '''
-        return field.auxiliary_coordinates
+        if exact:
+            arg = 'exact'
+        else:
+            arg = 'and'
+
+        return dict(field.auxiliary_coordinates.filter_by_axis(
+            arg, *axes))
 
     def get_bounds(self, parent, default=None):
         '''TODO
@@ -819,8 +841,8 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Returns:
-
-        `list`
+        
+        `tuple`
 
         '''
         return field.get_data_axes()

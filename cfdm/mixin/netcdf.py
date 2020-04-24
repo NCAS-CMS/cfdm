@@ -584,7 +584,10 @@ class NetCDFGlobalAttributes(NetCDF):
     :Parameters:
 
         values: `bool`, optional
+            TODO
 
+           .. versionadded:: 1.8.2
+    
     :Returns:
     
         `dict`

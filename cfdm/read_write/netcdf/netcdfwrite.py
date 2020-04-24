@@ -2386,7 +2386,7 @@ class NetCDFWrite(IOWrite):
         # terrible things to it (or are we? should review this)
         f = self.implementation.copy_construct(org_f)
 
-        data_axes = self.implementation.get_field_data_axes(f)
+        data_axes = list(self.implementation.get_field_data_axes(f))
     
         # Mapping of domain axis identifiers to netCDF dimension
         # names. This gets reset for each new field that is written to
@@ -2552,33 +2552,61 @@ class NetCDFWrite(IOWrite):
                 # --------------------------------------------------------
                 # There is NO dimension coordinate for this axis
                 # --------------------------------------------------------
-                spanning_constructs = self.implementation.get_constructs(
-                    f, axes=[axis])
+                spanning_constructs = (
+                    self.implementation.get_constructs(f, axes=[axis])
+                )
 
-                if axis not in data_axes and spanning_constructs:
+                spanning_auxiliary_coordinates = (
+                    self.implementation.get_auxiliary_coordinates(
+                        f, axes=[axis], exact=True)
+                )
+                
+                if (axis not in data_axes
+                    and spanning_constructs
+                    and spanning_constructs != spanning_auxiliary_coordinates):
                     # The data array doesn't span the domain axis but
-                    # an auxiliary coordinate, cell measure, domain
-                    # ancillary or field ancillary does, so expand the
-                    # data array to include it.
+                    # a cell measure, domain ancillary or field
+                    # ancillary does, or an N-d (N>1) auxiliary
+                    # coordinate does, so expand the data array to
+                    # include it.
                     f = self.implementation.field_insert_dimension(
                             f, position=0, axis=axis)
                     data_axes.append(axis)
+                    
+#                spanning_constructs = self.implementation.get_constructs(f, axes=[axis])
+#
+#                if axis not in data_axes and spanning_constructs:
+#                    # The data array doesn't span the domain axis but
+#                    # an auxiliary coordinate, cell measure, domain
+#                    # ancillary or field ancillary does, so expand the
+#                    # data array to include it.
+#                    f = self.implementation.field_insert_dimension(
+#                            f, position=0, axis=axis)
+#                    data_axes.append(axis)
     
                 # If the data array (now) spans this domain axis then create a
                 # netCDF dimension for it
                 if axis in data_axes:
-                    axis_size0 = self.implementation.get_domain_axis_size(
-                        f, axis)
+                    axis_size0 = (
+                        self.implementation.get_domain_axis_size(f, axis)
+                    )
                 
                     use_existing_dimension = False
 
                     if spanning_constructs:
-                        for key, construct in list(spanning_constructs.items()):
-                            axes = self.implementation.get_construct_data_axes(f, key)
-                            spanning_constructs[key] = (construct, axes.index(axis))
+                        for key, construct in list(
+                                spanning_constructs.items()):
+                            axes = (
+                                self.implementation.get_construct_data_axes(
+                                    f, key)
+                            )
+                            spanning_constructs[key] = (construct,
+                                                        axes.index(axis))
 
                         for b1 in g['xxx']:
-                            (ncdim1,  axis_size1),  constructs1 = list(b1.items())[0]
+                            (ncdim1,  axis_size1),  constructs1 = (
+                                list(b1.items())[0]
+                            )
 
                             if axis_size0 != axis_size1:
                                 continue
@@ -2638,6 +2666,7 @@ class NetCDFWrite(IOWrite):
                         self._write_dimension(ncdim, f, axis, unlimited=unlimited)
                         
                         xxx.append({(ncdim, axis_size0): spanning_constructs})
+                # --- End: if
             # --- End: if    
         # --- End: for
 
@@ -2742,9 +2771,24 @@ class NetCDFWrite(IOWrite):
         # ----------------------------------------------------------------
         # Initialize the list of 'coordinates' attribute variable values
         # (each of the form 'name')
-        for key, aux_coord in sorted(self.implementation.get_auxiliary_coordinates(f).items()):
-            coordinates = self._write_auxiliary_coordinate(f, key, aux_coord,
-                                                           coordinates)
+        for key, aux_coord in sorted(
+                self.implementation.get_auxiliary_coordinates(f).items()):
+            axes = self.implementation.get_construct_data_axes(f, key)
+            if len(axes) > 1 or axes[0] in data_axes:
+                # This auxiliary coordinate construct spans at least
+                # one of the dimensions of the field constuct's data
+                # array.
+                coordinates = self._write_auxiliary_coordinate(f, key,
+                                                               aux_coord,
+                                                               coordinates)
+            else:
+                # This auxiliary coordinate needs to be written as a
+                # scalar coordiante variable
+                coordinates = self._write_scalar_coordinate(f, key,
+                                                            aux_coord,
+                                                            axis,
+                                                            coordinates)
+        # --- End: for
     
         # ------------------------------------------------------------
         # Create netCDF variables from domain ancillaries

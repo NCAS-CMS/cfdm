@@ -8,7 +8,7 @@ import numpy
 
 import cfdm
 
-verbose  =  False
+verbose  = False
 warnings = False
 
 
@@ -195,7 +195,7 @@ class create_fieldTest(unittest.TestCase):
 
         if verbose:
             print("####################################################")
-            
+
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
 
         g = cfdm.read(self.filename, verbose=verbose)
@@ -250,7 +250,7 @@ class create_fieldTest(unittest.TestCase):
 
         if verbose:            
             for x in g:
-                x.print_read_report()
+                x.dataset_compliance(display=True)
 
             print(g)
             
@@ -275,6 +275,6 @@ class create_fieldTest(unittest.TestCase):
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())
-    print(cfdm.environment(display=False))
+    cfdm.environment(display=True)
     print('')
     unittest.main(verbosity=2)

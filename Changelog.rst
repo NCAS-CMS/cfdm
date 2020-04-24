@@ -11,7 +11,10 @@ version 1.8.2
 * New keyword parameter to `cfdm.read`: ``mask``
 * New keyword parameter to `cfdm.Field.nc_global_attributes`:
   ``values``
-
+* Fixed bug in `cfdm.write` that caused (what are effectively)
+  string-valued scalar auxiliary coordinates to not be written to disk
+  as such, or even a an exception to be raised.
+  
 version 1.8.1
 -------------
 ----
