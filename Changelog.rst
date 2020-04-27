@@ -1,4 +1,14 @@
-version 1.8.2
+version 1.8.3
+-------------
+----
+
+**2020-04-??**
+
+* `cfdm.Field.apply_masking` now masks metadata constructs.
+* New keyword parameter to `cfdm.read`: ``warn_valid`
+* New keyword parameter to `cfdm.write`: ``warn_valid`
+  
+*version 1.8.2
 -------------
 ----
 
