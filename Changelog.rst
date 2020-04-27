@@ -6,7 +6,9 @@ version 1.8.3
 
 * `cfdm.Field.apply_masking` now masks metadata constructs.
 * New keyword parameter to `cfdm.read`: ``warn_valid`
+  (https://github.com/NCAS-CMS/cfdm/issues/30)
 * New keyword parameter to `cfdm.write`: ``warn_valid`
+  (https://github.com/NCAS-CMS/cfdm/issues/30)
   
 *version 1.8.2
 -------------
