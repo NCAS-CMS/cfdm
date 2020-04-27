@@ -1059,6 +1059,22 @@ class NetCDFRead(IORead):
 
         raise ValueError("Can't (yet) plualise {}".format(singular))
     
+    def _set_default_FillValue(self, construct, ncvar):
+        '''
+        '''
+        # ------------------------------------------------------------
+        # Masking has been turned off, so make sure that there is a
+        # fill value recorded so that masking may later be applied
+        # manually, if required.
+        # ------------------------------------------------------------
+        _FillValue = self.implementation.get_property(construct, '_FillValue',
+                                                      None)
+        if _FillValue is None:
+            self.implementation.set_properties(
+                construct, {'_FillValue':
+                            self.default_netCDF_fill_value(ncvar)}
+            )
+            
     def _customize_read_vars(self):
         '''TODO
 
@@ -2153,17 +2169,11 @@ class NetCDFRead(IORead):
         if not g['mask']:
             # --------------------------------------------------------
             # Masking has been turned off, so make sure that there is
-            # a fill value recorded so that masking may later be
-            # applied manually, if required. (Introduced at v1.8.2.)
+            # a fill value recorded on the field so that masking may
+            # later be applied manually, if required. (Introduced at
+            # v1.8.2.)
             # --------------------------------------------------------
-            _FillValue = self.implementation.get_property(f, '_FillValue',
-                                                          None)
-            if _FillValue is None:
-                self.implementation.set_properties(
-                    f, {'_FillValue':
-                        self.default_netCDF_fill_value(field_ncvar)}
-                )
-        # --- End: if
+            self._set_default_FillValue(f, field_ncvar)
 
         # Store the field's netCDF variable name
         self.implementation.nc_set_variable(f, field_ncvar)
@@ -3126,6 +3136,15 @@ class NetCDFRead(IORead):
 
         self.implementation.set_properties(c, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the coordinate or domain
+            # ancillary so that masking may later be applied manually,
+            # if required. (Introduced at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(c, ncvar)
+
 #        if attribute == 'climatology':
 #            # Need to 
 #            self.implementation.set_geometry(coordinate=c, value='climatology')
@@ -3152,6 +3171,15 @@ class NetCDFRead(IORead):
             bounds_properties = g['variable_attributes'][bounds_ncvar].copy()
             bounds_properties.pop('formula_terms', None)                
             self.implementation.set_properties(bounds, bounds_properties)
+
+            if not g['mask']:
+                # ----------------------------------------------------
+                # Masking has been turned off, so make sure that there
+                # is a fill value recorded on the bounds so that
+                # masking may later be applied manually, if
+                # required. (Introduced at v1.8.3.)
+                # ----------------------------------------------------
+                self._set_default_FillValue(bounds, bounds_ncvar)
 
             bounds_dimensions = g['variable_dimensions'][bounds_ncvar]
 
