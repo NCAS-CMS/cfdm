@@ -559,6 +559,7 @@ class NetCDFRead(IORead):
             # Warn for the presence of valid_[min|max|range]
             # attributes?
             'warn_valid': bool(warn_valid),
+            'valid_properties': set(('valid_min', 'valid_max', 'valid_range')),
         }
         
         g = self.read_vars
@@ -978,45 +979,19 @@ class NetCDFRead(IORead):
             # Warn for the presence of 'valid_min', 'valid_max'or
             # 'valid_range' properties. (Introduced at v1.8.3.)
             # --------------------------------------------------------
-            valid_properties = set(('valid_min', 'valid_max', 'valid_range'))
+                       # Check field constructs
+            for index, f in enumerate(out):    
+                self._check_valid(f, index, f, 'field')
 
-            # Check field constructs
-            for i, f in enumerate(out):                
-                x = sorted(valid_properties.intersection(
-                    self.implementation.get_properties(f)))
-                if not x:
-                    continue
-                
-                print(
-                    "WARNING: Field construct {!r} (index {}) has {} {}. "
-                    "Set warn_valid=False to remove warning.".format(
-                        f, i, ', '.join(x), self._plural(x, 'property')))
+                # Check coordinate constructs
+                for c in self.implementation.get_coordinates(f).values():
+                    self._check_valid(f, index, c, 'coordinate')
 
-            # Check coordinate constructs
-            for c in self.implementation.get_coordinates(f).values():
-                x = sorted(valid_properties.intersection(
-                    self.implementation.get_properties(c)))
-                if not x:
-                    continue
-                
-                print(
-                    "WARNING: Field construct {!r} (index {}) "
-                    "coordinate construct has {} {}. "
-                    "Set warn_valid=False to remove warning.".format(
-                        f, i, ', '.join(x), self._plural(x, 'property')))
-
-            # Check domain ancillary constructs
-            for c in self.implementation.get_domain_ancillaries(f).values():
-                x = sorted(valid_properties.intersection(
-                    self.implementation.get_properties(c)))
-                if not x:
-                    continue
-                
-                print(
-                    "WARNING: Field construct {!r} (index {}) "
-                    "domain ancillary construct has {} {}. "
-                    "Set warn_valid=False to remove warning.".format(
-                        f, i, ', '.join(x), self._plural(x, 'property')))
+                # Check domain ancillary constructs
+                for c in (
+                        self.implementation.get_domain_ancillaries(f).values()
+                ):
+                    self._check_valid(f, index, c, 'domain ancillary')
         # --- End: if
 
         # ------------------------------------------------------------
@@ -1028,6 +1003,29 @@ class NetCDFRead(IORead):
         # Return the fields
         # ------------------------------------------------------------
         return out
+
+    def _check_valid(self, field, index, construct, construct_type):
+        '''TODO
+        '''
+        x = sorted(self.read_vars['valid_properties'].intersection(
+            self.implementation.get_properties(construct)))
+        if not x:
+            return
+
+        # Still here?
+        if construct_type == 'field':
+            construct_type = ""
+        else:
+            construct_type = " {} construct".format(construct_type)
+            
+        print(
+            "WARNING: {!r} (index {}){} has {} {}. "
+            "Set warn_valid=False to remove warning.".format(
+                field,
+                index,
+                construct_type,
+                ', '.join(x),
+                self._plural(x, 'property')))
 
     def _plural(self, x, singular):
         '''TODO

@@ -399,4 +399,4 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
                      string=string, verbose=verbose,
-                     extra_write_vars=None)
+                     warn_valid=warn_valid, extra_write_vars=None)
