@@ -390,8 +390,7 @@ class NetCDFRead(IORead):
 
     def read(self, filename, extra=None, default_version=None,
              external=None, extra_read_vars=None, _scan_only=False,
-             verbose=False, warnings=True, mask=True):
-#             supplementary_read_vars=None):
+             verbose=False, mask=True, warnings=True, warn_valid=True):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
     location.
             
@@ -466,6 +465,17 @@ class NetCDFRead(IORead):
             details.
 
             .. versionadded:: 1.8.2
+          
+        warn_valid: `bool`, optional
+            If False then do not warn for the presence of
+            ``valid_min``, ``valid_max`` or ``valid_range`` field
+            construct properties. By default a warning is printed if
+            any returned field construct has any of these properties.
+
+            See also the *mask* parameter, which can prevent automatic
+            masking based on these properties.
+
+            .. versionadded:: 1.8.3
           
     :Returns:
     
@@ -544,6 +554,10 @@ class NetCDFRead(IORead):
 
             # Auto mask?
             'mask': bool(mask),
+
+            # Warn for the presence of valid_[min|max|range]
+            # attributes?
+            'warn_valid': bool(warn_valid),
         }
         
         g = self.read_vars
@@ -911,13 +925,17 @@ class NetCDFRead(IORead):
         if verbose:
             print("Referenced netCDF variables:\n   ",
                   end=' ') # pragma: no cover
-            print("\n    ".join([ncvar for  ncvar in all_fields
-                                 if not self._is_unreferenced(ncvar)])) # pragma: no cover
+            print("\n    ".join(
+                [ncvar for  ncvar in all_fields
+                 if not self._is_unreferenced(ncvar)])
+            ) # pragma: no cover
 
             print("Unreferenced netCDF variables:\n   ",
                   end=' ') # pragma: no cover
-            print("\n    ".join([ncvar for ncvar in all_fields
-                                 if self._is_unreferenced(ncvar)])) # pragma: no cover
+            print("\n    ".join(
+                [ncvar for ncvar in all_fields
+                 if self._is_unreferenced(ncvar)])
+            ) # pragma: no cover
         
         # ------------------------------------------------------------
         # If requested, reinstate fields created from netCDF variables
@@ -927,7 +945,8 @@ class NetCDFRead(IORead):
             fields0 = list(fields.values())
             for construct_type in g['extra']:
                 for f in fields0:
-                    for construct in g['get_constructs'][construct_type](f).values():
+                    for construct in (
+                            g['get_constructs'][construct_type](f).values()):
                         ncvar = self.implementation.nc_get_variable(construct)
                         if ncvar not in all_fields:
                             continue
@@ -946,6 +965,27 @@ class NetCDFRead(IORead):
                     print(str(x))
                     print("Report:")
                     x.dataset_compliance(display=True)
+        # --- End: if
+
+        if warn_valid:
+            # Warn for the presence of 'valid_min', 'valid_max'or
+            # 'valid_range' field properties. (Introduced at v1.8.3.)
+            valid_properties = set(('valid_min', 'valid_max', 'valid_range'))
+            for i, f in enumerate(out):
+                x = sorted(valid_properties.intersection(
+                    self.implementation.get_properties(f)))
+                if not x:
+                    continue
+
+                if len(x) == 1:
+                    p = 'property'
+                else:
+                    p = 'properties'
+                    
+                print(
+                    "WARNING: Field construct {!r} (index {}) has {} {}. "
+                    "Set warn_valid=False to remove warning.".format(
+                        f, i, ', '.join(x), p))
         # --- End: if
 
         # ------------------------------------------------------------
@@ -2045,7 +2085,7 @@ class NetCDFRead(IORead):
         if not g['mask']:
             # Masking has been turned off, so make sure that there is
             # a fill value recorded so that masking may later be
-            # applied manually, if required.
+            # applied manually, if required. (Introduced at v1.8.2.)
             _FillValue = self.implementation.get_property(f, '_FillValue',
                                                           None)
             if _FillValue is None:
@@ -2053,8 +2093,8 @@ class NetCDFRead(IORead):
                     f, {'_FillValue':
                         self.default_netCDF_fill_value(field_ncvar)}
                 )
-        # --- End: if            
-            
+        # --- End: if
+
         # Store the field's netCDF variable name
         self.implementation.nc_set_variable(f, field_ncvar)
 

@@ -12,7 +12,8 @@ _implementation = implementation()
        
 
 def read(filename, external=None, extra=None, verbose=False,
-         warnings=False, mask=True, _implementation=_implementation):
+         warnings=False, warn_valid=True,
+         mask=True,_implementation=_implementation):
     '''Read field constructs from a dataset.
 
     The dataset may be a netCDF file on disk or on an OPeNDAP server,
@@ -178,6 +179,17 @@ def read(filename, external=None, extra=None, verbose=False,
             details.
     
             .. versionadded:: 1.8.2
+            
+        warn_valid: `bool`, optional
+            If False then do not warn for the presence of
+            ``valid_min``, ``valid_max`` or ``valid_range`` field
+            construct properties. By default a warning is printed if
+            any returned field construct has any of these properties.
+
+            See also the *mask* parameter, which can prevent automatic
+            masking based on these properties.
+    
+            .. versionadded:: 1.8.3
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
@@ -242,7 +254,8 @@ def read(filename, external=None, extra=None, verbose=False,
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
-                             mask=mask, extra_read_vars=None)
+                             warn_valid=warn_valid, mask=mask,
+                             extra_read_vars=None)
     elif cdl:
         raise IOError(
             "Can't determine format of file {} "

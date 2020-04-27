@@ -1053,7 +1053,6 @@ class CFDMImplementation(Implementation):
         '''
         return parent.properties()
 
-
     def get_property(self, construct, prop, default=None):
        '''TODO
 
