@@ -468,9 +468,10 @@ class NetCDFRead(IORead):
           
         warn_valid: `bool`, optional
             If False then do not warn for the presence of
-            ``valid_min``, ``valid_max`` or ``valid_range`` field
-            construct properties. By default a warning is printed if
-            any returned field construct has any of these properties.
+            ``valid_min``, ``valid_max`` or ``valid_range`` properties
+            on field, coordinate or domain ancillary constructs. By
+            default a warning is printed if such construct has any of
+            these properties.
 
             See also the *mask* parameter, which can prevent automatic
             masking based on these properties.
@@ -691,11 +692,16 @@ class NetCDFRead(IORead):
             for attr in map(str, variable.ncattrs()):
                 try:
                     variable_attributes[ncvar][attr] = variable.getncattr(attr)
-                    if isinstance(variable_attributes[ncvar][attr], basestring):
+                    if isinstance(variable_attributes[ncvar][attr],
+                                  basestring):
                         try:
-                            variable_attributes[ncvar][attr] = str(variable_attributes[ncvar][attr])
+                            variable_attributes[ncvar][attr] = (
+                                str(variable_attributes[ncvar][attr])
+                            )
                         except UnicodeEncodeError:
-                            variable_attributes[ncvar][attr] = variable_attributes[ncvar][attr].encode(errors='ignore')
+                            variable_attributes[ncvar][attr] = (
+                                variable_attributes[ncvar][attr].encode(errors='ignore')
+                            )
                 except UnicodeDecodeError:
                     pass
             # --- End: for
@@ -968,24 +974,49 @@ class NetCDFRead(IORead):
         # --- End: if
 
         if warn_valid:
+            # --------------------------------------------------------
             # Warn for the presence of 'valid_min', 'valid_max'or
-            # 'valid_range' field properties. (Introduced at v1.8.3.)
+            # 'valid_range' properties. (Introduced at v1.8.3.)
+            # --------------------------------------------------------
             valid_properties = set(('valid_min', 'valid_max', 'valid_range'))
-            for i, f in enumerate(out):
+
+            # Check field constructs
+            for i, f in enumerate(out):                
                 x = sorted(valid_properties.intersection(
                     self.implementation.get_properties(f)))
                 if not x:
                     continue
-
-                if len(x) == 1:
-                    p = 'property'
-                else:
-                    p = 'properties'
-                    
+                
                 print(
                     "WARNING: Field construct {!r} (index {}) has {} {}. "
                     "Set warn_valid=False to remove warning.".format(
-                        f, i, ', '.join(x), p))
+                        f, i, ', '.join(x), self._plural(x, 'property')))
+
+            # Check coordinate constructs
+            for c in self.implementation.get_coordinates(f).values():
+                x = sorted(valid_properties.intersection(
+                    self.implementation.get_properties(c)))
+                if not x:
+                    continue
+                
+                print(
+                    "WARNING: Field construct {!r} (index {}) "
+                    "coordinate construct has {} {}. "
+                    "Set warn_valid=False to remove warning.".format(
+                        f, i, ', '.join(x), self._plural(x, 'property')))
+
+            # Check domain ancillary constructs
+            for c in self.implementation.get_domain_ancillaries(f).values():
+                x = sorted(valid_properties.intersection(
+                    self.implementation.get_properties(c)))
+                if not x:
+                    continue
+                
+                print(
+                    "WARNING: Field construct {!r} (index {}) "
+                    "domain ancillary construct has {} {}. "
+                    "Set warn_valid=False to remove warning.".format(
+                        f, i, ', '.join(x), self._plural(x, 'property')))
         # --- End: if
 
         # ------------------------------------------------------------
@@ -998,6 +1029,38 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         return out
 
+    def _plural(self, x, singular):
+        '''TODO
+
+    :Parameters:
+
+        x: sequence
+
+        singular: `str`
+
+    :Returns:
+        
+        `str`
+            The word in its singular or plural form.
+
+    **Examples:**
+
+    >>> n._plural([1, 2], 'property')
+    'properties'
+    >>> n._plural([1], 'property')
+    'property'
+    >>> n._plural([], 'property')
+    'properties'
+
+        '''                    
+        if len(x) == 1:
+            return singular
+
+        if singular[-1] == 'y':
+            return singular[:-1] + 'ies'
+
+        raise ValueError("Can't (yet) plualise {}".format(singular))
+    
     def _customize_read_vars(self):
         '''TODO
 
@@ -1111,7 +1174,9 @@ class NetCDFRead(IORead):
                     # Update the read parameters so that this external
                     # variable looks like its internal
                     for key in keys:
-                        self.read_vars[key][ncvar] = external_read_vars[key][ncvar]
+                        self.read_vars[key][ncvar] = (
+                            external_read_vars[key][ncvar]
+                        )
 
                     # Remove this ncvar from the set of external variables
                     external_variables.remove(ncvar)
@@ -1322,8 +1387,10 @@ class NetCDFRead(IORead):
             print("    Implied dimensions: {} -> {}".format(
                 sample_dimension,
                 g['compression'][sample_dimension]['ragged_indexed_contiguous']['implied_ncdimensions'])) # pragma: no cover
-            print("    Removing g['compression'][{!r}]['ragged_contiguous']".format(
-                sample_dimension)) # pragma: no cover
+            print(
+                "    Removing "
+                "g['compression'][{!r}]['ragged_contiguous']".format(
+                    sample_dimension)) # pragma: no cover
             
         del g['compression'][sample_dimension]['ragged_contiguous']
 
@@ -1699,8 +1766,9 @@ class NetCDFRead(IORead):
         g['new_dimensions'][element_dimension] = element_dimension_size
         
         if g['verbose']:
-            print("    Created g['compression'][{!r}]['ragged_indexed']".format(
-                indexed_sample_dimension)) # pragma: no cover
+            print("    Created "
+                  "g['compression'][{!r}]['ragged_indexed']".format(
+                      indexed_sample_dimension)) # pragma: no cover
     
         return element_dimension
 
@@ -1967,7 +2035,8 @@ class NetCDFRead(IORead):
                 # Infer the formula terms bounds variables from the
                 # coordinates
                 # ----------------------------------------------------
-                for term, ncvar in g['formula_terms'][coord_ncvar]['coord'].items():
+                for term, ncvar in (
+                        g['formula_terms'][coord_ncvar]['coord'].items()):
                     g['formula_terms'][coord_ncvar]['bounds'][term] = None
                     
                     if z_ncdim not in self._ncdimensions(ncvar):
@@ -2000,8 +2069,9 @@ class NetCDFRead(IORead):
                     if not is_coordinate_with_bounds:
                          self._add_message(
                              field_ncvar, ncvar,
-                             message=('Formula terms variable',
-                                      'that spans the vertical dimension has no bounds'),
+                             message=("Formula terms variable",
+                                      "that spans the vertical dimension "
+                                      "has no bounds"),
                              attribute=attribute,
                              variable=coord_ncvar)
                 # --- End: for
@@ -2083,9 +2153,11 @@ class NetCDFRead(IORead):
         self.implementation.set_properties(f, field_properties, copy=True)
 
         if not g['mask']:
+            # --------------------------------------------------------
             # Masking has been turned off, so make sure that there is
             # a fill value recorded so that masking may later be
             # applied manually, if required. (Introduced at v1.8.2.)
+            # --------------------------------------------------------
             _FillValue = self.implementation.get_property(f, '_FillValue',
                                                           None)
             if _FillValue is None:
@@ -2430,7 +2502,8 @@ class NetCDFRead(IORead):
                 
             ok = True
             domain_ancillaries = []
-            for term, ncvar in g['formula_terms'][coord_ncvar]['coord'].items():
+            for term, ncvar in (
+                    g['formula_terms'][coord_ncvar]['coord'].items()):
                 if ncvar is None:
                     continue
 
@@ -2557,7 +2630,8 @@ class NetCDFRead(IORead):
                     create_new = True
                     
                     if not coordinates:
-                        # DCH ALERT -  what to do about duplicate standard names? TODO
+                        # DCH ALERT
+                        # what to do about duplicate standard names? TODO
                         name = parameters.get('grid_mapping_name', None)
                         for n in self.cf_coordinate_reference_coordinates().get(name, ()):
                             for key, coord in self.implementation.get_coordinates(field=f).items():
@@ -3641,7 +3715,10 @@ class NetCDFRead(IORead):
                         uncompressed_shape = tuple(
                             [g['internal_dimension_sizes'][dim]
                              for dim in self._ncdimensions(ncvar)])
-                        compressed_dimension = g['variable_dimensions'][ncvar].index(c['sample_dimension'])
+                        compressed_dimension = (
+                            g['variable_dimensions'][ncvar].index(
+                                c['sample_dimension'])
+                        )
                         array = self._create_gathered_array(
                             gathered_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
@@ -4935,7 +5012,8 @@ class NetCDFRead(IORead):
         
         def subst(s):
             "substitute tokens for WORD and SEP (space or end of string)"
-            return s.replace('WORD', r'[A-Za-z0-9_]+').replace('SEP', r'(\s+|$)')
+            return s.replace('WORD', r'[A-Za-z0-9_]+').replace(
+                'SEP', r'(\s+|$)')
 
         out = []
         

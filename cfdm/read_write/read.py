@@ -182,9 +182,10 @@ def read(filename, external=None, extra=None, verbose=False,
             
         warn_valid: `bool`, optional
             If False then do not warn for the presence of
-            ``valid_min``, ``valid_max`` or ``valid_range`` field
-            construct properties. By default a warning is printed if
-            any returned field construct has any of these properties.
+            ``valid_min``, ``valid_max`` or ``valid_range`` properties
+            on field, coordinate or domain ancillary constructs. By
+            default a warning is printed if such construct has any of
+            these properties.
 
             See also the *mask* parameter, which can prevent automatic
             masking based on these properties.
