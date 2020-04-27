@@ -437,6 +437,79 @@ class Field(mixin.NetCDFVariable,
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    def apply_masking(self, inplace=False):
+        '''Apply masking as defined by the CF conventions.
+
+    Masking is applied to the field construct data as well as metadata
+    constructs' data.
+
+    Masking is applied according to any of the following criteria that
+    are applicable:
+
+    * where data elements are equal to the value of the
+      ``missing_value`` property;
+
+    * where data elements are equal to the value of the ``_FillValue``
+      property;
+
+    * where data elements are strictly less than the value of the
+      ``valid_min`` property;
+
+    * where data elements are strictly greater than the value of the
+      ``valid_max`` property;
+
+    * where data elements are within the inclusive range specified by
+      the two values of ``valid_range`` property.
+
+    If any of the above properties have not been set the no masking is
+    applied for that method.
+
+    Elements that are already masked remain so.
+
+    .. note:: If using the `apply_masking` method on a construct that
+              has been read from a dataset with the ``mask=False``
+              parameter to the `read` function, then the mask defined
+              in the dataset can only be recreated if the
+              ``missing_value``, ``_FillValue``, ``valid_min``,
+              ``valid_max``, and ``valid_range`` properties have not
+              been updated.
+
+    .. versionadded:: 1.8.3
+
+    .. seealso:: `Data.apply_masking`, `read`, `write`
+               
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+        `Field` or `None`
+            A new field construct with masked values, or `None` if the
+            operation was in-place.
+    
+    **Examples:**
+
+                TODO DCH
+
+        '''             
+        if inplace:
+            f = self
+        else:
+            f = self.copy()
+       
+        # Apply masking to the field construct
+        super(Field, f).apply_masking(inplace=True)
+
+        # Apply masking to the metadata constructs
+        for c in f.constructs.filter_by_data().values():
+            c.apply_masking(inplace=True)
+                        
+        if inplace:
+            f = None            
+        return f
+    
     def climatological_time_axes(self):
         '''TODO
 

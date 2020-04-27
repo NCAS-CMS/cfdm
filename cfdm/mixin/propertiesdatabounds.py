@@ -496,7 +496,7 @@ class PropertiesDataBounds(PropertiesData):
 
     .. versionadded:: 1.8.2
 
-    .. seealso:: `Data.apply_masking`
+    .. seealso:: `Data.apply_masking`, `read`, `write`
                
     :Parameters:
 

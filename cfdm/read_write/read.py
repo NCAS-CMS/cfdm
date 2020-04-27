@@ -169,9 +169,10 @@ def read(filename, external=None, extra=None, verbose=False,
             dataset. By default such warnings are not displayed.
             
         mask: `bool`, optional
-            If False then do not mask by convention when reading data
-            from disk. By default data is masked by convention.
-           
+            If False then do not mask by convention when reading the
+            data of field or metadata constructs from disk. By default
+            data is masked by convention.
+
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
             ``_FillValue`` and ``missing_value``,``valid_min``,

@@ -312,7 +312,7 @@ class PropertiesData(Properties):
 
     .. versionadded:: 1.8.2
 
-    .. seealso:: `Data.apply_masking`
+    .. seealso:: `Data.apply_masking`, `read`, `write`
                
     :Parameters:
 
@@ -358,7 +358,7 @@ class PropertiesData(Properties):
                     "'valid_min' or 'valid_max' properties")
 
             data.apply_masking(**kwargs)
-
+                        
         if inplace:
             v = None            
         return v

@@ -455,8 +455,9 @@ class NetCDFRead(IORead):
             checked.
             
         mask: `bool`, optional
-            If False then do not mask by convention when reading data
-            from disk. By default data is masked by convention.
+            If False then do not mask by convention when reading the
+            data of field or metadata constructs from disk. By default
+            data is masked by convention.
 
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
@@ -3331,6 +3332,16 @@ class NetCDFRead(IORead):
             # external file
             self.implementation.set_properties(cell_measure,
                                                g['variable_attributes'][ncvar])
+
+            if not g['mask']:
+                # ----------------------------------------------------
+                # Masking has been turned off, so make sure that there
+                # is a fill value recorded on the cell measure so that
+                # masking may later be applied manually, if
+                # required. (Introduced at v1.8.3.)
+                # ----------------------------------------------------
+                self._set_default_FillValue(cell_measure, ncvar)
+            
             data = self._create_data(ncvar, cell_measure)            
             self.implementation.set_data(cell_measure, data, copy=False)
             
@@ -3368,6 +3379,15 @@ class NetCDFRead(IORead):
         sample_ncdim = properties.pop('sample_dimension', None)
         self.implementation.set_properties(variable, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         # Set the netCDF variable name
         self.implementation.nc_set_variable(variable, ncvar)
 
@@ -3417,6 +3437,15 @@ class NetCDFRead(IORead):
         instance_ncdim = properties.pop('instance_dimension', None)
         self.implementation.set_properties(variable, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         # Set the netCDF variable name
         self.implementation.nc_set_variable(variable, ncvar)
 
@@ -3475,6 +3504,15 @@ class NetCDFRead(IORead):
         properties = g['variable_attributes'][ncvar]
         self.implementation.set_properties(variable, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         data = self._create_data(ncvar, variable)
         self.implementation.set_data(variable, data, copy=False)
             
@@ -3506,6 +3544,15 @@ class NetCDFRead(IORead):
         properties.pop('compress', None)
         self.implementation.set_properties(variable, properties)
         
+        if not self.read_vars['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         data = self._create_data(ncvar, variable, uncompress_override=True)
         self.implementation.set_data(variable, data, copy=False)
             
@@ -3540,6 +3587,15 @@ class NetCDFRead(IORead):
         properties = g['variable_attributes'][ncvar]
         self.implementation.set_properties(variable, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         return variable
 
     def _create_PartNodeCount(self, ncvar, ncdim):
@@ -3578,6 +3634,15 @@ class NetCDFRead(IORead):
         properties = g['variable_attributes'][ncvar]
         self.implementation.set_properties(variable, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         return variable
 
     def _create_cell_method(self, axes, method, qualifiers):
@@ -3869,6 +3934,15 @@ class NetCDFRead(IORead):
                            self.read_vars['variable_attributes'][ncvar],
                            copy=True)
 
+        if not self.read_vars['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the field ancillary so that
+            # masking may later be applied manually, if
+            # required. (Introduced at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(field_ancillary, ncvar)
+            
         # Insert data
         data = self._create_data(ncvar, field_ancillary)
         self.implementation.set_data(field_ancillary, data, copy=False)
