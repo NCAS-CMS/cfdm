@@ -350,12 +350,12 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             output netCDF dimensions, variables and attributes.
     
        warn_valid: `bool`, optional         
-            If False then do not warn for when writing "out-of-range"
-            data, as defined by the presence of ``valid_min``,
-            ``valid_max`` or ``valid_range`` properties on field and
-            metadata constructs that have data. By default a warning
-            is printed if any such construct has any of these
-            properties.
+            If False then do not print a warning when writing
+            "out-of-range" data, as defined by the presence of
+            ``valid_min``, ``valid_max`` or ``valid_range`` properties
+            on field and metadata constructs that have data. By
+            default a warning is printed if any such construct has any
+            of these properties.
 
             The consequence of writing out-of-range data values is
             that by default these values they will be masked when the

@@ -181,7 +181,7 @@ def read(filename, external=None, extra=None, verbose=False,
             .. versionadded:: 1.8.2
             
         warn_valid: `bool`, optional
-            If False then do not warn for the presence of
+            If False then do not print a warning for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
             on field contructs and metadata constructs that have
             data. By default a warning is printed if any such a
