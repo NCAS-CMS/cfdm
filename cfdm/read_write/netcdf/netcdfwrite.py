@@ -195,7 +195,7 @@ class NetCDFWrite(IOWrite):
     
     :Returns:
     
-        `None`
+        `dict`
         
         '''
         g = self.write_vars
@@ -211,7 +211,7 @@ class NetCDFWrite(IOWrite):
             netcdf_attrs.pop(attr, None) 
     
         if not netcdf_attrs:
-            return
+            return {}
 
         # Make sure that _FillValue and missing data have the same
         # data type as the data
@@ -227,6 +227,8 @@ class NetCDFWrite(IOWrite):
         # --- End: for
 
         self.write_vars['nc'][ncvar].setncatts(netcdf_attrs)
+
+        return netcdf_attrs
     
     def _character_array(self, array):
         '''Convert a numpy string array to a numpy character array wih an
@@ -2165,7 +2167,8 @@ class NetCDFWrite(IOWrite):
         # -------------------------------------------------------------
         # Write attributes to the netCDF variable
         # -------------------------------------------------------------
-        self._write_attributes(cfvar, ncvar, extra=extra, omit=omit)
+        attributes = self._write_attributes(cfvar, ncvar, extra=extra,
+                                            omit=omit)
         
         # -------------------------------------------------------------
         # Write data to the netCDF variable
@@ -2193,7 +2196,9 @@ class NetCDFWrite(IOWrite):
                 set(ncdimensions).intersection(g['sample_ncdim'].values()))
             
             self._write_data(data, cfvar, ncvar, ncdimensions,
-                             unset_values=unset_values, compressed=compressed)
+                             unset_values=unset_values,
+                             compressed=compressed,
+                             attributes=attributes)
     
         # Update the 'seen' dictionary
         g['seen'][id(cfvar)] = {'variable': cfvar,
@@ -2257,8 +2262,8 @@ class NetCDFWrite(IOWrite):
 
         return data, ncdimensions
     
-    def _write_data(self, data, cfvar, ncvar, ncdimensions, unset_values=(),
-                    compressed=False):
+    def _write_data(self, data, cfvar, ncvar, ncdimensions,
+                    unset_values=(), compressed=False, attributes={}):
         '''TODO
 
     :Parameters:
@@ -2272,6 +2277,8 @@ class NetCDFWrite(IOWrite):
         ncdimensions: `tuple` of `str`
     
         unset_values: sequence of numbers
+
+        attributes: `dict`, optional
 
         '''
         g = self.write_vars
@@ -2288,7 +2295,7 @@ class NetCDFWrite(IOWrite):
         new_dtype = g['datatype'].get(array.dtype)
         if new_dtype is not None:
             array = array.astype(new_dtype)  
-
+        
         # Check that the array doesn't contain any elements
         # which are equal to any of the missing data values
         if unset_values:
@@ -2302,18 +2309,76 @@ class NetCDFWrite(IOWrite):
                     "ERROR: Can't write data that has _FillValue or "
                     "missing_value at unmasked point: {!r}".format(ncvar))
         # --- End: if
-
+        
         if (g['fmt'] == 'NETCDF4' and array.dtype.kind in 'SU' and
             numpy.ma.isMA(array)):
             # VLEN variables can not be assigned to by masked arrays
             # https://github.com/Unidata/netcdf4-python/pull/465
             array = array.filled('')
 
+        if g['warn_valid']:
+            # Check for out-of-range values
+            self._check_valid(cfvar, array, attributes)
+            
         # Copy the array into the netCDF variable
         g['nc'][ncvar][...] = array
 
         self._aaa(ncvar, array)
 
+    def _check_valid(self, cfvar, array, attributes):
+        '''Check array for out-of-range values, as defined by the
+    valid_[min|max|range] attributes.
+
+    :Parameters:
+
+        cfvar: Construct
+
+        array: `numpy.ndarray`
+
+        attributes: `dict`
+
+    :Returns:
+
+        `None`
+
+        '''
+        valid_range = None
+        valid_min = None
+        valid_max = None
+        
+        if 'valid_range' in attributes:                
+            prop = 'valid_range'
+            valid_range = True
+            valid_min, valid_max = attributes[prop]
+
+        if 'valid_min' in attributes:
+            prop = 'valid_min'
+            if valid_range:
+                raise ValueError("Can't write {!r} with both {} and "
+                                 "valid_range properties".format(cvfar, prop))
+
+            valid_min = attributes[prop]
+            
+        if 'valid_max' in attributes:
+            prop = 'valid_max'
+            if valid_range:
+                raise ValueError("Can't write {!r} with both {} and "
+                                 "valid_range properties".format(cvfar, prop))
+
+            valid_max = attributes[prop]
+
+        if valid_min is not None and array.min() < valid_min:
+            print("WARNING: Some {!r} data values are less than the valid "
+                  "minimum defined by the {} property: {}. "
+                  "Set warn_valid=False to remove warning".format(
+                      cfvar, prop, valid_min))
+            
+        if valid_max is not None  and array.max() > valid_max:
+            print("WARNING: Some {!r} data values are greater than the valid "
+                  "maximum defined by the {} property: {}. "
+                  "Set warn_valid=False to remove warning".format(
+                      cfvar, prop, valid_max))
+            
     def _aaa(self, ncvar, array):
         '''TODO
 
@@ -3437,9 +3502,9 @@ class NetCDFWrite(IOWrite):
         warn_valid: `bool`, optional
             If False then do not warn for when writing "out of range"
             data, as defined by the presence of ``valid_min``,
-            ``valid_max`` or ``valid_range`` properties on field,
-            coordinate or domain ancillary constructs. By default a
-            warning is printed if any such construct has any of these
+            ``valid_max`` or ``valid_range`` properties on field or
+            metadata constructs that have data. By default a warning
+            is printed if any such construct has any of these
             properties.
 
             *Parameter example:*
@@ -3537,6 +3602,11 @@ class NetCDFWrite(IOWrite):
             'latest_version': LooseVersion(
                 self.implementation.get_cf_version()),
             'version': {},
+
+            # Warn for the presence of out-of-range data with of
+            # valid_[min|max|range] attributes?
+            'warn_valid': bool(warn_valid),
+            'valid_properties': set(('valid_min', 'valid_max', 'valid_range')),
         }
         g = self.write_vars
 

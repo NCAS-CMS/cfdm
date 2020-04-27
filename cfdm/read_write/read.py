@@ -175,21 +175,22 @@ def read(filename, external=None, extra=None, verbose=False,
 
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
-            ``_FillValue`` and ``missing_value``,``valid_min``,
-            ``valid_max``, ``valid_range``. See the CF conventions for
-            details.
+            ``_FillValue``,``missing_value``,``valid_min``,
+            ``valid_max`` and ``valid_range``.
     
             .. versionadded:: 1.8.2
             
         warn_valid: `bool`, optional
             If False then do not warn for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
-            on field, coordinate or domain ancillary constructs. By
-            default a warning is printed if such construct has any of
-            these properties.
+            on field contructs and metadata constructs that have
+            data. By default a warning is printed if any such a
+            construct has any of these properties.
 
-            See also the *mask* parameter, which can prevent automatic
-            masking based on these properties.
+            "Out-of-range" data values in the file, as defined by any
+            of these properties, are by default automatically masked.
+            See the *mask* parameter for turning off all automatic
+            masking.
     
             .. versionadded:: 1.8.3
 
