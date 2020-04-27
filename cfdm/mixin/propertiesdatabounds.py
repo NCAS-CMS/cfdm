@@ -8,6 +8,8 @@ from . import PropertiesData
 
 from ..functions import RTOL, ATOL
 
+from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+
 
 class PropertiesDataBounds(PropertiesData):
     '''Mixin class for a data array with descriptive properties and cell
@@ -454,6 +456,7 @@ class PropertiesDataBounds(PropertiesData):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    @_inplace_enabled
     def apply_masking(self, bounds=True, inplace=False):
         '''Apply masking as defined by the CF conventions.
 
@@ -513,9 +516,8 @@ class PropertiesDataBounds(PropertiesData):
         TODO DCH
 
         '''
-        c = super().apply_masking(inplace=inplace)
-        if inplace:
-            c = self
+        c = _inplace_enabled_define_and_cleanup(self)
+        super(PropertiesDataBounds, c).apply_masking(axes, inplace=True)
 
         data = c.get_bounds_data(None)
         if data is not None:
@@ -536,9 +538,7 @@ class PropertiesDataBounds(PropertiesData):
                                               c.get_property(prop, None))
             
             data.apply_masking(**kwargs)
- 
-        if inplace:
-            c = None            
+
         return c
 
     def del_node_count(self, default=ValueError()):
@@ -1220,6 +1220,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return bounds.get_data(default=default)
 
+    @_inplace_enabled
     def insert_dimension(self, position, inplace=False):
         '''Expand the shape of the data array.
 
@@ -1267,10 +1268,7 @@ class PropertiesDataBounds(PropertiesData):
     (19, 73, 1, 96, 4)
 
         '''
-        if inplace:
-            c = self
-        else:
-            c = self.copy()
+        c = _inplace_enabled_define_and_cleanup(self)
 
         # Parse position
         ndim = c.ndim        
@@ -1281,9 +1279,8 @@ class PropertiesDataBounds(PropertiesData):
                 "Can't insert dimension: Invalid position: {!r}".format(
                     position))
         
-        c = super().insert_dimension(position, inplace=inplace)
-        if inplace:
-            c = self
+        super(PropertiesDataBounds, c).insert_dimension(
+            position, inplace=True)
                 
         # ------------------------------------------------------------
         # Expand the dims of the bounds
@@ -1299,8 +1296,6 @@ class PropertiesDataBounds(PropertiesData):
         if interior_ring is not None:
             interior_ring.insert_dimension(position, inplace=True)
 
-        if inplace:
-            c = None            
         return c
 
     def set_node_count(self, node_count, copy=True):
@@ -1364,6 +1359,7 @@ class PropertiesDataBounds(PropertiesData):
 
         self._set_component('part_node_count', part_node_count, copy=False)
 
+    @_inplace_enabled
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
@@ -1420,9 +1416,8 @@ class PropertiesDataBounds(PropertiesData):
         if axes is None:
             axes = tuple([i for i, n in enumerate(self.shape) if n == 1])
 
-        c = super().squeeze(axes, inplace=inplace)
-        if inplace:
-            c = self
+        c = _inplace_enabled_define_and_cleanup(self)
+        super(PropertiesDataBounds, c).squeeze(axes, inplace=True)
         
         # ------------------------------------------------------------
         # Squeeze the bounds
@@ -1438,10 +1433,9 @@ class PropertiesDataBounds(PropertiesData):
         if interior_ring is not None:
             interior_ring.squeeze(axes, inplace=True)
 
-        if inplace:
-            c = None                
         return c
-    
+
+    @_inplace_enabled
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
@@ -1501,10 +1495,9 @@ class PropertiesDataBounds(PropertiesData):
 
         # ------------------------------------------------------------ 
         # Transpose the coordinates 
-        # ------------------------------------------------------------         
-        c = super().transpose(axes, inplace=inplace)
-        if inplace:
-            c = self
+        # ------------------------------------------------------------
+        c = _inplace_enabled_define_and_cleanup(self)
+        super(PropertiesDataBounds, c).transpose(axes, inplace=True)
  
         # ------------------------------------------------------------ 
         # Transpose the bounds 
@@ -1534,10 +1527,9 @@ class PropertiesDataBounds(PropertiesData):
         if interior_ring is not None: 
             interior_ring.transpose(axes + [-1], inplace=True)
 
-        if inplace:
-            c = None            
         return c
-    
+
+    @_inplace_enabled
     def uncompress(self, inplace=False):
         '''Uncompress the construct.
 
@@ -1584,16 +1576,13 @@ class PropertiesDataBounds(PropertiesData):
     True
 
         '''
-        v = super().uncompress(inplace=inplace)
-        if inplace:
-            v = self
+        v = _inplace_enabled_define_and_cleanup(self)
+        super(PropertiesDataBounds, v).uncompress(inplace=True)
         
         bounds = v.get_bounds(None)
         if bounds is not None:
             bounds.uncompress(inplace=True)
 
-        if inplace:
-            v = None            
         return v
     
 # --- End: class
