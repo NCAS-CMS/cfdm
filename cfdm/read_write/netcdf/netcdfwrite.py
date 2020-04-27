@@ -2318,7 +2318,7 @@ class NetCDFWrite(IOWrite):
 
         if g['warn_valid']:
             # Check for out-of-range values
-            self._check_valid(cfvar, array, attributes)
+            warned = self._check_valid(cfvar, array, attributes)
             
         # Copy the array into the netCDF variable
         g['nc'][ncvar][...] = array
@@ -2339,9 +2339,12 @@ class NetCDFWrite(IOWrite):
 
     :Returns:
 
-        `None`
+        `bool`
+            Whether or not a warning was issued.
 
         '''
+        out = 0
+        
         valid_range = None
         valid_min = None
         valid_max = None
@@ -2351,6 +2354,11 @@ class NetCDFWrite(IOWrite):
             valid_range = True
             valid_min, valid_max = attributes[prop]
 
+        message = ("WARNING: Some {!r} data values written to {} are "
+                   "{} than the valid {} "
+                   "defined by the {} property: {}. "
+                   "Set warn_valid=False to remove warning.")
+                   
         if 'valid_min' in attributes:
             prop = 'valid_min'
             if valid_range:
@@ -2359,6 +2367,12 @@ class NetCDFWrite(IOWrite):
 
             valid_min = attributes[prop]
             
+        if valid_min is not None and array.min() < valid_min:
+            print(message.format(
+                cfvar, self.write_vars['filename'],
+                'less', 'minimum', prop, valid_min))
+            out += 1
+        
         if 'valid_max' in attributes:
             prop = 'valid_max'
             if valid_range:
@@ -2367,18 +2381,14 @@ class NetCDFWrite(IOWrite):
 
             valid_max = attributes[prop]
 
-        if valid_min is not None and array.min() < valid_min:
-            print("WARNING: Some {!r} data values are less than the valid "
-                  "minimum defined by the {} property: {}. "
-                  "Set warn_valid=False to remove warning".format(
-                      cfvar, prop, valid_min))
-            
         if valid_max is not None  and array.max() > valid_max:
-            print("WARNING: Some {!r} data values are greater than the valid "
-                  "maximum defined by the {} property: {}. "
-                  "Set warn_valid=False to remove warning".format(
-                      cfvar, prop, valid_max))
-            
+            print(message.format(
+                cfvar, self.write_vars['filename'],
+                'greater', 'maximum', prop, valid_max))
+            out += 1
+
+        return bool(out)
+    
     def _aaa(self, ncvar, array):
         '''TODO
 
