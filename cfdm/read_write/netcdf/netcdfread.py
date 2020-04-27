@@ -993,6 +993,18 @@ class NetCDFRead(IORead):
                         self.implementation.get_domain_ancillaries(f).values()
                 ):
                     self._check_valid(f, index, c, 'domain ancillary')
+ 
+                # Check field ancillary constructs
+                for c in (
+                        self.implementation.get_field_ancillaries(f).values()
+                ):
+                    self._check_valid(f, index, c, 'field ancillary')
+ 
+                # Check cell measure constructs
+                for c in (
+                        self.implementation.get_cell_measures(f).values()
+                ):
+                    self._check_valid(f, index, c, 'cell measure')
         # --- End: if
 
         # ------------------------------------------------------------
