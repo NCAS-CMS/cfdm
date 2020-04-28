@@ -146,7 +146,7 @@ The `cfdm.read` function has optional parameters to
   (see :ref:`data masking <Data-mask>`);
 
 * issue warnings when ``valid_min``, ``valid_max`` and ``valid_range``
-  attributes are persent (see :ref:`data masking <Data-mask>`); and
+  attributes are present (see :ref:`data masking <Data-mask>`); and
 
 * display information and issue warnings about the mapping of the
   netCDF file contents to CF data model constructs.
@@ -1865,7 +1865,7 @@ watersheds will require more nodes than others. Such cells are called
 `geometries`_.
 
 If a coordinate construct represents geometries then it will have a
-geometry attribute (not a :ref:`CF property
+"geometry" attribute (not a :ref:`CF property
 <Metadata-construct-properties>`) with one of the values ``'point'``,
 '``line'`` or ``'polygon'``.
 
@@ -3498,7 +3498,7 @@ is still created, but one without any metadata or data:
 If this field construct were to be written to disk using `cfdm.write`,
 then the output file would be identical to the original ``parent.nc``
 file, i.e. the netCDF variable name of the cell measure construct
-("areacella") would be listed by the "external_variables" global
+(``areacella``) would be listed by the ``external_variables`` global
 attribute.
 
 However, the dataset may also be read *with* the external file. In
@@ -3533,7 +3533,7 @@ variable had been present in the parent dataset:
 If this field construct were to be written to disk using `cfdm.write`
 then by default the cell measure construct, with all of its metadata
 and data, would be written to the named output file, along with all of
-the other constructs. There would be no "external_variables" global
+the other constructs. There would be no ``external_variables`` global
 attribute.
 
 To create a reference to an external variable in an output netCDF

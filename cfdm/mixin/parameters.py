@@ -141,7 +141,7 @@ class Parameters(Container):
 
             if not self._equals(value0, value1, rtol=rtol, atol=atol,
                                 verbose=verbose,
-                                ignore_data_type=True, #ignore_data_type,
+                                ignore_data_type=True,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_type=ignore_type):
                 if verbose:

@@ -1,7 +1,6 @@
 from __future__ import print_function
 from builtins import (str, super)
 
-from . import Container
 from . import Properties
 
 
@@ -50,7 +49,7 @@ class PropertiesData(Properties):
     (1, 10, 1)
 
         '''
-        new = self.copy() #data=False)
+        new = self.copy()  # data=False)
         
         data = self.get_data(None)
         if data is not None:
@@ -83,7 +82,7 @@ class PropertiesData(Properties):
             isreftime = 'since' in units
             
         if isreftime:
-            units += ' '+self.get_property('calendar', '')
+            units += ' ' + self.get_property('calendar', '')
             
         return '{0}{1} {2}'.format(self.identity(''), dims, units)
 
@@ -396,8 +395,7 @@ class PropertiesData(Properties):
         else:
             string = []
             
-        indent0 = '    ' * _level
-        indent1 = '    ' * (_level+1)
+        indent1 = '    ' * (_level + 1)
 
         # ------------------------------------------------------------
         # Data
@@ -542,12 +540,13 @@ class PropertiesData(Properties):
                 print("{0}: Only one external variable)".format(
                     self.__class__.__name__))
             return False
-        elif external0:
+        
+        if external0:
             # Both variables are external
             if self.nc_get_variable(None) != other.nc_get_variable(None):
                 if verbose:
                     print(
-                        "{0}: External variable have different "
+                        "{}: External variable have different "
                         "netCDF variable names: {} != {})".format(
                             self.__class__.__name__,
                             self.nc_get_variable(None),

@@ -5,6 +5,7 @@ from .netcdf import NetCDFWrite
 
 _implementation = implementation()
 
+
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           global_attributes=None, variable_attributes=None,
           file_descriptors=None, external=None, Conventions=None,
@@ -94,26 +95,26 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             The format of the output file. One of:
     
             ==========================  ================================
-            *fmt*                       Output file type                
-            ==========================  ================================ 
-            ``'NETCDF4'``               NetCDF4 format file. This is the   
-                                        default.                    
+            *fmt*                       Output file type
+            ==========================  ================================
+            ``'NETCDF4'``               NetCDF4 format file. This is the
+                                        default.
                                                                         
-            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see    
-                                        below)                     
+            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see
+                                        below)
                                                                         
-            ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file 
-                                        (limited to file sizes less     
-                                        than 2GB).                      
-                                                                        
+            ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
+                                        (limited to file sizes less
+                                        than 2GB).
+
             ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
-                                        file                            
+                                        file
                                                                         
             ``'NETCDF3_64BIT'``         An alias for
-                                        ``'NETCDF3_64BIT_OFFSET'``      
+                                        ``'NETCDF3_64BIT_OFFSET'``
                                                                         
-            ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format    
-                                        file with extensions (see below)      
+            ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
+                                        file with extensions (see below)
             ==========================  ================================
     
             By default the format is ``'NETCDF4'``.
@@ -251,7 +252,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
              *Parameter example:*
                ``variable_attributes=['project', 'doi']``
     
-        external: `str`, optional  
+        external: `str`, optional
             Write metadata constructs that have data and are marked as
             external to the named external file. Ignored if there are
             no such constructs.
