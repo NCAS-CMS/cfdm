@@ -998,7 +998,7 @@ class Constructs(object):
 
 
     def ordered(self):
-        '''Return the contructs in their predetermined order.
+        '''Return the constructs in their predetermined order.
 
     For cell method constructs, the predetermined order is that in
     which they where added.

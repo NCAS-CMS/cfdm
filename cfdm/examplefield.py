@@ -141,9 +141,9 @@ def example_field(n, _implementation=_implementation):
 
     >>> f = example_field(6)
     >>> print(f)
-    Field: preciptitation_amount (ncvar%pr)
+    Field: precipitation_amount (ncvar%pr)
     ---------------------------------------
-    Data            : preciptitation_amount(cf_role=timeseries_id(2), time(4))
+    Data            : precipitation_amount(cf_role=timeseries_id(2), time(4))
     Dimension coords: time(4) = [2000-01-02 00:00:00, ..., 2000-01-05 00:00:00]
     Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
                     : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
@@ -763,9 +763,9 @@ def example_field(n, _implementation=_implementation):
         f.set_construct(c)
 
     elif n == 6:
-        # field: preciptitation_amount
+        # field: precipitation_amount
         f = Field()
-        f.set_properties({'Conventions': 'CF-1.8', 'featureType': 'timeSeries', 'comment': 'TODO', 'standard_name': 'preciptitation_amount', 'standard_units': 'kg m-2'})
+        f.set_properties({'Conventions': 'CF-1.8', 'featureType': 'timeSeries', 'comment': 'TODO', 'standard_name': 'precipitation_amount', 'standard_units': 'kg m-2'})
         d = Data([[1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0]], dtype='f8')
         f.set_data(d)
         f.nc_set_variable('pr')

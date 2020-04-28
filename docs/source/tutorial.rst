@@ -857,7 +857,7 @@ have the same relative order as the field construct:
 
 .. code-block:: python
    :caption: *Also permute the data dimension of metadata constructs
-             using the 'contructs' keyword.*
+             using the 'constructs' keyword.*
 
    >>> t4 = t.transpose([0, 2, 1], constructs=True)
 
@@ -876,7 +876,7 @@ the original field construct.
 
 
 .. code-block:: python
-   :caption: *Inspect the data mask of a field constuct.*
+   :caption: *Inspect the data mask of a field construct.*
 
    >>> print(q)
    Field: specific_humidity (ncvar%q)
@@ -927,7 +927,7 @@ meet the criteria implied by the ``missing_value``, ``_FillValue``,
 usually applied automatically. However, this automatic masking may be
 bypassed by setting the *mask* keyword of the `cfdm.read` function to
 `False`. The mask, as defined in the dataset, may subsequently be
-applied manually with the `~Field.apply_masking` mthod of the field
+applied manually with the `~Field.apply_masking` method of the field
 construct.
    
 .. code-block:: python

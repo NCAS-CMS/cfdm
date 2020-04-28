@@ -170,7 +170,7 @@ class CellMethod(mixin.Container,
 #                if not cell_methods[0].endswith(':'):
 #                    break
 #
-#                # Check that "name" ebds with colon? How? ('lat: mean (area-weighted) or lat: mean (interval: 1 degree_north comment: area-weighted)')
+#                # Check that "name" ends with colon? How? ('lat: mean (area-weighted) or lat: mean (interval: 1 degree_north comment: area-weighted)')
 #
 #                axis = cell_methods.pop(0)[:-1]
 #

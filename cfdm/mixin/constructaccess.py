@@ -569,7 +569,7 @@ class ConstructAccess(object):
             return self._default(
                 default,
                 "1-d coordinate constructs selected with identity "
-                "{!r} have not been assigned a domain axis contructs".format(
+                "{!r} have not been assigned a domain axis constructs".format(
                     coord))                       
         
         if len(keys) > 1:

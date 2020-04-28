@@ -3390,7 +3390,7 @@ class NetCDFWrite(IOWrite):
             Specify data type conversions to be applied prior to writing
             data to disk. Arrays with data types which are not specified
             remain unchanged. By default, array data types are preserved
-            with the exception of booleans (``numpy.dtype(bool)``, which
+            with the exception of Booleans (``numpy.dtype(bool)``, which
             are converted to 32 bit integers.
     
             *Parameter example:*
@@ -3579,7 +3579,7 @@ class NetCDFWrite(IOWrite):
             g['file_descriptors'] = file_descriptors
     
         # ------------------------------------------------------------
-        # Set up data type conversions. By default, booleans are
+        # Set up data type conversions. By default, Booleans are
         # converted to 32-bit integers and python objects are
         # converted to 64-bit floats.
         # ------------------------------------------------------------

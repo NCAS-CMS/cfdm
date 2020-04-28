@@ -880,7 +880,7 @@ class CFDMImplementation(Implementation):
 
     
     def get_count(self, construct):
-        '''Return the measure property of a cell measure contruct.
+        '''Return the measure property of a cell measure construct.
     
     :Parameters:
     
@@ -937,7 +937,7 @@ class CFDMImplementation(Implementation):
 
     
     def get_measure(self, cell_measure):
-        '''Return the measure property of a cell measure contruct.
+        '''Return the measure property of a cell measure construct.
     
     :Parameters:
     

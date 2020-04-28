@@ -832,9 +832,9 @@ class Data(mixin.Container,
     
     @property
     def mask(self):
-        '''The boolean missing data mask of the data array.
+        '''The Boolean missing data mask of the data array.
 
-    The boolean mask has True where the data array has missing data
+    The Boolean mask has True where the data array has missing data
     and False otherwise.
         
     :Returns:
@@ -1386,7 +1386,7 @@ class Data(mixin.Container,
                 if getattr(getattr(index, 'dtype', None), 'kind', None) == 'b':
                     # E.g. index is [True, False, True] -> [0, 2]
                     #
-                    # Convert booleans to non-negative integers. We're
+                    # Convert Booleans to non-negative integers. We're
                     # assuming that anything with a dtype attribute also
                     # has a size attribute.
                     if index.size != size:

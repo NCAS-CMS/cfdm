@@ -834,7 +834,7 @@ class NetCDFRead(IORead):
                 self._parse_geometry(ncvar, geometry_ncvar,
                                      variable_attributes)
                 
-                # Do not attempt to create a field contruct from a
+                # Do not attempt to create a field construct from a
                 # geometry container variable
                 g['do_not_create_field'].add(geometry_ncvar)
         # --- End: if
@@ -2950,7 +2950,7 @@ class NetCDFRead(IORead):
     :Returns:
     
         `DimensionCoordinate` or `AuxiliaryCoordinate` or `DomainAncillary`
-            The new contruct.
+            The new construct.
     
         '''
         g = self.read_vars
