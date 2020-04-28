@@ -167,7 +167,7 @@ class FieldTest(unittest.TestCase):
 
         d = f.data.copy()
         g = f.copy()        
-        self.assertTrue(f.apply_masking(inplace=True) is None)
+        self.assertIsNone(f.apply_masking(inplace=True))
         self.assertTrue(f.equals(g, verbose=1))
 
         x = 0.11        
