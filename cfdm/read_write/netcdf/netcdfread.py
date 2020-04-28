@@ -1004,6 +1004,8 @@ class NetCDFRead(IORead):
         '''Issue a warning if a construct with data has valid_[min|max|range]
     properties.
 
+    .. versionadded:: 1.8.3
+
     :Parameters:
 
         field: `Field`
