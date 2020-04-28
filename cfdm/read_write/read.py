@@ -12,7 +12,7 @@ _implementation = implementation()
        
 
 def read(filename, external=None, extra=None, verbose=False,
-         warnings=False, warn_valid=True,
+         warnings=False, warn_valid=False,
          mask=True,_implementation=_implementation):
     '''Read field constructs from a dataset.
 
@@ -181,16 +181,15 @@ def read(filename, external=None, extra=None, verbose=False,
             .. versionadded:: 1.8.2
             
         warn_valid: `bool`, optional
-            If False then do not print a warning for the presence of
+            If True then print a warning for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
             on field contructs and metadata constructs that have
-            data. By default a warning is printed if any such a
-            construct has any of these properties.
+            data. By default no such warning is printed
 
             "Out-of-range" data values in the file, as defined by any
-            of these properties, are by default automatically masked.
-            See the *mask* parameter for turning off all automatic
-            masking.
+            of these properties, are by default automatically masked,
+            which may not be as intended. See the *mask* parameter for
+            turning off all automatic masking.
     
             .. versionadded:: 1.8.3
 

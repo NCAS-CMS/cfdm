@@ -390,7 +390,8 @@ class NetCDFRead(IORead):
 
     def read(self, filename, extra=None, default_version=None,
              external=None, extra_read_vars=None, _scan_only=False,
-             verbose=False, mask=True, warnings=True, warn_valid=True):
+             verbose=False, mask=True, warnings=True,
+             warn_valid=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
     location.
             
@@ -468,17 +469,18 @@ class NetCDFRead(IORead):
             .. versionadded:: 1.8.2
           
         warn_valid: `bool`, optional
-            If False then do not warn for the presence of
+            If True then print a warning for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
-            on field, coordinate or domain ancillary constructs. By
-            default a warning is printed if such construct has any of
-            these properties.
+            on field contructs and metadata constructs that have
+            data. By default no such warning is printed
 
-            See also the *mask* parameter, which can prevent automatic
-            masking based on these properties.
-
+            "Out-of-range" data values in the file, as defined by any
+            of these properties, are by default automatically masked,
+            which may not be as intended. See the *mask* parameter for
+            turning off all automatic masking.
+    
             .. versionadded:: 1.8.3
-          
+
     :Returns:
     
         `list`

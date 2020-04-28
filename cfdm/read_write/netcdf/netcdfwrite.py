@@ -2368,8 +2368,8 @@ class NetCDFWrite(IOWrite):
             valid_range = True
             valid_min, valid_max = attributes[prop]
 
-        message = ("WARNING: {!r} has some data values written to {} "
-                   "that are {} than the valid {} "
+        message = ("WARNING: {!r} has data values written to {} "
+                   "that are strictly {} than the valid {} "
                    "defined by the {} property: {}. "
                    "Set warn_valid=False to remove warning.")
                    
