@@ -168,6 +168,23 @@ def read(filename, external=None, extra=None, verbose=False,
             is incomplete due to structural non-compliance of the
             dataset. By default such warnings are not displayed.
             
+        warn_valid: `bool`, optional
+            If True then print a warning for the presence of
+            ``valid_min``, ``valid_max`` or ``valid_range`` properties
+            on field contructs and metadata constructs that have
+            data. By default no such warning is issued.
+
+            "Out-of-range" data values in the file, as defined by any
+            of these properties, are automatically masked by default,
+            which may not be as intended. See the *mask* parameter for
+            turning off all automatic masking.
+    
+            See
+            https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
+            for details.
+
+            .. versionadded:: 1.8.3
+
         mask: `bool`, optional
             If False then do not mask by convention when reading the
             data of field or metadata constructs from disk. By default
@@ -175,24 +192,15 @@ def read(filename, external=None, extra=None, verbose=False,
 
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
-            ``_FillValue``,``missing_value``,``valid_min``,
+            ``_FillValue``, ``missing_value``, ``valid_min``,
             ``valid_max`` and ``valid_range``.
     
+            See
+            https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
+            for details.
+
             .. versionadded:: 1.8.2
             
-        warn_valid: `bool`, optional
-            If True then print a warning for the presence of
-            ``valid_min``, ``valid_max`` or ``valid_range`` properties
-            on field contructs and metadata constructs that have
-            data. By default no such warning is printed
-
-            "Out-of-range" data values in the file, as defined by any
-            of these properties, are by default automatically masked,
-            which may not be as intended. See the *mask* parameter for
-            turning off all automatic masking.
-    
-            .. versionadded:: 1.8.3
-
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
