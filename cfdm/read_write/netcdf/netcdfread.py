@@ -980,31 +980,14 @@ class NetCDFRead(IORead):
             # Warn for the presence of 'valid_min', 'valid_max'or
             # 'valid_range' properties. (Introduced at v1.8.3.)
             # --------------------------------------------------------
-                       # Check field constructs
-            for index, f in enumerate(out):    
-                self._check_valid(f, index, f, 'field')
+            for f in out:    
+                # Check field constructs
+                self._check_valid(f, f)
 
-                # Check coordinate constructs
-                for c in self.implementation.get_coordinates(f).values():
-                    self._check_valid(f, index, c, 'coordinate')
-
-                # Check domain ancillary constructs
-                for c in (
-                        self.implementation.get_domain_ancillaries(f).values()
-                ):
-                    self._check_valid(f, index, c, 'domain ancillary')
- 
-                # Check field ancillary constructs
-                for c in (
-                        self.implementation.get_field_ancillaries(f).values()
-                ):
-                    self._check_valid(f, index, c, 'field ancillary')
- 
-                # Check cell measure constructs
-                for c in (
-                        self.implementation.get_cell_measures(f).values()
-                ):
-                    self._check_valid(f, index, c, 'cell measure')
+                # Check constructs with data
+                for c in self.implementation.get_constructs(
+                        f, data=True).values():
+                    self._check_valid(f, c)
         # --- End: if
 
         # ------------------------------------------------------------
@@ -1017,8 +1000,23 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         return out
 
-    def _check_valid(self, field, index, construct, construct_type):
-        '''TODO
+    def _check_valid(self, field, construct):
+        '''Issue a warning if a construct with data has valid_[min|max|range]
+    properties.
+
+    :Parameters:
+
+        field: `Field`
+            The parent field construct.
+
+        construct: Construct
+            The construct that may have valid_[min|max|range]
+            properties. May also be the parent field construct.
+
+    :Returns:
+
+        `None`
+
         '''
         x = sorted(self.read_vars['valid_properties'].intersection(
             self.implementation.get_properties(construct)))
@@ -1026,17 +1024,16 @@ class NetCDFRead(IORead):
             return
 
         # Still here?
-        if construct_type == 'field':
-            construct_type = ""
+        if self.implementation.is_field(construct):
+            construct = ""
         else:
-            construct_type = " {} construct".format(construct_type)
+            construct = " {!r} with".format(construct)
             
         print(
-            "WARNING: {!r} (index {}){} has {} {}. "
+            "WARNING: {!r} has{} {} {}. "
             "Set warn_valid=False to remove warning.".format(
                 field,
-                index,
-                construct_type,
+                construct,
                 ', '.join(x),
                 self._plural(x, 'property')))
 
