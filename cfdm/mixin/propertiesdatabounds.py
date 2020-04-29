@@ -516,7 +516,7 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         c = _inplace_enabled_define_and_cleanup(self)
-        super(PropertiesDataBounds, c).apply_masking(axes, inplace=True)
+        super(PropertiesDataBounds, c).apply_masking(inplace=True)
 
         data = c.get_bounds_data(None)
         if data is not None:
