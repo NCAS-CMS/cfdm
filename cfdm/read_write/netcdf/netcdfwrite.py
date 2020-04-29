@@ -3445,7 +3445,10 @@ class NetCDFWrite(IOWrite):
                         "Can't write to the same file that contains data that "
                         "needs to be read: {}".format(filename))
         # --- End: if
-        
+
+        if self.write_vars['overwrite']:
+            os.remove(filename)
+                
         try:        
             nc = netCDF4.Dataset(filename, mode, format=fmt)
         except RuntimeError as error:
@@ -3787,27 +3790,28 @@ class NetCDFWrite(IOWrite):
         # Scalar coordinate variables
         # ------------------------------------------------------------
         g['scalar'] = scalar
-            
+
+        g['overwrite'] = overwrite
+
         # ------------------------------------------------------------
         # Still here? Open the output netCDF file.
         # ------------------------------------------------------------
         filename = os.path.expanduser(os.path.expandvars(filename))
-        
         if os.path.isfile(filename):
             if not overwrite:
                 raise IOError(
                     "Can't write to an existing file unless "
                     "overwrite=True: {}".format(
                         os.path.abspath(filename)))
-                    
+
             if not os.access(filename, os.W_OK):
                 raise IOError(
                     "Can't overwrite an existing file without "
                     "permission: {}".format(
                         os.path.abspath(filename)))
-                
-            os.remove(filename)
-
+        else:
+            g['overwrite'] = False
+        
         # ------------------------------------------------------------
         # Open the netCDF file to be written
         # ------------------------------------------------------------

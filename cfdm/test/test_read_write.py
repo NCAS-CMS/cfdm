@@ -14,13 +14,14 @@ import cfdm
 
 warnings = False
 
-tmpfile  = tempfile.mktemp('.cfdm_test')
-tmpfileh  = tempfile.mktemp('.cfdm_test')
+tmpfile = tempfile.mktemp('.cfdm_test')
+tmpfileh = tempfile.mktemp('.cfdm_test')
 tmpfileh2 = tempfile.mktemp('.cfdm_test')
-tmpfilec  = tempfile.mktemp('.cfdm_test')
-tmpfile0  = tempfile.mktemp('.cfdm_test')
-tmpfile1  = tempfile.mktemp('.cfdm_test')
+tmpfilec = tempfile.mktemp('.cfdm_test')
+tmpfile0 = tempfile.mktemp('.cfdm_test')
+tmpfile1 = tempfile.mktemp('.cfdm_test')
 tmpfiles = [tmpfile, tmpfileh, tmpfilec, tmpfile0, tmpfile1]
+
 def _remove_tmpfiles():
     '''
     '''
@@ -29,7 +30,6 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
-
         
 atexit.register(_remove_tmpfiles)
 
@@ -44,12 +44,32 @@ class read_writeTest(unittest.TestCase):
     test_only = []
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_read_CDL']
-#    test_only = ['test_write_HDF_chunks']
+#    test_only = ['test_write_filename']
 #    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_read_field']
 #    test_only = ['test_read_mask']
 #    test_only = ['test_read_write_format']
     
+    def test_write_filename(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        tmpfile = tempfile.mktemp('.cfdm_test')
+        tmpfiles.append(tmpfile)
+        
+        tmpfile = 'delme.nc'
+
+        f = cfdm.example_field(0)
+        a = f.data.array
+
+        cfdm.write(f, tmpfile)
+        g = cfdm.read(tmpfile)
+
+        with self.assertRaises(Exception):
+            cfdm.write(g, tmpfile)
+            
+        self.assertTrue((a == g[0].data.array).all())
+            
     def test_read_field(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -60,10 +80,12 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(filename)
         self.assertTrue(len(f) == 1, '\n'+str(f))
 
-        f = cfdm.read(filename, extra=['dimension_coordinate'], warnings=warnings)
+        f = cfdm.read(filename, extra=['dimension_coordinate'],
+                      warnings=warnings)
         self.assertTrue(len(f) == 4, '\n'+str(f))
 
-        f = cfdm.read(filename, extra=['auxiliary_coordinate'], warnings=warnings)
+        f = cfdm.read(filename, extra=['auxiliary_coordinate'],
+                      warnings=warnings)
         self.assertTrue(len(f) == 4, '\n'+str(f))
         
         f = cfdm.read(filename, extra='cell_measure')
@@ -75,14 +97,23 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(filename, extra='domain_ancillary', warnings=warnings)
         self.assertTrue(len(f) == 4, '\n'+str(f))
         
-        f = cfdm.read(filename, extra=['field_ancillary', 'auxiliary_coordinate'],
+        f = cfdm.read(filename, extra=['field_ancillary',
+                                       'auxiliary_coordinate'],
                       warnings=warnings)
         self.assertTrue(len(f) == 7, '\n'+str(f))
         
-        self.assertTrue(len(cfdm.read(filename, extra=['domain_ancillary', 'auxiliary_coordinate'], warnings=warnings)) == 7)
-        self.assertTrue(len(cfdm.read(filename, extra=['domain_ancillary', 'cell_measure', 'auxiliary_coordinate'], warnings=warnings)) == 8)
+        self.assertTrue(len(cfdm.read(filename,
+                                      extra=['domain_ancillary',
+                                             'auxiliary_coordinate'],
+                                      warnings=warnings)) == 7)
+        self.assertTrue(len(cfdm.read(filename,
+                                      extra=['domain_ancillary',
+                                             'cell_measure',
+                                             'auxiliary_coordinate'],
+                                      warnings=warnings)) == 8)
 
-        f = cfdm.read(filename, extra=('field_ancillary', 'dimension_coordinate',
+        f = cfdm.read(filename, extra=('field_ancillary',
+                                       'dimension_coordinate',
                                        'cell_measure', 'auxiliary_coordinate',
                                        'domain_ancillary'), warnings=warnings)
         self.assertTrue(len(f) == 14, '\n'+str(f))
@@ -106,7 +137,6 @@ class read_writeTest(unittest.TestCase):
             self.assertTrue(f.equals(g, verbose=True),
                             'Bad read/write of format: {}'.format(fmt))
             
-
     def test_read_write_netCDF4_compress_shuffle(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -122,9 +152,9 @@ class read_writeTest(unittest.TestCase):
                     g = cfdm.read(tmpfile)[0]
                     self.assertTrue(
                         f.equals(g, verbose=True),
-                        'Bad read/write with lossless compression: {}, {}, {}'.format(fmt, compress, shuffle))
+                        "Bad read/write with lossless compression: "
+                        "{}, {}, {}".format(fmt, compress, shuffle))
         #--- End: for
-
 
     def test_read_write_missing_data(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -196,7 +226,6 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(g.data.dtype == numpy.dtype('float32'), 
                         'datatype read in is '+str(g.data.dtype))
 
-
     def test_read_write_unlimited(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -232,9 +261,11 @@ class read_writeTest(unittest.TestCase):
 
         subprocess.run(' '.join(['ncdump', self.filename, '>', tmpfile]),
                        shell=True, check=True)
-        subprocess.run(' '.join(['ncdump', '-h', self.filename, '>', tmpfileh]),
+        subprocess.run(
+            ' '.join(['ncdump', '-h', self.filename, '>', tmpfileh]),
                                 shell=True, check=True)
-        subprocess.run(' '.join(['ncdump', '-c', self.filename, '>', tmpfilec]),
+        subprocess.run(
+            ' '.join(['ncdump', '-c', self.filename, '>', tmpfilec]),
                        shell=True, check=True)
 
         f0 = cfdm.read(self.filename)[0]
@@ -244,8 +275,10 @@ class read_writeTest(unittest.TestCase):
 
         self.assertTrue(f0.equals(f, verbose=True))
 
-        self.assertTrue(f.construct('grid_latitude').equals(c.construct('grid_latitude'), verbose=True))
-        self.assertTrue(f0.construct('grid_latitude').equals(c.construct('grid_latitude'), verbose=True))
+        self.assertTrue(f.construct('grid_latitude').equals(
+            c.construct('grid_latitude'), verbose=True))
+        self.assertTrue(f0.construct('grid_latitude').equals
+                        (c.construct('grid_latitude'), verbose=True))
 
         with self.assertRaises(OSError):
             x = cfdm.read('test_read_write.py')
@@ -256,11 +289,12 @@ class read_writeTest(unittest.TestCase):
             r'"1 i\ // comment"',
             r'"1 i\ \t// comment"'
         ]:
-            # Note that really we just want to do an in-place sed ('sed -i')
-            # but because of subtle differences between the GNU (Linux OS) and
-            # BSD (some Mac OS) command variants a safe portable one-liner may
-            # not be possible. This will do, overwriting the intermediate file.
-            # The '-E' to mark as an extended regex is also for portability.
+            # Note that really we just want to do an in-place sed
+            # ('sed -i') but because of subtle differences between the
+            # GNU (Linux OS) and BSD (some Mac OS) command variants a
+            # safe portable one-liner may not be possible. This will
+            # do, overwriting the intermediate file.  The '-E' to mark
+            # as an extended regex is also for portability.
             subprocess.run(
                 ' '.join(['sed', '-E', '-e', regex, tmpfileh, '>' + tmpfileh2,
                           '&&', 'mv', tmpfileh2, tmpfileh]),
@@ -270,7 +304,6 @@ class read_writeTest(unittest.TestCase):
             h = cfdm.read(tmpfileh)[0]
 
 #        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)
-
             
     def test_read_write_string(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -286,7 +319,6 @@ class read_writeTest(unittest.TestCase):
                             "{!r} {!r}".format(f[i], f[j]))
             self.assertTrue(f[j].data.equals(f[i].data, verbose=1),
                             "{!r} {!r}".format(f[j], f[i]))
-
 
         for string0 in (True, False):
             for fmt0 in ('NETCDF4',
@@ -308,11 +340,11 @@ class read_writeTest(unittest.TestCase):
                         f1 = cfdm.read(self.string_filename)
                         cfdm.write(f0, tmpfile1, fmt=fmt1, string=string1)
     
-                        for i, j in zip(cfdm.read(tmpfile1), cfdm.read(tmpfile0)):
+                        for i, j in zip(cfdm.read(tmpfile1),
+                                        cfdm.read(tmpfile0)):
                             self.assertTrue(i.equals(j, verbose=1))
         #--- End: for
-        
-                
+                        
 #--- End: class
 
 if __name__ == "__main__":

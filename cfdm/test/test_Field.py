@@ -179,26 +179,35 @@ class FieldTest(unittest.TestCase):
 
         f = cfdm.example_field(0)
 
+        tmpfile = 'cfdm_test_Field_get_filenames.nc'
+        
         cfdm.write(f, tmpfile)
         g = cfdm.read(tmpfile)[0]
 
         abspath_tmpfile = os.path.abspath(tmpfile)
-        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]))
+        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]),
+                        g.get_filenames())
 
         g.data[...] = -99
-        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]))
+        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]),
+                        g.get_filenames())
 
         for c in g.constructs.filter_by_data().values():
             c.data[...] = -99
 
-        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]))
+        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]),
+                        g.get_filenames())
 
         for c in g.constructs.filter_by_data().values():
             if c.has_bounds():                
                 c.bounds.data[...] = -99
+        # --- End: for
 
-        self.assertTrue(g.get_filenames() == set())
+        self.assertTrue(g.get_filenames() == set(),
+                        g.get_filenames())
 
+        os.remove(tmpfile)
+        
     def test_Field_apply_masking(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
