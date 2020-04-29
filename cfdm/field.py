@@ -17,6 +17,8 @@ from .data import RaggedIndexedArray
 from .data import RaggedIndexedContiguousArray
 from .data import GatheredArray
 
+from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+
 
 class Field(mixin.NetCDFVariable,
             mixin.NetCDFGeometry,
@@ -547,6 +549,7 @@ class Field(mixin.NetCDFVariable,
 
         return out
 
+    @_inplace_enabled
     def compress(self, method,axes=None, count_properties=None,
                  index_properties=None, list_properties=None,
                  inplace=False):
@@ -843,15 +846,10 @@ class Field(mixin.NetCDFVariable,
                     data._set_CompressedArray(y, copy=False)                
         # --- End: def
 
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
 
         data = f.get_data(None)
         if data is None:
-            if inplace:
-                f = None
             return f
             
         current_compression_type = data.get_compression_type().replace(
@@ -859,8 +857,6 @@ class Field(mixin.NetCDFVariable,
         if (current_compression_type
             and current_compression_type == 'ragged_'+method):
             # The field is already compressed by the correct method
-            if inplace:
-                f = None
             return f
     
         if method == 'contiguous':
@@ -1042,8 +1038,6 @@ class Field(mixin.NetCDFVariable,
         
         f.data._set_CompressedArray(x, copy=False)
 
-        if inplace:
-            f = None
         return f
 
     def copy(self, data=True):
@@ -1364,7 +1358,8 @@ class Field(mixin.NetCDFVariable,
             out.update(c.get_filenames())
 
         return out
-    
+
+    @_inplace_enabled
     def insert_dimension(self, axis, position=0, inplace=False):
         '''Expand the shape of the data array.
 
@@ -1419,10 +1414,7 @@ class Field(mixin.NetCDFVariable,
     (19, 73, 1, 96)
 
         '''
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
             
         domain_axis = f.domain_axes.get(axis, None)
         if domain_axis is None:
@@ -1451,8 +1443,6 @@ class Field(mixin.NetCDFVariable,
         if data_axes is not None:
             f.set_data_axes(data_axes)
 
-        if inplace:
-            f = None
         return f
 
     def convert(self, key, full_domain=True):
@@ -1684,6 +1674,7 @@ class Field(mixin.NetCDFVariable,
             print('    },')
             print('}\n')
 
+    @_inplace_enabled
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
@@ -1733,10 +1724,7 @@ class Field(mixin.NetCDFVariable,
     (73, 96)
 
         '''
-        if inplace:            
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
             
         if axes is None:
             iaxes = [i for i, n in enumerate(f.data.shape) if n == 1]
@@ -1757,11 +1745,9 @@ class Field(mixin.NetCDFVariable,
         if data_axes is not None:
             f.set_data_axes(new_data_axes)
 
-        if inplace:
-            f = None
-
         return f
 
+    @_inplace_enabled
     def transpose(self, axes=None, constructs=False, inplace=False):
         '''Permute the axes of the data array.
 
@@ -1811,10 +1797,7 @@ class Field(mixin.NetCDFVariable,
     (96, 19, 73)
 
         '''
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
             
         try:
             iaxes = f.data._parse_axes(axes)
@@ -1863,11 +1846,9 @@ class Field(mixin.NetCDFVariable,
                 f.set_data_axes(axes=new_construct_axes, key=key)
         # --- End: if
 
-        if inplace:
-            f = None
-        
         return f
 
+    @_inplace_enabled
     def uncompress(self, inplace=False):
         '''Uncompress the construct.
 
@@ -1917,15 +1898,12 @@ class Field(mixin.NetCDFVariable,
     True
  
         '''
-        f = super().uncompress(inplace=inplace)
-        if inplace:
-            f = self
-           
+        f = _inplace_enabled_define_and_cleanup(self)
+        super(f.__class__, f).uncompress(inplace=True)
+
         for c in f.constructs.filter_by_data().values():
             c.uncompress(inplace=True)
 
-        if inplace:
-            f = None
         return f    
     
 # --- End: class

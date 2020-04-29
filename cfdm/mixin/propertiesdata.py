@@ -3,6 +3,8 @@ from builtins import (str, super)
 
 from . import Properties
 
+from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+
 
 class PropertiesData(Properties):
     '''Mixin class for a data array with descriptive properties.
@@ -275,6 +277,7 @@ class PropertiesData(Properties):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    @_inplace_enabled
     def apply_masking(self, inplace=False):
         '''Apply masking as defined by the CF conventions.
 
@@ -328,10 +331,7 @@ class PropertiesData(Properties):
                 TODO DCH
 
         '''             
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
+        v = _inplace_enabled_define_and_cleanup(self)
        
         data = v.get_data(None)
         if data is not None:
@@ -357,9 +357,7 @@ class PropertiesData(Properties):
                     "'valid_min' or 'valid_max' properties")
 
             data.apply_masking(**kwargs)
-                        
-        if inplace:
-            v = None            
+
         return v
     
     def dump(self, display=True, _key=None, _omit_properties=(),
@@ -607,7 +605,8 @@ class PropertiesData(Properties):
             return data.get_filenames()
 
         return set()
-    
+
+    @_inplace_enabled
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
 
@@ -649,19 +648,15 @@ class PropertiesData(Properties):
     (19, 73, 1, 96)
 
         '''       
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
+        v = _inplace_enabled_define_and_cleanup(self)
        
         data = v.get_data(None)
         if data is not None:
             data.insert_dimension(position, inplace=True)
 
-        if inplace:
-            v = None            
         return v
-    
+
+    @_inplace_enabled
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
@@ -709,19 +704,15 @@ class PropertiesData(Properties):
     (73, 96)
 
         '''
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
+        v = _inplace_enabled_define_and_cleanup(self)
 
         data = v.get_data(None)
         if data is not None:
             data.squeeze(axes, inplace=True)
 
-        if inplace:
-            v = None
         return v
 
+    @_inplace_enabled
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
@@ -761,20 +752,15 @@ class PropertiesData(Properties):
     (73, 19, 96)
 
         '''       
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
+        v = _inplace_enabled_define_and_cleanup(self)
  
         data = v.get_data(None)
         if data is not None:
             data.transpose(axes, inplace=True)
-        
-        if inplace:
-            v = None
 
         return v
-    
+
+    @_inplace_enabled
     def uncompress(self, inplace=False):
         '''Uncompress the construct.
 
@@ -821,17 +807,12 @@ class PropertiesData(Properties):
     True
 
         '''
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
             
         data = f.get_data(None)
         if data is not None:
             data.uncompress(inplace=True)
-            
-        if inplace:
-            f = None
+
         return f    
 
 # --- End: class

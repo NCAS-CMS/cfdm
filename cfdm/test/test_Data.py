@@ -125,7 +125,7 @@ class DataTest(unittest.TestCase):
         d[...] = cfdm.masked
         a = d.array
         self.assertTrue(a.shape == ())
-        self.assertTrue(a[()] is numpy.ma.masked)
+        self.assertIs(a[()], numpy.ma.masked)
 
     def test_Data_apply_masking(self):
         '''Check cf.Data.apply_masking'''
@@ -238,7 +238,7 @@ class DataTest(unittest.TestCase):
         d[...] = cfdm.masked
         a = d.array
         self.assertTrue(a.shape == ())
-        self.assertTrue(a[()] is numpy.ma.masked)
+        self.assertIs(a[()], numpy.ma.masked)
 
         # Non-scalar numeric array
         b = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
@@ -263,7 +263,7 @@ class DataTest(unittest.TestCase):
 
         d[0] = cfdm.masked
         dt = d.datetime_array
-        self.assertTrue(dt[0] is numpy.ma.masked)
+        self.assertIs(dt[0], numpy.ma.masked)
         self.assertTrue(dt[1] == datetime.datetime(2000, 12, 2,  0, 0))
         
         d = cfdm.Data(11292.5, units='days since 1970-1-1')
@@ -272,7 +272,7 @@ class DataTest(unittest.TestCase):
 
         d[()] = cfdm.masked
         dt = d.datetime_array
-        self.assertTrue(dt[()] is numpy.ma.masked)
+        self.assertIs(dt[()], numpy.ma.masked)
         
     def test_Data_flatten(self):
         '''Check cf.Data.flatten'''
@@ -285,7 +285,7 @@ class DataTest(unittest.TestCase):
 
         d = cfdm.Data(ma.copy())        
         self.assertTrue(d.equals(d.flatten([]), verbose=True))
-        self.assertTrue(d.flatten(inplace=True) is None)
+        self.assertIsNone(d.flatten(inplace=True))
         
         d = cfdm.Data(ma.copy())
         

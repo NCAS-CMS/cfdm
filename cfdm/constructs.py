@@ -489,7 +489,7 @@ class Constructs(core.Constructs):
 #        if not keys:
 #            return self._default(
 #                default,
-#                "1-d coordinate constructs selected with identity {!r} have not been assigned a domain axis contructs".format(
+#                "1-d coordinate constructs selected with identity {!r} have not been assigned a domain axis constructs".format(
 #                    coord))                       
 #        
 #        if len(keys) > 1:
@@ -505,7 +505,7 @@ class Constructs(core.Constructs):
 
     The identity is the first found of the following:
     
-    1. The canonical identity of a dimension coordinate contruct that
+    1. The canonical identity of a dimension coordinate construct that
        span the domain axis construct.
     2. The identity of a one-dimensional auxiliary coordinate
        construct that spans the domain axis construct. This will
@@ -968,14 +968,14 @@ class Constructs(core.Constructs):
             raise ValueError(
                 "mode parameter must be one of 'and', 'or', 'exact', subset'")
         
-        data_contructs = self.filter_by_data()
+        data_constructs = self.filter_by_data()
         constructs_data_axes = self.data_axes()
 
         axes = set(axes)
                     
         if not axes:            
             for cid in tuple(out):
-                if cid not in data_contructs:
+                if cid not in data_constructs:
                     out._pop(cid)
             # --- End: for
             
@@ -983,7 +983,7 @@ class Constructs(core.Constructs):
         
         # Still here?
         for cid in tuple(out):
-            if cid not in data_contructs:
+            if cid not in data_constructs:
                 out._pop(cid)
                 continue
                 
@@ -1424,7 +1424,7 @@ class Constructs(core.Constructs):
         return out
 
     def filter_by_naxes(self, *naxes):
-        '''Select metadata constructs by the number of domain axis contructs
+        '''Select metadata constructs by the number of domain axis constructs
     spanned by their data.
     
     .. versionadded:: 1.7.0
@@ -1473,11 +1473,11 @@ class Constructs(core.Constructs):
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_naxes': naxes},)
             
-        data_contructs = self.filter_by_data()
+        data_constructs = self.filter_by_data()
         constructs_data_axes = self.data_axes()
         
         for key in tuple(out):
-            if key not in data_contructs:
+            if key not in data_constructs:
                 out._pop(key)
                 continue
 

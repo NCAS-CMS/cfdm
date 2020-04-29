@@ -47,12 +47,12 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         x.positive = 'up'
         self.assertTrue(x.positive == 'up')
         del x.positive
-        self.assertTrue(getattr(x, 'positive', None) is None)
+        self.assertIsNone(getattr(x, 'positive', None))
 
         x.axis = 'Z'
         self.assertTrue(x.axis == 'Z')
         del x.axis
-        self.assertTrue(getattr(x, 'axis', None) is None)
+        self.assertIsNone(getattr(x, 'axis', None))
 
         d = f.dimension_coordinates('grid_longitude').value()
         x = cfdm.AuxiliaryCoordinate(source=d)

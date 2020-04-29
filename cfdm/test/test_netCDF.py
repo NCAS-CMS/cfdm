@@ -39,8 +39,8 @@ class NetCDFTest(unittest.TestCase):
         self.assertTrue(f.nc_get_variable(default=None) == 'qwerty')
         self.assertTrue(f.nc_del_variable() == 'qwerty')
         self.assertFalse(f.nc_has_variable())
-        self.assertTrue(f.nc_get_variable(default=None) is None)
-        self.assertTrue(f.nc_del_variable(default=None) is None)
+        self.assertIsNone(f.nc_get_variable(default=None))
+        self.assertIsNone(f.nc_del_variable(default=None))
 
         d = cfdm.DomainAxis()
         
@@ -50,8 +50,8 @@ class NetCDFTest(unittest.TestCase):
         self.assertTrue(d.nc_get_dimension(default=None) == 'qwerty')
         self.assertTrue(d.nc_del_dimension() == 'qwerty')
         self.assertFalse(d.nc_has_dimension())
-        self.assertTrue(d.nc_get_dimension(default=None) is None)
-        self.assertTrue(d.nc_del_dimension(default=None) is None)
+        self.assertIsNone(d.nc_get_dimension(default=None))
+        self.assertIsNone(d.nc_del_dimension(default=None))
 
         d = cfdm.Count()
         
@@ -61,8 +61,8 @@ class NetCDFTest(unittest.TestCase):
         self.assertTrue(d.nc_get_sample_dimension(default=None) == 'qwerty')
         self.assertTrue(d.nc_del_sample_dimension() == 'qwerty')
         self.assertFalse(d.nc_has_sample_dimension())
-        self.assertTrue(d.nc_get_sample_dimension(default=None) is None)
-        self.assertTrue(d.nc_del_sample_dimension(default=None) is None)
+        self.assertIsNone(d.nc_get_sample_dimension(default=None))
+        self.assertIsNone(d.nc_del_sample_dimension(default=None))
        
         # ------------------------------------------------------------
         # Global attributes

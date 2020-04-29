@@ -12,6 +12,8 @@ from .. import mixin
 from ..constants import masked as cfdm_masked
 from ..functions import abspath
 
+from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+
 from . import abstract
 from . import NumpyArray
 
@@ -831,9 +833,9 @@ class Data(mixin.Container,
     
     @property
     def mask(self):
-        '''The boolean missing data mask of the data array.
+        '''The Boolean missing data mask of the data array.
 
-    The boolean mask has True where the data array has missing data
+    The Boolean mask has True where the data array has missing data
     and False otherwise.
         
     :Returns:
@@ -904,6 +906,7 @@ class Data(mixin.Container,
 
         return masked
 
+    @_inplace_enabled
     def apply_masking(self, fill_values=None, valid_min=None,
                       valid_max=None, valid_range=None, inplace=False):
         '''Apply masking.
@@ -1040,11 +1043,8 @@ class Data(mixin.Container,
                     "two elements")
             
             valid_min, valid_max = valid_range
-            
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+
+        d = _inplace_enabled_define_and_cleanup(self)
 
         if fill_values is None:
             fill_values = False
@@ -1102,8 +1102,6 @@ class Data(mixin.Container,
             array = numpy.ma.where(mask, cfdm_masked, array)
             d._set_Array(array, copy=False)
 
-        if inplace:
-            d = None
         return d
 
     def copy(self, array=True):
@@ -1128,7 +1126,8 @@ class Data(mixin.Container,
 
         '''
         return super().copy(array=array)
-    
+
+    @_inplace_enabled
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
 
@@ -1175,10 +1174,7 @@ class Data(mixin.Container,
     (19, 73, 1, 96)
 
         '''
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
             
         # Parse position
         ndim = d.ndim 
@@ -1196,8 +1192,6 @@ class Data(mixin.Container,
         # Delete hdf5 chunksizes
         d.nc_clear_hdf5_chunksizes()
 
-        if inplace:
-            d = None
         return d
 
     def get_count(self, default=ValueError()):
@@ -1393,7 +1387,7 @@ class Data(mixin.Container,
                 if getattr(getattr(index, 'dtype', None), 'kind', None) == 'b':
                     # E.g. index is [True, False, True] -> [0, 2]
                     #
-                    # Convert booleans to non-negative integers. We're
+                    # Convert Booleans to non-negative integers. We're
                     # assuming that anything with a dtype attribute also
                     # has a size attribute.
                     if index.size != size:
@@ -1542,6 +1536,7 @@ class Data(mixin.Container,
 #
 #        '''
 
+    @_inplace_enabled
     def squeeze(self, axes=None, inplace=False):
         '''Remove size 1 axes from the data.
 
@@ -1593,10 +1588,7 @@ class Data(mixin.Container,
     (1, 73, 96)
 
         '''
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
             
         if not d.ndim:
             if axes:
@@ -1604,10 +1596,6 @@ class Data(mixin.Container,
                     "Can't squeeze data: axes {} can not be used for "
                     "data with shape {}".format(
                         axes, d.shape))
-
-            if inplace:
-                return
-            
             return d
 
         shape = d.shape
@@ -1630,9 +1618,6 @@ class Data(mixin.Container,
         # --- End: if
 
         if not axes:
-            if inplace:
-                return
-            
             return d
 
         array = self.array
@@ -1643,8 +1628,6 @@ class Data(mixin.Container,
         # Delete hdf5 chunksizes
         d.nc_clear_hdf5_chunksizes()
 
-        if inplace:
-            d = None        
         return d
 
     def sum(self, axes=None):
@@ -1684,6 +1667,7 @@ class Data(mixin.Container,
         
         return d
 
+    @_inplace_enabled
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
@@ -1727,10 +1711,7 @@ class Data(mixin.Container,
     (96, 19, 73)
 
         '''
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
             
         ndim = d.ndim    
         
@@ -1742,9 +1723,6 @@ class Data(mixin.Container,
         
         if axes is None:
             if ndim <= 1:
-                if inplace:
-                    return
-
                 return d
             
             axes = tuple(range(ndim-1, -1, -1))
@@ -1755,9 +1733,6 @@ class Data(mixin.Container,
 
         # Return unchanged if axes are in the same order as the data
         if axes == tuple(range(ndim)):            
-            if inplace:
-                return
-
             return d
             
         array = self.array
@@ -1765,8 +1740,6 @@ class Data(mixin.Container,
 
         d._set_Array(array, copy=False)
 
-        if inplace:
-            d = None
         return d
 
     def get_compressed_axes(self):
@@ -2126,6 +2099,7 @@ class Data(mixin.Container,
         '''
         return self._item((slice(0, 1),)*self.ndim)
 
+    @_inplace_enabled
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
 
@@ -2215,10 +2189,7 @@ class Data(mixin.Container,
       [15 19 23]]]
 
         '''
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
             
         ndim = self.ndim
         if not ndim:
@@ -2227,9 +2198,6 @@ class Data(mixin.Container,
                     "Can't flatten: "
                     "Can't remove an axis from scalar {}".format(
                         self.__class__.__name__))
-            
-            if inplace:
-                d = None
             return d
 
         shape = list(d.shape)
@@ -2243,8 +2211,6 @@ class Data(mixin.Container,
 
         n_axes = len(axes)
         if n_axes <= 1:
-            if inplace:
-                d = None
             return d
 
         order = [i for i in range(ndim) if i not in axes]
@@ -2263,8 +2229,7 @@ class Data(mixin.Container,
             
         if inplace:
             d.__dict__ = out.__dict__
-            out = None
-                  
+
         return out
     
     def last_element(self):
@@ -2423,6 +2388,7 @@ class Data(mixin.Container,
 #
 #        return underlying_array        
 
+    @_inplace_enabled
     def uncompress(self, inplace=False):
         '''Uncompress the underlying array.
 
@@ -2456,16 +2422,11 @@ class Data(mixin.Container,
     <NumpyArray(4, 9): >
 
         '''
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
     
         if d.get_compression_type():
             d._set_Array(d.array, copy=False)
 
-        if inplace:
-            d = None
         return d
 
     def unique(self):

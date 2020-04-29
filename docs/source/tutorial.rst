@@ -858,7 +858,7 @@ have the same relative order as the field construct:
 
 .. code-block:: python
    :caption: *Also permute the data dimension of metadata constructs
-             using the 'contructs' keyword.*
+             using the 'constructs' keyword.*
 
    >>> t4 = t.transpose([0, 2, 1], constructs=True)
 
@@ -877,7 +877,7 @@ the original field construct.
 
 
 .. code-block:: python
-   :caption: *Inspect the data mask of a field constuct.*
+   :caption: *Inspect the data mask of a field construct.*
 
    >>> print(q)
    Field: specific_humidity (ncvar%q)
