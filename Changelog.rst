@@ -13,8 +13,8 @@ version 1.8.3
 * New keyword parameter to `cfdm.write`: ``warn_valid``
   (https://github.com/NCAS-CMS/cfdm/issues/30)
   
-*version 1.8.2
---------------
+version 1.8.2
+-------------
 ----
 
 **2020-04-24**
