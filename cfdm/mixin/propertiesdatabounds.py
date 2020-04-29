@@ -2,7 +2,7 @@ from __future__ import print_function
 from builtins import (range, super)
 
 from functools import reduce
-from operator  import mul    
+from operator import mul    
 
 from . import PropertiesData
 
@@ -174,7 +174,6 @@ class PropertiesDataBounds(PropertiesData):
         if interior_ring is not None: 
             new.set_interior_ring(interior_ring[indices], copy=False) 
             
-
         # Subspace the bounds, if there are any. 
         self_bounds = self.get_bounds(None) 
         if self_bounds is not None: 
@@ -351,9 +350,9 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is not None:
             ndim = bounds.ndim
             if self.has_geometry():
-               ndim -= 2
+                ndim -= 2
             else:
-               ndim -= 1
+                ndim -= 1
 
             return ndim
         
@@ -499,7 +498,7 @@ class PropertiesDataBounds(PropertiesData):
 
     .. versionadded:: 1.8.2
 
-    .. seealso:: `Data.apply_masking`
+    .. seealso:: `Data.apply_masking`, `read`, `write`
                
     :Parameters:
 
@@ -667,7 +666,7 @@ class PropertiesDataBounds(PropertiesData):
         bounds = self.get_bounds(None)
         if bounds is not None:
             string.append(bounds.dump(display=False, _key=_key,
-                                      _prefix=_prefix+'Bounds:',
+                                      _prefix=_prefix + 'Bounds:',
                                       _create_title=False,
                                       _level=_level, _axes=_axes,
                                       _axis_names=_axis_names))
@@ -677,11 +676,12 @@ class PropertiesDataBounds(PropertiesData):
         # ------------------------------------------------------------
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            string.append(interior_ring.dump(display=False, _key=_key,
-                                             _prefix=_prefix+'Interior Ring:',
-                                             _create_title=False,
-                                             _level=_level, _axes=_axes,
-                                             _axis_names=_axis_names))
+            string.append(interior_ring.dump(
+                display=False, _key=_key,
+                _prefix=_prefix + 'Interior Ring:',
+                _create_title=False,
+                _level=_level, _axes=_axes,
+                _axis_names=_axis_names))
             
         string = '\n'.join(string)
         
@@ -837,7 +837,7 @@ class PropertiesDataBounds(PropertiesData):
                                 ignore_compression=ignore_compression):
                 if verbose:
                     print("{0}: Different bounds".format(
-                        self.__class__.__name__)) # pragma: no cover
+                        self.__class__.__name__))  # pragma: no cover
                     
                 return False
         # --- End: if
@@ -849,7 +849,7 @@ class PropertiesDataBounds(PropertiesData):
         if self_has_interior_ring != other.has_interior_ring():
             if verbose:
                 print("{0}: Different interior ring".format(
-                    self.__class__.__name__)) # pragma: no cover
+                    self.__class__.__name__))  # pragma: no cover
                 
             return False
                 
@@ -864,13 +864,34 @@ class PropertiesDataBounds(PropertiesData):
                                 ignore_compression=ignore_compression):
                 if verbose:
                     print("{0}: Different interior ring".format(
-                        self.__class__.__name__)) # pragma: no cover
+                        self.__class__.__name__))  # pragma: no cover
                     
                 return False
         # --- End: if
 
         return True
 
+    def get_filenames(self):
+        '''Return the name of the file or files containing the data.
+
+    The names of the file or files containing the bounds data are also
+    returned.
+    
+    :Returns:
+    
+        `set`
+            The file names in normalized, absolute form. If all of the
+            data are in memory then an empty `set` is returned.
+
+        '''
+        out = super().get_filenames()
+        
+        data = self.get_bounds_data(None)
+        if data is not None:            
+            out.update(data.get_filenames())
+
+        return out
+    
     def get_node_count(self, default=ValueError()):
         '''Return the node count variable for geometry bounds.
 
@@ -906,9 +927,10 @@ class PropertiesDataBounds(PropertiesData):
         try:
             return self._get_component('node_count')
         except ValueError:
-            return self._default(default,
-                    "{!r} has no node count variable".format(
-                        self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no node count variable".format(
+                    self.__class__.__name__))
 
     def get_part_node_count(self, default=ValueError()):
         '''Return the part node count variable for geometry bounds.
@@ -946,9 +968,10 @@ class PropertiesDataBounds(PropertiesData):
         try:
             return self._get_component('part_node_count')
         except ValueError:
-            return self._default(default,
-                    "{!r} has no part node count variable".format(
-                        self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no part node count variable".format(
+                    self.__class__.__name__))
 
     def has_node_count(self):
         '''Whether or not there is a node count variable for geometry bounds..
@@ -1272,7 +1295,7 @@ class PropertiesDataBounds(PropertiesData):
 
         # Parse position
         ndim = c.ndim        
-        if -ndim-1 <= position < 0:
+        if -ndim - 1 <= position < 0:
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
@@ -1489,7 +1512,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         ndim = self.ndim 
         if axes is None: 
-            axes = list(range(ndim-1, -1, -1)) 
+            axes = list(range(ndim - 1, -1, -1)) 
         else: 
             axes = self._parse_axes(axes) 
 
@@ -1510,14 +1533,16 @@ class PropertiesDataBounds(PropertiesData):
             bounds.transpose(b_axes, inplace=True) 
 
             data = bounds.get_data(None)
-            if data is not None:
-                if (ndim == 2 and data.ndim == 3 and data.shape[-1] == 4 and 
-                    b_axes[0:2] == [1, 0]):
-                    # Swap elements 1 and 3 of the trailing dimension so 
-                    # that the values are still contiguous (if they ever 
-                    # were). See section 7.1 of the CF conventions. 
-                    data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)]
-                    bounds.set_data(data, copy=False) 
+            if (data is not None
+                and ndim == 2
+                and data.ndim == 3
+                and data.shape[-1] == 4
+                and b_axes[0:2] == [1, 0]):
+                # Swap elements 1 and 3 of the trailing dimension so
+                # that the values are still contiguous (if they ever
+                # were). See section 7.1 of the CF conventions.
+                data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)]
+                bounds.set_data(data, copy=False) 
         # --- End: if 
  
         # ------------------------------------------------------------ 

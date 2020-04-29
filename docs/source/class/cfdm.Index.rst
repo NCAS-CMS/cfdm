@@ -81,6 +81,7 @@ Miscellaneous
 
    ~cfdm.Index.copy
    ~cfdm.Index.equals
+   ~cfdm.Index.get_filenames
 
 NetCDF
 ------

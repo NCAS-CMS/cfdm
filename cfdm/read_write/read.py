@@ -12,7 +12,8 @@ _implementation = implementation()
        
 
 def read(filename, external=None, extra=None, verbose=False,
-         warnings=False, mask=True, _implementation=_implementation):
+         warnings=False, warn_valid=False, mask=True,
+         _implementation=_implementation):
     '''Read field constructs from a dataset.
 
     The dataset may be a netCDF file on disk or on an OPeNDAP server,
@@ -167,44 +168,65 @@ def read(filename, external=None, extra=None, verbose=False,
             is incomplete due to structural non-compliance of the
             dataset. By default such warnings are not displayed.
             
+        warn_valid: `bool`, optional
+            If True then print a warning for the presence of
+            ``valid_min``, ``valid_max`` or ``valid_range`` properties
+            on field contructs and metadata constructs that have
+            data. By default no such warning is issued.
+
+            "Out-of-range" data values in the file, as defined by any
+            of these properties, are automatically masked by default,
+            which may not be as intended. See the *mask* parameter for
+            turning off all automatic masking.
+    
+            See
+            https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
+            for details.
+
+            .. versionadded:: 1.8.3
+
         mask: `bool`, optional
-            If False then do not mask by convention when reading data
-            from disk. By default data is masked by convention.
-           
+            If False then do not mask by convention when reading the
+            data of field or metadata constructs from disk. By default
+            data is masked by convention.
+
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
-            ``_FillValue`` and ``missing_value``,``valid_min``,
-            ``valid_max``, ``valid_range``. See the CF conventions for
-            details.
+            ``_FillValue``, ``missing_value``, ``valid_min``,
+            ``valid_max`` and ``valid_range``.
     
+            See
+            https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
+            for details.
+
             .. versionadded:: 1.8.2
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
-    
+
     :Returns:
-        
+
         `list`
             The field constructs found in the dataset. The list may be
             empty.
-    
+
     **Examples:**
-    
+
     >>> x = cfdm.read('file.nc')
     >>> print(type(x))
     <type 'list'>
-    
+
     Read a file and create field constructs from CF-netCDF data
     variables as well as from the netCDF variables that correspond to
     particular types metadata constructs:
-    
+
     >>> f = cfdm.read('file.nc', extra='domain_ancillary')
-    >>> g = cfdm.read('file.nc', extra=['dimension_coordinate', 
+    >>> g = cfdm.read('file.nc', extra=['dimension_coordinate',
     ...                                 'auxiliary_coordinate'])
-    
+
     Read a file that contains external variables:
-    
+
     >>> h = cfdm.read('parent.nc')
     >>> i = cfdm.read('parent.nc', external='external.nc')
     >>> j = cfdm.read('parent.nc', external=['external1.nc', 'external2.nc'])
@@ -217,7 +239,7 @@ def read(filename, external=None, extra=None, verbose=False,
         extra = (extra,)
 
     filename = os.path.expanduser(os.path.expandvars(filename))
-    
+
     if os.path.isdir(filename):
         raise IOError("Can't read directory {}".format(filename))
 
@@ -233,7 +255,7 @@ def read(filename, external=None, extra=None, verbose=False,
 
     # Read the file into fields.
     cdl = False
-    if netcdf.is_cdl_file(filename):        
+    if netcdf.is_cdl_file(filename):
         # Create a temporary netCDF file from input CDL
         cdl = True
         cdl_filename = filename
@@ -242,7 +264,8 @@ def read(filename, external=None, extra=None, verbose=False,
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
-                             mask=mask, extra_read_vars=None)
+                             warn_valid=warn_valid, mask=mask,
+                             extra_read_vars=None)
     elif cdl:
         raise IOError(
             "Can't determine format of file {} "

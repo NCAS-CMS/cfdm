@@ -81,6 +81,7 @@ Miscellaneous
 
    ~cfdm.Count.copy
    ~cfdm.Count.equals
+   ~cfdm.Count.get_filenames
 
 NetCDF
 ------

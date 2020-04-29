@@ -333,7 +333,6 @@ class CFDMImplementation(Implementation):
        '''
        return field.cell_measures
 
-
     def get_cell_methods(self, field):
         '''TODO
         '''
@@ -428,7 +427,7 @@ class CFDMImplementation(Implementation):
         '''
         return field.constructs.data_axes()[key]
     
-    def get_constructs(self, field, axes=[]):
+    def get_constructs(self, field, axes=[], data=False):
         '''Return constructs that span particular axes.
 
     If no axes are specified then all constructs are returned.
@@ -440,11 +439,17 @@ class CFDMImplementation(Implementation):
     
         axes: sequence of `str`
     
+        data: `bool`
+            If True then only return constructs that can contain data.
+
     :Returns:
     
         `dict`
 
         '''
+        if data:
+            return dict(field.constructs.filter_by_data())
+        
         return dict(field.constructs.filter_by_axis('and', *axes))
     
     def get_coordinate_reference_coordinates(self, coordinate_reference):
@@ -846,7 +851,12 @@ class CFDMImplementation(Implementation):
 
         '''
         return field.get_data_axes()
-         
+
+    def get_filenames(self, parent):
+        '''TODO
+'''
+        return parent.get_filenames()
+
     def get_data_max(self, parent):
         '''Use `get_data_maximum` instead (since cfdm version 1.8.0).
         
@@ -1053,7 +1063,6 @@ class CFDMImplementation(Implementation):
         '''
         return parent.properties()
 
-
     def get_property(self, construct, prop, default=None):
        '''TODO
 
@@ -1102,13 +1111,11 @@ class CFDMImplementation(Implementation):
         '''
         return parent.get_data(default=default)
 
-
     def initialise_AuxiliaryCoordinate(self):
         '''TODO
         '''
         cls = self.get_class('AuxiliaryCoordinate')
         return cls()
-
 
     def initialise_Bounds(self):
         '''TODO
@@ -1116,13 +1123,11 @@ class CFDMImplementation(Implementation):
         cls = self.get_class('Bounds')
         return cls()
 
-
     def initialise_CellMeasure(self, measure=None):
         '''TODO
         '''
         cls = self.get_class('CellMeasure')
         return cls(measure=measure)
-
 
     def initialise_CellMethod(self, axes=None, method=None,
                               qualifiers=None):
@@ -1130,7 +1135,6 @@ class CFDMImplementation(Implementation):
         '''
         cls = self.get_class('CellMethod')
         return cls(axes=axes, method=method, qualifiers=qualifiers)
-
 
     def initialise_CoordinateConversion(self, 
                                         domain_ancillaries=None,
@@ -1141,13 +1145,11 @@ class CFDMImplementation(Implementation):
         return cls(domain_ancillaries=domain_ancillaries,
                    parameters=parameters)
 
-
     def initialise_CoordinateReference(self):
         '''TODO
         '''
         cls = self.get_class('CoordinateReference')
         return cls()
-
  
     def initialise_Count(self):
         '''TODO
@@ -1155,7 +1157,6 @@ class CFDMImplementation(Implementation):
         '''
         cls = self.get_class('Count')
         return cls()
-
 
     def initialise_Data(self, array=None, units=None, calendar=None,
                         copy=True, **kwargs):
@@ -1184,13 +1185,11 @@ class CFDMImplementation(Implementation):
         return cls(array=array, units=units, calendar=calendar,
                    copy=copy, **kwargs)
 
-
     def initialise_Datum(self, parameters=None):
         '''TODO
         '''
         cls = self.get_class('Datum')
         return cls(parameters=parameters)
-
 
     def initialise_DimensionCoordinate(self, properties=None,
                                        data=None, bounds=None,
@@ -1201,7 +1200,6 @@ class CFDMImplementation(Implementation):
         return cls(properties=properties, data=data, bounds=bounds,
                    interior_ring=interior_ring, copy=copy)
 
-
     def initialise_DimensionCoordinate_from_AuxiliaryCoordinate(            
             self,
             auxiliary_coordinate=None,
@@ -1211,13 +1209,11 @@ class CFDMImplementation(Implementation):
         cls = self.get_class('DimensionCoordinate')
         return cls(source=auxiliary_coordinate, copy=copy)
 
-
     def initialise_DomainAncillary(self):
         '''TODO
         '''
         cls = self.get_class('DomainAncillary')
         return cls()
-
 
     def initialise_DomainAxis(self, size=None):
         '''TODO
@@ -1225,20 +1221,17 @@ class CFDMImplementation(Implementation):
         cls = self.get_class('DomainAxis')
         return cls(size=size)
 
-
     def initialise_Field(self):
         '''TODO
         '''
         cls = self.get_class('Field')
         return cls()
 
-
     def initialise_FieldAncillary(self):
         '''TODO
         '''
         cls = self.get_class('FieldAncillary')
         return cls()
-
 
     def initialise_GatheredArray(self, compressed_array=None,
                                  ndim=None, shape=None, size=None,
@@ -1253,14 +1246,12 @@ class CFDMImplementation(Implementation):
                    compressed_dimension=compressed_dimension,
                    list_variable=list_variable)
 
-
     def initialise_Index(self):
         '''TODO
 
         '''
         cls = self.get_class('Index')
         return cls()
-
 
     def initialise_InteriorRing(self):
         '''TODO
@@ -1269,14 +1260,12 @@ class CFDMImplementation(Implementation):
         cls = self.get_class('InteriorRing')
         return cls()
 
-
     def initialise_List(self):
         '''TODO
 
         '''
         cls = self.get_class('List')
         return cls()
-
 
     def initialise_NetCDFArray(self, filename=None, ncvar=None,
                                dtype=None, ndim=None, shape=None,
@@ -1353,6 +1342,20 @@ class CFDMImplementation(Implementation):
         '''
         return bool(coordinate.get_geometry(None) == 'climatology')
 
+    def is_field(self, construct):
+        '''Return True if the construct is a field construct
+
+    :Parameters:
+
+        construct: Construct
+    
+    :Returns:
+    
+        `bool`
+
+        '''
+        return getattr(construct, 'construct_type', None) == 'field'
+
     def is_geometry(self, coordinate):
         '''Return True if the coordinate bounds are geometries.
 
@@ -1369,7 +1372,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return bool(coordinate.get_geometry(None) in ('point', 'line', 'polygon'))
-
 
     def is_masked(self, data):
         '''Whether or not the data has any masked values.
@@ -1422,7 +1424,6 @@ class CFDMImplementation(Implementation):
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
 
-
     def set_bounds(self, construct, bounds, copy=True):
         '''TODO
 
@@ -1434,7 +1435,6 @@ class CFDMImplementation(Implementation):
 
         '''
         construct.set_bounds(bounds, copy=copy)
-
 
     def set_cell_measure(self, field, construct, axes, copy=True):
         '''Insert a cell_measure object into a field.

@@ -1,7 +1,6 @@
 from __future__ import print_function
 from builtins import (str, super)
 
-from . import Container
 from . import Properties
 
 from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
@@ -52,7 +51,7 @@ class PropertiesData(Properties):
     (1, 10, 1)
 
         '''
-        new = self.copy() #data=False)
+        new = self.copy()  # data=False)
         
         data = self.get_data(None)
         if data is not None:
@@ -85,7 +84,7 @@ class PropertiesData(Properties):
             isreftime = 'since' in units
             
         if isreftime:
-            units += ' '+self.get_property('calendar', '')
+            units += ' ' + self.get_property('calendar', '')
             
         return '{0}{1} {2}'.format(self.identity(''), dims, units)
 
@@ -315,7 +314,7 @@ class PropertiesData(Properties):
 
     .. versionadded:: 1.8.2
 
-    .. seealso:: `Data.apply_masking`
+    .. seealso:: `Data.apply_masking`, `read`, `write`
                
     :Parameters:
 
@@ -394,8 +393,7 @@ class PropertiesData(Properties):
         else:
             string = []
             
-        indent0 = '    ' * _level
-        indent1 = '    ' * (_level+1)
+        indent1 = '    ' * (_level + 1)
 
         # ------------------------------------------------------------
         # Data
@@ -540,12 +538,13 @@ class PropertiesData(Properties):
                 print("{0}: Only one external variable)".format(
                     self.__class__.__name__))
             return False
-        elif external0:
+        
+        if external0:
             # Both variables are external
             if self.nc_get_variable(None) != other.nc_get_variable(None):
                 if verbose:
                     print(
-                        "{0}: External variable have different "
+                        "{}: External variable have different "
                         "netCDF variable names: {} != {})".format(
                             self.__class__.__name__,
                             self.nc_get_variable(None),
@@ -590,6 +589,22 @@ class PropertiesData(Properties):
         # --- End: if
 
         return True
+
+    def get_filenames(self):
+        '''Return the name of the file or files containing the data.
+    
+    :Returns:
+    
+        `set`
+            The file names in normalized, absolute form. If the data
+            are in memory then an empty `set` is returned.
+
+        '''
+        data = self.get_data(None)
+        if data is not None:            
+            return data.get_filenames()
+
+        return set()
 
     @_inplace_enabled
     def insert_dimension(self, position=0, inplace=False):

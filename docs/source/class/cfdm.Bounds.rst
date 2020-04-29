@@ -84,6 +84,7 @@ Miscellaneous
    ~cfdm.Bounds.copy
    ~cfdm.Bounds.equals
    ~cfdm.Bounds.uncompress
+   ~cfdm.Bounds.get_filenames
 
 NetCDF
 ------

@@ -9,7 +9,8 @@ import netCDF4
 from .. import core
 from .. import mixin
 
-from ..constants  import masked as cfdm_masked
+from ..constants import masked as cfdm_masked
+from ..functions import abspath
 
 from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 
@@ -2030,6 +2031,39 @@ class Data(mixin.Container,
         # ------------------------------------------------------------
         return True            
 
+    def get_filenames(self):
+        '''Return the name of the file containing the data array.
+    
+    :Returns:
+    
+        `set`
+            The file name in normalized, absolute form. If the data is
+            are memory then an empty `set` is returned.
+
+    **Examples:**
+    
+    >>> f = cfdm.example_field(0)
+    >>> cfdm.write(f, 'temp_file.nc')
+    >>> g = cfdm.read('temp_file.nc')[0]
+    >>> d = g.data
+    >>> d.get_filenames()
+    {'/data/user/temp_file.nc'}
+    >>> d[...] = -99
+    >>> d.get_filenames()
+    set()
+
+        '''
+        source = self.source(None)
+        if source is None:
+            return set()
+
+        try:
+            filename = source.get_filename()
+        except AttributeError:
+            return set()
+        else:
+            return set((abspath(filename),))
+            
     def first_element(self):
         '''Return the first element of the data as a scalar.
 

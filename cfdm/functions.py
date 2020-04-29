@@ -6,6 +6,7 @@ from builtins import str
 import os
 import platform
 import sys
+import urllib.parse
 
 import netCDF4
 import cftime
@@ -217,6 +218,41 @@ def CF():
 
     '''
     return __cf_version__
+
+def abspath(filename):
+    '''Return a normalised absolute version of a file name.
+
+    If a string containing URL is provided then it is returned
+    unchanged.
+
+    :Parameters:
+
+        filename: `str`
+            The name of the file.
+
+    :Returns:
+
+        `str`
+            The normalized absolutized version of *filename*.
+
+    **Examples:**
+
+    >>> import os
+    >>> os.getcwd()
+    '/data/archive'
+    >>> abspath('file.nc')
+    '/data/archive/file.nc'
+    >>> abspath('..//archive///file.nc')
+    '/data/archive/file.nc'
+    >>> abspath('http://data/archive/file.nc')
+    'http://data/archive/file.nc'
+
+    '''
+    u = urllib.parse.urlparse(filename)
+    if u.scheme != '':
+        return filename
+
+    return os.path.abspath(filename)
 
 def default_netCDF_fill_values():
     '''The default netCDF fill values for each data type.
