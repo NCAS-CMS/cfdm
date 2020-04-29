@@ -3414,7 +3414,7 @@ class NetCDFWrite(IOWrite):
         '''
         self.write_vars['netcdf'].close()
 
-    def file_open(self, filename, mode, fmt):
+    def file_open(self, filename, mode, fmt, fields=None):
         '''Open the netCDF file for writing.
         
     :Parameters:
@@ -3437,6 +3437,15 @@ class NetCDFWrite(IOWrite):
             A `netCDF4.Dataset` object for the file.
 
         '''
+        if fields:
+            filename = os.path.abspath(filename)
+            for f in fields:
+                if filename in self.implementation.get_filenames(f):
+                    raise ValueError(
+                        "Can't write to the same file that contains data that "
+                        "needs to be read: {}".format(filename))
+        # --- End: if
+        
         try:        
             nc = netCDF4.Dataset(filename, mode, format=fmt)
         except RuntimeError as error:
@@ -3804,7 +3813,7 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         mode = 'w'
         g['filename'] = filename
-        g['netcdf'] = self.file_open(filename, mode, fmt)
+        g['netcdf'] = self.file_open(filename, mode, fmt, fields)
     
 #        # -----------------------------------------------------------
 #        # Set the fill mode for a Dataset open for writing to

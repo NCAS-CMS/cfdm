@@ -851,7 +851,12 @@ class CFDMImplementation(Implementation):
 
         '''
         return field.get_data_axes()
-         
+
+    def get_filenames(self, parent):
+        '''TODO
+'''
+        return parent.get_filenames()
+
     def get_data_max(self, parent):
         '''Use `get_data_maximum` instead (since cfdm version 1.8.0).
         
@@ -1349,7 +1354,7 @@ class CFDMImplementation(Implementation):
         `bool`
 
         '''
-        return construct.construct_type == 'field'
+        return getattr(construct, 'construct_type', None) == 'field'
 
     def is_geometry(self, coordinate):
         '''Return True if the coordinate bounds are geometries.
@@ -1419,7 +1424,6 @@ class CFDMImplementation(Implementation):
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
 
-
     def set_bounds(self, construct, bounds, copy=True):
         '''TODO
 
@@ -1431,7 +1435,6 @@ class CFDMImplementation(Implementation):
 
         '''
         construct.set_bounds(bounds, copy=copy)
-
 
     def set_cell_measure(self, field, construct, axes, copy=True):
         '''Insert a cell_measure object into a field.

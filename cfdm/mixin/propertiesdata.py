@@ -592,6 +592,22 @@ class PropertiesData(Properties):
 
         return True
 
+    def get_filenames(self):
+        '''Return the name of the file or files containing the data.
+    
+    :Returns:
+    
+        `set
+            The file names in normalized, absolute form. If the data
+            are in memory then an empty `set` is returned.
+
+        '''
+        data = self.get_data(None)
+        if data is not None:            
+            return data.get_filenames()
+
+        return set()
+    
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
 

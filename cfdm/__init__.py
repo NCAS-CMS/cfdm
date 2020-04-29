@@ -64,10 +64,11 @@ if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
 
 from .constants  import masked
 
-from .functions import (CF,
-                        environment,
-                        ATOL,
-                        RTOL)
+from .functions import (ATOL,
+                        RTOL,
+                        CF,
+                        abspath,
+                        environment)
 
 from .constructs import Constructs
 

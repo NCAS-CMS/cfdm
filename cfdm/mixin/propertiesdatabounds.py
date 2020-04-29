@@ -871,6 +871,27 @@ class PropertiesDataBounds(PropertiesData):
 
         return True
 
+    def get_filenames(self):
+        '''Return the name of the file or files containing the data.
+
+    The names of the file or files containing the bounds data are also
+    returned.
+    
+    :Returns:
+    
+        `set`
+            The file names in normalized, absolute form. If all of the
+            data are in memory then an empty `set` is returned.
+
+        '''
+        out = super().get_filenames()
+        
+        data = self.get_bounds_data(None)
+        if data is not None:            
+            out.update(data.get_filenames())
+
+        return out
+    
     def get_node_count(self, default=ValueError()):
         '''Return the node count variable for geometry bounds.
 

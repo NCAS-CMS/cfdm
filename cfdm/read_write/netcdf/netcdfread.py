@@ -1013,15 +1013,21 @@ class NetCDFRead(IORead):
         field: `Field`
             The parent field construct.
 
-        construct: Construct
+        construct: Construct or Bounds
             The construct that may have valid_[min|max|range]
-            properties. May also be the parent field construct.
+            properties. May also be the parent field construct or
+            Bounds.
 
     :Returns:
 
         `None`
 
         '''
+        # Check the bounds, if any.
+        if self.implementation.has_bounds(construct):
+            bounds = self.implementation.get_bounds(construct)
+            self._check_valid(field, bounds)
+        
         x = sorted(self.read_vars['valid_properties'].intersection(
             self.implementation.get_properties(construct)))
         if not x:
@@ -1035,7 +1041,7 @@ class NetCDFRead(IORead):
             
         print(
             "WARNING: {!r} has{} {} {}. "
-            "Set warn_valid=False to remove warning.".format(
+            "Set warn_valid=False to suppress warning.".format(
                 field,
                 construct,
                 ', '.join(x),

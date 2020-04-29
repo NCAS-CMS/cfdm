@@ -1337,6 +1337,34 @@ class Field(mixin.NetCDFVariable,
 
         return True
 
+    def get_filenames(self):
+        '''Return the name of the file or files containing the data.
+
+    The names of the file or files containing the data of metadata
+    constructs are also returned.
+    
+    :Returns:
+    
+        `set`
+            The file names in normalized, absolute form. If all of the
+            data are in memory then an empty `set` is returned.
+
+    **Examples:**
+    
+    >>> f = cfdm.example_field(0)
+    >>> cfdm.write(f, 'temp_file.nc')
+    >>> g = cfdm.read('temp_file.nc')[0]
+    >>> g.get_filenames()
+    {'/data/user/file1.nc'}
+
+        '''
+        out = super().get_filenames()
+        
+        for c in self.constructs.filter_by_data().values():
+            out.update(c.get_filenames())
+
+        return out
+    
     def insert_dimension(self, axis, position=0, inplace=False):
         '''Expand the shape of the data array.
 

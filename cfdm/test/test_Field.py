@@ -1,14 +1,31 @@
 from __future__ import print_function
+
+import atexit
 import collections
 import datetime
 import inspect
 import os
 import re
+import tempfile
 import unittest
 
 import numpy
 
 import cfdm
+
+tmpfile  = tempfile.mktemp('.cfdm_test')
+tmpfiles = [tmpfile]
+def _remove_tmpfiles():
+    '''
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+        
+atexit.register(_remove_tmpfiles)
+
 
 class FieldTest(unittest.TestCase):
     def setUp(self):
@@ -155,6 +172,32 @@ class FieldTest(unittest.TestCase):
 #            
 #            values, counts = numpy.unique(f.data.array, return_counts=True)
 #            self.assertTrue(counts[0] == array.size)
+
+    def test_Field_get_filenames(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.example_field(0)
+
+        cfdm.write(f, tmpfile)
+        g = cfdm.read(tmpfile)[0]
+
+        abspath_tmpfile = os.path.abspath(tmpfile)
+        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]))
+
+        g.data[...] = -99
+        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]))
+
+        for c in g.constructs.filter_by_data().values():
+            c.data[...] = -99
+
+        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]))
+
+        for c in g.constructs.filter_by_data().values():
+            if c.has_bounds():                
+                c.bounds.data[...] = -99
+
+        self.assertTrue(g.get_filenames() == set())
 
     def test_Field_apply_masking(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
