@@ -3414,7 +3414,7 @@ class NetCDFWrite(IOWrite):
         '''
         self.write_vars['netcdf'].close()
 
-    def file_open(self, filename, mode, fmt, fields=None):
+    def file_open(self, filename, mode, fmt, fields):
         '''Open the netCDF file for writing.
         
     :Parameters:
@@ -3431,6 +3431,9 @@ class NetCDFWrite(IOWrite):
             As for the *format* parameter for initialising a
             `netCDF.Dataset` instance.
 
+        fields: sequence of `Field`
+            The field constructs to be written.
+
     :Returns:
             
         `netCDF.Dataset`
@@ -3442,8 +3445,8 @@ class NetCDFWrite(IOWrite):
             for f in fields:
                 if filename in self.implementation.get_filenames(f):
                     raise ValueError(
-                        "Can't write to the same file that contains data that "
-                        "needs to be read: {}".format(filename))
+                        "Can't write to a file that contains data "
+                        "that needs to be read: {}".format(filename))
         # --- End: if
 
         if self.write_vars['overwrite']:

@@ -597,7 +597,7 @@ class PropertiesData(Properties):
     
     :Returns:
     
-        `set
+        `set`
             The file names in normalized, absolute form. If the data
             are in memory then an empty `set` is returned.
 
