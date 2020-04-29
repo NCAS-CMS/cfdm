@@ -4,6 +4,7 @@ from builtins import (range, str)
 import datetime
 import tempfile
 import os
+import platform
 import unittest
 import atexit
 import inspect
@@ -283,25 +284,29 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(OSError):
             x = cfdm.read('test_read_write.py')
 
-        for regex in [
-            r'"1 i\ \ "',
-            r'"1 i\// comment"',
-            r'"1 i\ // comment"',
-            r'"1 i\ \t// comment"'
-        ]:
-            # Note that really we just want to do an in-place sed
-            # ('sed -i') but because of subtle differences between the
-            # GNU (Linux OS) and BSD (some Mac OS) command variants a
-            # safe portable one-liner may not be possible. This will
-            # do, overwriting the intermediate file.  The '-E' to mark
-            # as an extended regex is also for portability.
-            subprocess.run(
-                ' '.join(['sed', '-E', '-e', regex, tmpfileh, '>' + tmpfileh2,
-                          '&&', 'mv', tmpfileh2, tmpfileh]),
-                shell=True, check=True
-            )
+        # TODO: make portable instead of skipping on Mac OS (see Issue #25):
+        #       '-i' aspect solved, but the regex patterns need amending too.
+        if platform.system() != 'Darwin':  # False for Mac OS(X) only
+            for regex in [
+                r'"1 i\ \ "',
+                r'"1 i\// comment"',
+                r'"1 i\ // comment"',
+                r'"1 i\ \t// comment"'
+            ]:
+                # Note that really we just want to do an in-place sed
+                # ('sed -i') but because of subtle differences between the
+                # GNU (Linux OS) and BSD (some Mac OS) command variants a
+                # safe portable one-liner may not be possible. This will
+                # do, overwriting the intermediate file. The '-E' to mark
+                # as an extended regex is also for portability.
+                subprocess.run(
+                    ' '.join(
+                        ['sed', '-E', '-e', regex, tmpfileh, '>' + tmpfileh2,
+                         '&&', 'mv', tmpfileh2, tmpfileh]
+                    ), shell=True, check=True
+                )
 
-            h = cfdm.read(tmpfileh)[0]
+                h = cfdm.read(tmpfileh)[0]
 
 #        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)
             
