@@ -124,7 +124,6 @@ class Container(object):
         if not isinstance(y, numpy.ndarray):
             y = numpy.asanyarray(y)
             
-            
         # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
 
         if not ignore_data_type and x.dtype != y.dtype:
@@ -184,8 +183,8 @@ class Container(object):
                 other = type(self)(source=other, copy=False)
         elif not isinstance(other, self.__class__):
             if verbose:
-                print("{0}: Incompatible type: {1}".format(
-		    self.__class__.__name__, type(other)))
+                print("{}: Incompatible type: {}".format(
+                    self.__class__.__name__, type(other)))
             return False
 
         return other

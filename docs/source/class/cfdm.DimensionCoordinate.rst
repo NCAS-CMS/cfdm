@@ -120,8 +120,7 @@ Miscellaneous
    ~cfdm.DimensionCoordinate.copy
    ~cfdm.DimensionCoordinate.equals
    ~cfdm.DimensionCoordinate.uncompress
-
-
+   ~cfdm.DimensionCoordinate.get_filenames
 
 NetCDF
 ------

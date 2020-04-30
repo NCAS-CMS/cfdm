@@ -129,6 +129,7 @@ class ConstructAccess(object):
         try_get_construct = self.get_construct(key, default=None)
         if try_get_construct is None:
             return False
+        
         return True
 
     def set_construct(self, construct, key=None, axes=None,

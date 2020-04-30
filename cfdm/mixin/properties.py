@@ -49,18 +49,18 @@ class Properties(Container):
         
         if _omit_properties:
             for prop in _omit_properties:
-                 properties.pop(prop, None)
+                properties.pop(prop, None)
         # --- End: if
  
         for prop, value in sorted(properties.items()):
-            name   = '{0}{1}{2} = '.format(indent0, _prefix, prop)
-            value  = repr(value)
+            name = '{0}{1}{2} = '.format(indent0, _prefix, prop)
+            value = repr(value)
             subsequent_indent = ' ' * len(name)
             if value.startswith("'") or value.startswith('"'):
                 subsequent_indent = '{0} '.format(subsequent_indent)
                 
             string.append(
-                textwrap.fill(name+value, 79,
+                textwrap.fill(name + value, 79,
                               subsequent_indent=subsequent_indent))
         
         return '\n'.join(string)
@@ -85,7 +85,7 @@ class Properties(Container):
 
         '''
         indent0 = '    ' * _level
-        indent1 = '    ' * (_level+1)
+        indent1 = '    ' * (_level + 1)
 
         string = []
 
@@ -111,7 +111,7 @@ class Properties(Container):
         # Properties
         # ------------------------------------------------------------
         properties = self._dump_properties(_prefix=_prefix,
-                                           _level=_level+1,
+                                           _level=_level + 1,
                                            _omit_properties=_omit_properties)
         if properties:
             string.append(properties)
@@ -222,7 +222,7 @@ class Properties(Container):
         if ignore_fill_value:
             ignore_properties += ('_FillValue', 'missing_value')
 
-        self_properties  = self.properties()
+        self_properties = self.properties()
         other_properties = other.properties()
 
         if ignore_properties:
@@ -233,9 +233,12 @@ class Properties(Container):
                 
         if set(self_properties) != set(other_properties):
             if verbose:
-                for prop in set(self_properties).symmetric_difference(other_properties):
-                    print("{0}: Missing property: {1}".format( 
+                for prop in set(self_properties).symmetric_difference(
+                        other_properties):
+                    print("{}: Missing property: {}".format( 
                         self.__class__.__name__, prop))
+            # --- End: if
+            
             return False
 
         for prop, x in self_properties.items():
@@ -244,12 +247,13 @@ class Properties(Container):
             if not self._equals(x, y,
                                 rtol=rtol, atol=atol,
                                 ignore_fill_value=ignore_fill_value,
-                                ignore_data_type=True, #ignore_data_type,
+                                ignore_data_type=True,
                                 verbose=verbose):
                 if verbose:
-                    print("{0}: Different {1!r} property values: "
-                          "{2!r}, {3!r}".format(
-                        self.__class__.__name__, prop, x, y))
+                    print("{}: Different {!r} property values: "
+                          "{!r}, {!r}".format(
+                              self.__class__.__name__, prop, x, y))
+                    
                 return False
         # --- End: for
 
@@ -314,7 +318,7 @@ class Properties(Container):
         if n is not None:
             return n
         
-        for prop in  ('cf_role', 'axis', 'long_name'):
+        for prop in ('cf_role', 'axis', 'long_name'):
             n = self.get_property(prop, None)
             if n is not None:
                 return '{0}={1}'.format(prop, n)

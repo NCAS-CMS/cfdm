@@ -62,12 +62,16 @@ if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
         "Bad cftime version: cfdm requires cftime version {} or later. Got {} at {}".format(
             _minimum_vn, cftime.__version__, cftime.__file__))
 
-from .constants  import masked
+from .constants import masked
 
-from .functions import (CF,
-                        environment,
-                        ATOL,
-                        RTOL)
+from .functions import (ATOL,
+                        RTOL,
+                        CF,
+                        abspath,
+                        environment)
+
+# Lightweight methods included in the namespace purely for testing purposes:
+from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 
 from .constructs import Constructs
 
@@ -111,7 +115,3 @@ from .read_write import (read,
                          write)
 
 from .examplefield import example_field
-
-
-    
-    

@@ -390,8 +390,8 @@ class NetCDFRead(IORead):
 
     def read(self, filename, extra=None, default_version=None,
              external=None, extra_read_vars=None, _scan_only=False,
-             verbose=False, warnings=True, mask=True):
-#             supplementary_read_vars=None):
+             verbose=False, mask=True, warnings=True,
+             warn_valid=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
     location.
             
@@ -456,8 +456,9 @@ class NetCDFRead(IORead):
             checked.
             
         mask: `bool`, optional
-            If False then do not mask by convention when reading data
-            from disk. By default data is masked by convention.
+            If False then do not mask by convention when reading the
+            data of field or metadata constructs from disk. By default
+            data is masked by convention.
 
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
@@ -467,6 +468,19 @@ class NetCDFRead(IORead):
 
             .. versionadded:: 1.8.2
           
+        warn_valid: `bool`, optional
+            If True then print a warning for the presence of
+            ``valid_min``, ``valid_max`` or ``valid_range`` properties
+            on field contructs and metadata constructs that have
+            data. By default no such warning is printed
+
+            "Out-of-range" data values in the file, as defined by any
+            of these properties, are by default automatically masked,
+            which may not be as intended. See the *mask* parameter for
+            turning off all automatic masking.
+    
+            .. versionadded:: 1.8.3
+
     :Returns:
     
         `list`
@@ -544,6 +558,11 @@ class NetCDFRead(IORead):
 
             # Auto mask?
             'mask': bool(mask),
+
+            # Warn for the presence of valid_[min|max|range]
+            # attributes?
+            'warn_valid': bool(warn_valid),
+            'valid_properties': set(('valid_min', 'valid_max', 'valid_range')),
         }
         
         g = self.read_vars
@@ -677,11 +696,16 @@ class NetCDFRead(IORead):
             for attr in map(str, variable.ncattrs()):
                 try:
                     variable_attributes[ncvar][attr] = variable.getncattr(attr)
-                    if isinstance(variable_attributes[ncvar][attr], basestring):
+                    if isinstance(variable_attributes[ncvar][attr],
+                                  basestring):
                         try:
-                            variable_attributes[ncvar][attr] = str(variable_attributes[ncvar][attr])
+                            variable_attributes[ncvar][attr] = (
+                                str(variable_attributes[ncvar][attr])
+                            )
                         except UnicodeEncodeError:
-                            variable_attributes[ncvar][attr] = variable_attributes[ncvar][attr].encode(errors='ignore')
+                            variable_attributes[ncvar][attr] = (
+                                variable_attributes[ncvar][attr].encode(errors='ignore')
+                            )
                 except UnicodeDecodeError:
                     pass
             # --- End: for
@@ -911,13 +935,17 @@ class NetCDFRead(IORead):
         if verbose:
             print("Referenced netCDF variables:\n   ",
                   end=' ') # pragma: no cover
-            print("\n    ".join([ncvar for  ncvar in all_fields
-                                 if not self._is_unreferenced(ncvar)])) # pragma: no cover
+            print("\n    ".join(
+                [ncvar for  ncvar in all_fields
+                 if not self._is_unreferenced(ncvar)])
+            ) # pragma: no cover
 
             print("Unreferenced netCDF variables:\n   ",
                   end=' ') # pragma: no cover
-            print("\n    ".join([ncvar for ncvar in all_fields
-                                 if self._is_unreferenced(ncvar)])) # pragma: no cover
+            print("\n    ".join(
+                [ncvar for ncvar in all_fields
+                 if self._is_unreferenced(ncvar)])
+            ) # pragma: no cover
         
         # ------------------------------------------------------------
         # If requested, reinstate fields created from netCDF variables
@@ -927,7 +955,8 @@ class NetCDFRead(IORead):
             fields0 = list(fields.values())
             for construct_type in g['extra']:
                 for f in fields0:
-                    for construct in g['get_constructs'][construct_type](f).values():
+                    for construct in (
+                            g['get_constructs'][construct_type](f).values()):
                         ncvar = self.implementation.nc_get_variable(construct)
                         if ncvar not in all_fields:
                             continue
@@ -948,6 +977,21 @@ class NetCDFRead(IORead):
                     x.dataset_compliance(display=True)
         # --- End: if
 
+        if warn_valid:
+            # --------------------------------------------------------
+            # Warn for the presence of 'valid_min', 'valid_max'or
+            # 'valid_range' properties. (Introduced at v1.8.3.)
+            # --------------------------------------------------------
+            for f in out:    
+                # Check field constructs
+                self._check_valid(f, f)
+
+                # Check constructs with data
+                for c in self.implementation.get_constructs(
+                        f, data=True).values():
+                    self._check_valid(f, c)
+        # --- End: if
+
         # ------------------------------------------------------------
         # Close the netCDF file(s)
         # ------------------------------------------------------------
@@ -958,6 +1002,99 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         return out
 
+    def _check_valid(self, field, construct):
+        '''Issue a warning if a construct with data has valid_[min|max|range]
+    properties.
+
+    .. versionadded:: 1.8.3
+
+    :Parameters:
+
+        field: `Field`
+            The parent field construct.
+
+        construct: Construct or Bounds
+            The construct that may have valid_[min|max|range]
+            properties. May also be the parent field construct or
+            Bounds.
+
+    :Returns:
+
+        `None`
+
+        '''
+        # Check the bounds, if any.
+        if self.implementation.has_bounds(construct):
+            bounds = self.implementation.get_bounds(construct)
+            self._check_valid(field, bounds)
+        
+        x = sorted(self.read_vars['valid_properties'].intersection(
+            self.implementation.get_properties(construct)))
+        if not x:
+            return
+
+        # Still here?
+        if self.implementation.is_field(construct):
+            construct = ""
+        else:
+            construct = " {!r} with".format(construct)
+            
+        print(
+            "WARNING: {!r} has{} {} {}. "
+            "Set warn_valid=False to suppress warning.".format(
+                field,
+                construct,
+                ', '.join(x),
+                self._plural(x, 'property')))
+
+    def _plural(self, x, singular):
+        '''TODO
+
+    :Parameters:
+
+        x: sequence
+
+        singular: `str`
+
+    :Returns:
+        
+        `str`
+            The word in its singular or plural form.
+
+    **Examples:**
+
+    >>> n._plural([1, 2], 'property')
+    'properties'
+    >>> n._plural([1], 'property')
+    'property'
+    >>> n._plural([], 'property')
+    'properties'
+
+        '''                    
+        if len(x) == 1:
+            return singular
+
+        if singular[-1] == 'y':
+            return singular[:-1] + 'ies'
+
+        raise ValueError("Can't (yet) plualise {}".format(singular))
+    
+    def _set_default_FillValue(self, construct, ncvar):
+        '''
+        '''
+        # ------------------------------------------------------------
+        # Masking has been turned off, so make sure that there is a
+        # fill value recorded so that masking may later be applied
+        # manually, if required.
+        # ------------------------------------------------------------
+        _FillValue = self.implementation.get_property(construct, '_FillValue',
+                                                      None)
+        if _FillValue is None:
+            self.implementation.set_properties(
+                construct, {'_FillValue':
+                            self.default_netCDF_fill_value(ncvar)}
+            )
+            
     def _customize_read_vars(self):
         '''TODO
 
@@ -1071,7 +1208,9 @@ class NetCDFRead(IORead):
                     # Update the read parameters so that this external
                     # variable looks like its internal
                     for key in keys:
-                        self.read_vars[key][ncvar] = external_read_vars[key][ncvar]
+                        self.read_vars[key][ncvar] = (
+                            external_read_vars[key][ncvar]
+                        )
 
                     # Remove this ncvar from the set of external variables
                     external_variables.remove(ncvar)
@@ -1282,8 +1421,10 @@ class NetCDFRead(IORead):
             print("    Implied dimensions: {} -> {}".format(
                 sample_dimension,
                 g['compression'][sample_dimension]['ragged_indexed_contiguous']['implied_ncdimensions'])) # pragma: no cover
-            print("    Removing g['compression'][{!r}]['ragged_contiguous']".format(
-                sample_dimension)) # pragma: no cover
+            print(
+                "    Removing "
+                "g['compression'][{!r}]['ragged_contiguous']".format(
+                    sample_dimension)) # pragma: no cover
             
         del g['compression'][sample_dimension]['ragged_contiguous']
 
@@ -1659,8 +1800,9 @@ class NetCDFRead(IORead):
         g['new_dimensions'][element_dimension] = element_dimension_size
         
         if g['verbose']:
-            print("    Created g['compression'][{!r}]['ragged_indexed']".format(
-                indexed_sample_dimension)) # pragma: no cover
+            print("    Created "
+                  "g['compression'][{!r}]['ragged_indexed']".format(
+                      indexed_sample_dimension)) # pragma: no cover
     
         return element_dimension
 
@@ -1927,7 +2069,8 @@ class NetCDFRead(IORead):
                 # Infer the formula terms bounds variables from the
                 # coordinates
                 # ----------------------------------------------------
-                for term, ncvar in g['formula_terms'][coord_ncvar]['coord'].items():
+                for term, ncvar in (
+                        g['formula_terms'][coord_ncvar]['coord'].items()):
                     g['formula_terms'][coord_ncvar]['bounds'][term] = None
                     
                     if z_ncdim not in self._ncdimensions(ncvar):
@@ -1960,8 +2103,9 @@ class NetCDFRead(IORead):
                     if not is_coordinate_with_bounds:
                          self._add_message(
                              field_ncvar, ncvar,
-                             message=('Formula terms variable',
-                                      'that spans the vertical dimension has no bounds'),
+                             message=("Formula terms variable",
+                                      "that spans the vertical dimension "
+                                      "has no bounds"),
                              attribute=attribute,
                              variable=coord_ncvar)
                 # --- End: for
@@ -2043,18 +2187,14 @@ class NetCDFRead(IORead):
         self.implementation.set_properties(f, field_properties, copy=True)
 
         if not g['mask']:
+            # --------------------------------------------------------
             # Masking has been turned off, so make sure that there is
-            # a fill value recorded so that masking may later be
-            # applied manually, if required.
-            _FillValue = self.implementation.get_property(f, '_FillValue',
-                                                          None)
-            if _FillValue is None:
-                self.implementation.set_properties(
-                    f, {'_FillValue':
-                        self.default_netCDF_fill_value(field_ncvar)}
-                )
-        # --- End: if            
-            
+            # a fill value recorded on the field so that masking may
+            # later be applied manually, if required. (Introduced at
+            # v1.8.2.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(f, field_ncvar)
+
         # Store the field's netCDF variable name
         self.implementation.nc_set_variable(f, field_ncvar)
 
@@ -2390,7 +2530,8 @@ class NetCDFRead(IORead):
                 
             ok = True
             domain_ancillaries = []
-            for term, ncvar in g['formula_terms'][coord_ncvar]['coord'].items():
+            for term, ncvar in (
+                    g['formula_terms'][coord_ncvar]['coord'].items()):
                 if ncvar is None:
                     continue
 
@@ -2517,7 +2658,8 @@ class NetCDFRead(IORead):
                     create_new = True
                     
                     if not coordinates:
-                        # DCH ALERT -  what to do about duplicate standard names? TODO
+                        # DCH ALERT
+                        # what to do about duplicate standard names? TODO
                         name = parameters.get('grid_mapping_name', None)
                         for n in self.cf_coordinate_reference_coordinates().get(name, ()):
                             for key, coord in self.implementation.get_coordinates(field=f).items():
@@ -3014,6 +3156,15 @@ class NetCDFRead(IORead):
 
         self.implementation.set_properties(c, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the coordinate or domain
+            # ancillary so that masking may later be applied manually,
+            # if required. (Introduced at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(c, ncvar)
+
 #        if attribute == 'climatology':
 #            # Need to 
 #            self.implementation.set_geometry(coordinate=c, value='climatology')
@@ -3040,6 +3191,15 @@ class NetCDFRead(IORead):
             bounds_properties = g['variable_attributes'][bounds_ncvar].copy()
             bounds_properties.pop('formula_terms', None)                
             self.implementation.set_properties(bounds, bounds_properties)
+
+            if not g['mask']:
+                # ----------------------------------------------------
+                # Masking has been turned off, so make sure that there
+                # is a fill value recorded on the bounds so that
+                # masking may later be applied manually, if
+                # required. (Introduced at v1.8.3.)
+                # ----------------------------------------------------
+                self._set_default_FillValue(bounds, bounds_ncvar)
 
             bounds_dimensions = g['variable_dimensions'][bounds_ncvar]
 
@@ -3191,6 +3351,16 @@ class NetCDFRead(IORead):
             # external file
             self.implementation.set_properties(cell_measure,
                                                g['variable_attributes'][ncvar])
+
+            if not g['mask']:
+                # ----------------------------------------------------
+                # Masking has been turned off, so make sure that there
+                # is a fill value recorded on the cell measure so that
+                # masking may later be applied manually, if
+                # required. (Introduced at v1.8.3.)
+                # ----------------------------------------------------
+                self._set_default_FillValue(cell_measure, ncvar)
+            
             data = self._create_data(ncvar, cell_measure)            
             self.implementation.set_data(cell_measure, data, copy=False)
             
@@ -3228,6 +3398,15 @@ class NetCDFRead(IORead):
         sample_ncdim = properties.pop('sample_dimension', None)
         self.implementation.set_properties(variable, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         # Set the netCDF variable name
         self.implementation.nc_set_variable(variable, ncvar)
 
@@ -3277,6 +3456,15 @@ class NetCDFRead(IORead):
         instance_ncdim = properties.pop('instance_dimension', None)
         self.implementation.set_properties(variable, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         # Set the netCDF variable name
         self.implementation.nc_set_variable(variable, ncvar)
 
@@ -3335,6 +3523,15 @@ class NetCDFRead(IORead):
         properties = g['variable_attributes'][ncvar]
         self.implementation.set_properties(variable, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         data = self._create_data(ncvar, variable)
         self.implementation.set_data(variable, data, copy=False)
             
@@ -3366,6 +3563,15 @@ class NetCDFRead(IORead):
         properties.pop('compress', None)
         self.implementation.set_properties(variable, properties)
         
+        if not self.read_vars['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         data = self._create_data(ncvar, variable, uncompress_override=True)
         self.implementation.set_data(variable, data, copy=False)
             
@@ -3400,6 +3606,15 @@ class NetCDFRead(IORead):
         properties = g['variable_attributes'][ncvar]
         self.implementation.set_properties(variable, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         return variable
 
     def _create_PartNodeCount(self, ncvar, ncdim):
@@ -3438,6 +3653,15 @@ class NetCDFRead(IORead):
         properties = g['variable_attributes'][ncvar]
         self.implementation.set_properties(variable, properties)
 
+        if not g['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the variable so that masking
+            # may later be applied manually, if required. (Introduced
+            # at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(variable, ncvar)
+            
         return variable
 
     def _create_cell_method(self, axes, method, qualifiers):
@@ -3601,7 +3825,10 @@ class NetCDFRead(IORead):
                         uncompressed_shape = tuple(
                             [g['internal_dimension_sizes'][dim]
                              for dim in self._ncdimensions(ncvar)])
-                        compressed_dimension = g['variable_dimensions'][ncvar].index(c['sample_dimension'])
+                        compressed_dimension = (
+                            g['variable_dimensions'][ncvar].index(
+                                c['sample_dimension'])
+                        )
                         array = self._create_gathered_array(
                             gathered_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
@@ -3726,6 +3953,15 @@ class NetCDFRead(IORead):
                            self.read_vars['variable_attributes'][ncvar],
                            copy=True)
 
+        if not self.read_vars['mask']:
+            # --------------------------------------------------------
+            # Masking has been turned off, so make sure that there is
+            # a fill value recorded on the field ancillary so that
+            # masking may later be applied manually, if
+            # required. (Introduced at v1.8.3.)
+            # --------------------------------------------------------
+            self._set_default_FillValue(field_ancillary, ncvar)
+            
         # Insert data
         data = self._create_data(ncvar, field_ancillary)
         self.implementation.set_data(field_ancillary, data, copy=False)
@@ -4895,7 +5131,8 @@ class NetCDFRead(IORead):
         
         def subst(s):
             "substitute tokens for WORD and SEP (space or end of string)"
-            return s.replace('WORD', r'[A-Za-z0-9_]+').replace('SEP', r'(\s+|$)')
+            return s.replace('WORD', r'[A-Za-z0-9_]+').replace(
+                'SEP', r'(\s+|$)')
 
         out = []
         

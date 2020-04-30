@@ -1,3 +1,18 @@
+version 1.8.3
+-------------
+----
+
+**2020-04-??**
+
+* `cfdm.Field.apply_masking` now masks metadata constructs.
+* New method: `cfdm.Field.get_filenames`
+* New method: `cfdm.Data.get_filenames`
+* New function: `cfdm.abspath`
+* New keyword parameter to `cfdm.read`: ``warn_valid``
+  (https://github.com/NCAS-CMS/cfdm/issues/30)
+* New keyword parameter to `cfdm.write`: ``warn_valid``
+  (https://github.com/NCAS-CMS/cfdm/issues/30)
+  
 version 1.8.2
 -------------
 ----

@@ -5,12 +5,14 @@ from .netcdf import NetCDFWrite
 
 _implementation = implementation()
 
+
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           global_attributes=None, variable_attributes=None,
           file_descriptors=None, external=None, Conventions=None,
           datatype=None, least_significant_digit=None,
           endian='native', compress=0, fletcher32=False, shuffle=True,
-          string=True, verbose=False, _implementation=_implementation):
+          string=True, verbose=False, warn_valid=True,
+          _implementation=_implementation):
     '''Write field constructs to a netCDF file.
 
     **File format**
@@ -69,7 +71,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     
     .. versionadded:: 1.7.0
     
-    .. seealso:: `cfdm.read`
+    .. seealso:: `read`
     
     :Parameters:
     
@@ -93,26 +95,26 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             The format of the output file. One of:
     
             ==========================  ================================
-            *fmt*                       Output file type                
-            ==========================  ================================ 
-            ``'NETCDF4'``               NetCDF4 format file. This is the   
-                                        default.                    
+            *fmt*                       Output file type
+            ==========================  ================================
+            ``'NETCDF4'``               NetCDF4 format file. This is the
+                                        default.
                                                                         
-            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see    
-                                        below)                     
+            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see
+                                        below)
                                                                         
-            ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file 
-                                        (limited to file sizes less     
-                                        than 2GB).                      
-                                                                        
+            ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
+                                        (limited to file sizes less
+                                        than 2GB).
+
             ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
-                                        file                            
+                                        file
                                                                         
             ``'NETCDF3_64BIT'``         An alias for
-                                        ``'NETCDF3_64BIT_OFFSET'``      
+                                        ``'NETCDF3_64BIT_OFFSET'``
                                                                         
-            ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format    
-                                        file with extensions (see below)      
+            ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
+                                        file with extensions (see below)
             ==========================  ================================
     
             By default the format is ``'NETCDF4'``.
@@ -250,7 +252,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
              *Parameter example:*
                ``variable_attributes=['project', 'doi']``
     
-        external: `str`, optional  
+        external: `str`, optional
             Write metadata constructs that have data and are marked as
             external to the named external file. Ignored if there are
             no such constructs.
@@ -348,6 +350,27 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             If True then print a summary of how constructs map to
             output netCDF dimensions, variables and attributes.
     
+       warn_valid: `bool`, optional
+            If False then do not print a warning when writing
+            "out-of-range" data, as indicated by the values, if
+            present, of any of the ``valid_min``, ``valid_max`` or
+            ``valid_range`` properties on field and metadata
+            constructs that have data. By default a warning is printed
+            if any such construct has any of these properties in
+            combination with out-of-range data.
+
+            The consequence of writing out-of-range data values is
+            that, by default, these values will be masked when the
+            file is subsequently read.
+
+            *Parameter example:*
+              If a construct has ``valid_max`` property with value
+              ``100`` and data with maximum value ``999``, then the
+              resulting warning may be suppressed by setting
+              ``warn_valid=False``.
+         
+            .. versionadded:: 1.8.3
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
             and metadata constructs and their components.
@@ -383,4 +406,4 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
                      string=string, verbose=verbose,
-                     extra_write_vars=None)
+                     warn_valid=warn_valid, extra_write_vars=None)

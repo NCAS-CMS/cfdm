@@ -84,11 +84,9 @@ instance".
 The `cfdm.read` function reads a `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
 from an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, and returns
-the contents as a Python list of zero or more `Field` class instances,
-each of which represents a field construct. (Henceforth, the phrase
-"field construct" will be assumed to mean "`Field` instance".) The
-list contains a field construct to represent each of the CF-netCDF
-data variables in the file.
+the contents as a Python list of zero or field constructs. The list
+contains a field construct to represent each of the CF-netCDF data
+variables in the file.
 
 Datasets of any version of CF up to and including CF-|version| can be
 read.
@@ -145,10 +143,13 @@ The `cfdm.read` function has optional parameters to
   by default as data variables in their own right;
 
 * request that masking is *not* applied by convention to data elements
-  (see :ref:`data masking <Data-mask>`); and
+  (see :ref:`data masking <Data-mask>`);
 
-* display information and warnings about the mapping of the netCDF
-  file contents to CF data model constructs.
+* issue warnings when ``valid_min``, ``valid_max`` and ``valid_range``
+  attributes are present (see :ref:`data masking <Data-mask>`); and
+
+* display information and issue warnings about the mapping of the
+  netCDF file contents to CF data model constructs.
 
 .. _CF-compliance:
 
@@ -161,7 +162,7 @@ element of the CF data model, then a field construct is still
 returned, but may be incomplete. This is so that datasets which are
 partially conformant may nonetheless be modified in memory and written
 to new datasets. Such "structural" non-compliance would occur, for
-example, if the "coordinates" attribute of a CF-netCDF data variable
+example, if the ``coordinates`` attribute of a CF-netCDF data variable
 refers to another variable that does not exist, or refers to a
 variable that spans a netCDF dimension that does not apply to the data
 variable. Other types of non-compliance are not checked, such whether
@@ -924,12 +925,18 @@ instance should be used instead.
 The mask of a netCDF dataset array is implied by array values that
 meet the criteria implied by the ``missing_value``, ``_FillValue``,
 ``valid_min``, ``valid_max``, and ``valid_range`` properties, and is
-usually applied automatically. However, this automatic masking may be
-bypassed by setting the *mask* keyword of the `cfdm.read` function to
-`False`. The mask, as defined in the dataset, may subsequently be
-applied manually with the `~Field.apply_masking` method of the field
-construct.
-   
+usually applied automatically by `cfdm.read`. NetCDF data elements
+that equal the values of the ``missing_value`` and ``_FillValue``
+properties are masked, as are data elements that exceed the value of
+the ``valid_max`` property, subceed the value of the ``valid_min``
+property, or lie outside of the range defined by the ``valid_range``
+property.
+
+However, this automatic masking may be bypassed by setting the *mask*
+keyword of the `cfdm.read` function to `False`. The mask, as defined
+in the dataset, may subsequently be applied manually with the
+`~Field.apply_masking` method of the field construct.
+
 .. code-block:: python
    :caption: *Read a dataset from disk without automatic masking, and
              then manually apply the mask*
@@ -951,7 +958,13 @@ construct.
     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
     [   --    --    --    --    --    --    --    --]]
-   
+
+The `~Field.apply_masking` method of the field construct utilises as
+many of the ``missing_value``, ``_FillValue``, ``valid_min``,
+``valid_max``, and ``valid_range`` properties as are present and may
+be used on any construct, not just those that have been read from
+datasets.
+    
 .. _Indexing:
 
 Indexing
@@ -1286,15 +1299,17 @@ construct ``t`` have identities ``'latitude'``, ``'longitude'`` and
 
 A construct's identity may be any one of the following
 
-* The value of the "standard_name" property, e.g. ``'air_temperature'``,
+* The value of the ``standard_name`` property,
+  e.g. ``'air_temperature'``,
 * The value of any property, preceded by the property name and an
   equals, e.g. ``'long_name=Air Temperature'``, ``'axis=X'``,
   ``'foo=bar'``, etc.,
-* The cell measure, preceded by "measure:", e.g. ``'measure:volume'``
+* The cell measure, preceded by "measure:",
+  e.g. ``'measure:volume'``
 * The cell method, preceded by "method:", e.g. ``'method:maximum'``
 * The netCDF variable name, preceded by "ncvar%",
   e.g. ``'ncvar%tas'`` (see the :ref:`netCDF interface
-  <NetCDF-interface>`), 
+  <NetCDF-interface>`),
 * The netCDF dimension name, preceded by "ncdim%" e.g. ``'ncdim%z'``
   (see the :ref:`netCDF interface <NetCDF-interface>`), and 
 * The construct key, preceded by "key%"
@@ -2380,13 +2395,13 @@ the field construct.
        units = 'degrees_east'
        Data(longitude(8)) = [0.0, ..., 7.0] degrees_east
 
-The "Conventions" property does not need to be set because it is
+The ``Conventions`` property does not need to be set because it is
 automatically included in output files as a netCDF global
-"Conventions" attribute, either as the CF version of the cfdm package
-(as returned by the `cfdm.CF` function), or else specified via the
-*Conventions* keyword of the `cfdm.write` function. See the section on
-:ref:`Writing-to-disk` for details on how to specify additional
-conventions.
+``Conventions`` attribute, either as the CF version of the cfdm
+package (as returned by the `cfdm.CF` function), or else specified via
+the *Conventions* keyword of the `cfdm.write` function. See the
+section on :ref:`Writing-to-disk` for details on how to specify
+additional conventions.
 
 If this field were to be written to a netCDF dataset then, in the
 absence of predefined names, default netCDF variable and dimension
@@ -2743,8 +2758,8 @@ Comparing the field constructs ``orog_from_file`` (created with
 the ``tas`` field construct), the former lacks the auxiliary
 coordinate, cell measure and coordinate reference constructs of the
 latter. This is because the surface altitude netCDF variable in
-``tas.nc`` does not have the "coordinates", "cell_measures" nor
-"grid_mapping" netCDF attributes that would link it to auxiliary
+``tas.nc`` does not have the ``coordinates``, ``cell_measures`` nor
+``grid_mapping`` netCDF attributes that would link it to auxiliary
 coordinate, cell measure and grid mapping netCDF variables.
 
 ----
@@ -2832,7 +2847,7 @@ constructs to be considered equal they must have corresponding
 metadata constructs and for each pair of constructs:
 
 * the descriptive properties must be the same (with the exception of
-  the field construct's "Conventions" property, which is never
+  the field construct's ``Conventions`` property, which is never
   checked), and vector-valued properties must have same the size and
   be element-wise equal, and
   
@@ -3259,7 +3274,7 @@ constructs.
 Conventions
 ^^^^^^^^^^^
 
-The "Conventions" netCDF global attribute containing the version of
+The ``Conventions`` netCDF global attribute containing the version of
 the CF conventions is always automatically created. If the version of
 the CF conventions has been set as a field property, or with the
 *Conventions* keyword of the `cfdm.write` function, then it is
@@ -3319,7 +3334,8 @@ of the field construct.
 
 The new dataset is structured as follows (note, relative to file
 ``q_file.nc``, the existence of the "time" dimension and the lack of a
-"coordinates" attribute on the, now three-dimensional, data variable):
+``coordinates`` attribute on the, now three-dimensional, data
+variable):
    
 .. code-block:: console
    :caption: *Inspect the new dataset with the ncdump command line
@@ -3482,7 +3498,7 @@ is still created, but one without any metadata or data:
 If this field construct were to be written to disk using `cfdm.write`,
 then the output file would be identical to the original ``parent.nc``
 file, i.e. the netCDF variable name of the cell measure construct
-("areacella") would be listed by the "external_variables" global
+(``areacella``) would be listed by the ``external_variables`` global
 attribute.
 
 However, the dataset may also be read *with* the external file. In
@@ -3517,7 +3533,7 @@ variable had been present in the parent dataset:
 If this field construct were to be written to disk using `cfdm.write`
 then by default the cell measure construct, with all of its metadata
 and data, would be written to the named output file, along with all of
-the other constructs. There would be no "external_variables" global
+the other constructs. There would be no ``external_variables`` global
 attribute.
 
 To create a reference to an external variable in an output netCDF

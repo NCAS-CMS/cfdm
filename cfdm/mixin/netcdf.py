@@ -32,7 +32,7 @@ class NetCDF(object):
 
         '''
         if source is None:
-             netcdf = {}
+            netcdf = {}
         else:        
             try:
                 netcdf = source._get_component('netcdf', {})
@@ -97,9 +97,10 @@ class NetCDFDimension(NetCDF):
         try:
             return self._get_component('netcdf').pop('dimension')
         except KeyError:
-            return self._default(default,
-                   "{!r} has no netCDF dimension name".format(
-                       self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no netCDF dimension name".format(
+                    self.__class__.__name__))
 
     def nc_get_dimension(self, default=ValueError()):
         '''Return the netCDF dimension name.
@@ -141,9 +142,10 @@ class NetCDFDimension(NetCDF):
         try:
             return self._get_component('netcdf')['dimension']
         except KeyError:
-            return self._default(default,
-                   "{!r} has no netCDF dimension name".format(
-                       self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no netCDF dimension name".format(
+                    self.__class__.__name__))
 
     def nc_has_dimension(self):
         '''Whether the netCDF dimension name has been set.
@@ -264,9 +266,10 @@ class NetCDFVariable(NetCDF):
         try:
             return self._get_component('netcdf').pop('variable')
         except KeyError:
-            return self._default(default,
-                   "{!r} has no netCDF variable name".format(
-                       self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no netCDF variable name".format(
+                    self.__class__.__name__))
 
     def nc_get_variable(self, default=ValueError()):
         '''Return the netCDF variable name.
@@ -309,9 +312,10 @@ class NetCDFVariable(NetCDF):
         try:
             return self._get_component('netcdf')['variable']
         except KeyError:
-            return self._default(default,
-                   "{!r} has no netCDF variable name".format(
-                       self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no netCDF variable name".format(
+                    self.__class__.__name__))
 
     def nc_has_variable(self):
         '''Whether the netCDF variable name has been set.
@@ -432,9 +436,10 @@ class NetCDFSampleDimension(NetCDF):
         try:
             return self._get_component('netcdf').pop('sample_dimension')
         except KeyError:
-            return self._default(default,
-                   "{!r} has no netCDF sample dimension name".format(
-                       self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no netCDF sample dimension name".format(
+                    self.__class__.__name__))
 
     def nc_get_sample_dimension(self, default=ValueError()):
         '''Return the netCDF sample dimension name.
@@ -476,9 +481,10 @@ class NetCDFSampleDimension(NetCDF):
         try:
             return self._get_component('netcdf')['sample_dimension']
         except KeyError:
-            return self._default(default,
-                   "{!r} has no netCDF sample dimension name".format(
-                       self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no netCDF sample dimension name".format(
+                    self.__class__.__name__))
 
     def nc_has_sample_dimension(self):
         '''Whether the netCDF sample dimension name has been set.
@@ -1103,9 +1109,10 @@ class NetCDFGeometry(NetCDF):
         try:
             return self._get_component('netcdf').pop('geometry_variable')
         except KeyError:
-            return self._default(default,
-                   "{!r} has no netCDF geometry variable name".format(
-                       self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no netCDF geometry variable name".format(
+                    self.__class__.__name__))
 
     def nc_get_geometry_variable(self, default=ValueError()):
         '''Return the netCDF geometry container variable name.
@@ -1148,9 +1155,10 @@ class NetCDFGeometry(NetCDF):
         try:
             return self._get_component('netcdf')['geometry_variable']
         except KeyError:
-            return self._default(default,
-                   "{!r} has no netCDF geometry variable name".format(
-                       self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no netCDF geometry variable name".format(
+                    self.__class__.__name__))
 
     def nc_has_geometry_variable(self):
         '''Whether the netCDF geometry container variable name has been set.
@@ -1222,6 +1230,7 @@ class NetCDFGeometry(NetCDF):
         self._get_component('netcdf')['geometry_variable'] = value
 
 # --- End: class
+
 
 class NetCDFHDF5(NetCDF):
     '''Mixin class for TODO
@@ -1339,7 +1348,8 @@ class NetCDFHDF5(NetCDF):
         else:
             if len(chunksizes) != len(shape):
                 raise ValueError(
-"chunksizes must be a sequence with the same length as dimensions")
+                    "chunksizes must be a sequence with the same length "
+                    "as dimensions")
 
             for i, j in zip(chunksizes, shape):
                 if i < 0:
@@ -1427,9 +1437,10 @@ class NetCDFHDF5_exp(NetCDF):
         try:
             return self._get_component('netcdf')['hdf5_chunksize']
         except KeyError:
-            return self._default(default,
-                   "{!r} has no HDF5 chunksize".format(
-                       self.__class__.__name__))
+            return self._default(
+                default,
+                "{!r} has no HDF5 chunksize".format(
+                    self.__class__.__name__))
 
     def nc_has_hdf5_chunksize(self):
         '''TODO

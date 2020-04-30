@@ -96,8 +96,7 @@ Miscellaneous
    ~cfdm.FieldAncillary.copy
    ~cfdm.FieldAncillary.equals
    ~cfdm.FieldAncillary.uncompress
-
-
+   ~cfdm.FieldAncillary.get_filenames
 
 NetCDF
 ------
