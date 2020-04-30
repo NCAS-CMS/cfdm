@@ -120,11 +120,11 @@ autodoc_default_options = {'members': True,
 
 intersphinx_cache_limit = 5     # days to keep the cached inventories
 intersphinx_mapping = {
-    'sphinx':     ('http://sphinx.pocoo.org',  None),
-    'python':     ('http://docs.python.org/3', None),
-    'numpy':      ('http://docs.scipy.org/doc/numpy', None),
-    'netCDF4':    ('http://unidata.github.io/netcdf4-python', None),
-    'cftime' :    ('http://unidata.github.io/cftime', None),
+    'sphinx':     ('https://www.sphinx-doc.org/en/master/',  None),
+    'python':     ('https://docs.python.org/3', None),
+    'numpy':      ('https://docs.scipy.org/doc/numpy', None),
+    #'netCDF4':    ('https://unidata.github.io/netcdf4-python/', None),
+    'cftime' :    ('https://unidata.github.io/cftime', None),
     }
 
 # This extension is meant to help with the common pattern of having

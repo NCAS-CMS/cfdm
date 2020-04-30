@@ -213,7 +213,7 @@ version 1.7.3
 * Fixed bug in `cfdm.CoordinateReference.clear_coordinates`.
 * Fixed bug in `cfdm.Field.convert` (which omitted domain ancillaries
   in the result).
-* Added **kwargs parameter to
+* Added ``kwargs`` parameter to
   `cfdm.CFDMImplementation.initialise_Data`, to facilitate
   subclassing.
 * Added `NetCDFRead._customize_read_vars` to facilitate subclassing.

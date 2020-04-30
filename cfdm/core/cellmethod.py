@@ -65,7 +65,7 @@ class CellMethod(abstract.Container):
             `set_method` method.
     
             *Parameter example:*
-              ``method='mean'
+              ``method='mean'``
     
         qualifiers: `dict`, optional
             Set descriptive qualifiers. The dictionary keys are
