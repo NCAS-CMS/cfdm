@@ -1,0 +1,7 @@
+cfdm.AuxiliaryCoordinate.apply_masking
+======================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.AuxiliaryCoordinate.apply_masking

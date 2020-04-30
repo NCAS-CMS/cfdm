@@ -1,0 +1,7 @@
+cfdm.Field.cell_methods
+=======================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.Field.cell_methods
