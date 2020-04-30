@@ -101,7 +101,7 @@ The following file types can be read:
 ..
 
 * Files in `CDL format
-  <https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_utilities_guide.html>`_,
+  <https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_working_with_netcdf_files.html#netcdf_utilities>`_,
   with or without the data array values.
 
 ..
@@ -973,7 +973,7 @@ Indexing
 When a `Data` instance is indexed a new instance is created for the
 part of the data defined by the indices. Indexing follows rules that
 are very similar to the `numpy indexing rules
-<https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
+<https://numpy.org/doc/stable/user/basics.indexing.html>`_,
 the only differences being:
 
 * An integer index *i* specified for a dimension reduces the size of
@@ -1014,7 +1014,7 @@ Assignment
 Values can be changed by assigning to elements selected by indices of
 the `Data` instance using rules that are very similar to the `numpy
 indexing rules
-<https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
+<https://numpy.org/doc/stable/user/basics.indexing.html>`_,
 the only difference being:
 
 * When two or more dimensions' indices are sequences of integers then
@@ -1047,7 +1047,7 @@ A single value may be assigned to any number of elements.
 
 An array of values can be assigned, as long as it is broadcastable to
 the shape defined by the indices, using the `numpy broadcasting rules
-<https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html>`_.
+<https://numpy.org/doc/stable/user/basics.broadcasting.html>`_.
 
 .. code-block:: python
    :caption: *Overwrite the square of values of -3 with the numbers 0

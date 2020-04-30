@@ -2,7 +2,7 @@ version 1.8.3
 -------------
 ----
 
-**2020-04-??**
+**2020-04-30**
 
 * `cfdm.Field.apply_masking` now masks metadata constructs.
 * New method: `cfdm.Field.get_filenames`
