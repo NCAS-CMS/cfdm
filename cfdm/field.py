@@ -1899,7 +1899,7 @@ class Field(mixin.NetCDFVariable,
  
         '''
         f = _inplace_enabled_define_and_cleanup(self)
-        super(f.__class__, f).uncompress(inplace=True)
+        super(Field, f).uncompress(inplace=True)
 
         for c in f.constructs.filter_by_data().values():
             c.uncompress(inplace=True)
