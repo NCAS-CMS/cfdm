@@ -176,6 +176,7 @@ Miscellaneous
    ~cfdm.Field.equals
    ~cfdm.Field.convert
    ~cfdm.Field.uncompress
+   ~cfdm.Field.get_filenames
 
 .. _Field-NetCDF:
    

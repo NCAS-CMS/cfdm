@@ -11,15 +11,14 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -36,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.2</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.3</a></h1>
 
 
 
@@ -64,7 +63,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -449,6 +448,8 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="function/cfdm.abspath.html#cfdm.abspath">abspath() (in module cfdm)</a>
+</li>
       <li><a href="method/cfdm.Data.any.html#cfdm.Data.any">any() (cfdm.Data method)</a>
 </li>
       <li><a href="method/cfdm.AuxiliaryCoordinate.apply_masking.html#cfdm.AuxiliaryCoordinate.apply_masking">apply_masking() (cfdm.AuxiliaryCoordinate method)</a>
@@ -1587,8 +1588,6 @@
         <li><a href="method/cfdm.List.get_data.html#cfdm.List.get_data">(cfdm.List method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cfdm.core.Domain.get_data_axes.html#cfdm.core.Domain.get_data_axes">get_data_axes() (cfdm.core.Domain method)</a>
 
       <ul>
@@ -1599,6 +1598,8 @@
         <li><a href="method/cfdm.Field.get_data_axes.html#cfdm.Field.get_data_axes">(cfdm.Field method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cfdm.CoordinateReference.get_datum.html#cfdm.CoordinateReference.get_datum">get_datum() (cfdm.CoordinateReference method)</a>
 
       <ul>
@@ -1617,6 +1618,30 @@
         <li><a href="method/cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary.html#cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary">(cfdm.core.abstract.ParametersDomainAncillaries method)</a>
 </li>
         <li><a href="method/cfdm.core.CoordinateConversion.get_domain_ancillary.html#cfdm.core.CoordinateConversion.get_domain_ancillary">(cfdm.core.CoordinateConversion method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cfdm.AuxiliaryCoordinate.get_filenames.html#cfdm.AuxiliaryCoordinate.get_filenames">get_filenames() (cfdm.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cfdm.Bounds.get_filenames.html#cfdm.Bounds.get_filenames">(cfdm.Bounds method)</a>
+</li>
+        <li><a href="method/cfdm.CellMeasure.get_filenames.html#cfdm.CellMeasure.get_filenames">(cfdm.CellMeasure method)</a>
+</li>
+        <li><a href="method/cfdm.Count.get_filenames.html#cfdm.Count.get_filenames">(cfdm.Count method)</a>
+</li>
+        <li><a href="method/cfdm.Data.get_filenames.html#cfdm.Data.get_filenames">(cfdm.Data method)</a>
+</li>
+        <li><a href="method/cfdm.DimensionCoordinate.get_filenames.html#cfdm.DimensionCoordinate.get_filenames">(cfdm.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cfdm.DomainAncillary.get_filenames.html#cfdm.DomainAncillary.get_filenames">(cfdm.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cfdm.Field.get_filenames.html#cfdm.Field.get_filenames">(cfdm.Field method)</a>
+</li>
+        <li><a href="method/cfdm.FieldAncillary.get_filenames.html#cfdm.FieldAncillary.get_filenames">(cfdm.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cfdm.Index.get_filenames.html#cfdm.Index.get_filenames">(cfdm.Index method)</a>
+</li>
+        <li><a href="method/cfdm.List.get_filenames.html#cfdm.List.get_filenames">(cfdm.List method)</a>
 </li>
       </ul></li>
       <li><a href="method/cfdm.core.Data.get_fill_value.html#cfdm.core.Data.get_fill_value">get_fill_value() (cfdm.core.Data method)</a>
@@ -2965,11 +2990,11 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-24.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -120,8 +120,7 @@ Miscellaneous
    ~cfdm.AuxiliaryCoordinate.copy
    ~cfdm.AuxiliaryCoordinate.equals
    ~cfdm.AuxiliaryCoordinate.uncompress
-
-
+   ~cfdm.AuxiliaryCoordinate.get_filenames
 
 NetCDF
 ------

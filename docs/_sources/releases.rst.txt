@@ -10,6 +10,7 @@
 ----------
 ----
 
+* `Version 1.8.3 <https://ncas-cms.github.io/cfdm/1.8.3>`_ (2020-04-30)
 * `Version 1.8.2 <https://ncas-cms.github.io/cfdm/1.8.2>`_ (2020-04-24)
 * `Version 1.8.1 <https://ncas-cms.github.io/cfdm/1.8.1>`_ (2020-04-14)
 * `Version 1.8.0 <https://ncas-cms.github.io/cfdm/1.8.0>`_ (2020-03-23)

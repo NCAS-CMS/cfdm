@@ -120,8 +120,7 @@ Miscellaneous
    ~cfdm.DomainAncillary.copy
    ~cfdm.DomainAncillary.equals
    ~cfdm.DomainAncillary.uncompress
-
-
+   ~cfdm.DomainAncillary.get_filenames
 
 NetCDF
 ------

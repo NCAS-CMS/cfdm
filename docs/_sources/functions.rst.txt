@@ -44,4 +44,4 @@ Version |release| for version |version| of the CF conventions.
    cfdm.environment
    cfdm.example_field
    cfdm.implementation
-
+   cfdm.abspath

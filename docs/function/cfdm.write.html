@@ -10,15 +10,14 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.CF" href="cfdm.CF.html" />
@@ -37,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.2</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.3</a></h1>
 
 
 
@@ -65,7 +64,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -111,7 +110,7 @@
 <h1>cfdm.write<a class="headerlink" href="#cfdm-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.write">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">string=True</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.2/cfdm/read_write/write.py#L8-L386"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">string=True</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.3/cfdm/read_write/write.py#L9-L409"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -149,7 +148,7 @@ dimensions may be accessed with the
 <a class="reference internal" href="../method/cfdm.DomainAxis.nc_set_unlimited.html#cfdm.DomainAxis.nc_set_unlimited" title="cfdm.DomainAxis.nc_set_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited</span></code></a> methods of a domain axis
 construct.</p>
 <p><strong>NetCDF4 HDF chunk sizes</strong></p>
-<p>HDF5 chunksizes may be set on contruct’s data. See the
+<p>HDF5 chunksizes may be set on construct’s data. See the
 <a class="reference internal" href="../method/cfdm.Data.nc_hdf5_chunksizes.html#cfdm.Data.nc_hdf5_chunksizes" title="cfdm.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>,
 <a class="reference internal" href="../method/cfdm.Data.nc_clear_hdf5_chunksizes.html#cfdm.Data.nc_clear_hdf5_chunksizes" title="cfdm.Data.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a> and
 <a class="reference internal" href="../method/cfdm.Data.nc_set_hdf5_chunksizes.html#cfdm.Data.nc_set_hdf5_chunksizes" title="cfdm.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a> metods of a <a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
@@ -158,7 +157,7 @@ construct.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a></p>
+<p><a class="reference internal" href="cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -330,7 +329,7 @@ a netCDF data variable attribute</p>
 </dd>
 </dl>
 </dd>
-<dt>external: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional  </dt><dd><p>Write metadata constructs that have data and are marked as
+<dt>external: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Write metadata constructs that have data and are marked as
 external to the named external file. Ignored if there are
 no such constructs.</p>
 </dd>
@@ -417,9 +416,30 @@ arrays of type char with an extra dimension denoting the
 maximum string length, regardless of the selected output
 file format.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><blockquote>
-<div><p>If True then print a summary of how constructs map to
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print a summary of how constructs map to
 output netCDF dimensions, variables and attributes.</p>
+</dd>
+<dt>warn_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><blockquote>
+<div><p>If False then do not print a warning when writing
+“out-of-range” data, as indicated by the values, if
+present, of any of the <code class="docutils literal notranslate"><span class="pre">valid_min</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_max</span></code> or
+<code class="docutils literal notranslate"><span class="pre">valid_range</span></code> properties on field and metadata
+constructs that have data. By default a warning is printed
+if any such construct has any of these properties in
+combination with out-of-range data.</p>
+<p>The consequence of writing out-of-range data values is
+that, by default, these values will be masked when the
+file is subsequently read.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>If a construct has <code class="docutils literal notranslate"><span class="pre">valid_max</span></code> property with value
+<code class="docutils literal notranslate"><span class="pre">100</span></code> and data with maximum value <code class="docutils literal notranslate"><span class="pre">999</span></code>, then the
+resulting warning may be suppressed by setting
+<code class="docutils literal notranslate"><span class="pre">warn_valid=False</span></code>.</p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.8.3.</span></p>
+</div>
 </div></blockquote>
 <dl class="simple">
 <dt>_implementation: (subclass of) <code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code>, optional</dt><dd><p>Define the CF data model implementation that defines field
@@ -458,11 +478,11 @@ and metadata constructs and their components.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-24.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/function/cfdm.write.rst.txt"

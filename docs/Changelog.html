@@ -10,15 +10,14 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Older releases" href="releases.html" />
@@ -36,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.2</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.3</a></h1>
 
 
 
@@ -64,7 +63,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -103,6 +102,21 @@
             
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-1-8-3">
+<h2>version 1.8.3<a class="headerlink" href="#version-1-8-3" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2020-04-30</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="method/cfdm.Field.apply_masking.html#cfdm.Field.apply_masking" title="cfdm.Field.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.apply_masking</span></code></a> now masks metadata constructs.</p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.get_filenames.html#cfdm.Field.get_filenames" title="cfdm.Field.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.get_filenames</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.get_filenames.html#cfdm.Data.get_filenames" title="cfdm.Data.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.get_filenames</span></code></a></p></li>
+<li><p>New function: <a class="reference internal" href="function/cfdm.abspath.html#cfdm.abspath" title="cfdm.abspath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.abspath</span></code></a></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a>: <code class="docutils literal notranslate"><span class="pre">warn_valid</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/30">https://github.com/NCAS-CMS/cfdm/issues/30</a>)</p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>: <code class="docutils literal notranslate"><span class="pre">warn_valid</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/30">https://github.com/NCAS-CMS/cfdm/issues/30</a>)</p></li>
+</ul>
+</div>
 <div class="section" id="version-1-8-2">
 <h2>version 1.8.2<a class="headerlink" href="#version-1-8-2" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -302,7 +316,7 @@ arguments are provided: Now returns all possible constructs that
 <li><p>Fixed bug in <a class="reference internal" href="method/cfdm.CoordinateReference.clear_coordinates.html#cfdm.CoordinateReference.clear_coordinates" title="cfdm.CoordinateReference.clear_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CoordinateReference.clear_coordinates</span></code></a>.</p></li>
 <li><p>Fixed bug in <a class="reference internal" href="method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.convert</span></code></a> (which omitted domain ancillaries
 in the result).</p></li>
-<li><p>Added <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs parameter to
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> parameter to
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CFDMImplementation.initialise_Data</span></code>, to facilitate
 subclassing.</p></li>
 <li><p>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFRead._customize_read_vars</span></code> to facilitate subclassing.</p></li>
@@ -351,11 +365,11 @@ default.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-24.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/Changelog.rst.txt"
