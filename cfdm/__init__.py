@@ -67,6 +67,7 @@ from .constants import masked
 from .functions import (ATOL,
                         RTOL,
                         CF,
+                        LOG_SEVERITY_LEVEL,
                         abspath,
                         environment)
 
@@ -115,3 +116,15 @@ from .read_write import (read,
                          write)
 
 from .examplefield import example_field
+
+
+# Set up basic logging for the full project with a root logger
+import logging
+import sys
+
+logging.basicConfig(
+    stream=sys.stdout,
+    style='{',  # by default uses old style ('%') string formatting
+    format='{message}',  # no module names or datetimes etc. for simple case
+    level=logging.WARNING,  # default, but use LOG_SEVERITY_LEVEL() to change
+)

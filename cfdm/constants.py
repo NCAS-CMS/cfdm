@@ -1,6 +1,8 @@
+import logging
 import sys
 
 import numpy
+
 
 CONSTANTS = {
     # The value of absolute tolerance for testing numerically tolerant
@@ -9,7 +11,11 @@ CONSTANTS = {
     # The value of relative tolerance for testing numerically tolerant
     # equality.
     'ATOL': sys.float_info.epsilon,
+    # The minimal level of seriousness for which log messages are shown. See
+    # functions.LOG_SEVERITY_LEVEL().
+    'LOG_SEVERITY_LEVEL': logging.getLevelName(logging.getLogger().level),
 }
+
 
 # --------------------------------------------------------------------
 # masked
