@@ -20,6 +20,8 @@ from pprint            import pformat
 import numpy
 import netCDF4
 
+from ...functions import LOG_SEVERITY_LEVEL, _reset_log_severity_level
+
 from .. import IORead
 
 from . import constants
@@ -396,7 +398,7 @@ class NetCDFRead(IORead):
 
     def read(self, filename, extra=None, default_version=None,
              external=None, extra_read_vars=None, _scan_only=False,
-             verbose=False, mask=True, warnings=True,
+             verbose=None, mask=True, warnings=True,
              warn_valid=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
     location.
@@ -627,6 +629,20 @@ class NetCDFRead(IORead):
             raise IOError("Can't read non-existent file {}".format(filename))
 
         g['filename'] = filename
+
+        # ------------------------------------------------------------
+        # Process verbosity argument as override to logging level.
+        # ------------------------------------------------------------
+        if verbose:  # i.e. verbose=True by user argument specification
+            # This level is effectively below 'DEBUG' and results in all
+            # logging messages being returned, no matter their level:
+            _reset_log_severity_level('NOTSET')
+        elif verbose is None:  # note we exclude user set verbose=False here
+            # verbose=None implies to just use the global logging level to
+            # decide what (if any) log messages to filter out. So by setting
+            # as True we bypass all 'if verbose' checks required otherwise:
+            verbose = True
+        # else (verbose is False) so 'if verbose' checks bypass all log calls
 
         # ------------------------------------------------------------
         # Open the netCDF file to be read
@@ -1013,10 +1029,12 @@ class NetCDFRead(IORead):
         # --- End: if
 
         # ------------------------------------------------------------
-        # Close the netCDF file(s)
+        # Close the netCDF file(s) and reset the log level if required
         # ------------------------------------------------------------
         self.file_close()
-         
+        if logging.getLevelName(logging.getLogger().level) == 'NOTSET':
+            LOG_SEVERITY_LEVEL(LOG_SEVERITY_LEVEL())  # reset to original value
+
         # ------------------------------------------------------------
         # Return the fields
         # ------------------------------------------------------------
