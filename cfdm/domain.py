@@ -8,6 +8,8 @@ from . import core
 
 from . import Constructs
 
+from .decorators import _manage_log_level_via_verbosity
+
 
 logger = logging.getLogger(__name__)
 
@@ -292,7 +294,8 @@ class Domain(mixin.ConstructAccess,
         else:
             return string
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_compression=True, ignore_type=False):
         '''Whether two domains are the same.
@@ -323,7 +326,7 @@ class Domain(mixin.ConstructAccess,
                             ignore_data_type=ignore_data_type,
                             ignore_fill_value=ignore_fill_value,
                             ignore_compression=ignore_compression):
-            if verbose:
+            if verbose is not False:  # i.e. is True (/truthy) *or None*
                 logger.info(
                     "{0}: Different metadata constructs".format(
                         self.__class__.__name__)

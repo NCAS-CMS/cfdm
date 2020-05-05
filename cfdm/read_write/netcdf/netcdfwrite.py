@@ -3496,7 +3496,7 @@ class NetCDFWrite(IOWrite):
               datatype=None, least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
               shuffle=True, scalar=True, string=True,
-              extra_write_vars=None, verbose=False,
+              extra_write_vars=None, verbose=None,
               warn_valid=True):
         '''Write fields to a netCDF file.
         

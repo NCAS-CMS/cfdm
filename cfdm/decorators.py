@@ -1,5 +1,11 @@
 from functools import wraps
 
+from .functions import (
+    LOG_SEVERITY_LEVEL,
+    _disable_logging,
+    _reset_log_severity_level,
+)
+
 
 # Identifier for 'inplace_enabled' to use as internal '_custom' dictionary key,
 # or directly as a (temporary) attribute name if '_custom' is not provided:
@@ -71,3 +77,44 @@ def _inplace_enabled_define_and_cleanup(instance):
         del instance.INPLACE_ENABLED_PLACEHOLDER
 
     return x
+
+
+def _manage_log_level_via_verbosity(method_with_verbose_kwarg):
+    '''A decorator for managing log message filtering by verbosity argument.
+
+    This enables overriding of the log severity level such that a verbose=True
+    input to the decorated method will force all log messages called within
+    the method (only) to be displayed, even if less than the
+    cfdm.LOG_SEVERITY_LEVEL() which would otherwise filter them out, and
+    verbose=False input will disable all log messages appearing, again
+    regardless of LOG_SEVERITY_LEVEL(). If verbose=None, as is the default,
+    the LOG_SEVERITY_LEVEL() determines which log messages are shown, as
+    standard.
+
+    Only use this to decorate functions which make log calls directly
+    and have a 'verbose' keyword argument set to None by default.
+    '''
+
+    @wraps(method_with_verbose_kwarg)
+    def verbose_override_wrapper(self, *args, **kwargs):
+        verbose = kwargs.get('verbose')
+
+        if verbose:
+            # This level is effectively below 'DEBUG' and results in all log
+            # messages being returned, no matter their level. Note this only
+            # holds over the time of method execution (see reversion below).
+            _reset_log_severity_level('NOTSET')
+        elif verbose is False:  # deliberatly excluding verbose=None case
+            _disable_logging()  # prevents any log messages being displayed
+
+        try:
+            return method_with_verbose_kwarg(self, *args, **kwargs)
+        except Exception as exc:
+            raise
+        finally:  # so above changes are reverted even when method errors
+            if verbose:
+                _reset_log_severity_level(LOG_SEVERITY_LEVEL())  # revert
+            elif verbose is False:  # deliberatly excluding verbose=None case
+                _disable_logging('NOTSET')  # lift the disactivation
+
+    return verbose_override_wrapper

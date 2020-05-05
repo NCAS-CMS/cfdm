@@ -11,7 +11,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           file_descriptors=None, external=None, Conventions=None,
           datatype=None, least_significant_digit=None,
           endian='native', compress=0, fletcher32=False, shuffle=True,
-          string=True, verbose=False, warn_valid=True,
+          string=True, verbose=None, warn_valid=True,
           _implementation=_implementation):
     '''Write field constructs to a netCDF file.
 

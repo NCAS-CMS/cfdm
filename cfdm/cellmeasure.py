@@ -6,6 +6,8 @@ import logging
 from . import mixin
 from . import core
 
+from .decorators import _manage_log_level_via_verbosity
+
 
 logger = logging.getLogger(__name__)
 
@@ -136,7 +138,8 @@ class CellMeasure(mixin.NetCDFVariable,
                              _axes=_axes, _axis_names=_axis_names)
 
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=True,
                ignore_type=False):
@@ -254,7 +257,7 @@ class CellMeasure(mixin.NetCDFVariable,
         measure0 = self.get_measure(None)
         measure1 = other.get_measure(None)
         if measure0 != measure1:
-            if verbose:
+            if verbose is not False:  # i.e. is True (/truthy) *or None*
                 logger.info("{0}: Different measure ({1} != {2})".format(
                     self.__class__.__name__, measure0, measure1))
             return False

@@ -5,13 +5,15 @@ import os
 
 from ..cfdmimplementation import implementation
 
+from ..decorators import _manage_log_level_via_verbosity
+
 from .netcdf import NetCDFRead
 
 
 _implementation = implementation()
        
 
-def read(filename, external=None, extra=None, verbose=False,
+def read(filename, external=None, extra=None, verbose=None,
          warnings=False, warn_valid=False, mask=True,
          _implementation=_implementation):
     '''Read field constructs from a dataset.

@@ -19,7 +19,11 @@ from .data import RaggedIndexedArray
 from .data import RaggedIndexedContiguousArray
 from .data import GatheredArray
 
-from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+from .decorators import (
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -1189,7 +1193,8 @@ class Field(mixin.NetCDFVariable,
         else:
             return string
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=True,
                ignore_type=False):
@@ -1329,7 +1334,7 @@ class Field(mixin.NetCDFVariable,
                             ignore_fill_value=ignore_fill_value,
                             ignore_compression=ignore_compression,
                             _ignore_type=False):
-            if verbose:
+            if verbose is not False:  # i.e. is True (/truthy) *or None*
                 logger.info(
                     "{0}: Different metadata constructs".format(
                         self.__class__.__name__)

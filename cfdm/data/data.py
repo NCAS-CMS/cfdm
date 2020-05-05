@@ -13,7 +13,11 @@ from .. import mixin
 from ..constants import masked as cfdm_masked
 from ..functions import abspath
 
-from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+from ..decorators import (
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
 
 from . import abstract
 from . import NumpyArray
@@ -1850,7 +1854,8 @@ class Data(mixin.Container,
         return cls(numpy.empty(shape=shape, dtype=dtype), units=units,
                    calendar=calendar)
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_compression=True, ignore_type=False,
                _check_values=True):
@@ -1949,7 +1954,11 @@ class Data(mixin.Container,
             return pp
         
         other = pp
-        
+
+        # Allow verbosity to interface with log message filtering levels
+        # (see decorators._manage_log_level_via_verbosity):
+        verbose = verbose is not False  # i.e. is True (/truthy) *or None*
+
         # Check that each instance has the same shape
         if self.shape != other.shape:
             if verbose:

@@ -45,7 +45,7 @@ class Parameters(Container):
         '''
         return 'Parameters: {0}'.format(', '.join(sorted(self.parameters())))
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_type=False):
         '''Whether two instances are the same.

@@ -694,7 +694,7 @@ class PropertiesDataBounds(PropertiesData):
         else:
             return string
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=True,
                ignore_type=False):

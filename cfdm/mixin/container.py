@@ -160,7 +160,7 @@ class Container(object):
                 else:
                     return bool(out)
 
-    def _equals_preprocess(self, other, verbose=False,
+    def _equals_preprocess(self, other, verbose=None,
                            ignore_type=False):
         '''Common preprocessing prior to testing of equality.
 

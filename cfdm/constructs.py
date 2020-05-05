@@ -8,6 +8,8 @@ from copy import deepcopy
 
 from . import core
 
+from .decorators import _manage_log_level_via_verbosity
+
 
 logger = logging.getLogger(__name__)
 
@@ -178,8 +180,9 @@ class Constructs(core.Constructs):
 
         return out
 
+    @_manage_log_level_via_verbosity
     def _equals_cell_method(self, other, rtol=None, atol=None,
-                            verbose=False, ignore_type=False,
+                            verbose=None, ignore_type=False,
                             axis1_to_axis0=None, key1_to_key0=None):
         '''TODO
 
@@ -187,6 +190,10 @@ class Constructs(core.Constructs):
         cell_methods0 = self.filter_by_type('cell_method')
         cell_methods1 = other.filter_by_type('cell_method')
 
+        # Allow verbosity to interface with log message filtering levels
+        # (see decorators._manage_log_level_via_verbosity):
+        verbose = verbose is not False  # i.e. is True (/truthy) *or None*
+        
         if len(cell_methods0) != len(cell_methods1):
             if verbose:
                 logger.info(
@@ -377,8 +384,9 @@ class Constructs(core.Constructs):
 
         return True
 
+    @_manage_log_level_via_verbosity
     def _equals_domain_axis(self, other, rtol=None, atol=None,
-                            verbose=False, ignore_type=False,
+                            verbose=None, ignore_type=False,
                             axis1_to_axis0=None, key1_to_key0=None):
         '''TODO
 
@@ -390,7 +398,7 @@ class Constructs(core.Constructs):
       
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes
-            if verbose:
+            if verbose is not False:  # i.e. is True (/truthy) *or None*
                 logger.info(
                     "{0}: Different domain axis sizes: {1} != {2}".format(
                         self.__class__.__name__,
@@ -626,7 +634,7 @@ class Constructs(core.Constructs):
         # Get the identity from the domain axis construct key
         return 'key%{0}'.format(key)
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_compression=True, _ignore_type=False,
                _return_axis_map=False):

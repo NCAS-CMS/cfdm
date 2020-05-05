@@ -130,7 +130,7 @@ class DimensionCoordinate(mixin.NetCDFVariable,
                             _axes=_axes, _axis_names=_axis_names)
 
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=True,
                ignore_type=False):
