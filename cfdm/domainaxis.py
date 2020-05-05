@@ -1,8 +1,13 @@
 from __future__ import print_function
 from builtins import super
 
+import logging
+
 from . import mixin
 from . import core
+
+
+logger = logging.getLogger(__name__)
 
 
 class DomainAxis(mixin.NetCDFDimension,
@@ -132,8 +137,10 @@ class DomainAxis(mixin.NetCDFDimension,
         other_size = other.get_size(None)
         if not self_size == other_size:
             if verbose:
-                print("{0}: Different axis sizes: {1} != {2}".format(
-			self.__class__.__name__, self_size, other_size))
+                logger.info(
+                    "{0}: Different axis sizes: {1} != {2}".format(
+		        self.__class__.__name__, self_size, other_size)
+                )
             return False
 
         return True

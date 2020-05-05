@@ -2,7 +2,7 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import (str, super)
 
-
+import logging
 import os
 import urllib.parse
 
@@ -11,6 +11,9 @@ import netCDF4
 
 from . import abstract
 from .numpyarray import NumpyArray
+
+
+logger = logging.getLogger(__name__)
 
 
 class NetCDFArray(abstract.Array):
@@ -180,7 +183,7 @@ class NetCDFArray(abstract.Array):
 #            array = numpy.ma.resize(array, (new_size, strlen))
 #            
 #            array = array.filled(fill_value='')
-#            print('array=', array)
+#            logger.info('array={}'.format(array))
 #            array = numpy.array([''.join(x).rstrip() for x in array],
 #                                dtype='S{0}'.format(strlen))
 #            

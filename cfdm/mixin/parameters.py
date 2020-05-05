@@ -1,7 +1,12 @@
 from __future__ import print_function
 from builtins import super
 
+import logging
+
 from . import Container
+
+
+logger = logging.getLogger(__name__)
 
 
 class Parameters(Container):
@@ -124,11 +129,13 @@ class Parameters(Container):
         parameters1 = other.parameters()
         if set(parameters0) != set(parameters1):
             if verbose:
-                print(
+                logger.info(
                     "{0}: Different parameter-valued terms "
                     "({1} != {2})".format(
                         self.__class__.__name__,
-                        set(parameters0), set(parameters1)))
+                        set(parameters0), set(parameters1)
+                    )
+                )
             return False
 
         # Check that the parameter values are equal
@@ -145,8 +152,10 @@ class Parameters(Container):
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_type=ignore_type):
                 if verbose:
-                    print("{}: Unequal {!r} terms ({!r} != {!r})".format( 
-                        self.__class__.__name__, term, value0, value1))
+                    logger.info(
+                        "{}: Unequal {!r} terms ({!r} != {!r})".format( 
+                            self.__class__.__name__, term, value0, value1)
+                    )
                 return False
         # --- End: for
 

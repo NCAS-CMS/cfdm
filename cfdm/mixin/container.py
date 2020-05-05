@@ -2,10 +2,14 @@ from __future__ import print_function
 from builtins import object
 
 import inspect
+import logging
 
 import numpy
 
 from ..functions import ATOL, RTOL
+
+
+logger = logging.getLogger(__name__)
 
 
 class Container(object):
@@ -183,7 +187,7 @@ class Container(object):
                 other = type(self)(source=other, copy=False)
         elif not isinstance(other, self.__class__):
             if verbose:
-                print("{}: Incompatible type: {}".format(
+                logger.info("{}: Incompatible type: {}".format(
                     self.__class__.__name__, type(other)))
             return False
 

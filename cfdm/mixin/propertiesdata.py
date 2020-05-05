@@ -1,9 +1,14 @@
 from __future__ import print_function
 from builtins import (str, super)
 
+import logging
+
 from . import Properties
 
 from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+
+
+logger = logging.getLogger(__name__)
 
 
 class PropertiesData(Properties):
@@ -535,7 +540,7 @@ class PropertiesData(Properties):
         external1 = other._get_component('external', False)
         if external0 != external1:
             if verbose:
-                print("{0}: Only one external variable)".format(
+                logger.info("{0}: Only one external variable)".format(
                     self.__class__.__name__))
             return False
         
@@ -543,12 +548,14 @@ class PropertiesData(Properties):
             # Both variables are external
             if self.nc_get_variable(None) != other.nc_get_variable(None):
                 if verbose:
-                    print(
+                    logger.info(
                         "{}: External variable have different "
                         "netCDF variable names: {} != {})".format(
                             self.__class__.__name__,
                             self.nc_get_variable(None),
-                            other.nc_get_variable(None)))
+                            other.nc_get_variable(None)
+                        )
+                    )
                 return False
 
             return True
@@ -570,9 +577,10 @@ class PropertiesData(Properties):
         # ------------------------------------------------------------
         if self.has_data() != other.has_data():
             if verbose:
-                print(
+                logger.info(
                     "{0}: Different data: Only one {0} has data".format(
-                        self.__class__.__name__))
+                        self.__class__.__name__)
+                )
             return False
             
         if self.has_data():
@@ -583,7 +591,7 @@ class PropertiesData(Properties):
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
                 if verbose:
-                    print("{0}: Different data".format(
+                    logger.info("{0}: Different data".format(
                         self.__class__.__name__))
                 return False
         # --- End: if

@@ -1,11 +1,15 @@
 from __future__ import print_function
 from builtins import super
 
+import logging
 import textwrap
 
 import numpy
 
 from . import Container
+
+
+logger = logging.getLogger(__name__)
 
 
 class Properties(Container):
@@ -235,8 +239,10 @@ class Properties(Container):
             if verbose:
                 for prop in set(self_properties).symmetric_difference(
                         other_properties):
-                    print("{}: Missing property: {}".format( 
-                        self.__class__.__name__, prop))
+                    logger.info(
+                        "{}: Missing property: {}".format( 
+                            self.__class__.__name__, prop)
+                    )
             # --- End: if
             
             return False
@@ -250,9 +256,11 @@ class Properties(Container):
                                 ignore_data_type=True,
                                 verbose=verbose):
                 if verbose:
-                    print("{}: Different {!r} property values: "
-                          "{!r}, {!r}".format(
-                              self.__class__.__name__, prop, x, y))
+                    logger.info(
+                        "{}: Different {!r} property values: "
+                        "{!r}, {!r}".format(
+                            self.__class__.__name__, prop, x, y)
+                    )
                     
                 return False
         # --- End: for

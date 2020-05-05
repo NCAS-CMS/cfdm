@@ -1,6 +1,8 @@
 from __future__ import print_function
 from builtins import (str, super, zip)
 
+import logging
+
 from . import mixin
 from . import core
 from . import Constructs
@@ -18,6 +20,9 @@ from .data import RaggedIndexedContiguousArray
 from .data import GatheredArray
 
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+
+
+logger = logging.getLogger(__name__)
 
 
 class Field(mixin.NetCDFVariable,
@@ -1325,8 +1330,10 @@ class Field(mixin.NetCDFVariable,
                             ignore_compression=ignore_compression,
                             _ignore_type=False):
             if verbose:
-                print("{0}: Different metadata constructs".format(
-                    self.__class__.__name__))
+                logger.info(
+                    "{0}: Different metadata constructs".format(
+                        self.__class__.__name__)
+                )
             return False
 
         return True
@@ -1666,8 +1673,11 @@ class Field(mixin.NetCDFVariable,
                 for x in value1:
                     print('        {!r}: ['.format(key1))
                     print('            {{{0}}},'.format(
-                        '\n             '.join(['{0!r}: {1!r},'.format(key2, value2)
-                                                for key2, value2 in sorted(x.items())])))
+                        '\n             '.join(
+                            ['{0!r}: {1!r},'.format(key2, value2)
+                             for key2, value2 in sorted(x.items())]
+                        )
+                    ))
 
                 print('        ],')
 

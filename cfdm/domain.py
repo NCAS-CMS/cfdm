@@ -1,10 +1,15 @@
 from __future__ import print_function
 from builtins import (str, super)
 
+import logging
+
 from . import mixin
 from . import core
 
 from . import Constructs
+
+
+logger = logging.getLogger(__name__)
 
 
 class Domain(mixin.ConstructAccess,
@@ -319,8 +324,10 @@ class Domain(mixin.ConstructAccess,
                             ignore_fill_value=ignore_fill_value,
                             ignore_compression=ignore_compression):
             if verbose:
-                print("{0}: Different metadata constructs".format(
-                    self.__class__.__name__))
+                logger.info(
+                    "{0}: Different metadata constructs".format(
+                        self.__class__.__name__)
+                )
             return False
 
         return True

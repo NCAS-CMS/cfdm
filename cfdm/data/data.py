@@ -2,6 +2,7 @@ from __future__ import print_function
 from builtins import (range, super, zip)
 
 import itertools
+import logging
 
 import numpy
 import netCDF4
@@ -16,6 +17,9 @@ from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 
 from . import abstract
 from . import NumpyArray
+
+
+logger = logging.getLogger(__name__)
 
 
 class Data(mixin.Container,
@@ -1949,24 +1953,31 @@ class Data(mixin.Container,
         # Check that each instance has the same shape
         if self.shape != other.shape:
             if verbose:
-                print("{0}: Different shapes: {1} != {2}".format(
-                    self.__class__.__name__, self.shape, other.shape))
+                logger.info(
+                    "{0}: Different shapes: {1} != {2}".format(
+                        self.__class__.__name__, self.shape, other.shape)
+                )
             return False
 
         # Check that each instance has the same fill value
         if (not ignore_fill_value and
             self.get_fill_value(None) != other.get_fill_value(None)):
             if verbose:
-                print("{0}: Different fill value: {1} != {2}".format(
-                    self.__class__.__name__, 
-                    self.get_fill_value(None), other.get_fill_value(None)))
+                logger.info(
+                    "{0}: Different fill value: {1} != {2}".format(
+                        self.__class__.__name__, 
+                        self.get_fill_value(None), other.get_fill_value(None)
+                    )
+                )
             return False
 
         # Check that each instance has the same data type
         if not ignore_data_type and self.dtype != other.dtype:
             if verbose:
-                print("{0}: Different data types: {1} != {2}".format(
-                    self.__class__.__name__, self.dtype, other.dtype))
+                logger.info(
+                    "{0}: Different data types: {1} != {2}".format(
+                        self.__class__.__name__, self.dtype, other.dtype)
+                )
             return False
 
         # Return now if we have been asked to not check the array
@@ -1980,8 +1991,10 @@ class Data(mixin.Container,
             y = getattr(other, 'get_'+attr)(None)
             if x != y:
                 if verbose:
-                    print("{0}: Different {1}: {2!r} != {3!r}".format(
-                        self.__class__.__name__, attr, x, y))
+                    logger.info(
+                        "{0}: Different {1}: {2!r} != {3!r}".format(
+                            self.__class__.__name__, attr, x, y)
+                    )
                 return False
         # --- End: for
            
@@ -1992,11 +2005,13 @@ class Data(mixin.Container,
             compression_type = self.get_compression_type()
             if compression_type != other.get_compression_type():
                 if verbose:
-                    print("{0}: Different compression types: "
-                          "{1} != {2}".format(
-                              self.__class__.__name__,
-                              compression_type,
-                              other.get_compression_type()))
+                    logger.info(
+                        "{0}: Different compression types: "
+                        "{1} != {2}".format(
+                            self.__class__.__name__,
+                            compression_type,
+                            other.get_compression_type())
+                    )
                     
                 return False
             
@@ -2008,8 +2023,10 @@ class Data(mixin.Container,
                                     other.compressed_array,
                                     rtol=rtol, atol=atol):
                     if verbose:
-                        print("{0}: Different compressed array values".format(
-                            self.__class__.__name__))
+                        logger.info(
+                            "{0}: Different compressed array values".format(
+                                self.__class__.__name__)
+                        )
                     return False
         # --- End: if
         
@@ -2019,7 +2036,7 @@ class Data(mixin.Container,
         if not self._equals(self.array, other.array,
                             rtol=rtol, atol=atol):
             if verbose:
-                print(
+                logger.info(
                     "{0}: Different array values (atol={1}, rtol={2})".format(
                         self.__class__.__name__,
                         atol, rtol)) # pragma: no cover

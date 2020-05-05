@@ -1,8 +1,13 @@
 from __future__ import print_function
 from builtins import super
 
+import logging
+
 from . import mixin
 from . import core
+
+
+logger = logging.getLogger(__name__)
 
 
 class CellMeasure(mixin.NetCDFVariable,
@@ -250,7 +255,7 @@ class CellMeasure(mixin.NetCDFVariable,
         measure1 = other.get_measure(None)
         if measure0 != measure1:
             if verbose:
-                print("{0}: Different measure ({1} != {2})".format(
+                logger.info("{0}: Different measure ({1} != {2})".format(
                     self.__class__.__name__, measure0, measure1))
             return False
 

@@ -2,10 +2,15 @@ from __future__ import print_function
 from builtins import (str, super)
 from past.builtins import basestring
 
+import logging
+
 from . import mixin
 from . import core
 from . import CoordinateConversion
 from . import Datum
+
+
+logger = logging.getLogger(__name__)
 
 
 class CoordinateReference(mixin.NetCDFVariable,
@@ -313,10 +318,11 @@ class CoordinateReference(mixin.NetCDFVariable,
         coords1 = other.coordinates()
         if len(coords0) != len(coords1):
             if verbose:
-                print(
+                logger.info(
                     "{}: Different sized collections of coordinates "
                     "({}, {})".format(                        
-                        self.__class__.__name__, coords0, coords1))
+                        self.__class__.__name__, coords0, coords1)
+                )
                 
             return False
 
@@ -326,9 +332,10 @@ class CoordinateReference(mixin.NetCDFVariable,
                 verbose=verbose,
                 ignore_type=ignore_type):
             if verbose:
-                print(
+                logger.info(
                     "{}: Different coordinate conversions".format(
-                        self.__class__.__name__))
+                        self.__class__.__name__)
+                )
                 
             return False
         
@@ -338,7 +345,7 @@ class CoordinateReference(mixin.NetCDFVariable,
                 verbose=verbose,
                 ignore_type=ignore_type):
             if verbose:
-                print(
+                logger.info(
                     "{}: Different datums".format(self.__class__.__name__))
                 
             return False
