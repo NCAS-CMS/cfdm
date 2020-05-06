@@ -1,3 +1,11 @@
+version 1.8.4
+-------------
+----
+
+**2020-05-??**
+
+* Added new example field ``7`` to `cfdm.example_field`.
+  
 version 1.8.3
 -------------
 ----
