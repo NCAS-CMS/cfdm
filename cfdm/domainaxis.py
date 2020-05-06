@@ -138,11 +138,10 @@ class DomainAxis(mixin.NetCDFDimension,
         self_size  = self.get_size(None)
         other_size = other.get_size(None)
         if not self_size == other_size:
-            if verbose is not False:  # i.e. is True (/truthy) *or None*
-                logger.info(
-                    "{0}: Different axis sizes: {1} != {2}".format(
-		        self.__class__.__name__, self_size, other_size)
-                )
+            logger.info(
+                "{0}: Different axis sizes: {1} != {2}".format(
+                    self.__class__.__name__, self_size, other_size)
+            )
             return False
 
         return True

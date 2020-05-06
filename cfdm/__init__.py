@@ -124,7 +124,7 @@ import sys
 
 logging.basicConfig(
     stream=sys.stdout,
-    style='{',  # by default uses old style ('%') string formatting
-    format='{message}',  # no module names or datetimes etc. for simple case
-    level=logging.WARNING,  # default, but use LOG_SEVERITY_LEVEL() to change
+    style='{',              # default is old style ('%') string formatting
+    format='{message}',     # no module names or datetimes etc. for basic case
+    level=logging.WARNING,  # default but change level via LOG_SEVERITY_LEVEL()
 )

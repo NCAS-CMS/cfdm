@@ -5,8 +5,6 @@ import os
 
 from ..cfdmimplementation import implementation
 
-from ..decorators import _manage_log_level_via_verbosity
-
 from .netcdf import NetCDFRead
 
 

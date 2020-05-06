@@ -5,6 +5,8 @@ import logging
 
 from . import Container
 
+from ..decorators import _manage_log_level_via_verbosity
+
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +47,7 @@ class Parameters(Container):
         '''
         return 'Parameters: {0}'.format(', '.join(sorted(self.parameters())))
 
+    @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_type=False):
@@ -128,14 +131,13 @@ class Parameters(Container):
         parameters0 = self.parameters()
         parameters1 = other.parameters()
         if set(parameters0) != set(parameters1):
-            if verbose:
-                logger.info(
-                    "{0}: Different parameter-valued terms "
-                    "({1} != {2})".format(
-                        self.__class__.__name__,
-                        set(parameters0), set(parameters1)
-                    )
+            logger.info(
+                "{0}: Different parameter-valued terms "
+                "({1} != {2})".format(
+                    self.__class__.__name__,
+                    set(parameters0), set(parameters1)
                 )
+            )
             return False
 
         # Check that the parameter values are equal
@@ -151,11 +153,10 @@ class Parameters(Container):
                                 ignore_data_type=True,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_type=ignore_type):
-                if verbose:
-                    logger.info(
-                        "{}: Unequal {!r} terms ({!r} != {!r})".format( 
-                            self.__class__.__name__, term, value0, value1)
-                    )
+                logger.info(
+                    "{}: Unequal {!r} terms ({!r} != {!r})".format( 
+                        self.__class__.__name__, term, value0, value1)
+                )
                 return False
         # --- End: for
 

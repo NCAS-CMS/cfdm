@@ -9,7 +9,11 @@ from . import PropertiesData
 
 from ..functions import RTOL, ATOL
 
-from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+from ..decorators import (
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -694,6 +698,7 @@ class PropertiesDataBounds(PropertiesData):
         else:
             return string
 
+    @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=True,
@@ -816,13 +821,12 @@ class PropertiesDataBounds(PropertiesData):
         # Check the geometry type
         # ------------------------------------------------------------
         if self.get_geometry(None) != other.get_geometry(None):
-            if verbose:
-                logger.info(
-                    "{0}: Different geometry types: {1}, {2}".format(
-                        self.__class__.__name__,
-                        self.get_geometry(None), other.get_geometry(None)
-                    )
+            logger.info(
+                "{0}: Different geometry types: {1}, {2}".format(
+                    self.__class__.__name__,
+                    self.get_geometry(None), other.get_geometry(None)
                 )
+            )
             return False
 
         # ------------------------------------------------------------
@@ -830,9 +834,8 @@ class PropertiesDataBounds(PropertiesData):
         # ------------------------------------------------------------
         self_has_bounds = self.has_bounds()
         if self_has_bounds != other.has_bounds():
-            if verbose:
-                logger.info(
-                    "{0}: Different bounds".format(self.__class__.__name__))
+            logger.info(
+                "{0}: Different bounds".format(self.__class__.__name__))
             return False
                 
         if self_has_bounds:            
@@ -843,9 +846,8 @@ class PropertiesDataBounds(PropertiesData):
                                 ignore_type=ignore_type,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
-                if verbose:
-                    logger.info("{0}: Different bounds".format(
-                        self.__class__.__name__))  # pragma: no cover
+                logger.info("{0}: Different bounds".format(
+                    self.__class__.__name__))  # pragma: no cover
                     
                 return False
         # --- End: if
@@ -855,9 +857,8 @@ class PropertiesDataBounds(PropertiesData):
         # ------------------------------------------------------------
         self_has_interior_ring = self.has_interior_ring()
         if self_has_interior_ring != other.has_interior_ring():
-            if verbose:
-                logger.info("{0}: Different interior ring".format(
-                    self.__class__.__name__))  # pragma: no cover
+            logger.info("{0}: Different interior ring".format(
+                self.__class__.__name__))  # pragma: no cover
                 
             return False
                 
@@ -870,9 +871,8 @@ class PropertiesDataBounds(PropertiesData):
                                 ignore_type=ignore_type,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
-                if verbose:
-                    logger.info("{0}: Different interior ring".format(
-                        self.__class__.__name__))  # pragma: no cover
+                logger.info("{0}: Different interior ring".format(
+                    self.__class__.__name__))  # pragma: no cover
                     
                 return False
         # --- End: if

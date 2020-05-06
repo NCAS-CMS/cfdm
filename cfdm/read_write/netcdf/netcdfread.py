@@ -1242,7 +1242,6 @@ class NetCDFRead(IORead):
         '''TODO
         '''
         g = self.read_vars
-        verbose = g['verbose']
 
         logger.info(
             "        List variable: compress = {}".format(compress),
@@ -1283,8 +1282,6 @@ class NetCDFRead(IORead):
 
         '''
         g = self.read_vars        
-
-        verbose = g['verbose']
 
         logger.info(
             "    count variable: sample_dimension = {}".format(
@@ -1345,8 +1342,6 @@ class NetCDFRead(IORead):
 
         '''
         g = self.read_vars
-                
-        verbose = g['verbose']
 
         logger.info(
             "    index variable: instance_dimension = {}".format(
@@ -1396,8 +1391,6 @@ class NetCDFRead(IORead):
     
     '''
         g = self.read_vars
-                
-        verbose = g['verbose']
 
         logger.info(
             "Pre-processing indexed and contiguous compression"
@@ -1489,8 +1482,6 @@ class NetCDFRead(IORead):
 
         '''
         g = self.read_vars        
-        
-        verbose = g['verbose']
 
         logger.info(
             "    Geometry container = {!r}".format(geometry_ncvar)
@@ -2190,8 +2181,6 @@ class NetCDFRead(IORead):
             'dimensions': dimensions,
             'non-compliance': {}
         }
-        
-        verbose = g['verbose']
 
         logger.info(
             "Converting netCDF variable {} ({}) to a Field:".format(
@@ -4716,8 +4705,6 @@ class NetCDFRead(IORead):
                             'is not in file')
         incorrect_dimensions = ('Ancillary variable',
                                 'spans incorrect dimensions')
-        
-        verbose = self.read_vars['verbose']
 
         g = self.read_vars
         

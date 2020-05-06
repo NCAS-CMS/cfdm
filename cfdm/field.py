@@ -1334,11 +1334,10 @@ class Field(mixin.NetCDFVariable,
                             ignore_fill_value=ignore_fill_value,
                             ignore_compression=ignore_compression,
                             _ignore_type=False):
-            if verbose is not False:  # i.e. is True (/truthy) *or None*
-                logger.info(
-                    "{0}: Different metadata constructs".format(
-                        self.__class__.__name__)
-                )
+            logger.info(
+                "{0}: Different metadata constructs".format(
+                    self.__class__.__name__)
+            )
             return False
 
         return True

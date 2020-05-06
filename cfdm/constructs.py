@@ -190,16 +190,11 @@ class Constructs(core.Constructs):
         cell_methods0 = self.filter_by_type('cell_method')
         cell_methods1 = other.filter_by_type('cell_method')
 
-        # Allow verbosity to interface with log message filtering levels
-        # (see decorators._manage_log_level_via_verbosity):
-        verbose = verbose is not False  # i.e. is True (/truthy) *or None*
-        
         if len(cell_methods0) != len(cell_methods1):
-            if verbose:
-                logger.info(
-                    "Verbose: Different numbers of cell methods: "
-                    "{0!r} != {1!r}".format(cell_methods0, cell_methods1)
-                )
+            logger.info(
+                "Verbose: Different numbers of cell methods: "
+                "{0!r} != {1!r}".format(cell_methods0, cell_methods1)
+            )
             return False
 
         if not len(cell_methods0):
@@ -217,15 +212,14 @@ class Constructs(core.Constructs):
             axes0 = cm0.get_axes(())
             axes1 = list(cm1.get_axes(()))
             if len(axes0) != len(axes1):
-                if verbose:
-                    logger.info(
-                        "{0}: Different cell methods (mismatched axes):"
-                        "\n  {1}\n  {2}".format(
-                            cm0.__class__.__name__,
-                            cell_methods0.ordered(),
-                            cell_methods1.ordered()
-                        )
+                logger.info(
+                    "{0}: Different cell methods (mismatched axes):"
+                    "\n  {1}\n  {2}".format(
+                        cm0.__class__.__name__,
+                        cell_methods0.ordered(),
+                        cell_methods1.ordered()
                     )
+                )
                 return False
     
             indices = []
@@ -243,14 +237,13 @@ class Constructs(core.Constructs):
                     elif axis0 in axis0_to_axis1 or axis1 in axis1_to_axis0:
                         # Only one of axis0 and axis1 is a domain axis
                         # construct
-                        if verbose:
-                            logger.info(
-                                "{0}: Different cell methods "
-                                "(mismatched axes):\n  {1}\n  {2}".format(
-                                    cm0.__class__.__name__,
-                                    cell_methods0, cell_methods1
-                                )
+                        logger.info(
+                            "{0}: Different cell methods "
+                            "(mismatched axes):\n  {1}\n  {2}".format(
+                                cm0.__class__.__name__,
+                                cell_methods0, cell_methods1
                             )
+                        )
                         return False
                     elif axis0 == axis1:
                         # axes0 and axis 1 are identical standard
@@ -259,26 +252,24 @@ class Constructs(core.Constructs):
                         indices.append(cm1.get_axes(()).index(axis1))
                     elif axis1 is None:
                         # axis1 
-                        if verbose:
-                            logger.info(
-                                "{0}: Different cell methods "
-                                "(mismatched axes):\n  {1}\n  {2}".format(
-                                    cm0.__class__.__name__,
-                                    cell_methods0, cell_methods1
-                                )
+                        logger.info(
+                            "{0}: Different cell methods "
+                            "(mismatched axes):\n  {1}\n  {2}".format(
+                                cm0.__class__.__name__,
+                                cell_methods0, cell_methods1
                             )
+                        )
                         return False
             # --- End: for
 
             if len(cm1.get_axes(())) != len(indices):
-                if verbose:
-                    logger.info(
-                        "{0}: [4] Different cell methods "
-                        "(mismatched axes):\n  {1}\n  {2}".format(
-                              cm0.__class__.__name__,
-                              cell_methods0, cell_methods1
-                        )
+                logger.info(
+                    "{0}: [4] Different cell methods "
+                    "(mismatched axes):\n  {1}\n  {2}".format(
+                          cm0.__class__.__name__,
+                          cell_methods0, cell_methods1
                     )
+                )
                 return False
 
             cm1 = cm1.sorted(indices=indices)
@@ -287,16 +278,16 @@ class Constructs(core.Constructs):
             if not cm0.equals(cm1, atol=atol, rtol=rtol,
                               verbose=verbose,
                               ignore_type=ignore_type):
-                if verbose:
-                    logger.info(
-                        "Verbose: Different cell methods: "
-                        "{0!r}, {1!r}".format(cell_methods0, cell_methods1)
-                    )
+                logger.info(
+                    "Verbose: Different cell methods: "
+                    "{0!r}, {1!r}".format(cell_methods0, cell_methods1)
+                )
                 return False                
         # --- End: for
 
         return True
 
+    @_manage_log_level_via_verbosity
     def _equals_coordinate_reference(self, other, rtol=None,
                                      atol=None, verbose=0,
                                      ignore_type=False,
@@ -308,14 +299,13 @@ class Constructs(core.Constructs):
         refs1 = dict(other.filter_by_type('coordinate_reference'))
 
         if len(refs0) != len(refs1):
-            if verbose:
-                logger.info(
-                    "{0}: Different numbers of {1} constructs: "
-                    "{2} != {3}".format(
-                        self.__class__.__name__, 'coordinate reference',
-                        len(refs0), len(refs1)
-                    )
+            logger.info(
+                "{0}: Different numbers of {1} constructs: "
+                "{2} != {3}".format(
+                    self.__class__.__name__, 'coordinate reference',
+                    len(refs0), len(refs1)
                 )
+            )
 
             return False
         
@@ -373,11 +363,10 @@ class Constructs(core.Constructs):
                 # --- End: for
     
                 if not found_match:
-                    if verbose:
-                        logger.info(
-                            "{0}: No match for {1!r})".format(
-                                self.__class__.__name__, ref0)
-                        )
+                    logger.info(
+                        "{0}: No match for {1!r})".format(
+                            self.__class__.__name__, ref0)
+                    )
                     return False
             # --- End: for
         # --- End: if
@@ -398,13 +387,12 @@ class Constructs(core.Constructs):
       
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes
-            if verbose is not False:  # i.e. is True (/truthy) *or None*
-                logger.info(
-                    "{0}: Different domain axis sizes: {1} != {2}".format(
-                        self.__class__.__name__,
-                        sorted(self_sizes), sorted(other_sizes)
-                    )
+            logger.info(
+                "{0}: Different domain axis sizes: {1} != {2}".format(
+                    self.__class__.__name__,
+                    sorted(self_sizes), sorted(other_sizes)
                 )
+            )
             return False
 
         return True
@@ -634,6 +622,7 @@ class Constructs(core.Constructs):
         # Get the identity from the domain axis construct key
         return 'key%{0}'.format(key)
 
+    @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_compression=True, _ignore_type=False,
@@ -718,11 +707,10 @@ class Constructs(core.Constructs):
         
         # Check that each instance is the same type
         if  not isinstance(other, self.__class__):
-            if verbose:
-                logger.info(
-                    "{0}: Incompatible type: {1}".format(
-                        self.__class__.__name__, other.__class__.__name__)
-                )
+            logger.info(
+                "{0}: Incompatible type: {1}".format(
+                    self.__class__.__name__, other.__class__.__name__)
+            )
             if not _return_axis_map:
                 return False
         
@@ -835,16 +823,15 @@ class Constructs(core.Constructs):
             # --- End: for
 
             if not matched_all_constructs_with_these_axes:
-                if verbose:
-                    names = [self.domain_axis_identity(axis0)
-                             for axis0 in axes0]
-                    logger.info(
-                        "{0}: Can't match constructs "
-                        "spanning axes {1}".format(
-                              self.__class__.__name__, names)
-                    )
-                    if log:
-                        logger.info('\n'.join(log))
+                names = [self.domain_axis_identity(axis0)
+                         for axis0 in axes0]
+                logger.info(
+                    "{0}: Can't match constructs "
+                    "spanning axes {1}".format(
+                          self.__class__.__name__, names)
+                )
+                if log:
+                    logger.info('\n'.join(log))
                 if not _return_axis_map:
                     return False
             else:
@@ -855,33 +842,31 @@ class Constructs(core.Constructs):
         for axes0, axes1 in axes0_to_axes1.items():
             for axis0, axis1 in zip(axes0, axes1):
                 if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:
-                    if verbose:
-                        logger.info(
-                            "{0}: Ambiguous axis mapping "
-                            "({1} -> both {2} and {3})".format(
-                                self.__class__.__name__,
-                                self.domain_axis_identity(axes0),
-                                other.domain_axis_identity(axis1),
-                                other.domain_axis_identity(
-                                    axis0_to_axis1[axis0])
-                            )
-                        )  # pragma: no cover
+                    logger.info(
+                        "{0}: Ambiguous axis mapping "
+                        "({1} -> both {2} and {3})".format(
+                            self.__class__.__name__,
+                            self.domain_axis_identity(axes0),
+                            other.domain_axis_identity(axis1),
+                            other.domain_axis_identity(
+                                axis0_to_axis1[axis0])
+                        )
+                    )  # pragma: no cover
                     if not _return_axis_map:
                         return False
                 elif (axis1 in axis1_to_axis0
                       and axis0 != axis1_to_axis0[axis1]):
-                    if verbose:
-                        logger.info(
-                            "{0}: Ambiguous axis mapping "
-                            "({1} -> both {2} and {3})".format(
-                                self.__class__.__name__,
-                                self.domain_axis_identity(axis0),
-                                self.domain_axis_identity(
-                                    axis1_to_axis0[axis0]),
-                                other.domain_axis_identity(
-                                    axes1)
-                            )
-                        )  # pragma: no cover
+                    logger.info(
+                        "{0}: Ambiguous axis mapping "
+                        "({1} -> both {2} and {3})".format(
+                            self.__class__.__name__,
+                            self.domain_axis_identity(axis0),
+                            self.domain_axis_identity(
+                                axis1_to_axis0[axis0]),
+                            other.domain_axis_identity(
+                                axes1)
+                        )
+                    )  # pragma: no cover
                     if not _return_axis_map:
                         return False
 

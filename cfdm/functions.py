@@ -215,12 +215,12 @@ def _disable_logging(at_level=None):
 
     This is an overriding level for all loggers.
 
-    If 'at_level' is not provided, it defaults under-the-hood to 'CRITICAL'
-    ( see https://docs.python.org/3/library/logging.html#logging.disable),
+    If 'at_level' is not provided, it defaults under the hood to 'CRITICAL'
+    (see https://docs.python.org/3/library/logging.html#logging.disable),
     the highest level.
 
     Note specifying 'NOTSET' as the input will revert any disactivation level
-    previously set with this method, so the logger regains its previous level.
+    previously set with this method, so the logger regains its original level.
     '''
     if at_level:
         logging.disable(getattr(logging, at_level))

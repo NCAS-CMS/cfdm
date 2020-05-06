@@ -8,6 +8,8 @@ import numpy
 
 from . import Container
 
+from ..decorators import _manage_log_level_via_verbosity
+
 
 logger = logging.getLogger(__name__)
 
@@ -127,6 +129,7 @@ class Properties(Container):
         else:
             return string
 
+    @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_type=False):
@@ -236,14 +239,13 @@ class Properties(Container):
         # --- End: if
                 
         if set(self_properties) != set(other_properties):
-            if verbose:
-                for prop in set(self_properties).symmetric_difference(
-                        other_properties):
-                    logger.info(
-                        "{}: Missing property: {}".format( 
-                            self.__class__.__name__, prop)
-                    )
-            # --- End: if
+            for prop in set(self_properties).symmetric_difference(
+                    other_properties):
+                logger.info(
+                    "{}: Missing property: {}".format( 
+                        self.__class__.__name__, prop)
+                )
+        # --- End: if
             
             return False
 
@@ -255,12 +257,11 @@ class Properties(Container):
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_data_type=True,
                                 verbose=verbose):
-                if verbose:
-                    logger.info(
-                        "{}: Different {!r} property values: "
-                        "{!r}, {!r}".format(
-                            self.__class__.__name__, prop, x, y)
-                    )
+                logger.info(
+                    "{}: Different {!r} property values: "
+                    "{!r}, {!r}".format(
+                        self.__class__.__name__, prop, x, y)
+                )
                     
                 return False
         # --- End: for

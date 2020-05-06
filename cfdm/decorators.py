@@ -115,6 +115,6 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg):
             if verbose:
                 _reset_log_severity_level(LOG_SEVERITY_LEVEL())  # revert
             elif verbose is False:  # deliberatly excluding verbose=None case
-                _disable_logging('NOTSET')  # lift the disactivation
+                _disable_logging('NOTSET')  # lift the deactivation (re-enable)
 
     return verbose_override_wrapper

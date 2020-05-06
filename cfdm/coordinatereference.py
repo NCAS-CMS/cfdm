@@ -320,12 +320,11 @@ class CoordinateReference(mixin.NetCDFVariable,
         coords0 = self.coordinates()
         coords1 = other.coordinates()
         if len(coords0) != len(coords1):
-            if verbose is not False:  # i.e. is True (/truthy) *or None*
-                logger.info(
-                    "{}: Different sized collections of coordinates "
-                    "({}, {})".format(                        
-                        self.__class__.__name__, coords0, coords1)
-                )
+            logger.info(
+                "{}: Different sized collections of coordinates "
+                "({}, {})".format(                        
+                    self.__class__.__name__, coords0, coords1)
+            )
                 
             return False
 
@@ -334,11 +333,10 @@ class CoordinateReference(mixin.NetCDFVariable,
                 rtol=rtol, atol=atol,
                 verbose=verbose,
                 ignore_type=ignore_type):
-            if verbose is not False:  # i.e. is True (/truthy) *or None*
-                logger.info(
-                    "{}: Different coordinate conversions".format(
-                        self.__class__.__name__)
-                )
+            logger.info(
+                "{}: Different coordinate conversions".format(
+                    self.__class__.__name__)
+            )
                 
             return False
         
@@ -347,9 +345,8 @@ class CoordinateReference(mixin.NetCDFVariable,
                 rtol=rtol, atol=atol,
                 verbose=verbose,
                 ignore_type=ignore_type):
-            if verbose is not False:  # i.e. is True (/truthy) *or None*
-                logger.info(
-                    "{}: Different datums".format(self.__class__.__name__))
+            logger.info(
+                "{}: Different datums".format(self.__class__.__name__))
                 
             return False
 

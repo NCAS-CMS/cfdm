@@ -257,9 +257,8 @@ class CellMeasure(mixin.NetCDFVariable,
         measure0 = self.get_measure(None)
         measure1 = other.get_measure(None)
         if measure0 != measure1:
-            if verbose is not False:  # i.e. is True (/truthy) *or None*
-                logger.info("{0}: Different measure ({1} != {2})".format(
-                    self.__class__.__name__, measure0, measure1))
+            logger.info("{0}: Different measure ({1} != {2})".format(
+                self.__class__.__name__, measure0, measure1))
             return False
 
         return True
