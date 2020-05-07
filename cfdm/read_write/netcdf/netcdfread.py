@@ -986,11 +986,11 @@ class NetCDFRead(IORead):
             for x in out:
                 qq = x.dataset_compliance()
                 if qq:
-                    logger.info(
+                    logger.warning(
                         "WARNING: Field incomplete due to "
                         "non-CF-compliant dataset: {!s}".format(x)
                     )
-                    logger.info("Report:")
+                    logger.warning("Report:")
                     x.dataset_compliance(display=True)
         # --- End: if
 
@@ -2297,7 +2297,7 @@ class NetCDFRead(IORead):
                     self.implementation.get_construct_data_size(coord),
                     ncdim)
 
-                logger.info(
+                logger.debug(
                     "    [0] Inserting {!r}".format(domain_axis)
                 )  # pragma: no cover
                 axis = self.implementation.set_domain_axis(
@@ -2305,7 +2305,7 @@ class NetCDFRead(IORead):
                     construct=domain_axis,
                     copy=False)
 
-                logger.info(
+                logger.debug(
                     "    [1] Inserting {!r}".format(coord)
                 )  # pragma: no cover
                 dim = self.implementation.set_dimension_coordinate(
@@ -2335,7 +2335,7 @@ class NetCDFRead(IORead):
                     size = g['internal_dimension_sizes'][ncdim]
 
                 domain_axis = self._create_domain_axis(size, ncdim)
-                logger.info(
+                logger.debug(
                     "    [2] Inserting {!r}".format(domain_axis)
                 )  # pragma: no cover
                 axis = self.implementation.set_domain_axis(
@@ -2366,7 +2366,7 @@ class NetCDFRead(IORead):
     
         data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)
 
-        logger.info(
+        logger.debug(
             "    [3] Inserting {!r}".format(data)
         )  # pragma: no cover
 
@@ -2415,7 +2415,7 @@ class NetCDFRead(IORead):
                         # String valued scalar coordinate. T turn it
                         # into a 1-d auxiliary coordinate construct.
                         domain_axis = self._create_domain_axis(1)
-                        logger.info(
+                        logger.debug(
                             "    [4] Inserting {!r}".format(domain_axis)
                         )  # pragma: no cover
                         dim = self.implementation.set_domain_axis(
@@ -2444,7 +2444,7 @@ class NetCDFRead(IORead):
                     
                     domain_axis = self._create_domain_axis(
                         self.implementation.get_construct_data_size(coord))
-                    logger.info(
+                    logger.debug(
                         "    [5] Inserting {!r}".format(domain_axis)
                     )  # pragma: no cover
                     axis = self.implementation.set_domain_axis(
@@ -2452,7 +2452,7 @@ class NetCDFRead(IORead):
                         construct=domain_axis,
                         copy=False)
                     
-                    logger.info(
+                    logger.debug(
                         "    [5] Inserting {!r}".format(coord)
                     )  # pragma: no cover
                     dim = self.implementation.set_dimension_coordinate(
@@ -2473,7 +2473,7 @@ class NetCDFRead(IORead):
                     del g['auxiliary_coordinate'][ncvar]
                 else:
                     # Insert auxiliary coordinate
-                    logger.info(
+                    logger.debug(
                         "    [6] Inserting {!r}".format(coord)
                     )  # pragma: no cover
                         
@@ -2529,7 +2529,7 @@ class NetCDFRead(IORead):
                     g['auxiliary_coordinate'][node_ncvar] = coord
                     
                 # Insert auxiliary coordinate
-                logger.info(
+                logger.debug(
                     "    [6] Inserting {!r}".format(coord)
                 )  # pragma: no cover
 
@@ -2537,8 +2537,11 @@ class NetCDFRead(IORead):
                 # the data variable
                 geometry_dimension = geometry['geometry_dimension']
                 if geometry_dimension not in g['ncdim_to_axis']:
-                    logger.info("WOAH")
-                    
+                    logger.warning(
+                        "geometry['geometry_dimension'] is not in "
+                        "g['ncdim_to_axis']"
+                    )
+
                 aux = self.implementation.set_auxiliary_coordinate(
                     f, coord,
                     axes=(g['ncdim_to_axis'][geometry_dimension],),
@@ -2619,7 +2622,7 @@ class NetCDFRead(IORead):
                
             # Still here? Create a formula terms coordinate reference.
             for ncvar, domain_anc, axes in domain_ancillaries:
-                logger.info(
+                logger.debug(
                     "    [7] Inserting {!r}".format(domain_anc)
                 )  # pragma: no cover
                     
@@ -2666,7 +2669,7 @@ class NetCDFRead(IORead):
                                                     grid_mapping,
                                                     parsed_grid_mapping)
             if not cf_compliant:
-                logger.info(
+                logger.warning(
                     "        Bad grid_mapping: {}".format(grid_mapping)
                 )  # pragma: no cover
             else:
@@ -2724,7 +2727,7 @@ class NetCDFRead(IORead):
                             if vcoord in coordinates:
                                 # Add the datum to an already existing
                                 # vertical coordinate reference
-                                logger.info(
+                                logger.debug(
                                     "    [ ] Inserting "
                                     "{!r} into {!r}".format(datum, vcr)
                                 )  # pragma: no cover
@@ -2790,7 +2793,7 @@ class NetCDFRead(IORead):
                         cell = self._create_cell_measure(measure, ncvar)
                         g['cell_measure'][ncvar] = cell
 
-                    logger.info(
+                    logger.debug(
                         "    [8] Inserting {!r}".format(cell)
                     )  # pragma: no cover
 
@@ -2824,7 +2827,7 @@ class NetCDFRead(IORead):
 
                 cell_method = self._create_cell_method(
                     axes, method, properties)
-                logger.info(
+                logger.debug(
                     "    [ ] Inserting {!r}".format(cell_method)
                 )  # pragma: no cover
                         
@@ -2860,7 +2863,7 @@ class NetCDFRead(IORead):
                         g['field_ancillary'][ncvar] = field_anc
                         
                     # Insert the field ancillary
-                    logger.info(
+                    logger.debug(
                         "    [9] Inserting {!r}".format(field_anc)
                     )  # pragma: no cover
                     key = self.implementation.set_field_ancillary(field=f,
@@ -3022,7 +3025,8 @@ class NetCDFRead(IORead):
         else:  # pragma: no cover
             dimensions = '(' + ', '.join(dimensions) + ')'  # pragma: no cover
 
-        logger.info(
+        # Though an error of sorts, set as warning as does not terminate read
+        logger.warning(
             "    Error processing netCDF variable {} {}: {}".format(
                 ncvar, dimensions, d['reason'])
         )  # pragma: no cover
@@ -4713,7 +4717,8 @@ class NetCDFRead(IORead):
                                   message=incorrectly_formatted,
                                   attribute=attribute)
 
-            logger.info(
+            # Though an error of sorts, set as warning; read not terminated
+            logger.warning(
                 "    Error processing netCDF variable {}: {}".format(
                     field_ncvar, d['reason'])
             )  # pragma: no cover

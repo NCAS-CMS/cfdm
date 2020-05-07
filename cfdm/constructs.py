@@ -192,7 +192,7 @@ class Constructs(core.Constructs):
 
         if len(cell_methods0) != len(cell_methods1):
             logger.info(
-                "Verbose: Different numbers of cell methods: "
+                "Different numbers of cell methods: "
                 "{0!r} != {1!r}".format(cell_methods0, cell_methods1)
             )
             return False
