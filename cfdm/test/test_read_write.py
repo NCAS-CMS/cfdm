@@ -36,20 +36,29 @@ atexit.register(_remove_tmpfiles)
 
 
 class read_writeTest(unittest.TestCase):
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'test_file.nc')
+    def setUp(self):
+        # Disable non-critical log messages to silence expected warnings/errors
+        cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        self.filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
-    string_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                   'string_char.nc')
+        self.string_filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'string_char.nc')
 
-    test_only = []
-#    test_only = ['NOTHING!!!!!']
-#    test_only = ['test_read_CDL']
-#    test_only = ['test_write_filename']
-#    test_only = ['test_read_write_unlimited']
-#    test_only = ['test_read_field']
-#    test_only = ['test_read_mask']
-#    test_only = ['test_read_write_format']
+        self.test_only = []
+        #    self.test_only = ['NOTHING!!!!!']
+        #    self.test_only = ['test_read_CDL']
+        #    self.test_only = ['test_write_filename']
+        #    self.test_only = ['test_read_write_unlimited']
+        #    self.test_only = ['test_read_field']
+        #    self.test_only = ['test_read_mask']
+        #    self.test_only = ['test_read_write_format']
     
     def test_write_filename(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

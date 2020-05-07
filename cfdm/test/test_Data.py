@@ -22,17 +22,28 @@ def axes_combinations(ndim):
 
 
 class DataTest(unittest.TestCase):
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'test_file.nc')
+    def setUp(self):
+        # Disable non-critical log messages to silence expected warnings/errors
+        cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
 
-    test_only = []
-#    test_only = ['NOTHING!!!!!']
-#    test_only = ['test_Data__asdatetime__asreftime__isdatetime']
-#    test_only = ['test_Data__setitem__']
-#    test_only = ['test_Data_ceil', 'test_Data_floor', 'test_Data_trunc', 'test_Data_rint']
-#    test_only = ['test_Data_array', 'test_Data_datetime_array']
-#    test_only = ['test_dumpd_loadd']
-#    test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
+        self.filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+
+        self.test_only = []
+        #    self.test_only = ['NOTHING!!!!!']
+        #    self.test_only = ['test_Data__asdatetime__asreftime__isdatetime']
+        #    self.test_only = ['test_Data__setitem__']
+        #    self.test_only = ['test_Data_ceil', 'test_Data_floor',
+        #                      'test_Data_trunc', 'test_Data_rint']
+        #    self.test_only = ['test_Data_array', 'test_Data_datetime_array']
+        #    self.test_only = ['test_dumpd_loadd']
+        #    self.test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
 
     def test_Data_any(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

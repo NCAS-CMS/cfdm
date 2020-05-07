@@ -97,6 +97,15 @@ import cfdm
 
 class ExternalVariableTest(unittest.TestCase):
     def setUp(self):
+        # Disable non-critical log messages to silence expected warnings/errors
+        cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+
         self.parent_file           = 'parent.nc'
         self.external_file         = 'external.nc'
         self.combined_file         = 'combined.nc'

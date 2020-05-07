@@ -12,6 +12,15 @@ import cfdm
 
 class StringTest(unittest.TestCase):
     def setUp(self):
+        # Disable non-critical log messages to silence expected warnings/errors
+        cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+
         self.test_only = []
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
@@ -21,7 +30,7 @@ class StringTest(unittest.TestCase):
     def tearDown(self):
         os.remove(self.tempfilename)
 
-        
+
     def test_STRING(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

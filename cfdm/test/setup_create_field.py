@@ -14,9 +14,17 @@ warnings = False
 
 class create_fieldTest(unittest.TestCase):
     def setUp(self):
-        filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'test_file.nc')
-        self.filename = filename
+        # Disable non-critical log messages to silence expected warnings/errors
+        cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+
+        self.filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
         try:
             os.remove(self.filename)
