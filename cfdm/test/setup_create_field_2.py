@@ -200,7 +200,7 @@ class create_fieldTest_2(unittest.TestCase):
             print(f.constructs)
             print(f.construct_data_axes())
         
-        self.assertTrue(f.equals(f.copy(), verbose=True),
+        self.assertTrue(f.equals(f.copy(), verbose=verbose),
                         "Field f not equal to a copy of itself")
         
 #        f.dump()
@@ -239,7 +239,7 @@ class create_fieldTest_2(unittest.TestCase):
                             sorted(g.constructs.items())))
 
 
-            self.assertTrue(g.equals(g.copy(), verbose=True),
+            self.assertTrue(g.equals(g.copy(), verbose=verbose),
                             "Field g not equal to a copy of itself")
             if verbose:
                 print('f')
@@ -247,7 +247,7 @@ class create_fieldTest_2(unittest.TestCase):
                 print('g')
                 g.dump()
             
-            self.assertTrue(g.equals(f, verbose=True),                            
+            self.assertTrue(g.equals(f, verbose=verbose),
                             "Field not equal to itself read back in")
         #--- End: for
         

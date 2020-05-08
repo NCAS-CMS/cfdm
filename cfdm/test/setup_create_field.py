@@ -195,10 +195,10 @@ class create_fieldTest(unittest.TestCase):
             print(f.constructs())
             print(f.constructs.data_axes())
 
-        self.assertTrue(f.equals(f, verbose=True),
+        self.assertTrue(f.equals(f, verbose=verbose),
                         "Field f not equal to itself")
 
-        self.assertTrue(f.equals(f.copy(), verbose=True),
+        self.assertTrue(f.equals(f.copy(), verbose=verbose),
                         "Field f not equal to a copy of itself")
 
         if verbose:
@@ -231,14 +231,21 @@ class create_fieldTest(unittest.TestCase):
                             sorted(g.constructs),
                             sorted(g.constructs.items())))
 
-        self.assertTrue(f.equals(f, verbose=True),
-                        "Field f not equal to itself after having been written to disk")
+        self.assertTrue(
+            f.equals(f, verbose=verbose),
+            "Field f not equal to itself after having been written to disk"
+        )
 
-        self.assertTrue(f.equals(f.copy(), verbose=True),
-                        "Field f not equal to a copy of itself after having been written to disk")
+        self.assertTrue(
+            f.equals(f.copy(), verbose=verbose),
+            "Field f not equal to a copy of itself after having been "
+            "written to disk"
+        )
 
-        self.assertTrue(g.equals(g.copy(), verbose=True),
-                        "Field g not equal to a copy of itself")
+        self.assertTrue(
+            g.equals(g.copy(), verbose=verbose),
+            "Field g not equal to a copy of itself"
+        )
 
         if verbose:                    
             print('g')
@@ -246,8 +253,10 @@ class create_fieldTest(unittest.TestCase):
             print('f')
             f.dump()
             
-        self.assertTrue(g.equals(f, verbose=True),
-                        "Field (f) not equal to itself read back in (g)")
+        self.assertTrue(
+            g.equals(f, verbose=verbose),
+            "Field (f) not equal to itself read back in (g)"
+        )
 
         
         x = g.dump(display=False)
