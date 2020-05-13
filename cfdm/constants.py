@@ -18,6 +18,21 @@ CONSTANTS = {
 
 
 # --------------------------------------------------------------------
+# logging
+# --------------------------------------------------------------------
+valid_log_levels = [
+    'DEBUG',
+    'INFO',
+    'WARNING',
+    'ERROR',
+    'CRITICAL',
+    'DISABLE',
+]
+# Map string level identifiers to ints from 0 to len(valid_log_levels):
+numeric_log_level_map = dict(enumerate(valid_log_levels))
+
+
+# --------------------------------------------------------------------
 # masked
 # --------------------------------------------------------------------
 '''A constant that allows data values to be masked by direct
