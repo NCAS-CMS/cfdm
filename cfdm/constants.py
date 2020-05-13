@@ -20,13 +20,13 @@ CONSTANTS = {
 # --------------------------------------------------------------------
 # logging
 # --------------------------------------------------------------------
-valid_log_levels = [
-    'DEBUG',
-    'INFO',
-    'WARNING',
-    'ERROR',
-    'CRITICAL',
+valid_log_levels = [  # order (highest to lowest severity) is crucial here
     'DISABLE',
+    'CRITICAL',
+    'ERROR',
+    'WARNING',
+    'INFO',
+    'DEBUG',
 ]
 # Map string level identifiers to ints from 0 to len(valid_log_levels):
 numeric_log_level_map = dict(enumerate(valid_log_levels))
