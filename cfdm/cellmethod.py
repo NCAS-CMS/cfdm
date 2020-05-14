@@ -339,11 +339,19 @@ class CellMethod(mixin.Container,
             The tolerance on relative differences between real
             numbers. The default value is set by the `cfdm.RTOL`
             function.
-    
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from 0 to 5, corresponding to increasing verbosity,
+            set for the duration of the method call (only) as the minimum
+            severity level cut-off of displayed log messages, temporarily
+            overriding the global configured `cfdm.LOG_SEVERITY_LEVEL`. If
+            None (the default value), log messages will be filtered out, or
+            otherwise, according to the value of the `LOG_SEVERITY_LEVEL`.
+
+            Overall, the higher the value set up to 5, the more description
+            that is printed to convey information about differences that
+            lead to inequality.
+
         ignore_qualifiers: sequence of `str`, optional
             The names of qualifiers to omit from the comparison.
     

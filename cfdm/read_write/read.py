@@ -157,12 +157,19 @@ def read(filename, external=None, extra=None, verbose=None,
             parent field construct's domain as possible by using the
             `~cfdm.Field.convert` method of a returned field
             construct, instead of setting the *extra* parameter.
-    
-        verbose: `bool`, optional
-            If True then print a description of how the contents of
-            the netCDF file were parsed and mapped to CF data model
-            constructs.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from 0 to 5, corresponding to increasing verbosity,
+            set for the duration of the method call (only) as the minimum
+            severity level cut-off of displayed log messages, temporarily
+            overriding the global configured `cfdm.LOG_SEVERITY_LEVEL`. If
+            None (the default value), log messages will be filtered out, or
+            otherwise, according to the value of the `LOG_SEVERITY_LEVEL`.
+
+            Overall, the higher the value set up to 5, the more description
+            that is printed to convey how the contents of the netCDF file
+            were parsed and mapped to CF data model constructs.
+
         warnings: `bool`, optional
             If True then print warnings when an output field construct
             is incomplete due to structural non-compliance of the

@@ -94,11 +94,19 @@ class DomainAxis(mixin.NetCDFDimension,
     
         other: 
             The object to compare for equality.
-    
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from 0 to 5, corresponding to increasing verbosity,
+            set for the duration of the method call (only) as the minimum
+            severity level cut-off of displayed log messages, temporarily
+            overriding the global configured `cfdm.LOG_SEVERITY_LEVEL`. If
+            None (the default value), log messages will be filtered out, or
+            otherwise, according to the value of the `LOG_SEVERITY_LEVEL`.
+
+            Overall, the higher the value set up to 5, the more description
+            that is printed to convey information about differences that
+            lead to inequality.
+
         ignore_type: `bool`, optional
             Any type of object may be tested but, in general, equality
             is only possible with another domain axis construct, or a
