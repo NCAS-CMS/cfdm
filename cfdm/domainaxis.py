@@ -122,7 +122,7 @@ class DomainAxis(mixin.NetCDFDimension,
     
     >>> d = cfdm.DomainAxis(1)
     >>> e = cfdm.DomainAxis(99)
-    >>> d.equals(e, verbose=True)
+    >>> d.equals(e, verbose=4)
     DomainAxis: Different axis sizes: 1 != 99
     False
 

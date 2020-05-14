@@ -50,9 +50,9 @@ class DomainTest(unittest.TestCase):
         d = f.domain
         e = d.copy()
 
-        self.assertTrue(d.equals(d, verbose=True))
-        self.assertTrue(d.equals(e, verbose=True))
-        self.assertTrue(e.equals(d, verbose=True))
+        self.assertTrue(d.equals(d, verbose=4))
+        self.assertTrue(d.equals(e, verbose=4))
+        self.assertTrue(e.equals(d, verbose=4))
 
 
 #--- End: class

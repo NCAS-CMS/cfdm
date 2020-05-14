@@ -468,15 +468,15 @@ class FieldTest(unittest.TestCase):
             return
 
         f = self.f.copy()
-        self.assertTrue(f.equals(f, verbose=True))
+        self.assertTrue(f.equals(f, verbose=4))
  
         g = f.copy()
-        self.assertTrue(f.equals(g, verbose=True))
-        self.assertTrue(g.equals(f, verbose=True))
+        self.assertTrue(f.equals(g, verbose=4))
+        self.assertTrue(g.equals(f, verbose=4))
 
         g = f[...]
-        self.assertTrue(f.equals(g, verbose=True))
-        self.assertTrue(g.equals(f, verbose=True))
+        self.assertTrue(f.equals(g, verbose=4))
+        self.assertTrue(g.equals(f, verbose=4))
 
         g = g.squeeze()
         self.assertFalse(f.equals(g))
@@ -561,7 +561,7 @@ class FieldTest(unittest.TestCase):
 
                 u = f.uncompress()
                 self.assertFalse(bool(u.data.get_compression_type()), message)
-                self.assertTrue(f.equals(u, verbose=True), message)
+                self.assertTrue(f.equals(u, verbose=4), message)
 
                 for method1 in methods:
                     message += ', method1='+method1
@@ -576,22 +576,22 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(bool(c.data.get_compression_type()),
                                     message)
 
-                    self.assertTrue(u.equals(c, verbose=True), message)
-                    self.assertTrue(f.equals(c, verbose=True), message)
+                    self.assertTrue(u.equals(c, verbose=4), message)
+                    self.assertTrue(f.equals(c, verbose=4), message)
                     
                     c = f.compress(method1)
                     self.assertTrue(bool(c.data.get_compression_type()),
                                     message)
 
-                    self.assertTrue(u.equals(c, verbose=True), message)
-                    self.assertTrue(f.equals(c, verbose=True), message)
+                    self.assertTrue(u.equals(c, verbose=4), message)
+                    self.assertTrue(f.equals(c, verbose=4), message)
 
                     cfdm.write(c, 'delme.nc')
                     c = cfdm.read('delme.nc')[0]
 
                     self.assertTrue(bool(c.data.get_compression_type()),
                                     message)
-                    self.assertTrue(f.equals(c, verbose=True), message)
+                    self.assertTrue(f.equals(c, verbose=4), message)
         # --- End: for
         
 # --- End: class

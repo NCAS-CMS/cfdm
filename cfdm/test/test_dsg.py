@@ -572,7 +572,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=True))
+            self.assertTrue(g[i].equals(f[i], verbose=4))
 
         # ------------------------------------------------------------
         # Test creation
@@ -639,7 +639,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=True))
+            self.assertTrue(g[i].equals(f[i], verbose=4))
 
 
     def test_DSG_indexed_contiguous(self):  
@@ -673,7 +673,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=True))
+            self.assertTrue(g[i].equals(f[i], verbose=4))
 
 
     def test_DSG_create_contiguous(self):

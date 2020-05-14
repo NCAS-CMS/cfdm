@@ -54,9 +54,9 @@ class CellMethodTest(unittest.TestCase):
         # ------------------------------------------------------------
         for c in f.cell_methods.values():
             d = c.copy()
-            self.assertTrue(c.equals(c, verbose=True))
-            self.assertTrue(c.equals(d, verbose=True))
-            self.assertTrue(d.equals(c, verbose=True))
+            self.assertTrue(c.equals(c, verbose=4))
+            self.assertTrue(c.equals(d, verbose=4))
+            self.assertTrue(d.equals(c, verbose=4))
             self.assertTrue(c.identity() == 'method:'+c.get_method())
             self.assertTrue(c.identities() == ['method:'+c.get_method()])
 
@@ -71,7 +71,7 @@ class CellMethodTest(unittest.TestCase):
                             axes=['A', 'B'],
                             qualifiers={'interval': [2, 1]})
         
-        self.assertTrue(d.equals(c.sorted(), verbose=True))
+        self.assertTrue(d.equals(c.sorted(), verbose=4))
 
         c = cfdm.CellMethod(method='minimum',
                             axes=['B', 'A'],
@@ -81,7 +81,7 @@ class CellMethodTest(unittest.TestCase):
                             axes=['A', 'B'],
                             qualifiers={'interval': [3]})
         
-        self.assertTrue(d.equals(c.sorted(), verbose=True))
+        self.assertTrue(d.equals(c.sorted(), verbose=4))
 
         c = cfdm.CellMethod(method='minimum',
                             axes=['area'],
@@ -91,7 +91,7 @@ class CellMethodTest(unittest.TestCase):
                             axes=['area'],
                             qualifiers={'interval': [3]})
         
-        self.assertTrue(d.equals(c.sorted(), verbose=True))
+        self.assertTrue(d.equals(c.sorted(), verbose=4))
 
         
 #--- End: class

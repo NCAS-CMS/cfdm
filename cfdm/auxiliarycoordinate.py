@@ -229,7 +229,7 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
     >>> g.set_property('foo', 'bar')
     >>> f.equals(g)
     False
-    >>> f.equals(g, verbose=True)
+    >>> f.equals(g, verbose=4)
     AuxiliaryCoordinate: Non-common property name: foo
     AuxiliaryCoordinate: Different properties
     False

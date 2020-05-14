@@ -282,7 +282,7 @@ class GatheredTest(unittest.TestCase):
 #            x.dump()
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=True))
+            self.assertTrue(g[i].equals(f[i], verbose=4))
 
 
     def test_GATHERING_create(self):

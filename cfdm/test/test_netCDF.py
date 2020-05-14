@@ -154,8 +154,8 @@ class NetCDFTest(unittest.TestCase):
         for x, y in zip(h, g):
             self.assertTrue(x.properties()           == y.properties())
             self.assertTrue(x.nc_global_attributes() == y.nc_global_attributes())
-            self.assertTrue(x.equals(y, verbose=True))
-            self.assertTrue(y.equals(x, verbose=True))
+            self.assertTrue(x.equals(y, verbose=4))
+            self.assertTrue(y.equals(x, verbose=4))
 
         g[1].nc_set_global_attribute('comment', 'different comment')
         cfdm.write(g, 'tempfilename3.nc')
@@ -165,8 +165,8 @@ class NetCDFTest(unittest.TestCase):
             self.assertTrue(x.nc_global_attributes() == {'comment': None,
                                                          'qwerty': None,
                                                          'Conventions': None})
-            self.assertTrue(x.equals(y, verbose=True))
-            self.assertTrue(y.equals(x, verbose=True))
+            self.assertTrue(x.equals(y, verbose=4))
+            self.assertTrue(y.equals(x, verbose=4))
 #        os.remove('tempfilename.nc')
 
 

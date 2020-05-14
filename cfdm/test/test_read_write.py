@@ -144,7 +144,7 @@ class read_writeTest(unittest.TestCase):
             g = cfdm.read(tmpfile)
             self.assertTrue(len(g) == 1, 'g = '+repr(g))
             g = g[0]
-            self.assertTrue(f.equals(g, verbose=True),
+            self.assertTrue(f.equals(g, verbose=4),
                             'Bad read/write of format: {}'.format(fmt))
             
     def test_read_write_netCDF4_compress_shuffle(self):
@@ -161,7 +161,7 @@ class read_writeTest(unittest.TestCase):
                                shuffle=shuffle)
                     g = cfdm.read(tmpfile)[0]
                     self.assertTrue(
-                        f.equals(g, verbose=True),
+                        f.equals(g, verbose=4),
                         "Bad read/write with lossless compression: "
                         "{}, {}, {}".format(fmt, compress, shuffle))
         #--- End: for
@@ -179,7 +179,7 @@ class read_writeTest(unittest.TestCase):
                     'NETCDF4_CLASSIC'):
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)[0]
-            self.assertTrue(f.equals(g, verbose=True),
+            self.assertTrue(f.equals(g, verbose=4),
                             'Bad read/write of format: {}'.format(fmt))
 
     def test_read_mask(self):
@@ -283,12 +283,12 @@ class read_writeTest(unittest.TestCase):
         h = cfdm.read(tmpfileh)[0]
         c = cfdm.read(tmpfilec)[0]
 
-        self.assertTrue(f0.equals(f, verbose=True))
+        self.assertTrue(f0.equals(f, verbose=4))
 
         self.assertTrue(f.construct('grid_latitude').equals(
-            c.construct('grid_latitude'), verbose=True))
+            c.construct('grid_latitude'), verbose=4))
         self.assertTrue(f0.construct('grid_latitude').equals
-                        (c.construct('grid_latitude'), verbose=True))
+                        (c.construct('grid_latitude'), verbose=4))
 
         with self.assertRaises(OSError):
             x = cfdm.read('test_read_write.py')

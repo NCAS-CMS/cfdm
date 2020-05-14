@@ -295,7 +295,7 @@ class DataTest(unittest.TestCase):
         ma[0, 0, 2, 1] = cfdm.masked
 
         d = cfdm.Data(ma.copy())        
-        self.assertTrue(d.equals(d.flatten([]), verbose=True))
+        self.assertTrue(d.equals(d.flatten([]), verbose=4))
         self.assertIsNone(d.flatten(inplace=True))
         
         d = cfdm.Data(ma.copy())
@@ -305,7 +305,7 @@ class DataTest(unittest.TestCase):
             e = d.flatten(axes)
             self.assertTrue(e.ndim == 1)
             self.assertTrue(e.shape == b.shape)
-            self.assertTrue(e.equals(cfdm.Data(b), verbose=True))
+            self.assertTrue(e.equals(cfdm.Data(b), verbose=4))
             
         for axes in axes_combinations(d.ndim):
             e = d.flatten(axes)
@@ -367,9 +367,9 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(a, units='days since 2000-2-2', calendar='noleap')
         e = copy.deepcopy(d)
 
-        self.assertTrue(d.equals(d, verbose=True))
-        self.assertTrue(d.equals(e, verbose=True))
-        self.assertTrue(e.equals(d, verbose=True))    
+        self.assertTrue(d.equals(d, verbose=4))
+        self.assertTrue(d.equals(e, verbose=4))
+        self.assertTrue(e.equals(d, verbose=4))    
         
     def test_Data_max_min_sum_squeeze(self):  
         '''Check cf.Data.maximum, cf.Data.minumum, cf.Data.sum,

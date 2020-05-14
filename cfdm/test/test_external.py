@@ -166,7 +166,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(c) == 1)
 
         for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], verbose=True))
+            self.assertTrue(c[i].equals(f[i], verbose=4))
 
         # External file contains other variables
         f = cfdm.read(self.parent_file, external=self.combined_file,
@@ -181,7 +181,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(c) == 1)
 
         for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], verbose=True))
+            self.assertTrue(c[i].equals(f[i], verbose=4))
 
         # Two external files
         f = cfdm.read(self.parent_file,
@@ -197,7 +197,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(c) == 1)
 
         for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], verbose=True))
+            self.assertTrue(c[i].equals(f[i], verbose=4))
 
    
     def test_EXTERNAL_WRITE(self):
@@ -216,7 +216,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(g) == len(combined))
 
         for i in range(len(g)):
-            self.assertTrue(combined[i].equals(g[i], verbose=True))
+            self.assertTrue(combined[i].equals(g[i], verbose=4))
 
         cell_measure = g[0].constructs('measure:area').value()
 
@@ -237,7 +237,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(h) == len(parent))
 
         for i in range(len(h)):
-            self.assertTrue(parent[i].equals(h[i], verbose=True))
+            self.assertTrue(parent[i].equals(h[i], verbose=4))
 
         h = cfdm.read(self.tempfilename_external)
         external = cfdm.read(self.external_file)
@@ -245,7 +245,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(len(h) == len(external))
 
         for i in range(len(h)):
-            self.assertTrue(external[i].equals(h[i], verbose=True))
+            self.assertTrue(external[i].equals(h[i], verbose=4))
 
     
 #--- End: class
