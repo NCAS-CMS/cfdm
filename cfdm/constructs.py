@@ -289,7 +289,7 @@ class Constructs(core.Constructs):
 
     @_manage_log_level_via_verbosity
     def _equals_coordinate_reference(self, other, rtol=None,
-                                     atol=None, verbose=0,
+                                     atol=None, verbose=None,
                                      ignore_type=False,
                                      axis1_to_axis0=None,
                                      key1_to_key0=None):
@@ -310,19 +310,20 @@ class Constructs(core.Constructs):
             return False
         
         if refs0:
-            construct_verbose = (verbose > 1)
-        
+            # Note: the following set of log calls are not warnings as such,
+            # but set them as warnings so they only emerge at higher
+            # verbosity level than 'INFO'.
+
             for ref0 in refs0.values():
                 found_match = False
                 for key1, ref1 in tuple(refs1.items()):
-                    if construct_verbose:
-                        logger.info(
-                            "{0}: Comparing {1!r}, {2!r}: ".format(
-                                self.__class__.__name__, ref0, ref1)
-                        )  # pragma: no cover
+                    logger.warning(
+                        "{0}: Comparing {1!r}, {2!r}: ".format(
+                            self.__class__.__name__, ref0, ref1)
+                    )  # pragma: no cover
  
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
-                                       verbose=construct_verbose,
+                                       verbose=verbose,
                                        ignore_type=ignore_type):
                         continue
 
@@ -333,9 +334,8 @@ class Constructs(core.Constructs):
                         coordinates1.add(key1_to_key0.get(value, value))
                         
                     if coordinates0 != coordinates1:
-                        if construct_verbose:
-                            logger.info(
-                                "Coordinates don't match")  # pragma: no cover
+                        logger.warning(
+                            "Coordinates don't match")  # pragma: no cover
                             
                         continue
     
@@ -346,16 +346,14 @@ class Constructs(core.Constructs):
                               for term, key in ref1.coordinate_conversion.domain_ancillaries().items()}
 
                     if terms0 != terms1:
-                        if construct_verbose:
-                            logger.info(
-                                "Coordinate conversion domain ancillaries "
-                                "don't match"
-                            )  # pragma: no cover
+                        logger.warning(
+                            "Coordinate conversion domain ancillaries "
+                            "don't match"
+                        )  # pragma: no cover
  
                         continue
 
-                    if construct_verbose:
-                        logger.info("OK")  # pragma: no cover
+                    logger.warning("OK")  # pragma: no cover
                         
                     found_match = True
                     del refs1[key1]                                       
@@ -703,8 +701,6 @@ class Constructs(core.Constructs):
             if not _return_axis_map:
                 return True
 
-        construct_verbose = (verbose > 1)
-        
         # Check that each instance is the same type
         if  not isinstance(other, self.__class__):
             logger.info(
@@ -770,28 +766,30 @@ class Constructs(core.Constructs):
 #                    elif not role_constructs0:
 #                        break
 
+                    # Note: the following set of log calls are not warnings
+                    # as such, but set them as warnings so they only emerge
+                    # at higher verbosity level than 'INFO'.
+
                     # Check that there are matching pairs of equal
                     # constructs
                     matched_construct = True
                     for key0, item0 in role_constructs0.items():
                         matched_construct = False
                         for key1, item1 in tuple(role_constructs1.items()):
-                            if construct_verbose:
-                                logger.info(
-                                    "{}: Comparing {!r}, {!r}: ".format(
-                                        self.__class__.__name__, item0, item1)
-                                )  # pragma: no cover
+                            logger.warning(
+                                "{}: Comparing {!r}, {!r}: ".format(
+                                    self.__class__.__name__, item0, item1)
+                            )  # pragma: no cover
                                 
                             if item0.equals(
                                     item1,
                                     rtol=rtol, atol=atol,
-                                    verbose=construct_verbose,
+                                    verbose=verbose,
                                     ignore_data_type=ignore_data_type,
                                     ignore_fill_value=ignore_fill_value,
                                     ignore_compression=ignore_compression,
                                     ignore_type=_ignore_type):
-                                if construct_verbose:
-                                    logger.info("OK")  # pragma: no cover
+                                logger.warning("OK")  # pragma: no cover
                                     
                                 del role_constructs1[key1]
                                 key1_to_key0[key1] = key0
