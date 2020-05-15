@@ -39,6 +39,10 @@ def example_field(n, _implementation=_implementation):
 
             ``6``  A field construct that has polygon geometry
                    coordinate cells with interior ring variables.
+
+            ``7``  A field construct that has rotated pole dimension
+                   coordinate constructs and 2-d latitude and
+                   longitude auxiliary coordinate constructs.
             =====  ===================================================
 
             See the examples for details.
@@ -151,11 +155,25 @@ def example_field(n, _implementation=_implementation):
                     : altitude(cf_role=timeseries_id(2), 3, 4) = [[[1.0, ..., --]]] m
     Coord references: grid_mapping_name:latitude_longitude
 
+    >>> f = cfdm.example_field(7)
+    >>> print(f)
+    Field: eastward_wind (ncvar%ua)
+    -------------------------------
+    Data            : eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1
+    Cell methods    : time(3): mean
+    Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
+                    : air_pressure(1) = [850.0] hPa
+                    : grid_latitude(4) = [0.44, ..., -0.88] degrees
+                    : grid_longitude(5) = [-1.18, ..., 0.58] degrees
+    Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north
+                    : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+
     '''
-    if not 0 <= n <= 6:
+    if not 0 <= n <= 7:
         raise ValueError(
             "Must select an example field construct with an "
-            "integer argument between 0 and 6 inclusive. Got {!r}".format(
+            "integer argument between 0 and 7 inclusive. Got {!r}".format(
                 n))
 
     AuxiliaryCoordinate = _implementation.get_class('AuxiliaryCoordinate')
@@ -874,6 +892,122 @@ def example_field(n, _implementation=_implementation):
         c.datum.set_parameter('inverse_flattening', 298.257223563)
         c.datum.set_parameter('longitude_of_prime_meridian', 0.0)
         c.coordinate_conversion.set_parameter('grid_mapping_name', 'latitude_longitude')
+        f.set_construct(c)
+
+    elif n == 7:
+        # field: eastward_wind
+        f = Field()
+        f.set_properties({'Conventions': 'CF-1.8', '_FillValue': -1073741824.0, 'standard_name': 'eastward_wind', 'units': 'm s-1'})
+        d = Data([[[[12.62, 13.23, 13.75, 14.13, 14.28], [12.46, 12.9, 13.46, 13.71, 14.03], [12.22, 12.57, 12.91, 13.19, 13.8], [11.83, 12.25, 12.6, 13.09, 13.63]]], [[[3.6, 3.3, 3.13, 3.21, 3.67], [3.69, 3.53, 3.91, 4.5, 5.63], [4.64, 5.03, 5.8, 6.79, 8.17], [6.7, 7.42, 8.23, 9.32, 10.5]]], [[[10.42, 10.81, 11.03, 10.96, 10.6], [10.59, 10.95, 11.36, 11.27, 11.08], [10.82, 11.19, 11.43, 11.43, 11.45], [10.93, 11.23, 11.35, 11.58, 11.64]]]], units='m s-1', dtype='f4', fill_value=-1073741824.0)
+        f.set_data(d)
+        f.nc_set_variable('ua')
+        
+        # domain_axis: ncdim%t
+        c = DomainAxis()
+        c.set_size(3)
+        c.nc_set_dimension('t')
+        f.set_construct(c, key='domainaxis0', copy=False)
+        
+        # domain_axis: ncdim%z
+        c = DomainAxis()
+        c.set_size(1)
+        c.nc_set_dimension('z')
+        f.set_construct(c, key='domainaxis1', copy=False)
+        
+        # domain_axis: ncdim%y
+        c = DomainAxis()
+        c.set_size(4)
+        c.nc_set_dimension('y')
+        f.set_construct(c, key='domainaxis2', copy=False)
+        
+        # domain_axis: ncdim%x
+        c = DomainAxis()
+        c.set_size(5)
+        c.nc_set_dimension('x')
+        f.set_construct(c, key='domainaxis3', copy=False)
+        
+        # field data axes
+        f.set_data_axes(('domainaxis0', 'domainaxis1', 'domainaxis2', 'domainaxis3'))
+        
+        # auxiliary_coordinate: latitude
+        c = AuxiliaryCoordinate()
+        c.set_properties({'standard_name': 'latitude', 'units': 'degrees_north'})
+        d = Data([[52.4243, 52.4338, 52.439, 52.4398, 52.4362], [51.9845, 51.9939, 51.999, 51.9998, 51.9962], [51.5446, 51.5539, 51.559, 51.5598, 51.5563], [51.1048, 51.114, 51.119, 51.1198, 51.1163]], units='degrees_north', dtype='f8')
+        c.set_data(d)
+        b = Bounds()
+        b.set_properties({'units': 'degrees_north'})
+        d = Data([[[52.6378, 52.198, 52.2097, 52.6496], [52.6496, 52.2097, 52.217, 52.6569], [52.6569, 52.217, 52.2199, 52.6599], [52.6599, 52.2199, 52.2185, 52.6585], [52.6585, 52.2185, 52.2128, 52.6527]], [[52.198, 51.7582, 51.7698, 52.2097], [52.2097, 51.7698, 51.777, 52.217], [52.217, 51.777, 51.7799, 52.2199], [52.2199, 51.7799, 51.7786, 52.2185], [52.2185, 51.7786, 51.7729, 52.2128]], [[51.7582, 51.3184, 51.3299, 51.7698], [51.7698, 51.3299, 51.337, 51.777], [51.777, 51.337, 51.3399, 51.7799], [51.7799, 51.3399, 51.3386, 51.7786], [51.7786, 51.3386, 51.333, 51.7729]], [[51.3184, 50.8786, 50.89, 51.3299], [51.3299, 50.89, 50.8971, 51.337], [51.337, 50.8971, 50.8999, 51.3399], [51.3399, 50.8999, 50.8986, 51.3386], [51.3386, 50.8986, 50.893, 51.333]]], units='degrees_north', dtype='f8')
+        b.set_data(d)
+        c.set_bounds(b)
+        f.set_construct(c, axes=('domainaxis2', 'domainaxis3'), key='auxiliarycoordinate0', copy=False)
+        
+        # auxiliary_coordinate: longitude
+        c = AuxiliaryCoordinate()
+        c.set_properties({'standard_name': 'longitude', 'units': 'degrees_east'})
+        d = Data([[8.0648, 8.7862, 9.5079, 10.2296, 10.9514], [8.0838, 8.7981, 9.5127, 10.2274, 10.942], [8.1024, 8.8098, 9.5175, 10.2252, 10.9328], [8.1207, 8.8213, 9.5221, 10.223, 10.9238]], units='degrees_east', dtype='f8')
+        c.set_data(d)
+        b = Bounds()
+        b.set_properties({'units': 'degrees_east'})
+        d = Data([[[7.6928, 7.7155, 8.4332, 8.4176], [8.4176, 8.4332, 9.1512, 9.1428], [9.1428, 9.1512, 9.8694, 9.8681], [9.8681, 9.8694, 10.5876, 10.5935], [10.5935, 10.5876, 11.3057, 11.3187]], [[7.7155, 7.7379, 8.4485, 8.4332], [8.4332, 8.4485, 9.1595, 9.1512], [9.1512, 9.1595, 9.8707, 9.8694], [9.8694, 9.8707, 10.5818, 10.5876], [10.5876, 10.5818, 11.2929, 11.3057]], [[7.7379, 7.7598, 8.4636, 8.4485], [8.4485, 8.4636, 9.1677, 9.1595], [9.1595, 9.1677, 9.8719, 9.8707], [9.8707, 9.8719, 10.5762, 10.5818], [10.5818, 10.5762, 11.2804, 11.2929]], [[7.7598, 7.7812, 8.4783, 8.4636], [8.4636, 8.4783, 9.1757, 9.1677], [9.1677, 9.1757, 9.8732, 9.8719], [9.8719, 9.8732, 10.5707, 10.5762], [10.5762, 10.5707, 11.2681, 11.2804]]], units='degrees_east', dtype='f8')
+        b.set_data(d)
+        c.set_bounds(b)
+        f.set_construct(c, axes=('domainaxis2', 'domainaxis3'), key='auxiliarycoordinate1', copy=False)
+        
+        # dimension_coordinate: time
+        c = DimensionCoordinate()
+        c.set_properties({'axis': 'T', 'standard_name': 'time', 'units': 'days since 1979-1-1', 'calendar': 'gregorian'})
+        d = Data([120.5, 121.5, 122.5], units='days since 1979-1-1', calendar='gregorian', dtype='f8')
+        c.set_data(d)
+        b = Bounds()
+        b.set_properties({'units': 'days since 1979-1-1', 'calendar': 'gregorian'})
+        d = Data([[120.0, 121.0], [121.0, 122.0], [122.0, 123.0]], units='days since 1979-1-1', calendar='gregorian', dtype='f8')
+        b.set_data(d)
+        c.set_bounds(b)
+        f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+        
+        # dimension_coordinate: air_pressure
+        c = DimensionCoordinate()
+        c.set_properties({'positive': 'down', 'axis': 'Z', 'standard_name': 'air_pressure', 'units': 'hPa'})
+        d = Data([850.0], units='hPa', dtype='f8')
+        c.set_data(d)
+        f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+        
+        # dimension_coordinate: grid_latitude
+        c = DimensionCoordinate()
+        c.set_properties({'axis': 'Y', 'standard_name': 'grid_latitude', 'units': 'degrees'})
+        d = Data([0.44, 0.0, -0.44, -0.88], units='degrees', dtype='f8')
+        c.set_data(d)
+        b = Bounds()
+        b.set_properties({'units': 'degrees'})
+        d = Data([[0.66, 0.22], [0.22, -0.22], [-0.22, -0.66], [-0.66, -1.1]], units='degrees', dtype='f8')
+        b.set_data(d)
+        c.set_bounds(b)
+        f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+        
+        # dimension_coordinate: grid_longitude
+        c = DimensionCoordinate()
+        c.set_properties({'axis': 'X', 'standard_name': 'grid_longitude', 'units': 'degrees'})
+        d = Data([-1.18, -0.74, -0.3, 0.14, 0.58], units='degrees', dtype='f8')
+        c.set_data(d)
+        b = Bounds()
+        b.set_properties({'units': 'degrees'})
+        d = Data([[-1.4, -0.96], [-0.96, -0.52], [-0.52, -0.08], [-0.08, 0.36], [0.36, 0.8]], units='degrees', dtype='f8')
+        b.set_data(d)
+        c.set_bounds(b)
+        f.set_construct(c, axes=('domainaxis3',), key='dimensioncoordinate3', copy=False)
+        
+        # cell_method
+        c = CellMethod()
+        c.set_method('mean')
+        c.set_axes(('domainaxis0',))
+        f.set_construct(c)
+        
+        # coordinate_reference
+        c = CoordinateReference()
+        c.set_coordinates({'dimensioncoordinate3', 'auxiliarycoordinate1', 'auxiliarycoordinate0', 'dimensioncoordinate2'})
+        c.coordinate_conversion.set_parameter('grid_mapping_name', 'rotated_latitude_longitude')
+        c.coordinate_conversion.set_parameter('grid_north_pole_latitude', 38.0)
+        c.coordinate_conversion.set_parameter('grid_north_pole_longitude', 190.0)
         f.set_construct(c)
 
     return f
