@@ -12,14 +12,14 @@ import cfdm
 
 class CoordinateReferenceTest(unittest.TestCase):
     def setUp(self):
-        # Disable non-critical log messages to silence expected warnings/errors
-        cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_SEVERITY_LEVEL('DISABLE')
         # Note: to enable all messages for given methods, lines or calls (those
         # without a 'verbose' option to do the same) e.g. to debug them, wrap
         # them (for methods, start-to-end internally) as follows:
         # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
         # < ... test code ... >
-        # cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # cfdm.LOG_SEVERITY_LEVEL('DISABLE')
 
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
@@ -56,7 +56,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                 parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
                 domain_ancillaries={'a': 'aux0', 'b': 'aux1', 'orog': 'orog'})
         )
-        self.assertTrue(t.equals(t.copy(), verbose=4))
+        self.assertTrue(t.equals(t.copy(), verbose=3))
         
         # Create a horizontal grid mapping coordinate reference
         t = cfdm.CoordinateReference(
@@ -66,7 +66,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                              'grid_north_pole_latitude': 38.0,
                              'grid_north_pole_longitude': 190.0})
         )            
-        self.assertTrue(t.equals(t.copy(), verbose=4))
+        self.assertTrue(t.equals(t.copy(), verbose=3))
 
         datum=cfdm.Datum(parameters={'earth_radius': 6371007})
         conversion=cfdm.CoordinateConversion(
@@ -80,7 +80,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             coordinates=['x', 'y', 'lat', 'lon']
         )
 
-        self.assertTrue(t.equals(t.copy(), verbose=4))
+        self.assertTrue(t.equals(t.copy(), verbose=3))
 
         # Create a horizontal grid mapping coordinate reference
         t = cfdm.CoordinateReference(
@@ -92,7 +92,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                                'false_easting': -20000,
                                'false_northing': -30000})
         )
-        self.assertTrue(t.equals(t.copy(), verbose=4))
+        self.assertTrue(t.equals(t.copy(), verbose=3))
 
         # Create a horizontal grid mapping coordinate reference
         t = cfdm.CoordinateReference(
@@ -104,7 +104,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                                'false_easting': -20000,
                                'false_northing': -30000})
         )
-        self.assertTrue(t.equals(t.copy(), verbose=4))
+        self.assertTrue(t.equals(t.copy(), verbose=3))
 
 
     def test_CoordinateConversion(self):

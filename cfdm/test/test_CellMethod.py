@@ -12,14 +12,14 @@ import cfdm
 
 class CellMethodTest(unittest.TestCase):
     def setUp(self):
-        # Disable non-critical log messages to silence expected warnings/errors
-        cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_SEVERITY_LEVEL('DISABLE')
         # Note: to enable all messages for given methods, lines or calls (those
         # without a 'verbose' option to do the same) e.g. to debug them, wrap
         # them (for methods, start-to-end internally) as follows:
         # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
         # < ... test code ... >
-        # cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # cfdm.LOG_SEVERITY_LEVEL('DISABLE')
 
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
@@ -54,9 +54,9 @@ class CellMethodTest(unittest.TestCase):
         # ------------------------------------------------------------
         for c in f.cell_methods.values():
             d = c.copy()
-            self.assertTrue(c.equals(c, verbose=4))
-            self.assertTrue(c.equals(d, verbose=4))
-            self.assertTrue(d.equals(c, verbose=4))
+            self.assertTrue(c.equals(c, verbose=3))
+            self.assertTrue(c.equals(d, verbose=3))
+            self.assertTrue(d.equals(c, verbose=3))
             self.assertTrue(c.identity() == 'method:'+c.get_method())
             self.assertTrue(c.identities() == ['method:'+c.get_method()])
 
@@ -71,7 +71,7 @@ class CellMethodTest(unittest.TestCase):
                             axes=['A', 'B'],
                             qualifiers={'interval': [2, 1]})
         
-        self.assertTrue(d.equals(c.sorted(), verbose=4))
+        self.assertTrue(d.equals(c.sorted(), verbose=3))
 
         c = cfdm.CellMethod(method='minimum',
                             axes=['B', 'A'],
@@ -81,7 +81,7 @@ class CellMethodTest(unittest.TestCase):
                             axes=['A', 'B'],
                             qualifiers={'interval': [3]})
         
-        self.assertTrue(d.equals(c.sorted(), verbose=4))
+        self.assertTrue(d.equals(c.sorted(), verbose=3))
 
         c = cfdm.CellMethod(method='minimum',
                             axes=['area'],
@@ -91,7 +91,7 @@ class CellMethodTest(unittest.TestCase):
                             axes=['area'],
                             qualifiers={'interval': [3]})
         
-        self.assertTrue(d.equals(c.sorted(), verbose=4))
+        self.assertTrue(d.equals(c.sorted(), verbose=3))
 
         
 #--- End: class

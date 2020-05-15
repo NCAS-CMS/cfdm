@@ -23,14 +23,14 @@ def axes_combinations(ndim):
 
 class DataTest(unittest.TestCase):
     def setUp(self):
-        # Disable non-critical log messages to silence expected warnings/errors
-        cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_SEVERITY_LEVEL('DISABLE')
         # Note: to enable all messages for given methods, lines or calls (those
         # without a 'verbose' option to do the same) e.g. to debug them, wrap
         # them (for methods, start-to-end internally) as follows:
         # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
         # < ... test code ... >
-        # cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # cfdm.LOG_SEVERITY_LEVEL('DISABLE')
 
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
@@ -295,7 +295,7 @@ class DataTest(unittest.TestCase):
         ma[0, 0, 2, 1] = cfdm.masked
 
         d = cfdm.Data(ma.copy())        
-        self.assertTrue(d.equals(d.flatten([]), verbose=4))
+        self.assertTrue(d.equals(d.flatten([]), verbose=3))
         self.assertIsNone(d.flatten(inplace=True))
         
         d = cfdm.Data(ma.copy())
@@ -305,7 +305,7 @@ class DataTest(unittest.TestCase):
             e = d.flatten(axes)
             self.assertTrue(e.ndim == 1)
             self.assertTrue(e.shape == b.shape)
-            self.assertTrue(e.equals(cfdm.Data(b), verbose=4))
+            self.assertTrue(e.equals(cfdm.Data(b), verbose=3))
             
         for axes in axes_combinations(d.ndim):
             e = d.flatten(axes)
@@ -367,9 +367,9 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(a, units='days since 2000-2-2', calendar='noleap')
         e = copy.deepcopy(d)
 
-        self.assertTrue(d.equals(d, verbose=4))
-        self.assertTrue(d.equals(e, verbose=4))
-        self.assertTrue(e.equals(d, verbose=4))    
+        self.assertTrue(d.equals(d, verbose=3))
+        self.assertTrue(d.equals(e, verbose=3))
+        self.assertTrue(e.equals(d, verbose=3))    
         
     def test_Data_max_min_sum_squeeze(self):  
         '''Check cf.Data.maximum, cf.Data.minumum, cf.Data.sum,

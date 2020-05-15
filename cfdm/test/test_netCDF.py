@@ -11,14 +11,14 @@ import cfdm
 
 class NetCDFTest(unittest.TestCase):
     def setUp(self):
-        # Disable non-critical log messages to silence expected warnings/errors
-        cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_SEVERITY_LEVEL('DISABLE')
         # Note: to enable all messages for given methods, lines or calls (those
         # without a 'verbose' option to do the same) e.g. to debug them, wrap
         # them (for methods, start-to-end internally) as follows:
         # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
         # < ... test code ... >
-        # cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # cfdm.LOG_SEVERITY_LEVEL('DISABLE')
 
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
@@ -154,8 +154,8 @@ class NetCDFTest(unittest.TestCase):
         for x, y in zip(h, g):
             self.assertTrue(x.properties()           == y.properties())
             self.assertTrue(x.nc_global_attributes() == y.nc_global_attributes())
-            self.assertTrue(x.equals(y, verbose=4))
-            self.assertTrue(y.equals(x, verbose=4))
+            self.assertTrue(x.equals(y, verbose=3))
+            self.assertTrue(y.equals(x, verbose=3))
 
         g[1].nc_set_global_attribute('comment', 'different comment')
         cfdm.write(g, 'tempfilename3.nc')
@@ -165,8 +165,8 @@ class NetCDFTest(unittest.TestCase):
             self.assertTrue(x.nc_global_attributes() == {'comment': None,
                                                          'qwerty': None,
                                                          'Conventions': None})
-            self.assertTrue(x.equals(y, verbose=4))
-            self.assertTrue(y.equals(x, verbose=4))
+            self.assertTrue(x.equals(y, verbose=3))
+            self.assertTrue(y.equals(x, verbose=3))
 #        os.remove('tempfilename.nc')
 
 

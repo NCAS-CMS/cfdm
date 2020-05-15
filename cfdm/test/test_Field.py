@@ -29,14 +29,14 @@ atexit.register(_remove_tmpfiles)
 
 class FieldTest(unittest.TestCase):
     def setUp(self):
-        # Disable non-critical log messages to silence expected warnings/errors
-        cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_SEVERITY_LEVEL('DISABLE')
         # Note: to enable all messages for given methods, lines or calls (those
         # without a 'verbose' option to do the same) e.g. to debug them, wrap
         # them (for methods, start-to-end internally) as follows:
         # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
         # < ... test code ... >
-        # cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # cfdm.LOG_SEVERITY_LEVEL('DISABLE')
 
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -468,15 +468,15 @@ class FieldTest(unittest.TestCase):
             return
 
         f = self.f.copy()
-        self.assertTrue(f.equals(f, verbose=4))
+        self.assertTrue(f.equals(f, verbose=3))
  
         g = f.copy()
-        self.assertTrue(f.equals(g, verbose=4))
-        self.assertTrue(g.equals(f, verbose=4))
+        self.assertTrue(f.equals(g, verbose=3))
+        self.assertTrue(g.equals(f, verbose=3))
 
         g = f[...]
-        self.assertTrue(f.equals(g, verbose=4))
-        self.assertTrue(g.equals(f, verbose=4))
+        self.assertTrue(f.equals(g, verbose=3))
+        self.assertTrue(g.equals(f, verbose=3))
 
         g = g.squeeze()
         self.assertFalse(f.equals(g))
@@ -561,7 +561,7 @@ class FieldTest(unittest.TestCase):
 
                 u = f.uncompress()
                 self.assertFalse(bool(u.data.get_compression_type()), message)
-                self.assertTrue(f.equals(u, verbose=4), message)
+                self.assertTrue(f.equals(u, verbose=3), message)
 
                 for method1 in methods:
                     message += ', method1='+method1
@@ -576,22 +576,22 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(bool(c.data.get_compression_type()),
                                     message)
 
-                    self.assertTrue(u.equals(c, verbose=4), message)
-                    self.assertTrue(f.equals(c, verbose=4), message)
+                    self.assertTrue(u.equals(c, verbose=3), message)
+                    self.assertTrue(f.equals(c, verbose=3), message)
                     
                     c = f.compress(method1)
                     self.assertTrue(bool(c.data.get_compression_type()),
                                     message)
 
-                    self.assertTrue(u.equals(c, verbose=4), message)
-                    self.assertTrue(f.equals(c, verbose=4), message)
+                    self.assertTrue(u.equals(c, verbose=3), message)
+                    self.assertTrue(f.equals(c, verbose=3), message)
 
                     cfdm.write(c, 'delme.nc')
                     c = cfdm.read('delme.nc')[0]
 
                     self.assertTrue(bool(c.data.get_compression_type()),
                                     message)
-                    self.assertTrue(f.equals(c, verbose=4), message)
+                    self.assertTrue(f.equals(c, verbose=3), message)
         # --- End: for
         
 # --- End: class

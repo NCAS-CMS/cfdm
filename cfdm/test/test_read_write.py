@@ -37,14 +37,14 @@ atexit.register(_remove_tmpfiles)
 
 class read_writeTest(unittest.TestCase):
     def setUp(self):
-        # Disable non-critical log messages to silence expected warnings/errors
-        cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_SEVERITY_LEVEL('DISABLE')
         # Note: to enable all messages for given methods, lines or calls (those
         # without a 'verbose' option to do the same) e.g. to debug them, wrap
         # them (for methods, start-to-end internally) as follows:
         # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
         # < ... test code ... >
-        # cfdm.LOG_SEVERITY_LEVEL('CRITICAL')
+        # cfdm.LOG_SEVERITY_LEVEL('DISABLE')
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
@@ -144,7 +144,7 @@ class read_writeTest(unittest.TestCase):
             g = cfdm.read(tmpfile)
             self.assertTrue(len(g) == 1, 'g = '+repr(g))
             g = g[0]
-            self.assertTrue(f.equals(g, verbose=4),
+            self.assertTrue(f.equals(g, verbose=3),
                             'Bad read/write of format: {}'.format(fmt))
             
     def test_read_write_netCDF4_compress_shuffle(self):
@@ -161,7 +161,7 @@ class read_writeTest(unittest.TestCase):
                                shuffle=shuffle)
                     g = cfdm.read(tmpfile)[0]
                     self.assertTrue(
-                        f.equals(g, verbose=4),
+                        f.equals(g, verbose=3),
                         "Bad read/write with lossless compression: "
                         "{}, {}, {}".format(fmt, compress, shuffle))
         #--- End: for
@@ -179,7 +179,7 @@ class read_writeTest(unittest.TestCase):
                     'NETCDF4_CLASSIC'):
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)[0]
-            self.assertTrue(f.equals(g, verbose=4),
+            self.assertTrue(f.equals(g, verbose=3),
                             'Bad read/write of format: {}'.format(fmt))
 
     def test_read_mask(self):
@@ -283,12 +283,12 @@ class read_writeTest(unittest.TestCase):
         h = cfdm.read(tmpfileh)[0]
         c = cfdm.read(tmpfilec)[0]
 
-        self.assertTrue(f0.equals(f, verbose=4))
+        self.assertTrue(f0.equals(f, verbose=3))
 
         self.assertTrue(f.construct('grid_latitude').equals(
-            c.construct('grid_latitude'), verbose=4))
+            c.construct('grid_latitude'), verbose=3))
         self.assertTrue(f0.construct('grid_latitude').equals
-                        (c.construct('grid_latitude'), verbose=4))
+                        (c.construct('grid_latitude'), verbose=3))
 
         with self.assertRaises(OSError):
             x = cfdm.read('test_read_write.py')
