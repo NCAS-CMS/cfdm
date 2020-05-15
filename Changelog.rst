@@ -1,3 +1,16 @@
+version 1.8.4
+-------------
+----
+
+**2020-??-??**
+
+* Enabled configuration of the extent and nature of informational and warning
+  messages output by `cfdm` using a logging framework (see points below).
+* New function `cfdm.LOG_LEVEL` to set the minimum log level for which
+  messages are displayed globally, i.e. to change the project-wide verbosity.
+* Changed behaviour and default of `verbose` keyword argument available to
+  certain functions so that it interfaces with the new logging functionality.
+
 version 1.8.3
 -------------
 ----
