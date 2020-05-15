@@ -171,11 +171,16 @@ A `verbose` value effectively overrides the value of
 functions/methods it calls in turn, until the origin function/method
 completes.
 
-`verbose` accepts the same values (either the string names, or the
-integer code equivalents) that `cfdm.LOG_SEVERITY_LEVEL` does, as
-listed :ref:`in the table in the section above <logging>`. By default,
-it is set to `None`, in which case the global `cfdm.LOG_SEVERITY_LEVEL`
-value is used to determine which messages, if any, are filtered out.
+The `verbose` argument accepts the same levels as
+`cfdm.LOG_SEVERITY_LEVEL` (including `0` for 'DISABLE'), as listed in
+:ref:`the table in the section above <logging>`, however to
+keep the keyword simple, only the integer code is recognised and should
+be used, not the string name. For example, `verbose=2` should be set
+rather than `verbose='INFO'`.
+
+By default, `verbose` is set to `None`, in which case the value of the
+`cfdm.LOG_SEVERITY_LEVEL` setting is used to determine which messages,
+if any, are filtered out.
 
 
 ----
