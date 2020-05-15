@@ -1,7 +1,7 @@
 from functools import wraps
 
 from .functions import (
-    LOG_SEVERITY_LEVEL,
+    LOG_LEVEL,
     _disable_logging,
     _reset_log_severity_level,
 )
@@ -86,11 +86,11 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg):
 
     This enables overriding of the log severity level such that an integer
     input (lying in the valid range) to the decorated function will ignore
-    the global cfdm.LOG_SEVERITY_LEVEL() to configure a custom verbosity
+    the global cfdm.LOG_LEVEL() to configure a custom verbosity
     for the individual function call, applying to its logic and any
     functions it calls internally and lasting only the duration of the call.
 
-    If verbose=None, as is the default, the LOG_SEVERITY_LEVEL() determines
+    If verbose=None, as is the default, the LOG_LEVEL() determines
     which log messages are shown, as standard.
 
     Only use this to decorate functions which make log calls directly
@@ -121,14 +121,14 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg):
                 "values are integers from -1 to {} corresponding in the "
                 "positive cases to increasing verbosity, or None, to "
                 "configure the verbosity according to the global "
-                "LOG_SEVERITY_LEVEL setting.".format(
+                "LOG_LEVEL setting.".format(
                     len(numeric_log_level_map) - 2)
             )
             return
 
         # First need to (temporarily) re-enable global logging if disabled
         # in the cases where you do not want to disable it anyway:
-        if (LOG_SEVERITY_LEVEL() == 'DISABLE' and verbose not in (0, None)):
+        if (LOG_LEVEL() == 'DISABLE' and verbose not in (0, None)):
             _disable_logging(at_level='NOTSET')  # enables all logging again
 
         # After method completes, re-set any changes to log level or enabling
@@ -140,8 +140,8 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg):
             if verbose == 0:
                 _disable_logging(at_level='NOTSET')  # lift the deactivation
             elif verbose in numeric_log_level_map.keys():
-                _reset_log_severity_level(LOG_SEVERITY_LEVEL())
-            if LOG_SEVERITY_LEVEL() == 'DISABLE' and verbose != 0:
+                _reset_log_severity_level(LOG_LEVEL())
+            if LOG_LEVEL() == 'DISABLE' and verbose != 0:
                 _disable_logging()  # disable again after re-enabling
 
     return verbose_override_wrapper

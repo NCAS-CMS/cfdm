@@ -351,15 +351,16 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             verbosity (else `-1` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cfdm.LOG_SEVERITY_LEVEL`.
+            regardless of the global configured `cfdm.LOG_LEVEL`.
 
             Else, if None (the default value), log messages will be filtered
             out, or otherwise, according to the value of the
-            `LOG_SEVERITY_LEVEL` setting.
+            `LOG_LEVEL` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of `3`) the more description that is printed to convey
-            information about differences that lead to inequality.
+            how constructs map to output netCDF dimensions, variables and
+            attributes.
 
        warn_valid: `bool`, optional
             If False then do not print a warning when writing

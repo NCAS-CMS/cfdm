@@ -67,7 +67,7 @@ from .constants import masked
 from .functions import (ATOL,
                         RTOL,
                         CF,
-                        LOG_SEVERITY_LEVEL,
+                        LOG_LEVEL,
                         abspath,
                         environment)
 
@@ -127,7 +127,7 @@ logging.basicConfig(
     stream=sys.stdout,
     style='{',              # default is old style ('%') string formatting
     format='{message}',     # no module names or datetimes etc. for basic case
-    level=logging.WARNING,  # default but change level via LOG_SEVERITY_LEVEL()
+    level=logging.WARNING,  # default but change level via LOG_LEVEL()
 )
 
 # And create custom level inbetween 'INFO' & 'DEBUG', to understand value see:

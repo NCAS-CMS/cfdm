@@ -81,7 +81,7 @@ There are two means to do this, which are covered in more detail in the
 sub-sections below. Namely, you may configure the extent of messaging:
 
 * **globally** i.e. for all `cfdm` operations, by setting the
-  `cfdm.LOG_SEVERITY_LEVEL` which controls the project-wide logging;
+  `cfdm.LOG_LEVEL` which controls the project-wide logging;
 * **for a specific function only** (for many functions) by setting that
   function's `verbose` keyword argument (which overrides the
   global setting for the duration of the function call).
@@ -106,13 +106,13 @@ lowest on this scale, these levels are:
 * `DEBUG`: produces highly-verbose information intended mainly for
   the purposes of debugging & `cfdm` library development.
 
-The function `cfdm.LOG_SEVERITY_LEVEL` sets the minimum of these levels for
+The function `cfdm.LOG_LEVEL` sets the minimum of these levels for
 which messages are displayed. Any message marked as being of any lower
 level will be filtered out. Note it sets the verbosity *globally*, for *all*
 `cfdm` library operations (unless these are overridden for individual
 functions, as covered below).
 
-As well as the named log levels above, `cfdm.LOG_SEVERITY_LEVEL` accepts a
+As well as the named log levels above, `cfdm.LOG_LEVEL` accepts a
 further identifier, `DISABLE`. Each of these potential settings has a
 numerical value that is treated interchangeably and may instead be set (as
 this may be easier to recall and write, if less explicit). The
@@ -150,9 +150,9 @@ rather than `4` which would follow the increasing integer code pattern.
 `-1` reflects that it is the final value in the sequence, as with
 Python indexing.
 
-The default value for `cfdm.LOG_SEVERITY_LEVEL` is `'WARNING'` (`1`).
+The default value for `cfdm.LOG_LEVEL` is `'WARNING'` (`1`).
 However, whilst completing this tutorial, it may be instructive to set the
-`LOG_SEVERITY_LEVEL` to a higher verbosity level such as `'INFO'` to
+`LOG_LEVEL` to a higher verbosity level such as `'INFO'` to
 gain insight into the internal workings of `cfdm` calls.
 
 
@@ -164,22 +164,22 @@ especially complex processing, for example the `cfdm.read` and `cfdm.write`
 functions, accept a keyword argument `verbose`. This be set to
 change the minimum log level at which messages are displayed for the
 function/method call only, without being influenced by, or influencing,
-the global `cfdm.LOG_SEVERITY_LEVEL` value.
+the global `cfdm.LOG_LEVEL` value.
 
 A `verbose` value effectively overrides the value of
-`cfdm.LOG_SEVERITY_LEVEL` for the function/method along with any
+`cfdm.LOG_LEVEL` for the function/method along with any
 functions/methods it calls in turn, until the origin function/method
 completes.
 
 The `verbose` argument accepts the same levels as
-`cfdm.LOG_SEVERITY_LEVEL` (including `0` for 'DISABLE'), as listed in
+`cfdm.LOG_LEVEL` (including `0` for `DISABLE`), as listed in
 :ref:`the table in the section above <logging>`, however to
 keep the keyword simple, only the integer code is recognised and should
 be used, not the string name. For example, `verbose=2` should be set
 rather than `verbose='INFO'`.
 
 By default, `verbose` is set to `None`, in which case the value of the
-`cfdm.LOG_SEVERITY_LEVEL` setting is used to determine which messages,
+`cfdm.LOG_LEVEL` setting is used to determine which messages,
 if any, are filtered out.
 
 

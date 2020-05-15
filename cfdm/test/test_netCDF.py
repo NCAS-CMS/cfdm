@@ -12,13 +12,13 @@ import cfdm
 class NetCDFTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.LOG_SEVERITY_LEVEL('DISABLE')
+        cfdm.LOG_LEVEL('DISABLE')
         # Note: to enable all messages for given methods, lines or calls (those
         # without a 'verbose' option to do the same) e.g. to debug them, wrap
         # them (for methods, start-to-end internally) as follows:
-        # cfdm.LOG_SEVERITY_LEVEL('DEBUG')
+        # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
-        # cfdm.LOG_SEVERITY_LEVEL('DISABLE')
+        # cfdm.LOG_LEVEL('DISABLE')
 
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
