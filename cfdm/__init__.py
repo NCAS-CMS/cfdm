@@ -122,9 +122,21 @@ from .examplefield import example_field
 import logging
 import sys
 
+# Configure the root logger which all module loggers inherit from:
 logging.basicConfig(
     stream=sys.stdout,
     style='{',              # default is old style ('%') string formatting
     format='{message}',     # no module names or datetimes etc. for basic case
     level=logging.WARNING,  # default but change level via LOG_SEVERITY_LEVEL()
 )
+
+# And create custom level inbetween 'INFO' & 'DEBUG', to understand value see:
+# https://docs.python.org/3.8/howto/logging.html#logging-levels
+logging.DETAIL = 15  # set value as an attribute as done for built-in levels
+logging.addLevelName(logging.DETAIL, 'DETAIL')
+
+def detail(self, message, *args, **kwargs):
+    if self.isEnabledFor(logging.DETAIL):
+        self._log(logging.DETAIL, message, args, **kwargs)
+
+logging.Logger.detail = detail

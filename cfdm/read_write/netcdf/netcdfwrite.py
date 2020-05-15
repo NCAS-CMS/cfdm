@@ -2127,7 +2127,7 @@ class NetCDFWrite(IOWrite):
             chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
 
         if chunksizes is not None:
-            logger.info(
+            logger.detail(
                 '      HDF5 chunksizes: {}'.format(chunksizes)
             )  # pragma: no cover
         
