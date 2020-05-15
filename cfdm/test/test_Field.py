@@ -230,7 +230,7 @@ class FieldTest(unittest.TestCase):
         d = f.data.copy()
         g = f.copy()        
         self.assertIsNone(f.apply_masking(inplace=True))
-        self.assertTrue(f.equals(g, verbose=1))
+        self.assertTrue(f.equals(g, verbose=3))
 
         x = 0.11        
         y = 0.1
@@ -241,31 +241,31 @@ class FieldTest(unittest.TestCase):
         
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x])
-        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(e.equals(g.data, verbose=3))
         self.assertTrue(g.data.array.count() == g.data.size - 1)
 
         f.set_property('valid_range', [y, z])
         d = f.data.copy()
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_range=[y, z])
-        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(e.equals(g.data, verbose=3))
 
         f.del_property('valid_range')
         f.set_property('valid_min', y)
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_min=y)
-        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(e.equals(g.data, verbose=3))
 
         f.del_property('valid_min')
         f.set_property('valid_max', z)
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_max=z)
-        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(e.equals(g.data, verbose=3))
 
         f.set_property('valid_min', y)
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_min=y, valid_max=z)
-        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(e.equals(g.data, verbose=3))
 
     def test_Field_PROPERTIES(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

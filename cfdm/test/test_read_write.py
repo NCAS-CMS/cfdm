@@ -329,9 +329,9 @@ class read_writeTest(unittest.TestCase):
         
         for i in range(0, n):
             j = i + n
-            self.assertTrue(f[i].data.equals(f[j].data, verbose=1),
+            self.assertTrue(f[i].data.equals(f[j].data, verbose=3),
                             "{!r} {!r}".format(f[i], f[j]))
-            self.assertTrue(f[j].data.equals(f[i].data, verbose=1),
+            self.assertTrue(f[j].data.equals(f[i].data, verbose=3),
                             "{!r} {!r}".format(f[j], f[i]))
 
         for string0 in (True, False):
@@ -356,7 +356,7 @@ class read_writeTest(unittest.TestCase):
     
                         for i, j in zip(cfdm.read(tmpfile1),
                                         cfdm.read(tmpfile0)):
-                            self.assertTrue(i.equals(j, verbose=1))
+                            self.assertTrue(i.equals(j, verbose=3))
         #--- End: for
                         
 #--- End: class
