@@ -186,7 +186,7 @@ def LOG_LEVEL(*log_level):
             CONSTANTS['LOG_LEVEL'] = level
             _reset_log_severity_level(level)
         else:
-            print(
+            raise ValueError(
                 "Logging level '{}' is not one of the valid values '{}', or "
                 "a corresponding integer of 0 to {} and (lastly) -1, "
                 "respectively. Value remains as it was, at:".format(
