@@ -184,7 +184,7 @@ def LOG_LEVEL(*log_level):
         # integer 0 to 5 corresponding to one of those as converted above:
         if level in valid_log_levels:
             CONSTANTS['LOG_LEVEL'] = level
-            _reset_log_severity_level(level)
+            _reset_log_emergence_level(level)
         else:
             raise ValueError(
                 "Logging level '{}' is not one of the valid values '{}', or "
@@ -197,7 +197,7 @@ def LOG_LEVEL(*log_level):
     return old
 
 
-def _reset_log_severity_level(level, logger=None):
+def _reset_log_emergence_level(level, logger=None):
     '''Re-set minimum severity level for displayed log messages of a logger.
 
     This may correspond to a change, otherwise will re-set to the same value
@@ -208,6 +208,10 @@ def _reset_log_severity_level(level, logger=None):
     above), else a ValueError will be raised by the logging module.
 
     Unless another logger is specified, this will apply to the root logger.
+
+    Important: with an input level of 'DISABLE' (0), this method only
+    disables the logging; the responsibility to re-enable it once the need for
+    deactivation is over lies with methods that call this.
     '''
     if logger:
         use_logger = logging.getLogger(logger)

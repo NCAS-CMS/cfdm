@@ -3,7 +3,7 @@ from functools import wraps
 from .functions import (
     LOG_LEVEL,
     _disable_logging,
-    _reset_log_severity_level,
+    _reset_log_emergence_level,
 )
 
 from .constants import numeric_log_level_map
@@ -112,7 +112,7 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg):
 
         # Override log levels for the function & all it calls (to reset at end)
         if verbose in numeric_log_level_map.keys():
-            _reset_log_severity_level(numeric_log_level_map[verbose])
+            _reset_log_emergence_level(numeric_log_level_map[verbose])
         elif verbose is not None:  # None as default, note exclude True & False
             # Print rather than log because if user specifies a verbose kwarg
             # they want to change the log levels so may have them disabled.
@@ -140,7 +140,7 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg):
             if verbose == 0:
                 _disable_logging(at_level='NOTSET')  # lift the deactivation
             elif verbose in numeric_log_level_map.keys():
-                _reset_log_severity_level(LOG_LEVEL())
+                _reset_log_emergence_level(LOG_LEVEL())
             if LOG_LEVEL() == 'DISABLE' and verbose != 0:
                 _disable_logging()  # disable again after re-enabling
 
