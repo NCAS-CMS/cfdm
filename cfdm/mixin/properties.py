@@ -221,7 +221,7 @@ class Properties(Container):
     >>> q.set_property('foo', 'bar')
     >>> p.equals(q)
     False
-    >>> p.equals(q, verbose=4)
+    >>> p.equals(q, verbose=3)
     Field: Non-common property name: foo
     Field: Different properties
     False

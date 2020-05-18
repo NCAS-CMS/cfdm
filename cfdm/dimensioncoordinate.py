@@ -247,7 +247,7 @@ class DimensionCoordinate(mixin.NetCDFVariable,
     >>> g.set_property('foo', 'bar')
     >>> f.equals(g)
     False
-    >>> f.equals(g, verbose=4)
+    >>> f.equals(g, verbose=3)
     DimensionCoordinate: Non-common property name: foo
     DimensionCoordinate: Different properties
     False

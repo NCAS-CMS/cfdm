@@ -1315,7 +1315,7 @@ class Field(mixin.NetCDFVariable,
     >>> g.set_property('foo', 'bar')
     >>> f.equals(g)
     False
-    >>> f.equals(g, verbose=4)
+    >>> f.equals(g, verbose=3)
     Field: Non-common property name: foo
     Field: Different properties
     False

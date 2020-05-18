@@ -3624,7 +3624,7 @@ class NetCDFWrite(IOWrite):
     
     >>> type(f)
     <class 'cf.field.FieldList'>
-    >>> cf.write([f, g], 'file.nc', verbose=4)
+    >>> cf.write([f, g], 'file.nc', verbose=3)
     [<CF Field: air_pressure(30, 24)>,
      <CF Field: u_compnt_of_wind(19, 29, 24)>,
      <CF Field: v_compnt_of_wind(19, 29, 24)>,

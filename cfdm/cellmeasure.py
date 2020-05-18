@@ -249,7 +249,7 @@ class CellMeasure(mixin.NetCDFVariable,
     >>> g.set_property('foo', 'bar')
     >>> f.equals(g)
     False
-    >>> f.equals(g, verbose=4)
+    >>> f.equals(g, verbose=3)
     CellMeasure: Non-common property name: foo
     CellMeasure: Different properties
     False
