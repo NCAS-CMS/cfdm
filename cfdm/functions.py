@@ -224,6 +224,8 @@ def _reset_log_emergence_level(level, logger=None):
     if level == 'DISABLE':
         _disable_logging()
     else:
+        # First must (re-)enable in case logging previously was disabled:
+        _disable_logging(at_level='NOTSET')
         use_logger.setLevel(getattr(logging, level))
 
 
