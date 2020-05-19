@@ -155,13 +155,15 @@ class FunctionsTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for n in range(7):
+        top = 7
+        
+        for n in range(top + 1):
             f = cfdm.example_field(n)
             _ = f.data.array
             _ = f.dump(display=False)
 
         with self.assertRaises(Exception):
-            _ = cfdm.example_field(-999)
+            _ = cfdm.example_field(top + 1)
 
 #--- End: class
 

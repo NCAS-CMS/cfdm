@@ -59,7 +59,9 @@ class NetCDFRead(IORead):
         'Grid mapping coordinate variable': 152, 
         
         'Cell method interval': 160,
-        
+
+        'External variable': 170,
+
         # Purely structural
         'Compressed dimension': 300,
         'compress attribute': 301,
@@ -77,6 +79,7 @@ class NetCDFRead(IORead):
         'has incompatible terms': 6,
         'that spans the vertical dimension has no bounds': 7,
     'that does not span the vertical dimension is inconsistent with the formula_terms of the parametric coordinate variable': 8,
+        'is not referenced in file': 9,
     }
 
     def cf_datum_parameters(self):
@@ -934,7 +937,9 @@ class NetCDFRead(IORead):
                     None, ncvar,
                     message=('External variable',
                              'is not referenced in file'),
-                    attribute={'external_variables': external_variables})
+                    attribute={
+                        'external_variables': netcdf_external_variables}
+                )
         # --- End: if
         
         # ------------------------------------------------------------

@@ -2,15 +2,16 @@ version 1.8.4
 -------------
 ----
 
-**2020-??-??**
+**2020-05-??**
 
+* Added new example field ``7`` to `cfdm.example_field`.
 * Enabled configuration of the extent and nature of informational and warning
   messages output by `cfdm` using a logging framework (see points below).
 * New function `cfdm.LOG_LEVEL` to set the minimum log level for which
   messages are displayed globally, i.e. to change the project-wide verbosity.
-* Changed behaviour and default of `verbose` keyword argument available to
-  certain functions so that it interfaces with the new logging functionality.
-
+* Changed behaviour and default of `verbose` keyword argument when available
+  to a function/method so it interfaces with the new logging functionality.
+  
 version 1.8.3
 -------------
 ----
