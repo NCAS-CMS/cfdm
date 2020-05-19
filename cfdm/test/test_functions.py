@@ -47,7 +47,7 @@ class FunctionsTest(unittest.TestCase):
             'Detail', 0, 'DISABLE', 'warning']
 
         self.test_only = []
-        
+
     def test_ATOL_RTOL(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -57,7 +57,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertTrue(cfdm.RTOL() == 1e-5)
         self.assertTrue(cfdm.RTOL(org) == 1e-5)
         self.assertTrue(cfdm.RTOL() == org)
-        
+
         org = cfdm.ATOL()
         self.assertTrue(cfdm.ATOL(1e-5) == org)
         self.assertTrue(cfdm.ATOL() == 1e-5)
@@ -156,7 +156,7 @@ class FunctionsTest(unittest.TestCase):
             return
 
         top = 7
-        
+
         for n in range(top + 1):
             f = cfdm.example_field(n)
             _ = f.data.array

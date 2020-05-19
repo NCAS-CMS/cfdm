@@ -26,7 +26,7 @@ The cfdm package can
     * incorporate, and create, metadata stored in external files,
     * read, write, and create data that have been compressed by
       convention (i.e. ragged or gathered arrays), whilst presenting a
-      view of the data in its uncompressed form, and 
+      view of the data in its uncompressed form, and
     * read, write, and create coordinates defined by geometry cells
       (new in version 1.8.0).
 

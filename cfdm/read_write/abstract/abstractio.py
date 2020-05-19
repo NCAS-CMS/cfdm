@@ -11,7 +11,7 @@ class IO(with_metaclass(abc.ABCMeta, object)):
         '''**Initialisation**
 
     :Parameters:
-    
+
         implementation: `Implementation'
             The objects required to represent a Field.
 
@@ -61,5 +61,5 @@ class IOWrite(with_metaclass(abc.ABCMeta, IO)):
 
         '''
         raise NotImplementedError() # pragma: no cover
-    
+
 # --- End: class

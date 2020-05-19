@@ -38,7 +38,7 @@ class CFDMImplementation(Implementation):
     def __init__(self,
 
                  cf_version=None,
-                 
+
                  AuxiliaryCoordinate=None,
                  CellMeasure=None,
                  CellMethod=None,
@@ -48,19 +48,19 @@ class CFDMImplementation(Implementation):
                  DomainAxis=None,
                  Field=None,
                  FieldAncillary=None,
-                 
+
                  Bounds=None,
                  InteriorRing=None,
                  CoordinateConversion=None,
                  Datum=None,
                  Data=None,
-                 
+
                  GatheredArray=None,
                  NetCDFArray=None,
                  RaggedContiguousArray=None,
                  RaggedIndexedArray=None,
                  RaggedIndexedContiguousArray=None,
-                 
+
                  List=None,
                  Count=None,
                  Index=None,
@@ -70,34 +70,34 @@ class CFDMImplementation(Implementation):
         '''**Initialisation**
 
     :Parameters:
-    
+
         AuxiliaryCoordinate:
             An auxiliary coordinate construct class.
-    
+
         CellMeasure:
             A cell measure construct class.
-    
+
         CellMethod:
             A cell method construct class.
-    
+
         CoordinateReference:
             A coordinate reference construct class.
-    
+
         DimensionCoordinate:
             A dimension coordinate construct class.
-    
+
         DomainAncillary:
             A domain ancillary construct class.
-    
+
         DomainAxis:
             A domain axis construct class.
-    
+
         Field:
             A field construct class.
-    
+
         FieldAncillary:
             A field ancillary construct class.
-    
+
         Bounds:             = Bounds
         CoordinateAncillary = CoordinateAncillary
         Data                = Data
@@ -122,7 +122,7 @@ class CFDMImplementation(Implementation):
             CoordinateConversion=CoordinateConversion,
             Datum=Datum,
             Data=Data,
-            
+
             GatheredArray=GatheredArray,
             NetCDFArray=NetCDFArray,
             RaggedContiguousArray=RaggedContiguousArray,
@@ -133,7 +133,7 @@ class CFDMImplementation(Implementation):
             Count=Count,
             Index=Index,
             NodeCountProperties=NodeCountProperties,
-            PartNodeCountProperties=PartNodeCountProperties,        
+            PartNodeCountProperties=PartNodeCountProperties,
         )
 
     def __repr__(self):
@@ -148,15 +148,15 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Parameters:
-    
+
         bounds: `Bounds`
-    
+
         position: `int`
-    
+
     :Returns:
-    
+
         `Bounds`
-    
+
         '''
         return bounds.insert_dimension(position=position)
 
@@ -177,20 +177,20 @@ class CFDMImplementation(Implementation):
         out = {'node_count'     : {},
                'part_node_count': {},
                'interior_ring'  : {}}
-        
+
         for coord in self.get_auxiliary_coordinates(field).values():
             for variable in out:
                 x = getattr(self, 'get_'+variable)(coord)
                 if x is None:
                     continue
-                
+
                 for k, v in x.properties().items():
                     if k not in out[variable]:
                         out[variable][k] = v
                     elif v != out[variable][k]:
                         return False
         # --- End: for
-        
+
         for coord in self.get_auxiliary_coordinates(field).values():
             for variable in out:
                 x = getattr(self, 'get_'+variable)(coord)
@@ -206,17 +206,17 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Parameters:
-    
+
         construct: construct
-    
+
         position: `int`
-    
+
         copy: `bool`, optional
-    
+
     :Returns:
-    
+
         construct
-    
+
         '''
         return construct.insert_dimension(position=position)
 
@@ -224,7 +224,7 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Returns:
-    
+
             The deep copy.
 
         '''
@@ -240,9 +240,9 @@ class CFDMImplementation(Implementation):
 #        '''TODO
 #
 #    :Parameters:
-#    
+#
 #        data: `Data`
-#    
+#
 #        position: `int`
 #
 #    :Returns:
@@ -251,24 +251,24 @@ class CFDMImplementation(Implementation):
 #
 #        '''
 #        data.insert_dimension(position=position, inplace=True)
-                
+
     def del_property(self, construct, prop, default):
         '''TODO
 
     :Parameters:
-    
+
     :Returns:
-    
+
             The value of the deleted property
-    
+
     **Examples:**
-    
+
     >>> c.set_properties(f, {'standard_name', 'air_temperature'})
     >>> c.del_property(f, 'standard_name')
     'air_temperature'
     >>> c.get_property(f, 'standard_name')
     AttributeError: Field doesn't have property 'standard_name'
-        
+
         '''
         return construct.del_property(prop, default)
 
@@ -292,17 +292,17 @@ class CFDMImplementation(Implementation):
 
     If no axes are specified then all auxiliary coordinate constructs
     are returned.
-    
+
     If axes are specified then auxiliary coordinate constructs whose
     data arrays span those axes, and possibly other axes, are
     returned.
-    
+
     :Parameters:
-    
+
         axes: sequence of `str`
-    
+
     :Returns:
-    
+
         `dict`
 
         '''
@@ -327,7 +327,7 @@ class CFDMImplementation(Implementation):
             return default
 
         return self.nc_get_variable(bounds, default=default)
-    
+
     def get_cell_measures(self, field):
        '''TODO
        '''
@@ -337,17 +337,17 @@ class CFDMImplementation(Implementation):
         '''TODO
         '''
         return field.cell_methods.ordered()
-       
+
     def get_cell_method_axes(self, cell_method, default=None):
         '''TODO
 
     :Returns:
-    
+
         `tuple`
 
         '''
         return cell_method.get_axes(default=default)
-    
+
     def get_cell_method_string(self, cell_method):
         '''TODO
 
@@ -372,11 +372,11 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Parameters:
-    
+
         data: `Data`
-    
+
     :Returns:
-    
+
         `numpy.ndarray`
 
         '''
@@ -386,7 +386,7 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Returns:
-    
+
         `list`
 
         '''
@@ -394,23 +394,23 @@ class CFDMImplementation(Implementation):
             data = self.get_data(construct)
         else:
             data = self.get_data(field)
-            
+
         if key is not None:
             data_axes = self.get_construct_data_axes(field, key)
         else:
             data_axes = self.get_field_data_axes(field)
-            
+
         return [data_axes[i] for i in self.get_data_compressed_axes(data)]
 
     def get_compression_type(self, construct):
         '''TODO
- 
+
     :Parameters:
-    
-        construct:      
-    
+
+        construct:
+
     :Returns:
-    
+
         `str`
             The compression type. If there is no compression then an
             empty string is returned.
@@ -419,53 +419,53 @@ class CFDMImplementation(Implementation):
         data = construct.get_data(None)
         if data is None:
             return ''
-        
+
         return data.get_compression_type()
-        
+
     def get_construct_data_axes(self, field, key):
         '''TODO
         '''
         return field.constructs.data_axes()[key]
-    
+
     def get_constructs(self, field, axes=[], data=False):
         '''Return constructs that span particular axes.
 
     If no axes are specified then all constructs are returned.
-    
+
     If axes are specified then constructs whose data arrays span those
     axes, and possibly other axes, are returned.
-    
+
     :Parameters:
-    
+
         axes: sequence of `str`
-    
+
         data: `bool`
             If True then only return constructs that can contain data.
 
     :Returns:
-    
+
         `dict`
 
         '''
         if data:
             return dict(field.constructs.filter_by_data())
-        
+
         return dict(field.constructs.filter_by_axis('and', *axes))
-    
+
     def get_coordinate_reference_coordinates(self, coordinate_reference):
         '''Return the coordinates of a coordinate reference object.
 
     :Parameters:
-    
+
         coordinate_reference: `CoordinateReference`
-    
+
     :Returns:
-    
+
         `set`
 
         '''
         return coordinate_reference.coordinates()
-    
+
     def get_coordinate_conversion_parameters(self, coordinate_reference):
         '''TODO
 
@@ -488,7 +488,7 @@ class CFDMImplementation(Implementation):
 
        '''
        return field.coordinates
-    
+
     def get_data_calendar(self, data, default=None):
         '''TODO
         '''
@@ -508,22 +508,22 @@ class CFDMImplementation(Implementation):
         '''Return the number of dimensions spanned by the data array.
 
     :Parameters:
-    
-        parent: 
+
+        parent:
             The object containing the data array.
-    
+
     :Returns:
-    
+
         `int`
             The number of dimensions spanned by the data array.
-    
+
     **Examples:**
-    
+
     >>> d
     <DimensionCoordinate: latitude(180) degrees_north>
     >>> w.get_data_ndim(d)
     1
-    
+
     >>> b
     <Bounds: latitude(180, 2) degrees_north>
     >>> w.get_data_ndim(b)
@@ -535,22 +535,22 @@ class CFDMImplementation(Implementation):
         '''Return the shape of the data array.
 
     :Parameters:
-    
-        parent: 
+
+        parent:
             The object containing the data array.
-    
+
     :Returns:
-    
+
         `tuple`
             The shape of the data array.
-    
+
     **Examples:**
-    
+
     >>> d
     <DimensionCoordinate: latitude(180) degrees_north>
     >>> w.get_data_shape(d)
     (180,)
-    
+
     >>> b
     <Bounds: latitude(180, 2) degrees_north>
     >>> w.get_data_shape(b)
@@ -563,22 +563,22 @@ class CFDMImplementation(Implementation):
         '''Return the number of elements in the data array.
 
     :Parameters:
-    
-        parent: 
+
+        parent:
             The object containing the data array.
-    
+
     :Returns:
-    
+
         `int`
             The number of elements in the data array.
-    
+
     **Examples:**
-    
+
     >>> d
     <DimensionCoordinate: latitude(180) degrees_north>
     >>> w.get_data_ndim(d)
     180
-    
+
     >>> b
     <Bounds: latitude(180, 2) degrees_north>
     >>> w.get_data_ndim(b)
@@ -594,28 +594,28 @@ class CFDMImplementation(Implementation):
 
     def get_datum(self, coordinate_reference):
         '''TODO
-        
+
     :Parameters:
-    
+
     :Returns:
-    
+
         datum object
-            
+
         '''
         return coordinate_reference.datum
-            
+
     def get_datum_parameters(self, ref):
         '''Return the parameter-valued terms of a coordinate reference datum.
 
     :Parameters:
-    
+
         coordinate_reference: `CoordinateReference`
-    
+
     :Returns:
-    
+
         `dict`
-    
-        '''        
+
+        '''
         return ref.datum.parameters()
 
     def get_dimension_coordinates(self, field):
@@ -636,7 +636,7 @@ class CFDMImplementation(Implementation):
         '''
         return field.domain_axes
 
- 
+
     def get_domain_axis_size(self, field, axis):
         '''TODO
         '''
@@ -652,30 +652,30 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     .. versionadded:: 1.8.0
-    
+
     :Parameters:
-    
+
     :Returns:
-    
+
         `str`
-    
+
         '''
         return field.nc_get_geometry_variable(default)
 
     def nc_get_hdf5_chunksizes(self, data):
-        '''Return the HDF5 chunksizes for the data. 
+        '''Return the HDF5 chunksizes for the data.
 
     ..versionadded:: 1.7.2
-    
+
     :Parameters:
-    
+
         data: Data instance
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `tuple` or `None`
             The HDF5 chunksizes, or `None` if they haven't been set.
-    
+
         '''
         out = data.nc_hdf5_chunksizes()
         if not out:
@@ -686,8 +686,8 @@ class CFDMImplementation(Implementation):
     def nc_get_sample_dimension(self, count, default=None):
         '''Return the name of the netCDF sample dimension.
 
-    :Returns: 
-    
+    :Returns:
+
         `str`
             The name of the netCDF sample dimension.
 
@@ -698,13 +698,13 @@ class CFDMImplementation(Implementation):
         '''Whether a domain axis corresponds to a netCDF unlimited dimension.
 
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-      
+
         field: `Field`
-    
+
     :Returns:
-    
+
         `set`
             The selection of domain axis construct identifiers that are
             unlimited.
@@ -715,21 +715,21 @@ class CFDMImplementation(Implementation):
             return False
 
         return domain_axis.nc_is_unlimited()
-    
+
     def nc_set_unlimited_axis(self, field, axis):
         '''Set a domain axis to correspond to a netCDF unlimited dimension.
-    
+
     .. versionadded:: 1.7.4
-    
+
     :Parameters:
-      
+
         field: `Field`
-    
+
         axis: `str`
             Domain axis construct key.
-    
+
     :Returns:
-    
+
         `None`
 
         '''
@@ -738,29 +738,29 @@ class CFDMImplementation(Implementation):
             return
 
         domain_axis.nc_set_unlimited(True)
-    
+
     def nc_get_global_attributes(self, field):
         '''TODO
 
         '''
         return field.nc_global_attributes()
-    
+
     def nc_set_global_attributes(self, field, attributes):
         '''TODO
 
     .. versionadded:: 1.7.0
-    
+
     attributes: `dict`
-    
+
         '''
         for attr, value in attributes.items():
             field.nc_set_global_attribute(attr, value)
-    
+
     def equal_constructs(self, construct0, construct1,
                          ignore_type=False):
         '''TODO
 
-        '''    
+        '''
         return construct0.equals(construct1, ignore_type=ignore_type)
 
     def equal_properties(self, property_value0, property_value1):
@@ -774,13 +774,13 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Parameters:
-    
+
         coordinate_reference0: coordinate reference construct
-    
+
         coordinate_reference1: coordinate reference construct
-    
+
     :Returns:
-    
+
         `bool`
 
         '''
@@ -792,61 +792,61 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Parameters:
-    
+
     :Returns:
-    
+
         `int`
-    
+
         '''
         return construct.data.size
-   
+
     def nc_get_external(self, parent):
         '''Return whether a construct is external.
 
     :Parameters:
-    
-        parent: 
+
+        parent:
             The object
-    
+
     :Returns:
-    
+
         `bool`
             Whether the construct is external.
 
         '''
         if not hasattr(parent, 'nc_get_external'):
             return False
-        
+
         return parent.nc_get_external()
-    
+
     def get_field_ancillaries(self, field):
         '''Return the field ancillaries of a field.
 
     :Parameters:
-    
-        field: 
+
+        field:
             The field object.
-    
+
     :Returns:
-    
+
         `dict`
             A dictionary whose values are field ancillary objects, keyed
             by unique identifiers.
-    
+
     **Examples:**
-    
+
     >>> w.get_field_ancillaries(f)
     {'fieldancillary0': <FieldAncillary: ....>,
      'fieldancillary1': <FieldAncillary: ....>}
 
         '''
         return field.field_ancillaries
-                  
+
     def get_field_data_axes(self, field):
         '''TODO
 
     :Returns:
-        
+
         `tuple`
 
         '''
@@ -859,51 +859,51 @@ class CFDMImplementation(Implementation):
 
     def get_data_max(self, parent):
         '''Use `get_data_maximum` instead (since cfdm version 1.8.0).
-        
+
         '''
         raise NotImplementedError(
             "Use `get_data_maximum` instead (since cfdm version 1.8.0).")
-   
+
     def get_data_maximum(self, parent):
         '''TODO
 
     :Parameters:
-    
+
     :Returns:
-    
+
         `int`
-        
+
         '''
         return parent.data.maximum()
-    
+
     def get_data_sum(self, parent):
         '''TODO
 
     :Parameters:
-    
+
     :Returns:
-    
+
         `int`
-            
+
         '''
         return parent.data.sum()
 
-    
+
     def get_count(self, construct):
         '''Return the measure property of a cell measure construct.
-    
+
     :Parameters:
-    
+
         cell_measure:
             The cell measure object.
-    
+
     :Returns:
-    
+
         `str` or `None`
             The measure property, or `None` if it has not been set.
-    
+
     **Examples:**
-    
+
     >>> c
     <CellMeasure: area(73, 96) km2>
     >>> w.get_measure(c)
@@ -911,56 +911,56 @@ class CFDMImplementation(Implementation):
         '''
         return construct.get_data().get_count(default=None)
 
-    
+
     def get_index(self, construct):
         '''TODO
 
     :Parameters:
-    
-      
+
+
     :Returns:
-    
+
         '''
         return construct.get_data().get_index(default=None)
 
-    
+
     def get_interior_ring(self, construct):
         '''TODO
 
     :Parameters:
-    
+
         TODO
 
     :Returns:
-    
+
         TODO
-    
+
         '''
         return construct.get_interior_ring(default=None)
 
-    
+
     def get_list(self, construct):
         '''TODO
 
         '''
         return construct.get_data().get_list(default=None)
 
-    
+
     def get_measure(self, cell_measure):
         '''Return the measure property of a cell measure construct.
-    
+
     :Parameters:
-    
+
         cell_measure:
             The cell measure object.
-    
+
     :Returns:
-    
+
         `str` or `None`
             The measure property, or `None` if it has not been set.
-    
+
     **Examples:**
-    
+
     >>> c
     <CellMeasure: area(73, 96) km2>
     >>> w.get_measure(c)
@@ -968,22 +968,22 @@ class CFDMImplementation(Implementation):
         '''
         return cell_measure.get_measure(default=None)
 
-    
+
     def nc_get_dimension(self, parent, default=None):
         '''Return the netCDF variable name.
 
     :Parameters:
-    
-        parent: 
+
+        parent:
             The object containing the data array.
-    
+
         default: `str`, optional
-    
+
     :Returns:
-    
+
         `str`
             The netCDF dimension name.
-    
+
     **Examples:**
 
         '''
@@ -994,11 +994,11 @@ class CFDMImplementation(Implementation):
        '''TODO
 
     :Parameters:
-    
+
        TODO
 
     :Returns:
-    
+
        `str`
            TODO
        '''
@@ -1009,51 +1009,51 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     .. versionadded:: 1.8.0
-    
+
     :Parameters:
-    
-        construct: 
-      
+
+        construct:
+
     :Returns:
-    
+
         Node count variable
 
         '''
         return construct.get_node_count(default=None)
 
-    
+
     def get_part_node_count(self, construct):
         '''TODO
 
     .. versionadded:: 1.8.0
-    
+
     :Parameters:
-    
-      
+
+
     :Returns:
-    
+
         Part node count variable
-    
+
 
         '''
         return construct.get_part_node_count(default=None)
 
-    
+
     def get_properties(self, parent):
         '''Return all properties.
 
     :Parameters:
-    
-        parent: 
+
+        parent:
             The object containing the properties.
-    
+
     :Returns:
-    
+
         `dict`
             The property names and their values
-    
+
     **Examples:**
-    
+
     >>> d
     <DimensionCoordinate: latitude(180) degrees_north>
     >>> w.get_properties(d)
@@ -1089,21 +1089,21 @@ class CFDMImplementation(Implementation):
         '''Return the data array.
 
     :Parameters:
-    
-        parent: 
+
+        parent:
             The object containing the data array.
-    
+
     :Returns:
-    
+
             The data.
-    
+
     **Examples:**
-    
+
     >>> d
     <DimensionCoordinate: latitude(180) degrees_north>
     >>> w.get_data(d)
     <Data(180): [-89.5, ..., 89.5] degrees_north>
-    
+
     >>> b
     <Bounds: latitude(180, 2) degrees_north>
     >>> w.get_data(b)
@@ -1136,7 +1136,7 @@ class CFDMImplementation(Implementation):
         cls = self.get_class('CellMethod')
         return cls(axes=axes, method=method, qualifiers=qualifiers)
 
-    def initialise_CoordinateConversion(self, 
+    def initialise_CoordinateConversion(self,
                                         domain_ancillaries=None,
                                         parameters=None):
         '''TODO
@@ -1150,7 +1150,7 @@ class CFDMImplementation(Implementation):
         '''
         cls = self.get_class('CoordinateReference')
         return cls()
- 
+
     def initialise_Count(self):
         '''TODO
 
@@ -1163,20 +1163,20 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Patameters:
-    
+
         array:
-    
+
         units:
-    
+
         calendar:
-    
+
         copy: `bool`, optional
-    
+
         kwargs: optional
             Not used in this imlementation
-    
+
     :Returns;
-    
+
         `Data`
             TODO
 
@@ -1200,7 +1200,7 @@ class CFDMImplementation(Implementation):
         return cls(properties=properties, data=data, bounds=bounds,
                    interior_ring=interior_ring, copy=copy)
 
-    def initialise_DimensionCoordinate_from_AuxiliaryCoordinate(            
+    def initialise_DimensionCoordinate_from_AuxiliaryCoordinate(
             self,
             auxiliary_coordinate=None,
             copy=True):
@@ -1273,7 +1273,7 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Returns:
-    
+
         `NetCDFArray`
 
         '''
@@ -1334,7 +1334,7 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Returns:
-    
+
         `bool`
             The value of the 'climatology' cell extent parameter, or
             False if not set.
@@ -1348,9 +1348,9 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         construct: Construct
-    
+
     :Returns:
-    
+
         `bool`
 
         '''
@@ -1360,12 +1360,12 @@ class CFDMImplementation(Implementation):
         '''Return True if the coordinate bounds are geometries.
 
     :Parameters:
-    
-        coordinate: 
+
+        coordinate:
             The coordinate construct.
-    
+
     :Returns:
-    
+
         `bool`
              True if the coordinate bounds are geometries, otherwise
              False.
@@ -1375,50 +1375,50 @@ class CFDMImplementation(Implementation):
 
     def is_masked(self, data):
         '''Whether or not the data has any masked values.
-        
+
     .. versionadded:: 1.8.0
 
     :Parameters:
-    
+
         data: `Data`
-    
+
     :Returns:
-    
+
         `bool`
             Whether or not the data has any masked values.
 
         '''
         return data.mask.any()
-    
+
 
     def nc_set_instance_dimension(self, variable, ncdim):
         '''TODO
         '''
         variable.nc_set_instance_dimension(ncdim)
 
-    
+
 
     def nc_set_sample_dimension(self, variable, ncdim):
         '''TODO
         '''
         variable.nc_set_sample_dimension(ncdim)
 
-    
+
     def set_auxiliary_coordinate(self, field, construct, axes, copy=True):
         '''Insert a auxiliary coordinate object into a field.
-        
+
     :Parameters:
-    
+
         field: `Field`
-    
+
         construct: `AuxiliaryCoordinate`
-    
+
         axes: `tuple`
-    
+
         copy: `bool`, optional
-    
+
     :Returns:
-    
+
         `str`
 
         '''
@@ -1428,9 +1428,9 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Parameters:
-    
+
     :Returns:
-    
+
         `None`
 
         '''
@@ -1440,17 +1440,17 @@ class CFDMImplementation(Implementation):
         '''Insert a cell_measure object into a field.
 
     :Parameters:
-    
+
         field: `Field`
-    
+
         construct: `CellMeasure`
-    
+
         axes: `tuple`
-    
+
         copy: `bool`, optional
-    
+
     :Returns:
-    
+
         `str`
 
         '''
@@ -1461,15 +1461,15 @@ class CFDMImplementation(Implementation):
         '''Insert a cell_method object into a field.
 
     :Parameters:
-    
+
         field: `Field`
-    
+
         construct: `CellMethod`
-    
+
         copy: `bool`, optional
-    
+
     :Returns:
-    
+
         `str`
 
         '''
@@ -1480,22 +1480,22 @@ class CFDMImplementation(Implementation):
         '''
         cell_method.set_axes(axes)
 
-    
+
     def set_cell_method_method(self, cell_method, method):
         '''TODO
         '''
         cell_method.set_method(method)
-    
+
     def set_coordinate_conversion(self, coordinate_reference,
                                   coordinate_conversion):
         '''TODO
 
     :Parameters:
-    
+
     :Returns:
-    
+
         `None`
-    
+
         '''
         coordinate_reference.set_coordinate_conversion(coordinate_conversion)
 
@@ -1522,9 +1522,9 @@ class CFDMImplementation(Implementation):
         '''TODO
 
     :Parameters:
-    
+
     :Returns:
-    
+
         `None`
         '''
         coordinate_reference.set_coordinates(coordinates)
@@ -1539,19 +1539,19 @@ class CFDMImplementation(Implementation):
     def set_data(self, construct, data, axes=None, copy=True):
         '''If the construct is a Field then the corresponding domain axes must
     also be provided.
-    
+
     :Parameters:
-    
+
         construct: construct
-    
+
         data: `Data`
-    
+
         axes: `tuple`, optional
-    
+
         copy: `bool`, optional
-    
+
     :Returns:
-    
+
         `None`
 
         '''
@@ -1564,9 +1564,9 @@ class CFDMImplementation(Implementation):
         '''Insert a datum object into a coordinate reference construct.
 
     :Parameters:
-    
+
     :Returns:
-    
+
         `None`
 
         '''
@@ -1575,19 +1575,19 @@ class CFDMImplementation(Implementation):
     def set_dimension_coordinate(self, field, construct, axes,
                                  copy=True):
         '''Insert a dimension coordinate object into a field.
-        
+
     :Parameters:
-    
+
         field: `Field`
-    
+
         construct: `DimensionCoordinate`
-    
+
         axes: `tuple`
-    
+
         copy: `bool`, optional
-    
+
     :Returns:
-    
+
         `str`
 
         '''
@@ -1598,17 +1598,17 @@ class CFDMImplementation(Implementation):
         '''Insert a domain ancillary object into a field.
 
     :Parameters:
-    
+
         field: `Field`
-    
+
         construct: `DomainAncillary`
-    
+
         axes: `tuple`
-    
+
         copy: `bool`, optional
-    
+
     :Returns:
-    
+
         `str`
 
         '''
@@ -1618,15 +1618,15 @@ class CFDMImplementation(Implementation):
         '''Insert a domain_axis object into a field.
 
     :Parameters:
-    
+
         field: `Field`
-    
+
         construct: `domain_axis`
-    
+
         copy: `bool`, optional
-    
+
     :Returns:
-    
+
         `str`
 
         '''
@@ -1642,17 +1642,17 @@ class CFDMImplementation(Implementation):
         '''Insert a field ancillary object into a field.
 
     :Parameters:
-    
+
         field: `Field`
-    
+
         construct: `FieldAncillary`
-    
+
         axes: `tuple`
-    
+
         copy: `bool`, optional
-    
+
     :Returns:
-    
+
         `str`
 
         '''
@@ -1670,11 +1670,11 @@ class CFDMImplementation(Implementation):
         '''Insert TODO
 
     Parameters:
-    
+
        copy: `bool`, optional
-    
+
     Returns:
-    
+
        `None`
         '''
         parent.set_node_count(node_count, copy=copy)
@@ -1683,13 +1683,13 @@ class CFDMImplementation(Implementation):
         '''Insert TODO
 
     .. versionadded:: 1.8.0
-    
+
     :Parameters:
-    
+
         copy: `bool`, optional
-    
+
     :Returns:
-    
+
         `None`
         '''
         parent.set_part_node_count(part_node_count, copy=copy)
@@ -1698,13 +1698,13 @@ class CFDMImplementation(Implementation):
         '''Insert an interior ring array into a coordiante.
 
     .. versionadded:: 1.8.0
-    
+
     :Parameters:
-    
+
         copy: `bool`, optional
-    
+
     :Returns:
-    
+
         `None`
 
         '''
@@ -1741,12 +1741,12 @@ class CFDMImplementation(Implementation):
 
         '''
         field.nc_set_geometry_variable(ncvar)
-    
+
     def nc_set_variable(self, parent, ncvar):
         '''TODO
 
     :Parameters:
-    
+
     :Returns:
 
         `None`
@@ -1784,7 +1784,7 @@ class CFDMImplementation(Implementation):
 
     :Parameters:
 
-        construct: 
+        construct:
 
         properties: `dict`
 
@@ -1796,30 +1796,30 @@ class CFDMImplementation(Implementation):
         construct.set_properties(properties, copy=copy)
 
     def has_bounds(self, construct):
-        '''TODO 
+        '''TODO
 
     :Parameters:
-    
+
     :Returns:
-    
+
         `bool`
 
         '''
         return construct.has_bounds()
-        
+
     def has_datum(self, coordinate_reference):
         '''Return True if a coordinate reference has a datum.
 
     :Parameters:
-    
+
         coordinate_reference: coordinate reference construct
-    
+
     :Returns:
-    
+
         `bool`
-    
+
     **Examples:**
-    
+
     >>> if API.has_datum(ref):
     ...     print ref, 'has a datum'
     ... else:
@@ -1832,40 +1832,40 @@ class CFDMImplementation(Implementation):
         '''Return True if a property exists.
 
     :Parameters:
-    
-        parent: 
+
+        parent:
             The object containing the property.
-    
+
     :Returns:
-    
+
         `bool`
             `True` if the property exists, otherwise `False`.
-    
+
     **Examples:**
-    
+
     >>> coord
     <DimensionCoordinate: latitude(180) degrees_north>
     >>> w.has_property(coord, 'units')
     True
-    
+
     >>> bounds
     <Bounds: latitude(180, 2) degrees_north>
     >>> w.has_property(bounds, 'long_name')
     False
         '''
         return parent.has_property(prop)
-    
+
     def squeeze(self, construct, axes=None):
         '''TODO
         '''
         return construct.squeeze(axes=axes)
-       
+
 # --- End: class
 
 
 _implementation = CFDMImplementation(
     cf_version = CF(),
-    
+
     AuxiliaryCoordinate = AuxiliaryCoordinate,
     CellMeasure         = CellMeasure,
     CellMethod          = CellMethod,
@@ -1875,10 +1875,10 @@ _implementation = CFDMImplementation(
     DomainAxis          = DomainAxis,
     Field               = Field,
     FieldAncillary      = FieldAncillary,
-    
+
     Bounds       = Bounds,
     InteriorRing = InteriorRing,
-    
+
     CoordinateConversion = CoordinateConversion,
     Datum                = Datum,
 
@@ -1887,7 +1887,7 @@ _implementation = CFDMImplementation(
     Count                   = Count,
     NodeCountProperties     = NodeCountProperties,
     PartNodeCountProperties = PartNodeCountProperties,
-    
+
     Data                         = Data,
     GatheredArray                = GatheredArray,
     NetCDFArray                  = NetCDFArray,
@@ -1900,16 +1900,16 @@ def implementation():
     '''Return a container for the CF data model implementation.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `cfdm.example_field`, `cfdm.read`, `cfdm.write`
-    
+
     :Returns:
-    
+
         `CFDMImplementation`
             A container for the CF data model implementation.
-    
+
     **Examples:**
-    
+
     >>> i = cfdm.implementation()
     >>> i
     <CFDMImplementation: >

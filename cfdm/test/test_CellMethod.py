@@ -66,34 +66,34 @@ class CellMethodTest(unittest.TestCase):
         c = cfdm.CellMethod(method='minimum',
                             axes=['B', 'A'],
                             qualifiers={'interval': [1, 2]})
-        
+
         d = cfdm.CellMethod(method='minimum',
                             axes=['A', 'B'],
                             qualifiers={'interval': [2, 1]})
-        
+
         self.assertTrue(d.equals(c.sorted(), verbose=3))
 
         c = cfdm.CellMethod(method='minimum',
                             axes=['B', 'A'],
                             qualifiers={'interval': [3]})
-        
+
         d = cfdm.CellMethod(method='minimum',
                             axes=['A', 'B'],
                             qualifiers={'interval': [3]})
-        
+
         self.assertTrue(d.equals(c.sorted(), verbose=3))
 
         c = cfdm.CellMethod(method='minimum',
                             axes=['area'],
                             qualifiers={'interval': [3]})
-        
+
         d = cfdm.CellMethod(method='minimum',
                             axes=['area'],
                             qualifiers={'interval': [3]})
-        
+
         self.assertTrue(d.equals(c.sorted(), verbose=3))
 
-        
+
 #--- End: class
 
 if __name__ == '__main__':

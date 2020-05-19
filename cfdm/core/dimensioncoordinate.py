@@ -15,7 +15,7 @@ class DimensionCoordinate(abstract.Coordinate):
     cell must have exactly two vertices. CF-netCDF coordinate
     variables and numeric scalar coordinate variables correspond to
     dimension coordinate constructs.
-    
+
     The dimension coordinate construct consists of a data array of the
     coordinate values which spans a subset of the domain axis
     constructs, an optional array of cell bounds recording the extents
@@ -28,23 +28,23 @@ class DimensionCoordinate(abstract.Coordinate):
     domain. Note that, for climatological time axes, the bounds are
     interpreted in a special way indicated by the cell method
     constructs.
-    
+
     .. versionadded:: 1.7.0
 
     '''
     @property
     def construct_type(self):
         '''Return a description of the construct type.
-            
+
     .. versionadded:: 1.7.0
-            
+
     :Returns:
-    
+
         `str`
             The construct type.
-    
+
     **Examples:**
-    
+
     >>> f.construct_type
     'dimension_coordinate'
 

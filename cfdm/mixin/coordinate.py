@@ -6,5 +6,5 @@ class Coordinate(PropertiesDataBounds):
 
     .. versionadded:: 1.7.0
 
-    '''   
+    '''
 # --- End: class

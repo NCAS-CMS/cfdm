@@ -22,7 +22,7 @@ class CellMethod(mixin.Container,
     the field construct represent the variation of the physical
     quantity within its cells, i.e. the structure of the data at a
     higher resolution.
-    
+
     A single cell method construct consists of a set of axes, a
     "method" property which describes how a value of the field
     construct's data array describes the variation of the quantity
@@ -31,7 +31,7 @@ class CellMethod(mixin.Container,
     more precisely how the method was applied (e.g. recording the
     spacing of the original data, or the fact that the method was
     applied only over El Nino years).
-    
+
     .. versionadded:: 1.7.0
 
     '''
@@ -39,16 +39,16 @@ class CellMethod(mixin.Container,
         '''Called by the `str` built-in function.
 
     x.__str__() <==> str(x)
-    
+
     Returns a CF-netCDF-like string of the cell method.
-    
+
     Note that if the intention is to use this string in a CF-netCDF
     cell_methods attribute then, unless they are standard names, the
     axes names will need to be modified to be netCDF dimension names.
-    
+
     .. versionadded:: 1.7.0
 
-        '''     
+        '''
         string = ['{0}:'.format(axis) for axis in self.get_axes(())]
 
         string.append(self.get_method(''))
@@ -85,17 +85,17 @@ class CellMethod(mixin.Container,
 
     Returns a description the method, all qualifiers and the axes to
     which it applies.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
+
         display: `bool`, optional
             If False then return the description as a string. By
             default the description is printed.
-    
+
     :Returns:
-    
+
         `None` or `str`
             The description. If *display* is True then the description
             is printed and `None` is returned. Otherwise the
@@ -116,7 +116,7 @@ class CellMethod(mixin.Container,
 #
 #        n_axes = len(c.get_axes(()))
 #        if n_axes > 1:
-#            interval = c.get_qualifier('interval', ())            
+#            interval = c.get_qualifier('interval', ())
 #            if len(interval) == 1:
 #                c.set_property('interval', interval*n_axes)
 #
@@ -154,7 +154,7 @@ class CellMethod(mixin.Container,
 #
 #        '''
 #        out = []
-#        
+#
 #        if not string:
 #            return out
 #
@@ -162,7 +162,7 @@ class CellMethod(mixin.Container,
 #        # for parsing into the result list. For example,
 #        #
 #        # 'lat: mean (interval: 1 hour)
-#        # 
+#        #
 #        # maps to
 #        #
 #        # ['lat:', 'mean', '(', 'interval:', '1', 'hour', ')']
@@ -204,7 +204,7 @@ class CellMethod(mixin.Container,
 #                if not cell_methods:
 #                    break
 #            # --- End: while
-#            if not cell_methods: 
+#            if not cell_methods:
 #                out.append(cm)
 #                break
 #
@@ -215,7 +215,7 @@ class CellMethod(mixin.Container,
 #
 #                if not (re_search('^(interval|comment):$', cell_methods[0])):
 #                    cell_methods.insert(0, 'comment:')
-#                           
+#
 #                while not re_search('^\)$', cell_methods[0]):
 #                    term = cell_methods.pop(0)[:-1]
 #
@@ -267,13 +267,13 @@ class CellMethod(mixin.Container,
 #                        cm.set_property('comment', ' '.join(comment))
 #                    # --- End: if
 #
-#                # --- End: while 
+#                # --- End: while
 #
 #                if cell_methods[0].endswith(')'):
 #                    cell_methods.pop(0)
 #            # --- End: if
 #
-#            n_intervals = len(interval)          
+#            n_intervals = len(interval)
 #            if n_intervals > 1 and n_intervals != len(axes):
 #                message = "Cell method interval is incorrectly formatted"
 #                if allow_error:
@@ -299,42 +299,42 @@ class CellMethod(mixin.Container,
         '''Whether two cell method constructs are the same.
 
     Equality is strict by default. This means that:
-    
+
     * the descriptive qualifiers must be the same (see the
       *ignore_qualifiers* parameter).
-    
+
     The axes of the cell method constructs are *not* considered,
     because they may only be correctly interpreted by the field
     constructs that contain the cell method constructs in
     question. They are, however, taken into account when two fields
     constructs are tested for equality.
-    
+
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
     differences) and ``rtol`` (the tolerance on relative differences)
     are positive, typically very small numbers. The data type of the
     numbers is not taken into consideration. See the *atol* and *rtol*
     parameters.
-    
+
     Any type of object may be tested but, in general, equality is only
     possible with another cell method construct, or a subclass of
     one. See the *ignore_type* parameter.
-    
+
     NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
-        other: 
+
+        other:
             The object to compare for equality.
-    
+
         atol: float, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `cfdm.ATOL`
             function.
-            
+
         rtol: float, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `cfdm.RTOL`
@@ -357,21 +357,21 @@ class CellMethod(mixin.Container,
 
         ignore_qualifiers: sequence of `str`, optional
             The names of qualifiers to omit from the comparison.
-    
+
         ignore_type: `bool`, optional
             Any type of object may be tested but, in general, equality
             is only possible with another cell method construct, or a
             subclass of one. If *ignore_type* is True then
             ``CellMethod(source=other)`` is tested, rather than the
             ``other`` defined by the *other* parameter.
-    
-    :Returns: 
-      
+
+    :Returns:
+
         `bool`
             Whether the two cell method constructs are equal.
-    
+
     **Examples:**
-    
+
     >>> c.equals(c)
     True
     >>> c.equals(c.copy())
@@ -384,7 +384,7 @@ class CellMethod(mixin.Container,
                                         ignore_type=ignore_type)
         if pp is True or pp is False:
             return pp
-        
+
         other = pp
 
         # ------------------------------------------------------------
@@ -409,7 +409,7 @@ class CellMethod(mixin.Container,
         for prop in tuple(ignore_qualifiers) + ('interval',):
             self_qualifiers.pop(prop, None)
             other_qualifiers.pop(prop, None)
-                
+
         if set(self_qualifiers) != set(other_qualifiers):
             for q in set(self_qualifiers).symmetric_difference(
                     other_qualifiers):
@@ -446,7 +446,7 @@ class CellMethod(mixin.Container,
                 )
                 return False
             # --- End: if
-            
+
             if len(intervals0) != len(intervals1):
                 logger.info(
                     "{0}: Different numbers of interval qualifiers: "
@@ -493,7 +493,7 @@ class CellMethod(mixin.Container,
 #
 #:Parameters:
 #
-#    other : 
+#    other :
 #        The object to compare for equality.
 #
 #    atol : float, optional
@@ -504,7 +504,7 @@ class CellMethod(mixin.Container,
 #        The relative tolerance for all numerical comparisons, By
 #        default the value returned by the `RTOL` function is used.
 #
-#:Returns: 
+#:Returns:
 #
 #    out : bool
 #        Whether or not the two instances are equivalent.
@@ -524,7 +524,7 @@ class CellMethod(mixin.Container,
 #
 #        axes0 = self.axes
 #        axes1 = other.axes
-#            
+#
 #        if len(axes0) != len(axes1) or set(axes0) != set(axes1):
 #            logger.info("{}: Nonequivalent axes: {!r}, {!r}".format(
 #                self.__class__.__name__, axes0, axes1))
@@ -544,13 +544,13 @@ class CellMethod(mixin.Container,
 #
 #        self_interval  = self1.get_property('interval', ())
 #        other_interval = other1.get_property('interval', ())
-#        
+#
 #        if len(self_interval) != len(other_interval):
 #            self1 = self1.expand_intervals(copy=False)
 #            other1.expand_intervals(copy=False)
 #
 #            self_interval  = self1.get_property('interval', ())
-#            other_interval = other1.get_property('interval', ())        
+#            other_interval = other1.get_property('interval', ())
 #
 #            if len(self_interval) != len(other_interval):
 #                logger.info(
@@ -583,26 +583,26 @@ class CellMethod(mixin.Container,
         '''Return the canonical identity for the cell method construct.
 
     By default the identity is the first found of the following:
-    
+
     1. The method, preceeded by 'method:'
     2. The value of the *default* parameter.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `identities`
-    
+
     :Parameters:
-    
+
         default: optional
             If no identity can be found then return the value of the
             default parameter.
-       
+
     :Returns:
-    
+
             The identity.
-    
+
     **Examples:**
-    
+
     >>> c.get_method()
     'minimum;
     >>> c.identity()
@@ -620,27 +620,27 @@ class CellMethod(mixin.Container,
         n = self.get_method(None)
         if n is not None:
             return 'method:{0}'.format(n)
-            
+
         return default
 
     def identities(self):
         '''Return all possible identities.
 
     The identities comprise:
-    
+
     * The method, preceeded by 'method:'.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `identity`
-    
+
     :Returns:
-    
+
         `list`
             The identities.
-    
+
     **Examples:**
-    
+
     >>> c.get_method()
     'minimum'
     >>> c.identities()
@@ -656,31 +656,31 @@ class CellMethod(mixin.Container,
         n = self.get_method(None)
         if n is not None:
             out.append('method:{0}'.format(n))
-            
+
         return out
 
     def sorted(self, indices=None):
         '''Return a new cell method construct with sorted axes.
-        
+
     The axes are sorted by domain axis construct identifier or
     standard name, and any intervals are sorted accordingly.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
+
         indices: ordered sequence of `int`, optional
             Sort the axes with the given indices. By default the axes
             are sorted by domain axis construct identifier or standard
             name.
-    
+
     :Returns:
-    
+
         `CellMethod`
             A new cell method construct with sorted axes.
-    
+
     **Examples:**
-    
+
     >>> cm = cfdm.CellMethod(axes=['domainaxis1', 'domainaxis0'],
     ...                      method='mean',
     ...                      qualifiers={'interval': [1, 2]})
@@ -688,7 +688,7 @@ class CellMethod(mixin.Container,
     <CellMethod: domainaxis1: domainaxis0: mean (interval: 1 interval: 2)>
     >>> cm.sorted()
     <CellMethod: domainaxis0: domainaxis1: mean (interval: 2 interval: 1)>
-    
+
     >>> cm = cfdm.CellMethod(axes=['domainaxis0', 'area'],
     ...                      method='mean',
     ...                      qualifiers={'interval': [1, 2]})
@@ -699,7 +699,7 @@ class CellMethod(mixin.Container,
 
         '''
         new = self.copy()
-        
+
         axes = new.get_axes(())
         if len(axes) == 1:
             return new

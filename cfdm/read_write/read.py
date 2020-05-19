@@ -9,7 +9,7 @@ from .netcdf import NetCDFRead
 
 
 _implementation = implementation()
-       
+
 
 def read(filename, external=None, extra=None, verbose=None,
          warnings=False, warn_valid=False, mask=True,
@@ -18,10 +18,10 @@ def read(filename, external=None, extra=None, verbose=None,
 
     The dataset may be a netCDF file on disk or on an OPeNDAP server,
     or a CDL file on disk (see below).
-    
+
     The returned field constructs are sorted by the netCDF variable
     names of their corresponding data variables.
-    
+
 
     **CDL files**
 
@@ -39,9 +39,9 @@ def read(filename, external=None, extra=None, verbose=None,
     constructs in memory will be created with data with all missing
     values.
 
-   
+
     **NetCDF unlimited dimensions**
-    
+
     Domain axis constructs that correspond to NetCDF unlimited
     dimensions may be accessed with the
     `~cf.DomainAxis.nc_is_unlimited` and
@@ -50,14 +50,14 @@ def read(filename, external=None, extra=None, verbose=None,
 
 
     **CF-compliance**
-    
+
     If the dataset is partially CF-compliant to the extent that it is
     not possible to unambiguously map an element of the netCDF dataset
     to an element of the CF data model, then a field construct is
     still returned, but may be incomplete. This is so that datasets
     which are partially conformant may nonetheless be modified in
     memory and written to new datasets.
-    
+
     Such "structural" non-compliance would occur, for example, if the
     "coordinates" attribute of a CF-netCDF data variable refers to
     another variable that does not exist, or refers to a variable that
@@ -68,10 +68,10 @@ def read(filename, external=None, extra=None, verbose=None,
     `~cfdm.Field.dataset_compliance` method of the field construct, as
     well as optionally displayed when the dataset is read by setting
     the *warnings* parameter.
-    
+
 
     **Performance**
-    
+
     Descriptive properties are always read into memory, but lazy
     loading is employed for all data arrays, which means that no data
     is read into memory until the data is required for inspection or
@@ -80,24 +80,24 @@ def read(filename, external=None, extra=None, verbose=None,
     operation fast.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `cfdm.write`, `cfdm.Field.convert`,
                  `cfdm.Field.dataset_compliance`
-    
+
     :Parameters:
-    
+
         filename: `str`
             The file name or OPenDAP URL of the dataset.
-    
+
             Relative paths are allowed, and standard tilde and shell
             parameter expansions are applied to the string.
-    
+
             *Parameter example:*
               The file ``file.nc`` in the user's home directory could
               be described by any of the following:
               ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
               ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
-        
+
         external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by
             attributes, but are not present, in the parent file given
@@ -106,28 +106,28 @@ def read(filename, external=None, extra=None, verbose=None,
             global ``external_variables`` attribute. Multiple external
             files may be provided, which are searched in random order
             for the required external variables.
-           
+
             If an external variable is not found in any external
             files, or is found in multiple external files, then the
             relevant metadata construct is still created, but without
             any metadata or data. In this case the construct's
             `!is_external` method will return `True`.
-    
+
             *Parameter example:*
               ``external='cell_measure.nc'``
-    
+
             *Parameter example:*
               ``external=['cell_measure.nc']``
-    
+
             *Parameter example:*
               ``external=('cell_measure_A.nc', 'cell_measure_O.nc')``
-    
+
         extra: (sequence of) `str`, optional
             Create extra, independent fields from netCDF variables
             that correspond to particular types metadata
             constructs. The *extra* parameter may be one, or a
             sequence, of:
-    
+
               ==========================  ================================
               *extra*                     Metadata constructs
               ==========================  ================================
@@ -137,17 +137,17 @@ def read(filename, external=None, extra=None, verbose=None,
               ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
               ``'cell_measure'``          Cell measure constructs
               ==========================  ================================
-    
+
             *Parameter example:*
               To create fields from auxiliary coordinate constructs:
               ``extra='auxiliary_coordinate'`` or
               ``extra=['auxiliary_coordinate']``.
-    
+
             *Parameter example:*
               To create fields from domain ancillary and cell measure
               constructs: ``extra=['domain_ancillary',
               'cell_measure']``.
-    
+
             An extra field construct created via the *extra* parameter
             will have a domain limited to that which can be inferred
             from the corresponding netCDF variable, but without the
@@ -178,7 +178,7 @@ def read(filename, external=None, extra=None, verbose=None,
             If True then print warnings when an output field construct
             is incomplete due to structural non-compliance of the
             dataset. By default such warnings are not displayed.
-            
+
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
@@ -189,7 +189,7 @@ def read(filename, external=None, extra=None, verbose=None,
             of these properties, are automatically masked by default,
             which may not be as intended. See the *mask* parameter for
             turning off all automatic masking.
-    
+
             See
             https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
             for details.
@@ -205,7 +205,7 @@ def read(filename, external=None, extra=None, verbose=None,
             values of any of the netCDF variable attributes
             ``_FillValue``, ``missing_value``, ``valid_min``,
             ``valid_max`` and ``valid_range``.
-    
+
             See
             https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
             for details.

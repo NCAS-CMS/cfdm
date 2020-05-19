@@ -106,7 +106,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(len(c.filter_by_ncvar('areacella'))          == 1)
         self.assertTrue(len(c.filter_by_ncdim('grid_longitude'))     == 1)
         self.assertTrue(len(c.filter_by_size(9))                     == 1)
-                        
+
         constructs = c.filter_by_type('auxiliary_coordinate',
                                       'cell_measure',
                                       'cell_method',
@@ -132,7 +132,7 @@ class ConstructsTest(unittest.TestCase):
                         'Got {} constructs, expected {}'.format(len(constructs), n))
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMeasure)
-                        
+
         constructs = c.filter_by_size(9, 10)
         n = 2
         self.assertTrue(len(constructs) == n,
@@ -208,11 +208,11 @@ class ConstructsTest(unittest.TestCase):
                            {'standard_name': 'surface_altitude', 'units': 'm'},
                            {'standard_name': 'surface_altitude', 'units': 'degrees'},
                            {'standard_name': 'surface_altitude', 'units': 'qwerty'},
-            ):                
+            ):
                 d = c.filter_by_property(*mode, **kwargs)
                 e = d.inverse_filter()
                 self.assertTrue(len(e) == len(c) - len(d))
-        
+
         # Axis
 #        for mode in ([], ['and'], ['or'], ['exact'], ['subset'], ['superset']):
         for mode in ('and', 'or', 'exact', 'subset'):
@@ -228,7 +228,7 @@ class ConstructsTest(unittest.TestCase):
                 e = d.inverse_filter()
                 self.assertTrue(len(e) == len(c) - len(d))
         #--- End: for
-        
+
         # Inverse filter, filters applied
         self.assertTrue(len(c.filters_applied()) == 0)
         ci = c.inverse_filter()
@@ -239,7 +239,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(len(d.filters_applied()) == 1)
         di = d.inverse_filter()
         self.assertTrue(len(di) == len(c) - len(d))
-        
+
         e = d.filter_by_property(units='degrees')
         self.assertTrue(len(e.filters_applied()) == 2)
         ei = e.inverse_filter(1)
@@ -255,9 +255,9 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(h2.equals(f2, verbose=3))
 
         # Unfilter
-        self.assertTrue(e.unfilter(1).equals(d, verbose=3))        
+        self.assertTrue(e.unfilter(1).equals(d, verbose=3))
         self.assertTrue(e.unfilter(1).unfilter().equals(c, verbose=3))
-        self.assertTrue(d.unfilter(1).equals(c, verbose=3))        
+        self.assertTrue(d.unfilter(1).equals(c, verbose=3))
         self.assertTrue(c.unfilter(1).equals(c, verbose=3))
 
 

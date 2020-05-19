@@ -28,14 +28,14 @@ class NetCDFTest(unittest.TestCase):
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
         os.close(fd)
-        
+
         self.test_only = []
 
 
     def tearDown(self):
         os.remove(self.tempfilename)
 
-    
+
     def test_netCDF_variable_dimension(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -52,7 +52,7 @@ class NetCDFTest(unittest.TestCase):
         self.assertIsNone(f.nc_del_variable(default=None))
 
         d = cfdm.DomainAxis()
-        
+
         d.nc_set_dimension('qwerty')
         self.assertTrue(d.nc_has_dimension())
         self.assertTrue(d.nc_get_dimension() == 'qwerty')
@@ -63,7 +63,7 @@ class NetCDFTest(unittest.TestCase):
         self.assertIsNone(d.nc_del_dimension(default=None))
 
         d = cfdm.Count()
-        
+
         d.nc_set_sample_dimension('qwerty')
         self.assertTrue(d.nc_has_sample_dimension())
         self.assertTrue(d.nc_get_sample_dimension() == 'qwerty')
@@ -72,13 +72,13 @@ class NetCDFTest(unittest.TestCase):
         self.assertFalse(d.nc_has_sample_dimension())
         self.assertIsNone(d.nc_get_sample_dimension(default=None))
         self.assertIsNone(d.nc_del_sample_dimension(default=None))
-       
+
         # ------------------------------------------------------------
         # Global attributes
         # ------------------------------------------------------------
         # values keyword
         f = cfdm.Field()
-        
+
         f.nc_set_global_attribute('Conventions', 'CF-1.8')
         f.nc_set_global_attribute('project')
         f.nc_set_global_attribute('foo')
@@ -87,39 +87,39 @@ class NetCDFTest(unittest.TestCase):
         self.assertTrue(f.nc_global_attributes(values=True) == {
             'Conventions': 'CF-1.8',
             'project': 'X',
-            'foo': None})      
+            'foo': None})
 
         f = cfdm.Field()
         self.assertTrue(f.nc_clear_global_attributes() == {})
-        
+
         f.nc_set_global_attribute('Conventions')
         f.nc_set_global_attribute('project', 'X')
         self.assertTrue(f.nc_global_attributes() == {'Conventions': None,
                                                      'project': 'X'})
-        
+
         f.nc_set_global_attribute('project')
         f.nc_set_global_attribute('comment', None)
         self.assertTrue(f.nc_global_attributes() == {'Conventions': None,
                                                      'project': None,
                                                      'comment': None})
-                
+
         self.assertTrue(f.nc_clear_global_attributes() == {'Conventions': None,
                                                            'project': None,
                                                            'comment': None})
         self.assertTrue(f.nc_global_attributes() == {})
-        
+
         f.nc_set_global_attribute('Conventions')
         f.nc_set_global_attribute('project')
         self.assertTrue(f.nc_global_attributes() == {'Conventions': None,
                                                      'project': None})
-        
+
         _ = f.nc_clear_global_attributes()
         f.nc_set_global_attributes({})
         self.assertTrue(f.nc_global_attributes() == {})
-                
+
         f.nc_set_global_attributes({'comment': 123}, copy=False)
         self.assertTrue(f.nc_global_attributes() == {'comment': 123})
-                
+
         f.nc_set_global_attributes({'comment': None, 'foo': 'bar'})
         self.assertTrue(f.nc_global_attributes() == {'comment': None,
                                                      'foo': 'bar'})
@@ -132,13 +132,13 @@ class NetCDFTest(unittest.TestCase):
 
         f2 = f.copy()
         f2.nc_set_variable('ua')
-        
+
         cfdm.write([f, f2], 'tempfilename.nc', file_descriptors={'comment': 'global comment',
                                                                  'qwerty': 'asdf'})
 
         g = cfdm.read('tempfilename.nc', verbose=False)
         self.assertTrue(len(g) == 2)
-        
+
         for x in g:
             self.assertTrue(x.properties() == {'comment': 'variable comment',
                                                'foo': 'bar',

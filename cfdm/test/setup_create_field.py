@@ -29,9 +29,9 @@ class create_fieldTest(unittest.TestCase):
         try:
             os.remove(self.filename)
         except:
-            pass        
+            pass
 
-            
+
     def test_create_field(self):
 
         # Dimension coordinates
@@ -51,27 +51,27 @@ class create_fieldTest(unittest.TestCase):
         array[-2, 1] = 30
         array[-1, :] = [30, 36]
         dim0.set_bounds(cfdm.Bounds(data=cfdm.Data(array)))
-        
+
         dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]),
                                         bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
         dim2.set_property('standard_name'         , 'atmosphere_hybrid_height_coordinate')
         dim2.set_property('computed_standard_name', 'altitude')
-                      
+
         # Auxiliary coordinates
         ak = cfdm.DomainAncillary(data=cfdm.Data([10.]))
         ak.set_property('units', 'm')
         ak.id = 'atmosphere_hybrid_height_coordinate_ak'
         ak.set_bounds(cfdm.Bounds(data=cfdm.Data([[5, 15.]])))
-        
+
         bk = cfdm.DomainAncillary(data=cfdm.Data([20.]))
         bk.id = 'atmosphere_hybrid_height_coordinate_bk'
         bk.set_bounds(cfdm.Bounds(data=cfdm.Data([[14, 26.]])))
-        
+
         aux2 = cfdm.AuxiliaryCoordinate(
             data=cfdm.Data(numpy.arange(-45, 45, dtype='int32').reshape(10, 9)))
         aux2.set_property('units', 'degree_N')
         aux2.set_property('standard_name', 'latitude')
-        
+
         aux3 = cfdm.AuxiliaryCoordinate(
             data=cfdm.Data(numpy.arange(60, 150, dtype='int32').reshape(9, 10)))
         aux3.set_property('standard_name', 'longitude')
@@ -89,23 +89,23 @@ class create_fieldTest(unittest.TestCase):
         msr0.set_measure('area')
         msr0.set_property('units', 'km2')
         msr0.nc_set_variable('areacella')
-        
-        # Data          
+
+        # Data
         data = cfdm.Data(numpy.arange(90.).reshape(10, 9))
 
         properties = {'units': 'm s-1'}
-        
+
         f = cfdm.Field(properties=properties)
         f.set_property('standard_name', 'eastward_wind')
 
         da = cfdm.DomainAxis(9)
-        da.nc_set_dimension('x')        
+        da.nc_set_dimension('x')
         axisX = f.set_construct(da)
         axisY = f.set_construct(cfdm.DomainAxis(10))
         axisZ = f.set_construct(cfdm.DomainAxis(1))
 
         f.set_data(data, axes=[axisY, axisX])
-        
+
         x = f.set_construct(dim0, axes=axisX)
         y = f.set_construct(dim1, axes=axisY)
         z = f.set_construct(dim2, axes=[axisZ])
@@ -122,9 +122,9 @@ class create_fieldTest(unittest.TestCase):
             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                         'grid_north_pole_latitude': 38.0,
                         'grid_north_pole_longitude': 190.0})
-        
+
         datum = cfdm.Datum(parameters={'earth_radius': 6371007})
-        
+
         ref0 = cfdm.CoordinateReference(
             coordinate_conversion=coordinate_conversion,
             datum=datum,
@@ -146,12 +146,12 @@ class create_fieldTest(unittest.TestCase):
             domain_ancillaries={'orog': orog,
                                 'a'   : ak,
                                 'b'   : bk})
-        
+
         ref1 = cfdm.CoordinateReference(
             coordinates=[z],
             datum=datum,
             coordinate_conversion=coordinate_conversion)
-        
+
         ref1 = f.set_construct(ref1)
 
         # Field ancillary variables
@@ -159,7 +159,7 @@ class create_fieldTest(unittest.TestCase):
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.set_property('standard_name', 'ancillaryA')
         f.set_construct(anc, axes=[axisY, axisX])
-        
+
         g = f[0]
         g = g.squeeze()
         anc = cfdm.FieldAncillary(data=g.get_data())
@@ -172,7 +172,7 @@ class create_fieldTest(unittest.TestCase):
         anc.set_property('foo', 'bar')
         f.set_construct(anc, axes=[axisY])
 
-        
+
         f.set_property('flag_values', numpy.array([1, 2, 4], 'int32'))
         f.set_property('flag_meanings', 'a bb ccc')
         f.set_property('flag_masks', [2, 1, 0])
@@ -181,7 +181,7 @@ class create_fieldTest(unittest.TestCase):
                                method='mean',
                                qualifiers={'interval': [cfdm.Data(1, 'day')],
                                            'comment' : 'ok'})
-    
+
         cm1 =  cfdm.CellMethod(axes=[axisY],
                                method='maximum',
                                qualifiers={'where' : 'sea'})
@@ -215,7 +215,7 @@ class create_fieldTest(unittest.TestCase):
 #        units = g[0].construct('ncvar%ancillary_data_1').get_property('units', None)
 #        self.assertTrue(units =='m s-1', 'units: '+str(units))
 
-            
+
 #        sys.exit(1)
         array = g[0].constructs.filter_by_identity('long_name=greek_letters').value().data.array
         self.assertTrue(array[1] == b'beta', 'greek_letters = {!r}'.format(array))
@@ -223,7 +223,7 @@ class create_fieldTest(unittest.TestCase):
         self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))
 
         g = g[0].squeeze()
-        
+
         self.assertTrue(sorted(f.constructs) == sorted(g.constructs),
                         '\n\nf (created in memory)\n{}\n\n{}\n\ng (read from disk)\n{}\n\n{}'.format(
                             sorted(f.constructs),
@@ -247,47 +247,47 @@ class create_fieldTest(unittest.TestCase):
             "Field g not equal to a copy of itself"
         )
 
-        if verbose:                    
+        if verbose:
             print('g')
             g.dump()
             print('f')
             f.dump()
-            
+
         self.assertTrue(
             g.equals(f, verbose=verbose),
             "Field (f) not equal to itself read back in (g)"
         )
 
-        
+
         x = g.dump(display=False)
         x = f.dump(display=False)
 
         g = cfdm.read(self.filename, verbose=verbose,
                       extra='domain_ancillary', warnings=warnings)
 
-        if verbose:            
+        if verbose:
             for x in g:
                 x.dataset_compliance(display=True)
 
             print(g)
-            
+
 #        for x in g:
 #            x.dump()
 #        h = g.field('domainancillary2')
 #        h.dump()
 #        print h
-#        
+#
 #
 #        h = g.field('domainancillary1')
 #        print h
-#        
+#
 #        h = g.field('domainancillary0')
 #        print h
-#        
+#
 #        h = g.field('cellmeasure0')
 #        print h
 
-        
+
 #--- End: class
 
 if __name__ == "__main__":

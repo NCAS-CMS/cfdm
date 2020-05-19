@@ -6,12 +6,12 @@ import abc
 class Implementation(with_metaclass(abc.ABCMeta, object)):
     '''Store an implementation of the CF data model.
 
-    '''    
+    '''
     def __init__(self, cf_version=None, **kwargs):
         '''**Initialisation**
 
     :Parameters:
-    
+
         kwargs:
             The concrete objects required to represent a Field.
 
@@ -26,12 +26,12 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         '''Return all the classes of the implmeentation.
 
     :Returns:
-        
+
         `dict`
             The class objects, keyed by their class name.
-    
+
     **Examples:**
-    
+
     >>> sorted(i.classes())
     ['AuxiliaryCoordinate',
      'Bounds',
@@ -62,8 +62,8 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         return self._class.copy()
 
     def copy(self):
-        '''Copy 
-        
+        '''Copy
+
         '''
         return type(self)(cf_version=self.get_cf_version(),
                           **self._class)
@@ -72,19 +72,19 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         '''Return a class of the implementation.
 
     :Parameters:
-    
+
         name: `str`
             The name of the class.
-    
+
             *Parameter example:*
               ``name='Field'``
-    
+
     :Returns:
-           
+
             The class object.
-    
+
     **Examples:**
-    
+
     >>> Field = i.get_class('Field')
     >>> f = Field()
 
@@ -99,14 +99,14 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         '''Return the CF version of the implementation.
 
     :Returns:
-        
+
         `str`
             The version.
-    
+
     **Examples:**
-    
+
     >>> i.get_cf_version()
-    '1.8'    
+    '1.8'
 
         '''
         return self._cf_version
@@ -115,18 +115,18 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         '''Set a class of the implementation.
 
     :Parameters:
-    
+
         name: `str`
             The name of the class.
-    
+
             *Parameter example:*
               ``name='Field'``
-    
-        cls: 
+
+        cls:
             The class object.
-    
+
     :Returns:
-    
+
         `None`
 
     **Examples:**

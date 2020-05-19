@@ -25,27 +25,27 @@ class PropertiesData(Properties):
         '''Return a subspace defined by indices
 
     f.__getitem__(indices) <==> f[indices]
-    
+
     Indexing follows rules that are very similar to the numpy indexing
     rules, the only differences being:
-    
+
     * An integer index i takes the i-th element but does not reduce
       the rank by one.
-    
+
     * When two or more dimensions' indices are sequences of integers
       then these indices work independently along each dimension
       (similar to the way vector subscripts work in Fortran). This is
       the same behaviour as indexing on a Variable object of the
       netCDF4 package.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Returns:
-    
+
             The subspace.
-    
+
     **Examples:**
-    
+
     >>> f.shape
     (1, 10, 9)
     >>> f[:, :, 1].shape
@@ -61,11 +61,11 @@ class PropertiesData(Properties):
 
         '''
         new = self.copy()  # data=False)
-        
+
         data = self.get_data(None)
         if data is not None:
             new.set_data(data[indices], copy=False)
-        
+
         return new
 
     def __str__(self):
@@ -91,10 +91,10 @@ class PropertiesData(Properties):
             isreftime = bool(self.get_property('calendar', False))
         else:
             isreftime = 'since' in units
-            
+
         if isreftime:
             units += ' ' + self.get_property('calendar', '')
-            
+
         return '{0}{1} {2}'.format(self.identity(''), dims, units)
 
     # ----------------------------------------------------------------
@@ -104,29 +104,29 @@ class PropertiesData(Properties):
         '''Conform axes.
 
     :Parameters:
-    
+
         axes: (sequence of) `int`
-    
+
     :Returns:
-    
+
         `list`
             The conformed axes.
 
         '''
 #        ndim = self.data.ndim
 #        ndim = self.ndim
-        
+
 #        if axes is None:
 #            return list(range(ndim))
-        
+
         if axes is None:
             return axes
 
         if isinstance(axes, int):
             axes = (axes,)
-            
+
         ndim = self.ndim
-        
+
         return [(i + ndim if i < 0 else i) for i in axes]
 
     # ----------------------------------------------------------------
@@ -137,7 +137,7 @@ class PropertiesData(Properties):
         '''Data-type of the data elements.
 
     **Examples:**
-    
+
     >>> d.dtype
     dtype('float64')
     >>> type(d.dtype)
@@ -194,7 +194,7 @@ class PropertiesData(Properties):
 
         raise AttributeError("{!r} object has no attribute 'ndim'".format(
             self.__class__.__name__))
-    
+
     @property
     def shape(self):
         '''A tuple of the data array's dimension sizes.
@@ -324,24 +324,24 @@ class PropertiesData(Properties):
     .. versionadded:: 1.8.2
 
     .. seealso:: `Data.apply_masking`, `read`, `write`
-               
+
     :Parameters:
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
 
             A new instance with masked values, or `None` if the
             operation was in-place.
-    
+
     **Examples:**
 
                 TODO DCH
 
-        '''             
+        '''
         v = _inplace_enabled_define_and_cleanup(self)
-       
+
         data = v.get_data(None)
         if data is not None:
             fill_values = []
@@ -350,10 +350,10 @@ class PropertiesData(Properties):
                 if x is not None:
                     fill_values.append(x)
             # --- End: for
-            
+
             kwargs = {'inplace': True,
                       'fill_values': fill_values}
-            
+
             for prop in ('valid_min', 'valid_max', 'valid_range'):
                 kwargs[prop] = v.get_property(prop, None)
 
@@ -368,22 +368,22 @@ class PropertiesData(Properties):
             data.apply_masking(**kwargs)
 
         return v
-    
+
     def dump(self, display=True, _key=None, _omit_properties=(),
              _prefix='', _title=None, _create_title=True, _level=0,
              _axes=None, _axis_names=None):
         '''A full description.
 
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
+
         display: `bool`, optional
             If False then return the description as a string. By
             default the description is printed.
-    
+
     :Returns:
-    
+
             The description. If *display* is True then the description
             is printed and `None` is returned. Otherwise the
             description is returned as a string.
@@ -401,7 +401,7 @@ class PropertiesData(Properties):
             string = [string]
         else:
             string = []
-            
+
         indent1 = '    ' * (_level + 1)
 
         # ------------------------------------------------------------
@@ -412,21 +412,21 @@ class PropertiesData(Properties):
             if _axes and _axis_names:
                 x = [_axis_names[axis] for axis in _axes]
                 ndim = data.ndim
-                x = x[:ndim]                    
+                x = x[:ndim]
                 if len(x) < ndim:
                     x.extend([str(size) for size in data.shape[len(x):]])
             else:
                 x = [str(size) for size in data.shape]
 
             shape = ', '.join(x)
-            
+
             string.append('{0}{1}Data({2}) = {3}'.format(indent1,
                                                          _prefix,
                                                          shape,
                                                          str(data)))
-        
+
         string = '\n'.join(string)
-       
+
         if display:
             print(string)
         else:
@@ -440,24 +440,24 @@ class PropertiesData(Properties):
         '''Whether two instances are the same.
 
     Equality is strict by default. This means that:
-    
+
     * the same descriptive properties must be present, with the same
       values and data types, and vector-valued properties must also
       have same the size and be element-wise equal (see the
       *ignore_properties* and *ignore_data_type* parameters), and
-    
+
     ..
-    
+
     * if there are data arrays then they must have same shape and data
       type, the same missing data mask, and be element-wise equal (see
       the *ignore_data_type* parameter).
-    
+
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
     differences) and ``rtol`` (the tolerance on relative differences)
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
-    
+
     Any compression is ignored by default, with only the arrays in
     their uncompressed forms being compared. See the
     *ignore_compression* parameter.
@@ -465,27 +465,27 @@ class PropertiesData(Properties):
     Any type of object may be tested but, in general, equality is only
     possible with another object of the same type, or a subclass of
     one. See the *ignore_type* parameter.
-    
+
     NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
-        other: 
+
+        other:
             The object to compare for equality.
-    
+
         atol: float, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `cfdm.ATOL`
             function.
-            
+
         rtol: float, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `cfdm.RTOL`
             function.
-    
+
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison.
@@ -507,32 +507,32 @@ class PropertiesData(Properties):
 
         ignore_properties: sequence of `str`, optional
             The names of properties to omit from the comparison.
-    
+
         ignore_data_type: `bool`, optional
             If True then ignore the data types in all numerical
             comparisons. By default different numerical data types
             imply inequality, regardless of whether the elements are
             within the tolerance for equality.
-    
+
         ignore_compression: `bool`, optional
             If False then the compression type and, if applicable, the
             underlying compressed arrays must be the same, as well as
             the arrays in their uncompressed forms. By default only
             the the arrays in their uncompressed forms are compared.
-    
+
         ignore_type: `bool`, optional
             Any type of object may be tested but, in general, equality
             is only possible with another object of the same type, or
             a subclass of one. If *ignore_type* is True then equality
             is possible for any object with a compatible API.
-    
-    :Returns: 
-      
+
+    :Returns:
+
         `bool`
             Whether the two instances are equal.
-    
+
     **Examples:**
-    
+
     >>> x.equals(x)
     True
     >>> x.equals(x.copy())
@@ -545,7 +545,7 @@ class PropertiesData(Properties):
                                         ignore_type=ignore_type)
         if pp is True or pp is False:
             return pp
-        
+
         other = pp
 
         # ------------------------------------------------------------
@@ -558,7 +558,7 @@ class PropertiesData(Properties):
             logger.info("{0}: Only one external variable)".format(
                 self.__class__.__name__))
             return False
-        
+
         if external0:
             # Both variables are external
             if self.nc_get_variable(None) != other.nc_get_variable(None):
@@ -573,7 +573,7 @@ class PropertiesData(Properties):
                 return False
 
             return True
-                
+
         # ------------------------------------------------------------
         # Check the properties
         # ------------------------------------------------------------
@@ -583,7 +583,7 @@ class PropertiesData(Properties):
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
                 ignore_properties=ignore_properties,
-                ignore_type=ignore_type): 
+                ignore_type=ignore_type):
             return False
 
         # ------------------------------------------------------------
@@ -595,7 +595,7 @@ class PropertiesData(Properties):
                     self.__class__.__name__)
             )
             return False
-            
+
         if self.has_data():
             if not self._equals(self.get_data(), other.get_data(),
                                 rtol=rtol, atol=atol,
@@ -612,16 +612,16 @@ class PropertiesData(Properties):
 
     def get_filenames(self):
         '''Return the name of the file or files containing the data.
-    
+
     :Returns:
-    
+
         `set`
             The file names in normalized, absolute form. If the data
             are in memory then an empty `set` is returned.
 
         '''
         data = self.get_data(None)
-        if data is not None:            
+        if data is not None:
             return data.get_filenames()
 
         return set()
@@ -631,35 +631,35 @@ class PropertiesData(Properties):
         '''Expand the shape of the data array.
 
     Inserts a new size 1 axis into the data array.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `squeeze`, `transpose`
-    
+
     :Parameters:
-    
+
         position: `int`, optional
             Specify the position that the new axis will have in the
             data array. By default the new axis has position 0, the
             slowest varying position. Negative integers counting from
             the last position are allowed.
-    
+
             *Parameter example:*
               ``position=2``
-    
+
             *Parameter example:*
               ``position=-1``
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
             A new instance with expanded data axes. If the operation
             was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.shape
     (19, 73, 96)
     >>> f.insert_dimension(position=3).shape
@@ -667,9 +667,9 @@ class PropertiesData(Properties):
     >>> f.insert_dimension(position=-1).shape
     (19, 73, 1, 96)
 
-        '''       
+        '''
         v = _inplace_enabled_define_and_cleanup(self)
-       
+
         data = v.get_data(None)
         if data is not None:
             data.insert_dimension(position, inplace=True)
@@ -682,38 +682,38 @@ class PropertiesData(Properties):
 
     By default all size one axes are removed, but particular size one
     axes may be selected for removal.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `insert_dimension`, `transpose`
-    
+
     :Parameters:
-    
+
         axes: (sequence of) `int`
             The positions of the size one axes to be removed. By
             default all size one axes are removed. Each axis is
             identified by its original integer position. Negative
             integers counting from the last position are allowed.
-    
+
             *Parameter example:*
               ``axes=0``
-    
+
             *Parameter example:*
               ``axes=-2``
-    
+
             *Parameter example:*
               ``axes=[2, 0]``
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
             A new instance with removed data axes. If the operation
             was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.shape
     (1, 73, 1, 96)
     >>> f.squeeze().shape
@@ -737,33 +737,33 @@ class PropertiesData(Properties):
         '''Permute the axes of the data array.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `insert_dimension`, `squeeze`
-    
+
     :Parameters:
-    
+
         axes: (sequence of) `int`
             The new axis order. By default the order is reversed. Each
             axis in the new order is identified by its original
             integer position. Negative integers counting from the last
             position are allowed.
-    
+
             *Parameter example:*
               ``axes=[2, 0, 1]``
-    
+
             *Parameter example:*
               ``axes=[-1, 0, 1]``
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
             A new instance with permuted data axes. If the operation
             was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.shape
     (19, 73, 96)
     >>> f.tranpose().shape
@@ -771,9 +771,9 @@ class PropertiesData(Properties):
     >>> f.tranpose([1, 0, 2]).shape
     (73, 19, 96)
 
-        '''       
+        '''
         v = _inplace_enabled_define_and_cleanup(self)
- 
+
         data = v.get_data(None)
         if data is not None:
             data.transpose(axes, inplace=True)
@@ -799,24 +799,24 @@ class PropertiesData(Properties):
         * Ragged arrays for discrete sampling geometries (DSG). Three
           different types of ragged array representation are
           supported.
-        
+
         ..
-        
+
         * Compression by gathering.
 
     .. versionadded:: 1.7.11
-    
+
     :Parameters:
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
 
             The uncompressed construct, or `None` if the operation was
             in-place.
 
-    **Examples:** 
+    **Examples:**
 
     >>> f.data.get_compression_type()
     'ragged contiguous'
@@ -828,11 +828,11 @@ class PropertiesData(Properties):
 
         '''
         f = _inplace_enabled_define_and_cleanup(self)
-            
+
         data = f.get_data(None)
         if data is not None:
             data.uncompress(inplace=True)
 
-        return f    
+        return f
 
 # --- End: class

@@ -16,24 +16,24 @@ class NetCDF(object):
     def _initialise_netcdf(self, source=None):
         '''Call this from inside the __init__ method of a class that inherits
     from this mixin class.
-    
+
     :Parameters:
-    
+
         source: optional
             Initialise the netCDF components from those of *source*.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f._initialise_netcdf(source)
 
         '''
         if source is None:
             netcdf = {}
-        else:        
+        else:
             try:
                 netcdf = source._get_component('netcdf', {})
             except AttributeError:
@@ -44,7 +44,7 @@ class NetCDF(object):
                 else:
                     netcdf = {}
         # --- End: if
-        
+
         self._set_component('netcdf', netcdf, copy=False)
 
 
@@ -61,24 +61,24 @@ class NetCDFDimension(NetCDF):
         '''Remove the netCDF dimension name.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_get_dimension`, `nc_has_dimension`,
                  `nc_set_dimension`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the netCDF
             dimension name has not been set. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
         `str`
             The removed netCDF dimension name.
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_dimension('time')
     >>> f.nc_has_dimension()
     True
@@ -106,24 +106,24 @@ class NetCDFDimension(NetCDF):
         '''Return the netCDF dimension name.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_del_dimension`, `nc_has_dimension`,
                  `nc_set_dimension`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the netCDF
             dimension name has not been set. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
         `str`
             The netCDF dimension name.
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_dimension('time')
     >>> f.nc_has_dimension()
     True
@@ -138,7 +138,7 @@ class NetCDFDimension(NetCDF):
     >>> print(f.nc_del_dimension(None))
     None
 
-        '''   
+        '''
         try:
             return self._get_component('netcdf')['dimension']
         except KeyError:
@@ -151,18 +151,18 @@ class NetCDFDimension(NetCDF):
         '''Whether the netCDF dimension name has been set.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_del_dimension`, `nc_get_dimension`,
                  `nc_set_dimension`
-    
+
     :Returns:
-    
+
         `bool`
             `True` if the netCDF dimension name has been set,
             otherwise `False`.
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_dimension('time')
     >>> f.nc_has_dimension()
     True
@@ -182,23 +182,23 @@ class NetCDFDimension(NetCDF):
 
     def nc_set_dimension(self, value):
         '''Set the netCDF dimension name.
-        
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_del_dimension`, `nc_get_dimension`,
                  `nc_has_dimension`
-    
+
     :Parameters:
-    
+
         value: `str`
             The value for the netCDF dimension name.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_dimension('time')
     >>> f.nc_has_dimension()
     True
@@ -230,24 +230,24 @@ class NetCDFVariable(NetCDF):
         '''Remove the netCDF variable name.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_get_variable`, `nc_has_variable`,
                  `nc_set_variable`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the netCDF
             variable name has not been set. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
         `str`
             The removed netCDF variable name.
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_variable('tas')
     >>> f.nc_has_variable()
     True
@@ -262,7 +262,7 @@ class NetCDFVariable(NetCDF):
     >>> print(f.nc_del_variable(None))
     None
 
-        '''        
+        '''
         try:
             return self._get_component('netcdf').pop('variable')
         except KeyError:
@@ -275,25 +275,25 @@ class NetCDFVariable(NetCDF):
         '''Return the netCDF variable name.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_del_variable`, `nc_has_variable`,
                  `nc_set_variable`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the netCDF
             variable name has not been set. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
         `str`
             The netCDF variable name. If unset then *default* is
             returned, if provided.
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_variable('tas')
     >>> f.nc_has_variable()
     True
@@ -321,18 +321,18 @@ class NetCDFVariable(NetCDF):
         '''Whether the netCDF variable name has been set.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_del_variable`, `nc_get_variable`,
                  `nc_set_variable`
-    
+
     :Returns:
-    
+
         `bool`
             `True` if the netCDF variable name has been set, otherwise
             `False`.
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_variable('tas')
     >>> f.nc_has_variable()
     True
@@ -354,21 +354,21 @@ class NetCDFVariable(NetCDF):
         '''Set the netCDF variable name.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_del_variable`, `nc_get_variable`,
                  `nc_has_variable`
-    
+
     :Parameters:
-    
+
         value: `str`
             The value for the netCDF variable name.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_variable('tas')
     >>> f.nc_has_variable()
     True
@@ -400,24 +400,24 @@ class NetCDFSampleDimension(NetCDF):
         '''Remove the netCDF sample dimension name.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_get_sample_dimension`, `nc_has_sample_dimension`,
                  `nc_set_sample_dimension`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the netCDF
             sample dimension name has not been set. If set to an
             `Exception` instance then it will be raised instead.
-    
+
     :Returns:
-    
+
         `str`
             The removed netCDF sample dimension name.
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_sample_dimension('time')
     >>> f.nc_has_sample_dimension()
     True
@@ -445,24 +445,24 @@ class NetCDFSampleDimension(NetCDF):
         '''Return the netCDF sample dimension name.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_del_sample_dimension`, `nc_has_sample_dimension`,
                  `nc_set_sample_dimension`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the netCDF
             sample dimension name has not been set. If set to an
             `Exception` instance then it will be raised instead.
-    
+
     :Returns:
-    
+
         `str`
             The netCDF sample dimension name.
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_sample_dimension('time')
     >>> f.nc_has_sample_dimension()
     True
@@ -490,18 +490,18 @@ class NetCDFSampleDimension(NetCDF):
         '''Whether the netCDF sample dimension name has been set.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_del_sample_dimension`, `nc_get_sample_dimension`,
                  `nc_set_sample_dimension`
-    
+
     :Returns:
-         
+
         `bool`
             `True` if the netCDF sample dimension name has been set,
             otherwise `False`.
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_sample_dimension('time')
     >>> f.nc_has_sample_dimension()
     True
@@ -523,21 +523,21 @@ class NetCDFSampleDimension(NetCDF):
         '''Set the netCDF sample dimension name.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_del_sample_dimension`, `nc_get_sample_dimension`,
                  `nc_has_sample_dimension`
-                 
+
     :Parameters:
-    
+
         value: `str`
             The value for the netCDF sample dimension name.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_sample_dimension('time')
     >>> f.nc_has_sample_dimension()
     True
@@ -568,7 +568,7 @@ class NetCDFGlobalAttributes(NetCDF):
     def nc_global_attributes(self, values=False):
         '''Return the selection of properties to be written as netCDF global
     attributes.
-    
+
     When multiple field constructs are being written to the same file,
     it is only possible to create a netCDF global attribute from a
     property that has identical values for each field construct. If
@@ -577,16 +577,16 @@ class NetCDFGlobalAttributes(NetCDF):
     it has been selected as such, but will appear instead as
     attributes on the netCDF data variables corresponding to each
     field construct.
-    
+
     The standard description-of-file-contents properties are always
     written as netCDF global attributes, if possible, so selecting
     them is optional.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `write`, `nc_clear_global_attributes`,
                  `nc_set_global_attribute`, `nc_set_global_attributes`
-    
+
     :Parameters:
 
         values: `bool`, optional
@@ -595,15 +595,15 @@ class NetCDFGlobalAttributes(NetCDF):
             construct property.
 
             .. versionadded:: 1.8.2
-    
+
     :Returns:
-    
+
         `dict`
             The selection of properties requested for writting to
             netCDF global attributes.
-    
+
     **Examples:**
-    
+
     >>> f.nc_global_attributes()
     {'Conventions': None, 'comment': None}
     >>> f.nc_set_global_attribute('foo')
@@ -621,7 +621,7 @@ class NetCDFGlobalAttributes(NetCDF):
 
         '''
         out = self._get_component('netcdf').get('global_attributes')
-        
+
         if out is None:
             return {}
 
@@ -636,13 +636,13 @@ class NetCDFGlobalAttributes(NetCDF):
                     if value is None and prop in properties:
                         out[prop] = properties[prop]
         # --- End: if
-        
+
         return out
 
     def nc_clear_global_attributes(self):
         '''Remove the selection of properties to be written as netCDF global
     attributes.
-    
+
     When multiple field constructs are being written to the same file,
     it is only possible to create a netCDF global attribute from a
     property that has identical values for each field construct. If
@@ -651,24 +651,24 @@ class NetCDFGlobalAttributes(NetCDF):
     it has been selected as such, but will appear instead as
     attributes on the netCDF data variables corresponding to each
     field construct.
-    
+
     The standard description-of-file-contents properties are always
     written as netCDF global attributes, if possible, so selecting
     them is optional.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `write`, `nc_global_attributes`,
                  `nc_set_global_attribute`, `nc_set_global_attributes`
-    
+
     :Returns:
-    
+
         `dict`
             The removed selection of properties requested for writting
             to netCDF global attributes.
-    
+
     **Examples:**
-    
+
     >>> f.nc_global_attributes()
     {'Conventions': None, 'comment': None}
     >>> f.nc_set_global_attribute('foo')
@@ -684,7 +684,7 @@ class NetCDFGlobalAttributes(NetCDF):
 
         '''
         out = self._get_component('netcdf').get('global_attributes')
-        
+
         if out is None:
             out = {}
 
@@ -703,23 +703,23 @@ class NetCDFGlobalAttributes(NetCDF):
     it has been selected as such, but will appear instead as
     attributes on the netCDF data variables corresponding to each
     field construct.
-    
+
     The standard description-of-file-contents properties are always
     written as netCDF global attributes, if possible, so selecting
     them is optional.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `write`, `nc_global_attributes`,
                  `nc_clear_global_attributes`,
                  `nc_set_global_attributes`
-    
+
     :Parameters:
-    
+
         prop: `str`
             Select the property to be written (if possible) as a
             netCDF global attribute.
-    
+
         value: optional
             The value of the netCDF global attribute, which will be
             created (if possible) in addition to the property as
@@ -727,13 +727,13 @@ class NetCDFGlobalAttributes(NetCDF):
             then this acts as an instruction to write the property (if
             possible) to a netCDF global attribute instead of to a
             netCDF data variable.
-            
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f.nc_global_attributes()
     {'Conventions': None, 'comment': None}
     >>> f.nc_set_global_attribute('foo')
@@ -749,12 +749,12 @@ class NetCDFGlobalAttributes(NetCDF):
 
         '''
         out = self._get_component('netcdf').get('global_attributes')
-        
+
         if out is None:
-            out = {}        
+            out = {}
 
         out[prop] = value
-        
+
         self._get_component('netcdf')['global_attributes'] = out
 
     def nc_set_global_attributes(self, properties, copy=True):
@@ -768,19 +768,19 @@ class NetCDFGlobalAttributes(NetCDF):
     it has been selected as such, but will appear instead as
     attributes on the netCDF data variables corresponding to each
     field construct.
-    
+
     The standard description-of-file-contents properties are always
     written as netCDF global attributes, if possible, so selecting
     them is optional.
-    
+
     .. versionadded:: 1.7.10
-    
+
     .. seealso:: `write`, `nc_clear_global_attributes`,
                  `nc_global_attributes`, `nc_set_global_attribute`
-    
+
     :Parameters:
-    
-        properties: `dict` 
+
+        properties: `dict`
             Set the properties be written as a netCDF global attribute
             from the dictionary supplied. The value of a netCDF global
             attribute, which will be created (if possible) in addition
@@ -788,21 +788,21 @@ class NetCDFGlobalAttributes(NetCDF):
             value of `None` is used then this acts as an instruction
             to write the property (if possible) to a netCDF global
             attribute instead of to a netCDF data variable.
-    
+
             *Parameter example:*
               ``properties={'Conventions': None, 'project': 'research'}``
-    
+
         copy: `bool`, optional
             If False then any property values provided by the
             *properties* parameter are not copied before insertion. By
             default they are deep copied.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f.nc_global_attributes()
     {'Conventions': None, 'comment': None}
     >>> f.nc_set_global_attributes({})
@@ -818,19 +818,19 @@ class NetCDFGlobalAttributes(NetCDF):
 
         '''
         if copy:
-            properties = deepcopy(properties)                
+            properties = deepcopy(properties)
         else:
             properties = properties.copy()
-        
+
         out = self._get_component('netcdf').get('global_attributes')
         if out is None:
-            out = {}        
+            out = {}
 
         out.update(properties)
-        
+
         self._get_component('netcdf')['global_attributes'] = out
 
-    
+
 # --- End: class
 
 
@@ -845,24 +845,24 @@ class NetCDFUnlimitedDimensions(NetCDF):
     def nc_unlimited_dimensions(self):
         '''Return the selection of domain axis constructs to be written as
     netCDF unlimited dimensions.
-    
+
     By default output netCDF dimensions are not unlimited.
-    
+
     .. versionadded:: 1.7.0
-    
+
     Deprecated at version 1.7.4
-    
+
     .. seealso:: `write`, `nc_clear_unlimited_dimensions`,
                  `nc_set_unlimited_dimensions`
-    
+
     :Returns:
-    
+
         `set`
             The selection of domain axis constructs to be written as
             netCDF unlimited dimensions.
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_unlimited_dimensions(['domainaxis0'])
     >>> f.nc_unlimited_dimensions()
     {'domainaxis0'}
@@ -879,9 +879,9 @@ class NetCDFUnlimitedDimensions(NetCDF):
             "Field.nc_unlimited_dimensions was deprecated at v1.7.4 "
             "and is no longer available. Use DomainAxis.nc_is_unlimited "
             "instead")
-    
+
         out = self._get_component('netcdf').get('unlimited_dimensions')
-        
+
         if out is None:
             return set()
 
@@ -890,35 +890,35 @@ class NetCDFUnlimitedDimensions(NetCDF):
     def nc_set_unlimited_dimensions(self, axes):
         '''Select domain axis constructs to be written as netCDF unlimited
     dimensions.
-    
+
     By default output netCDF dimensions are not unlimited.
-    
+
     .. versionadded:: 1.7.0
-    
+
     Deprecated at version 1.7.4
-    
+
     .. seealso:: `write`, `nc_unlimited_dimensions`,
                  `nc_clear_unlimited_dimensions`
-    
+
     :Parameters:
-    
-        axes: sequence of `str`, optional   
+
+        axes: sequence of `str`, optional
             Select the domain axis constructs from the sequence
             provided. Domain axis constructs are identified by their
             construct identifiers.
-    
+
             *Parameter example:*
               ``axes=['domainaxis0', 'domainaxis1']``
-            
+
             *Parameter example:*
-              ``axes=()``        
-    
+              ``axes=()``
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_unlimited_dimensions(['domainaxis0'])
     >>> f.nc_unlimited_dimensions()
     {'domainaxis0'}
@@ -935,38 +935,38 @@ class NetCDFUnlimitedDimensions(NetCDF):
             "Field.nc_set_unlimited_dimensions was deprecated at v1.7.4 "
             "and is no longer available. Use DomainAxis.nc_set_unlimited "
             "instead")
-                
+
         out = self._get_component('netcdf').get('unlimited_dimensions')
-        
+
         if out is None:
             out = set()
         else:
             out = set(out)
 
         out.update(axes)
-            
+
         self._get_component('netcdf')['unlimited_dimensions'] = tuple(out)
 
     def nc_clear_unlimited_dimensions(self):
         '''Remove the selection of domain axis constructs to be written as
     netCDF unlimited dimensions.
-    
+
     By default output netCDF dimensions are not unlimited.
-    
+
     .. versionadded:: 1.7.0
-    
+
     Deprecated at version 1.7.4
-    
+
     .. seealso:: `write`, `nc_unlimited_dimensions`,
                  `nc_set_unlimited_dimensions`
-    
+
     :Returns:
-    
+
         `set`
             The selection of domain axis constructs that has been removed.
-    
+
     **Examples:**
-    
+
     >>> f.nc_set_unlimited_dimensions(['domainaxis0'])
     >>> f.nc_unlimited_dimensions()
     {'domainaxis0'}
@@ -982,10 +982,10 @@ class NetCDFUnlimitedDimensions(NetCDF):
         raise DeprecationError(
             "Field.nc_clear_unlimited_dimensions was deprecated at v1.7.4 "
             "and is no longer available. Use DomainAxis.nc_set_unlimited "
-            "instead")                
+            "instead")
 
         out = self._get_component('netcdf').get('unlimited_dimensions')
-        
+
         if out is None:
             out = set()
         else:
@@ -995,7 +995,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
         return out
 
-    
+
 # --- End: class
 
 
@@ -1009,16 +1009,16 @@ class NetCDFExternal(NetCDF):
         '''Whether the construct corresponds to an external netCDF variable.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_set_external`
-    
+
     :Returns:
-    
+
         `bool`
             The external status.
-    
+
     **Examples:**
-    
+
     >>> c.nc_get_external()
     False
     >>> c.nc_set_external(True)
@@ -1032,23 +1032,23 @@ class NetCDFExternal(NetCDF):
         '''Set external status of a netCDF variable.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `nc_get_external`
-    
+
     :Parameters:
-    
+
         external: `bool`, optional
             Set the external status.
-    
+
             *Parameter example:*
               ``external=True``
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> c.nc_get_external()
     False
     >>> c.nc_set_external(True)
@@ -1067,7 +1067,7 @@ class NetCDFGeometry(NetCDF):
 
     .. versionadded:: 1.8.0
 
-    '''   
+    '''
     def nc_del_geometry_variable(self, default=ValueError()):
         '''Remove the netCDF geometry container variable name.
 
@@ -1151,7 +1151,7 @@ class NetCDFGeometry(NetCDF):
     >>> print(f.nc_del_geometry_variable(None))
     None
 
-        '''   
+        '''
         try:
             return self._get_component('netcdf')['geometry_variable']
         except KeyError:
@@ -1195,9 +1195,9 @@ class NetCDFGeometry(NetCDF):
 
     def nc_set_geometry_variable(self, value):
         '''Set the netCDF geometry container variable name.
-        
+
     .. versionadded:: 1.8.0
-    
+
     .. seealso:: `nc_del_geometry_variable`,
                  `nc_get_geometry_variable`,
                  `nc_has_geometry_variable`
@@ -1243,22 +1243,22 @@ class NetCDFHDF5(NetCDF):
 
     .. note:: Chunksizes are cleared from the output of methods that
               change the data shape.
-    
+
     .. note:: Chunksizes are ignored for netCDF3 files that do not use
               HDF5.
 
     .. versionadded:: 1.7.2
-    
+
     .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`
-    
+
     :Returns:
-    
+
         `tuple`
             TODO The chunk sizes prior to the new setting, or the current
             current sizes if no new values are specified.
-    
+
     **Examples:**
-    
+
     >>> d.shape
     (1, 96, 73)
     >>> d.nc_set_hdf5_chunksizes([1, 48, 73])
@@ -1277,21 +1277,21 @@ class NetCDFHDF5(NetCDF):
 
     .. note:: Chunksizes are cleared from the output of methods that
               change the data shape.
-    
+
     .. note:: Chunksizes are ignored for netCDF3 files that do not use
               HDF5.
 
     .. versionadded:: 1.7.2
-    
+
     .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`
-    
+
     :Returns:
-    
+
         `tuple`
             TODO
-    
+
     **Examples:**
-    
+
     >>> d.shape
     (1, 96, 73)
     >>> d.nc_set_hdf5_chunksizes([1, 48, 73])
@@ -1310,26 +1310,26 @@ class NetCDFHDF5(NetCDF):
 
     .. note:: Chunksizes are cleared from the output of methods that
               change the data shape.
-   
+
     .. note:: Chunksizes are ignored for netCDF3 files that do not use
               HDF5.
 
     .. versionadded:: 1.7.2
-    
+
     .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`
-    
+
     :Parameters:
-    
+
         chunksizes: sequence of `int`
             The chunksizes for each dimension. Can be integers from 0
             to the dimension size.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> d.shape
     (1, 96, 73)
     >>> d.nc_set_hdf5_chunksizes([1, 48, 73])
@@ -1357,7 +1357,7 @@ class NetCDFHDF5(NetCDF):
                 if i > j:
                     raise ValueError("chunksize cannot exceed dimension size")
         # --- End: try
-        
+
         self._get_component('netcdf')['hdf5_chunksizes'] = tuple(chunksizes)
 
 
@@ -1377,18 +1377,18 @@ class NetCDFHDF5_exp(NetCDF):
               netCDF3 files that do not use HDF5.
 
     .. versionadded:: 1.7.4
-    
+
     .. seealso:: `nc_get_hdf5_chunksize`, `nc_has_hdf5_chunksize`,
                  `nc_set_hdf5_chunksize`
-    
+
     :Returns:
-    
+
             TODO
-    
+
     **Examples:**
-    
+
     TODO
-    
+
     >>> d.shape
     (1, 96, 73)
     >>> d.nc_set_hdf5_chunksizes([1, 48, 73])
@@ -1410,19 +1410,19 @@ class NetCDFHDF5_exp(NetCDF):
               netCDF3 files that do not use HDF5.
 
     .. versionadded:: 1.7.4
-    
+
     .. seealso:: `nc_del_hdf5_chunksize`, `nc_has_hdf5_chunksize`,
                  `nc_set_hdf5_chunksize`
-    
+
     :Returns:
-    
+
             TODO The chunk sizes prior to the new setting, or the current
             current sizes if no new values are specified.
-    
+
     **Examples:**
-    
+
     TODO
-    
+
     >>> d.shape
     (1, 96, 73)
     >>> d.nc_set_hdf5_chunksizes([1, 48, 73])
@@ -1450,20 +1450,20 @@ class NetCDFHDF5_exp(NetCDF):
               netCDF3 files that do not use HDF5.
 
     .. versionadded:: 1.7.4
-    
+
     .. seealso:: `nc_del_hdf5_chunksize`, `nc_get_hdf5_chunksize`,
                  `nc_set_hdf5_chunksize`
-    
+
     :Returns:
-    
+
         `bool`
             TODO The chunk sizes prior to the new setting, or the current
             current sizes if no new values are specified.
-    
+
     **Examples:**
-    
+
     TODO
-    
+
     >>> d.shape
     (1, 96, 73)
     >>> d.nc_set_hdf5_chunksizes([1, 48, 73])
@@ -1485,23 +1485,23 @@ class NetCDFHDF5_exp(NetCDF):
               netCDF3 files that do not use HDF5.
 
     .. versionadded:: 1.7.4
-    
+
     .. seealso:: `nc_del_hdf5_chunksize`, `nc_get_hdf5_chunksize`,
                  `nc_has_hdf5_chunksize`
-    
+
     :Parameters:
-    
+
         value: `int`
             TODO
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     TODO
-    
+
     >>> d.shape
     (1, 96, 73)
     >>> d.nc_set_hdf5_chunksizes([1, 48, 73])
@@ -1529,19 +1529,19 @@ class NetCDFUnlimitedDimension(NetCDF):
 
     By default output netCDF dimensions are not unlimited. The status
     is used by the `write` function.
-    
+
     .. versionadded:: 1.7.4
-    
+
     .. seealso:: `nc_set_unlimited`
-    
+
     :Returns:
-    
+
         `bool`
             The existing unlimited status. True and False signify
             "unlimited" and "not unlimited" repectively.
-    
+
     **Examples:**
-    
+
     >>> da = f.domain_axis('domainaxis1')
     >>> da.nc_is_unlimited()
     False
@@ -1558,24 +1558,24 @@ class NetCDFUnlimitedDimension(NetCDF):
 
     def nc_set_unlimited(self, value):
         '''Set the unlimited status of the a netCDF dimension.
-    
+
     By default output netCDF dimensions are not unlimited. The status
     is used by the `write` function.
-    
+
     .. versionadded:: 1.7.4
-    
+
     .. seealso:: `nc_is_unlimited`
-    
+
     :Parameters:
-    
+
         value: `bool`
             The new unlimited status. True and False signify
             "unlimited" and "not unlimited" repectively.
 
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
 
     >>> da = f.domain_axis('domainaxis1')

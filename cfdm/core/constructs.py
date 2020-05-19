@@ -10,11 +10,11 @@ class Constructs(object):
     .. versionadded:: 1.7.0
 
     '''
-    def __init__(self, 
-                 auxiliary_coordinate=None,                
-                 dimension_coordinate=None,         
-                 domain_ancillary=None,         
-                 field_ancillary=None,         
+    def __init__(self,
+                 auxiliary_coordinate=None,
+                 dimension_coordinate=None,
+                 domain_ancillary=None,
+                 field_ancillary=None,
                  cell_measure=None,
                  coordinate_reference=None,
                  domain_axis=None,
@@ -27,59 +27,59 @@ class Constructs(object):
         '''**Initialization**
 
     :Parameters:
-    
+
         auxiliary_coordinate: `str`, optional
             The base name for keys of auxiliary coordinate constructs.
-    
+
             *Parameter example:*
               ``auxiliary_coordinate='auxiliarycoordinate'``
-    
+
         dimension_coordinate: `str`, optional
             The base name for keys of dimension coordinate constructs.
-    
+
             *Parameter example:*
               ``dimension_coordinate='dimensioncoordinate'``
-    
+
         domain_ancillary: `str`, optional
             The base name for keys of domain ancillary constructs.
-    
+
             *Parameter example:*
               ``domain_ancillary='domainancillary'``
-    
+
         field_ancillary: `str`, optional
             The base name for keys of field ancillary constructs.
-    
+
             *Parameter example:*
               ``field_ancillary='fieldancillary'``
-    
+
         cell_measure: `str`, optional
             The base name for keys of cell measure constructs.
-    
+
             *Parameter example:*
               ``cell_measure='cellmeasure'``
-    
+
         coordinate_reference: `str`, optional
             The base name for keys of coordinate reference constructs.
-    
+
             *Parameter example:*
               ``coordinate_reference='coordinatereference'``
-    
+
         domain_axis: `str`, optional
             The base name for keys of domain axis constructs.
-    
+
             *Parameter example:*
               ``domain_axis='domainaxis'``
-    
+
         cell_method: `str`, optional
             The base name for keys of cell method constructs.
-    
+
             *Parameter example:*
               ``cell_method='cellmethod'``
-    
+
         source: optional
             Initialize the construct keys and contained metadata
             constructs from those of *source*.
-    
+
         copy: `bool`, optional
             If False then do not deep copy metadata constructs from
             those of *source* prior to initialization. By default such
@@ -87,11 +87,11 @@ class Constructs(object):
 
         '''
         self._ignore = tuple(set(_ignore))
-        
+
         if source is not None:
 
             self._field_data_axes = source._field_data_axes
-            
+
             if _view:
                 self._key_base             = source._key_base
                 self._array_constructs     = source._array_constructs
@@ -101,12 +101,12 @@ class Constructs(object):
                 self._construct_type       = source._construct_type
                 self._constructs           = source._constructs
                 return
-            
+
             self._key_base             = source._key_base.copy()
             self._array_constructs     = source._array_constructs.copy()
             self._non_array_constructs = source._non_array_constructs.copy()
             self._ordered_constructs   = source._ordered_constructs.copy()
-            self._construct_axes       = source._construct_axes.copy()           
+            self._construct_axes       = source._construct_axes.copy()
             self._construct_type       = source._construct_type.copy()
             self._constructs           = source._constructs.copy()
 
@@ -115,43 +115,43 @@ class Constructs(object):
             #    self._array_constructs.discard(construct_type)
             #    self._non_array_constructs.discard(construct_type)
             #    self._ordered_constructs.discard(construct_type)
-            
-            d = {}            
+
+            d = {}
             for construct_type in source._array_constructs:
                 if construct_type in self._ignore:
                     for cid in source._constructs.get(construct_type, ()):
                         self._construct_axes.pop(cid, None)
                         self._construct_type.pop(cid, None)
                     # --- End: for
-                    
+
                     continue
 
                 if construct_type not in source._constructs:
                     continue
-                    
+
                 if copy:
                     if construct_type in source._ordered_constructs:
                         new_v = OrderedDict()
                     else:
                         new_v = {}
-                        
+
                     for cid, construct in source._constructs[construct_type].items():
                         new_v[cid] = construct.copy(data=_use_data)
                 else:
                     new_v = source._constructs[construct_type].copy()
-                    
+
                 d[construct_type] = new_v
             # --- End: for
-            
+
             for construct_type in source._non_array_constructs:
                 if construct_type in self._ignore:
                     for cid in source._constructs.get(construct_type, ()):
                         self._construct_type.pop(cid, None)
                     continue
-                
+
                 if construct_type not in source._constructs:
                     continue
-                    
+
                 if copy:
                     if construct_type in source._ordered_constructs:
                         new_v = OrderedDict()
@@ -168,16 +168,16 @@ class Constructs(object):
 
                 d[construct_type] = new_v
             # --- End: for
-        
+
             self._constructs = d
 
             self._ignore = ()
-            
+
             return
         # --- End: if
-                
+
         self._field_data_axes = None
-        
+
         self._key_base = {}
 
         self._array_constructs     = set()
@@ -190,21 +190,21 @@ class Constructs(object):
         # {'domainaxis1'         :'domain_axis',
         #  'auxiliarycoordinate3':'auxiliary_coordinate'}
         self._construct_type = {}
-        
+
         self._constructs     = {}
-        
+
         if auxiliary_coordinate:
             self._key_base['auxiliary_coordinate'] = auxiliary_coordinate
             self._array_constructs.add('auxiliary_coordinate')
-            
+
         if dimension_coordinate:
             self._key_base['dimension_coordinate'] = dimension_coordinate
             self._array_constructs.add('dimension_coordinate')
-            
+
         if domain_ancillary:
             self._key_base['domain_ancillary'] = domain_ancillary
             self._array_constructs.add('domain_ancillary')
-            
+
         if field_ancillary:
             self._key_base['field_ancillary'] = field_ancillary
             self._array_constructs.add('field_ancillary')
@@ -228,10 +228,10 @@ class Constructs(object):
 
         for x in self._array_constructs:
             self._constructs[x] = {}
-        
+
         for x in self._non_array_constructs:
             self._constructs[x] = {}
-        
+
         for x in self._ordered_constructs:
             self._constructs[x] = OrderedDict()
 
@@ -243,7 +243,7 @@ class Constructs(object):
     .. versionadded:: 1.7.0
 
         '''
-        return key in self._construct_type        
+        return key in self._construct_type
 
     def __copy__(self):
         '''Called by the `copy.copy` standard library function.
@@ -252,7 +252,7 @@ class Constructs(object):
 
         '''
         return self.shallow_copy()
-   
+
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` standard library function.
 
@@ -260,7 +260,7 @@ class Constructs(object):
 
         '''
         return self.copy()
-   
+
     def __getitem__(self, key):
         '''Return a construct with the given key.
 
@@ -272,11 +272,11 @@ class Constructs(object):
         construct_type = self.construct_type(key) # ignore??
         if construct_type is None:
             raise KeyError(key)
-        
+
         d = self._constructs.get(construct_type)
         if d is None:
             d = {}
-            
+
         return d[key]
 
     def __iter__(self):
@@ -288,7 +288,7 @@ class Constructs(object):
 
         '''
         return iter(self._dictionary().keys())
-            
+
     def __len__(self):
         '''Return the number of constructs.
 
@@ -306,21 +306,21 @@ class Constructs(object):
         '''TODO
 
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
-        default: 
+
+        default:
             TODO
-            
-        message: `str`, optional 
+
+        message: `str`, optional
             TODO
-            
+
     :Returns:
-    
+
         TODO
-    
+
     **Examples:**
-    
+
     TODO
 
         '''
@@ -330,7 +330,7 @@ class Constructs(object):
                 default.args = (message,)
 
             raise default
-        
+
         return default
 
     def _del_data_axes(self, k, *d):
@@ -343,28 +343,28 @@ class Constructs(object):
         return self._construct_axes.pop(k, *d)
 
     # ----------------------------------------------------------------
-    # Private dictionary-like methods    
+    # Private dictionary-like methods
     # ----------------------------------------------------------------
     def _pop(self, k, *d):
         '''D.pop(k[,d]) -> v, remove specified key and return the
     corresponding value.
-    
+
     If k is not found, d is returned if given, otherwise KeyError is
     raised
 
         '''
         # Remove the construct axes, if any
         self._del_data_axes(k, None)
-        
+
         # Find the construct type
         try:
             construct_type = self._construct_type.pop(k)
         except KeyError as error:
             if d:
                 return d[0]
-            
+
             raise KeyError(error)
-            
+
         # Remove and return the construct
         return self._constructs[construct_type].pop(k, *d)
 
@@ -388,27 +388,27 @@ class Constructs(object):
         x = self._construct_type.get(key)
         if x in self._ignore:
             return
-        
+
         return x
 
     # ----------------------------------------------------------------
-    # Private methods    
+    # Private methods
     # ----------------------------------------------------------------
     def _check_construct_type(self, construct_type, default=ValueError()):
         '''<TODO>
 
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
+
         construct_type: `str`
-    
+
     :Returns:
-    
+
         TODO
-    
+
     **Examples:**
-    
+
     TODO
 
         '''
@@ -418,14 +418,14 @@ class Constructs(object):
         x = self._key_base
         if self._ignore:
             x = set(x).difference(self._ignore)
-        
+
         if construct_type not in x:
             return self._default(
                 default,
                 "Invalid construct type {0!r}. Must be one of {1}".format(
                     construct_type, sorted(x)))
 
-        return construct_type    
+        return construct_type
 
     def _construct_type_description(self, construct_type):
         '''TODO
@@ -451,39 +451,39 @@ class Constructs(object):
 
     def _del_construct(self, key, default=ValueError()):
         '''Remove a metadata construct.
-    
+
     If a domain axis construct is selected for removal then it can't
     be spanned by any metdata construct data arrays, nor be referenced
     by any cell method constructs.
-    
+
     However, a domain ancillary construct may be removed even if it is
     referenced by coordinate reference construct. In this case the
     reference is replace with `None`.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `_get_construct`, `_set_construct`
-    
+
     :Parameters:
-    
+
         key: `str`
             The key of the construct to be removed.
-    
+
             *Parameter example:*
               ``key='auxiliarycoordinate0'``
-      
+
         default: optional
             Return the value of the *default* parameter if the
             construct can not be removed, or does not exist. If set to
             an `Exception` instance then it will be raised instead.
-    
-    
+
+
     :Returns:
-    
+
             The removed construct.
-    
+
     **Examples:**
-    
+
     >>> x = f._del_construct('auxiliarycoordinate2')
 
         '''
@@ -496,7 +496,7 @@ class Constructs(object):
                     raise ValueError(
                         "Can't remove domain axis construct {!r} that spans the data array of metadata construct {!r}".format(
                             key, xid))
-    
+
             # Fail if the domain axis construct is referenced by a
             # cell method construct
             try:
@@ -521,7 +521,7 @@ class Constructs(object):
                     if key == value:
                         coordinate_conversion.set_domain_ancillary(term, None)
                 # --- End: for
-                    
+
                 ref.del_coordinate(key, None)
         # --- End: if
 
@@ -530,61 +530,61 @@ class Constructs(object):
         if out is None:
             return self._default(default, "Can't get remove non-existent construct")
 
-        return out    
+        return out
 
     def _set_construct(self, construct, key=None, axes=None,
                        copy=True):
         '''Set a metadata construct.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `_del_construct`, `_get_construct`,
                  `_set_construct_data_axes`
-    
+
     :Parameters:
-    
+
         construct:
             The metadata construct to be inserted.
-    
+
         key: `str`, optional
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
             automatically. If the identifier already exists then the
             exisiting construct will be replaced.
-    
+
             *Parameter example:*
               ``key='cellmeasure0'``
-    
+
         axes: (sequence of) `str`, optional
             The construct identifiers of the domain axis constructs
             spanned by the data array. An exception is raised if used
             for a metadata construct that can not have a data array,
             i.e. domain axis, cell method and coordinate reference
             constructs.
-    
+
             The axes may also be set afterwards with the
             `_set_construct_data_axes` method.
-    
+
             *Parameter example:*
               ``axes='domainaxis1'``
-            
+
             *Parameter example:*
               ``axes=['domainaxis1']``
-            
+
             *Parameter example:*
               ``axes=('domainaxis1', 'domainaxis0')``
-            
+
         copy: `bool`, optional
             If True then return a copy of the unique selected
             construct. By default the construct is not copied.
-    
+
     :Returns:
-    
+
          `str`
             The construct identifier for the construct.
-        
+
     **Examples:**
-    
+
     >>> key = f.set_construct(c)
     >>> key = f.set_construct(c, copy=False)
     >>> key = f.set_construct(c, axes='domainaxis2')
@@ -602,7 +602,7 @@ class Constructs(object):
 #             ``extra_axes=1``
 
         construct_type = self._check_construct_type(construct.construct_type)
-                                                
+
         if key is None:
             # Create a new construct identifier
             key = self.new_identifier(construct_type)
@@ -618,7 +618,7 @@ class Constructs(object):
 
             if axes is not None:
                 self._set_construct_data_axes(key=key, axes=axes,
-                                              construct=construct)                        
+                                              construct=construct)
         elif axes is not None:
             raise ValueError(
                 "Can't set {!r}: Can't provide domain axis constructs for {} construct".format(
@@ -641,37 +641,37 @@ class Constructs(object):
         '''TODO
 
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
+
         key: `str`, optional
             The construct identifier of metadata construct.
-    
+
             *Parameter example:*
               ``key='cellmeasure0'``
-    
+
         axes: (sequence of) `str`
             The construct identifiers of the domain axis constructs
             spanned by the data array. An exception is raised if used
             for a metadata construct that can not have a data array,
             i.e. domain axis, cell method and coordinate reference
             constructs.
-    
+
             *Parameter example:*
               ``axes='domainaxis1'``
-    
+
             *Parameter example:*
               ``axes=['domainaxis1']``
-    
+
             *Parameter example:*
               ``axes=['domainaxis1', 'domainaxis0']``
-            
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> key = f.set_construct(c)
     >>> f._set_construct_data_axes(key, axes='domainaxis1')
 
@@ -681,17 +681,17 @@ class Constructs(object):
                 raise ValueError(
                     "Can't set axes for non-existent construct identifier {!r}".format(key))
 
-            construct = self[key]        
-        
+            construct = self[key]
+
         if isinstance(axes, basestring):
             axes = (axes,)
-            
+
         domain_axes = self.filter_by_type('domain_axis')
 
         axes_shape = []
         for axis in axes:
             if axis not in domain_axes:
-                raise ValueError(                    
+                raise ValueError(
                     "Can't set {!r} domain axes: Domain axis {!r} does not exist".format(
                         construct, axis))
 
@@ -718,17 +718,17 @@ class Constructs(object):
                         "Can't set {!r}: Bounds data shape of {!r} does not match the shape required by domain axes {}: {}".format(
                             construct, data.shape, tuple(axes), axes_shape))
         # --- End: try
-        
+
         self._construct_axes[key] = tuple(axes)
 
     # ----------------------------------------------------------------
-    # Dictionary-like methods    
+    # Dictionary-like methods
     # ----------------------------------------------------------------
     def get(self, key, *default):
         '''Return the construct for construct key, if it exists, else default.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `items`, `keys`, `values`
 
         '''
@@ -736,34 +736,34 @@ class Constructs(object):
 
     def items(self):
         '''Return the items as (construct key, construct) pairs.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `get`, `keys`, `values`
-    
+
         '''
         return self._dictionary().items()
-    
+
     def keys(self):
         '''Return all of the construct keys, in arbitrary order.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `get`, `items`, `values`
 
         '''
         return self._construct_type.keys()
-    
+
     def values(self):
         '''Returns all of the metadata constructs, in arbitrary order.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `get`, `items`, `keys`
 
         '''
         return self._dictionary().values()
-    
+
     def construct_types(self):
         '''TODO
 
@@ -780,22 +780,22 @@ class Constructs(object):
         '''Return the sole metadata construct.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `get`, `key`, `values`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if there is
             not exactly one construct. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
             The metadata construct.
-    
+
     **Examples:**
-    
+
     >>> print(c)
     Constructs:
     {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
@@ -811,32 +811,32 @@ class Constructs(object):
         if len(self) > 1:
             return self._default(default,
                                  "Can't return {} constructs".format(len(self)))
-        
+
         _, construct = self._dictionary().popitem()
-            
+
         return construct
-    
+
     def key(self, default=ValueError()):
         '''Return the construct key of the sole metadata construct.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `get`, `keys`, `value`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if there is
             not exactly one construct. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
         `str`
             The construct key.
-    
+
     **Examples:**
-    
+
     >>> print(c)
     Constructs:
     {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
@@ -852,26 +852,26 @@ class Constructs(object):
         if len(self) > 1:
             return self._default(default,
                  "Can't get key for {} constructs".format(len(self)))
-        
+
         key, _ = self._dictionary().popitem()
-            
+
         return key
-        
+
     def data_axes(self):
         '''Return the domain axis constructs spanned by metadata construct
     data.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Returns:
-    
+
         `dict`
-    
+
             The keys of the domain axes constructs spanned by metadata
             construct data.
-    
+
     **Examples:**
-    
+
     >>> print(c)
     Constructs:
     {'cellmethod0': <CellMethod: area: mean>,
@@ -904,23 +904,23 @@ class Constructs(object):
 
     def copy(self, data=True):
         '''Return a deep copy.
-    
+
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
+
         data: `bool`, optional
             If False then do not copy data contained in the metadata
             constructs. By default such data are copied.
-    
+
     :Returns:
-    
+
             The deep copy.
-    
+
     **Examples:**
-    
+
     >>> g = f.copy()
     >>> g = f.copy(data=False)
 
@@ -930,21 +930,21 @@ class Constructs(object):
 
     def new_identifier(self, construct_type):
         '''Return a new, unsed construct key.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
+
         construct_type: `str`
             TODO
-    
+
     :Returns:
-    
+
         `str`
             The new construct key.
-    
+
     **Examples:**
-    
+
     >>> c.keys()
     ['domainaxis0',
      'domainaxis1',
@@ -966,7 +966,7 @@ class Constructs(object):
 
         '''
         construct_type = self._check_construct_type(construct_type)
-        
+
         keys = self._constructs[construct_type]
 
         n = len(keys)
@@ -988,12 +988,12 @@ class Constructs(object):
         if construct_type is None:
             raise ValueError("Can't replace non-existent construct {!r}".format(key))
 
-        if axes is not None and construct_type in self._array_constructs:        
+        if axes is not None and construct_type in self._array_constructs:
             self._construct_axes[key] = tuple(axes)
 
         if copy:
             construct = construct.copy()
-            
+
         self._constructs[construct_type][key] = construct
 
 
@@ -1002,17 +1002,17 @@ class Constructs(object):
 
     For cell method constructs, the predetermined order is that in
     which they where added.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Returns:
-    
+
          `collections.OrderedDict`
              The constructs and their construct keys, in their
              predetermined order.
-    
+
     **Examples:**
-    
+
     >>> print(c)
     onstructs:
     {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean>,
@@ -1025,25 +1025,25 @@ class Constructs(object):
         if len(self._constructs) > 1:
             raise ValueError(
                 "Can't order multiple construct types: {!r}".format(self))
-        
+
         if self._ordered_constructs != set(self._constructs):
             raise ValueError(
                 "Can't order un-orderable construct type: {!r}".format(self))
 
         return self._constructs[tuple(self._ordered_constructs)[0]].copy()
-    
+
     def filter_by_type(self, *types):
         '''Select metadata constructs by type.
 
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
-        types: optional 
+
+        types: optional
             Select constructs that have are of any of the given types.
-    
+
             A type is specified by one of the following strings:
-    
+
             ==========================  ================================
             *type*                      Construct selected
             ==========================  ================================
@@ -1056,22 +1056,22 @@ class Constructs(object):
             ``'cell_method'``           Cell method constructs
             ``'field_ancillary'``       Field ancillary constructs
             ==========================  ================================
-    
+
             If no types are provided then all constructs are selected.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     Select dimension coordinate constructs:
-    
+
     >>> d = c.filter_by_type('dimension_coordinate')
-    
+
     Select dimension coordinate and field ancillary constructs:
-    
+
     >>> d = c.filter_by_type('dimension_coordinate',
         'field_ancillary')
 
@@ -1091,21 +1091,21 @@ class Constructs(object):
         '''Return a shallow copy.
 
     ``f.shallow_copy()`` is equivalent to ``copy.copy(f)``.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Returns:
-    
+
             The shallow copy.
-    
+
     **Examples:**
-    
+
     >>> g = f.shallow_copy()
 
         '''
         if _ignore is None:
             _ignore = self._ignore
-            
+
         return type(self)(source=self, copy=False, _ignore=_ignore,
                           _view=False)
 
@@ -1113,20 +1113,20 @@ class Constructs(object):
         '''Return a new view the container with the same metadata constructs.
 
     :Parameters:
-    
+
         ignore: `bool`, optional
             TODO
-    
+
     :Returns:
-    
+
         `Constructs`
             <TODO>
-    
+
     **Examples:**
-    
+
     <TODO>
-    
+
         '''
         return type(self)(source=self, _view=True, _ignore=ignore)
-    
+
 # --- End: class

@@ -19,50 +19,50 @@ class Constructs(core.Constructs):
 
     Calling a `Constructs` instance selects metadata constructs by
     identity and is an alias for the `filter_by_identity` method.
-    
+
     **Examples:**
-    
+
     Select constructs that have a ``standard_name`` property of 'foo':
-    
+
     >>> d = c('foo')
-    
+
     .. versionadded:: 1.7.0
 
-    ''' 
+    '''
     def __call__(self, *identities):
         '''Select metadata constructs by identity.
 
     Calling a `Constructs` instance selects metadata constructs by
     identity and is an alias for the `filter_by_identity` method.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_identity`
-    
+
     :Parameters:
-    
+
         identities: optional
             See `filter_by_identity` for details.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     >>> print(c('latitude'))
     Constructs:
     {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
     >>> print(c.filter_by_identity('latitude'))
     Constructs:
     {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
-    
+
     See `filter_by_identity` for more examples.
 
         '''
         return self.filter_by_identity(*identities)
-    
+
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -73,8 +73,8 @@ class Constructs(core.Constructs):
         '''
         construct_types = ['{0}({1})'.format(c, len(v))
                            for c, v in sorted(self._constructs.items())
-                           if len(v) and c not in self._ignore]    
-        
+                           if len(v) and c not in self._ignore]
+
         return '<{0}: {1}>'.format(self.__class__.__name__, ', '.join(construct_types))
 
     def __str__(self):
@@ -89,7 +89,7 @@ class Constructs(core.Constructs):
 
         construct_types = [c
                            for c, v in sorted(self._constructs.items())
-                           if len(v) and c not in self._ignore]    
+                           if len(v) and c not in self._ignore]
 
         first = '{'
         for construct_type in construct_types:
@@ -100,7 +100,7 @@ class Constructs(core.Constructs):
                 else:
                     out.append('{!r}: {!r},'.format(key, value))
         # --- End: for
-        
+
         if first:
             out[0] = out[0] + '\n{}'
         else:
@@ -114,18 +114,18 @@ class Constructs(core.Constructs):
     def _axes_to_constructs(self):
         '''Map domain axis constructs to the metadata constructs whose data
     span them.
-    
+
     This is useful for ascertaining whether or not two `Constructs`
     instances are equal.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Returns:
-    
+
         `dict`
-    
+
     **Examples:**
-    
+
     >>> f.constructs._axes_to_constructs()
     {('domainaxis0',): {'auxiliary_coordinate': {},
                         'cell_measure'        : {},
@@ -158,13 +158,13 @@ class Constructs(core.Constructs):
                         'dimension_coordinate': {'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >},
                         'domain_ancillary'    : {},
                         'field_ancillary'     : {}}}
-    
+
         '''
         out = {}
 
 
         data_axes = self.data_axes()
-        
+
         for axes in data_axes.values():
             d = {construct_type: {}
                  for construct_type in self._array_constructs
@@ -198,7 +198,7 @@ class Constructs(core.Constructs):
             return False
 
         if not len(cell_methods0):
-            return True    
+            return True
 
         cell_methods0 = cell_methods0.ordered()
         cell_methods1 = cell_methods1.ordered()
@@ -221,7 +221,7 @@ class Constructs(core.Constructs):
                     )
                 )
                 return False
-    
+
             indices = []
             for axis0 in axes0:
                 if axis0 is None:
@@ -251,7 +251,7 @@ class Constructs(core.Constructs):
                         axes1.remove(axis1)
                         indices.append(cm1.get_axes(()).index(axis1))
                     elif axis1 is None:
-                        # axis1 
+                        # axis1
                         logger.info(
                             "{0}: Different cell methods "
                             "(mismatched axes):\n  {1}\n  {2}".format(
@@ -282,7 +282,7 @@ class Constructs(core.Constructs):
                     "Verbose: Different cell methods: "
                     "{0!r}, {1!r}".format(cell_methods0, cell_methods1)
                 )
-                return False                
+                return False
         # --- End: for
 
         return True
@@ -308,7 +308,7 @@ class Constructs(core.Constructs):
             )
 
             return False
-        
+
         if refs0:
             # Note: the following set of log calls are not warnings as such,
             # but set them as warnings so they only emerge at higher
@@ -321,7 +321,7 @@ class Constructs(core.Constructs):
                         "{0}: Comparing {1!r}, {2!r}: ".format(
                             self.__class__.__name__, ref0, ref1)
                     )  # pragma: no cover
- 
+
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
                                        verbose=verbose,
                                        ignore_type=ignore_type):
@@ -332,13 +332,13 @@ class Constructs(core.Constructs):
                     coordinates1 = set()
                     for value in ref1.coordinates():
                         coordinates1.add(key1_to_key0.get(value, value))
-                        
+
                     if coordinates0 != coordinates1:
                         logger.warning(
                             "Coordinates don't match")  # pragma: no cover
-                            
+
                         continue
-    
+
                     # Domain ancillary-valued coordinate conversion terms
                     terms0 = ref0.coordinate_conversion.domain_ancillaries()
 
@@ -350,16 +350,16 @@ class Constructs(core.Constructs):
                             "Coordinate conversion domain ancillaries "
                             "don't match"
                         )  # pragma: no cover
- 
+
                         continue
 
                     logger.warning("OK")  # pragma: no cover
-                        
+
                     found_match = True
-                    del refs1[key1]                                       
+                    del refs1[key1]
                     break
                 # --- End: for
-    
+
                 if not found_match:
                     logger.info(
                         "{0}: No match for {1!r})".format(
@@ -382,7 +382,7 @@ class Constructs(core.Constructs):
                        for d in self.filter_by_type('domain_axis').values()]
         other_sizes = [d.get_size()
                        for d in other.filter_by_type('domain_axis').values()]
-      
+
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes
             logger.info(
@@ -394,7 +394,7 @@ class Constructs(core.Constructs):
             return False
 
         return True
-    
+
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -402,24 +402,24 @@ class Constructs(core.Constructs):
         '''Return a deep copy.
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
+
         data: `bool`, optional
             If False then do not copy data contained in the metadata
             constructs. By default such data are copied.
-    
+
     :Returns:
-    
+
             The deep copy.
-    
+
     **Examples:**
-    
+
     >>> g = f.copy()
     >>> g = f.copy(data=False)
-    
+
         '''
         out = super().copy(data=data)
 
@@ -427,7 +427,7 @@ class Constructs(core.Constructs):
         if prefiltered is not None:
             out._prefiltered = prefiltered.copy(data=data)
             out._filters_applied = self._filters_applied
-            
+
         return out
 
 #    def domain_axis_key(self, identity, default=ValueError()):
@@ -487,7 +487,7 @@ class Constructs(core.Constructs):
 #                                'auxiliary_coordinates')
 #        c = c.filter_by_naxes(1)
 #        c = c.filter_by_identity(identity)
-#        
+#
 #        if not len(c) :
 #            return self._default(
 #                default,
@@ -495,26 +495,26 @@ class Constructs(core.Constructs):
 #
 #        data_axes = self.data_axes()
 #        domain_axes = self.filter_by_type('domain_axis')
-#        
+#
 #        keys = []
 #        for ckey, coord in c.items():
 #            axes = data_axes.get(ckey)
 #            if not axes:
 #                continue
-#            
+#
 #            key = axes[0]
 #            if domain_axes.get(key):
 #                keys.append(key)
 #        # --- End: for
-#        
+#
 #        keys = set(keys)
-#            
+#
 #        if not keys:
 #            return self._default(
 #                default,
 #                "1-d coordinate constructs selected with identity {!r} have not been assigned a domain axis constructs".format(
-#                    coord))                       
-#        
+#                    coord))
+#
 #        if len(keys) > 1:
 #            return self._default(
 #                default,
@@ -527,7 +527,7 @@ class Constructs(core.Constructs):
         '''Return the canonical identity for a domain axis construct.
 
     The identity is the first found of the following:
-    
+
     1. The canonical identity of a dimension coordinate construct that
        span the domain axis construct.
     2. The identity of a one-dimensional auxiliary coordinate
@@ -537,22 +537,22 @@ class Constructs(core.Constructs):
        ``'axis='``) property, as appropriate.
     3. The netCDF dimension name, preceeded by 'ncdim%'.
     4. The domain axis construct key, preceeded by 'key%'.
-    
+
     :Parameters:
-    
+
         key: `str`
             The construct key for the domain axis construct.
-    
+
             *Parameter example:*
               ``key='domainaxis2'``
-    
+
     :Returns:
-    
+
         `str`
             The identity.
-    
+
     **Examples:**
-    
+
     >>> c.domain_axis_identity('domainaxis1')
     'longitude'
     >>> c.domain_axis_identity('domainaxis2')
@@ -564,7 +564,7 @@ class Constructs(core.Constructs):
 
         '''
         domain_axes = self.filter_by_type('domain_axis')
-        
+
         if key not in domain_axes:
             raise ValueError(
                 'No domain axis construct with key {!r}'.format(key))
@@ -578,7 +578,7 @@ class Constructs(core.Constructs):
                 identity = dim.identity()
                 if identity.startswith('ncvar%'):
                     identity = ''
-                
+
                 break
         # --- End: for
         if identity:
@@ -604,10 +604,10 @@ class Constructs(core.Constructs):
                 elif i.startswith('cf_role='):
                     cf_role.append(i)
             # --- End: for
-            
+
             if len(cf_role) == 1:
                 return cf_role[0]
-            
+
             if len(axis) == 1:
                 return axis[0]
         # --- End: if
@@ -632,35 +632,35 @@ class Constructs(core.Constructs):
     differences) and ``rtol`` (the tolerance on relative differences)
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
-    
+
     Any compression is ignored by default, with only the arrays in
     their uncompressed forms being compared. See the
     *ignore_compression* parameter.
-    
+
     Any type of object may be tested but equality is only possible
     with another `Constructs` construct, or a subclass of one.
-    
+
     NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked on
     any construct.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
-        other: 
+
+        other:
             The object to compare for equality.
-    
+
         atol: float, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `cfdm.ATOL`
             function.
-            
+
         rtol: float, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `cfdm.RTOL`
             function.
-    
+
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison for the
@@ -686,20 +686,20 @@ class Constructs(core.Constructs):
             comparisons. By default different numerical data types
             imply inequality, regardless of whether the elements are
             within the tolerance for equality.
-    
+
         ignore_compression: `bool`, optional
             If False then the compression type and, if applicable, the
             underlying compressed arrays must be the same, as well as
             the arrays in their uncompressed forms. By default only
             the arrays in their uncompressed forms are compared.
-    
-    :Returns: 
-      
+
+    :Returns:
+
         `bool`
             Whether the two instances are equal.
-    
+
     **Examples:**
-    
+
     >>> x.equals(x)
     True
     >>> x.equals(x.copy())
@@ -707,7 +707,7 @@ class Constructs(core.Constructs):
     >>> x.equals('something else')
     False
 
-        '''        
+        '''
         if self is other:
             if not _return_axis_map:
                 return True
@@ -720,12 +720,12 @@ class Constructs(core.Constructs):
             )
             if not _return_axis_map:
                 return False
-        
+
         axes0_to_axes1 = {}
         axis0_to_axis1 = {}
         axis1_to_axis0 = {}
         key1_to_key0   = {}
-        
+
         # ------------------------------------------------------------
         # Domain axis constructs
         # ------------------------------------------------------------
@@ -736,7 +736,7 @@ class Constructs(core.Constructs):
                                         key1_to_key0=key1_to_key0):
             if not _return_axis_map:
                 return False
-        
+
         # ------------------------------------------------------------
         # Constructs with arrays
         # ------------------------------------------------------------
@@ -746,8 +746,8 @@ class Constructs(core.Constructs):
         for axes0, constructs0 in axes_to_constructs0.items():
             matched_all_constructs_with_these_axes = False
 
-             
-            len_axes0 = len(axes0) 
+
+            len_axes0 = len(axes0)
             for axes1, constructs1 in tuple(axes_to_constructs1.items()):
 
                 constructs1 = constructs1.copy()
@@ -762,7 +762,7 @@ class Constructs(core.Constructs):
 #                    role_constructs1 = constructs1[construct_type].copy()
                     role_constructs0 = constructs0.get(construct_type, {})
                     role_constructs1 = constructs1.get(construct_type, {}).copy()
-                    
+
                     if len(role_constructs0) != len(role_constructs1):
                         # There are the different numbers of
                         # constructs of this type
@@ -791,7 +791,7 @@ class Constructs(core.Constructs):
                                 "{}: Comparing {!r}, {!r}: ".format(
                                     self.__class__.__name__, item0, item1)
                             )  # pragma: no cover
-                                
+
                             if item0.equals(
                                     item1,
                                     rtol=rtol, atol=atol,
@@ -801,7 +801,7 @@ class Constructs(core.Constructs):
                                     ignore_compression=ignore_compression,
                                     ignore_type=_ignore_type):
                                 logger.warning("OK")  # pragma: no cover
-                                    
+
                                 del role_constructs1[key1]
                                 key1_to_key0[key1] = key0
                                 matched_construct = True
@@ -885,7 +885,7 @@ class Constructs(core.Constructs):
 
         if _return_axis_map:
             return axis0_to_axis1
-        
+
         # ------------------------------------------------------------
         # Constructs with no arrays
         # ------------------------------------------------------------
@@ -900,88 +900,88 @@ class Constructs(core.Constructs):
 
         # ------------------------------------------------------------
         # Still here? Then the two objects are equal
-        # ------------------------------------------------------------     
+        # ------------------------------------------------------------
         return True
 
     def filter_by_axis(self, mode=None, *axes):
         '''Select metadata constructs by axes spanned by their data.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_data`, `filter_by_key`, `filter_by_measure`,
                  `filter_by_method`, `filter_by_identity`,
                  `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_property`, `filter_by_type`,
                  `filters_applied`, `inverse_filter`, `unfilter`
-    
+
     :Parameters:
-    
+
         mode: `str`
             Define the relationship between the given domain axes and the
             constructs' data.
-    
+
             ==========  ==================================================
             *mode*      Description
             ==========  ==================================================
-            ``'and'``   A construct is selected if it spans *all* of the 
+            ``'and'``   A construct is selected if it spans *all* of the
                         given domain axes, *and possibly others*.
-    
+
             ``'or'``    A construct is selected if it spans *any* of the
                         domain axes, *and possibly others*.
-           
-            ``exact``   A construct is selected if it spans *all* of the 
+
+            ``exact``   A construct is selected if it spans *all* of the
                         given domain axes, *and no others*.
-           
+
             ``subset``  A construct is selected if it spans *a subset* of
                         the given domain axes, *and no others*.
             ==========  ==================================================
-    
+
         axes: optional
             Select the constructs whose data spans particular domain axis
             constructs.
-    
+
             A domain axis construct is identified by its construct key
             (e.g. ``'domainaxis1'``).
-    
+
             If no axes are provided then all constructs that do or could
             have data, spanning any domain axes constructs, are selected.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     Select constructs whose data spans the "domainaxis1" domain axis
     construct:
-    
+
     >>> d = c.filter_by_axis('and', 'domainaxis1')
-    
+
     Select constructs whose data does not span the "domainaxis2" domain
     axis construct:
-    
+
     >>> d = c.filter_by_axis('and', 'domainaxis2').inverse_filter()
-    
+
     Select constructs whose data spans the "domainaxis1", but not the
     "domainaxis2" domain axis constructs:
-    
+
     >>> d = c.filter_by_axis('and', 'domainaxis1')
     >>> d = d.filter_by_axis('and', 'domainaxis2')
     >>> d  = d.inverse_filter(1)
-    
+
     Select constructs whose data spans the "domainaxis1" or the
     "domainaxis2" domain axis constructs:
-    
+
     >>> d = c.filter_by_axis('or', 'domainaxis1', 'domainaxis2')
 
-        '''       
+        '''
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_axis': (mode, axes)},)
-        
+
         # Parse the mode parameter
         _and      = False
         _or       = False
@@ -991,7 +991,7 @@ class Constructs(core.Constructs):
 
         if not axes and mode is None:
             mode = 'and'
-        
+
         if mode == 'and':
             _and = True
         elif mode == 'or':
@@ -1004,35 +1004,35 @@ class Constructs(core.Constructs):
             _subset = True
  #       elif mode == 'superset':
  #           _superset = True
-        else:    
+        else:
             raise ValueError(
                 "mode parameter must be one of 'and', 'or', 'exact', subset'")
-        
+
         data_constructs = self.filter_by_data()
         constructs_data_axes = self.data_axes()
 
         axes = set(axes)
-                    
-        if not axes:            
+
+        if not axes:
             for cid in tuple(out):
                 if cid not in data_constructs:
                     out._pop(cid)
             # --- End: for
-            
+
             return out
-        
+
         # Still here?
         for cid in tuple(out):
             if cid not in data_constructs:
                 out._pop(cid)
                 continue
-                
+
             x = constructs_data_axes.get(cid)
             if x is None:
                 # This construct does not have data axes
                 out._pop(cid)
                 continue
-            
+
             ok = True
             if _exact:
                 if set(x) != axes:
@@ -1057,7 +1057,7 @@ class Constructs(core.Constructs):
                 # This construct ..
                 out._pop(cid)
         # --- End: for
-        
+
         return out
 
     def filter_by_data(self):
@@ -1067,39 +1067,39 @@ class Constructs(core.Constructs):
     rather by whether the construct supports the inclusion of
     data. For example, constructs selected by this method will all
     have a `!get_data` method.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
                  `filter_by_method`, `filter_by_identity`,
                  `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_property`, `filter_by_type`,
                  `filters_applied`, `inverse_filter`, `unfilter`
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     Select constructs that could contain data:
-    
+
     >>> d = c.filter_by_data()
 
-        '''       
+        '''
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_data': ()},)
-        
+
         for cid in tuple(out):
             if out._construct_type[cid] not in self._array_constructs:
                 # This construct can not have data
                 out._pop(cid)
         # --- End: for
-                
+
         return out
 
     def filter_by_identity(self, *identities):
@@ -1107,85 +1107,85 @@ class Constructs(core.Constructs):
 
     Calling a `Constructs` instance selects metadata constructs by
     identity and is an alias for the `filter_by_identity` method.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_property`, `filter_by_type`,
                  `filters_applied`, `inverse_filter`, `unfilter`
-    
+
     :Parameters:
-    
+
         identities: optional
             Select constructs that have any of the given identities.
-    
+
             An identity is specified by a string (e.g. ``'latitude'``,
             ``'long_name=time'``, etc.); or a compiled regular
             expression (e.g. ``re.compile('^atmosphere')``), for which
             all constructs whose identities match (via `re.search`)
             are selected.
-    
+
             If no identities are provided then all constructs are
             selected.
-    
+
             Each construct has a number of identities, and is selected
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``x`` has
             four identities:
-    
+
                >>> x.identities()
                ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
-    
+
             In addition, each construct also has an identity based its
             construct key (e.g. ``'key%dimensioncoordinate2'``)
-    
+
             Note that in the output of a `print` call or `!dump`
             method, a construct is always described by one of its
             identities, and so this description may always be used as
             an *identities* argument.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     Select constructs that have a ``standard_name`` property of
     'latitude':
-    
+
     >>> d = c.filter_by_identity('latitude')
-    
+
     Select constructs that have a ``long_name`` property of 'Height':
-    
+
     >>> d = c.filter_by_identity('long_name=Height')
-    
+
     Select constructs that have a ``standard_name`` property of
     'latitude' or a "foo" property of 'bar':
-    
+
     >>> d = c.filter_by_identity('latitude', 'foo=bar')
-    
+
     Select constructs that have a netCDF variable name of 'time':
-    
+
     >>> d = c.filter_by_identity('ncvar%time')
 
         '''
         out = self.shallow_copy()
-        
+
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_identity': identities},)
-        
+
         # Return all constructs if no identities have been provided
         if not identities:
             return out
-        
+
         for cid, construct in tuple(out.items()):
             ok = False
-            for value0 in identities:          
+            for value0 in identities:
                 for value1 in ['key%'+cid] + construct.identities():
                     ok = self._matching_values(value0, construct, value1)
                     if ok:
@@ -1207,39 +1207,39 @@ class Constructs(core.Constructs):
         '''Select metadata constructs by key.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_identity`, `filter_by_naxes`,
                  `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_property`, `filter_by_type`,
                  `filters_applied`, `inverse_filter`, `unfilter`
-    
+
     :Parameters:
-    
+
         keys: optional
             Select constructs that have any of the given construct
             keys.
-    
+
             A key is specified by a string
             (e.g. ``'fieldancillary0'``).
-    
+
             If no keys are provided then all constructs are selected.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     Select the construct with key 'domainancillary0':
-    
+
     >>> d = c.filter_by_key('domainancillary0')
-    
+
     Select the constructs with keys 'dimensioncoordinate1' or
     'fieldancillary0':
-    
+
     >>> d = c.filter_by_key('dimensioncoordinate1', 'fieldancillary0')
 
         '''
@@ -1248,10 +1248,10 @@ class Constructs(core.Constructs):
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_key': keys},)
-        
+
         if not keys:
             return out
-        
+
         for cid in tuple(out):
             if cid not in keys:
                 out._pop(cid)
@@ -1263,64 +1263,64 @@ class Constructs(core.Constructs):
         '''Select cell measure constructs by measure.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_method`, `filter_by_identity`,
                  `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_property`, `filter_by_type`,
                  `filters_applied`, `inverse_filter`, `unfilter`
-    
+
     :Parameters:
-    
+
         measures: optional
             Select cell measure constructs that have any of the given
             measure values.
-    
+
             A measure is specified by a string (e.g. ``'area'``); or a
             compiled regular expression (e.g. ``re.compile('^a')``),
             for which all constructs whose measures match (via
             `re.search`) are selected.
-    
+
             If no measures are provided then all cell measure
             constructs are selected.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected cell measure constructs and their construct
             keys.
-            
+
     **Examples:**
-    
+
     >>> print(t.constructs.filter_by_type('measure'))
     Constructs:
     {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
      'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
-    
+
     Select cell measure constructs that have a measure of 'area':
-    
+
     >>> print(c.filter_by_measure('area'))
     Constructs:
     {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
-    
+
     Select cell measure constructs that have a measure of 'area' or
     'volume':
-    
+
     >>> print(c.filter_by_measure('area', 'volume'))
     Constructs:
     {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
      'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
-    
+
     Select cell measure constructs that have a measure of start with
     the letter "a" or "v":
-    
+
     >>> print(c.filter_by_measure(re.compile('^a|v')))
     Constructs:
     {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
      'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
-    
+
     Select cell measure constructs that have a measure of any value:
-    
+
     >>> print(c.filer_by_measure())
     Constructs:
     {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
@@ -1332,7 +1332,7 @@ class Constructs(core.Constructs):
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_measure': measures},)
-        
+
         for cid, construct in tuple(out.items()):
             try:
                 get_measure = construct.get_measure
@@ -1353,76 +1353,76 @@ class Constructs(core.Constructs):
                 if ok:
                     break
             # --- End: for
-            
+
             if not ok:
                 # This construct does not match any of the measures
                 out._pop(cid)
         # --- End: for
-        
+
         return out
 
     def filter_by_method(self, *methods):
         '''Select cell method constructs by method.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_identity`,
                  `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_property`, `filter_by_type`,
                  `filters_applied`, `inverse_filter`, `unfilter`
-    
+
     :Parameters:
-    
+
         methods: optional
             Select cell method constructs that have any of the given
             methods.
-    
+
             A method is specified by a string (e.g. ``'mean'``); or a
             compiled regular expression (e.g. ``re.compile('^m')``),
             for which all constructs whose methods match (via
             `re.search`) are selected.
-    
+
             If no methods are provided then all cell method constructs
             are selected.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected cell method constructs and their construct
             keys.
-    
+
     **Examples:**
-    
+
     >>> print(c.constructs.filter_by_type('cell_method'))
     Constructs:
     {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
      'cellmethod1': <CellMethod: domainaxis3: maximum>}
-    
+
     Select cell method constructs that have a method of 'mean':
-    
+
     >>> print(c.filter_by_method('mean'))
     Constructs:
     {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>}
-    
+
     Select cell method constructs that have a method of 'mean' or
     'maximum':
-    
+
     >>> print(c.filter_by_method('mean', 'maximum'))
     Constructs:
     {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
      'cellmethod1': <CellMethod: domainaxis3: maximum>}
-    
+
     Select cell method constructs that have a method that contain the
     letter 'x':
-    
+
     >>> import re
     >>> print(c.filter_by_method(re.compile('x')))
     Constructs:
     {'cellmethod1': <CellMethod: domainaxis3: maximum>}
-    
+
     Select cell method constructs that have a method of any value:
-    
+
     >>> print(c.filter_by_method())
     Constructs:
     {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
@@ -1430,11 +1430,11 @@ class Constructs(core.Constructs):
 
         '''
         out = self.shallow_copy()
-        
+
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_method': methods},)
-        
+
         for cid, construct in tuple(out.items()):
             try:
                 get_method = construct.get_method
@@ -1447,7 +1447,7 @@ class Constructs(core.Constructs):
 #                if not construct.has_method():
 #                    out._pop(cid)
                 continue
-            
+
             ok = False
             for value0 in methods:
                 value1 = get_method(None)
@@ -1455,67 +1455,67 @@ class Constructs(core.Constructs):
                 if ok:
                     break
             # --- End: for
-            
+
             if not ok:
                 # This construct does not match any of the methods
                 out._pop(cid)
         # --- End: for
-        
+
         return out
 
     def filter_by_naxes(self, *naxes):
         '''Select metadata constructs by the number of domain axis constructs
     spanned by their data.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_identity`, `filter_by_ncdim`,
                  `filter_by_ncvar`, `filter_by_property`,
                  `filter_by_type`, `filters_applied`, `inverse_filter`,
                  `unfilter`
-    
+
     :Parameters:
-    
+
         naxes: optional
             Select constructs whose data spans a particular number of
             domain axis constructs.
-    
+
             A number of domain axis constructs is given by an `int`.
-    
+
             If no numbers are provided then all constructs that do or
             could have data, spanning any domain axes constructs, are
             selected.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected domain axis constructs and their construct
             keys.
-    
+
     **Examples:**
-    
+
     Select constructs that contain data that spans two domain axis
     constructs:
-    
+
     >>> d = c.filter_by_naxes(2)
-    
+
     Select constructs that contain data that spans one or two domain
     axis constructs:
-    
+
     >>> d = c.filter_by_ncdim(1, 2)
 
         '''
         out = self.shallow_copy()
-        
+
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_naxes': naxes},)
-            
+
         data_constructs = self.filter_by_data()
         constructs_data_axes = self.data_axes()
-        
+
         for key in tuple(out):
             if key not in data_constructs:
                 out._pop(key)
@@ -1539,61 +1539,61 @@ class Constructs(core.Constructs):
                 # This construct does not have the right number of axes
                 out._pop(key)
         # --- End: for
-        
+
         return out
 
     def filter_by_ncdim(self, *ncdims):
         '''Select domain axis constructs by netCDF dimension name.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_naxes`, `filter_by_identity`,
                  `filter_by_ncvar`, `filter_by_property`,
                  `filter_by_type`, `filters_applied`, `inverse_filter`,
                  `unfilter`
-    
+
     :Parameters:
-    
+
         ncdims: optional
             Select domain axis constructs that have any of the given
             netCDF dimension names.
-    
+
             A netCDF dimension name is specified by a string
             (e.g. ``'time'``); or a compiled regular expression
             (e.g. ``re.compile('^lat')``), for which all constructs
             whose netCDF dimension names match (via `re.search`) are
             selected.
-    
+
             If no netCDF dimension names are provided then all domain
             axis constructs are selected.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected domain axis constructs and their construct
             keys.
-    
+
     **Examples:**
-    
+
     Select the domain axis constructs with netCDF dimension name
     'time':
-    
+
     >>> d = c.filter_by_ncdim('time')
-    
+
     Select the domain axis constructs with netCDF dimension name
     'time' or 'lat':
-    
+
     >>> d = c.filter_by_ncdim('time', 'lat')
 
         '''
         out = self.shallow_copy()
-        
+
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_ncdim': ncdims},)
-        
+
         for cid, construct in tuple(out.items()):
             try:
                 nc_get_dimension = construct.nc_get_dimension
@@ -1602,13 +1602,13 @@ class Constructs(core.Constructs):
                 # method
                 out._pop(cid)
                 continue
-            
+
             if not ncdims:
 #                if not construct.nc_has_dimension():
 #                    out._pop(cid)
-                    
+
                 continue
-            
+
             ok = False
             for value0 in ncdims:
                 value1 = nc_get_dimension(None)
@@ -1616,66 +1616,66 @@ class Constructs(core.Constructs):
                 if ok:
                     break
             # --- End: for
-            
+
             if not ok:
                 # This construct does not match any of the netCDF
                 # dimension names
                 out._pop(cid)
         # --- End: for
-        
+
         return out
 
     def filter_by_ncvar(self, *ncvars):
         '''Select domain axis constructs by netCDF variable name.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_naxes`, `filter_by_identity`,
                  `filter_by_ncdim`, `filter_by_property`,
                  `filter_by_type`, `filters_applied`, `inverse_filter`,
                  `unfilter`
-    
+
     :Parameters:
-    
+
         ncvars: optional
             Select constructs that have any of the given netCDF
             variable names.
-    
+
             A netCDF variable name is specified by a string
             (e.g. ``'time'``); or a compiled regular expression
             (e.g. ``re.compile('^lat')``), for which all constructs
             whose netCDF variable names match (via `re.search`) are
             selected.
-    
+
             If no netCDF variable names are provided then all
             constructs that do or could have a netCDF variable name,
             with any value, are selected.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     Select the constructs with netCDF variable name 'time':
-    
+
     >>> d = c.filter_by_ncvar('time')
-    
+
     Select the constructs with netCDF variable name 'time' or 'lat':
-    
+
     >>> d = c.filter_by_ncvar('time', 'lat')
 
         '''
         out = self.shallow_copy()
-        
+
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_ncvar': ncvars},)
-        
-        for cid, construct in tuple(out.items()):            
+
+        for cid, construct in tuple(out.items()):
             try:
                 nc_get_variable = construct.nc_get_variable
             except AttributeError:
@@ -1686,7 +1686,7 @@ class Constructs(core.Constructs):
 
             if not ncvars:
 #                if not construct.nc_has_variable():
-#                    out._pop(cid)                   
+#                    out._pop(cid)
                 continue
 
             ok = False
@@ -1702,88 +1702,88 @@ class Constructs(core.Constructs):
                 # variable names
                 out._pop(cid)
         # --- End: for
-        
+
         return out
 
     def _matching_values(self, value0, construct, value1):
-        if value1 is not None:                        
+        if value1 is not None:
             try:
                 result = value0.search(value1)
             except (AttributeError, TypeError):
                 result = construct._equals(value1, value0)
-                
+
             if result:
                 # This construct matches this property
                 return True
 
         return False
-    
+
     def filter_by_property(self, *mode, **properties):
         '''Select metadata constructs by property.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_naxes`, `filter_by_identity`,
                  `filter_by_ncdim`, `filter_by_ncvar`, `filter_by_type`,
                  `filters_applied`, `inverse_filter`, `unfilter`
-    
+
     :Parameters:
-            
+
         mode: optional
             Define the behaviour when multiple properties are
             provided.
-    
+
             By default (or if the *mode* parameter is ``'and'``) a
             construct is selected if it matches all of the given
             properties, but if the *mode* parameter is ``'or'`` then a
             construct will be selected when at least one of its
             properties matches.
-    
+
         properties:  optional
             Select constructs that have properties with the given
             values.
-    
+
             By default a construct is selected if it matches all of
             the given properties, but it may alternatively be selected
             when at least one of its properties matches (see the
             *mode* positional parameter).
-    
+
             A property value is given by a keyword parameter of the
             property name. The value may be a scalar or vector
             (e.g. ``'latitude'``, ``4``, ``['foo', 'bar']``); or a
             compiled regular expression
             (e.g. ``re.compile('^ocean')``), for which all constructs
             whose methods match (via `re.search`) are selected.
-    
+
             If no properties are provided then all constructs that do
             or could have properties, with any values, are selected.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     Select constructs that have a ``standard_name`` of 'latitude':
-    
+
     >>> d = c.filter_by_property(standard_name='latitude')
-    
+
     Select constructs that have a ``long_name`` of 'height' *and*
     ``units`` of 'm':
-    
+
     >>> d = c.filter_by_property(long_name='height', units='m')
-    
+
     Select constructs that have a ``long_name`` of 'height' *or* a
     ``foo`` of 'bar':
-    
+
     >>> d = c.filter_by_property('or', long_name='height', foo='bar')
-    
+
     Select constructs that have a ``standard_name`` which contains
     start with the string 'air':
-    
+
     >>> import re
     >>> d = c.filter_by_property(standard_name=re.compile('^air'))
 
@@ -1793,12 +1793,12 @@ class Constructs(core.Constructs):
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_property': (mode, properties)},)
-        
+
         _or = False
         if mode:
             if len(mode) > 1:
                 raise ValueError("Can provide at most one positional argument")
-            
+
             x = mode[0]
             if x == 'or':
                 _or = True
@@ -1817,7 +1817,7 @@ class Constructs(core.Constructs):
 
             if not properties:
 #                if not construct.properties():
-#                    out._pop(cid)                    
+#                    out._pop(cid)
                 continue
 
             ok = True
@@ -1831,7 +1831,7 @@ class Constructs(core.Constructs):
                 elif not ok:
                     break
             # --- End: for
-            
+
             if not ok:
                 # This construct does not match any of the sets of
                 # properties
@@ -1844,49 +1844,49 @@ class Constructs(core.Constructs):
         '''Select domain axis constructs by size.
 
     .. versionadded:: 1.7.3
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_naxes`, `filter_by_identity`,
                  `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_property`, `filter_by_type`,
                  `filters_applied`, `inverse_filter`, `unfilter`
-    
+
     :Parameters:
-            
+
         sizes: optional
             Select domain axis constructs that have any of the given
             sizes.
-    
+
             A size is specified by an `int`.
-    
+
             If no sizes are provided then all domain axis constructs
             are selected.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected domain axis constructs and their construct
             keys.
-            
+
     **Examples:**
-    
+
     Select domain axis constructs that have a size of 1:
-    
+
     >>> d = c.filter_by_size(1)
-    
+
     Select domain axis constructs that have a size of 1 or 96:
-    
+
     >>> d = c.filter_by_size(1, 96)
 
         '''
         out = self.shallow_copy()
-        
+
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_size': sizes},)
-        
-        for cid, construct in tuple(out.items()):            
+
+        for cid, construct in tuple(out.items()):
             try:
                 get_size = construct.get_size
             except AttributeError:
@@ -1906,32 +1906,32 @@ class Constructs(core.Constructs):
                 if ok:
                     break
             # --- End: for
-            
+
             if not ok:
                 # This construct does not match any of the sizes
                 out._pop(cid)
         # --- End: for
-        
+
         return out
 
     def filter_by_type(self, *types):
         '''Select metadata constructs by type.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_naxes`, `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_identity`, `filter_by_property`,
                  `filters_applied`, `inverse_filter`, `unfilter`
-    
+
     :Parameters:
-    
-        types: optional 
+
+        types: optional
             Select constructs that have are of any of the given types.
-    
+
             A type is specified by one of the following strings:
-    
+
             ==========================  ================================
             *type*                      Construct selected
             ==========================  ================================
@@ -1944,22 +1944,22 @@ class Constructs(core.Constructs):
             ``'cell_method'``           Cell method constructs
             ``'field_ancillary'``       Field ancillary constructs
             ==========================  ================================
-    
+
             If no types are provided then all constructs are selected.
-    
+
     :Returns:
-    
+
         `Constructs`
             The selected constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     Select dimension coordinate constructs:
-    
+
     >>> d = c.filter_by_type('dimension_coordinate')
-    
+
     Select dimension coordinate and field ancillary constructs:
-    
+
     >>> d = c.filter_by_type('dimension_coordinate', 'field_ancillary')
 
         '''
@@ -1968,8 +1968,8 @@ class Constructs(core.Constructs):
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() \
                                + ({'filter_by_type': types},)
-        
-        return out        
+
+        return out
 
     def filters_applied(self):
         '''A history of filters that have been applied.
@@ -1980,26 +1980,26 @@ class Constructs(core.Constructs):
     used, with a value that gives the arguments that were passed to
     the call of that method. If no filters have been applied then the
     tuple is empty.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_naxes`, `filter_by_identity`,
                  `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_property`, `filter_by_type`,
                  `inverse_filter`, `unfilter`
-    
+
     :Returns:
-    
+
         `tuple`
             The history of filters that have been applied, ordered
             from first to last. If no filters have been applied then
             the tuple is empty.
-    
-    
+
+
     **Examples:**
-    
+
     >>> print(c)
     {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
      'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
@@ -2042,26 +2042,26 @@ class Constructs(core.Constructs):
     that was used, with a value that gives the arguments that were
     passed to the call of that method. If no filters have been applied
     then the tuple is empty.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_naxes`, `filter_by_identity`,
                  `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_property`, `filter_by_type`,
                  `inverse_filter`, `unfilter`
-    
+
     :Returns:
-    
+
         `tuple`
             The removed history of filters that have been applied,
             ordered from first to last. If no filters have been
             applied then the tuple is empty.
-    
-    
+
+
     **Examples:**
-    
+
     >>> c.filters_applied()
     ({'filter_by_naxes': (3, 1)},
      {'filter_by_identity': ('grid_longitude',)})
@@ -2084,27 +2084,27 @@ class Constructs(core.Constructs):
     *not* selected by all previously applied filters. If no filters
     have been applied, then this will result in empty `Constructs`
     instance being returned.
-    
+
     If the *depth* parameter is set to *N* then the inverse is
     relative to the constructs selected by the *N*\ -th most recently
     applied filter.
-    
+
     A history of the filters that have been applied is returned in a
     `tuple` by the `filters_applied` method. The last element of the
     tuple describes the last filter applied. If no filters have been
     applied then the tuple is empty.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_naxes`, `filter_by_identity`,
                  `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_property`, `filter_by_type`,
                  `filters_applied`, `unfilter`
-    
+
     :Parameters:
-    
+
          depth: `int`, optional
             If set to ``N`` then the inverse is relative to the
             constructs selected by the ``N``-th most recently applied
@@ -2112,17 +2112,17 @@ class Constructs(core.Constructs):
             constructs selected by all previously applied
             filters. ``N`` may be larger than the total number of
             filters applied, which results in the default bahaviour.
-    
+
     :Returns:
-    
+
         `Constructs`
             The constructs, and their construct keys, that were not
             selected by the last filter applied. If no filtering has
             been applied, or the last filter was an inverse filter,
             then an empty `Constructs` instance is returned.
-    
+
     **Examples:**
-    
+
     >>> print(c)
     Constructs:
     {'cellmethod0': <CellMethod: area: mean>,
@@ -2172,7 +2172,7 @@ class Constructs(core.Constructs):
      'domainaxis2': <DomainAxis: size(1)>}
 
         '''
-        out = self.unfilter(depth=depth) 
+        out = self.unfilter(depth=depth)
 
         if depth:
             if 'inverse_filter' in self.filters_applied()[-1] :
@@ -2189,7 +2189,7 @@ class Constructs(core.Constructs):
 
                 return out
         # --- End: if
-        
+
         for key in self:
             out._pop(key)
 
@@ -2197,22 +2197,22 @@ class Constructs(core.Constructs):
                                + ({'inverse_filter': ()},)
 
         out._prefiltered = self.shallow_copy()
-        
+
         return out
 
     def shallow_copy(self, _ignore=None):
         '''Return a shallow copy.
-    
+
     ``f.shallow_copy()`` is equivalent to ``copy.copy(f)``.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Returns:
-    
+
             The shallow copy.
-    
+
     **Examples:**
-    
+
     >>> g = f.shallow_copy()
 
         '''
@@ -2222,7 +2222,7 @@ class Constructs(core.Constructs):
         if prefiltered is not None:
             out._prefiltered = prefiltered.shallow_copy()
             out._filters_applied = self._filters_applied
-           
+
         return out
 
     def unfilter(self, depth=None):
@@ -2230,43 +2230,43 @@ class Constructs(core.Constructs):
 
     By default, the unfiltered constructs are those that existed
     before all previously applied filters.
-    
+
     If the *depth* parameter is set to *N* then the unfiltered
     constructs are those that existed before the *N*\ -th most
     recently applied filter.
-    
+
     A history of the filters that have been applied is returned in a
     `tuple` by the `filters_applied` method. The last element of the
     tuple describes the last filter applied. If no filters have been
     applied then the tuple is empty.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
                  `filter_by_naxes`, `filter_by_identity`,
                  `filter_by_ncdim`, `filter_by_ncvar`,
                  `filter_by_property`, `filter_by_type`,
                  `filters_applied`, `inverse_filter`
-    
+
     :Parameters:
-    
+
          depth: `int`, optional
             If set to ``N`` then return the constructs selected by the
             ``N``-th most recently applied filter. By default the
             constructs from before all previously applied filters are
             returned. ``N`` may be larger than the total number of
             filters applied, which results in the default bahaviour.
-    
+
     :Returns:
-    
+
         `Constructs`
             The constructs, and their construct keys, that existed
             before the last filter was applied. If no filters have
             been applied then all of the constructs are returned.
-    
+
     **Examples:**
-    
+
     >>> print(c)
     Constructs:
     {'cellmethod0': <CellMethod: area: mean>,
@@ -2299,10 +2299,10 @@ class Constructs(core.Constructs):
     True
     >>> e.unfilter(2).equals(c)
     True
-    
+
     If no filters have been applied then the unfiltered constructs are
     unchanged:
-    
+
     >>> c.filters_applied()
     ()
     >>> c.unfilter().equals(c)
@@ -2310,7 +2310,7 @@ class Constructs(core.Constructs):
 
         '''
         out = self
-        
+
         if depth is None:
             while True:
                 prefiltered = getattr(out, '_prefiltered', None)
@@ -2326,7 +2326,7 @@ class Constructs(core.Constructs):
                 else:
                     break
         # --- End: if
-        
+
         return out.shallow_copy()
 
 # --- End: class

@@ -24,7 +24,7 @@ from .constants import CONSTANTS, valid_log_levels, numeric_log_level_map
 def ATOL(*atol):
     '''The tolerance on absolute differences when testing for numerically
     tolerant equality.
-    
+
     Two real numbers ``x`` and ``y`` are considered equal if
     ``abs(x-y) <= atol + rtol*abs(y)``, where atol (the tolerance on
     absolute differences) and rtol (the tolerance on relative
@@ -32,25 +32,25 @@ def ATOL(*atol):
     default both are set to the system epsilon (the difference between
     1 and the least value greater than 1 that is representable as a
     float).
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `RTOL`
-    
+
     :Parameters:
-    
+
         atol: `float`, optional
             The new value of absolute tolerance. The default is to not
             change the current value.
-    
+
     :Returns:
-    
+
         `float`
             The value prior to the change, or the current value if no
             new value was specified.
-    
+
     **Examples:**
-    
+
     >>> ATOL()
     2.220446049250313e-16
     >>> old = ATOL(1e-10)
@@ -68,10 +68,10 @@ def ATOL(*atol):
 
     return old
 
-def RTOL(*rtol):    
+def RTOL(*rtol):
     '''The tolerance on relative differences when testing for numerically
     tolerant equality.
-    
+
     Two real numbers ``x`` and ``y`` are considered equal if
     ``abs(x-y) <= atol + rtol*abs(y)``, where atol (the tolerance on
     absolute differences) and rtol (the tolerance on relative
@@ -79,25 +79,25 @@ def RTOL(*rtol):
     default both are set to the system epsilon (the difference between
     1 and the least value greater than 1 that is representable as a
     float).
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `ATOL`
-    
+
     :Parameters:
-    
+
         rtol: `float`, optional
             The new value of relative tolerance. The default is to not
             change the current value.
-    
+
     :Returns:
-    
+
         `float`
             The value prior to the change, or the current value if no
             new value was specified.
-    
+
     **Examples:**
-    
+
     >>> RTOL()
     2.220446049250313e-16
     >>> old = RTOL(1e-10)
@@ -133,9 +133,9 @@ def LOG_LEVEL(*log_level):
     The default level is 'WARNING' (`1`).
 
     .. versionadded:: 1.8.4
-    
+
     :Parameters:
-    
+
         log_level: `str` ot `int`, optional
             The new value of the minimal log severity level. This can be
             specified either as a string equal (ignoring case) to
@@ -157,7 +157,7 @@ def LOG_LEVEL(*log_level):
             always be returned.
 
     **Examples:**
-    
+
     >>> LOG_LEVEL()  # get the current value
     'WARNING'
     >>> LOG_LEVEL('INFO')  # change the value to 'INFO'
@@ -250,28 +250,28 @@ def _disable_logging(at_level=None):
 
 def environment(display=True, paths=True):
     '''Return the names, versions and paths of all dependencies.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
+
         display: `bool`, optional
             If False then return the description of the environment as
             a string. By default the description is printed.
-    
+
         paths: `bool`, optional
             If False then do not output the locations of each package.
 
     :Returns:
-    
+
         `None` or `list`
             If *display* is True then the description of the
             environment is printed and `None` is returned. Otherwise
             the description is returned as in a `list`.
-    
+
     **Examples:**
 
-    >>> environment()                                                                  
+    >>> environment()
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
     HDF5 library: 1.10.2
     netcdf library: 4.6.1
@@ -282,8 +282,8 @@ def environment(display=True, paths=True):
     cftime: 1.1.0 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
     numpy: 1.16.2 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
     cfdm: 1.8.0
-    
-    >>> environment(paths=False)                                                       
+
+    >>> environment(paths=False)
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
     HDF5 library: 1.10.2
     netcdf library: 4.6.1
@@ -304,7 +304,7 @@ def environment(display=True, paths=True):
     out.append('python: ' + str(platform.python_version()))
     if paths:
         out[-1] += ' ' + str(sys.executable)
-        
+
     out.append('future: ' + str(future.__version__))
     if paths:
         out[-1] += ' ' + str(os.path.abspath(future.__file__))
@@ -316,7 +316,7 @@ def environment(display=True, paths=True):
     out.append('cftime: ' + str(cftime.__version__))
     if paths:
         out[-1] += ' ' + str(os.path.abspath(cftime.__file__))
-        
+
     out.append('numpy: ' + str(numpy.__version__))
     if paths:
         out[-1] += ' ' + str(os.path.abspath(numpy.__file__))
@@ -329,24 +329,24 @@ def environment(display=True, paths=True):
         print('\n'.join(out))
     else:
         return out
-    
+
 def CF():
     '''The version of the CF conventions.
 
     This indicates which version of the CF conventions are represented
     by this release of the cfdm package, and therefore the version can
     not be changed.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Returns:
-    
+
         `str`
             The version of the CF conventions represented by this
             release of the cfdm package.
-    
+
     **Examples:**
-    
+
     >>> CF()
     '1.8'
 

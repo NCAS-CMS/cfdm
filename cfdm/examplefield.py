@@ -50,7 +50,7 @@ def example_field(n, _implementation=_implementation):
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
-    
+
     :Returns:
 
         `Field`
@@ -181,15 +181,15 @@ def example_field(n, _implementation=_implementation):
     CellMethod          = _implementation.get_class('CellMethod')
     CoordinateReference = _implementation.get_class('CoordinateReference')
     DimensionCoordinate = _implementation.get_class('DimensionCoordinate')
-    DomainAncillary     = _implementation.get_class('DomainAncillary')  
-    DomainAxis          = _implementation.get_class('DomainAxis')   
-    FieldAncillary      = _implementation.get_class('FieldAncillary')   
-    Field               = _implementation.get_class('Field')    
+    DomainAncillary     = _implementation.get_class('DomainAncillary')
+    DomainAxis          = _implementation.get_class('DomainAxis')
+    FieldAncillary      = _implementation.get_class('FieldAncillary')
+    Field               = _implementation.get_class('Field')
 
     Bounds              = _implementation.get_class('Bounds')
     InteriorRing        = _implementation.get_class('InteriorRing')
 
-    Data                = _implementation.get_class('Data')    
+    Data                = _implementation.get_class('Data')
 
     if n == 0:
         f = Field()
@@ -787,25 +787,25 @@ def example_field(n, _implementation=_implementation):
         d = Data([[1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0]], dtype='f8')
         f.set_data(d)
         f.nc_set_variable('pr')
-        
+
         # netCDF global attributes
         f.nc_set_global_attributes({'Conventions': None, 'featureType': None, 'comment': None})
-        
+
         # domain_axis: ncdim%instance
         c = DomainAxis()
         c.set_size(2)
         c.nc_set_dimension('instance')
         f.set_construct(c, key='domainaxis0', copy=False)
-        
+
         # domain_axis: ncdim%time
         c = DomainAxis()
         c.set_size(4)
         c.nc_set_dimension('time')
         f.set_construct(c, key='domainaxis1', copy=False)
-        
+
         # field data axes
         f.set_data_axes(('domainaxis0', 'domainaxis1'))
-        
+
         # auxiliary_coordinate: latitude
         c = AuxiliaryCoordinate()
         c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
@@ -825,7 +825,7 @@ def example_field(n, _implementation=_implementation):
         i.nc_set_variable('interior_ring')
         c.set_interior_ring(i)
         f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate0', copy=False)
-        
+
         # auxiliary_coordinate: longitude
         c = AuxiliaryCoordinate()
         c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
@@ -845,7 +845,7 @@ def example_field(n, _implementation=_implementation):
         i.nc_set_variable('interior_ring')
         c.set_interior_ring(i)
         f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate1', copy=False)
-        
+
         # auxiliary_coordinate: cf_role=timeseries_id
         c = AuxiliaryCoordinate()
         c.set_properties({'cf_role': 'timeseries_id'})
@@ -853,7 +853,7 @@ def example_field(n, _implementation=_implementation):
         c.set_data(d)
         c.nc_set_variable('instance_id')
         f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate2', copy=False)
-        
+
         # auxiliary_coordinate: Z
         c = AuxiliaryCoordinate()
         b = Bounds()
@@ -868,7 +868,7 @@ def example_field(n, _implementation=_implementation):
         i.nc_set_variable('interior_ring')
         c.set_interior_ring(i)
         f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate3', copy=False)
-        
+
         # dimension_coordinate: time
         c = DimensionCoordinate()
         c.set_properties({'standard_name': 'time', 'units': 'days since 2000-01-01'})
@@ -883,7 +883,7 @@ def example_field(n, _implementation=_implementation):
         c.set_bounds(b)
 
         f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate0', copy=False)
-        
+
         # coordinate_reference
         c = CoordinateReference()
         c.nc_set_variable('datum')
@@ -901,34 +901,34 @@ def example_field(n, _implementation=_implementation):
         d = Data([[[[12.62, 13.23, 13.75, 14.13, 14.28], [12.46, 12.9, 13.46, 13.71, 14.03], [12.22, 12.57, 12.91, 13.19, 13.8], [11.83, 12.25, 12.6, 13.09, 13.63]]], [[[3.6, 3.3, 3.13, 3.21, 3.67], [3.69, 3.53, 3.91, 4.5, 5.63], [4.64, 5.03, 5.8, 6.79, 8.17], [6.7, 7.42, 8.23, 9.32, 10.5]]], [[[10.42, 10.81, 11.03, 10.96, 10.6], [10.59, 10.95, 11.36, 11.27, 11.08], [10.82, 11.19, 11.43, 11.43, 11.45], [10.93, 11.23, 11.35, 11.58, 11.64]]]], units='m s-1', dtype='f4', fill_value=-1073741824.0)
         f.set_data(d)
         f.nc_set_variable('ua')
-        
+
         # domain_axis: ncdim%t
         c = DomainAxis()
         c.set_size(3)
         c.nc_set_dimension('t')
         f.set_construct(c, key='domainaxis0', copy=False)
-        
+
         # domain_axis: ncdim%z
         c = DomainAxis()
         c.set_size(1)
         c.nc_set_dimension('z')
         f.set_construct(c, key='domainaxis1', copy=False)
-        
+
         # domain_axis: ncdim%y
         c = DomainAxis()
         c.set_size(4)
         c.nc_set_dimension('y')
         f.set_construct(c, key='domainaxis2', copy=False)
-        
+
         # domain_axis: ncdim%x
         c = DomainAxis()
         c.set_size(5)
         c.nc_set_dimension('x')
         f.set_construct(c, key='domainaxis3', copy=False)
-        
+
         # field data axes
         f.set_data_axes(('domainaxis0', 'domainaxis1', 'domainaxis2', 'domainaxis3'))
-        
+
         # auxiliary_coordinate: latitude
         c = AuxiliaryCoordinate()
         c.set_properties({'standard_name': 'latitude', 'units': 'degrees_north'})
@@ -940,7 +940,7 @@ def example_field(n, _implementation=_implementation):
         b.set_data(d)
         c.set_bounds(b)
         f.set_construct(c, axes=('domainaxis2', 'domainaxis3'), key='auxiliarycoordinate0', copy=False)
-        
+
         # auxiliary_coordinate: longitude
         c = AuxiliaryCoordinate()
         c.set_properties({'standard_name': 'longitude', 'units': 'degrees_east'})
@@ -952,7 +952,7 @@ def example_field(n, _implementation=_implementation):
         b.set_data(d)
         c.set_bounds(b)
         f.set_construct(c, axes=('domainaxis2', 'domainaxis3'), key='auxiliarycoordinate1', copy=False)
-        
+
         # dimension_coordinate: time
         c = DimensionCoordinate()
         c.set_properties({'axis': 'T', 'standard_name': 'time', 'units': 'days since 1979-1-1', 'calendar': 'gregorian'})
@@ -964,14 +964,14 @@ def example_field(n, _implementation=_implementation):
         b.set_data(d)
         c.set_bounds(b)
         f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
-        
+
         # dimension_coordinate: air_pressure
         c = DimensionCoordinate()
         c.set_properties({'positive': 'down', 'axis': 'Z', 'standard_name': 'air_pressure', 'units': 'hPa'})
         d = Data([850.0], units='hPa', dtype='f8')
         c.set_data(d)
         f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
-        
+
         # dimension_coordinate: grid_latitude
         c = DimensionCoordinate()
         c.set_properties({'axis': 'Y', 'standard_name': 'grid_latitude', 'units': 'degrees'})
@@ -983,7 +983,7 @@ def example_field(n, _implementation=_implementation):
         b.set_data(d)
         c.set_bounds(b)
         f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
-        
+
         # dimension_coordinate: grid_longitude
         c = DimensionCoordinate()
         c.set_properties({'axis': 'X', 'standard_name': 'grid_longitude', 'units': 'degrees'})
@@ -995,13 +995,13 @@ def example_field(n, _implementation=_implementation):
         b.set_data(d)
         c.set_bounds(b)
         f.set_construct(c, axes=('domainaxis3',), key='dimensioncoordinate3', copy=False)
-        
+
         # cell_method
         c = CellMethod()
         c.set_method('mean')
         c.set_axes(('domainaxis0',))
         f.set_construct(c)
-        
+
         # coordinate_reference
         c = CoordinateReference()
         c.set_coordinates({'dimensioncoordinate3', 'auxiliarycoordinate1', 'auxiliarycoordinate0', 'dimensioncoordinate2'})

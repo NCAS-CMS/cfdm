@@ -17,56 +17,56 @@ class Data(abstract.Container):
         '''**Initialization**
 
     :Parameters:
-    
+
         array: subclass of `Array`
             The array of values. Ignored if the *source* parameter is
             set.
-    
+
         units: `str`, optional
             The physical units of the data. Ignored if the *source*
             parameter is set.
-    
+
             The units may also be set after initialisation with the
             `set_units` method.
-    
+
             *Parameter example:*
               ``units='km hr-1'``
-    
+
             *Parameter example:*
               ``units='days since 2018-12-01'``
-    
+
         calendar: `str`, optional
             The calendar for reference time units. Ignored if the
             *source* parameter is set.
-    
+
             The calendar may also be set after initialisation with the
             `set_calendar` method.
-    
+
             *Parameter example:*
               ``calendar='360_day'``
-            
-        fill_value: optional 
+
+        fill_value: optional
             The fill value of the data. By default, or if set to
             `None`, the `numpy` fill value appropriate to the array's
             data type will be used (see
             `numpy.ma.default_fill_value`). Ignored if the *source*
             parameter is set.
-    
+
             The fill value may also be set after initialisation with
             the `set_fill_value` method.
-    
+
             *Parameter example:*
               ``fill_value=-999.``
-                    
+
         source: *optional*
             Initialize the data, units, calendar and fill value from
             those of *source*.
-            
+
         source: optional
 
             Initialize the array, units, calendar and fill value from
             those of *source*.
-    
+
         copy: `bool`, optional
             If False then do not deep copy input parameters prior to
             initialization. By default arguments are deep copied.
@@ -75,7 +75,7 @@ class Data(abstract.Container):
         super().__init__(source=source)
 
         if source is not None:
-            try:                
+            try:
                 array = source._get_Array(None)
             except AttributeError:
                 array = None
@@ -84,7 +84,7 @@ class Data(abstract.Container):
                 units = source.get_units(None)
             except AttributeError:
                 units = None
-                
+
             try:
                 calendar = source.get_calendar(None)
             except AttributeError:
@@ -100,7 +100,7 @@ class Data(abstract.Container):
             self.set_units(units)
 
         if calendar is not None:
-            self.set_calendar(calendar)   
+            self.set_calendar(calendar)
 
         if fill_value is not None:
             self.set_fill_value(fill_value)
@@ -118,14 +118,14 @@ class Data(abstract.Container):
     If a fill value has been set (see `set_fill_value`) then it will
     be used, otherwise the default numpy fill value appropriate to the
     data type will be used.
-    
+
     :Returns:
-    
+
         `numpy.ndarray`
             An independent numpy array of the data.
-    
+
     **Examples:**
-    
+
     >>> d = Data([1, 2, 3.0], 'km')
     >>> n = d.array
     >>> isinstance(n, numpy.ndarray)
@@ -150,7 +150,7 @@ class Data(abstract.Container):
         '''Data-type of the data elements.
 
     **Examples:**
-    
+
     >>> d.dtype
     dtype('float64')
     >>> type(d.dtype)
@@ -162,29 +162,29 @@ class Data(abstract.Container):
             # The datatype is not known, so get the numpy array and
             # get it off that.
             datatype = self.array.dtype
-            
+
         return datatype
 
     @property
     def ndim(self):
         '''Number of data dimensions.
-    
+
     **Examples:**
-    
+
     >>> d.shape
     (73, 96)
     >>> d.ndim
     2
     >>> d.size
     7008
-    
+
     >>> d.shape
     (1, 1, 1)
     >>> d.ndim
     3
     >>> d.size
     1
-    
+
     >>> d.shape
     ()
     >>> d.ndim
@@ -200,21 +200,21 @@ class Data(abstract.Container):
         '''Tuple of data dimension sizes.
 
     **Examples:**
-    
+
     >>> d.shape
     (73, 96)
     >>> d.ndim
     2
     >>> d.size
     7008
-    
+
     >>> d.shape
     (1, 1, 1)
     >>> d.ndim
     3
     >>> d.size
     1
-    
+
     >>> d.shape
     ()
     >>> d.ndim
@@ -230,21 +230,21 @@ class Data(abstract.Container):
         '''Number of elements in the data.
 
     **Examples:**
-    
+
     >>> d.shape
     (73, 96)
     >>> d.size
     7008
     >>> d.ndim
     2
-    
+
     >>> d.shape
     (1, 1, 1)
     >>> d.ndim
     3
     >>> d.size
     1
-    
+
     >>> d.shape
     ()
     >>> d.ndim
@@ -262,23 +262,23 @@ class Data(abstract.Container):
         '''Return a deep copy of the data.
 
     ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
-    
+
     Copy-on-write is employed, so care must be taken when modifying
     any attribute.
-    
+
     :Parameters:
-    
+
         array: `bool`, optional
             If False then do not copy the array. By default the array
             is copied.
-    
+
     :Returns:
-    
+
         `Data`
             The deep copy.
-    
+
     **Examples:**
-    
+
     >>> e = d.copy()
     >>> e = d.copy(array=False)
 
@@ -289,11 +289,11 @@ class Data(abstract.Container):
         '''Delete the underlying array.
 
     :Returns:
-    
+
             The array.
-    
+
     **Examples:**
-    
+
     >>> old = d.del_data()
 
         '''
@@ -304,23 +304,23 @@ class Data(abstract.Container):
 
     .. seealso:: `get_calendar`, `has_calendar`, `set_calendar`,
                  `del_units`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the
             calendar has not been set. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
             The value of the deleted calendar.
-    
+
     **Examples:**
-    
+
     >>> d.set_calendar('360_day')
     >>> d.has_calendar()
-    True 
+    True
     >>> d.get_calendar()
     '360_day'
     >>> d.del_calendar()
@@ -345,20 +345,20 @@ class Data(abstract.Container):
         '''Delete the fill value.
 
     .. seealso:: `get_fill_value`, `has_fill_value`, `set_fill_value`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the fill
             value has not been set. If set to an `Exception` instance
             then it will be raised instead.
-    
+
     :Returns:
-    
+
             The value of the deleted fill value.
-    
+
     **Examples:**
-    
+
     >>> f.set_fill_value(-9999)
     >>> f.has_fill_value()
     True
@@ -390,18 +390,18 @@ class Data(abstract.Container):
         '''Delete the units.
 
     .. seealso:: `get_units`, `has_units`, `set_units`, `del_calendar`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the units
             has not been set. If set to an `Exception` instance then
             it will be raised instead.
-    
+
     :Returns:
-    
+
             The value of the deleted units.
-    
+
     **Examples:**
 
     >>> d.set_units('metres')
@@ -432,23 +432,23 @@ class Data(abstract.Container):
 
     .. seealso:: `del_calendar`, `has_calendar`, `set_calendar`,
                  `get_units`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the
             calendar has not been set. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
             The calendar.
-    
+
     **Examples:**
-    
+
     >>> d.set_calendar('360_day')
     >>> d.has_calendar()
-    True 
+    True
     >>> d.get_calendar()
     '360_day'
     >>> d.del_calendar()
@@ -473,18 +473,18 @@ class Data(abstract.Container):
         '''Return the array object.
 
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the array
             has not been set. If set to an `Exception` instance then
             it will be raised instead.
-    
+
     :Returns:
-    
+
             The array object.
-    
+
     **Examples:**
-    
+
     >>> a = d._get_Array(None)
 
         '''
@@ -499,21 +499,21 @@ class Data(abstract.Container):
         '''Return the missing data value.
 
     .. seealso:: `del_fill_value`, `has_fill_value`, `set_fill_value`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the fill
             value has not been set. If set to an `Exception` instance
             then it will be raised instead.
-    
+
     :Returns:
-    
+
             The fill value.
-    
+
     **Examples:**
-    
-    >>> f.set_fill_value(-9999) 
+
+    >>> f.set_fill_value(-9999)
     >>> f.has_fill_value()
     True
     >>> f.get_fill_value()
@@ -544,18 +544,18 @@ class Data(abstract.Container):
         '''Return the units.
 
     .. seealso:: `del_units`, `has_units`, `set_units`, `get_calendar`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the units
             has not been set. If set to an `Exception` instance then
             it will be raised instead.
-    
+
     :Returns:
-    
+
             The units.
-    
+
     **Examples:**
 
     >>> d.set_units('metres')
@@ -585,12 +585,12 @@ class Data(abstract.Container):
         '''Whether units have been set.
 
     .. seealso:: `del_units`, `get_units`, `set_units`, `has_calendar`
-  
+
     :Returns:
-    
+
         `bool`
             True if units have been set, otherwise False.
-    
+
     **Examples:**
 
     >>> d.set_units('metres')
@@ -616,17 +616,17 @@ class Data(abstract.Container):
 
     .. seealso:: `del_calendar`, `get_calendar`, `set_calendar`,
                  `has_units`
-   
+
     :Returns:
 
         `bool`
             True if the calendar has been set, otherwise False.
-    
+
     **Examples:**
-    
+
     >>> d.set_calendar('360_day')
     >>> d.has_calendar()
-    True 
+    True
     >>> d.get_calendar()
     '360_day'
     >>> d.del_calendar()
@@ -651,10 +651,10 @@ class Data(abstract.Container):
 
         `bool`
             True if a fill value has been set, otherwise False.
-    
+
     **Examples:**
-    
-    >>> f.set_fill_value(-9999) 
+
+    >>> f.set_fill_value(-9999)
     >>> f.has_fill_value()
     True
     >>> f.get_fill_value()
@@ -681,21 +681,21 @@ class Data(abstract.Container):
 
     .. seealso:: `del_calendar`, `get_calendar`, `has_calendar`,
                  `set_units`
-    
+
     :Parameters:
-    
+
         value: `str`
             The new calendar.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-        
+
     >>> d.set_calendar('360_day')
     >>> d.has_calendar()
-    True 
+    True
     >>> d.get_calendar()
     '360_day'
     >>> d.del_calendar()
@@ -715,40 +715,40 @@ class Data(abstract.Container):
         '''Set the array.
 
     :Parameters:
-    
+
         array: subclass of `Array`
             The array to be inserted.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> d._set_Array(a)
 
         '''
         if copy:
             array = array.copy()
-            
+
         self._set_component('array', array, copy=False)
 
     def set_fill_value(self, value):
         '''Set the missing data value.
 
     .. seealso:: `del_fill_value`, `has_fill_value`, `get_fill_value`
-    
+
     :Parameters:
-    
+
         value: scalar
             The new fill value.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f.set_fill_value(-9999)
     >>> f.has_fill_value()
     True
@@ -778,18 +778,18 @@ class Data(abstract.Container):
         '''Set the units.
 
     .. seealso:: `del_units`, `get_units`, `has_units`, `set_calendar`
-    
+
     :Parameters:
-    
+
         value: `str`
             The new units.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> d.set_units('metres')
     >>> d.has_units()
     True
@@ -812,23 +812,23 @@ class Data(abstract.Container):
         '''Return the underlying array object.
 
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if the array
             has not been set. If set to an `Exception` instance then
             it will be raised instead.
-    
+
     :Returns:
-    
+
         subclass of `Array`
             The underlying array object.
-    
+
     **Examples:**
-    
+
     TODO
 
         '''
         return  self._get_component('array', default=default)
-        
+
 # --- End: class
 

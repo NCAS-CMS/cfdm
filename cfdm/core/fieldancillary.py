@@ -10,7 +10,7 @@ class FieldAncillary(abstract.PropertiesData):
     satellite instrument, a related ancillary data variable might
     provide the uncertainty estimates for those retrievals (varying
     over the same spatiotemporal domain).
-    
+
     The field ancillary construct consists of an array of the
     ancillary data, which is zero-dimensional or which depends on one
     or more of the domain axes, and properties to describe the
@@ -22,23 +22,23 @@ class FieldAncillary(abstract.PropertiesData):
     parent field construct but does not contribute to the domain's
     definition, unlike, for instance, an auxiliary coordinate
     construct or domain ancillary construct.
-    
+
     .. versionadded:: 1.7.0
 
     '''
     @property
     def construct_type(self):
         '''Return a description of the construct type.
-            
+
     .. versionadded:: 1.7.0
-    
+
     :Returns:
-    
+
         `str`
             The construct type.
-    
+
     **Examples:**
-    
+
     >>> f.construct_type
     'field_ancillary'
 

@@ -17,9 +17,9 @@ class ConstructAccess(object):
         '''Return unique metadata construct names.
 
     .. versionadded:: 1.7.0
-    
+
     **Examples:**
-    
+
     >>> f._unique_construct_names()
     {'cellmethod0': 'method:mean',
      'dimensioncoordinate0': 'latitude',
@@ -29,38 +29,38 @@ class ConstructAccess(object):
      'domainaxis1': 'ncdim%lon',
      'domainaxis2': 'key%domainaxis2'}
 
-        '''    
+        '''
         key_to_name = {}
         name_to_keys = {}
 
 
         for d in self.constructs._constructs.values():
             name_to_keys = {}
-        
+
             for key, construct in d.items():
                 name = construct.identity(default='key%'+key)
                 name_to_keys.setdefault(name, []).append(key)
                 key_to_name[key] = name
-    
+
             for name, keys in name_to_keys.items():
                 if len(keys) <= 1:
                     continue
-                
+
                 for key in keys:
                     key_to_name[key] = '{0}{{{1}}}'.format(
                         name,
                         re.findall('\d+$', key)[0])
         # --- End: for
-        
+
         return key_to_name
 
     def _unique_domain_axis_identities(self):
         '''Return unique domain axis construct names.
 
     .. versionadded:: 1.7.0
-    
+
     **Examples:**
-    
+
     >>> f._unique_domain_axis_identities()
     {'domainaxis0': 'latitude(5)',
      'domainaxis1': 'longitude(8)',
@@ -80,13 +80,13 @@ class ConstructAccess(object):
             if len(keys) == 1:
                 key_to_name[keys[0]] = '{0}({1})'.format(name, size)
             else:
-                for key in keys:                    
+                for key in keys:
                     key_to_name[key] = '{0}{{{1}}}({2})'.format(
                         name,
                         re.findall('\d+$', key)[0],
                         size)
         # --- End: for
-        
+
         return key_to_name
 
     # ----------------------------------------------------------------
@@ -97,21 +97,21 @@ class ConstructAccess(object):
         '''Return coordinate reference constructs.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `constructs`
-    
+
     :Returns:
-    
+
         `Constructs`
             The constructs and their construct keys.
-    
-    
+
+
     **Examples:**
-    
+
     >>> f.coordinate_references
     Constructs:
     {}
-    
+
     >>> f.coordinate_references
     Constructs:
     {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
@@ -125,20 +125,20 @@ class ConstructAccess(object):
         '''Return domain axis constructs.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `constructs`
-    
+
     :Returns:
-    
+
         `Constructs`
             The domain axis constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     >>> f.domain_axes
     Constructs:
     {}
-    
+
     >>> f.domain_axes
     Constructs:
     {'domainaxis0': <DomainAxis: size(1)>,
@@ -154,21 +154,21 @@ class ConstructAccess(object):
         '''Return auxiliary coordinate constructs.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `constructs`
-    
+
     :Returns:
-    
+
         `Constructs`
             The auxiliary coordinate constructs and their construct
             keys.
-    
+
     **Examples:**
-    
+
     >>> f.auxiliary_coordinates
     Constructs:
     {}
-    
+
     >>> f.auxiliary_coordinates
     Constructs:
     {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
@@ -183,21 +183,21 @@ class ConstructAccess(object):
         '''Return dimension coordinate constructs.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `constructs`
-    
+
     :Returns:
-    
+
         `Constructs`
             The dimension coordinate constructs and their construct
             keys.
-    
+
     **Examples:**
-    
+
     >>> f.dimension_coordinates
     Constructs:
     {}
-    
+
     >>> f.dimension_coordinates
     Constructs:
     {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
@@ -213,22 +213,22 @@ class ConstructAccess(object):
         '''Return dimension and auxiliary coordinate constructs.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `auxiliary_coordinates`, `constructs`,
                  `dimension_coordinates`
-    
+
     :Returns:
-    
+
         `Constructs`
             The auxiliary coordinate and dimension coordinate
             constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     >>> f.coordinates
     Constructs:
     {}
-    
+
     >>> f.coordinates
     Constructs:
     {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
@@ -241,7 +241,7 @@ class ConstructAccess(object):
 
         '''
         out = self.dimension_coordinates
-        out._update(self.auxiliary_coordinates)        
+        out._update(self.auxiliary_coordinates)
         return out
 
     @property
@@ -249,20 +249,20 @@ class ConstructAccess(object):
         '''Return domain ancillary constructs.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `constructs`
-    
+
     :Returns:
-    
+
         `Constructs`
             The domain ancillary constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     >>> f.domain_ancillaries
     Constructs:
     {}
-    
+
     >>> f.domain_ancillaries
     Constructs:
     {'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
@@ -277,20 +277,20 @@ class ConstructAccess(object):
         '''Return cell measure constructs.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `constructs`
-    
+
     :Returns:
-    
+
         `Constructs`
             The cell measure constructs and their construct keys.
-    
+
     **Examples:**
-    
+
     >>> f.cell_measures
     Constructs:
     {}
-    
+
     >>> f.cell_measures
     Constructs:
     {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
@@ -305,52 +305,52 @@ class ConstructAccess(object):
         '''Select a metadata construct by its identity.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `construct_key`, `constructs`,
                  `Constructs.filter_by_identity`, `Constructs.value`
-    
+
     :Parameters:
-    
-        identity: optional    
+
+        identity: optional
             Select constructs that have the given identity. If exactly
             one construct is selected then it is returned, otherwise
             an exception is raised.
-    
+
             The identity is specified by a string
             (e.g. ``'latitude'``, ``'long_name=time'``, etc.); or a
             compiled regular expression
             (e.g. ``re.compile('^atmosphere')``), for which all
             constructs whose identities match (via `re.search`) are
             selected.
-    
+
             Each construct has a number of identities, and is selected
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``c`` has
             four identities:
-    
+
                >>> c.identities()
                ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
-    
+
             In addition, each construct also has an identity based its
             construct key (e.g. ``'key%dimensioncoordinate2'``)
-    
+
             Note that in the output of a `print` call or `!dump`
             method, a construct is always described by one of its
             identities, and so this description may always be used as
             an *identity* argument.
-    
+
         default: optional
             Return the value of the *default* parameter if the
             property has not been set. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
             The selected construct.
-    
+
     **Examples:**
-    
+
     >>> print(f.constructs)
     Constructs:
     {'cellmethod0': <CellMethod: area: mean>,
@@ -360,20 +360,20 @@ class ConstructAccess(object):
      'domainaxis0': <DomainAxis: size(5)>,
      'domainaxis1': <DomainAxis: size(8)>,
      'domainaxis2': <DomainAxis: size(1)>}
-    
+
     Select the construct that has the "standard_name" property of 'latitude':
-    
+
     >>> f.construct('latitude')
     <DimensionCoordinate: latitude(5) degrees_north>
-    
+
     Select the cell method construct that has a "method" of 'mean':
-    
+
     >>> f.construct('method:mean')
     <CellMethod: area: mean>
-    
+
     Attempt to select the construct whose "standard_name" start with the
     letter 'l':
-    
+
     >>> import re
     >>> f.construct(re.compile('^l'))
     ValueError: Can't return 2 constructs
@@ -396,53 +396,53 @@ class ConstructAccess(object):
         '''Select the key of a metadata construct by its identity.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `construct`, `constructs`,
                  `Constructs.filter_by_identity`, `Constructs.key`
-    
+
     :Parameters:
-    
+
         identity: optional
             Select constructs that have the given identity. If exactly
             one construct is selected then it is returned, otherwise
             an exception is raised.
-    
+
             The identity is specified by a string
             (e.g. ``'latitude'``, ``'long_name=time'``, etc.); or a
             compiled regular expression
             (e.g. ``re.compile('^atmosphere')``), for which all
             constructs whose identities match (via `re.search`) are
             selected.
-    
+
             Each construct has a number of identities, and is selected
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``c`` has
             four identities:
-    
+
                >>> c.identities()
                ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
-    
+
             In addition, each construct also has an identity based its
             construct key (e.g. ``'key%dimensioncoordinate2'``)
-    
+
             Note that in the output of a `print` call or `!dump`
             method, a construct is always described by one of its
             identities, and so this description may always be used as
             an *identity* argument.
-    
+
         default: optional
             Return the value of the *default* parameter if the
             property has not been set. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
         `str`
             The key of the selected construct.
-    
+
     **Examples:**
-    
+
     >>> print(f.constructs)
     Constructs:
     {'cellmethod0': <CellMethod: area: mean>,
@@ -452,21 +452,21 @@ class ConstructAccess(object):
      'domainaxis0': <DomainAxis: size(5)>,
      'domainaxis1': <DomainAxis: size(8)>,
      'domainaxis2': <DomainAxis: size(1)>}
-    
+
     Select the construct that has the "standard_name" property of
     'latitude':
-    
+
     >>> f.construct_key('latitude')
      'dimensioncoordinate0'
-    
+
     Select the cell method construct that has a "method" of 'mean':
-    
+
     >>> f.construct_key('method:mean')
     'cellmethod0'
-    
+
     Attempt to select the construct whose "standard_name" start with
     the letter 'l':
-    
+
     >>> import re
     >>> f.construct_key(re.compile('^l'))
     ValueError: Can't return the key of 2 constructs
@@ -489,49 +489,49 @@ class ConstructAccess(object):
     def domain_axis_key(self, identity, default=ValueError()):
         '''Return the key of the domain axis construct that is spanned by 1-d
     coordinate constructs.
-    
+
     :Parameters:
-    
-        identity:    
+
+        identity:
             Select the 1-d coordinate constructs that have the given
             identity.
-    
+
             An identity is specified by a string (e.g. ``'latitude'``,
             ``'long_name=time'``, etc.); or a compiled regular
             expression (e.g. ``re.compile('^atmosphere')``), for which
             all constructs whose identities match (via `re.search`)
             are selected.
-    
+
             Each coordinate construct has a number of identities, and
             is selected if any of them match any of those provided. A
             construct's identities are those returned by its
             `!identities` method. In the following example, the
             construct ``x`` has four identities:
-    
+
                >>> x.identities()
                ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
-    
+
             In addition, each construct also has an identity based its
             construct key (e.g. ``'key%dimensioncoordinate2'``)
-    
+
             Note that in the output of a `print` call or `!dump`
             method, a construct is always described by one of its
             identities, and so this description may always be used as
             an *identity* argument.
-    
+
         default: optional
             Return the value of the *default* parameter if a domain
             axis construct can not be found. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
         `str`
             The key of the domain axis construct that is spanned by
             the data of the selected 1-d coordinate constructs.
-    
+
     **Examples:**
-    
+
     TODO
 
         '''
@@ -542,7 +542,7 @@ class ConstructAccess(object):
                                       'auxiliary_coordinate')
         c = c.filter_by_naxes(1)
         c = c.filter_by_identity(identity)
-        
+
         if not len(c) :
             return self._default(
                 default,
@@ -551,27 +551,27 @@ class ConstructAccess(object):
 
         data_axes = constructs.data_axes()
         domain_axes = constructs.filter_by_type('domain_axis')
-        
+
         keys = []
         for ckey, coord in c.items():
             axes = data_axes.get(ckey)
             if not axes:
                 continue
-            
+
             key = axes[0]
             if domain_axes.get(key):
                 keys.append(key)
         # --- End: for
-        
+
         keys = set(keys)
-            
+
         if not keys:
             return self._default(
                 default,
                 "1-d coordinate constructs selected with identity "
                 "{!r} have not been assigned a domain axis constructs".format(
-                    coord))                       
-        
+                    coord))
+
         if len(keys) > 1:
             return self._default(
                 default,
@@ -580,5 +580,5 @@ class ConstructAccess(object):
                     identity, keys))
 
         return keys.pop()
-        
+
 # --- End: class

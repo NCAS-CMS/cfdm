@@ -13,9 +13,9 @@ class NumpyArray(abstract.Array):
     '''
     def __init__(self, array=None):
         '''**Initialization**
-    
+
     :Parameters:
-    
+
         array: `numpy.ndarray`
             The numpy array.
 
@@ -27,9 +27,9 @@ class NumpyArray(abstract.Array):
         '''Data-type of the data elements.
 
     .. versionadded:: 1.7.0
-    
+
     **Examples:**
-    
+
     >>> a.dtype
     dtype('float64')
     >>> print(type(a.dtype))
@@ -41,25 +41,25 @@ class NumpyArray(abstract.Array):
     @property
     def ndim(self):
         '''Number of array dimensions
-                
+
     .. versionadded:: 1.7.0
-    
+
     **Examples:**
-    
+
     >>> a.shape
     (73, 96)
     >>> a.ndim
     2
     >>> a.size
     7008
-    
+
     >>> a.shape
     (1, 1, 1)
     >>> a.ndim
     3
     >>> a.size
     1
-    
+
     >>> a.shape
     ()
     >>> a.ndim
@@ -75,30 +75,30 @@ class NumpyArray(abstract.Array):
         '''Tuple of array dimension sizes.
 
     .. versionadded:: 1.7.0
-    
+
     **Examples:**
-    
+
     >>> a.shape
     (73, 96)
     >>> a.ndim
     2
     >>> a.size
     7008
-    
+
     >>> a.shape
     (1, 1, 1)
     >>> a.ndim
     3
     >>> a.size
     1
-    
+
     >>> a.shape
     ()
     >>> a.ndim
     0
     >>> a.size
     1
-    
+
     '''
         return self._get_component('array').shape
 
@@ -107,23 +107,23 @@ class NumpyArray(abstract.Array):
         '''Number of elements in the array.
 
     .. versionadded:: 1.7.0
-    
+
     **Examples:**
-    
+
     >>> a.shape
     (73, 96)
     >>> a.size
     7008
     >>> a.ndim
     2
-    
+
     >>> a.shape
     (1, 1, 1)
     >>> a.ndim
     3
     >>> a.size
     1
-    
+
     >>> a.shape
     ()
     >>> a.ndim
@@ -138,21 +138,21 @@ class NumpyArray(abstract.Array):
         '''Return an independent numpy array containing the data.
 
     .. versionadded:: 1.7.0
-    
+
     :Returns:
-    
+
         `numpy.ndarray`
             An independent numpy array of the data.
-    
+
     **Examples:**
-    
+
     >>> n = a.array
     >>> isinstance(n, numpy.ndarray)
     True
 
         '''
         array = self._get_component('array')
-        
+
         if not array.ndim and numpy.ma.isMA(array):
             # This is because numpy.ma.copy doesn't work for
             # scalar arrays (at the moment, at least)

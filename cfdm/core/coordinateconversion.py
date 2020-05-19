@@ -4,7 +4,7 @@ from . import abstract
 class CoordinateConversion(abstract.ParametersDomainAncillaries):
     '''A coordinate conversion component of a coordinate reference
     construct of the CF data model.
-    
+
     A coordinate conversion formula converting coordinate values taken
     from the dimension or auxiliary coordinate constructs to a
     different coordinate system. A term of the conversion formula can
@@ -15,7 +15,7 @@ class CoordinateConversion(abstract.ParametersDomainAncillaries):
     spatially varying orography data). A coordinate reference
     construct relates the coordinate values of the field to locations
     in a planetary reference frame.
-    
+
     .. versionadded:: 1.7.0
 
     '''

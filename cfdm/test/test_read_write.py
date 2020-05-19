@@ -31,7 +31,7 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
-        
+
 atexit.register(_remove_tmpfiles)
 
 
@@ -59,14 +59,14 @@ class read_writeTest(unittest.TestCase):
         #    self.test_only = ['test_read_field']
         #    self.test_only = ['test_read_mask']
         #    self.test_only = ['test_read_write_format']
-    
+
     def test_write_filename(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         tmpfile = tempfile.mktemp('.cfdm_test')
         tmpfiles.append(tmpfile)
-        
+
         tmpfile = 'delme.nc'
 
         f = cfdm.example_field(0)
@@ -77,16 +77,16 @@ class read_writeTest(unittest.TestCase):
 
         with self.assertRaises(Exception):
             cfdm.write(g, tmpfile)
-            
+
         self.assertTrue((a == g[0].data.array).all())
-            
+
     def test_read_field(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         # Test field keyword of cfdm.read
         filename = self.filename
-        
+
         f = cfdm.read(filename)
         self.assertTrue(len(f) == 1, '\n'+str(f))
 
@@ -97,21 +97,21 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(filename, extra=['auxiliary_coordinate'],
                       warnings=warnings)
         self.assertTrue(len(f) == 4, '\n'+str(f))
-        
+
         f = cfdm.read(filename, extra='cell_measure')
         self.assertTrue(len(f) == 2, '\n'+str(f))
 
         f = cfdm.read(filename, extra=['field_ancillary'])
         self.assertTrue(len(f) == 4, '\n'+str(f))
-                
+
         f = cfdm.read(filename, extra='domain_ancillary', warnings=warnings)
         self.assertTrue(len(f) == 4, '\n'+str(f))
-        
+
         f = cfdm.read(filename, extra=['field_ancillary',
                                        'auxiliary_coordinate'],
                       warnings=warnings)
         self.assertTrue(len(f) == 7, '\n'+str(f))
-        
+
         self.assertTrue(len(cfdm.read(filename,
                                       extra=['domain_ancillary',
                                              'auxiliary_coordinate'],
@@ -146,7 +146,7 @@ class read_writeTest(unittest.TestCase):
             g = g[0]
             self.assertTrue(f.equals(g, verbose=3),
                             'Bad read/write of format: {}'.format(fmt))
-            
+
     def test_read_write_netCDF4_compress_shuffle(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -184,36 +184,36 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_mask(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return        
+            return
 
         f = cfdm.example_field(0)
 
         N = f.size
-        
+
         f.data[1, 1] = cfdm.masked
         f.data[2, 2] = cfdm.masked
 
         f.del_property('_FillValue', None)
         f.del_property('missing_value', None)
-        
+
         cfdm.write(f, tmpfile)
 
         g = cfdm.read(tmpfile)[0]
         self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
-        
+
         g = cfdm.read(tmpfile, mask=False)[0]
         self.assertTrue(numpy.ma.count(g.data.array) == N)
 
         g.apply_masking(inplace=True)
         self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
-        
+
         f.set_property('_FillValue', 999)
         f.set_property('missing_value', -111)
         cfdm.write(f, tmpfile)
-        
+
         g = cfdm.read(tmpfile)[0]
         self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
-        
+
         g = cfdm.read(tmpfile, mask=False)[0]
         self.assertTrue(numpy.ma.count(g.data.array) == N)
 
@@ -224,16 +224,16 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.filename)[0] 
+        f = cfdm.read(self.filename)[0]
         self.assertTrue(f.data.dtype == numpy.dtype(float))
 
         f.set_property('_FillValue'   , numpy.float64(-999.))
         f.set_property('missing_value', numpy.float64(-999.))
-        
-        cfdm.write(f, tmpfile, fmt='NETCDF4', 
+
+        cfdm.write(f, tmpfile, fmt='NETCDF4',
                  datatype={numpy.dtype(float): numpy.dtype('float32')})
         g = cfdm.read(tmpfile)[0]
-        self.assertTrue(g.data.dtype == numpy.dtype('float32'), 
+        self.assertTrue(g.data.dtype == numpy.dtype('float32'),
                         'datatype read in is '+str(g.data.dtype))
 
     def test_read_write_unlimited(self):
@@ -247,10 +247,10 @@ class read_writeTest(unittest.TestCase):
                     'NETCDF3_64BIT_OFFSET',
                     'NETCDF3_64BIT_DATA'):
             f = cfdm.read(self.filename)[0]
-            
+
             f.domain_axes['domainaxis0'].nc_set_unlimited(True)
             cfdm.write(f, tmpfile, fmt=fmt)
-            
+
             f = cfdm.read(tmpfile)[0]
             self.assertTrue(f.domain_axes['domainaxis0'].nc_is_unlimited())
 
@@ -259,7 +259,7 @@ class read_writeTest(unittest.TestCase):
         f.domain_axes['domainaxis0'].nc_set_unlimited(True)
         f.domain_axes['domainaxis2'].nc_set_unlimited(True)
         cfdm.write(f, tmpfile, fmt=fmt)
-        
+
         f = cfdm.read(tmpfile)[0]
         self.assertTrue(f.domain_axes['domainaxis0'].nc_is_unlimited())
         self.assertTrue(f.domain_axes['domainaxis2'].nc_is_unlimited())
@@ -318,7 +318,7 @@ class read_writeTest(unittest.TestCase):
                 h = cfdm.read(tmpfileh)[0]
 
 #        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)
-            
+
     def test_read_write_string(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -326,7 +326,7 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(self.string_filename)
 
         n = int(len(f)/2)
-        
+
         for i in range(0, n):
             j = i + n
             self.assertTrue(f[i].data.equals(f[j].data, verbose=3),
@@ -343,7 +343,7 @@ class read_writeTest(unittest.TestCase):
                          'NETCDF3_64BIT_DATA'):
                 f0 = cfdm.read(self.string_filename)
                 cfdm.write(f0, tmpfile0, fmt=fmt0, string=string0)
-                
+
                 for string1 in (True, False):
                     for fmt1 in ('NETCDF4',
                                  'NETCDF3_CLASSIC',
@@ -353,12 +353,12 @@ class read_writeTest(unittest.TestCase):
                                  'NETCDF3_64BIT_DATA'):
                         f1 = cfdm.read(self.string_filename)
                         cfdm.write(f0, tmpfile1, fmt=fmt1, string=string1)
-    
+
                         for i, j in zip(cfdm.read(tmpfile1),
                                         cfdm.read(tmpfile0)):
                             self.assertTrue(i.equals(j, verbose=3))
         #--- End: for
-                        
+
 #--- End: class
 
 if __name__ == "__main__":

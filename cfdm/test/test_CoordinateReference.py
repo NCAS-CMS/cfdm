@@ -57,7 +57,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                 domain_ancillaries={'a': 'aux0', 'b': 'aux1', 'orog': 'orog'})
         )
         self.assertTrue(t.equals(t.copy(), verbose=3))
-        
+
         # Create a horizontal grid mapping coordinate reference
         t = cfdm.CoordinateReference(
             coordinates=['coord1', 'fred', 'coord3'],
@@ -65,7 +65,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                  parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                              'grid_north_pole_latitude': 38.0,
                              'grid_north_pole_longitude': 190.0})
-        )            
+        )
         self.assertTrue(t.equals(t.copy(), verbose=3))
 
         datum=cfdm.Datum(parameters={'earth_radius': 6371007})
@@ -73,7 +73,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                         'grid_north_pole_latitude': 38.0,
                         'grid_north_pole_longitude': 190.0})
-        
+
         t = cfdm.CoordinateReference(
             coordinate_conversion=conversion,
             datum=datum,
@@ -120,7 +120,7 @@ class CoordinateReferenceTest(unittest.TestCase):
 
         domain_ancillaries = cc.domain_ancillaries()
         self.assertTrue(len(domain_ancillaries) == 3)
-        
+
         for key, value in domain_ancillaries.items():
             self.assertTrue(cc.has_domain_ancillary(key))
             self.assertTrue(cc.get_domain_ancillary(key) == value)
@@ -139,7 +139,7 @@ class CoordinateReferenceTest(unittest.TestCase):
 
         parameters = cc.parameters()
         self.assertTrue(len(parameters) == 3, parameters)
-        
+
         for key, value in parameters.items():
             self.assertTrue(cc.has_parameter(key))
             self.assertTrue(cc.get_parameter(key) == value)
@@ -168,7 +168,7 @@ class CoordinateReferenceTest(unittest.TestCase):
 
         parameters = d.parameters()
         self.assertTrue(len(parameters) == 1, parameters)
-        
+
         for key, value in parameters.items():
             self.assertTrue(d.has_parameter(key))
             self.assertTrue(d.get_parameter(key) == value)

@@ -40,56 +40,56 @@ class Data(mixin.Container,
         '''**Initialization**
 
     :Parameters:
-    
+
         array: numpy array-like or subclass of `Array`, optional
             The array of values. Ignored if the *source* parameter is
             set.
-    
+
             *Parameter example:*
               ``array=[34.6]``
-    
+
             *Parameter example:*
               ``array=[[1, 2], [3, 4]]``
-    
+
             *Parameter example:*
               ``array=numpy.ma.arange(10).reshape(2, 1, 5)``
-    
+
         units: `str`, optional
             The physical units of the data. Ignored if the *source*
             parameter is set.
-    
+
             The units may also be set after initialisation with the
             `set_units` method.
-    
+
             *Parameter example:*
               ``units='km hr-1'``
-    
+
             *Parameter example:*
               ``units='days since 2018-12-01'``
-    
+
         calendar: `str`, optional
             The calendar for reference time units. Ignored if the
             *source* parameter is set.
-            
+
             The calendar may also be set after initialisation with the
             `set_calendar` method.
-    
+
             *Parameter example:*
               ``calendar='360_day'``
-    
-        fill_value: optional 
+
+        fill_value: optional
             The fill value of the data. By default, or if set to
             `None`, the `numpy` fill value appropriate to the array's
             data type will be used (see
             `numpy.ma.default_fill_value`). Ignored if the *source*
             parameter is set.
-    
+
             The fill value may also be set after initialisation with
             the `set_fill_value` method.
-    
+
             *Parameter example:*
               ``fill_value=-999.``
-                    
+
         dtype: data-type, optional
             The desired data-type for the data. By default the
             data-type will be inferred form the *array* parameter.
@@ -120,11 +120,11 @@ class Data(mixin.Container,
         source: optional
             Initialize the array, units, calendar and fill value from
             those of *source*.
-    
+
         copy: `bool`, optional
             If False then do not deep copy input parameters prior to
             initialization. By default arguments are deep copied.
-    
+
         kwargs: ignored
             Not used. Present to facilitate subclassing.
 
@@ -144,7 +144,7 @@ class Data(mixin.Container,
             elif not isinstance(array, numpy.ndarray):
                 array = numpy.asanyarray(array)
 
-            array = numpy.ma.array(array, mask=mask)                
+            array = numpy.ma.array(array, mask=mask)
             array = NumpyArray(array)
 
         super().__init__(array=array, units=units, calendar=calendar,
@@ -152,24 +152,24 @@ class Data(mixin.Container,
                          copy=copy, _use_array=_use_array)
 
         self._initialise_netcdf(source)
-        
+
     def __array__(self, *dtype):
         '''The numpy array interface.
 
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
+
         dtype: optional
             Typecode or data-type to which the array is cast.
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `numpy.ndarray`
             An independent numpy array of the data.
-    
+
     **Examples:**
-    
+
     >>> import numpy
     >>> d = Data([1, 2, 3])
     >>> a = numpy.array(d)
@@ -188,21 +188,21 @@ class Data(mixin.Container,
             return array
         else:
             return array.astype(dtype[0], copy=False)
-      
+
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
     x.__repr__() <==> repr(x)
 
         '''
-        try:        
+        try:
             shape = self.shape
         except AttributeError:
             shape = ''
         else:
             shape = str(shape)
             shape = shape.replace(',)', ')')
-            
+
         return '<{0}{1}: {2}>'.format(
             self.__class__.__name__, shape, str(self))
 
@@ -210,30 +210,30 @@ class Data(mixin.Container,
         '''Return a subspace of the data defined by indices
 
     d.__getitem__(indices) <==> d[indices]
-    
+
     Indexing follows rules that are very similar to the numpy indexing
     rules, the only differences being:
-    
+
     * An integer index i takes the i-th element but does not reduce
       the rank by one.
-    
+
     * When two or more dimensions' indices are sequences of integers
       then these indices work independently along each dimension
       (similar to the way vector subscripts work in Fortran). This is
       the same behaviour as indexing on a Variable object of the
       netCDF4 package.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `__setitem__`, `_parse_indices`
-    
+
     :Returns:
-    
+
         `Data`
             The subspace of the data.
-    
+
     **Examples:**
-    
+
     >>> import numpy
     >>> d = Data(numpy.arange(100, 190).reshape(1, 10, 9))
     >>> d.shape
@@ -264,7 +264,7 @@ class Data(mixin.Container,
         if out.shape != self.shape:
             # Delete hdf5 chunksizes
             out.nc_clear_hdf5_chunksizes()
-        
+
         return out
 
     def __int__(self):
@@ -285,9 +285,9 @@ class Data(mixin.Container,
         '''Called when an iterator is required.
 
     x.__iter__() <==> iter(x)
-    
+
     **Examples:**
-    
+
     >>> d = Data([1, 2, 3], 'metres')
     >>> for e in d:
     ...    print repr(e)
@@ -295,14 +295,14 @@ class Data(mixin.Container,
     1
     2
     3
-    
+
     >>> d = Data([[1, 2], [4, 5]], 'metres')
     >>> for e in d:
     ...    print repr(e)
     ...
     <CF Data: [1, 2] metres>
     <CF Data: [4, 5] metres>
-    
+
     >>> d = Data(34, 'metres')
     >>> for e in d:
     ...     print repr(e)
@@ -315,14 +315,14 @@ class Data(mixin.Container,
         if not ndim:
             raise TypeError(
                 "Iteration over 0-d {}".format(self.__class__.__name__))
-            
+
         if ndim == 1:
             i = iter(self.array)
             while 1:
                 try:
                     yield next(i)
                 except StopIteration:
-                    return 
+                    return
         else:
             # ndim > 1
             for n in range(self.shape[0]):
@@ -334,40 +334,40 @@ class Data(mixin.Container,
         '''Assign to data elements defined by indices.
 
     d.__setitem__(indices, x) <==> d[indices]=x
-    
+
     Indexing follows rules that are very similar to the numpy indexing
     rules, the only differences being:
-    
+
     * An integer index i takes the i-th element but does not reduce
       the rank by one.
-    
+
     * When two or more dimensions' indices are sequences of integers
       then these indices work independently along each dimension
       (similar to the way vector subscripts work in Fortran). This is
       the same behaviour as indexing on a Variable object of the
       netCDF4 package.
-    
+
     **Broadcasting**
-    
+
     The value, or values, being assigned must be broadcastable to the
     shape defined by the indices, using the numpy broadcasting rules.
-    
+
     **Missing data**
-    
+
     Data array elements may be set to missing values by assigning them
     to `masked`. Missing values may be unmasked by assigning them to
     any other value.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `__getitem__`, `_parse_indices`
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> import numpy
     >>> d = Data(numpy.arange(100, 190).reshape(1, 10, 9))
     >>> d.shape
@@ -380,14 +380,14 @@ class Data(mixin.Container,
 
         '''
         indices = self._parse_indices(indices)
-                
+
         array = self.array
 
         if value is cfdm_masked or numpy.ma.isMA(value):
             # The data is not masked but the assignment is masking
             # elements, so turn the non-masked array into a masked
             # one.
-            array = array.view(numpy.ma.MaskedArray)        
+            array = array.view(numpy.ma.MaskedArray)
 
         self._set_subspace(array, indices, numpy.asanyarray(value))
 
@@ -409,13 +409,13 @@ class Data(mixin.Container,
 
         try:
             first = self.first_element()
-        except:            
+        except:
             out = ''
             if units:
                 out += ' {0}'.format(units)
             if calendar:
                 out += ' {0}'.format(calendar)
-               
+
             return out
 
         size  = self.size
@@ -425,14 +425,14 @@ class Data(mixin.Container,
         close_brackets = ']' * ndim
 
         mask = [False, False, False]
-        
+
         if size == 1:
             if isreftime:
                 # Convert reference time to date-time
                 if first is numpy.ma.masked:
                     first = 0
                     mask[0] = True
-                    
+
                 try:
                     first = type(self)(
                         numpy.ma.array(first, mask=mask[0]),
@@ -449,7 +449,7 @@ class Data(mixin.Container,
                 if last is numpy.ma.masked:
                     last = 0
                     mask[-1] = True
-                    
+
                 # Convert reference times to date-times
                 try:
                     first, last = type(self)(
@@ -463,21 +463,21 @@ class Data(mixin.Container,
                 out = '{0}{1!s}, ..., {2!s}{3}'.format(open_brackets,
                                                        first, last,
                                                        close_brackets)
-            elif shape[-1:] == (3,):                
+            elif shape[-1:] == (3,):
                 middle = self.second_element()
                 if isreftime:
                     # Convert reference time to date-time
                     if middle is numpy.ma.masked:
                         middle = 0
                         mask[1] = True
-                        
+
                     try:
                         middle = type(self)(
                             numpy.ma.array(middle, mask=mask[1]),
                             units, calendar).datetime_array
                     except (ValueError, OverflowError):
                         middle = '??'
-                        
+
                 out = '{0}{1!s}, {2!s}, {3!s}{4}'.format(open_brackets,
                                                          first, middle, last,
                                                          close_brackets)
@@ -490,13 +490,13 @@ class Data(mixin.Container,
                                                   first, last,
                                                   close_brackets)
         # --- End: if
-        
+
         if isreftime:
             if calendar:
                 out += ' {0}'.format(calendar)
         elif units:
             out += ' {0}'.format(units)
-            
+
         return out
 
     # ----------------------------------------------------------------
@@ -507,17 +507,17 @@ class Data(mixin.Container,
 
     It is assumed, but not checked, that the given index selects
     exactly one element.
-    
+
     :Parameters:
-    
-        index: 
-    
+
+        index:
+
     :Returns:
-    
+
             The selected element of the data.
-    
+
     **Examples:**
-    
+
     >>> import numpy
     >>> d = Data([[1, 2, 3]], 'km')
     >>> x = d._item((0, -1))
@@ -541,23 +541,23 @@ class Data(mixin.Container,
             return array.item()
 
         return numpy.ma.masked
-    
+
     def _parse_axes(self, axes):
         '''TODO
 
     :Parameters:
-    
+
         axes: (sequence of) `int`
             The axes of the data. May be one of, or a sequence of any
             combination of zero or more of:
-    
+
             * The integer position of a dimension in the data
               (negative indices allowed).
-    
+
     :Returns:
-    
+
         `tuple`
-    
+
     **Examples:**
 
     TODO
@@ -565,12 +565,12 @@ class Data(mixin.Container,
         '''
         if axes is None:
             return axes
-        
+
         ndim = self.ndim
 
         if isinstance(axes, int):
             axes = (axes,)
-            
+
         axes2 = []
         for axis in axes:
             if 0 <= axis < ndim:
@@ -581,37 +581,37 @@ class Data(mixin.Container,
                 raise ValueError(
                     "Invalid axis: {!r}".format(axis))
         # --- End: for
-            
+
         # Check for duplicate axes
         n = len(axes2)
         if n > len(set(axes2)) >= 1:
             raise ValueError("Duplicate axis: {}".format(axes2))
-        
+
         return tuple(axes2)
 
     def _set_Array(self, array, copy=True):
         '''Set the array.
 
     .. seealso:: `_set_CompressedArray`
-    
+
     :Parameters:
-    
+
         array: numpy array-like or subclass of `Array`, optional
             The array to be inserted.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> d._set_Array(a)
 
         '''
         if not isinstance(array, abstract.Array):
             if not isinstance(array, numpy.ndarray):
                 array = numpy.asanyarray(array)
-                
+
             array = NumpyArray(array)
 
         super()._set_Array(array, copy=copy)
@@ -620,18 +620,18 @@ class Data(mixin.Container,
         '''Set the compressed array.
 
     .. versionadded:: 1.7.11
-    
+
     .. seealso:: `_set_Array`
-    
+
     :Parameters:
-    
-        array: subclass of `CompressedArray`      
+
+        array: subclass of `CompressedArray`
             The compressed array to be inserted.
 
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
 
     >>> d._set_CompressedArray(a)
@@ -646,7 +646,7 @@ class Data(mixin.Container,
         axes_with_list_indices = [i for i, x in enumerate(indices)
                                   if not isinstance(x, slice)]
 
-        if len(axes_with_list_indices) < 2: 
+        if len(axes_with_list_indices) < 2:
             # --------------------------------------------------------
             # At most one axis has a list-of-integers index so we can
             # do a normal numpy assignment
@@ -679,7 +679,7 @@ class Data(mixin.Container,
             if numpy.size(value) == 1:
                 for i in itertools.product(*indices1):
                     array[i] = value
-                    
+
             else:
                 indices2 = []
                 ndim_difference = array.ndim - numpy.ndim(value)
@@ -703,7 +703,7 @@ class Data(mixin.Container,
                                 itertools.product(*indices2)):
                     array[i] = value[j]
         # --- End: if
-        
+
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -712,17 +712,17 @@ class Data(mixin.Container,
         '''Return an independent numpy array containing the compressed data.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `get_compressed_axes`, `get_compressed_dimension`,
                  `get_compression_type`
-    
+
     :Returns:
-    
+
         `numpy.ndarray`
             An independent numpy array of the compressed data.
-    
+
     **Examples:**
-    
+
     >>> a = d.compressed_array
 
         '''
@@ -737,17 +737,17 @@ class Data(mixin.Container,
     def datetime_array(self):
         '''Return an independent numpy array containing the date-time objects
     corresponding to times since a reference date.
-    
+
     Only applicable for reference time units.
-    
+
     If the calendar has not been set then the CF default calendar of
     "standard" (i.e. the mixed Gregorian/Julian calendar as defined by
     Udunits) will be used.
-    
+
     Conversions are carried out with the `netCDF4.num2date` function.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `array`, `datetime_as_string`
 
     :Returns:
@@ -756,7 +756,7 @@ class Data(mixin.Container,
             An independent numpy array of the date-time objects.
 
     **Examples:**
-    
+
     >>> d = Data([31, 62, 90], units='days since 2018-12-01')
     >>> a = d.datetime_array
     >>> print(a)
@@ -765,7 +765,7 @@ class Data(mixin.Container,
      cftime.DatetimeGregorian(2019-03-01 00:00:00)]
     >>> print(a[1])
     2019-02-01 00:00:00
-    
+
     >>> d = Data([31, 62, 90], units='days since 2018-12-01',
     ...          calendar='360_day')
     >>> a = d.datetime_array
@@ -787,7 +787,7 @@ class Data(mixin.Container,
                 mask = None
                 array = array.view(numpy.ndarray)
         # --- End: if
-        
+
         array = netCDF4.num2date(array, units=self.get_units(None),
                                  calendar=self.get_calendar('standard'),
                                  only_use_cftime_datetimes=True)
@@ -807,30 +807,30 @@ class Data(mixin.Container,
     def datetime_as_string(self):
         '''Return an independent numpy array containing string representations
     of times since a reference date.
-    
+
     Only applicable for reference time units.
-    
+
     If the calendar has not been set then the CF default calendar of
     "standard" (i.e. the mixed Gregorian/Julian calendar as defined by
     Udunits) will be used.
-    
+
     Conversions are carried out with the `netCDF4.num2date` function.
-    
+
     .. versionadded:: 1.8.0
-    
+
     .. seealso:: `array`, `datetime_array`
-    
+
     :Returns:
 
         `numpy.ndarray`
             An independent numpy array of the date-time strings.
 
     **Examples:**
-    
+
     >>> d = Data([31, 62, 90], units='days since 2018-12-01')
     >>> print(d.datetime_as_string)
     ['2019-01-01 00:00:00' '2019-02-01 00:00:00' '2019-03-01 00:00:00']
-  
+
     >>> d = Data([31, 62, 90], units='days since 2018-12-01',
     ...          calendar='360_day')
     >>> print(d.datetime_as_string)
@@ -838,24 +838,24 @@ class Data(mixin.Container,
 
         '''
         return self.datetime_array.astype(str)
-    
+
     @property
     def mask(self):
         '''The Boolean missing data mask of the data array.
 
     The Boolean mask has True where the data array has missing data
     and False otherwise.
-        
+
     :Returns:
-        
+
         `Data`
             TODO
-        
+
     **Examples:**
-    
-   >>> d = Data(numpy.ma.array([[280.0,   -99,   -99,   -99], 
-                                [281.0, 279.0, 278.0, 279.5]], 
-                mask=[[0, 1, 1, 1], 
+
+   >>> d = Data(numpy.ma.array([[280.0,   -99,   -99,   -99],
+                                [281.0, 279.0, 278.0, 279.5]],
+                mask=[[0, 1, 1, 1],
                       [0, 0, 0, 0]]))
     >>> d
     <Data(2, 4): [[280.0, ..., 279.5]]>
@@ -870,7 +870,7 @@ class Data(mixin.Container,
 
         '''
         return type(self)(numpy.ma.getmaskarray(self.array))
-    
+
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -927,7 +927,7 @@ class Data(mixin.Container,
     .. versionadded:: 1.8.2
 
     .. seealso:: `get_fill_value`, `mask`
-                 
+
     :Parameters:
 
         fill_values: `bool` or sequence of scalars, optional
@@ -943,19 +943,19 @@ class Data(mixin.Container,
 
             *Parameter example:*
               Specify a fill value of 999: ``fill_values=[999]``
-         
+
             *Parameter example:*
               Specify fill values of 999 and -1.0e30:
               ``fill_values=[999, -1.0e30]``
-         
+
             *Parameter example:*
               Use the fill value already set for the data:
               ``fill_values=True``
-         
+
             *Parameter example:*
               Use no fill values: ``fill_values=False`` or
               ``fill_value=[]``
-         
+
         valid_min: number, optional
             A scalar specifying the minimum valid value. Data elements
             strictly less than this number will be set to missing
@@ -979,9 +979,9 @@ class Data(mixin.Container,
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
         `Data` or `None`
             The data with masked values. If the operation was in-place
             then `None` is returned.
@@ -1003,12 +1003,12 @@ class Data(mixin.Container,
     >>> print(d.apply_masking(fill_values=[0]).array)
     [[--  1  2  3]
      [ 4 --  6  7]
-     [ 8  9 10 11]]    
+     [ 8  9 10 11]]
     >>> print(d.apply_masking(fill_values=[0, 11]).array)
     [[--  1  2  3]
      [ 4 --  6  7]
      [ 8  9 10 --]]
-    
+
     >>> print(d.apply_masking(valid_min=3).array)
     [[-- -- --  3]
      [ 4 --  6  7]
@@ -1021,7 +1021,7 @@ class Data(mixin.Container,
     [[-- --  2  3]
      [ 4 --  6  7]
      [ 8 -- -- --]]
-    
+
     >>> d.set_fill_value(7)
     >>> print(d.apply_masking(fill_values=True).array)
     [[0  1  2  3]
@@ -1045,18 +1045,18 @@ class Data(mixin.Container,
                     raise ValueError(
                         "'valid_range' parameter must be a vector of "
                         "two elements")
-            except TypeError:                
+            except TypeError:
                 raise ValueError(
                     "'valid_range' parameter must be a vector of "
                     "two elements")
-            
+
             valid_min, valid_max = valid_range
 
         d = _inplace_enabled_define_and_cleanup(self)
 
         if fill_values is None:
             fill_values = False
-        
+
         if isinstance(fill_values, bool):
             if fill_values:
                 fill_value = self.get_fill_value(None)
@@ -1066,7 +1066,7 @@ class Data(mixin.Container,
                     fill_values = ()
             else:
                 fill_values = ()
-        else:            
+        else:
             try:
                 _ = iter(fill_values)
             except TypeError:
@@ -1079,17 +1079,17 @@ class Data(mixin.Container,
                         "'fill_values' parameter must be a sequence or "
                         "of type bool. Got type {}".format(type(fill_values)))
         # --- End: if
-        
+
         mask = None
-        
+
         if fill_values:
             array = self.array
             mask = (array == fill_values[0])
-                
+
             for fill_value in fill_values[1:]:
                 mask |= (array == fill_value)
         # --- End: for
-            
+
         if valid_min is not None:
             if mask is None:
                 array = self.array
@@ -1106,7 +1106,7 @@ class Data(mixin.Container,
                 mask |= (array > valid_max)
         # --- End: if
 
-        if mask is not None:            
+        if mask is not None:
             array = numpy.ma.where(mask, cfdm_masked, array)
             d._set_Array(array, copy=False)
 
@@ -1116,19 +1116,19 @@ class Data(mixin.Container,
         '''Return a deep copy.
 
     ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
-    
+
     :Parameters:
-    
+
         array: `bool`, optional
             If False then do not copy the array. By default the array
             is copied.
-    
+
     :Returns:
-    
+
             The deep copy.
-    
+
     **Examples:**
-    
+
     >>> e = d.copy()
     >>> e = d.copy(array=False)
 
@@ -1141,36 +1141,36 @@ class Data(mixin.Container,
 
     Inserts a new size 1 axis, corresponding to a given position in
     the data array shape.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `flatten`, `squeeze`, `transpose`
-    
+
     :Parameters:
-    
+
         position: `int`, optional
             Specify the position that the new axis will have in the
             data array. By default the new axis has position 0, the
             slowest varying position. Negative integers counting from
             the last position are allowed.
-    
+
             *Parameter example:*
               ``position=2``
-    
+
             *Parameter example:*
               ``position=-1``
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
         `Data` or `None`
             The data with expanded axes. If the operation was in-place
             then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> d.shape
     (19, 73, 96)
     >>> d.insert_dimension('domainaxis3').shape
@@ -1183,9 +1183,9 @@ class Data(mixin.Container,
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-            
+
         # Parse position
-        ndim = d.ndim 
+        ndim = d.ndim
         if -ndim-1 <= position < 0:
             position += ndim + 1
         elif not 0 <= position <= ndim:
@@ -1206,22 +1206,22 @@ class Data(mixin.Container,
         '''Return the count variable for a compressed array.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `get_index`, `get_list`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if a count
             variable has not been set. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
             The count variable.
-    
+
     **Examples:**
-    
+
     >>> c = d.get_count()
 
         '''
@@ -1236,25 +1236,25 @@ class Data(mixin.Container,
         '''Return the index variable for a compressed array.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `get_count`, `get_list`
-    
+
     :Parameters:
-    
+
         default: optional
             Return *default* if index variable has not been set.
-    
+
         default: optional
             Return the value of the *default* parameter if an index
             variable has not been set. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
             The index variable.
-    
+
     **Examples:**
-    
+
     >>> i = d.get_index()
 
         '''
@@ -1269,22 +1269,22 @@ class Data(mixin.Container,
         '''Return the list variable for a compressed array.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `get_count`, `get_index`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if an index
             variable has not been set. If set to an `Exception`
             instance then it will be raised instead.
-    
+
     :Returns:
-    
+
             The list variable.
-    
+
     **Examples:**
-    
+
     >>> l = d.get_list()
 
         '''
@@ -1293,36 +1293,36 @@ class Data(mixin.Container,
         except (AttributeError, ValueError):
             return self._default(default,
                                  "{!r} has no list variable".format(
-                                     self.__class__.__name__))        
+                                     self.__class__.__name__))
 
     def get_compressed_dimension(self, default=ValueError()):
         '''Return the position of the compressed dimension in the compressed
     array.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `compressed_array`, `get_compressed_axes`,
                  `get_compression_type`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter there is no
             compressed dimension. If set to an `Exception` instance
             then it will be raised instead.
-    
+
     :Returns:
-    
+
         `int`
             The position of the compressed dimension in the compressed
             array.
-    
+
     **Examples:**
-    
+
     >>> d.get_compressed_dimension()
     2
 
-        ''' 
+        '''
         try:
             return self._get_Array().get_compressed_dimension()
         except (AttributeError, ValueError):
@@ -1332,25 +1332,25 @@ class Data(mixin.Container,
 
     def _parse_indices(self, indices):
         '''TODO
-    
+
     :Parameters:
-        
+
         indices: `tuple` (not a `list`!)
-        
+
     :Returns:
-        
+
         `list`
-        
+
     **Examples:**
-    
+
         '''
         shape = self.shape
-        
+
         parsed_indices = []
-    
+
         if not isinstance(indices, tuple):
             indices = (indices,)
-    
+
         # Initialize the list of parsed indices as the input indices with any
         # Ellipsis objects expanded
         length = len(indices)
@@ -1360,36 +1360,36 @@ class Data(mixin.Container,
             if index is Ellipsis:
                 m = n - length + 1
                 parsed_indices.extend([slice(None)] * m)
-                n -= m            
+                n -= m
             else:
                 parsed_indices.append(index)
                 n -= 1
-    
+
             length -= 1
 
         len_parsed_indices = len(parsed_indices)
-    
+
         if ndim and len_parsed_indices > ndim:
             raise IndexError(
                 "Invalid indices for data with shape {}: {} ".format(
                     shape, parsed_indices))
-    
+
         if len_parsed_indices < ndim:
             parsed_indices.extend([slice(None)]*(ndim-len_parsed_indices))
-    
+
         if not ndim and parsed_indices:
             raise IndexError(
                 "Scalar data can only be indexed with () or Ellipsis")
-    
+
         for i, (index, size) in enumerate(zip(parsed_indices, shape)):
-            if isinstance(index, slice):            
+            if isinstance(index, slice):
                 continue
-    
+
             if isinstance(index, int):
                 # E.g. 43 -> slice(43, 44, 1)
-                if index < 0: 
+                if index < 0:
                     index += size
-    
+
                 index = slice(index, index+1, 1)
             else:
                 if getattr(getattr(index, 'dtype', None), 'kind', None) == 'b':
@@ -1406,11 +1406,11 @@ class Data(mixin.Container,
 
                     index = numpy.where(index)[0]
                 # --- End: if
-    
+
                 if not numpy.ndim(index):
                     if index < 0:
                         index += size
-    
+
                     index = slice(index, index+1, 1)
                 else:
                     len_index = len(index)
@@ -1419,36 +1419,36 @@ class Data(mixin.Container,
                         index = index[0]
                         if index < 0:
                             index += size
-                        
+
                         index = slice(index, index+1, 1)
                     else:
                         # E.g. [1, 3, 4] -> [1, 3, 4]
                         pass
             # --- End: if
-            
-            parsed_indices[i] = index    
+
+            parsed_indices[i] = index
         # --- End: for
-    
+
         return parsed_indices
 
     def maximum(self, axes=None):
         '''Return the maximum of an array or the maximum along axes.
 
     Missing data array elements are omitted from the calculation.
-    
+
     .. versionadded:: 1.8.0
 
     .. seealso:: `minimum`
-    
+
     :Parameters:
-    
+
         axes: (sequence of) `int`, optional
-    
+
     :Returns:
-    
+
         `Data`
             Maximum of the data along the specified axes.
-    
+
     **Examples:**
 
         '''
@@ -1457,7 +1457,7 @@ class Data(mixin.Container,
             axes = self._parse_axes(axes)
         except ValueError as error:
             raise ValueError("Can't find maximum of data: {}".format(error))
-        
+
         array = self.array
         array = numpy.amax(array, axis=axes, keepdims=True)
 
@@ -1467,30 +1467,30 @@ class Data(mixin.Container,
         if out.shape != self.shape:
             # Delete hdf5 chunksizes
             out.nc_clear_hdf5_chunksizes()
-        
+
         return out
 
     def minimum(self, axes=None):
         '''Return the minimum of an array or minimum along axes.
 
     Missing data array elements are omitted from the calculation.
-    
+
     .. versionadded:: 1.8.0
 
     .. seealso:: `maximum`
-    
+
     :Parameters:
-    
+
         axes: (sequence of) `int`, optional
-    
+
     :Returns:
-    
+
         `Data`
             Minimum of the data along the specified axes.
-    
+
     **Examples:**
 
-        '''            
+        '''
         # Parse the axes. By default flattened input is used.
         try:
             axes = self._parse_axes(axes)
@@ -1511,22 +1511,22 @@ class Data(mixin.Container,
 
 #    def get_HDF_chunks(self, dddd):
 #        '''Set HDF5 chunks for the data array.
-#    
+#
 #Chunking refers to a storage layout where the data array is
 #partitioned into fixed-size multi-dimensional chunks when written to a
 #netCDF4 file on disk. Chunking is ignored if the data array is written
 #to a netCDF3 format file.
-#    
+#
 #A chunk has the same rank as the data array, but with fewer (or no
 #more) elements along each axis. The chunk is defined by a dictionary
 #in which each key identifies an axis (by its index in the data array
 #shape) and its value is the chunk size (i.e. number of axis elements)
 #for that axis.
-#    
+#
 #If a given chunk size for an axis is larger than the axis size, then
 #the size of the axis at the time of writing to disk will be used
 #instead.
-#    
+#
 #If chunk sizes have been specified for some but not all axes, then the
 #each unspecified chunk size is assumed to be the full size of its
 #axis.
@@ -1550,39 +1550,39 @@ class Data(mixin.Container,
 
     By default all size 1 axes are removed, but particular axes may be
     selected with the keyword arguments.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `flatten`, `insert_dimension`, `transpose`
-    
+
     :Parameters:
-    
+
         axes: (sequence of) `int`, optional
             The positions of the size one axes to be removed. By
             default all size one axes are removed. Each axis is
             identified by its original integer position. Negative
             integers counting from the last position are allowed.
-    
+
             *Parameter example:*
               ``axes=0``
-    
+
             *Parameter example:*
               ``axes=-2``
-    
+
             *Parameter example:*
               ``axes=[2, 0]``
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
         `Data` or `None`
             The data with removed data axes. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> d.shape
     (1, 73, 1, 96)
     >>> f.squeeze().shape
@@ -1597,7 +1597,7 @@ class Data(mixin.Container,
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-            
+
         if not d.ndim:
             if axes:
                 raise ValueError(
@@ -1642,18 +1642,18 @@ class Data(mixin.Container,
         '''Return the sum of an array or the sum along axes.
 
     Missing data array elements are omitted from the calculation.
-    
+
     .. seealso:: `max`, `min`
-    
+
     :Parameters:
-    
+
         axes: (sequence of) `int`, optional
-    
+
     :Returns:
-    
+
         `Data`
             The sum of the data along the specified axes.
-    
+
     **Examples:**
 
         '''
@@ -1662,17 +1662,17 @@ class Data(mixin.Container,
             axes = self._parse_axes(axes)
         except ValueError as error:
             raise ValueError("Can't sum data: {}".format(error))
-        
+
         array = self.array
         array = numpy.sum(array, axis=axes, keepdims=True)
-            
+
         d = self.copy(array=False)
         d._set_Array(array, copy=False)
 
         if d.shape != self.shape:
             # Delete hdf5 chunksizes
             d.nc_clear_hdf5_chunksizes()
-        
+
         return d
 
     @_inplace_enabled
@@ -1680,34 +1680,34 @@ class Data(mixin.Container,
         '''Permute the axes of the data array.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `flatten`, `insert_dimension`, `squeeze`
-    
+
     :Parameters:
-    
+
         axes: (sequence of) `int`
             The new axis order. By default the order is reversed. Each
             axis in the new order is identified by its original
             integer position. Negative integers counting from the last
             position are allowed.
-    
+
             *Parameter example:*
               ``axes=[2, 0, 1]``
-    
+
             *Parameter example:*
               ``axes=[-1, 0, 1]``
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
         `Data` or `None`
             The data with permuted data axes. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> d.shape
     (19, 73, 96)
     >>> d.transpose().shape
@@ -1720,19 +1720,19 @@ class Data(mixin.Container,
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-            
-        ndim = d.ndim    
-        
+
+        ndim = d.ndim
+
         # Parse the axes. By default, reverse the order of the axes.
         try:
             axes = d._parse_axes(axes)
         except ValueError as error:
             raise ValueError("Can't transpose data: {}".format(error))
-        
+
         if axes is None:
             if ndim <= 1:
                 return d
-            
+
             axes = tuple(range(ndim-1, -1, -1))
         elif len(axes) != ndim:
             raise ValueError(
@@ -1740,9 +1740,9 @@ class Data(mixin.Container,
                     axes))
 
         # Return unchanged if axes are in the same order as the data
-        if axes == tuple(range(ndim)):            
+        if axes == tuple(range(ndim)):
             return d
-            
+
         array = self.array
         array = numpy.transpose(array, axes=axes)
 
@@ -1754,26 +1754,26 @@ class Data(mixin.Container,
         '''Return the dimensions that have compressed in the underlying array.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `compressed_array`, `get_compressed_dimension`,
                  `get_compression_type`
-    
+
     :Returns:
-    
+
         `list`
             The dimensions of the data that are compressed to a single
             dimension in the underlying array. If the data are not
             compressed then an empty list is returned.
-    
+
     **Examples:**
-    
+
     >>> d.shape
     (2, 3, 4, 5, 6)
     >>> d.compressed_array.shape
     (2, 14, 6)
     >>> d.get_compressed_axes()
     [1, 2, 3]
-    
+
     >>> d.get_compression_type()
     ''
     >>> d.get_compressed_axes()
@@ -1791,24 +1791,24 @@ class Data(mixin.Container,
         '''Return the type of compression applied to the underlying array.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `compressed_array`, `compression_axes`,
                  `get_compressed_dimension`
-    
+
     :Returns:
-    
+
         `str`
             The compression type. An empty string means that no
             compression has been applied.
-            
+
     **Examples:**
-    
+
     >>> d.get_compression_type()
     ''
-    
+
     >>> d.get_compression_type()
     'gathered'
-    
+
     >>> d.get_compression_type()
     'ragged contiguous'
 
@@ -1826,28 +1826,28 @@ class Data(mixin.Container,
     Note that the mask of the returned empty data is hard.
 
     .. seealso:: `full`, `ones`, `zeros`
-    
+
     :Parameters:
-    
+
         shape: `int` or `tuple` of `int`
             The shape of the new array.
-    
+
         dtype: `numpy.dtype` or any object convertible to `numpy.dtype`
             The data-type of the new array. By default the data-type
             is ``float``.
-    
+
         units: `str` or `Units`
             The units for the empty data array.
-    
+
         calendar: `str`, optional
             The calendar for reference time units.
-            
+
     :Returns:
-    
+
         `Data`
-    
+
     **Examples:**
-    
+
     >>> d = Data.empty((96, 73))
 
         '''
@@ -1863,26 +1863,26 @@ class Data(mixin.Container,
 
     Equality is strict by default. This means that for data arrays to
     be considered equal:
-    
+
     * the units and calendar must be the same,
-    
+
     ..
-    
+
     * the fill value must be the same (see the *ignore_fill_value*
       parameter), and
-    
+
     ..
-    
+
     * the arrays must have same shape and data type, the same missing
       data mask, and be element-wise equal (see the *ignore_data_type*
       parameter).
-    
+
     Two numerical elements ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
     differences) and ``rtol`` (the tolerance on relative differences)
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
-   
+
     Any compression is ignored by default, with only the arrays in
     their uncompressed forms being compared. See the
     *ignore_compression* parameter.
@@ -1890,22 +1890,22 @@ class Data(mixin.Container,
     Any type of object may be tested but, in general, equality is only
     possible with another cell measure construct, or a subclass of
     one. See the *ignore_type* parameter.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
-        other: 
+
+        other:
             The object to compare for equality.
-    
+
         atol: float, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `ATOL` function.
-            
+
         rtol: float, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `RTOL` function.
-    
+
         ignore_fill_value: `bool`, optional
             If True then the fill value is omitted from the
             comparison.
@@ -1930,27 +1930,27 @@ class Data(mixin.Container,
             array comparisons. By default different numerical data
             types imply inequality, regardless of whether the elements
             are within the tolerance for equality.
-    
+
         ignore_compression: `bool`, optional
             If False then the compression type and, if applicable, the
             underlying compressed arrays must be the same, as well as
             the arrays in their uncompressed forms. By default only
             the the arrays in their uncompressed forms are compared.
-    
+
         ignore_type: `bool`, optional
             Any type of object may be tested but, in general, equality
             is only possible with another data array, or a subclass of
             one. If *ignore_type* is True then then
             ``Data(source=other)`` is tested, rather than the
             ``other`` defined by the *other* parameter.
-    
-    :Returns: 
-      
+
+    :Returns:
+
         `bool`
             Whether the two data arrays are equal.
-    
+
     **Examples:**
-    
+
     >>> d.equals(d)
     True
     >>> d.equals(d.copy())
@@ -1963,7 +1963,7 @@ class Data(mixin.Container,
                                         ignore_type=ignore_type)
         if pp is True or pp is False:
             return pp
-        
+
         other = pp
 
         # Check that each instance has the same shape
@@ -1979,7 +1979,7 @@ class Data(mixin.Container,
             self.get_fill_value(None) != other.get_fill_value(None)):
             logger.info(
                 "{0}: Different fill value: {1} != {2}".format(
-                    self.__class__.__name__, 
+                    self.__class__.__name__,
                     self.get_fill_value(None), other.get_fill_value(None)
                 )
             )
@@ -2009,7 +2009,7 @@ class Data(mixin.Container,
                 )
                 return False
         # --- End: for
-           
+
         if not ignore_compression:
             # --------------------------------------------------------
             # Check for equal compression types
@@ -2023,9 +2023,9 @@ class Data(mixin.Container,
                         compression_type,
                         other.get_compression_type())
                 )
-                    
+
                 return False
-            
+
             # --------------------------------------------------------
             # Check for equal compressed array values
             # --------------------------------------------------------
@@ -2039,7 +2039,7 @@ class Data(mixin.Container,
                     )
                     return False
         # --- End: if
-        
+
         # ------------------------------------------------------------
         # Check for equal (uncompressed) array values
         # ------------------------------------------------------------
@@ -2049,25 +2049,25 @@ class Data(mixin.Container,
                 "{0}: Different array values (atol={1}, rtol={2})".format(
                     self.__class__.__name__, atol, rtol)
             ) # pragma: no cover
-                
+
             return False
 
         # ------------------------------------------------------------
         # Still here? Then the two data arrays are equal.
         # ------------------------------------------------------------
-        return True            
+        return True
 
     def get_filenames(self):
         '''Return the name of the file containing the data array.
-    
+
     :Returns:
-    
+
         `set`
             The file name in normalized, absolute form. If the data is
             are memory then an empty `set` is returned.
 
     **Examples:**
-    
+
     >>> f = cfdm.example_field(0)
     >>> cfdm.write(f, 'temp_file.nc')
     >>> g = cfdm.read('temp_file.nc')[0]
@@ -2089,25 +2089,25 @@ class Data(mixin.Container,
             return set()
         else:
             return set((abspath(filename),))
-            
+
     def first_element(self):
         '''Return the first element of the data as a scalar.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `last_element`, `second_element`
-    
+
     :Returns:
-            
+
             The first element of the data.
-    
+
     **Examples:**
-    
+
     >>> d = Data(9.0)
     >>> x = d.first_element()
     >>> print(x, type(x))
     (9.0, <type 'float'>)
-    
+
     >>> d = Data([[1, 2], [3, 4]])
     >>> x = d.first_element()
     >>> print(x, type(x))
@@ -2116,7 +2116,7 @@ class Data(mixin.Container,
     >>> y = d.first_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
-    
+
     >>> d = Data(['foo', 'bar'])
     >>> x = d.first_element()
     >>> print(x, type(x))
@@ -2142,23 +2142,23 @@ class Data(mixin.Container,
     .. seealso:: `insert_dimension`, `squeeze`, `transpose`
 
     :Parameters:
-   
+
         axes: (sequence of) int or str, optional
             Select the axes.  By default all axes are flattened. The
             *axes* argument may be one, or a sequence, of:
-    
+
               * An internal axis identifier. Selects this axis.
 
             ..
-    
+
               * An integer. Selects the axis coresponding to the given
                 position in the list of axes of the data array.
-    
+
             No axes are flattened if *axes* is an empty sequence.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
 
         `Data` or `None`
@@ -2180,7 +2180,7 @@ class Data(mixin.Container,
 
     >>> e = d.flatten()
     >>> e
-    <Data(24): [0, ..., 23]>   
+    <Data(24): [0, ..., 23]>
     >>> print(e.array)
     [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23]
 
@@ -2189,7 +2189,7 @@ class Data(mixin.Container,
     <Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
 
     >>> e = d.flatten([1, 3])
-    >>> e             
+    >>> e
     <Data(1, 8, 3): [[[0, ..., 23]]]>
     >>> print(e.array)
     [[[ 0  4  8]
@@ -2202,7 +2202,7 @@ class Data(mixin.Container,
       [15 19 23]]]
 
     >>> d.flatten([0, -1], inplace=True)
-    >>> d          
+    >>> d
     <Data(4, 2, 3): [[[0, ..., 23]]]>
     >>> print(d.array)
     [[[ 0  4  8]
@@ -2216,7 +2216,7 @@ class Data(mixin.Container,
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-            
+
         ndim = self.ndim
         if not ndim:
             if axes or axes == 0:
@@ -2243,7 +2243,7 @@ class Data(mixin.Container,
         order[axes[0]:axes[0]] = axes
 
         d.transpose(order, inplace=True)
-        
+
         new_shape = [n for i, n in enumerate(shape) if i not in axes]
         new_shape.insert(axes[0], numpy.prod([shape[i] for i in axes]))
 
@@ -2252,30 +2252,30 @@ class Data(mixin.Container,
         out = type(self)(array, units=d.get_units(None),
                          calendar=d.get_calendar(None),
                          fill_value=d.get_fill_value(None))
-            
+
         if inplace:
             d.__dict__ = out.__dict__
 
         return out
-    
+
     def last_element(self):
         '''Return the last element of the data as a scalar.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `first_element`, `second_element`
-    
+
     :Returns:
-            
+
             The last element of the data.
-    
+
     **Examples:**
-    
+
     >>> d = Data(9.0)
     >>> x = d.last_element()
     >>> print(x, type(x))
     (9.0, <type 'float'>)
-    
+
     >>> d = Data([[1, 2], [3, 4]])
     >>> x = d.last_element()
     >>> print(x, type(x))
@@ -2284,28 +2284,28 @@ class Data(mixin.Container,
     >>> y = d.last_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
-    
+
     >>> d = Data(['foo', 'bar'])
     >>> x = d.last_element()
     >>> print(x, type(x))
     ('bar', <type 'str'>)
 
-        '''        
+        '''
         return self._item((slice(-1, None),)*self.ndim)
 
     def second_element(self):
         '''Return the second element of the data as a scalar.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `first_element`, `last_element`
-    
+
     :Returns:
-            
+
             The second element of the data.
-    
+
     **Examples:**
-    
+
     >>> d = Data([[1, 2], [3, 4]])
     >>> x = d.second_element()
     >>> print(x, type(x))
@@ -2314,7 +2314,7 @@ class Data(mixin.Container,
     >>> y = d.second_element()
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
-    
+
     >>> d = Data(['foo', 'bar'])
     >>> x = d.second_element()
     >>> print(x, type(x))
@@ -2343,7 +2343,7 @@ class Data(mixin.Container,
 #    casting : `str`, optional
 #        Controls what kind of data casting may occur. Defaults to
 #        'unsafe'.
-#    
+#
 #        ===============  =============================================
 #        *casting*        Casting rules
 #        ===============  =============================================
@@ -2412,31 +2412,31 @@ class Data(mixin.Container,
 #        if self.get_compression_type():
 #            return underlying_array.underlying_array(default=default)
 #
-#        return underlying_array        
+#        return underlying_array
 
     @_inplace_enabled
     def uncompress(self, inplace=False):
         '''Uncompress the underlying array.
 
 
-    
+
     .. versionadded:: 1.7.3
-    
+
     .. seealso:: `array`, `compressed_array`, `source`
-    
+
     :Parameters:
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
         `Data` or `None`
             The uncompressed data, or `None` if the operation was
             in-place.
 
     **Examples:**
-    
+
     >>> d.get_compression_type()
     'ragged contiguous'
     >>> d.source()
@@ -2449,7 +2449,7 @@ class Data(mixin.Container,
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-    
+
         if d.get_compression_type():
             d._set_Array(d.array, copy=False)
 
@@ -2460,16 +2460,16 @@ class Data(mixin.Container,
 
     The unique elements are sorted into a one dimensional array. with
     no missing values.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Returns:
-    
+
         `Data`
             The unique elements.
-    
+
     **Examples:**
-    
+
     >>> d = Data([[4, 2, 1], [1, 2, 3]], 'metre')
     >>> d.unique()
     <Data(4): [1, 2, 3, 4] metre>
@@ -2507,7 +2507,7 @@ class Data(mixin.Container,
 
         '''
         return self.minimum(axes=axes)
-    
+
 # --- End: class
 
 # --------------------------------------------------------------------

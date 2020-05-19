@@ -63,7 +63,7 @@ def run_test_suite(verbosity=2):
     if not outcome.wasSuccessful():
         exit(1)  # else is zero for sucess as standard
 
-    
+
 if __name__ == '__main__':
     print('---------------')
     print('CFDM TEST SUITE')
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     print('')
     print('Running tests from', os.path.abspath(os.curdir))
     print('')
-    
+
     run_test_suite_setup_0()
     run_test_suite_setup_1()
     run_test_suite()

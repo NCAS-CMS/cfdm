@@ -52,7 +52,7 @@ class Container(object):
         '''TODO
         '''
         return RTOL()
-    
+
 #    @classmethod
     def _equals(self, x, y, rtol=None, atol=None,
                 ignore_data_type=False, **kwargs):
@@ -61,15 +61,15 @@ class Container(object):
     Equality either uses one or other of the objects `!equals`
     methods, or casts them as numpy arrays and carried aout numericlly
     tolerant equality checks.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
+
         atol: float, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `ATOL` function.
-            
+
         rtol: float, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `RTOL` function.
@@ -83,7 +83,7 @@ class Container(object):
         kwargs['ignore_data_type'] = ignore_data_type
         kwargs['rtol'] = rtol
         kwargs['atol'] = atol
-        
+
         eq = getattr(x, 'equals', None)
         if callable(eq):
             # --------------------------------------------------------
@@ -98,7 +98,7 @@ class Container(object):
                 # Python 2
                 pass
             return eq(y, **kwargs)
-        
+
         eq = getattr(y, 'equals', None)
         if callable(eq):
             # --------------------------------------------------------
@@ -126,22 +126,22 @@ class Container(object):
         # ------------------------------------------------------------
         if not isinstance(x, numpy.ndarray):
             x = numpy.asanyarray(x)
-            
+
         if not isinstance(y, numpy.ndarray):
             y = numpy.asanyarray(y)
-            
+
         # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
 
         if not ignore_data_type and x.dtype != y.dtype:
             if (x.dtype.kind not in ('S', 'U')
                 and y.dtype.kind not in ('S', 'U')):
                 return False
-        
+
         x_is_masked = numpy.ma.isMA(x)
         y_is_masked = numpy.ma.isMA(y)
 
         if not (x_is_masked or y_is_masked):
-            try:            
+            try:
                 return bool(numpy.allclose(x, y, rtol=rtol, atol=atol))
             except (IndexError, NotImplementedError, TypeError):
                 return bool(numpy.all(x == y))
@@ -168,14 +168,14 @@ class Container(object):
 
     * If the LHS operand is (object identity) the RHS operand then
       return True.
-    
+
     * If ignore_type=False and the LHS operand is not of the same type, or
       a squblcass of, the RHS operand then return False
-    
+
     * If ignore_type=True and the LHS operand is not of the same type,
       or a sublcass of, the RHS operand then instantiate a new
       instance based on the the RHS class and return it.
-    
+
     .. versionadded:: 1.7.0
 
         '''

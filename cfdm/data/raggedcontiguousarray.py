@@ -15,10 +15,10 @@ class RaggedContiguousArray(abstract.CompressedArray,
     combines all features along a single dimension (the "sample
     dimension") such that each feature in the collection occupies a
     contiguous block.
-    
+
     The information needed to uncompress the data is stored in a
     "count variable" that gives the size of each block.
-    
+
     It is assumed that the compressed dimension is the left-most
     dimension in the compressed array.
 
@@ -30,19 +30,19 @@ class RaggedContiguousArray(abstract.CompressedArray,
         '''**Initialization**
 
     :Parameters:
-    
+
         compressed_array: `Data`
             The compressed data.
-    
+
         shape: `tuple`
             The uncompressed array dimension sizes.
-    
+
         size: `int`
             Number of elements in the uncompressed array.
-    
+
         ndim: `int`
             The number of uncompressed array dimensions
-    
+
         count_variable: `Count`
             The count variable required to uncompress the data,
             corresponding to a CF-netCDF count variable.
@@ -53,23 +53,23 @@ class RaggedContiguousArray(abstract.CompressedArray,
                          count_variable=count_variable,
                          compression_type='ragged contiguous',
                          compressed_dimension=0)
-       
+
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
     Returns an subspace of the uncompressed data an independent numpy
     array.
-    
+
     The indices that define the subspace are relative to the
     uncompressed data and must be either `Ellipsis` or a sequence that
     contains an index for each dimension. In the latter case, each
     dimension's index must either be a `slice` object or a sequence of
     two or more integers.
-    
+
     Indexing is similar to numpy indexing. The only difference to
     numpy indexing (given the restrictions on the type of indices
     allowed) is:
-    
+
     * When two or more dimension's indices are sequences of integers
       then these indices work independently along each dimension
       (similar to the way vector subscripts work in Fortran).
@@ -78,7 +78,7 @@ class RaggedContiguousArray(abstract.CompressedArray,
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-       
+
         compressed_array = self._get_compressed_Array()
 
         # Initialise the un-sliced uncompressed array
@@ -92,15 +92,15 @@ class RaggedContiguousArray(abstract.CompressedArray,
         # --------------------------------------------------------
 
         count_array = self.get_count().data.array
-        
-        start = 0 
+
+        start = 0
         for i, n in enumerate(count_array):
             n = int(n)
             sample_indices = slice(start, start + n)
-            
+
             u_indices = (i,
                          slice(0, sample_indices.stop - sample_indices.start))
-            
+
             uarray[u_indices] = compressed_array[(sample_indices,)]
             start += n
 
@@ -112,5 +112,5 @@ class RaggedContiguousArray(abstract.CompressedArray,
         super().to_memory()
         self.get_count().data.to_memory()
         return self
-    
+
 # --- End: class

@@ -28,7 +28,7 @@ class Container(with_metaclass(abc.ABCMeta, object)):
                 custom = {}
             else:
                 custom = custom.copy()
-#                if custom:                  
+#                if custom:
 #                        custom = deepcopy(custom)
 #                    else:
 #                        custom = custom.copy()
@@ -38,16 +38,16 @@ class Container(with_metaclass(abc.ABCMeta, object)):
             custom = {}
 
         self._set_component('custom', custom, copy=False)
-    
+
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` function.
 
     x.__deepcopy__() <==> copy.deepcopy(x)
-    
+
     .. versionadded:: 1.7.0
-    
+
     **Examples:**
-    
+
     >>> import copy
     >>> y = copy.deepcopy(x)
 
@@ -63,19 +63,19 @@ class Container(with_metaclass(abc.ABCMeta, object)):
     .. versionadded:: 1.7.0
 
     :Parameters:
-    
-        default: 
+
+        default:
             TODO
-            
-        message: `str`, optional 
+
+        message: `str`, optional
             TODO
-            
+
     :Returns:
-    
+
         TODO
-    
+
     **Examples:**
-    
+
     TODO
 
         '''
@@ -85,31 +85,31 @@ class Container(with_metaclass(abc.ABCMeta, object)):
                 default.args = (message,)
 
             raise default
-        
+
         return default
 
     def _del_component(self, component, default=ValueError()):
         '''Remove a component.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `_get_component`, `_has_component`, `_set_component`
-    
+
     :Parameters:
-    
-        component: 
+
+        component:
             The name of the component to be removed.
-    
+
         default: optional
             Return *default* if the component has not been set.
-    
+
     :Returns:
-    
+
             The removed component. If unset then *default* is
             returned, if provided.
-    
+
     **Examples:**
-    
+
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -133,9 +133,9 @@ class Container(with_metaclass(abc.ABCMeta, object)):
         '''Storage for additional attributes.
 
     .. versionadded:: 1.7.4
-    
+
     **Examples:**
-    
+
     >>> f._custom
     {}
     >>> f._custom['feature'] = ['f']
@@ -150,32 +150,32 @@ class Container(with_metaclass(abc.ABCMeta, object)):
     {'feature': ['f']}
     >>> g._custom
     {}
-    
+
     '''
         return self._get_component('custom')
-    
+
     def _get_component(self, component, default=ValueError()):
         '''Return a component
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `_del_component`, `_has_component`, `_set_component`
-    
+
     :Parameters:
-    
-        component: 
+
+        component:
             The name of the component to be returned.
-    
+
         default: optional
             Return *default* if the component has not been set.
-    
+
     :Returns:
-    
+
             The component. If unset then *default* is returned, if
             provided.
-    
+
     **Examples:**
-    
+
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -187,7 +187,7 @@ class Container(with_metaclass(abc.ABCMeta, object)):
     False
 
         '''
-        try:            
+        try:
             return self._components[component]
         except KeyError:
             return self._default(default,
@@ -198,21 +198,21 @@ class Container(with_metaclass(abc.ABCMeta, object)):
         '''Whether a component has been set.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `_del_component`, `_get_component`, `_set_component`
-    
+
     :Parameters:
-    
-        component: 
+
+        component:
             The name of the component.
-    
+
     :Returns:
-    
+
         `bool`
             True if the component has been set, otherwise False.
-    
+
     **Examples:**
-    
+
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -230,23 +230,23 @@ class Container(with_metaclass(abc.ABCMeta, object)):
         '''Set a component.
 
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `_del_component`, `_get_component`, `_has_component`
-    
+
     :Parameters:
-    
+
         component: `str`
             The name of the component.
-    
+
         value:
             The value for the component.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-        
+
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -260,7 +260,7 @@ class Container(with_metaclass(abc.ABCMeta, object)):
         '''
         if copy:
             value = deepcopy(value)
-            
+
         self._components[component] = value
 
     # ----------------------------------------------------------------
@@ -270,18 +270,18 @@ class Container(with_metaclass(abc.ABCMeta, object)):
         '''Return a deep copy.
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Returns:
-    
+
             The deep copy.
-    
+
     **Examples:**
-    
+
     >>> g = f.copy()
 
         '''
         return type(self)(source=self, copy=True)
-    
+
 # --- End: class
