@@ -36,20 +36,29 @@ atexit.register(_remove_tmpfiles)
 
 
 class read_writeTest(unittest.TestCase):
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'test_file.nc')
+    def setUp(self):
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_LEVEL('DISABLE')
+        self.filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
-    string_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                   'string_char.nc')
+        self.string_filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'string_char.nc')
 
-    test_only = []
-#    test_only = ['NOTHING!!!!!']
-#    test_only = ['test_read_CDL']
-#    test_only = ['test_write_filename']
-#    test_only = ['test_read_write_unlimited']
-#    test_only = ['test_read_field']
-#    test_only = ['test_read_mask']
-#    test_only = ['test_read_write_format']
+        self.test_only = []
+        #    self.test_only = ['NOTHING!!!!!']
+        #    self.test_only = ['test_read_CDL']
+        #    self.test_only = ['test_write_filename']
+        #    self.test_only = ['test_read_write_unlimited']
+        #    self.test_only = ['test_read_field']
+        #    self.test_only = ['test_read_mask']
+        #    self.test_only = ['test_read_write_format']
     
     def test_write_filename(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -135,7 +144,7 @@ class read_writeTest(unittest.TestCase):
             g = cfdm.read(tmpfile)
             self.assertTrue(len(g) == 1, 'g = '+repr(g))
             g = g[0]
-            self.assertTrue(f.equals(g, verbose=True),
+            self.assertTrue(f.equals(g, verbose=3),
                             'Bad read/write of format: {}'.format(fmt))
             
     def test_read_write_netCDF4_compress_shuffle(self):
@@ -152,7 +161,7 @@ class read_writeTest(unittest.TestCase):
                                shuffle=shuffle)
                     g = cfdm.read(tmpfile)[0]
                     self.assertTrue(
-                        f.equals(g, verbose=True),
+                        f.equals(g, verbose=3),
                         "Bad read/write with lossless compression: "
                         "{}, {}, {}".format(fmt, compress, shuffle))
         #--- End: for
@@ -170,7 +179,7 @@ class read_writeTest(unittest.TestCase):
                     'NETCDF4_CLASSIC'):
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)[0]
-            self.assertTrue(f.equals(g, verbose=True),
+            self.assertTrue(f.equals(g, verbose=3),
                             'Bad read/write of format: {}'.format(fmt))
 
     def test_read_mask(self):
@@ -274,12 +283,12 @@ class read_writeTest(unittest.TestCase):
         h = cfdm.read(tmpfileh)[0]
         c = cfdm.read(tmpfilec)[0]
 
-        self.assertTrue(f0.equals(f, verbose=True))
+        self.assertTrue(f0.equals(f, verbose=3))
 
         self.assertTrue(f.construct('grid_latitude').equals(
-            c.construct('grid_latitude'), verbose=True))
+            c.construct('grid_latitude'), verbose=3))
         self.assertTrue(f0.construct('grid_latitude').equals
-                        (c.construct('grid_latitude'), verbose=True))
+                        (c.construct('grid_latitude'), verbose=3))
 
         with self.assertRaises(OSError):
             x = cfdm.read('test_read_write.py')
@@ -320,9 +329,9 @@ class read_writeTest(unittest.TestCase):
         
         for i in range(0, n):
             j = i + n
-            self.assertTrue(f[i].data.equals(f[j].data, verbose=1),
+            self.assertTrue(f[i].data.equals(f[j].data, verbose=3),
                             "{!r} {!r}".format(f[i], f[j]))
-            self.assertTrue(f[j].data.equals(f[i].data, verbose=1),
+            self.assertTrue(f[j].data.equals(f[i].data, verbose=3),
                             "{!r} {!r}".format(f[j], f[i]))
 
         for string0 in (True, False):
@@ -347,13 +356,13 @@ class read_writeTest(unittest.TestCase):
     
                         for i, j in zip(cfdm.read(tmpfile1),
                                         cfdm.read(tmpfile0)):
-                            self.assertTrue(i.equals(j, verbose=1))
+                            self.assertTrue(i.equals(j, verbose=3))
         #--- End: for
                         
 #--- End: class
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())
-    print(cfdm.environment(display=False))
+    cfdm.environment(display=False)
     print('')
     unittest.main(verbosity=2)

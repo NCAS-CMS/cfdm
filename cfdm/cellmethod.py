@@ -1,10 +1,17 @@
 from __future__ import print_function
 from builtins import (str, super, zip)
 
+import logging
+
 import numpy
 
 from . import mixin
 from . import core
+
+from .decorators import _manage_log_level_via_verbosity
+
+
+logger = logging.getLogger(__name__)
 
 
 class CellMethod(mixin.Container,
@@ -286,7 +293,8 @@ class CellMethod(mixin.Container,
 #
 #        return out
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_qualifiers=(), ignore_type=False):
         '''Whether two cell method constructs are the same.
 
@@ -331,11 +339,22 @@ class CellMethod(mixin.Container,
             The tolerance on relative differences between real
             numbers. The default value is set by the `cfdm.RTOL`
             function.
-    
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            information about differences that lead to inequality.
+
         ignore_qualifiers: sequence of `str`, optional
             The names of qualifiers to omit from the comparison.
     
@@ -372,10 +391,12 @@ class CellMethod(mixin.Container,
         # Check the methods
         # ------------------------------------------------------------
         if self.get_method(None) != other.get_method(None):
-            if verbose:
-                print("{0}: Different methods: {1!r} != {2!r}".format(
-                    cm0.__class__.__name__,
-                    self.get_method(None), other.get_method(None)))
+            logger.info(
+                "{0}: Different methods: {1!r} != {2!r}".format(
+                    cm0.__class__.__name__, self.get_method(None),
+                    other.get_method(None)
+                )
+            )
             return False
 
         # ------------------------------------------------------------
@@ -390,10 +411,12 @@ class CellMethod(mixin.Container,
             other_qualifiers.pop(prop, None)
                 
         if set(self_qualifiers) != set(other_qualifiers):
-            if verbose:
-                for q in set(self_qualifiers).symmetric_difference(other_qualifiers):
-                    print("{0}: Non-common qualifier: {1!r}".format( 
-                        self.__class__.__name__, q))
+            for q in set(self_qualifiers).symmetric_difference(
+                    other_qualifiers):
+                logger.info(
+                    "{0}: Non-common qualifier: {1!r}".format(
+                        self.__class__.__name__, q)
+                )
             return False
 
         for qualifier, x in self_qualifiers.items():
@@ -402,9 +425,10 @@ class CellMethod(mixin.Container,
             if not self._equals(x, y, rtol=rtol, atol=atol,
                                 ignore_data_type=True,
                                 verbose=verbose):
-                if verbose:
-                    print("{0}: Different {1} qualifiers: {2!r}, {3!r}".format(
-                        self.__class__.__name__, prop, x, y))
+                logger.info(
+                    "{0}: Different {1} qualifiers: {2!r}, {3!r}".format(
+                        self.__class__.__name__, prop, x, y)
+                )
                 return False
         # --- End: for
 
@@ -415,21 +439,21 @@ class CellMethod(mixin.Container,
         intervals1 = other.get_qualifier('interval', ())
         if intervals0:
             if not intervals1:
-                if verbose:
-                    print(
-                        "{0}: Different interval qualifiers: "
-                        "{1!r} != {2!r}".format(
-                            self.__class__.__name__, intervals0, intervals1))
+                logger.info(
+                    "{0}: Different interval qualifiers: "
+                    "{1!r} != {2!r}".format(
+                        self.__class__.__name__, intervals0, intervals1)
+                )
                 return False
             # --- End: if
             
             if len(intervals0) != len(intervals1):
-                if verbose:
-                    print(
-                        "{0}: Different numbers of interval qualifiers: "
-                        "{1!r} != {2!r}".format(
-                            self.__class__.__name__, intervals0, intervals1))
-                    return False
+                logger.info(
+                    "{0}: Different numbers of interval qualifiers: "
+                    "{1!r} != {2!r}".format(
+                        self.__class__.__name__, intervals0, intervals1)
+                )
+                return False
             # --- End: if
 
             for data0, data1 in zip(intervals0, intervals1):
@@ -438,18 +462,20 @@ class CellMethod(mixin.Container,
                                     verbose=verbose,
                                     ignore_data_type=True,
                                     ignore_fill_value=True):
-                    if verbose:
-                        print(
-                            "{0}: Different interval qualifiers: "
-                            "{1!r} != {2!r}".format(
-                                self.__class__.__name__,
-                                intervals0, intervals1))
+                    logger.info(
+                        "{0}: Different interval qualifiers: "
+                        "{1!r} != {2!r}".format(
+                            self.__class__.__name__,
+                            intervals0, intervals1
+                        )
+                    )
                     return False
 
         elif intervals1:
-            if verbose:
-                print("{}: Different intervals: {!r} != {!r}".format(
-                    self.__class__.__name__, intervals0, intervals1))
+            logger.info(
+                "{}: Different intervals: {!r} != {!r}".format(
+                    self.__class__.__name__, intervals0, intervals1)
+            )
             return False
         # --- End: if
 
@@ -459,7 +485,8 @@ class CellMethod(mixin.Container,
 
         return True
 
-#    def equivalent(self, other, rtol=None, atol=None, verbose=False):
+#    @_manage_log_level_via_verbosity
+#    def equivalent(self, other, rtol=None, atol=None, verbose=None):
 #        '''True if two cell methods are equivalent, False otherwise.
 #
 #The `axes` and `interval` attributes are ignored in the comparison.
@@ -490,9 +517,8 @@ class CellMethod(mixin.Container,
 #
 #        # Check that each instance is the same type
 #        if self.__class__ != other.__class__:
-#            if verbose:
-#                print("{0}: Different types: {0} != {1}".format(
-#                    self.__class__.__name__, other.__class__.__name__))
+#            logger.info("{0}: Different types: {0} != {1}".format(
+#                self.__class__.__name__, other.__class__.__name__))
 #            return False
 #        # --- End: if
 #
@@ -500,9 +526,8 @@ class CellMethod(mixin.Container,
 #        axes1 = other.axes
 #            
 #        if len(axes0) != len(axes1) or set(axes0) != set(axes1):
-#            if verbose:
-#                print("{}: Nonequivalent axes: {!r}, {!r}".format(
-#                    self.__class__.__name__, axes0, axes1))
+#            logger.info("{}: Nonequivalent axes: {!r}, {!r}".format(
+#                self.__class__.__name__, axes0, axes1))
 #            return False
 #        # --- End: if
 #
@@ -510,10 +535,10 @@ class CellMethod(mixin.Container,
 #        other1 = other.sorted(argsort=argsort)
 #        self1 = self
 #
-#        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('interval',)):
-#            if verbose:
-#                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
-#                    self.__class__.__name__, self, other))
+#        if not self1.equals(
+#                other1, rtol=rtol, atol=atol, ignore=('interval',)):
+#            logger.info("{0}: Nonequivalent: {1!r}, {2!r}".format(
+#                self.__class__.__name__, self, other))
 #            return False
 #        # --- End: if
 #
@@ -528,10 +553,13 @@ class CellMethod(mixin.Container,
 #            other_interval = other1.get_property('interval', ())        
 #
 #            if len(self_interval) != len(other_interval):
-#                if verbose:
-#                    print(
-#"{0}: Different numbers of intervals: {1!r} != {2!r}".format(
-#    self.__class__.__name__, self_interval, other_interval))
+#                logger.info(
+#                    "{0}: Different numbers of intervals: "
+#                    "{1!r} != {2!r}".format(
+#                        self.__class__.__name__, self_interval,
+#                        other_interval
+#                    )
+#                )
 #                return False
 #        # --- End: if
 #
@@ -539,10 +567,12 @@ class CellMethod(mixin.Container,
 #        if self_interval:
 #            for data0, data1 in zip(self_interval, other_interval):
 #                if not data0.allclose(data1, rtol=rtol, atol=atol):
-#                    if verbose:
-#                        print(
-#"{0}: Different interval data: {1!r} != {2!r}".format(
-#    self.__class__.__name__, self_interval, other_interval))
+#                    logger.info(
+#                        "{0}: Different interval data: {1!r} != {2!r}".format(
+#                            self.__class__.__name__, self_interval,
+#                            other_interval
+#                        )
+#                    )
 #                    return False
 #        # --- End: if
 #

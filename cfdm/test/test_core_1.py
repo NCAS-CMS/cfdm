@@ -12,9 +12,17 @@ verbose = False
 
 
 class create_fieldTest(unittest.TestCase):
+    def setUp(self):
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_LEVEL('DISABLE')
 
     def test_core_create_field(self):
-
         # Dimension coordinates
         dim1 = cfdm.core.DimensionCoordinate(data=cfdm.core.Data(cfdm.core.NumpyArray(numpy.arange(10.))))
         dim1.set_property('standard_name', 'grid_latitude')
@@ -180,6 +188,6 @@ class create_fieldTest(unittest.TestCase):
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())
-    print(cfdm.environment(display=False))
+    cfdm.environment(display=False)
     print('')
     unittest.main(verbosity=2)

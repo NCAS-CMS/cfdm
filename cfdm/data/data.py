@@ -2,6 +2,7 @@ from __future__ import print_function
 from builtins import (range, super, zip)
 
 import itertools
+import logging
 
 import numpy
 import netCDF4
@@ -12,10 +13,17 @@ from .. import mixin
 from ..constants import masked as cfdm_masked
 from ..functions import abspath
 
-from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+from ..decorators import (
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
 
 from . import abstract
 from . import NumpyArray
+
+
+logger = logging.getLogger(__name__)
 
 
 class Data(mixin.Container,
@@ -1846,7 +1854,8 @@ class Data(mixin.Container,
         return cls(numpy.empty(shape=shape, dtype=dtype), units=units,
                    calendar=calendar)
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_compression=True, ignore_type=False,
                _check_values=True):
@@ -1900,11 +1909,22 @@ class Data(mixin.Container,
         ignore_fill_value: `bool`, optional
             If True then the fill value is omitted from the
             comparison.
-    
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            information about differences that lead to inequality.
+
         ignore_data_type: `bool`, optional
             If True then ignore the data types in all numerical data
             array comparisons. By default different numerical data
@@ -1945,28 +1965,32 @@ class Data(mixin.Container,
             return pp
         
         other = pp
-        
+
         # Check that each instance has the same shape
         if self.shape != other.shape:
-            if verbose:
-                print("{0}: Different shapes: {1} != {2}".format(
-                    self.__class__.__name__, self.shape, other.shape))
+            logger.info(
+                "{0}: Different shapes: {1} != {2}".format(
+                    self.__class__.__name__, self.shape, other.shape)
+            )
             return False
 
         # Check that each instance has the same fill value
         if (not ignore_fill_value and
             self.get_fill_value(None) != other.get_fill_value(None)):
-            if verbose:
-                print("{0}: Different fill value: {1} != {2}".format(
+            logger.info(
+                "{0}: Different fill value: {1} != {2}".format(
                     self.__class__.__name__, 
-                    self.get_fill_value(None), other.get_fill_value(None)))
+                    self.get_fill_value(None), other.get_fill_value(None)
+                )
+            )
             return False
 
         # Check that each instance has the same data type
         if not ignore_data_type and self.dtype != other.dtype:
-            if verbose:
-                print("{0}: Different data types: {1} != {2}".format(
-                    self.__class__.__name__, self.dtype, other.dtype))
+            logger.info(
+                "{0}: Different data types: {1} != {2}".format(
+                    self.__class__.__name__, self.dtype, other.dtype)
+            )
             return False
 
         # Return now if we have been asked to not check the array
@@ -1979,9 +2003,10 @@ class Data(mixin.Container,
             x = getattr(self, 'get_'+attr)(None)
             y = getattr(other, 'get_'+attr)(None)
             if x != y:
-                if verbose:
-                    print("{0}: Different {1}: {2!r} != {3!r}".format(
-                        self.__class__.__name__, attr, x, y))
+                logger.info(
+                    "{0}: Different {1}: {2!r} != {3!r}".format(
+                        self.__class__.__name__, attr, x, y)
+                )
                 return False
         # --- End: for
            
@@ -1991,12 +2016,13 @@ class Data(mixin.Container,
             # --------------------------------------------------------
             compression_type = self.get_compression_type()
             if compression_type != other.get_compression_type():
-                if verbose:
-                    print("{0}: Different compression types: "
-                          "{1} != {2}".format(
-                              self.__class__.__name__,
-                              compression_type,
-                              other.get_compression_type()))
+                logger.info(
+                    "{0}: Different compression types: "
+                    "{1} != {2}".format(
+                        self.__class__.__name__,
+                        compression_type,
+                        other.get_compression_type())
+                )
                     
                 return False
             
@@ -2007,9 +2033,10 @@ class Data(mixin.Container,
                 if not self._equals(self.compressed_array,
                                     other.compressed_array,
                                     rtol=rtol, atol=atol):
-                    if verbose:
-                        print("{0}: Different compressed array values".format(
-                            self.__class__.__name__))
+                    logger.info(
+                        "{0}: Different compressed array values".format(
+                            self.__class__.__name__)
+                    )
                     return False
         # --- End: if
         
@@ -2018,11 +2045,10 @@ class Data(mixin.Container,
         # ------------------------------------------------------------
         if not self._equals(self.array, other.array,
                             rtol=rtol, atol=atol):
-            if verbose:
-                print(
-                    "{0}: Different array values (atol={1}, rtol={2})".format(
-                        self.__class__.__name__,
-                        atol, rtol)) # pragma: no cover
+            logger.info(
+                "{0}: Different array values (atol={1}, rtol={2})".format(
+                    self.__class__.__name__, atol, rtol)
+            ) # pragma: no cover
                 
             return False
 

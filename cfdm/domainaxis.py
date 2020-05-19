@@ -1,8 +1,15 @@
 from __future__ import print_function
 from builtins import super
 
+import logging
+
 from . import mixin
 from . import core
+
+from .decorators import _manage_log_level_via_verbosity
+
+
+logger = logging.getLogger(__name__)
 
 
 class DomainAxis(mixin.NetCDFDimension,
@@ -66,8 +73,8 @@ class DomainAxis(mixin.NetCDFDimension,
         '''
         return 'size({0})'.format(self.get_size(''))
 
-
-    def equals(self, other, verbose=False, ignore_type=False):
+    @_manage_log_level_via_verbosity
+    def equals(self, other, verbose=None, ignore_type=False):
         '''Whether two domain axis constructs are the same.
 
     Equality is strict by default. This means that:
@@ -87,11 +94,22 @@ class DomainAxis(mixin.NetCDFDimension,
     
         other: 
             The object to compare for equality.
-    
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            information about differences that lead to inequality.
+
         ignore_type: `bool`, optional
             Any type of object may be tested but, in general, equality
             is only possible with another domain axis construct, or a
@@ -115,7 +133,7 @@ class DomainAxis(mixin.NetCDFDimension,
     
     >>> d = cfdm.DomainAxis(1)
     >>> e = cfdm.DomainAxis(99)
-    >>> d.equals(e, verbose=True)
+    >>> d.equals(e, verbose=3)
     DomainAxis: Different axis sizes: 1 != 99
     False
 
@@ -131,9 +149,10 @@ class DomainAxis(mixin.NetCDFDimension,
         self_size  = self.get_size(None)
         other_size = other.get_size(None)
         if not self_size == other_size:
-            if verbose:
-                print("{0}: Different axis sizes: {1} != {2}".format(
-			self.__class__.__name__, self_size, other_size))
+            logger.info(
+                "{0}: Different axis sizes: {1} != {2}".format(
+                    self.__class__.__name__, self_size, other_size)
+            )
             return False
 
         return True

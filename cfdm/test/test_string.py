@@ -12,6 +12,15 @@ import cfdm
 
 class StringTest(unittest.TestCase):
     def setUp(self):
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_LEVEL('DISABLE')
+
         self.test_only = []
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
@@ -21,7 +30,7 @@ class StringTest(unittest.TestCase):
     def tearDown(self):
         os.remove(self.tempfilename)
 
-        
+
     def test_STRING(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -83,6 +92,6 @@ class StringTest(unittest.TestCase):
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
-    print(cfdm.environment(display=False))
+    cfdm.environment(display=False)
     print('')
     unittest.main(verbosity=2)

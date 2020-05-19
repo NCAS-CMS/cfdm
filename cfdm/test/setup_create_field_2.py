@@ -14,8 +14,18 @@ warnings = False
 
 
 class create_fieldTest_2(unittest.TestCase):
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'test_file_b.nc')
+    def setUp(self):
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_LEVEL('DISABLE')
+
+        self.filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'test_file_b.nc')
 
     def test_create_field_2(self):
 
@@ -190,7 +200,7 @@ class create_fieldTest_2(unittest.TestCase):
             print(f.constructs)
             print(f.construct_data_axes())
         
-        self.assertTrue(f.equals(f.copy(), verbose=True),
+        self.assertTrue(f.equals(f.copy(), verbose=verbose),
                         "Field f not equal to a copy of itself")
         
 #        f.dump()
@@ -229,7 +239,7 @@ class create_fieldTest_2(unittest.TestCase):
                             sorted(g.constructs.items())))
 
 
-            self.assertTrue(g.equals(g.copy(), verbose=True),
+            self.assertTrue(g.equals(g.copy(), verbose=verbose),
                             "Field g not equal to a copy of itself")
             if verbose:
                 print('f')
@@ -237,7 +247,7 @@ class create_fieldTest_2(unittest.TestCase):
                 print('g')
                 g.dump()
             
-            self.assertTrue(g.equals(f, verbose=True),                            
+            self.assertTrue(g.equals(f, verbose=verbose),
                             "Field not equal to itself read back in")
         #--- End: for
         
@@ -272,6 +282,6 @@ class create_fieldTest_2(unittest.TestCase):
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())
-    print(cfdm.environment(display=False))
+    cfdm.environment(display=False)
     print('')
     unittest.main(verbosity=2)

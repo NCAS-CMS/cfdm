@@ -1,6 +1,8 @@
 from __future__ import print_function
 from builtins import (str, super, zip)
 
+import logging
+
 from . import mixin
 from . import core
 from . import Constructs
@@ -17,7 +19,14 @@ from .data import RaggedIndexedArray
 from .data import RaggedIndexedContiguousArray
 from .data import GatheredArray
 
-from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+from .decorators import (
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
+
+
+logger = logging.getLogger(__name__)
 
 
 class Field(mixin.NetCDFVariable,
@@ -1184,7 +1193,8 @@ class Field(mixin.NetCDFVariable,
         else:
             return string
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=True,
                ignore_type=False):
@@ -1244,11 +1254,22 @@ class Field(mixin.NetCDFVariable,
             If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison, for the field
             construct and metadata constructs.
-    
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            information about differences that lead to inequality.
+
         ignore_properties: sequence of `str`, optional
             The names of properties of the field construct (not the
             metadata constructs) to omit from the comparison. Note
@@ -1294,7 +1315,7 @@ class Field(mixin.NetCDFVariable,
     >>> g.set_property('foo', 'bar')
     >>> f.equals(g)
     False
-    >>> f.equals(g, verbose=True)
+    >>> f.equals(g, verbose=3)
     Field: Non-common property name: foo
     Field: Different properties
     False
@@ -1324,9 +1345,10 @@ class Field(mixin.NetCDFVariable,
                             ignore_fill_value=ignore_fill_value,
                             ignore_compression=ignore_compression,
                             _ignore_type=False):
-            if verbose:
-                print("{0}: Different metadata constructs".format(
-                    self.__class__.__name__))
+            logger.info(
+                "{0}: Different metadata constructs".format(
+                    self.__class__.__name__)
+            )
             return False
 
         return True
@@ -1666,8 +1688,11 @@ class Field(mixin.NetCDFVariable,
                 for x in value1:
                     print('        {!r}: ['.format(key1))
                     print('            {{{0}}},'.format(
-                        '\n             '.join(['{0!r}: {1!r},'.format(key2, value2)
-                                                for key2, value2 in sorted(x.items())])))
+                        '\n             '.join(
+                            ['{0!r}: {1!r},'.format(key2, value2)
+                             for key2, value2 in sorted(x.items())]
+                        )
+                    ))
 
                 print('        ],')
 

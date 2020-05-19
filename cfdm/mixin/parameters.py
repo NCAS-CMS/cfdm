@@ -1,7 +1,14 @@
 from __future__ import print_function
 from builtins import super
 
+import logging
+
 from . import Container
+
+from ..decorators import _manage_log_level_via_verbosity
+
+
+logger = logging.getLogger(__name__)
 
 
 class Parameters(Container):
@@ -40,7 +47,8 @@ class Parameters(Container):
         '''
         return 'Parameters: {0}'.format(', '.join(sorted(self.parameters())))
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_type=False):
         '''Whether two instances are the same.
@@ -76,11 +84,22 @@ class Parameters(Container):
             The tolerance on relative differences between real
             numbers. The default value is set by the `cfdm.RTOL`
             function.
-    
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            information about differences that lead to inequality.
+
         ignore_data_type: `bool`, optional
             If True then ignore the data types in all numerical
             comparisons. By default different numerical data types
@@ -92,11 +111,7 @@ class Parameters(Container):
             is only possible with another object of the same type, or
             a subclass of one. If *ignore_type* is True then equality
             is possible for any object with a compatible API.
-    
-        verbose: `bool`, optional
-            If True then print a verbose highlighting where the two
-            instances differ.
-    
+
     :Returns: 
     
         `bool`
@@ -123,12 +138,13 @@ class Parameters(Container):
         parameters0 = self.parameters()
         parameters1 = other.parameters()
         if set(parameters0) != set(parameters1):
-            if verbose:
-                print(
-                    "{0}: Different parameter-valued terms "
-                    "({1} != {2})".format(
-                        self.__class__.__name__,
-                        set(parameters0), set(parameters1)))
+            logger.info(
+                "{0}: Different parameter-valued terms "
+                "({1} != {2})".format(
+                    self.__class__.__name__,
+                    set(parameters0), set(parameters1)
+                )
+            )
             return False
 
         # Check that the parameter values are equal
@@ -144,9 +160,10 @@ class Parameters(Container):
                                 ignore_data_type=True,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_type=ignore_type):
-                if verbose:
-                    print("{}: Unequal {!r} terms ({!r} != {!r})".format( 
-                        self.__class__.__name__, term, value0, value1))
+                logger.info(
+                    "{}: Unequal {!r} terms ({!r} != {!r})".format( 
+                        self.__class__.__name__, term, value0, value1)
+                )
                 return False
         # --- End: for
 

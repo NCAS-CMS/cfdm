@@ -12,8 +12,17 @@ import cfdm
 
 class ConstructsTest(unittest.TestCase):
     def setUp(self):
-        self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                     'test_file.nc')
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_LEVEL('DISABLE')
+
+        self.filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
         f = cfdm.read(self.filename)
         self.assertTrue(len(f)==1, 'f={!r}'.format(f))
         self.f = f[0]
@@ -51,12 +60,12 @@ class ConstructsTest(unittest.TestCase):
         c = self.f.constructs
 
         d = c.copy()
-        self.assertTrue(c.equals(d, verbose=True))
-        self.assertTrue(d.equals(c, verbose=True))
+        self.assertTrue(c.equals(d, verbose=3))
+        self.assertTrue(d.equals(c, verbose=3))
 
         d = c.shallow_copy()
-        self.assertTrue(c.equals(d, verbose=True))
-        self.assertTrue(d.equals(c, verbose=True))
+        self.assertTrue(c.equals(d, verbose=3))
+        self.assertTrue(d.equals(c, verbose=3))
 
 
     def test_Constructs_FILTER(self):
@@ -242,20 +251,20 @@ class ConstructsTest(unittest.TestCase):
         f2 = e2.inverse_filter(1)
         g2 = f2.inverse_filter(1)
         h2 = g2.inverse_filter(1)
-        self.assertTrue(g2.equals(e2, verbose=True))
-        self.assertTrue(h2.equals(f2, verbose=True))
+        self.assertTrue(g2.equals(e2, verbose=3))
+        self.assertTrue(h2.equals(f2, verbose=3))
 
         # Unfilter
-        self.assertTrue(e.unfilter(1).equals(d, verbose=True))        
-        self.assertTrue(e.unfilter(1).unfilter().equals(c, verbose=True))
-        self.assertTrue(d.unfilter(1).equals(c, verbose=True))        
-        self.assertTrue(c.unfilter(1).equals(c, verbose=True))
+        self.assertTrue(e.unfilter(1).equals(d, verbose=3))        
+        self.assertTrue(e.unfilter(1).unfilter().equals(c, verbose=3))
+        self.assertTrue(d.unfilter(1).equals(c, verbose=3))        
+        self.assertTrue(c.unfilter(1).equals(c, verbose=3))
 
 
 #--- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
-    print(cfdm.environment(display=False))
+    cfdm.environment(display=False)
     print('')
     unittest.main(verbosity=2)

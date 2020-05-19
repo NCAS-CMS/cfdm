@@ -1,8 +1,15 @@
 from __future__ import print_function
 from builtins import super
 
+import logging
+
 from . import mixin
 from . import core
+
+from .decorators import _manage_log_level_via_verbosity
+
+
+logger = logging.getLogger(__name__)
 
 
 class CellMeasure(mixin.NetCDFVariable,
@@ -131,7 +138,8 @@ class CellMeasure(mixin.NetCDFVariable,
                              _axes=_axes, _axis_names=_axis_names)
 
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=True,
                ignore_type=False):
@@ -185,11 +193,22 @@ class CellMeasure(mixin.NetCDFVariable,
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison.
-    
-        verbose: `bool`, optional
-            If True then print information about differences that lead to
-            inequality.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            information about differences that lead to inequality.
+
         ignore_properties: sequence of `str`, optional
             The names of properties to omit from the comparison.
     
@@ -230,7 +249,7 @@ class CellMeasure(mixin.NetCDFVariable,
     >>> g.set_property('foo', 'bar')
     >>> f.equals(g)
     False
-    >>> f.equals(g, verbose=True)
+    >>> f.equals(g, verbose=3)
     CellMeasure: Non-common property name: foo
     CellMeasure: Different properties
     False
@@ -249,9 +268,8 @@ class CellMeasure(mixin.NetCDFVariable,
         measure0 = self.get_measure(None)
         measure1 = other.get_measure(None)
         if measure0 != measure1:
-            if verbose:
-                print("{0}: Different measure ({1} != {2})".format(
-                    self.__class__.__name__, measure0, measure1))
+            logger.info("{0}: Different measure ({1} != {2})".format(
+                self.__class__.__name__, measure0, measure1))
             return False
 
         return True

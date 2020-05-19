@@ -2,10 +2,16 @@ from __future__ import print_function
 from builtins import object
 
 import inspect
+import logging
 
 import numpy
 
 from ..functions import ATOL, RTOL
+
+from ..decorators import _manage_log_level_via_verbosity
+
+
+logger = logging.getLogger(__name__)
 
 
 class Container(object):
@@ -156,8 +162,8 @@ class Container(object):
                 else:
                     return bool(out)
 
-    def _equals_preprocess(self, other, verbose=False,
-                           ignore_type=False):
+    @_manage_log_level_via_verbosity
+    def _equals_preprocess(self, other, verbose=None, ignore_type=False):
         '''Common preprocessing prior to testing of equality.
 
     * If the LHS operand is (object identity) the RHS operand then
@@ -182,9 +188,8 @@ class Container(object):
             if not isinstance(other, self.__class__):
                 other = type(self)(source=other, copy=False)
         elif not isinstance(other, self.__class__):
-            if verbose:
-                print("{}: Incompatible type: {}".format(
-                    self.__class__.__name__, type(other)))
+            logger.info("{}: Incompatible type: {}".format(
+                self.__class__.__name__, type(other)))
             return False
 
         return other

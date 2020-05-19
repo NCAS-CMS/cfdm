@@ -134,6 +134,15 @@ import cfdm
     
 class GatheredTest(unittest.TestCase):
     def setUp(self):
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_LEVEL('DISABLE')
+
         self.gathered = 'gathered.nc'
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
@@ -273,7 +282,7 @@ class GatheredTest(unittest.TestCase):
 #            x.dump()
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=True))
+            self.assertTrue(g[i].equals(f[i], verbose=3))
 
 
     def test_GATHERING_create(self):
@@ -342,7 +351,7 @@ class GatheredTest(unittest.TestCase):
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.utcnow())
-    print(cfdm.environment(display=False))
+    cfdm.environment(display=False)
     print()
     unittest.main(verbosity=2)
 

@@ -2,10 +2,17 @@ from __future__ import print_function
 from builtins import (str, super)
 from past.builtins import basestring
 
+import logging
+
 from . import mixin
 from . import core
 from . import CoordinateConversion
 from . import Datum
+
+from .decorators import _manage_log_level_via_verbosity
+
+
+logger = logging.getLogger(__name__)
 
 
 class CoordinateReference(mixin.NetCDFVariable,
@@ -227,8 +234,9 @@ class CoordinateReference(mixin.NetCDFVariable,
             print(string)
         else:
             return string
-            
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_type=False):
         '''Whether two coordinate reference constructs are the same.
 
@@ -274,11 +282,22 @@ class CoordinateReference(mixin.NetCDFVariable,
             The tolerance on relative differences between real
             numbers. The default value is set by the `cfdm.RTOL`
             function.
-    
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            information about differences that lead to inequality.
+
         ignore_type: `bool`, optional
             Any type of object may be tested but, in general, equality
             is only possible with another coordinate reference
@@ -312,11 +331,11 @@ class CoordinateReference(mixin.NetCDFVariable,
         coords0 = self.coordinates()
         coords1 = other.coordinates()
         if len(coords0) != len(coords1):
-            if verbose:
-                print(
-                    "{}: Different sized collections of coordinates "
-                    "({}, {})".format(                        
-                        self.__class__.__name__, coords0, coords1))
+            logger.info(
+                "{}: Different sized collections of coordinates "
+                "({}, {})".format(                        
+                    self.__class__.__name__, coords0, coords1)
+            )
                 
             return False
 
@@ -325,10 +344,10 @@ class CoordinateReference(mixin.NetCDFVariable,
                 rtol=rtol, atol=atol,
                 verbose=verbose,
                 ignore_type=ignore_type):
-            if verbose:
-                print(
-                    "{}: Different coordinate conversions".format(
-                        self.__class__.__name__))
+            logger.info(
+                "{}: Different coordinate conversions".format(
+                    self.__class__.__name__)
+            )
                 
             return False
         
@@ -337,9 +356,8 @@ class CoordinateReference(mixin.NetCDFVariable,
                 rtol=rtol, atol=atol,
                 verbose=verbose,
                 ignore_type=ignore_type):
-            if verbose:
-                print(
-                    "{}: Different datums".format(self.__class__.__name__))
+            logger.info(
+                "{}: Different datums".format(self.__class__.__name__))
                 
             return False
 

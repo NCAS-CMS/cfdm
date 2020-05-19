@@ -29,6 +29,15 @@ atexit.register(_remove_tmpfiles)
 
 class FieldTest(unittest.TestCase):
     def setUp(self):
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_LEVEL('DISABLE')
+
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             'test_file.nc')
@@ -221,7 +230,7 @@ class FieldTest(unittest.TestCase):
         d = f.data.copy()
         g = f.copy()        
         self.assertIsNone(f.apply_masking(inplace=True))
-        self.assertTrue(f.equals(g, verbose=1))
+        self.assertTrue(f.equals(g, verbose=3))
 
         x = 0.11        
         y = 0.1
@@ -232,31 +241,31 @@ class FieldTest(unittest.TestCase):
         
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x])
-        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(e.equals(g.data, verbose=3))
         self.assertTrue(g.data.array.count() == g.data.size - 1)
 
         f.set_property('valid_range', [y, z])
         d = f.data.copy()
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_range=[y, z])
-        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(e.equals(g.data, verbose=3))
 
         f.del_property('valid_range')
         f.set_property('valid_min', y)
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_min=y)
-        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(e.equals(g.data, verbose=3))
 
         f.del_property('valid_min')
         f.set_property('valid_max', z)
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_max=z)
-        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(e.equals(g.data, verbose=3))
 
         f.set_property('valid_min', y)
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_min=y, valid_max=z)
-        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(e.equals(g.data, verbose=3))
 
     def test_Field_PROPERTIES(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -459,15 +468,15 @@ class FieldTest(unittest.TestCase):
             return
 
         f = self.f.copy()
-        self.assertTrue(f.equals(f, verbose=True))
+        self.assertTrue(f.equals(f, verbose=3))
  
         g = f.copy()
-        self.assertTrue(f.equals(g, verbose=True))
-        self.assertTrue(g.equals(f, verbose=True))
+        self.assertTrue(f.equals(g, verbose=3))
+        self.assertTrue(g.equals(f, verbose=3))
 
         g = f[...]
-        self.assertTrue(f.equals(g, verbose=True))
-        self.assertTrue(g.equals(f, verbose=True))
+        self.assertTrue(f.equals(g, verbose=3))
+        self.assertTrue(g.equals(f, verbose=3))
 
         g = g.squeeze()
         self.assertFalse(f.equals(g))
@@ -552,7 +561,7 @@ class FieldTest(unittest.TestCase):
 
                 u = f.uncompress()
                 self.assertFalse(bool(u.data.get_compression_type()), message)
-                self.assertTrue(f.equals(u, verbose=True), message)
+                self.assertTrue(f.equals(u, verbose=3), message)
 
                 for method1 in methods:
                     message += ', method1='+method1
@@ -567,22 +576,22 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(bool(c.data.get_compression_type()),
                                     message)
 
-                    self.assertTrue(u.equals(c, verbose=True), message)
-                    self.assertTrue(f.equals(c, verbose=True), message)
+                    self.assertTrue(u.equals(c, verbose=3), message)
+                    self.assertTrue(f.equals(c, verbose=3), message)
                     
                     c = f.compress(method1)
                     self.assertTrue(bool(c.data.get_compression_type()),
                                     message)
 
-                    self.assertTrue(u.equals(c, verbose=True), message)
-                    self.assertTrue(f.equals(c, verbose=True), message)
+                    self.assertTrue(u.equals(c, verbose=3), message)
+                    self.assertTrue(f.equals(c, verbose=3), message)
 
                     cfdm.write(c, 'delme.nc')
                     c = cfdm.read('delme.nc')[0]
 
                     self.assertTrue(bool(c.data.get_compression_type()),
                                     message)
-                    self.assertTrue(f.equals(c, verbose=True), message)
+                    self.assertTrue(f.equals(c, verbose=3), message)
         # --- End: for
         
 # --- End: class

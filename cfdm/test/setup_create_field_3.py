@@ -13,8 +13,18 @@ warnings = False
 
 
 class create_fieldTest(unittest.TestCase):
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'test_file_c.nc')
+    def setUp(self):
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_LEVEL('DISABLE')
+
+        self.filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'test_file_c.nc')
 
     def test_create_field_3(self):
 
@@ -239,10 +249,10 @@ class create_fieldTest(unittest.TestCase):
                             sorted(g.constructs),
                             sorted(g.constructs.items())))
 
-        self.assertTrue(f.equals(f.copy(), verbose=True),
+        self.assertTrue(f.equals(f.copy(), verbose=verbose),
                         "Field f not equal to a copy of itself")
 
-        self.assertTrue(g.equals(g.copy(), verbose=True),
+        self.assertTrue(g.equals(g.copy(), verbose=verbose),
                         "Field g not equal to a copy of itself")
 #        print f.dump()
     
@@ -258,7 +268,7 @@ class create_fieldTest(unittest.TestCase):
             g.dump()
 #        sys.exit(0)
         
-        self.assertTrue(g.equals(f, verbose=True),
+        self.assertTrue(g.equals(f, verbose=verbose),
                         "Field not equal to itself read back in")
   
 #        sys.exit(0)
@@ -296,6 +306,6 @@ class create_fieldTest(unittest.TestCase):
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())
-    print(cfdm.environment(display=False))
+    cfdm.environment(display=False)
     print('')
     unittest.main(verbosity=2)

@@ -2,13 +2,21 @@ from __future__ import print_function
 from builtins import (range, super)
 
 from functools import reduce
+import logging
 from operator import mul    
 
 from . import PropertiesData
 
 from ..functions import RTOL, ATOL
 
-from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+from ..decorators import (
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
+
+
+logger = logging.getLogger(__name__)
 
 
 class PropertiesDataBounds(PropertiesData):
@@ -690,7 +698,8 @@ class PropertiesDataBounds(PropertiesData):
         else:
             return string
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=True,
                ignore_type=False):
@@ -755,11 +764,22 @@ class PropertiesDataBounds(PropertiesData):
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison.
-    
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            information about differences that lead to inequality.
+
         ignore_properties: sequence of `str`, optional
             The names of properties to omit from the comparison.
     
@@ -812,10 +832,12 @@ class PropertiesDataBounds(PropertiesData):
         # Check the geometry type
         # ------------------------------------------------------------
         if self.get_geometry(None) != other.get_geometry(None):
-            if verbose:
-                print("{0}: Different geometry types: {1}, {2}".format(
+            logger.info(
+                "{0}: Different geometry types: {1}, {2}".format(
                     self.__class__.__name__,
-                    self.get_geometry(None), other.get_geometry(None)))
+                    self.get_geometry(None), other.get_geometry(None)
+                )
+            )
             return False
 
         # ------------------------------------------------------------
@@ -823,8 +845,8 @@ class PropertiesDataBounds(PropertiesData):
         # ------------------------------------------------------------
         self_has_bounds = self.has_bounds()
         if self_has_bounds != other.has_bounds():
-            if verbose:
-                print("{0}: Different bounds".format(self.__class__.__name__))
+            logger.info(
+                "{0}: Different bounds".format(self.__class__.__name__))
             return False
                 
         if self_has_bounds:            
@@ -835,9 +857,8 @@ class PropertiesDataBounds(PropertiesData):
                                 ignore_type=ignore_type,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
-                if verbose:
-                    print("{0}: Different bounds".format(
-                        self.__class__.__name__))  # pragma: no cover
+                logger.info("{0}: Different bounds".format(
+                    self.__class__.__name__))  # pragma: no cover
                     
                 return False
         # --- End: if
@@ -847,9 +868,8 @@ class PropertiesDataBounds(PropertiesData):
         # ------------------------------------------------------------
         self_has_interior_ring = self.has_interior_ring()
         if self_has_interior_ring != other.has_interior_ring():
-            if verbose:
-                print("{0}: Different interior ring".format(
-                    self.__class__.__name__))  # pragma: no cover
+            logger.info("{0}: Different interior ring".format(
+                self.__class__.__name__))  # pragma: no cover
                 
             return False
                 
@@ -862,9 +882,8 @@ class PropertiesDataBounds(PropertiesData):
                                 ignore_type=ignore_type,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_compression=ignore_compression):
-                if verbose:
-                    print("{0}: Different interior ring".format(
-                        self.__class__.__name__))  # pragma: no cover
+                logger.info("{0}: Different interior ring".format(
+                    self.__class__.__name__))  # pragma: no cover
                     
                 return False
         # --- End: if

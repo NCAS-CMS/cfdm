@@ -3,6 +3,7 @@ from builtins import (str, zip)
 from past.builtins import basestring
 
 import copy
+import logging
 import os
 import re
 
@@ -14,6 +15,11 @@ import netCDF4
 from .. import IOWrite
 
 from . import constants
+
+from ...decorators import _manage_log_level_via_verbosity
+
+
+logger = logging.getLogger(__name__)
 
 
 class NetCDFWrite(IOWrite):
@@ -521,13 +527,13 @@ class NetCDFWrite(IOWrite):
 
         '''
         g = self.write_vars
-        verbose = g['verbose']
         
         if axis is not None:        
-            if verbose:
-                domain_axis = self.implementation.get_domain_axes(f)[axis]
-                print('    Writing', repr(domain_axis),
-                      'to netCDF dimension:', ncdim)  # pragma: no cover
+            domain_axis = self.implementation.get_domain_axes(f)[axis]
+            logger.info(
+                '    Writing {!r} to netCDF dimension:{}'.format(
+                    domain_axis, ncdim)
+            )  # pragma: no cover
 
             size = self.implementation.get_domain_axis_size(f, axis)
             g['axis_to_ncdim'][axis] = ncdim
@@ -1019,11 +1025,12 @@ class NetCDFWrite(IOWrite):
             field,
             default='geometry_container')
         ncvar = self._netcdf_name(ncvar)
-        
-        if g['verbose']:
-            print('    Writing geometry container variable: {}'.format(
-                ncvar))  # pragma: no cover
-            print('        ', geometry_container)  # pragma: no cover
+
+        logger.info(
+            '    Writing geometry container variable: {}'.format(ncvar)
+        )  # pragma: no cover
+        logger.info(
+            '        {}'.format(geometry_container))  # pragma: no cover
             
         kwargs = {'varname': ncvar,
                   'datatype': 'S1',
@@ -1127,10 +1134,10 @@ class NetCDFWrite(IOWrite):
             # create it now.
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
-                if g['verbose']:
-                    print('    Writing size', size,
-                          'netCDF dimension for bounds:',
-                          ncdim)  # pragma: no cover
+                logger.info(
+                    '    Writing size {} netCDF dimension for '
+                    'bounds: {}'.format(size, ncdim)
+                )  # pragma: no cover
                     
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
@@ -1164,9 +1171,9 @@ class NetCDFWrite(IOWrite):
         axes = self.implementation.get_construct_data_axes(f, coord_key)
         for clim_axis in f.climatological_time_axes():
             if clim_axis == axes:
-                if g['verbose']:
-                    print(
-                        '    Setting climatological bounds')  # pragma: no cover
+                logger.info(
+                    '    Setting climatological bounds'
+                )  # pragma: no cover
                     
                 extra['climatology'] = extra.pop('bounds')
                 break
@@ -1254,10 +1261,10 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
                 size = self.implementation.get_data_size(nodes)
-                if g['verbose']:
-                    print('    Writing size', size,
-                          'netCDF node dimension: {}'.format(
-                              ncdim))  # pragma: no cover
+                logger.info(
+                    '    Writing size {} netCDF node dimension: '
+                    '{}'.format(size, ncdim)
+                )  # pragma: no cover
                     
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
@@ -1512,9 +1519,10 @@ class NetCDFWrite(IOWrite):
         else:
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
-                if g['verbose']:
-                    print('    Writing size', size,
-                          'netCDF part dimension', ncdim)  # pragma: no cover
+                logger.info(
+                    '    Writing size {} netCDF part '
+                    'dimension{}'.format(size, ncdim)
+                )  # pragma: no cover
                         
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
@@ -1582,10 +1590,10 @@ class NetCDFWrite(IOWrite):
         else:
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
-                if g['verbose']:
-                    print('    Writing size', size,
-                          'netCDF part dimension', ncdim)  # pragma: no cover
-                        
+                logger.info(
+                    '    Writing size {} netCDF part '
+                    'dimension{}'.format(size, ncdim)
+                )  # pragma: no cover
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
 
@@ -1990,8 +1998,6 @@ class NetCDFWrite(IOWrite):
 
         '''
         g = self.write_vars
-
-        verbose = g['verbose']
         
         if self._already_in_file(ref):
             # Use existing grid_mapping variable
@@ -2004,9 +2010,9 @@ class NetCDFWrite(IOWrite):
             default = cc_parameters.get('grid_mapping_name', 'grid_mapping')
             ncvar = self._create_netcdf_variable_name(ref, default=default)
 
-            if verbose:
-                print('    Writing', repr(ref),
-                      'to netCDF variable:', ncvar)  # pragma: no cover
+            logger.info(
+                '    Writing {!r} to netCDF variable:'.format(ref, ncvar)
+            )# pragma: no cover
 
             kwargs = {'varname': ncvar,
                       'datatype': 'S1',
@@ -2082,11 +2088,8 @@ class NetCDFWrite(IOWrite):
 
         '''
         g = self.write_vars
-                
-        verbose = g['verbose']
-        
-        if verbose:
-            print('    Writing {!r}'.format(cfvar), end='')  # pragma: no cover
+
+        logger.info('    Writing {!r}'.format(cfvar))  # pragma: no cover
      
         # ------------------------------------------------------------
         # Set the netCDF4.createVariable datatype
@@ -2123,8 +2126,10 @@ class NetCDFWrite(IOWrite):
         if data is not None:
             chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
 
-        if verbose and chunksizes is not None:
-            print('      HDF5 chunksizes:', chunksizes)  # pragma: no cover
+        if chunksizes is not None:
+            logger.detail(
+                '      HDF5 chunksizes: {}'.format(chunksizes)
+            )  # pragma: no cover
         
         # ------------------------------------------------------------
         # Create a new netCDF variable
@@ -2142,10 +2147,11 @@ class NetCDFWrite(IOWrite):
 
         # TODO
         kwargs = self._customize_createVariable(cfvar, kwargs)
-        
-        if verbose:
-            print(' to netCDF variable: {}({})'.format(
-                ncvar, ', '.join(ncdimensions)))  # pragma: no cover
+
+        logger.info(
+            ' to netCDF variable: {}({})'.format(
+                ncvar, ', '.join(ncdimensions))
+        )  # pragma: no cover
 
         try:
             self._createVariable(**kwargs)
@@ -2455,10 +2461,8 @@ class NetCDFWrite(IOWrite):
 
         '''
         g = self.write_vars
-        
-        verbose = g['verbose']
-        if verbose:
-            print('  Writing', repr(f) + ':')  # pragma: no cover
+
+        logger.info('  Writing {!r}:'.format(f))  # pragma: no cover
 
         xxx = []
             
@@ -2505,9 +2509,9 @@ class NetCDFWrite(IOWrite):
         # Type of compression applied to the field
         compression_type = self.implementation.get_compression_type(f)
         g['compression_type'] = compression_type
-        if verbose:
-            print("    Compression = {!r}".format(
-                g['compression_type']))  # pragma: no cover
+        logger.info(
+            "    Compression = {!r}".format(g['compression_type'])
+        )  # pragma: no cover
             
         # 
         g['sample_ncdim'] = {}
@@ -3013,11 +3017,11 @@ class NetCDFWrite(IOWrite):
                 ncvar = g['key_to_ncvar'][owning_coord_key]
                 formula_terms = ' '.join(formula_terms)
                 g['nc'][ncvar].setncattr('formula_terms', formula_terms)
-            
-                if g['verbose']:
-                    print("    Writing formula_terms attribute to "
-                          "netCDF variable",
-                          ncvar + ':', repr(formula_terms))  # pragma: no cover
+
+                logger.info(
+                    "    Writing formula_terms attribute to "
+                    "netCDF variable {}: {!r}".format(ncvar, formula_terms)
+                )  # pragma: no cover
     
                 # Add the formula_terms attribute to the parent
                 # coordinate bounds variable
@@ -3027,11 +3031,11 @@ class NetCDFWrite(IOWrite):
                     g['nc'][bounds_ncvar].setncattr(
                         'formula_terms', bounds_formula_terms)
 
-                    if g['verbose']:
-                        print("    Writing formula_terms to netCDF "
-                              "bounds variable",
-                              bounds_ncvar + ':',
-                              repr(bounds_formula_terms))  # pragma: no cover
+                    logger.info(
+                        "    Writing formula_terms to netCDF "
+                        "bounds variable {}: {!r}".format(
+                             bounds_ncvar, bounds_formula_terms)
+                    )  # pragma: no cover
             # --- End: if
                         
             # Deal with a vertical datum
@@ -3072,40 +3076,41 @@ class NetCDFWrite(IOWrite):
         # Cell measures
         if cell_measures:
             cell_measures = ' '.join(cell_measures)
-            if verbose:
-                print("    Writing cell_measures attribute to "
-                      "netCDF variable {}: {!r}".format(
-                          ncvar, cell_measures))  # pragma: no cover
+            logger.info(
+                "    Writing cell_measures attribute to "
+                "netCDF variable {}: {!r}".format(ncvar, cell_measures)
+            )  # pragma: no cover
                 
             extra['cell_measures'] = cell_measures
             
         # Auxiliary/scalar coordinates
         if coordinates:
             coordinates = ' '.join(coordinates)
-            if verbose:
-                print("    Writing coordinates attribute to "
-                      "netCDF variable {}: {!r}".format(
-                          ncvar, coordinates))  # pragma: no cover
+            logger.info(
+                "    Writing coordinates attribute to "
+                "netCDF variable {}: {!r}".format(ncvar, coordinates)
+            )  # pragma: no cover
                 
             extra['coordinates'] = coordinates
     
         # Grid mapping
         if grid_mapping:
             grid_mapping = ' '.join(grid_mapping)
-            if verbose:
-                print("    Writing grid_mapping attribute to "
-                      "netCDF variable {}: {!r}".format(
-                          ncvar, grid_mapping))  # pragma: no cover
+            logger.info(
+                "    Writing grid_mapping attribute to "
+                "netCDF variable {}: {!r}".format(ncvar, grid_mapping)
+            )  # pragma: no cover
                 
             extra['grid_mapping'] = grid_mapping
     
         # Ancillary variables
         if ancillary_variables:
             ancillary_variables = ' '.join(ancillary_variables)
-            if verbose:
-                print("    Writing ancillary_variables attribute to "
-                      "netCDF variable {}: {!r}".format(
-                          ncvar, ancillary_variables))  # pragma: no cover
+            logger.info(
+                "    Writing ancillary_variables attribute to "
+                "netCDF variable {}: {!r}".format(
+                    ncvar, ancillary_variables)
+            )  # pragma: no cover
 
             extra['ancillary_variables'] = ancillary_variables
             
@@ -3133,10 +3138,10 @@ class NetCDFWrite(IOWrite):
                     self.implementation.get_cell_method_string(cm))
 
             cell_methods = ' '.join(cell_methods_strings)
-            if verbose:
-                print("    Writing cell_methods attribute to "
-                      "netCDF variable",
-                      ncvar + ':', cell_methods)  # pragma: no cover
+            logger.info(
+                "    Writing cell_methods attribute to "
+                "netCDF variable {}: {}".format(ncvar, cell_methods)
+            )  # pragma: no cover
 
             extra['cell_methods'] = cell_methods
 
@@ -3187,9 +3192,9 @@ class NetCDFWrite(IOWrite):
         if count[0] == 1:
             # Add the vertical coordinate to an existing
             # horizontal coordinate reference
-            if g['verbose']:
-                print('      Adding {!r} to {!r}'.format(
-                    coord_key, grid_mapping))  # pragma: no cover
+            logger.info(
+                '      Adding {!r} to {!r}'.format(coord_key, grid_mapping)
+            )  # pragma: no cover
                 
             grid_mapping = count[1]
             self.implementation.set_coordinate_reference_coordinate(
@@ -3197,9 +3202,10 @@ class NetCDFWrite(IOWrite):
         else:
             # Create a new horizontal coordinate reference for the
             # vertical datum
-            if g['verbose']:
-                print("    Creating a new horizontal coordinate reference "
-                      "for the vertical datum")  # pragma: no cover
+            logger.info(
+                "    Creating a new horizontal coordinate reference "
+                "for the vertical datum"
+            )  # pragma: no cover
                 
             new_grid_mapping = (
                 self.implementation.initialise_CoordinateReference()
@@ -3459,13 +3465,14 @@ class NetCDFWrite(IOWrite):
         
         return nc
 
+    @_manage_log_level_via_verbosity
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
               global_attributes=None, variable_attributes=None,
               file_descriptors=None, external=None, Conventions=None,
               datatype=None, least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
               shuffle=True, scalar=True, string=True,
-              extra_write_vars=None, verbose=False,
+              extra_write_vars=None, verbose=None,
               warn_valid=True):
         '''Write fields to a netCDF file.
         
@@ -3617,15 +3624,14 @@ class NetCDFWrite(IOWrite):
     
     >>> type(f)
     <class 'cf.field.FieldList'>
-    >>> cf.write([f, g], 'file.nc', verbose=True)
+    >>> cf.write([f, g], 'file.nc', verbose=3)
     [<CF Field: air_pressure(30, 24)>,
      <CF Field: u_compnt_of_wind(19, 29, 24)>,
      <CF Field: v_compnt_of_wind(19, 29, 24)>,
      <CF Field: potential_temperature(19, 30, 24)>]
 
         '''    
-        if verbose:
-            print('Writing to', fmt)  # pragma: no cover
+        logger.info('Writing to {}'.format(fmt))  # pragma: no cover
 
         # ------------------------------------------------------------
         # Initialise netCDF write parameters
@@ -3775,8 +3781,6 @@ class NetCDFWrite(IOWrite):
             })
         g['endian'] = endian
         g['least_significant_digit'] = least_significant_digit
-        
-        g['verbose'] = verbose
         
         g['fmt'] = fmt
 

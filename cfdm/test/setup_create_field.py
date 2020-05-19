@@ -14,9 +14,17 @@ warnings = False
 
 class create_fieldTest(unittest.TestCase):
     def setUp(self):
-        filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'test_file.nc')
-        self.filename = filename
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_LEVEL('DISABLE')
+
+        self.filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
         try:
             os.remove(self.filename)
@@ -187,10 +195,10 @@ class create_fieldTest(unittest.TestCase):
             print(f.constructs())
             print(f.constructs.data_axes())
 
-        self.assertTrue(f.equals(f, verbose=True),
+        self.assertTrue(f.equals(f, verbose=verbose),
                         "Field f not equal to itself")
 
-        self.assertTrue(f.equals(f.copy(), verbose=True),
+        self.assertTrue(f.equals(f.copy(), verbose=verbose),
                         "Field f not equal to a copy of itself")
 
         if verbose:
@@ -223,14 +231,21 @@ class create_fieldTest(unittest.TestCase):
                             sorted(g.constructs),
                             sorted(g.constructs.items())))
 
-        self.assertTrue(f.equals(f, verbose=True),
-                        "Field f not equal to itself after having been written to disk")
+        self.assertTrue(
+            f.equals(f, verbose=verbose),
+            "Field f not equal to itself after having been written to disk"
+        )
 
-        self.assertTrue(f.equals(f.copy(), verbose=True),
-                        "Field f not equal to a copy of itself after having been written to disk")
+        self.assertTrue(
+            f.equals(f.copy(), verbose=verbose),
+            "Field f not equal to a copy of itself after having been "
+            "written to disk"
+        )
 
-        self.assertTrue(g.equals(g.copy(), verbose=True),
-                        "Field g not equal to a copy of itself")
+        self.assertTrue(
+            g.equals(g.copy(), verbose=verbose),
+            "Field g not equal to a copy of itself"
+        )
 
         if verbose:                    
             print('g')
@@ -238,8 +253,10 @@ class create_fieldTest(unittest.TestCase):
             print('f')
             f.dump()
             
-        self.assertTrue(g.equals(f, verbose=True),
-                        "Field (f) not equal to itself read back in (g)")
+        self.assertTrue(
+            g.equals(f, verbose=verbose),
+            "Field (f) not equal to itself read back in (g)"
+        )
 
         
         x = g.dump(display=False)
@@ -275,6 +292,6 @@ class create_fieldTest(unittest.TestCase):
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())
-    cfdm.environment(display=True)
+    cfdm.environment()
     print('')
     unittest.main(verbosity=2)

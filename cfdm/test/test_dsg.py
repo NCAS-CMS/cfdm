@@ -430,6 +430,15 @@ import cfdm
 
 class DSGTest(unittest.TestCase):
     def setUp(self):
+        # Disable log messages to silence expected warnings
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or calls (those
+        # without a 'verbose' option to do the same) e.g. to debug them, wrap
+        # them (for methods, start-to-end internally) as follows:
+        # cfdm.LOG_LEVEL('DEBUG')
+        # < ... test code ... >
+        # cfdm.LOG_LEVEL('DISABLE')
+
         self.contiguous         = 'DSG_timeSeries_contiguous.nc' #contiguous_file
         self.indexed            = 'DSG_timeSeries_indexed.nc' #indexed_file
         self.indexed_contiguous = 'DSG_timeSeriesProfile_indexed_contiguous.nc' #indexed_contiguous_file
@@ -563,7 +572,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=True))
+            self.assertTrue(g[i].equals(f[i], verbose=3))
 
         # ------------------------------------------------------------
         # Test creation
@@ -630,7 +639,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=True))
+            self.assertTrue(g[i].equals(f[i], verbose=3))
 
 
     def test_DSG_indexed_contiguous(self):  
@@ -664,7 +673,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=True))
+            self.assertTrue(g[i].equals(f[i], verbose=3))
 
 
     def test_DSG_create_contiguous(self):
@@ -717,7 +726,7 @@ class DSGTest(unittest.TestCase):
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.utcnow())
-    print(cfdm.environment(display=False))
+    cfdm.environment(display=False)
     print()
     unittest.main(verbosity=2)
     

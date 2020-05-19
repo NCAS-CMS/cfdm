@@ -1,11 +1,17 @@
 from __future__ import print_function
 from builtins import super
 
+import logging
 import textwrap
 
 import numpy
 
 from . import Container
+
+from ..decorators import _manage_log_level_via_verbosity
+
+
+logger = logging.getLogger(__name__)
 
 
 class Properties(Container):
@@ -123,7 +129,8 @@ class Properties(Container):
         else:
             return string
 
-    def equals(self, other, rtol=None, atol=None, verbose=False,
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_type=False):
         '''Whether two instances are the same.
@@ -165,11 +172,22 @@ class Properties(Container):
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison.
-    
-        verbose: `bool`, optional
-            If True then print information about differences that lead
-            to inequality.
-    
+
+        verbose: `int` or `None`, optional
+            If an integer from `0` to `3`, corresponding to increasing
+            verbosity (else `-1` as a special case of maximal and extreme
+            verbosity), set for the duration of the method call (only) as
+            the minimum severity level cut-off of displayed log messages,
+            regardless of the global configured `cfdm.LOG_LEVEL`.
+
+            Else, if None (the default value), log messages will be filtered
+            out, or otherwise, according to the value of the
+            `LOG_LEVEL` setting.
+
+            Overall, the higher a non-negative integer that is set (up to
+            a maximum of `3`) the more description that is printed to convey
+            information about differences that lead to inequality.
+
         ignore_properties: sequence of `str`, optional
             The names of properties to omit from the comparison.
     
@@ -203,7 +221,7 @@ class Properties(Container):
     >>> q.set_property('foo', 'bar')
     >>> p.equals(q)
     False
-    >>> p.equals(q, verbose=True)
+    >>> p.equals(q, verbose=3)
     Field: Non-common property name: foo
     Field: Different properties
     False
@@ -232,12 +250,13 @@ class Properties(Container):
         # --- End: if
                 
         if set(self_properties) != set(other_properties):
-            if verbose:
-                for prop in set(self_properties).symmetric_difference(
-                        other_properties):
-                    print("{}: Missing property: {}".format( 
-                        self.__class__.__name__, prop))
-            # --- End: if
+            for prop in set(self_properties).symmetric_difference(
+                    other_properties):
+                logger.info(
+                    "{}: Missing property: {}".format( 
+                        self.__class__.__name__, prop)
+                )
+        # --- End: if
             
             return False
 
@@ -249,10 +268,11 @@ class Properties(Container):
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_data_type=True,
                                 verbose=verbose):
-                if verbose:
-                    print("{}: Different {!r} property values: "
-                          "{!r}, {!r}".format(
-                              self.__class__.__name__, prop, x, y))
+                logger.info(
+                    "{}: Different {!r} property values: "
+                    "{!r}, {!r}".format(
+                        self.__class__.__name__, prop, x, y)
+                )
                     
                 return False
         # --- End: for
