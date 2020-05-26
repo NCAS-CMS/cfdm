@@ -81,7 +81,7 @@ def _inplace_enabled_define_and_cleanup(instance):
     return x
 
 
-def _manage_log_level_via_verbosity(method_with_verbose_kwarg):
+def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
     '''A decorator for managing log message filtering by verbosity argument.
 
     This enables overriding of the log severity level such that an integer
@@ -95,10 +95,19 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg):
 
     Only use this to decorate functions which make log calls directly
     and have a 'verbose' keyword argument set to None by default.
+
+    Note that the 'calls' keyword argument is to automatically track the number
+    of decorated functions that are being (or about to be) executed, with the
+    purpose of preventing resetting of the effective log level at the
+    completion of decorated functions that are called inside other decorated
+    functions (see comments in 'finaly' statement for further explanation).
     '''
 
     @wraps(method_with_verbose_kwarg)
     def verbose_override_wrapper(self, *args, **kwargs):
+        # Increment indicates that one decorated function has started execution
+        calls[0] += 1
+
         # Deliberately error if verbose kwarg not set, if not by user then
         # as a default to the decorated function, as this is crucial to usage.
         verbose = kwargs.get('verbose')
@@ -134,14 +143,22 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg):
         # After method completes, re-set any changes to log level or enabling
         try:
             return method_with_verbose_kwarg(self, *args, **kwargs)
-        except Exception as exc:
+        except Exception:
             raise
-        finally:  # so above changes are reverted even when method errors
-            if verbose == 0:
-                _disable_logging(at_level='NOTSET')  # lift the deactivation
-            elif verbose in numeric_log_level_map.keys():
-                _reset_log_emergence_level(LOG_LEVEL())
-            if LOG_LEVEL() == 'DISABLE' and verbose != 0:
-                _disable_logging()  # disable again after re-enabling
+        finally:  # so that crucial 'teardown' code runs even if method errors
+            # Decrement indicates one decorated function has finished execution
+            calls[0] -= 1
+            # Due to the incrementing and decrementing of 'calls', it will
+            # only be zero when the outermost decorated method has finished,
+            # so the following condition prevents resetting occurring once
+            # inner functions complete (which would mean any subsequent code
+            # in the outer function would undesirably regain the global level):
+            if calls[0] == 0:  # <TEAR DOWN COMMENT>
+                if verbose == 0:
+                    _disable_logging(at_level='NOTSET')  # lift deactivation
+                elif verbose in numeric_log_level_map.keys():
+                    _reset_log_emergence_level(LOG_LEVEL())
+                if LOG_LEVEL() == 'DISABLE' and verbose != 0:
+                    _disable_logging()  # disable again after re-enabling
 
     return verbose_override_wrapper
