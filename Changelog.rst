@@ -11,6 +11,9 @@ version 1.8.4
   messages are displayed globally, i.e. to change the project-wide verbosity.
 * Changed behaviour and default of `verbose` keyword argument when available
   to a function/method so it interfaces with the new logging functionality.
+* Fixed bug the wouldn't allow the reading of a netCDF file which
+  specifies Conventions other than CF
+  (https://github.com/NCAS-CMS/cfdm/issues/36).
   
 version 1.8.3
 -------------
