@@ -100,7 +100,8 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
     of decorated functions that are being (or about to be) executed, with the
     purpose of preventing resetting of the effective log level at the
     completion of decorated functions that are called inside other decorated
-    functions (see comments in 'finaly' statement for further explanation).
+    functions (see comments in 'finally' statement for further explanation).
+    Note (when it is of concern) that this approach may not be thread-safe.
     '''
 
     @wraps(method_with_verbose_kwarg)
@@ -153,7 +154,7 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
             # so the following condition prevents resetting occurring once
             # inner functions complete (which would mean any subsequent code
             # in the outer function would undesirably regain the global level):
-            if calls[0] == 0:  # <TEAR DOWN COMMENT>
+            if calls[0] == 0:
                 if verbose == 0:
                     _disable_logging(at_level='NOTSET')  # lift deactivation
                 elif verbose in numeric_log_level_map.keys():
