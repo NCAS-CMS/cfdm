@@ -1003,7 +1003,7 @@ class NetCDFRead(IORead):
                 if qq:
                     logger.warning(
                         "WARNING: Field incomplete due to "
-                        "non-CF-compliant dataset: {!s}".format(x)
+                        "non-CF-compliant dataset: {!r}".format(x)
                     )
                     logger.warning("Report:")
                     x.dataset_compliance(display=True)
@@ -3041,7 +3041,7 @@ class NetCDFRead(IORead):
             dimensions = '(' + ', '.join(dimensions) + ')'  # pragma: no cover
 
         # Though an error of sorts, set as warning as does not terminate read
-        logger.warning(
+        logger.info(
             "    Error processing netCDF variable {} {}: {}".format(
                 ncvar, dimensions, d['reason'])
         )  # pragma: no cover
@@ -4733,7 +4733,7 @@ class NetCDFRead(IORead):
                                   attribute=attribute)
 
             # Though an error of sorts, set as warning; read not terminated
-            logger.warning(
+            logger.debug(
                 "    Error processing netCDF variable {}: {}".format(
                     field_ncvar, d['reason'])
             )  # pragma: no cover

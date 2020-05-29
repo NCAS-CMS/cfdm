@@ -5,12 +5,16 @@ version 1.8.4
 **2020-05-??**
 
 * Added new example field ``7`` to `cfdm.example_field`.
-* Enabled configuration of the extent and nature of informational and warning
-  messages output by `cfdm` using a logging framework (see points below).
+* Enabled configuration of the extent and nature of informational and
+  warning messages output by `cfdm` using a logging framework (see
+  points below) (https://github.com/NCAS-CMS/cfdm/issues/31)
 * New function `cfdm.LOG_LEVEL` to set the minimum log level for which
-  messages are displayed globally, i.e. to change the project-wide verbosity.
-* Changed behaviour and default of `verbose` keyword argument when available
-  to a function/method so it interfaces with the new logging functionality.
+  messages are displayed globally, i.e. to change the project-wide
+  verbosity (https://github.com/NCAS-CMS/cfdm/issues/35).
+* Changed behaviour and default of `verbose` keyword argument when
+  available to a function/method so it interfaces with the new logging
+  functionality (https://github.com/NCAS-CMS/cfdm/issues/35).
+* Changed dependency: ``cftime>=1.1.3``
 * Fixed bug the wouldn't allow the reading of a netCDF file which
   specifies Conventions other than CF
   (https://github.com/NCAS-CMS/cfdm/issues/36).
@@ -76,8 +80,8 @@ version 1.8.0
   `cfdm.Field.shape`, `cfdm.Field.size`
 * New method: `cfdm.Data.any`
 * New ``paths`` keyword parameter to `cfdm.environment`
-* Changed minimum netCDF4 dependency to version 1.5.3.
-* Changed minimum cftime dependency to version 1.1.1.
+* Changed dependency: ``netCDF4>=1.5.3``
+* Changed dependency: ``cftime>=1.1.1``
 * Fixed bug that prevented the writing of ``'NETCDF3_64BIT_OFFSET'``
   and ``'NETCDF3_64BIT_DATA'`` format files
   (https://github.com/NCAS-CMS/cfdm/issues/9).
