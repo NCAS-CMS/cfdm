@@ -3,9 +3,9 @@
 '''
 
 __author__       = 'David Hassell'
-__date__         = '2020-04-30'
+__date__         = '2020-05-??'
 __cf_version__   = '1.8'
-__version__      = '1.8.3'
+__version__      = '1.8.4'
 
 from distutils.version import LooseVersion
 import platform
@@ -35,21 +35,24 @@ except ImportError as error1:
 _minimum_vn = '2.7.0'
 if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     raise ValueError(
-        "Bad python version: cfdm.core requires python version {} or later. Got {}".format(
+        "Bad python version: cfdm.core requires python>={}. "
+        "Got {}".format(
             _minimum_vn,  platform.python_version()))
 
 # Check the version of netCDF4
 minimum_vn = '1.5.3'
 if LooseVersion(netCDF4.__version__) < LooseVersion(minimum_vn):
     raise ValueError(
-        "Bad netCDF4 version: cfdm.core requires netCDF4 version {} or later. Got {} at {}".format(
+        "Bad netCDF4 version: cfdm.core requires netCDF4>={}. "
+        "Got {} at {}".format(
             minimum_vn, netCDF4.__version__, netCDF4.__file__))
 
 # Check the version of numpy
 minimum_vn = '1.15'
 if LooseVersion(numpy.__version__) < LooseVersion(minimum_vn):
     raise ValueError(
-        "Bad numpy version: cfdm.core requires numpy version {} or later. Got {} at {}".format(
+        "Bad numpy version: cfdm.core requires numpy>={}. "
+        "Got {} at {}".format(
             minimum_vn, numpy.__version__, numpy.__file__))
 
 from .constructs import Constructs
