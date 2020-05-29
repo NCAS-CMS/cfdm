@@ -61,7 +61,9 @@ class DSGTest(unittest.TestCase):
 
         self.assertTrue(len(f) == 2, 'f = '+repr(f))
         for g in f:
-            self.assertTrue(g.equals(g.copy(), verbose=3))
+            print(999)
+            self.assertTrue(g.equals(g.copy(), verbose=1))
+            print(888)
             self.assertTrue(len(g.auxiliary_coordinates) == 2)
 
         g = f[0]
