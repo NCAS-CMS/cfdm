@@ -675,9 +675,19 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Find the CF version for the file
         # ------------------------------------------------------------
-        # DCH ALERT: haven't yet dealt with multiple conventions! TODO
-        file_version = g['global_attributes'].get('Conventions', '').replace(
-            'CF-', '', 1)
+        Conventions =  g['global_attributes'].get('Conventions', '')
+        
+        all_conventions = re.split(',', Conventions)
+        if all_conventions[0] == Conventions:
+            all_conventions = re.split('\s+', Conventions)
+            
+        file_version = None
+        for c in all_conventions:
+            if not re.match('^CF-\d', c):
+                continue
+
+            file_version = re.sub('^CF-', '', c)
+            
         if not file_version:
             if default_version is not None:
                 # Assume the default version provided by the user

@@ -52,13 +52,14 @@ class read_writeTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), 'string_char.nc')
 
         self.test_only = []
-        #    self.test_only = ['NOTHING!!!!!']
-        #    self.test_only = ['test_read_CDL']
-        #    self.test_only = ['test_write_filename']
-        #    self.test_only = ['test_read_write_unlimited']
-        #    self.test_only = ['test_read_field']
-        #    self.test_only = ['test_read_mask']
-        #    self.test_only = ['test_read_write_format']
+        # self.test_only = ['NOTHING!!!!!']
+        # self.test_only = ['test_read_CDL']
+        # self.test_only = ['test_write_filename']
+        # self.test_only = ['test_read_write_unlimited']
+        # self.test_only = ['test_read_field']
+        # self.test_only = ['test_read_mask']
+        # self.test_only = ['test_read_write_format']
+        # self.test_only = ['test_read_write_Conventions']
 
     def test_write_filename(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -358,6 +359,55 @@ class read_writeTest(unittest.TestCase):
                                         cfdm.read(tmpfile0)):
                             self.assertTrue(i.equals(j, verbose=3))
         #--- End: for
+
+    def test_read_write_Conventions(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.read(self.filename)[0]
+
+        version = 'CF-' + cfdm.CF()
+        other = 'ACDD-1.3'
+
+        for Conventions in (other,):
+            cfdm.write(f, tmpfile0, Conventions=Conventions)
+            g = cfdm.read(tmpfile0)[0]
+            self.assertTrue(
+                g.get_property('Conventions') == ' '.join([version, other]),
+                "{!r}, {!r}".format(
+                    g.get_property('Conventions'), Conventions))
+
+        for Conventions in (version,
+                            '',
+                            ' ',
+                            ',',
+                            ', ',
+                            ):
+            Conventions = version
+            cfdm.write(f, tmpfile0, Conventions=Conventions)
+            g = cfdm.read(tmpfile0)[0]
+            self.assertTrue(g.get_property('Conventions') == version,
+                            "{!r}, {!r}".format(
+                                g.get_property('Conventions'),
+                                Conventions))
+
+        for Conventions in ([version],                          
+                            [version, other],
+        ):
+            cfdm.write(f, tmpfile0, Conventions=Conventions)
+            g = cfdm.read(tmpfile0)[0]
+            self.assertTrue(
+                g.get_property('Conventions') == ' '.join(Conventions),
+                "{!r}, {!r}".format(
+                    g.get_property('Conventions'), Conventions))
+
+        for Conventions in ([other, version],):
+            cfdm.write(f, tmpfile0, Conventions=Conventions)
+            g = cfdm.read(tmpfile0)[0]
+            self.assertTrue(
+                g.get_property('Conventions') == ' '.join([version, other]),
+                "{!r}, {!r}".format(
+                    g.get_property('Conventions'), Conventions))
 
 #--- End: class
 
