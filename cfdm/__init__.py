@@ -72,8 +72,14 @@ from .functions import (ATOL,
                         abspath,
                         environment)
 
-# Lightweight methods included in the namespace purely for testing purposes:
-from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+# Though these are internal-use methods, include them in the namespace
+# (without documenting them) so that cf-python can use them internally too:
+from .decorators import (
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
+
 
 from .constructs import Constructs
 
