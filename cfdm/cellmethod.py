@@ -60,7 +60,7 @@ class CellMethod(mixin.Container,
         # --- End: for
 
         interval = self.get_qualifier('interval', ())
-        comment  = self.get_qualifier('comment', None)
+        comment = self.get_qualifier('comment', None)
 
         if interval:
             x = ['(']
@@ -126,31 +126,33 @@ class CellMethod(mixin.Container,
 #    def parse(cls, string, allow_error=False):
 #        '''Parse a CF cell_methods string.
 #
-#:Parameters:
+# :Parameters:
 #
-#    string: `str`
-#        The CF cell_methods string to be parsed into the
-#        `cf.CellMethods` object. By default the cell methods will be
-#        empty.
+#     string: `str`
+#         The CF cell_methods string to be parsed into the
+#         `cf.CellMethods` object. By default the cell methods will be
+#         empty.
 #
-#    allow_error: `bool`, optional
+#     allow_error: `bool`, optional
 #
-#:Returns:
+# :Returns:
 #
-#    `list`
+#     `list`
 #
-#**Examples:**
+# **Examples:**
 #
-#>>> c = CellMethod.parse('time: minimum within years time: mean over years (ENSO years)')
-#>>> print c
-#Cell methods    : time: minimum within years
-#                  time: mean over years (ENSO years)
+# >>> c = CellMethod.parse(
+# ...     'time: minimum within years time: mean over years (ENSO years)')
+# >>> print c
+# Cell methods    : time: minimum within years
+#                   time: mean over years (ENSO years)
 #
-#>>> c = CellMethod()
-#>>> d = c.parse('time: minimum within years time: mean over years (ENSO years)')
-#>>> print d
-#Cell methods    : time: minimum within years
-#                  time: mean over years (ENSO years)
+# >>> c = CellMethod()
+# >>> d = c.parse(
+# ...     'time: minimum within years time: mean over years (ENSO years)')
+# >>> print d
+# Cell methods    : time: minimum within years
+#                   time: mean over years (ENSO years)
 #
 #        '''
 #        out = []
@@ -177,7 +179,9 @@ class CellMethod(mixin.Container,
 #                if not cell_methods[0].endswith(':'):
 #                    break
 #
-#                # Check that "name" ends with colon? How? ('lat: mean (area-weighted) or lat: mean (interval: 1 degree_north comment: area-weighted)')
+#                # Check that "name" ends with colon? How?
+#                # ('lat: mean (area-weighted) or lat: mean
+#                #  (interval: 1 degree_north comment: area-weighted)')
 #
 #                axis = cell_methods.pop(0)[:-1]
 #
@@ -229,27 +233,32 @@ class CellMethod(mixin.Container,
 #                        try:
 #                            parsed_interval = ast_literal_eval(interval)
 #                        except:
-#                            message = "Cell method interval is incorrectly formatted"
+#                            message = ("Cell method interval is incorrectly "
+#                                       "formatted")
 #                            if allow_error:
 #                                cm = cls()
 #                                cm.set_string(string)
 #                                cm.set_error(message)
 #                                return [out]
 #                            else:
-#                                raise ValueError("{}: {}".format(message, string))
+#                                raise ValueError("{}: {}".format(
+#                                    message, string))
 #                        # ---End: try
 #
 #                        try:
-#                            interval.append(cm._Data(parsed_interval, units=units))
+#                            interval.append(
+#                                cm._Data(parsed_interval, units=units))
 #                        except:
-#                            message = "Cell method interval is incorrectly formatted"
+#                            message = ("Cell method interval is incorrectly "
+#                                       formatted")
 #                            if allow_error:
 #                                cm = cls()
 #                                cm.set_string(string)
 #                                cm.set_error(message)
 #                                return [cm]
 #                            else:
-#                                raise ValueError("{}: {}".format(message, string))
+#                                raise ValueError(
+#                                    "{}: {}".format(message, string))
 #                        # ---End: try
 #
 #                        continue
@@ -402,7 +411,7 @@ class CellMethod(mixin.Container,
         # ------------------------------------------------------------
         # Check the qualifiers
         # ------------------------------------------------------------
-        self_qualifiers  = self.qualifiers()
+        self_qualifiers = self.qualifiers()
         other_qualifiers = other.qualifiers()
 
 #        if ignore_qualifiers:
@@ -489,27 +498,27 @@ class CellMethod(mixin.Container,
 #    def equivalent(self, other, rtol=None, atol=None, verbose=None):
 #        '''True if two cell methods are equivalent, False otherwise.
 #
-#The `axes` and `interval` attributes are ignored in the comparison.
+# The `axes` and `interval` attributes are ignored in the comparison.
 #
-#:Parameters:
+# :Parameters:
 #
-#    other :
-#        The object to compare for equality.
+#     other :
+#         The object to compare for equality.
 #
-#    atol : float, optional
-#        The absolute tolerance for all numerical comparisons, By
-#        default the value returned by the `ATOL` function is used.
+#     atol : float, optional
+#         The absolute tolerance for all numerical comparisons, By
+#         default the value returned by the `ATOL` function is used.
 #
-#    rtol : float, optional
-#        The relative tolerance for all numerical comparisons, By
-#        default the value returned by the `RTOL` function is used.
+#     rtol : float, optional
+#         The relative tolerance for all numerical comparisons, By
+#         default the value returned by the `RTOL` function is used.
 #
-#:Returns:
+# :Returns:
 #
-#    out : bool
-#        Whether or not the two instances are equivalent.
+#     out : bool
+#         Whether or not the two instances are equivalent.
 #
-#**Examples:**
+# **Examples:**
 #
 #        '''
 #        if self is other:
@@ -563,7 +572,7 @@ class CellMethod(mixin.Container,
 #                return False
 #        # --- End: if
 #
-##        intervals0 = self1.interval
+#        # intervals0 = self1.interval
 #        if self_interval:
 #            for data0, data1 in zip(self_interval, other_interval):
 #                if not data0.allclose(data1, rtol=rtol, atol=atol):

@@ -187,7 +187,7 @@ class Bounds(mixin.NetCDFVariable,
 
         if _fill_value:
             if not data.has_fill_value():
-                _ = self.inherited_properties().get('fill_value') # TODO
+                _ = self.inherited_properties().get('fill_value')  # TODO
                 if _ is not None:
                     data.set_fill_value(_)
         # --- End: if

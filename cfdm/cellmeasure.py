@@ -94,7 +94,6 @@ class CellMeasure(mixin.NetCDFVariable,
 
         self._initialise_netcdf(source)
 
-
     def dump(self, display=True, _omit_properties=None, _key=None,
              _level=0, _title=None, _axes=None, _axis_names=None):
         '''A full description of the cell measure construct.
@@ -132,11 +131,10 @@ class CellMeasure(mixin.NetCDFVariable,
                 _title += ' (external variable: {0})'.format(ncvar)
         # --- End: if
 
-        return super().dump( display=display, _key=_key,
-                             _omit_properties=_omit_properties,
-                             _level=_level, _title=_title,
-                             _axes=_axes, _axis_names=_axis_names)
-
+        return super().dump(display=display, _key=_key,
+                            _omit_properties=_omit_properties,
+                            _level=_level, _title=_title,
+                            _axes=_axes, _axis_names=_axis_names)
 
     @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,
@@ -274,7 +272,6 @@ class CellMeasure(mixin.NetCDFVariable,
 
         return True
 
-
     def identity(self, default=''):
         '''Return the canonical identity.
 
@@ -351,7 +348,6 @@ class CellMeasure(mixin.NetCDFVariable,
             return 'ncvar%{0}'.format(n)
 
         return default
-
 
     def identities(self):
         '''Return all possible identities.
