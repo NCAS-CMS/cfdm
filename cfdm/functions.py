@@ -116,6 +116,50 @@ def RTOL(*rtol):
     return old
 
 
+def _log_level(constants_dict, log_level):
+    ''' Equivalent to LOG_LEVEL, but with dict to modify as an argument.
+
+    This internal function is designed specifically so that a different
+    constants_dict can be manipulated with setting or reading of the
+    log level, without the constants dictionary becoming a user-facing
+    argument. LOG_LEVEL is the only function of the pair documented for use.
+
+    Overall, this means that cf-python can import these functions and use
+    them such that it can manipulate (its own separate) LOG_LEVEL constant.
+
+    Note: relies on the mutability of arguments (here the constants_dict).
+    '''
+    old = constants_dict['LOG_LEVEL']
+
+    if log_level:
+        level = log_level[0]
+
+        if isinstance(level, str):
+            level = level.upper()
+        elif level in numeric_log_level_map:
+            level = numeric_log_level_map[level]  # convert to string ID first
+
+        # Ensuring it is a valid level specifier to set & use, either
+        # a case-insensitive string of valid log level or
+        # dis/en-abler, or an integer 0 to 5 corresponding to one of
+        # those as converted above:
+        if level in valid_log_levels:
+            constants_dict['LOG_LEVEL'] = level
+            _reset_log_emergence_level(level)
+        else:
+            raise ValueError(
+                "Logging level {!r} is not one of the valid values {}, or "
+                "a corresponding integer of 0 to {} and (lastly) -1, "
+                "respectively. Value remains as it was, at:".format(
+                    level, "', '".join(valid_log_levels),
+                    len(valid_log_levels) - 2
+                )
+            )
+    # --- End: if
+
+    return old
+
+
 def LOG_LEVEL(*log_level):
     '''The minimal level of seriousness of log messages which are shown.
 
@@ -170,40 +214,11 @@ def LOG_LEVEL(*log_level):
     'DISABLE'
 
     '''
-    old = CONSTANTS['LOG_LEVEL']
-
-    if log_level:
-        level = log_level[0]
-
-        if isinstance(level, str):
-            level = level.upper()
-        elif level in numeric_log_level_map:
-            level = numeric_log_level_map[level]  # convert to string ID first
-
-        # Ensuring it is a valid level specifier to set & use, either
-        # a case-insensitive string of valid log level or
-        # dis/en-abler, or an integer 0 to 5 corresponding to one of
-        # those as converted above:
-        if level in valid_log_levels:
-            CONSTANTS['LOG_LEVEL'] = level
-            _reset_log_emergence_level(level)
-        else:
-            raise ValueError(
-                "Logging level {!r} is not one of the valid values {}, or "
-                "a corresponding integer of 0 to {} and (lastly) -1, "
-                "respectively. Value remains as it was, at:".format(
-                    level, "', '".join(valid_log_levels),
-                    len(valid_log_levels) - 2
-                )
-            )
-    # --- End: if
-    
-    return old
+    return _log_level(CONSTANTS, log_level)
 
 
 def _reset_log_emergence_level(level, logger=None):
-    '''Re-set minimum severity level for displayed log messages of a
-logger.
+    '''Re-set minimum level for displayed log messages of a logger.
 
     This may correspond to a change, otherwise will re-set to the same
     value (which is harmless, & as costly as checking to avoid this in

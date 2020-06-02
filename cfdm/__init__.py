@@ -65,12 +65,14 @@ if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
 
 from .constants import masked
 
+# _log_level is passed on so it can be used in cf-python (as in comment below)
 from .functions import (ATOL,
                         RTOL,
                         CF,
                         LOG_LEVEL,
                         abspath,
-                        environment)
+                        environment,
+                        _log_level)
 
 # Though these are internal-use methods, include them in the namespace
 # (without documenting them) so that cf-python can use them internally too:
