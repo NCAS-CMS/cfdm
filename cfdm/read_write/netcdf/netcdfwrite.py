@@ -1099,7 +1099,7 @@ class NetCDFWrite(IOWrite):
 
         if (g['output_version'] >= g['CF-1.8'] and
             self.implementation.is_geometry(coord)):
-
+            
             # --------------------------------------------------------
             # CF>=1.8 and we have geometry bounds, which are dealt
             # with separately
@@ -1142,7 +1142,7 @@ class NetCDFWrite(IOWrite):
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
 
-            # Set the netCDF bounds variable name
+                # Set the netCDF bounds variable name
                 default = coord_ncvar + '_bounds'
             else:
                 default = 'bounds'
@@ -1719,7 +1719,8 @@ class NetCDFWrite(IOWrite):
             if (not self.implementation.get_properties(coord) and
                 self.implementation.get_data(coord, default=None) is None):
                 # No coordinates, but possibly bounds
-                self._write_bounds(f, coord, key, ncdimensions, None)
+                self._write_bounds(f, coord, key, ncdimensions,
+                                   coord_ncvar=None)
             else:
                 ncvar = self._create_netcdf_variable_name(coord,
                                                           default='auxiliary')
