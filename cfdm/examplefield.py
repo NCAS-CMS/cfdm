@@ -856,6 +856,8 @@ def example_field(n, _implementation=_implementation):
 
         # auxiliary_coordinate: Z
         c = AuxiliaryCoordinate()
+        c.nc_set_variable('z')
+        c.set_geometry('polygon')
         b = Bounds()
         b.set_properties({'units': 'm', 'standard_name': 'altitude', 'axis': 'Z'})
         d = Data([[[1.0, 2.0, 4.0, 9.969209968386869e+36], [2.0, 3.0, 4.0, 5.0], [5.0, 1.0, 4.0, 9.969209968386869e+36]], [[3.0, 2.0, 1.0, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]]], units='m', dtype='f8', mask=Data([[[False, False, False, True], [False, False, False, False], [False, False, False, True]], [[False, False, False, True], [True, True, True, True], [True, True, True, True]]], dtype='b1'))
