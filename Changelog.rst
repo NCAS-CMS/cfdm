@@ -2,7 +2,7 @@ version 1.8.4
 -------------
 ----
 
-**2020-05-??**
+**2020-06-??**
 
 * Added new example field ``7`` to `cfdm.example_field`.
 * Enabled configuration of the extent and nature of informational and
@@ -18,6 +18,8 @@ version 1.8.4
 * Fixed bug the wouldn't allow the reading of a netCDF file which
   specifies Conventions other than CF
   (https://github.com/NCAS-CMS/cfdm/issues/36).
+* Fixed bug that prevented the reading of netCDF files with
+  unreferenced external variables.
   
 version 1.8.3
 -------------
