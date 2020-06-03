@@ -35,37 +35,38 @@ class CFDMImplementation(Implementation):
     .. versionadded:: 1.7.0
 
     '''
-    def __init__(self,
+    def __init__(
+            self,
 
-                 cf_version=None,
+            cf_version=None,
 
-                 AuxiliaryCoordinate=None,
-                 CellMeasure=None,
-                 CellMethod=None,
-                 CoordinateReference=None,
-                 DimensionCoordinate=None,
-                 DomainAncillary=None,
-                 DomainAxis=None,
-                 Field=None,
-                 FieldAncillary=None,
+            AuxiliaryCoordinate=None,
+            CellMeasure=None,
+            CellMethod=None,
+            CoordinateReference=None,
+            DimensionCoordinate=None,
+            DomainAncillary=None,
+            DomainAxis=None,
+            Field=None,
+            FieldAncillary=None,
 
-                 Bounds=None,
-                 InteriorRing=None,
-                 CoordinateConversion=None,
-                 Datum=None,
-                 Data=None,
+            Bounds=None,
+            InteriorRing=None,
+            CoordinateConversion=None,
+            Datum=None,
+            Data=None,
 
-                 GatheredArray=None,
-                 NetCDFArray=None,
-                 RaggedContiguousArray=None,
-                 RaggedIndexedArray=None,
-                 RaggedIndexedContiguousArray=None,
+            GatheredArray=None,
+            NetCDFArray=None,
+            RaggedContiguousArray=None,
+            RaggedIndexedArray=None,
+            RaggedIndexedContiguousArray=None,
 
-                 List=None,
-                 Count=None,
-                 Index=None,
-                 NodeCountProperties=None,
-                 PartNodeCountProperties=None,
+            List=None,
+            Count=None,
+            Index=None,
+            NodeCountProperties=None,
+            PartNodeCountProperties=None,
     ):
         '''**Initialisation**
 
@@ -174,9 +175,9 @@ class CFDMImplementation(Implementation):
         `bool`
             TODO
         '''
-        out = {'node_count'     : {},
+        out = {'node_count': {},
                'part_node_count': {},
-               'interior_ring'  : {}}
+               'interior_ring': {}}
 
         for coord in self.get_auxiliary_coordinates(field).values():
             for variable in out:
@@ -329,9 +330,9 @@ class CFDMImplementation(Implementation):
         return self.nc_get_variable(bounds, default=default)
 
     def get_cell_measures(self, field):
-       '''TODO
-       '''
-       return field.cell_measures
+        '''TODO
+        '''
+        return field.cell_measures
 
     def get_cell_methods(self, field):
         '''TODO
@@ -482,12 +483,12 @@ class CFDMImplementation(Implementation):
         return field.coordinate_references
 
     def get_coordinates(self, field):
-       '''TODO
+        '''TODO
 
     :Parameters:
 
-       '''
-       return field.coordinates
+        '''
+        return field.coordinates
 
     def get_data_calendar(self, data, default=None):
         '''TODO
@@ -624,18 +625,16 @@ class CFDMImplementation(Implementation):
         return field.dimension_coordinates
 
     def get_domain_ancillaries(self, field):
-       '''TODO
+        '''TODO
 
-       '''
-       return field.domain_ancillaries
-
+        '''
+        return field.domain_ancillaries
 
     def get_domain_axes(self, field):
         '''TODO
 
         '''
         return field.domain_axes
-
 
     def get_domain_axis_size(self, field, axis):
         '''TODO
@@ -888,7 +887,6 @@ class CFDMImplementation(Implementation):
         '''
         return parent.data.sum()
 
-
     def get_count(self, construct):
         '''Return the measure property of a cell measure construct.
 
@@ -911,7 +909,6 @@ class CFDMImplementation(Implementation):
         '''
         return construct.get_data().get_count(default=None)
 
-
     def get_index(self, construct):
         '''TODO
 
@@ -922,7 +919,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return construct.get_data().get_index(default=None)
-
 
     def get_interior_ring(self, construct):
         '''TODO
@@ -938,13 +934,11 @@ class CFDMImplementation(Implementation):
         '''
         return construct.get_interior_ring(default=None)
 
-
     def get_list(self, construct):
         '''TODO
 
         '''
         return construct.get_data().get_list(default=None)
-
 
     def get_measure(self, cell_measure):
         '''Return the measure property of a cell measure construct.
@@ -968,7 +962,6 @@ class CFDMImplementation(Implementation):
         '''
         return cell_measure.get_measure(default=None)
 
-
     def nc_get_dimension(self, parent, default=None):
         '''Return the netCDF variable name.
 
@@ -989,21 +982,19 @@ class CFDMImplementation(Implementation):
         '''
         return parent.nc_get_dimension(default=default)
 
-
     def nc_get_variable(self, construct, default=None):
-       '''TODO
+        '''TODO
 
     :Parameters:
 
-       TODO
+        TODO
 
     :Returns:
 
-       `str`
+        `str`
            TODO
-       '''
-       return construct.nc_get_variable(default=default)
-
+        '''
+        return construct.nc_get_variable(default=default)
 
     def get_node_count(self, construct):
         '''TODO
@@ -1021,7 +1012,6 @@ class CFDMImplementation(Implementation):
         '''
         return construct.get_node_count(default=None)
 
-
     def get_part_node_count(self, construct):
         '''TODO
 
@@ -1037,7 +1027,6 @@ class CFDMImplementation(Implementation):
 
         '''
         return construct.get_part_node_count(default=None)
-
 
     def get_properties(self, parent):
         '''Return all properties.
@@ -1064,26 +1053,24 @@ class CFDMImplementation(Implementation):
         return parent.properties()
 
     def get_property(self, construct, prop, default=None):
-       '''TODO
+        '''TODO
 
     :Parameters:
 
     :Returns:
 
-       '''
-       return construct.get_property(prop, default=default)
-
+        '''
+        return construct.get_property(prop, default=default)
 
     def get_geometry(self, construct, default=None):
-       '''TODO
+        '''TODO
 
     :Parameters:
 
     :Returns:
 
-       '''
-       return construct.get_geometry(default=default)
-
+        '''
+        return construct.get_geometry(default=default)
 
     def get_data(self, parent, default=None):
         '''Return the data array.
@@ -1371,7 +1358,8 @@ class CFDMImplementation(Implementation):
              False.
 
         '''
-        return bool(coordinate.get_geometry(None) in ('point', 'line', 'polygon'))
+        return bool(coordinate.get_geometry(None) in (
+            'point', 'line', 'polygon'))
 
     def is_masked(self, data):
         '''Whether or not the data has any masked values.
@@ -1390,19 +1378,15 @@ class CFDMImplementation(Implementation):
         '''
         return data.mask.any()
 
-
     def nc_set_instance_dimension(self, variable, ncdim):
         '''TODO
         '''
         variable.nc_set_instance_dimension(ncdim)
 
-
-
     def nc_set_sample_dimension(self, variable, ncdim):
         '''TODO
         '''
         variable.nc_set_sample_dimension(ncdim)
-
 
     def set_auxiliary_coordinate(self, field, construct, axes, copy=True):
         '''Insert a auxiliary coordinate object into a field.
@@ -1456,7 +1440,6 @@ class CFDMImplementation(Implementation):
         '''
         return field.set_construct(construct, axes=axes, copy=copy)
 
-
     def set_cell_method(self, field, construct, copy=True):
         '''Insert a cell_method object into a field.
 
@@ -1479,7 +1462,6 @@ class CFDMImplementation(Implementation):
         '''TODO
         '''
         cell_method.set_axes(axes)
-
 
     def set_cell_method_method(self, cell_method, method):
         '''TODO
@@ -1537,8 +1519,8 @@ class CFDMImplementation(Implementation):
         coordinate_reference.set_coordinate(coordinate)
 
     def set_data(self, construct, data, axes=None, copy=True):
-        '''If the construct is a Field then the corresponding domain axes must
-    also be provided.
+        '''If the construct is a Field then the corresponding domain
+    axes must also be provided.
 
     :Parameters:
 
@@ -1594,7 +1576,7 @@ class CFDMImplementation(Implementation):
         return field.set_construct(construct, axes=axes, copy=copy)
 
     def set_domain_ancillary(self, field, construct, axes, copy=True):
-#                             extra_axes=0, copy=True):
+        #                    extra_axes=0, copy=True):
         '''Insert a domain ancillary object into a field.
 
     :Parameters:
@@ -1864,37 +1846,38 @@ class CFDMImplementation(Implementation):
 
 
 _implementation = CFDMImplementation(
-    cf_version = CF(),
+    cf_version=CF(),
 
-    AuxiliaryCoordinate = AuxiliaryCoordinate,
-    CellMeasure         = CellMeasure,
-    CellMethod          = CellMethod,
-    CoordinateReference = CoordinateReference,
-    DimensionCoordinate = DimensionCoordinate,
-    DomainAncillary     = DomainAncillary,
-    DomainAxis          = DomainAxis,
-    Field               = Field,
-    FieldAncillary      = FieldAncillary,
+    AuxiliaryCoordinate=AuxiliaryCoordinate,
+    CellMeasure=CellMeasure,
+    CellMethod=CellMethod,
+    CoordinateReference=CoordinateReference,
+    DimensionCoordinate=DimensionCoordinate,
+    DomainAncillary=DomainAncillary,
+    DomainAxis=DomainAxis,
+    Field=Field,
+    FieldAncillary=FieldAncillary,
 
-    Bounds       = Bounds,
-    InteriorRing = InteriorRing,
+    Bounds=Bounds,
+    InteriorRing=InteriorRing,
 
-    CoordinateConversion = CoordinateConversion,
-    Datum                = Datum,
+    CoordinateConversion=CoordinateConversion,
+    Datum=Datum,
 
-    List                    = List,
-    Index                   = Index,
-    Count                   = Count,
-    NodeCountProperties     = NodeCountProperties,
-    PartNodeCountProperties = PartNodeCountProperties,
+    List=List,
+    Index=Index,
+    Count=Count,
+    NodeCountProperties=NodeCountProperties,
+    PartNodeCountProperties=PartNodeCountProperties,
 
-    Data                         = Data,
-    GatheredArray                = GatheredArray,
-    NetCDFArray                  = NetCDFArray,
-    RaggedContiguousArray        = RaggedContiguousArray,
-    RaggedIndexedArray           = RaggedIndexedArray,
-    RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
+    Data=Data,
+    GatheredArray=GatheredArray,
+    NetCDFArray=NetCDFArray,
+    RaggedContiguousArray=RaggedContiguousArray,
+    RaggedIndexedArray=RaggedIndexedArray,
+    RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
 )
+
 
 def implementation():
     '''Return a container for the CF data model implementation.
@@ -1941,4 +1924,3 @@ def implementation():
 
     '''
     return _implementation.copy()
-
