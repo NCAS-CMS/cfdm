@@ -75,7 +75,8 @@ class Constructs(core.Constructs):
                            for c, v in sorted(self._constructs.items())
                            if len(v) and c not in self._ignore]
 
-        return '<{0}: {1}>'.format(self.__class__.__name__, ', '.join(construct_types))
+        return '<{0}: {1}>'.format(
+            self.__class__.__name__, ', '.join(construct_types))
 
     def __str__(self):
         '''Called by the `str` built-in function.
@@ -93,7 +94,8 @@ class Constructs(core.Constructs):
 
         first = '{'
         for construct_type in construct_types:
-            for key, value in sorted(self._constructs[construct_type].items()):
+            for key, value in sorted(
+                    self._constructs[construct_type].items()):
                 if first:
                     out[0] = out[0] + '\n{{{!r}: {!r},'.format(key, value)
                     first = False
@@ -161,7 +163,6 @@ class Constructs(core.Constructs):
 
         '''
         out = {}
-
 
         data_axes = self.data_axes()
 
@@ -310,11 +311,11 @@ class Constructs(core.Constructs):
             return False
 
         if refs0:
-            if verbose == -1:                
+            if verbose == -1:
                 debug_verbose = 1
             else:
                 debug_verbose = 0
-                
+
             for ref0 in refs0.values():
                 found_match = False
                 for key1, ref1 in tuple(refs1.items()):
@@ -345,7 +346,9 @@ class Constructs(core.Constructs):
 
                     terms1 = {
                         term: key1_to_key0.get(key, key)
-                        for term, key in ref1.coordinate_conversion.domain_ancillaries().items()
+                        for term, key in (
+                            ref1.coordinate_conversion.domain_ancillaries(
+                            ).items())
                     }
 
                     if terms0 != terms1:
@@ -381,8 +384,8 @@ class Constructs(core.Constructs):
         '''TODO
 
         '''
-        self_sizes  = [d.get_size()
-                       for d in self.filter_by_type('domain_axis').values()]
+        self_sizes = [d.get_size()
+                      for d in self.filter_by_type('domain_axis').values()]
         other_sizes = [d.get_size()
                        for d in other.filter_by_type('domain_axis').values()]
 
@@ -434,55 +437,55 @@ class Constructs(core.Constructs):
         return out
 
 #    def domain_axis_key(self, identity, default=ValueError()):
-#        '''Return the key of the domain axis construct that is spanned by 1-d
-#coordinate constructs.
+#        '''Return the key of the domain axis construct that is spanned
+#    by 1-d coordinate constructs.
 #
-#.. versionadded:: 1.7.8
+#    .. versionadded:: 1.7.8
 #
-#.. seealso:: `domain_axis_identity`
+#    .. seealso:: `domain_axis_identity`
 #
-#:Parameters:
+#    :Parameters:
 #
-#    identity:
+#        identity:
 #
-#        Select the 1-d coordinate constructs that have the given
-#        identity.
+#            Select the 1-d coordinate constructs that have the given
+#            identity.
 #
-#        An identity is specified by a string (e.g. ``'latitude'``,
-#        ``'long_name=time'``, etc.); or a compiled regular expression
-#        (e.g. ``re.compile('^atmosphere')``), for which all constructs
-#        whose identities match (via `re.search`) are selected.
+#            An identity is specified by a string (e.g. ``'latitude'``,
+#            ``'long_name=time'``, etc.); or a compiled regular expression
+#            (e.g. ``re.compile('^atmosphere')``), for which all constructs
+#            whose identities match (via `re.search`) are selected.
 #
-#        Each coordinate construct has a number of identities, and is
-#        selected if any of them match any of those provided. A
-#        construct's identities are those returned by its `!identities`
-#        method. In the following example, the construct ``x`` has four
-#        identities:
+#            Each coordinate construct has a number of identities, and is
+#            selected if any of them match any of those provided. A
+#            construct's identities are those returned by its `!identities`
+#            method. In the following example, the construct ``x`` has four
+#            identities:
 #
-#           >>> x.identities()
-#           ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
+#               >>> x.identities()
+#               ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
 #
-#        In addition, each construct also has an identity based its
-#        construct key (e.g. ``'key%dimensioncoordinate2'``)
+#            In addition, each construct also has an identity based its
+#            construct key (e.g. ``'key%dimensioncoordinate2'``)
 #
-#        Note that in the output of a `print` call or `!dump` method, a
-#        construct is always described by one of its identities, and so
-#        this description may always be used as an *identity* argument.
+#            Note that in the output of a `print` call or `!dump` method, a
+#            construct is always described by one of its identities, and so
+#            this description may always be used as an *identity* argument.
 #
-#    default: optional
-#        Return the value of the *default* parameter if a domain axis
-#        construct can not be found. If set to an `Exception` instance
-#        then it will be raised instead.
+#        default: optional
+#            Return the value of the *default* parameter if a domain axis
+#            construct can not be found. If set to an `Exception` instance
+#            then it will be raised instead.
 #
-#:Returns:
+#    :Returns:
 #
-#    `str`
-#        The key of the domain axis construct that is spanned by the
-#        data of the selected 1-d coordinate constructs.
+#        `str`
+#            The key of the domain axis construct that is spanned by the
+#            data of the selected 1-d coordinate constructs.
 #
-#**Examples:**
+#    **Examples:**
 #
-#TODO
+#    TODO
 #
 #        '''
 #        # Select 1-d coordinate constructs with the given identity
@@ -494,7 +497,9 @@ class Constructs(core.Constructs):
 #        if not len(c) :
 #            return self._default(
 #                default,
-#                "No 1-d coordinate constructs have identity {!r}".format(identity))
+#                "No 1-d coordinate constructs have identity {!r}".format(
+#                    identity)
+#            )
 #
 #        data_axes = self.data_axes()
 #        domain_axes = self.filter_by_type('domain_axis')
@@ -515,14 +520,18 @@ class Constructs(core.Constructs):
 #        if not keys:
 #            return self._default(
 #                default,
-#                "1-d coordinate constructs selected with identity {!r} have not been assigned a domain axis constructs".format(
-#                    coord))
+#                "1-d coordinate constructs selected with identity {!r} "
+#                "have not been assigned a domain axis constructs".format(
+#                    coord)
+#            )
 #
 #        if len(keys) > 1:
 #            return self._default(
 #                default,
-#                "Multiple 1-d coordinate constructs selected with identity {!r} span multiple domain axes: {!r}".format(
-#                    identity, keys))
+#                "Multiple 1-d coordinate constructs selected with "
+#                "identity {!r} span multiple domain axes: {!r}".format(
+#                    identity, keys)
+#            )
 #
 #        return keys.pop()
 
@@ -716,7 +725,7 @@ class Constructs(core.Constructs):
                 return True
 
         # Check that each instance is the same type
-        if  not isinstance(other, self.__class__):
+        if not isinstance(other, self.__class__):
             logger.info(
                 "{0}: Incompatible type: {1}".format(
                     self.__class__.__name__, other.__class__.__name__)
@@ -724,15 +733,15 @@ class Constructs(core.Constructs):
             if not _return_axis_map:
                 return False
 
-        if verbose == -1:                
+        if verbose == -1:
             debug_verbose = 1
         else:
             debug_verbose = 0
-                
+
         axes0_to_axes1 = {}
         axis0_to_axis1 = {}
         axis1_to_axis0 = {}
-        key1_to_key0   = {}
+        key1_to_key0 = {}
 
         # ------------------------------------------------------------
         # Domain axis constructs
@@ -754,7 +763,6 @@ class Constructs(core.Constructs):
         for axes0, constructs0 in axes_to_constructs0.items():
             matched_all_constructs_with_these_axes = False
 
-
             len_axes0 = len(axes0)
             for axes1, constructs1 in tuple(axes_to_constructs1.items()):
 
@@ -766,10 +774,11 @@ class Constructs(core.Constructs):
                     continue
 
                 for construct_type in self._array_constructs:
-#                    role_constructs0 = constructs0[construct_type]
-#                    role_constructs1 = constructs1[construct_type].copy()
+                    # role_constructs0 = constructs0[construct_type]
+                    # role_constructs1 = constructs1[construct_type].copy()
                     role_constructs0 = constructs0.get(construct_type, {})
-                    role_constructs1 = constructs1.get(construct_type, {}).copy()
+                    role_constructs1 = constructs1.get(
+                        construct_type, {}).copy()
 
                     if len(role_constructs0) != len(role_constructs1):
                         # There are the different numbers of
@@ -987,14 +996,14 @@ class Constructs(core.Constructs):
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_axis': (mode, axes)},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_axis': (mode, axes)},))
 
         # Parse the mode parameter
-        _and      = False
-        _or       = False
-        _exact    = False
-        _subset   = False
+        _and = False
+        _or = False
+        _exact = False
+        _subset = False
 #        _superset = False
 
         if not axes and mode is None:
@@ -1010,8 +1019,8 @@ class Constructs(core.Constructs):
             _exact = True
         elif mode == 'subset':
             _subset = True
- #       elif mode == 'superset':
- #           _superset = True
+        # elif mode == 'superset':
+            # _superset = True
         else:
             raise ValueError(
                 "mode parameter must be one of 'and', 'or', 'exact', subset'")
@@ -1099,8 +1108,8 @@ class Constructs(core.Constructs):
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_data': ()},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_data': ()},))
 
         for cid in tuple(out):
             if out._construct_type[cid] not in self._array_constructs:
@@ -1184,8 +1193,8 @@ class Constructs(core.Constructs):
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_identity': identities},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_identity': identities},))
 
         # Return all constructs if no identities have been provided
         if not identities:
@@ -1254,8 +1263,8 @@ class Constructs(core.Constructs):
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_key': keys},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_key': keys},))
 
         if not keys:
             return out
@@ -1338,8 +1347,8 @@ class Constructs(core.Constructs):
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_measure': measures},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_measure': measures},))
 
         for cid, construct in tuple(out.items()):
             try:
@@ -1350,8 +1359,8 @@ class Constructs(core.Constructs):
                 continue
 
             if not measures:
-#                if not construct.has_measure():
-#                    out._pop(cid)
+                # if not construct.has_measure():
+                #     out._pop(cid)
                 continue
 
             ok = False
@@ -1440,8 +1449,8 @@ class Constructs(core.Constructs):
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_method': methods},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_method': methods},))
 
         for cid, construct in tuple(out.items()):
             try:
@@ -1452,8 +1461,8 @@ class Constructs(core.Constructs):
                 continue
 
             if not methods:
-#                if not construct.has_method():
-#                    out._pop(cid)
+                # if not construct.has_method():
+                #     out._pop(cid)
                 continue
 
             ok = False
@@ -1518,8 +1527,8 @@ class Constructs(core.Constructs):
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_naxes': naxes},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_naxes': naxes},))
 
         data_constructs = self.filter_by_data()
         constructs_data_axes = self.data_axes()
@@ -1532,7 +1541,7 @@ class Constructs(core.Constructs):
             x = constructs_data_axes.get(key)
             if x is None:
                 # This construct does not have data axes
-#                out._pop(key)
+                # out._pop(key)
                 continue
 
             ok = True
@@ -1599,8 +1608,8 @@ class Constructs(core.Constructs):
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_ncdim': ncdims},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_ncdim': ncdims},))
 
         for cid, construct in tuple(out.items()):
             try:
@@ -1612,8 +1621,8 @@ class Constructs(core.Constructs):
                 continue
 
             if not ncdims:
-#                if not construct.nc_has_dimension():
-#                    out._pop(cid)
+                # if not construct.nc_has_dimension():
+                #     out._pop(cid)
 
                 continue
 
@@ -1680,8 +1689,8 @@ class Constructs(core.Constructs):
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_ncvar': ncvars},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_ncvar': ncvars},))
 
         for cid, construct in tuple(out.items()):
             try:
@@ -1693,8 +1702,8 @@ class Constructs(core.Constructs):
                 continue
 
             if not ncvars:
-#                if not construct.nc_has_variable():
-#                    out._pop(cid)
+                # if not construct.nc_has_variable():
+                #     out._pop(cid)
                 continue
 
             ok = False
@@ -1799,13 +1808,14 @@ class Constructs(core.Constructs):
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_property': (mode, properties)},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_property': (mode, properties)},))
 
         _or = False
         if mode:
             if len(mode) > 1:
-                raise ValueError("Can provide at most one positional argument")
+                raise ValueError(
+                    "Can provide at most one positional argument")
 
             x = mode[0]
             if x == 'or':
@@ -1824,8 +1834,8 @@ class Constructs(core.Constructs):
                 continue
 
             if not properties:
-#                if not construct.properties():
-#                    out._pop(cid)
+                # if not construct.properties():
+                #     out._pop(cid)
                 continue
 
             ok = True
@@ -1891,8 +1901,8 @@ class Constructs(core.Constructs):
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_size': sizes},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_size': sizes},))
 
         for cid, construct in tuple(out.items()):
             try:
@@ -1903,8 +1913,8 @@ class Constructs(core.Constructs):
                 continue
 
             if not sizes:
-#                if not construct.has_size():
-#                    out._pop(cid)
+                # if not construct.has_size():
+                #     out._pop(cid)
                 continue
 
             ok = False
@@ -1974,8 +1984,8 @@ class Constructs(core.Constructs):
         out = super().filter_by_type(*types)
 
         out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() \
-                               + ({'filter_by_type': types},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'filter_by_type': types},))
 
         return out
 
@@ -2183,11 +2193,12 @@ class Constructs(core.Constructs):
         out = self.unfilter(depth=depth)
 
         if depth:
-            if 'inverse_filter' in self.filters_applied()[-1] :
+            if 'inverse_filter' in self.filters_applied()[-1]:
                 filters = out.filters_applied()
                 d = 1
                 while True:
-                    if d > len(filters) or 'inverse_filter' not in filters[-d]:
+                    if (d > len(filters) or 'inverse_filter'
+                            not in filters[-d]):
                         break
 
                     d += 1
@@ -2201,8 +2212,8 @@ class Constructs(core.Constructs):
         for key in self:
             out._pop(key)
 
-        out._filters_applied = self.filters_applied() \
-                               + ({'inverse_filter': ()},)
+        out._filters_applied = (self.filters_applied() +
+                                ({'inverse_filter': ()},))
 
         out._prefiltered = self.shallow_copy()
 
