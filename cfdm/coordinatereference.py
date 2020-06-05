@@ -81,7 +81,7 @@ class CoordinateReference(mixin.NetCDFVariable,
         '''
         instance = super().__new__(cls)
         instance._CoordinateConversion = CoordinateConversion
-        instance._Datum                = Datum
+        instance._Datum = Datum
         return instance
 
     def __init__(self, coordinates=None, datum=None,
