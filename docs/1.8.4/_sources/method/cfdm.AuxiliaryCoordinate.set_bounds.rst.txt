@@ -1,0 +1,7 @@
+cfdm.AuxiliaryCoordinate.set_bounds
+===================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.AuxiliaryCoordinate.set_bounds

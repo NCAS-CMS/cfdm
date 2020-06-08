@@ -2,7 +2,7 @@ version 1.8.4
 -------------
 ----
 
-**2020-06-??**
+**2020-06-08**
 
 * Added new example field ``7`` to `cfdm.example_field`.
 * Enabled configuration of the extent and nature of informational and

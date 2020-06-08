@@ -3,7 +3,7 @@
 '''
 
 __author__       = 'David Hassell'
-__date__         = '2020-05-??'
+__date__         = '2020-06-08'
 __cf_version__   = '1.8'
 __version__      = '1.8.4'
 

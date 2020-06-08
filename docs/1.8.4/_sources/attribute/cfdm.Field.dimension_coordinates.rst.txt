@@ -1,0 +1,7 @@
+cfdm.Field.dimension_coordinates
+================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.Field.dimension_coordinates
