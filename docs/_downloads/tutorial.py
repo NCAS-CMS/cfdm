@@ -374,7 +374,7 @@ Q = cfdm.Field(
           properties={'project': 'research',
                            'standard_name': 'specific_humidity',
                            'units': '1'})
-
+     		      
 # Create the domain axis constructs
 domain_axisT = cfdm.DomainAxis(1)
 domain_axisY = cfdm.DomainAxis(5)
@@ -420,7 +420,7 @@ dimX.set_properties({'standard_name': 'longitude',
 
 # Create a "longitude" dimension coordinate construct
 dimY = cfdm.DimensionCoordinate(properties={'standard_name': 'latitude',
-                                            'units': 'degrees_north'})
+     	                               'units': 'degrees_north'})
 array = numpy.arange(5.)
 dimY.set_data(cfdm.Data(array))
 
@@ -741,9 +741,9 @@ import cfdm
 # Define the array values
 data = cfdm.Data([[280.0,   -99,   -99,   -99],
                   [281.0, 279.0, 278.0, 279.5]],
-                 mask=[[0, 1, 1, 1],
+   	            mask=[[0, 1, 1, 1],
                        [0, 0, 0, 0]])
-
+	     
 # Create the field construct
 T = cfdm.Field()
 T.set_properties({'standard_name': 'air_temperature',
@@ -835,7 +835,7 @@ list_variable = cfdm.List(data=cfdm.Data(list_array))
 # shape
 array = cfdm.GatheredArray(
                  compressed_array=gathered_array,
-                 compressed_dimension=1,
+     	    compressed_dimension=1,
                  shape=(2, 3, 2), size=12, ndim=3,
                  list_variable=list_variable)
 
@@ -850,7 +850,7 @@ Y = P.set_construct(cfdm.DomainAxis(3))
 X = P.set_construct(cfdm.DomainAxis(2))
 
 # Set the data for the field
-P.set_data(cfdm.Data(array), axes=[T, Y, X])			      
+P.set_data(cfdm.Data(array), axes=[T, Y, X])
 
 P
 print(P.data.array)
@@ -860,3 +860,6 @@ list_variable = P.data.get_list()
 list_variable 
 print(list_variable.data.array)
 cfdm.write(P, 'P_gathered.nc')
+
+print("\n**Controlling output messages**\n")
+

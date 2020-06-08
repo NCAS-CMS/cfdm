@@ -32,6 +32,7 @@ Version |release| for version |version| of the CF conventions.
    cfdm.CF
    cfdm.ATOL
    cfdm.RTOL
+   cfdm.LOG_LEVEL
 
 **Miscellaneous**
 -----------------

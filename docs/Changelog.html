@@ -10,14 +10,14 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Older releases" href="releases.html" />
@@ -35,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.3</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.4</a></h1>
 
 
 
@@ -63,7 +63,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -102,6 +102,29 @@
             
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-1-8-4">
+<h2>version 1.8.4<a class="headerlink" href="#version-1-8-4" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2020-06-08</strong></p>
+<ul class="simple">
+<li><p>Added new example field <code class="docutils literal notranslate"><span class="pre">7</span></code> to <a class="reference internal" href="function/cfdm.example_field.html#cfdm.example_field" title="cfdm.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_field</span></code></a>.</p></li>
+<li><p>Enabled configuration of the extent and nature of informational and
+warning messages output by <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code> using a logging framework (see
+points below) (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/31">https://github.com/NCAS-CMS/cfdm/issues/31</a>)</p></li>
+<li><p>New function <a class="reference internal" href="function/cfdm.LOG_LEVEL.html#cfdm.LOG_LEVEL" title="cfdm.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.LOG_LEVEL</span></code></a> to set the minimum log level for which
+messages are displayed globally, i.e. to change the project-wide
+verbosity (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/35">https://github.com/NCAS-CMS/cfdm/issues/35</a>).</p></li>
+<li><p>Changed behaviour and default of <code class="xref py py-obj docutils literal notranslate"><span class="pre">verbose</span></code> keyword argument when
+available to a function/method so it interfaces with the new logging
+functionality (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/35">https://github.com/NCAS-CMS/cfdm/issues/35</a>).</p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.1.3</span></code></p></li>
+<li><p>Fixed bug the wouldn’t allow the reading of a netCDF file which
+specifies Conventions other than CF
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/36">https://github.com/NCAS-CMS/cfdm/issues/36</a>).</p></li>
+<li><p>Fixed bug that prevented the reading of netCDF files with
+unreferenced external variables.</p></li>
+</ul>
+</div>
 <div class="section" id="version-1-8-3">
 <h2>version 1.8.3<a class="headerlink" href="#version-1-8-3" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -162,8 +185,8 @@ groups functionality).</p></li>
 <a class="reference internal" href="attribute/cfdm.Field.shape.html#cfdm.Field.shape" title="cfdm.Field.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.shape</span></code></a>, <a class="reference internal" href="attribute/cfdm.Field.size.html#cfdm.Field.size" title="cfdm.Field.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.size</span></code></a></p></li>
 <li><p>New method: <a class="reference internal" href="method/cfdm.Data.any.html#cfdm.Data.any" title="cfdm.Data.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.any</span></code></a></p></li>
 <li><p>New <code class="docutils literal notranslate"><span class="pre">paths</span></code> keyword parameter to <a class="reference internal" href="function/cfdm.environment.html#cfdm.environment" title="cfdm.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.environment</span></code></a></p></li>
-<li><p>Changed minimum netCDF4 dependency to version 1.5.3.</p></li>
-<li><p>Changed minimum cftime dependency to version 1.1.1.</p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">netCDF4&gt;=1.5.3</span></code></p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.1.1</span></code></p></li>
 <li><p>Fixed bug that prevented the writing of <code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code>
 and <code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code> format files
 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/9">https://github.com/NCAS-CMS/cfdm/issues/9</a>).</p></li>
@@ -365,11 +388,11 @@ default.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-30.
+      &copy;2020, NCAS | Page built on 2020-06-08.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/Changelog.rst.txt"
