@@ -1,3 +1,12 @@
+version 1.8.5
+-------------
+----
+
+**2020-06-10**
+
+* Fixed bug that prevented the reading of certain netCDF files, such as
+  those with at least one external variable.
+
 version 1.8.4
 -------------
 ----
@@ -18,9 +27,7 @@ version 1.8.4
 * Fixed bug the wouldn't allow the reading of a netCDF file which
   specifies Conventions other than CF
   (https://github.com/NCAS-CMS/cfdm/issues/36).
-* Fixed bug that prevented the reading of netCDF files with
-  unreferenced external variables.
-  
+
 version 1.8.3
 -------------
 ----
