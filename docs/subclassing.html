@@ -10,14 +10,14 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Philosophy" href="philosophy.html" />
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.4</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.5</a></h1>
 
 
 
@@ -64,7 +64,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -105,7 +105,7 @@
   <div class="section" id="subclassing">
 <span id="id1"></span><h1><strong>Subclassing</strong><a class="headerlink" href="#subclassing" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.8.4 for version 1.8 of the CF conventions.</p>
+<p>Version 1.8.5 for version 1.8 of the CF conventions.</p>
 <p>Creating a new implementation of the CF data model by subclassing cfdm
 classes is straight forward. For example:</p>
 <div class="literal-block-wrapper docutils container" id="id2">
@@ -115,7 +115,7 @@ class.</em></span><a class="headerlink" href="#id2" title="Permalink to this cod
 
 <span class="k">class</span> <span class="nc">my_Field</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;I am a {!r} instance&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;I am a </span><span class="si">{!r}</span><span class="s1"> instance&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">f</span> <span class="o">=</span> <span class="n">my_Field</span><span class="p">()</span>
 <span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="s1">&#39;air_pressure&#39;</span><span class="p">)</span>
@@ -160,11 +160,11 @@ appropriate cfdm function.</em></span><a class="headerlink" href="#id3" title="P
 demonstrating that it is a my_Field instance from the
 new implementation that has the inherited functionality
 of a cfdm.Field instance.</em></span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
 <span class="go">&lt;class &#39;__main__.my_Field&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
 <span class="go">I am a &#39;my_Field&#39; instance</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%ta)</span>
 <span class="go">---------------------------------</span>
 <span class="go">Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
@@ -183,7 +183,7 @@ of a cfdm.Field instance.</em></span><a class="headerlink" href="#id4" title="Pe
 <span class="go">Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m</span>
 <span class="go">                : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]</span>
 <span class="go">                : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]</span>
 <span class="go">  [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]</span>
 <span class="go">  [269.7 279.1 273.4 274.2 279.6 270.2 280.0 272.5 263.7]</span>
@@ -212,11 +212,11 @@ this customisation.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-08.
+      &copy;2020, NCAS | Page built on 2020-06-10.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/subclassing.rst.txt"
