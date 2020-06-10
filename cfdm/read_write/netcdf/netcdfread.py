@@ -78,8 +78,15 @@ class NetCDFRead(IORead):
         'is not in file nor referenced by the external_variables global attribute': 5,
         'has incompatible terms': 6,
         'that spans the vertical dimension has no bounds': 7,
-    'that does not span the vertical dimension is inconsistent with the formula_terms of the parametric coordinate variable': 8,
+        'that does not span the vertical dimension is inconsistent with the formula_terms of the parametric coordinate variable': 8,
         'is not referenced in file': 9,
+        'exists in the file': 10,
+        'does not exist in file': 11,
+        'exists in multiple external files': 12,
+        'has incorrect size': 13,
+        'is missing': 14,
+        'is not used by data variable': 15,
+        'not in node_coordinates': 16,
     }
 
     def cf_datum_parameters(self):
@@ -4580,7 +4587,7 @@ class NetCDFRead(IORead):
             if bounds_ncvar not in geometry.get('node_coordinates', ()):
                 self._add_message(field_ncvar, bounds_ncvar,
                                   message=('Node coordinate variable',
-                                           'not in node_coordinates ????'),
+                                           'not in node_coordinates'),
                                   attribute=attribute,
                                   variable=parent_ncvar)
                 ok = False
