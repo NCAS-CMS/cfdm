@@ -1,6 +1,11 @@
 * Change the version and date in `cfdm/core/__init__.py`
   (`__version__` and `__date__` variables)
 
+* Ensure that the requirements on dependencies & their versions are
+  up-to-date and consistent in both the `install_requires` list of the
+  `setup.py` and in the `_requires` list and `LooseVersion` checks in
+  `cfdm/core/__init__.py`.
+
 * If required, change the CF conventions version in
   `cfdm/core/__init__.py` (`__cf_version__` variable)
 
