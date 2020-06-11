@@ -2,7 +2,6 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import (str, super)
 
-
 import os
 import urllib.parse
 
@@ -153,9 +152,10 @@ class NetCDFArray(abstract.Array):
             array = array.squeeze()
 
         kind = array.dtype.kind
-        if not string_type and kind in 'SU': # == 'S' and array.ndim > (self.ndim -
-                                                 #    getattr(self, 'gathered', 0) -
-                                                 #    getattr(self, 'ragged', 0)):
+        if not string_type and kind in 'SU':
+            #     == 'S' and array.ndim > (self.ndim -
+            #     getattr(self, 'gathered', 0) -
+            #     getattr(self, 'ragged', 0)):
             # --------------------------------------------------------
             # Collapse (by concatenation) the outermost (fastest
             # varying) dimension of char array into
@@ -169,7 +169,7 @@ class NetCDFArray(abstract.Array):
 #            array.resize((array.size,))
             array = numpy.array([x.rstrip() for x in array.flat], dtype='S')
             array = numpy.reshape(array, shape)
-            array = numpy.ma.masked_where(array==b'', array)
+            array = numpy.ma.masked_where(array == b'', array)
 
 #            array.set_fill_value('')
 #            strlen = array.shape[-1]
@@ -192,7 +192,7 @@ class NetCDFArray(abstract.Array):
             # A netCDF string type N-d (N>=1) variable comes out as a
             # numpy object array, so convert it to numpy string array.
             # --------------------------------------------------------
-            array = array.astype('S') #, copy=False)
+            array = array.astype('S')  # , copy=False)
 
             # --------------------------------------------------------
             # netCDF4-pytohn does not auto-mask VLEN variable, so do
@@ -402,7 +402,7 @@ class NetCDFArray(abstract.Array):
 
         '''
         netcdf = self._get_component('netcdf')
-        if netcdf is  None:
+        if netcdf is None:
             return
 
         netcdf.close()

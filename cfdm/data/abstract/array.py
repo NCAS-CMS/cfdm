@@ -67,7 +67,7 @@ class Array(with_metaclass(abc.ABCMeta, core_Array)):
     .. versionadded:: 1.7.0
 
         '''
-        raise NotImplementedError() # pragma: no cover
+        raise NotImplementedError()  # pragma: no cover
 
     def __repr__(self):
         '''Called by the `repr` built-in function.
@@ -171,11 +171,11 @@ class Array(with_metaclass(abc.ABCMeta, core_Array)):
 
         '''
         if indices is not Ellipsis:
-#        if indices is Ellipsis:
-#            pass
-#        elif not isinstance(indices, tuple):
-#            array = array[indices]
-#        else:
+            # if indices is Ellipsis:
+            #     pass
+            # elif not isinstance(indices, tuple):
+            #     array = array[indices]
+            # else:
             axes_with_list_indices = [i for i, x in enumerate(indices)
                                       if not isinstance(x, slice)]
             n_axes_with_list_indices = len(axes_with_list_indices)
