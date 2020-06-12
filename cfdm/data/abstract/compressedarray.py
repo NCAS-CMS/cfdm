@@ -80,7 +80,7 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
     .. versionadded:: 1.7.0
 
         '''
-        raise NotImplementedError() # pragma: no cover
+        raise NotImplementedError()  # pragma: no cover
 
     def _get_compressed_Array(self, default=ValueError()):
         '''TODO
@@ -299,7 +299,10 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
         compressed_dimension = self.get_compressed_dimension()
         compressed_ndim = self._get_compressed_Array().ndim
 
-        return list(range(compressed_dimension, self.ndim - (compressed_ndim - compressed_dimension - 1)))
+        return list(range(
+            compressed_dimension,
+            self.ndim - (compressed_ndim - compressed_dimension - 1)
+        ))
 
     def get_compressed_dimension(self, *default):
         '''Return the position of the compressed dimension in the compressed

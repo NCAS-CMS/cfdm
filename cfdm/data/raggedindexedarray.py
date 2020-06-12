@@ -5,6 +5,7 @@ import numpy
 from . import abstract
 from . import mixin
 
+
 class RaggedIndexedArray(mixin.RaggedIndexed,
                          abstract.CompressedArray):
     '''An underlying indexed ragged array.
@@ -97,7 +98,7 @@ class RaggedIndexedArray(mixin.RaggedIndexed,
         for i in range(uarray.shape[0]):
             sample_dimension_indices = numpy.where(index_array == i)[0]
 
-            u_indices = (i, #slice(i, i+1),
+            u_indices = (i,  # slice(i, i+1),
                          slice(0, len(sample_dimension_indices)))
 
             uarray[u_indices] = compressed_array[(sample_dimension_indices,)]

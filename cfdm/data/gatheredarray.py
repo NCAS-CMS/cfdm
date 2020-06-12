@@ -99,7 +99,7 @@ class GatheredArray(abstract.CompressedArray):
             for j in range(1, n_compressed_axes)]
 
         sample_indices = [slice(None)] * compressed_array.ndim
-        u_indices      = [slice(None)] * self.ndim
+        u_indices = [slice(None)] * self.ndim
 
         list_array = self.get_list().data.array
 

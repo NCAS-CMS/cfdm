@@ -128,9 +128,10 @@ class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
 
                 sample_indices = slice(start, stop)
 
-                u_indices = (i, #slice(i, i+1),
-                             j, #slice(j, j+1),
-                             slice(0, stop-start)) #slice(0, sample_indices.stop - sample_indices.start))
+                u_indices = (i,  # slice(i, i+1),
+                             j,  # slice(j, j+1),
+                             slice(0, stop-start))
+                # slice(0, sample_indices.stop - sample_indices.start))
 
                 uarray[u_indices] = compressed_array[(sample_indices,)]
             # --- End: for
