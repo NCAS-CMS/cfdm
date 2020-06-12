@@ -92,6 +92,7 @@ def environment(display=True, paths=True):
     else:
         return out
 
+
 def CF():
     '''The version of the CF conventions.
 
@@ -114,4 +115,3 @@ def CF():
 
     '''
     return __cf_version__
-

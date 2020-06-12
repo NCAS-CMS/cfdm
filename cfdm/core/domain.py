@@ -23,12 +23,13 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
     '''
     # Define the base of the identity keys for each construct type
-    _construct_key_base = {'auxiliary_coordinate': 'auxiliarycoordinate',
-                           'cell_measure'        : 'cellmeasure',
-                           'coordinate_reference': 'coordinatereference',
-                           'dimension_coordinate': 'dimensioncoordinate',
-                           'domain_ancillary'    : 'domainancillary',
-                           'domain_axis'         : 'domainaxis',
+    _construct_key_base = {
+        'auxiliary_coordinate': 'auxiliarycoordinate',
+        'cell_measure': 'cellmeasure',
+        'coordinate_reference': 'coordinatereference',
+        'dimension_coordinate': 'dimensioncoordinate',
+        'domain_ancillary': 'domainancillary',
+        'domain_axis': 'domainaxis',
     }
 
     def __new__(cls, *args, **kwargs):

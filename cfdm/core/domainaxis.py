@@ -128,8 +128,8 @@ class DomainAxis(abstract.Container):
         try:
             return self._del_component('size')
         except ValueError:
-            return self._default(default,
-              "{!r} has no size".format(self.__class__.__name__))
+            return self._default(
+                default, "{!r} has no size".format(self.__class__.__name__))
 
     def has_size(self):
         '''Whether the size has been set.
@@ -200,8 +200,8 @@ class DomainAxis(abstract.Container):
         try:
             return self._get_component('size')
         except ValueError:
-            return self._default(default,
-              "{!r} has no size".format(self.__class__.__name__))
+            return self._default(
+                default, "{!r} has no size".format(self.__class__.__name__))
 
     def set_size(self, size, copy=True):
         '''Set the size.
