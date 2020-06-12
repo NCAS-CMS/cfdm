@@ -1,0 +1,30 @@
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "https://orcid.org/0000-0001-5106-7502",
+      "@type": "Person",
+      "email": "",
+      "name": "David Hassell",
+      "affiliation": "NCAS"
+    },
+    {
+      "@id": "",
+      "@type": "Person",
+      "email": "",
+      "name": "Sadie Louise Bartholomew",
+      "affiliation": "NCAS"
+    }
+  ],
+  "identifier": "",
+  "codeRepository": "https://github.com/NCAS-CMS/cfdm",
+  "datePublished": "2020-06-12",
+  "dateModified": "2020-06-12",
+  "dateCreated": "2020-06-12",
+  "description": "A complete Python reference implementation of the CF data model.",
+  "keywords": "cf, metadata, netcdf, python",
+  "license": "MIT",
+  "title": "cfdm",
+  "version": "1.8.5"
+}
