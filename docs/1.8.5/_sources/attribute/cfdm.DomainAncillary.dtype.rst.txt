@@ -1,0 +1,7 @@
+cfdm.DomainAncillary.dtype
+==========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.DomainAncillary.dtype
