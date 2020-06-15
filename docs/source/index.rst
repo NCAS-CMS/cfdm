@@ -20,6 +20,7 @@
    introduction
    cf_data_model
    installation
+   support
    tutorial
    api_reference
    subclassing
