@@ -1,7 +1,7 @@
 cfdm
 ====
 
-A complete implementation of the CF data model.
+A Python reference implementation of the CF data model.
 
 Documentation
 =============

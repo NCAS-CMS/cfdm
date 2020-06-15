@@ -22,7 +22,7 @@
   "datePublished": "2020-06-12",
   "dateModified": "2020-06-12",
   "dateCreated": "2020-06-12",
-  "description": "A complete Python reference implementation of the CF data model.",
+  "description": "A Python reference implementation of the CF data model.",
   "keywords": "cf, metadata, netcdf, python",
   "license": "MIT",
   "title": "cfdm",

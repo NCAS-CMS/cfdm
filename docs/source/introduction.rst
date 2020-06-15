@@ -14,7 +14,7 @@
 
 Version |release| for version |version| of the CF conventions.
 
-The Python cfdm package is a complete implementation of the
+The Python cfdm package is a reference implementation of the
 :ref:`CF-data-model`.
 
 **Functionality**

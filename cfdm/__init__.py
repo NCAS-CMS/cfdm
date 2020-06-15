@@ -1,4 +1,4 @@
-'''cfdm is a complete implementation of the CF data model, that
+'''cfdm is a reference implementation of the CF data model, that
 identifies the fundamental elements of the CF conventions and shows
 how they relate to each other, independently of the netCDF encoding.
 
