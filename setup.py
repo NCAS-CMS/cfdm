@@ -33,7 +33,7 @@ def _get_version():
 version      = _get_version()
 packages     = ['cfdm']
 
-long_description = """The **cfdm** Python package is a complete implementation of the `CF
+long_description = """The **cfdm** Python package is a reference implementation of the `CF
 data model <https://www.geosci-model-dev.net/10/4619/2017>`_, that
 identifies the fundamental elements of the `CF conventions
 <http://cfconventions.org/>`_ and shows how they relate to each other,
@@ -117,7 +117,7 @@ up-to-date source."""
 setup(name = "cfdm",
       long_description = long_description,
       version      = version,
-      description  = "A complete implementation of the CF data model",
+      description  = "A Python reference implementation of the CF data model",
       author       = "David Hassell",
       maintainer   = "David Hassell",
       maintainer_email = "david.hassell@ncas.ac.uk",

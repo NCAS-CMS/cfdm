@@ -5,7 +5,7 @@
     {
       "@id": "https://orcid.org/0000-0001-5106-7502",
       "@type": "Person",
-      "email": "",
+      "email": "david.hassell@ncas.ac.uk",
       "name": "David Hassell",
       "affiliation": "NCAS"
     },
@@ -22,7 +22,7 @@
   "datePublished": "2020-06-12",
   "dateModified": "2020-06-12",
   "dateCreated": "2020-06-12",
-  "description": "A complete Python reference implementation of the CF data model.",
+  "description": "A Python reference implementation of the CF data model.",
   "keywords": "cf, metadata, netcdf, python",
   "license": "MIT",
   "title": "cfdm",

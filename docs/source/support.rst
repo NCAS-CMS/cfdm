@@ -23,4 +23,6 @@ https://github.com/NCAS-CMS/cfdm/issues
 
 Contributions to cfdm are welcome and should be raised as issues in
 the GitHub issue tracker: https://github.com/NCAS-CMS/cfdm/issues,
-preferably prior to a pull request containing the new code.
+prior to submitting a pull request containing the new code made from a
+fork of the cfdm GitHub code repository:
+https://github.com/NCAS-CMS/cfdm.

@@ -1,7 +1,7 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-.. _subclassing:
+.. _Extensions:
 
 **Extensions**
 ==============
