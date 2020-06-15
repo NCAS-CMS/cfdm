@@ -9,7 +9,7 @@
 This tutorial uses a number of small sample datasets, all of which can
 be found in the zip file ``cfdm_tutorial_files.zip``
 (:download:`download <../source/sample_files/cfdm_tutorial_files.zip>`,
-7kB):
+8kB):
 		    
 .. code-block:: console
    :caption: *Unpack the sample datasets.*
