@@ -23,9 +23,9 @@
    support
    tutorial
    api_reference
-   subclassing
    philosophy
    performance
+   extensions
    versioning
    releases
    Changelog

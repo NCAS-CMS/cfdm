@@ -483,7 +483,7 @@ class CFDMImplementation(Implementation):
         return field.coordinate_references
 
     def get_coordinates(self, field):
-        '''TODO
+        '''Get coordinate constructs from a Field instance.
 
     :Parameters:
 
