@@ -315,7 +315,7 @@ html_sidebars = { '**': ['about.html',
                          'searchbox.html',
                          'globaltoc.html',
                          'relations.html',
-                         'sourcelink.html',
+#                         'sourcelink.html',
                          ]
 }
 
