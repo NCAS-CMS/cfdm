@@ -19,7 +19,7 @@ Version |release| for version |version| of the CF conventions.
 **Python versions**
 -------------------
 
-cfdm works for Python 2.7 and Python 3.
+cfdm works for Python version 2.7 and versions 3.5 or newer.
 
 ----
 
@@ -126,7 +126,8 @@ Tests are run from within the ``cfdm/test`` directory:
 
 The cfdm package requires:
 
-* `Python <https://www.python.org/>`_, version 2.7 or 3 or newer,
+* `Python <https://www.python.org/>`_, version 2.7, or versions 3.5 or
+  newer,
 
 * `numpy <http://www.numpy.org/>`_, version 1.15 or newer,
 
@@ -134,8 +135,7 @@ The cfdm package requires:
   or newer,
 
 * `cftime <https://unidata.github.io/cftime/>`_, version 1.1.3 or
-  newer (note that this library is installed with netCDF4, but
-  possibly not a new enough version), and
+  newer,
 
 * `future <https://python-future.org/>`_, version 0.16.0 or newer.
 

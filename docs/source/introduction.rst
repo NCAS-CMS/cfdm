@@ -17,17 +17,37 @@ Version |release| for version |version| of the CF conventions.
 The Python cfdm package is a reference implementation of the
 :ref:`CF-data-model`.
 
+The CF data model is a complete representation of the CF (Climate and
+Forecast) metadata conventions (http://cfconventions.org) for storing
+geoscientific datasets. It can describe any conceivable CF-compliant
+dataset. Therefore cfdm, a complete software implementation of the CF
+data model, will also be able to process any CF-compliant dataset.
+
+The cfdm package is, however, not strict about CF-compliance, so that
+non-conformant datasets may be created or ingested from existing
+datasets and written to new datasets. This is so that existing
+datasets which are non-CF-compliant may be processed by cfdm, ideally
+being modified in memory to be (more) CF-compliant.
+     
+    
 **Functionality**
 -----------------
 
 ----
 
-The cfdm package implements the :ref:`CF-data-model` [#cfdm]_ for its
-internal data structures and so is able to process any CF-compliant
-dataset. It is not strict about CF-compliance, however, so that
-partially conformant datasets may be ingested from existing datasets
-and written to new datasets.This is so that datasets which are
-partially conformant may nonetheless be modified in memory.
+With few exceptions, cfdm only has the functionality required to read
+and write datasets, and to create, modify and inspect field constructs
+in memory. This limited scope is intentional, because
+
+i) many tasks do not require any higher-level functionality (such as
+   inspecting the values of metadata properties, or creating datasets
+   from raw data), and
+   
+ii) the expectation is that other libraries will build on cfdm,
+    inheriting its comprehensive knowledge of the CF conventions, to
+    add more sophisticated methods appropriate to their user base. To
+    this end, cfdm has been designed to be :ref:`flexibly extensible
+    <Extensions>`.
 
 .. code-block:: python
    :caption: *A simple example of reading a field construct from a
@@ -73,14 +93,27 @@ The cfdm package can
 * read, write, and create coordinates defined by geometry cells (**new
   in version 1.8.0**).
 
-Note that cfdm enables the creation of CF field constructs, but it's
-:ref:`up to the user to use them in a CF-compliant way
-<CF-conventions>`.
+Note that the cfdm package enables the representation and creation of
+CF field constructs, but it's :ref:`up to the user to use them in a
+CF-compliant way <CF-conventions>`.
 
-The cfdm package has, with few exceptions, only the functionality
-required to read and write datasets, and to create, modify and inspect
-field constructs in memory.
+In addition, a command line tool is provided that allows inspection of
+datasets outside of a Python environment:
 
+.. code-block:: console
+   :caption: *Inspect a dataset from the command line.*
+
+   $ cfdump file.nc
+   Field: air_temperature (ncvar%tas)
+   ----------------------------------
+   Data            : air_temperature(time(12), latitude(64), longitude(128)) K
+   Cell methods    : time(12): mean (interval: 1.0 month)
+   Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap
+                   : latitude(64) = [-87.8638, ..., 87.8638] degrees_north
+                   : longitude(128) = [0.0, ..., 357.1875] degrees_east
+                   : height(1) = [2.0] m
+
+  
 Hierarchical groups
 ^^^^^^^^^^^^^^^^^^^
 
@@ -90,21 +123,12 @@ will include support for netCDF4 files containing data organised in
 hierarchical groups, but this is not available in version |release|
 (even though it is allowed in CF-|version|).
 
-Additional functionality
-^^^^^^^^^^^^^^^^^^^^^^^^
+Related packages
+^^^^^^^^^^^^^^^^
 
-The `cf-python <https://ncas-cms.github.io/cf-python>`_ and `cf-plot
-<http://ajheaps.github.io/cf-plot/>`_ packages, which are both are
-built on top of the cfdm package, include higher level functionality,
-such as regridding, statistical operations and comprehensive
-visualisation.
-
-----
-
-.. [#cfdm] :small:`Hassell, D., Gregory, J., Blower, J.,
-           Lawrence, B. N., and Taylor, K. E.: A data model of the
-           Climate and Forecast metadata conventions (CF-1.6) with a
-           software implementation (cf-python v2.1), Geosci. Model
-           Dev., 10, 4619-4646,
-           https://doi.org/10.5194/gmd-10-4619-2017, 2017.`
-
+The `cf-python <https://ncas-cms.github.io/cf-python>`_ package, which
+is built on top of the cfdm package, includes higher-level
+functionality, such as regridding, and statistical operations. In
+turn, the `cf-plot <http://ajheaps.github.io/cf-plot/>`_ package
+provides comprehensive visualisation to field constructs created by
+cf-python.
