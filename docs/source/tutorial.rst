@@ -32,6 +32,21 @@ The cfdm package is imported as follows:
 
    >>> import cfdm
 
+.. tip:: It is possible to change the extent to which cfdm outputs
+         feedback messages and it may be instructive to increase the
+         verbosity whilst working through this tutorial to see and
+         learn more about what cfdm is doing under the hood and about
+         the nature of the dataset being operated on. This can be done
+         for example by running:
+
+         .. code-block:: python
+            :caption: *Increase the verbosity of cfdm from the default.*
+
+            >>> cfdm.LOG_LEVEL('INFO')
+
+         See :ref:`the section on 'Logging' <Logging>` for
+         more information.
+
 .. _CF-version:
 
 CF version
