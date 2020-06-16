@@ -20,7 +20,7 @@ The Python cfdm package is a reference implementation of the
 The CF data model is a complete representation of the CF (Climate and
 Forecast) metadata conventions (http://cfconventions.org) for storing
 geoscientific datasets. It can describe any conceivable CF-compliant
-dataset. Therefore cfdm, a complete software implementation of the CF
+dataset. Therefore cfdm, a software implementation of the CF
 data model, will also be able to process any CF-compliant dataset.
 
 The cfdm package is, however, not strict about CF-compliance, so that
@@ -46,7 +46,7 @@ i) many tasks do not require any higher-level functionality (such as
 ii) the expectation is that other libraries will build on cfdm,
     inheriting its comprehensive knowledge of the CF conventions, to
     add more sophisticated methods appropriate to their user base. To
-    this end, cfdm has been designed to be :ref:`flexibly extensible
+    this end, cfdm has been designed to be :ref:`highly extensible
     <Extensions>`.
 
 .. code-block:: python
@@ -94,11 +94,11 @@ The cfdm package can
   in version 1.8.0**).
 
 Note that the cfdm package enables the representation and creation of
-CF field constructs, but it's :ref:`up to the user to use them in a
-CF-compliant way <CF-conventions>`.
+CF field constructs, but it is largely :ref:`up to the user to use
+them in a CF-compliant way <CF-conventions>`.
 
-In addition, a command line tool is provided that allows inspection of
-datasets outside of a Python environment:
+A command line tool is provided that allows inspection of datasets
+outside of a Python environment:
 
 .. code-block:: console
    :caption: *Inspect a dataset from the command line.*
@@ -127,8 +127,7 @@ Related packages
 ^^^^^^^^^^^^^^^^
 
 The `cf-python <https://ncas-cms.github.io/cf-python>`_ package, which
-is built on top of the cfdm package, includes higher-level
-functionality, such as regridding, and statistical operations. In
-turn, the `cf-plot <http://ajheaps.github.io/cf-plot/>`_ package
-provides comprehensive visualisation to field constructs created by
-cf-python.
+is built as an extension to cfdm, includes higher-level functionality,
+such as regridding, and statistical operations. In turn, the `cf-plot
+<http://ajheaps.github.io/cf-plot/>`_ package provides comprehensive
+visualisation of field constructs created by cf-python.
