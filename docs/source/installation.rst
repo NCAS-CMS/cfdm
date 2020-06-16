@@ -14,6 +14,11 @@ Version |release| for version |version| of the CF conventions.
    :local:
    :backlinks: entry
 
+.. note:: The latest version to be released and the newest versions
+          available from the Python package index (PyPI) and conda are
+          confirmed at `the top of the README document
+          <https://github.com/NCAS-CMS/cfdm#cfdm>`_.
+
 .. _Python-versions:
 
 **Python versions**
