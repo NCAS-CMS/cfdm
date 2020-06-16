@@ -4,6 +4,7 @@ from past.builtins import basestring
 from collections import OrderedDict
 from copy import copy
 
+
 class Constructs(object):
     '''A container for metadata constucts.
 
@@ -93,28 +94,28 @@ class Constructs(object):
             self._field_data_axes = source._field_data_axes
 
             if _view:
-                self._key_base             = source._key_base
-                self._array_constructs     = source._array_constructs
+                self._key_base = source._key_base
+                self._array_constructs = source._array_constructs
                 self._non_array_constructs = source._non_array_constructs
-                self._ordered_constructs   = source._ordered_constructs
-                self._construct_axes       = source._construct_axes
-                self._construct_type       = source._construct_type
-                self._constructs           = source._constructs
+                self._ordered_constructs = source._ordered_constructs
+                self._construct_axes = source._construct_axes
+                self._construct_type = source._construct_type
+                self._constructs = source._constructs
                 return
 
-            self._key_base             = source._key_base.copy()
-            self._array_constructs     = source._array_constructs.copy()
+            self._key_base = source._key_base.copy()
+            self._array_constructs = source._array_constructs.copy()
             self._non_array_constructs = source._non_array_constructs.copy()
-            self._ordered_constructs   = source._ordered_constructs.copy()
-            self._construct_axes       = source._construct_axes.copy()
-            self._construct_type       = source._construct_type.copy()
-            self._constructs           = source._constructs.copy()
+            self._ordered_constructs = source._ordered_constructs.copy()
+            self._construct_axes = source._construct_axes.copy()
+            self._construct_type = source._construct_type.copy()
+            self._constructs = source._constructs.copy()
 
-            #for construct_type in self._ignore:
-            #    self._key_base.pop(construct_type, None)
-            #    self._array_constructs.discard(construct_type)
-            #    self._non_array_constructs.discard(construct_type)
-            #    self._ordered_constructs.discard(construct_type)
+            # for construct_type in self._ignore:
+            #     self._key_base.pop(construct_type, None)
+            #     self._array_constructs.discard(construct_type)
+            #     self._non_array_constructs.discard(construct_type)
+            #     self._ordered_constructs.discard(construct_type)
 
             d = {}
             for construct_type in source._array_constructs:
@@ -135,7 +136,8 @@ class Constructs(object):
                     else:
                         new_v = {}
 
-                    for cid, construct in source._constructs[construct_type].items():
+                    for cid, construct in (
+                            source._constructs[construct_type].items()):
                         new_v[cid] = construct.copy(data=_use_data)
                 else:
                     new_v = source._constructs[construct_type].copy()
@@ -158,11 +160,14 @@ class Constructs(object):
                     else:
                         new_v = {}
 
-                    for cid, construct in source._constructs[construct_type].items():
+                    for cid, construct in (
+                            source._constructs[construct_type].items()):
                         new_v[cid] = construct.copy()
 #                    new_v = {
 #                        cid: construct.copy()
-#                        for cid, construct in source._constructs[construct_type].items()}
+#                        for cid, construct in (
+#                            source._constructs[construct_type].items())
+#                    }
                 else:
                     new_v = source._constructs[construct_type].copy()
 
@@ -180,9 +185,9 @@ class Constructs(object):
 
         self._key_base = {}
 
-        self._array_constructs     = set()
+        self._array_constructs = set()
         self._non_array_constructs = set()
-        self._ordered_constructs   = set()
+        self._ordered_constructs = set()
 
         self._construct_axes = {}
 
@@ -191,7 +196,7 @@ class Constructs(object):
         #  'auxiliarycoordinate3':'auxiliary_coordinate'}
         self._construct_type = {}
 
-        self._constructs     = {}
+        self._constructs = {}
 
         if auxiliary_coordinate:
             self._key_base['auxiliary_coordinate'] = auxiliary_coordinate
@@ -269,7 +274,7 @@ class Constructs(object):
     .. versionadded:: 1.7.0
 
         '''
-        construct_type = self.construct_type(key) # ignore??
+        construct_type = self.construct_type(key)  # ignore??
         if construct_type is None:
             raise KeyError(key)
 
@@ -374,13 +379,13 @@ class Constructs(object):
         '''
         self._ignore = tuple(set(self._ignore).union(other._ignore))
 
-        self._key_base.update            (other._key_base)
-        self._array_constructs.update    (other._array_constructs)
+        self._key_base.update(other._key_base)
+        self._array_constructs.update(other._array_constructs)
         self._non_array_constructs.update(other._non_array_constructs)
-        self._ordered_constructs.update  (other._ordered_constructs)
-        self._construct_axes.update      (other._construct_axes)
-        self._construct_type.update      (other._construct_type)
-        self._constructs.update          (other._constructs)
+        self._ordered_constructs.update(other._ordered_constructs)
+        self._construct_axes.update(other._construct_axes)
+        self._construct_type.update(other._construct_type)
+        self._constructs.update(other._constructs)
 
     def construct_type(self, key):
         '''TODO
@@ -494,8 +499,10 @@ class Constructs(object):
             for xid, axes in data_axes.items():
                 if key in axes:
                     raise ValueError(
-                        "Can't remove domain axis construct {!r} that spans the data array of metadata construct {!r}".format(
-                            key, xid))
+                        "Can't remove domain axis construct {!r} that spans "
+                        "the data array of metadata construct {!r}".format(
+                            key, xid)
+                    )
 
             # Fail if the domain axis construct is referenced by a
             # cell method construct
@@ -510,14 +517,17 @@ class Constructs(object):
                     axes = cm.get_axes(())
                     if key in axes:
                         raise ValueError(
-                            "Can't remove domain axis construct {!r} that is referenced by cell method construct {!r}".format(
-                                key, xid))
+                            "Can't remove domain axis construct {!r} "
+                            "that is referenced by cell method construct "
+                            "{!r}".format(key, xid)
+                        )
         else:
             # Remove references to the removed construct in coordinate
             # reference constructs
             for ref in self.filter_by_type('coordinate_reference').values():
                 coordinate_conversion = ref.coordinate_conversion
-                for term, value in coordinate_conversion.domain_ancillaries().items():
+                for term, value in (
+                        coordinate_conversion.domain_ancillaries().items()):
                     if key == value:
                         coordinate_conversion.set_domain_ancillary(term, None)
                 # --- End: for
@@ -528,7 +538,8 @@ class Constructs(object):
         out = self._pop(key, None)
 
         if out is None:
-            return self._default(default, "Can't get remove non-existent construct")
+            return self._default(
+                default, "Can't get remove non-existent construct")
 
         return out
 
@@ -611,18 +622,23 @@ class Constructs(object):
             # ---------------------------------------------------------
             # The construct could have a data array
             # ---------------------------------------------------------
-#            if axes is None:
-#                raise ValueError(
-#"Can't set {} construct: Must specify the domain axes for the data array".format(
-#    self._construct_type_description(construct_type)))
-
+            # if axes is None:
+            #     raise ValueError(
+            #         "Can't set {} construct: Must specify the domain axes "
+            #         "for the data array".format(
+            #             self._construct_type_description(construct_type))
+            #     )
             if axes is not None:
                 self._set_construct_data_axes(key=key, axes=axes,
                                               construct=construct)
         elif axes is not None:
             raise ValueError(
-                "Can't set {!r}: Can't provide domain axis constructs for {} construct".format(
-                    construct, self._construct_type_description(construct_type)))
+                "Can't set {!r}: Can't provide domain axis constructs for "
+                "{} construct".format(
+                    construct,
+                    self._construct_type_description(construct_type)
+                )
+            )
 
         # Record the construct type
         self._construct_type[key] = construct_type
@@ -679,7 +695,9 @@ class Constructs(object):
         if construct is None:
             if self.construct_type(key) is None:
                 raise ValueError(
-                    "Can't set axes for non-existent construct identifier {!r}".format(key))
+                    "Can't set axes for non-existent construct "
+                    "identifier {!r}".format(key)
+                )
 
             construct = self[key]
 
@@ -692,19 +710,23 @@ class Constructs(object):
         for axis in axes:
             if axis not in domain_axes:
                 raise ValueError(
-                    "Can't set {!r} domain axes: Domain axis {!r} does not exist".format(
-                        construct, axis))
+                    "Can't set {!r} domain axes: Domain axis {!r} does not "
+                    "exist".format(construct, axis)
+                )
 
             axes_shape.append(domain_axes[axis].get_size())
 
         axes_shape = tuple(axes_shape)
 
-        extra_axes=0
+        extra_axes = 0
         data = construct.get_data(None)
-        if data is not None and data.shape[:data.ndim - extra_axes] != axes_shape:
+        if (data is not None and
+                data.shape[:data.ndim - extra_axes] != axes_shape):
             raise ValueError(
-                "Can't set {!r}: Data shape of {!r} does not match the shape required by domain axes {}: {}".format(
-                    construct, data.shape, tuple(axes), axes_shape))
+                "Can't set {!r}: Data shape of {!r} does not match the "
+                "shape required by domain axes {}: {}".format(
+                    construct, data.shape, tuple(axes), axes_shape)
+            )
 
         try:
             bounds = construct.get_bounds(None)
@@ -713,10 +735,14 @@ class Constructs(object):
         else:
             if bounds is not None:
                 data = bounds.get_data(None)
-                if data is not None and data.shape[:len(axes_shape)] != axes_shape:
+                if (data is not None and
+                        data.shape[:len(axes_shape)] != axes_shape):
                     raise ValueError(
-                        "Can't set {!r}: Bounds data shape of {!r} does not match the shape required by domain axes {}: {}".format(
-                            construct, data.shape, tuple(axes), axes_shape))
+                        "Can't set {!r}: Bounds data shape of {!r} does "
+                        "not match the shape required by domain axes "
+                        "{}: {}".format(
+                            construct, data.shape, tuple(axes), axes_shape)
+                    )
         # --- End: try
 
         self._construct_axes[key] = tuple(axes)
@@ -768,7 +794,7 @@ class Constructs(object):
         '''TODO
 
         '''
-        out =  self._construct_type.copy()
+        out = self._construct_type.copy()
         if self._ignore:
             for x in self._ignore:
                 del out[x]
@@ -809,8 +835,8 @@ class Constructs(object):
             return self._default(default, "Can't return zero constructs")
 
         if len(self) > 1:
-            return self._default(default,
-                                 "Can't return {} constructs".format(len(self)))
+            return self._default(
+                default, "Can't return {} constructs".format(len(self)))
 
         _, construct = self._dictionary().popitem()
 
@@ -850,8 +876,8 @@ class Constructs(object):
             return self._default(default, "Can't get key for zero constructs")
 
         if len(self) > 1:
-            return self._default(default,
-                 "Can't get key for {} constructs".format(len(self)))
+            return self._default(
+                default, "Can't get key for {} constructs".format(len(self)))
 
         key, _ = self._dictionary().popitem()
 
@@ -986,7 +1012,8 @@ class Constructs(object):
         '''
         construct_type = self.construct_types().get(key)
         if construct_type is None:
-            raise ValueError("Can't replace non-existent construct {!r}".format(key))
+            raise ValueError(
+                "Can't replace non-existent construct {!r}".format(key))
 
         if axes is not None and construct_type in self._array_constructs:
             self._construct_axes[key] = tuple(axes)
@@ -995,7 +1022,6 @@ class Constructs(object):
             construct = construct.copy()
 
         self._constructs[construct_type][key] = construct
-
 
     def ordered(self):
         '''Return the constructs in their predetermined order.
