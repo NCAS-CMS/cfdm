@@ -63,7 +63,7 @@ class CoordinateReference(abstract.Container):
         '''
         instance = super().__new__(cls)
         instance._CoordinateConversion = CoordinateConversion
-        instance._Datum                = Datum
+        instance._Datum = Datum
         return instance
 
     def __init__(self, coordinates=None, datum=None,
@@ -323,9 +323,10 @@ class CoordinateReference(abstract.Container):
             coordinates.remove(key)
             return key
 
-        return self._default(default,
-              "{!r} has no {!r} coordinate".format(
-                  self.__class__.__name__, key))
+        return self._default(
+            default, "{!r} has no {!r} coordinate".format(
+                self.__class__.__name__, key)
+        )
 
     def del_coordinate_conversion(self):
         '''Remove the coordinate conversion component.

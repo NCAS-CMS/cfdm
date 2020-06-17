@@ -154,9 +154,10 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
             return self._get_component('domain_ancillaries').pop(
                 domain_ancillary)
         except KeyError:
-            return self._default(default,
-                                 "{!r} has no {!r} domain ancillary".format(
-                                     self.__class__.__name__, domain_ancillary))
+            return self._default(
+                default, "{!r} has no {!r} domain ancillary".format(
+                    self.__class__.__name__, domain_ancillary)
+            )
 
     def domain_ancillaries(self):
         '''Return all domain_ancillaries.
@@ -230,9 +231,10 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
         try:
             return self._get_component('domain_ancillaries')[domain_ancillary]
         except KeyError:
-            return self._default(default,
-                                 "{!r} has no {!r} domain ancillary".format(
-                                     self.__class__.__name__, domain_ancillary))
+            return self._default(
+                default, "{!r} has no {!r} domain ancillary".format(
+                    self.__class__.__name__, domain_ancillary)
+            )
 
     def has_domain_ancillary(self, domain_ancillary):
         '''Whether a domain ancillary has been set.

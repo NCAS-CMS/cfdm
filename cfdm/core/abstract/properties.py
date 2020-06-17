@@ -138,9 +138,10 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         try:
             return self._get_component('properties').pop(prop)
         except KeyError:
-            return self._default(default,
-                                 "{!r} has no {!r} property".format(
-                                 self.__class__.__name__, prop))
+            return self._default(
+                default, "{!r} has no {!r} property".format(
+                    self.__class__.__name__, prop)
+            )
 
     def get_property(self, prop, default=ValueError()):
         '''Return a property.

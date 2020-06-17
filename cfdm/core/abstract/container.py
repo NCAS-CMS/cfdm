@@ -124,9 +124,10 @@ class Container(with_metaclass(abc.ABCMeta, object)):
         try:
             return self._components.pop(component)
         except KeyError:
-             return self._default(default,
-                                  "{!r} has no {!r} component".format(
-                                      self.__class__.__name__, component))
+            return self._default(
+                default, "{!r} has no {!r} component".format(
+                    self.__class__.__name__, component)
+            )
 
     @property
     def _custom(self):

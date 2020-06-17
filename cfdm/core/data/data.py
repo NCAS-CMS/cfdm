@@ -828,7 +828,6 @@ class Data(abstract.Container):
     TODO
 
         '''
-        return  self._get_component('array', default=default)
+        return self._get_component('array', default=default)
 
 # --- End: class
-

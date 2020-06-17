@@ -1,4 +1,4 @@
-from builtins import (str, super) #(object, str)
+from builtins import (str, super)  # (object, str)
 from future.utils import with_metaclass
 
 import abc
@@ -68,7 +68,7 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
     <type 'numpy.dtype'>
 
         '''
-        raise NotImplementedError() # pragma: no cover
+        raise NotImplementedError()  # pragma: no cover
 
     @property
     @abc.abstractmethod
@@ -101,7 +101,7 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
     1
 
         '''
-        raise NotImplementedError() # pragma: no cover
+        raise NotImplementedError()  # pragma: no cover
 
     @property
     @abc.abstractmethod
@@ -134,7 +134,7 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
     1
 
         '''
-        raise NotImplementedError() # pragma: no cover
+        raise NotImplementedError()  # pragma: no cover
 
     @property
     @abc.abstractmethod
@@ -167,7 +167,7 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
     1
 
         '''
-        raise NotImplementedError() # pragma: no cover
+        raise NotImplementedError()  # pragma: no cover
 
     @property
     @abc.abstractmethod
@@ -188,7 +188,7 @@ class Array(with_metaclass(abc.ABCMeta, Container)):
     True
 
         '''
-        raise NotImplementedError() # pragma: no cover
+        raise NotImplementedError()  # pragma: no cover
 
     # ----------------------------------------------------------------
     # Methods

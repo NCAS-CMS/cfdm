@@ -227,8 +227,8 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
         try:
             return self._del_component('bounds')
         except ValueError:
-            return self._default(default,
-                           "{!r} has no bounds".format(self.__class__.__name__))
+            return self._default(
+                default, "{!r} has no bounds".format(self.__class__.__name__))
 
     def del_geometry(self, default=ValueError()):
         '''TODO
@@ -256,8 +256,10 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
         try:
             return self._del_component('geometry')
         except ValueError:
-            return self._default(default,
-                           "{!r} has no geometry type".format(self.__class__.__name__))
+            return self._default(
+                default, "{!r} has no geometry type".format(
+                    self.__class__.__name__)
+            )
 
     def get_bounds(self, default=ValueError()):
         '''Return the bounds.
@@ -301,8 +303,8 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
         try:
             return self._get_component('bounds')
         except ValueError:
-            return self._default(default,
-                           "{!r} has no bounds".format(self.__class__.__name__))
+            return self._default(
+                default, "{!r} has no bounds".format(self.__class__.__name__))
 
     def get_geometry(self, default=ValueError()):
         '''Return the geometry type.
@@ -330,8 +332,10 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
         try:
             return self._get_component('geometry')
         except ValueError:
-            return self._default(default,
-                    "{!r} has no geometry type".format(self.__class__.__name__))
+            return self._default(
+                default, "{!r} has no geometry type".format(
+                    self.__class__.__name__)
+            )
 
     def get_interior_ring(self, default=ValueError()):
         '''Return the interior ring variable for polygon geometries.
@@ -373,8 +377,10 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
         try:
             return self._get_component('interior_ring')
         except ValueError:
-            return self._default(default,
-                    "{!r} has no interior ring variable".format(self.__class__.__name__))
+            return self._default(
+                default, "{!r} has no interior ring variable".format(
+                    self.__class__.__name__)
+            )
 
     def has_bounds(self):
         '''Whether or not there are bounds.

@@ -2,10 +2,10 @@
 
 '''
 
-__author__       = 'David Hassell'
-__date__         = '2020-06-10'
-__cf_version__   = '1.8'
-__version__      = '1.8.5'
+__author__ = 'David Hassell'
+__date__ = '2020-06-10'
+__cf_version__ = '1.8'
+__version__ = '1.8.5'
 
 from distutils.version import LooseVersion
 import platform
