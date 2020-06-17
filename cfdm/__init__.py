@@ -34,6 +34,11 @@ Note that cfdm enables the creation of CF field constructs, but it's
 up to the user to use them in a CF-compliant way.
 
 '''
+import logging
+import sys
+import platform
+
+from distutils.version import LooseVersion
 
 from . import core
 
@@ -45,10 +50,6 @@ __version__      = core.__version__
 _requires = ('cftime',)
 
 _error0 = 'cfdm requires the modules {}. '.format(', '.join(_requires))
-
-from distutils.version import LooseVersion
-import platform
-
 
 try:
     import cftime
@@ -65,7 +66,8 @@ if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
 
 from .constants import masked
 
-# Internal ones passed on so they can be used in cf-python (see comment below)
+# Internal ones passed on so they can be used in cf-python (see
+# comment below)
 from .functions import (
     ATOL,
     RTOL,
@@ -79,7 +81,8 @@ from .functions import (
 )
 
 # Though these are internal-use methods, include them in the namespace
-# (without documenting them) so that cf-python can use them internally too:
+# (without documenting them) so that cf-python can use them internally
+# too:
 from .decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
@@ -131,10 +134,9 @@ from .read_write import (read,
 from .examplefield import example_field
 
 
+# --------------------------------------------------------------------
 # Set up basic logging for the full project with a root logger
-import logging
-import sys
-
+# --------------------------------------------------------------------
 # Configure the root logger which all module loggers inherit from:
 logging.basicConfig(
     stream=sys.stdout,

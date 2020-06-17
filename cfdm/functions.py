@@ -352,7 +352,7 @@ def environment(display=True, paths=True):
         out[-1] += ' ' + str(os.path.abspath(__file__))
 
     if display:
-        print('\n'.join(out))
+        print('\n'.join(out))  # pragma: no cover
     else:
         return out
 
@@ -417,29 +417,29 @@ def abspath(filename):
     return os.path.abspath(filename)
 
 
-def default_netCDF_fill_values():
-    '''The default netCDF fill values for each data type.
-
-    :Returns:
-
-        `dict`
-            The default fill values, keyed by `numpy` data type
-            strings
-
-    **Examples:**
-
-    >>> default_netCDF_fill_values()
-    {'S1': '\x00',
-     'i1': -127,
-     'u1': 255,
-     'i2': -32767,
-     'u2': 65535,
-     'i4': -2147483647,
-     'u4': 4294967295,
-     'i8': -9223372036854775806,
-     'u8': 18446744073709551614,
-     'f4': 9.969209968386869e+36,
-     'f8': 9.969209968386869e+36}
-
-    '''
-    return netCDF4.default_fillvals
+#def default_netCDF_fill_values():
+#    '''The default netCDF fill values for each data type.
+#
+#    :Returns:
+#
+#        `dict`
+#            The default fill values, keyed by `numpy` data type
+#            strings
+#
+#    **Examples:**
+#
+#    >>> default_netCDF_fill_values()
+#    {'S1': '\x00',
+#     'i1': -127,
+#     'u1': 255,
+#     'i2': -32767,
+#     'u2': 65535,
+#     'i4': -2147483647,
+#     'u4': 4294967295,
+#     'i8': -9223372036854775806,
+#     'u8': 18446744073709551614,
+#     'f4': 9.969209968386869e+36,
+#     'f8': 9.969209968386869e+36}
+#
+#    '''
+#    return netCDF4.default_fillvals

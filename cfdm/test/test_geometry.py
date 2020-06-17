@@ -19,39 +19,44 @@ class DSGTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL('DISABLE')
-        # Note: to enable all messages for given methods, lines or calls (those
-        # without a 'verbose' option to do the same) e.g. to debug them, wrap
-        # them (for methods, start-to-end internally) as follows:
+        # Note: to enable all messages for given methods, lines or
+        # calls (those without a 'verbose' option to do the same)
+        # e.g. to debug them, wrap them (for methods, start-to-end
+        # internally) as follows:
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')
 
-        self.geometry_1_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                            'geometry_1.nc')
-        self.geometry_2_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                            'geometry_2.nc')
-        self.geometry_3_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                            'geometry_3.nc')
-        self.geometry_4_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                            'geometry_4.nc')
-        self.geometry_interior_ring_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                                        'geometry_interior_ring.nc')
-        self.geometry_interior_ring_file_2 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                                          'geometry_interior_ring_2.nc')
+        self.geometry_1_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_1.nc')
+        self.geometry_2_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_2.nc')
+        self.geometry_3_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_3.nc')
+        self.geometry_4_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_4.nc')
+        self.geometry_interior_ring_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_interior_ring.nc')
+        self.geometry_interior_ring_file_2 = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_interior_ring_2.nc')
 
-        (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
+        (fd, self.tempfilename) = tempfile.mkstemp(
+            suffix='.nc', prefix='cfdm_', dir='.')
         os.close(fd)
 #        self.tempfilename = 'delme.nc'
-
 
         self.test_only = []
 #        self.test_only = ['test_node_count']
 #        self.test_only = ['test_geometry_3']
 
-
     def tearDown(self):
         os.remove(self.tempfilename)
-
 
     def test_node_count(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -100,7 +105,6 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(c.del_node_count(None).equals(n, verbose=3))
         self.assertFalse(c.has_node_count())
 
-
     def test_geometry_2(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -138,7 +142,6 @@ class DSGTest(unittest.TestCase):
         nc.nc_set_variable('new_var_name')
         cfdm.write(f, self.tempfilename, verbose=False)
 
-
     def test_geometry_3(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -171,7 +174,6 @@ class DSGTest(unittest.TestCase):
 #            a.dump()
 #            b.dump()
             self.assertTrue(a.equals(b, verbose=3))
-
 
     def test_geometry_4(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -209,11 +211,9 @@ class DSGTest(unittest.TestCase):
         nc.nc_set_variable('new_var_name')
         cfdm.write(f, self.tempfilename, verbose=False)
 
-
     def test_geometry_interior_ring(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-
 
         for geometry_file in (self.geometry_interior_ring_file,
                               self.geometry_interior_ring_file_2):
@@ -296,8 +296,7 @@ class DSGTest(unittest.TestCase):
             cfdm.write(f, self.tempfilename)
 
             pnc.nc_set_dimension('new_dim_name')
-            cfdm.write(f, self.tempfilename)
-
+            cfdm.write(f, self.tempfilename)            
             
 #--- End: class
 
