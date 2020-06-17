@@ -120,7 +120,7 @@ class DimensionCoordinate(mixin.NetCDFVariable,
             if _key is None:
                 default = ''
             else:
-                default = 'key%{0}'.format(key)
+                default = 'key%{0}'.format(_key)
 
             _title = 'Dimension coordinate: ' + self.identity(default=default)
 
