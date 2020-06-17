@@ -14,9 +14,10 @@ class DomainTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL('DISABLE')
-        # Note: to enable all messages for given methods, lines or calls (those
-        # without a 'verbose' option to do the same) e.g. to debug them, wrap
-        # them (for methods, start-to-end internally) as follows:
+        # Note: to enable all messages for given methods, lines or
+        # calls (those without a 'verbose' option to do the same)
+        # e.g. to debug them, wrap them (for methods, start-to-end
+        # internally) as follows:
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')
@@ -29,7 +30,6 @@ class DomainTest(unittest.TestCase):
 
         self.test_only = []
 
-
     def test_DomainAxis__repr__str_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -41,8 +41,18 @@ class DomainTest(unittest.TestCase):
             _ = str(d)
             self.assertTrue(d.construct_type == 'domain_axis')
 
-
     def test_DomainAxis_equals(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f
+
+        d = f.construct('key%domainaxis0')
+        _ = cfdm.DomainAxis(source=d)
+
+        _ = cfdm.DomainAxis(source=f)
+            
+    def test_DomainAxis_source(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -55,6 +65,22 @@ class DomainTest(unittest.TestCase):
         self.assertTrue(d.equals(e, verbose=3))
         self.assertTrue(e.equals(d, verbose=3))
 
+    def test_DomainAxis_size(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f
+
+        d = f.construct('key%domainaxis0')
+
+        d.set_size(99)
+
+        self.assertTrue(d.has_size())
+        self.assertTrue(d.get_size() == 99)
+        self.assertTrue(d.del_size() == 99)
+        self.assertIsNone(d.get_size(None))
+        self.assertIsNone(d.del_size(None))
+        self.assertFalse(d.has_size())
 
     def test_DomainAxis_unlimited(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -70,7 +96,6 @@ class DomainTest(unittest.TestCase):
             self.assertTrue(d.nc_is_unlimited())
             d.nc_set_unlimited(False)
             self.assertFalse(d.nc_is_unlimited())
-
 
 #--- End: class
 

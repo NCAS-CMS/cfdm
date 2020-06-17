@@ -7,51 +7,45 @@ import numpy
 
 import cfdm
 
-class AuxiliaryCoordinateTest(unittest.TestCase):
+
+class DomainAncillaryTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL('DISABLE')
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
-        # internally) as follows:        
+        # internally) as follows:
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')
-
+        
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
         
-        aux1 = cfdm.AuxiliaryCoordinate()
-        aux1.standard_name = 'latitude'
-        a = numpy.array([-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7, 11.30003, 17.8678678, 23.5, 30])
-        aux1.set_data(cfdm.Data(a, 'degrees_north'))
-        bounds = cfdm.Bounds()
-        b = numpy.empty(a.shape + (2,))
-        b[:, 0] = a - 0.1
-        b[:, 1] = a + 0.1
-        bounds.set_data(cfdm.Data(b))
-        aux1.set_bounds(bounds)
-        self.aux1 = aux1
-
-    def test_AuxiliaryCoordinate__repr__str__dump(self):
+    def test_DomainAncillary__repr__str__dump(self):
         f = cfdm.read(self.filename)[0]
-        x = f.auxiliary_coordinates('latitude').value()
+        x = f.domain_ancillaries('ncvar%a').value()
 
         _ = repr(x)
         _ = str(x)
         _ = x.dump(display=False)
-        _ = x.dump(display=False, _title=None)
 
-    def test_AuxiliaryCoordinate_bounds(self):
+        _ = x.dump(display=False, _key=f.domain_ancillaries('ncvar%a').key())
+
+        x.nc_del_variable()
+        _ = x.dump(display=False)
+        
+
+    def test_DomainAncillary_bounds(self):
         f = cfdm.read(self.filename)[0]
 
-        d = f.dimension_coordinates('grid_longitude').value()
-        x = cfdm.AuxiliaryCoordinate(source=d)
+        a = f.auxiliary_coordinates('latitude').value()
+        x = cfdm.DomainAncillary(source=a)
 
-    def test_AuxiliaryCoordinate_properties(self):
+    def test_DomainAncillary_properties(self):
         f = cfdm.read(self.filename)[0]
-        x = f.auxiliary_coordinates('latitude').value()
+        x = f.domain_ancillaries('ncvar%a').value()
 
         x.set_property('long_name', 'qwerty')
         
@@ -59,16 +53,11 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertTrue(x.del_property('long_name') == 'qwerty')
         self.assertIsNone(x.get_property('long_name', None))
         self.assertIsNone(x.del_property('long_name', None))
-        
-    def test_AuxiliaryCoordinate_source(self):
-        f = cfdm.read(self.filename)[0]
-        d = f.dimension_coordinates('grid_longitude').value()
-        x = cfdm.AuxiliaryCoordinate(source=d)
 
-    def test_AuxiliaryCoordinate_insert_dimension(self):
+    def test_DomainAncillary_insert_dimension(self):
         f = cfdm.read(self.filename)[0]
         d = f.dimension_coordinates('grid_longitude').value()
-        x = cfdm.AuxiliaryCoordinate(source=d)
+        x = cfdm.DomainAncillary(source=d)
 
         self.assertTrue(x.shape == (9,))
         self.assertTrue(x.bounds.shape == (9, 2))
@@ -81,13 +70,13 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertTrue(x.shape == (9, 1))
         self.assertTrue(x.bounds.shape == (9, 1, 2), x.bounds.shape)
 
-    def test_AuxiliaryCoordinate_transpose(self):
+    def test_DomainAncillary_transpose(self):
         f = cfdm.read(self.filename)[0]
-        x = f.auxiliary_coordinates('longitude').value()
-
+        a = f.auxiliary_coordinates('longitude').value()
         bounds = cfdm.Bounds(
             data=cfdm.Data(numpy.arange(9*10*4).reshape(9, 10, 4)))
-        x.set_bounds(bounds)
+        a.set_bounds(bounds)
+        x = cfdm.DomainAncillary(source=a)
 
         self.assertTrue(x.shape == (9, 10))
         self.assertTrue(x.bounds.shape == (9, 10, 4))
@@ -100,13 +89,14 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertTrue(x.shape == (10, 9))
         self.assertTrue(x.bounds.shape == (10, 9, 4), x.bounds.shape)
 
-    def test_AuxiliaryCoordinate_squeeze(self):
+    def test_DomainAncillary_squeeze(self):
         f = cfdm.read(self.filename)[0]
-        x = f.auxiliary_coordinates('longitude').value()
-
+        a = f.auxiliary_coordinates('longitude').value()
         bounds = cfdm.Bounds(
             data=cfdm.Data(numpy.arange(9*10*4).reshape(9, 10, 4)))
-        x.set_bounds(bounds)
+        a.set_bounds(bounds)
+        x = cfdm.DomainAncillary(source=a)
+
         x.insert_dimension(1, inplace=True)
         x.insert_dimension(0, inplace=True)
 
@@ -120,7 +110,6 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         x.squeeze(2, inplace=True)
         self.assertTrue(x.shape == (1, 9, 10))
         self.assertTrue(x.bounds.shape == (1, 9, 10, 4), x.bounds.shape)
-
 
 #--- End: class
 

@@ -9,18 +9,22 @@ import cfdm
 def randomise_test_order(*_args):
     '''Return a random choice from 1 and -1.
 
-    When set as the test loader method for standard (merge)sort comparison
-    to order all methods in a test case (see 'sortTestMethodsUsing'), ensures
-    they run in a random order, meaning implicit reliance on setup or state,
-    i.e. test dependencies, become evident over repeated runs.
+    When set as the test loader method for standard (merge)sort
+    comparison to order all methods in a test case (see
+    'sortTestMethodsUsing'), ensures they run in a random order,
+    meaning implicit reliance on setup or state, i.e. test
+    dependencies, become evident over repeated runs.
+
     '''
     return choice([1, -1])
 
 
 # Build the test suite from the tests found in the test files.
 test_loader = unittest.TestLoader
-# Randomise the order to run the test methods within each test case (module),
-# i.e. within each test_<TestCase>, e.g. for all in test_AuxiliaryCoordinate:
+# Randomise the order to run the test methods within each test case
+# (module),
+# i.e. within each test_<TestCase>,
+# e.g. for all in test_AuxiliaryCoordinate:
 test_loader.sortTestMethodsUsing = randomise_test_order
 
 testsuite_setup_0 = unittest.TestSuite()
@@ -36,7 +40,8 @@ testsuite_setup_1.addTests(
 
 testsuite = unittest.TestSuite()
 all_test_cases = test_loader().discover('.', pattern='test_*.py')
-# Randomise the order to run the test cases (modules, i.e. test_<TestCase>)
+# Randomise the order to run the test cases (modules,
+# i.e. test_<TestCase>)
 # TODO: change to a in-built unittest way to specify the above (can't find one
 # after much searching, but want to avoid mutating weakly-private attribute).
 shuffle(all_test_cases._tests)
@@ -58,8 +63,9 @@ def run_test_suite_setup_1(verbosity=2):
 def run_test_suite(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     outcome = runner.run(testsuite)
-    # Note unittest.TextTestRunner().run() does not set an exit code, so (esp.
-    # for CI / GH Actions workflows) we need $? = 1 set if any sub-test fails:
+    # Note unittest.TextTestRunner().run() does not set an exit code,
+    # so (esp.  for CI / GH Actions workflows) we need $? = 1 set if
+    # any sub-test fails:
     if not outcome.wasSuccessful():
         exit(1)  # else is zero for sucess as standard
 

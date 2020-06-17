@@ -3,6 +3,7 @@ import copy
 import datetime
 import inspect
 import logging
+import os
 import unittest
 
 import cfdm
@@ -11,13 +12,15 @@ import cfdm
 class FunctionsTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # Need to run this per-class, not per-method, to access the original
-        # value of LOG_LEVEL to use to test the default (see test_LOG_LEVEL)
+        # Need to run this per-class, not per-method, to access the
+        # original value of LOG_LEVEL to use to test the default (see
+        # test_LOG_LEVEL)
         cls.original = cfdm.LOG_LEVEL('DISABLE')
 
-        # When this module is run as part of full test-suite, the value set in
-        # previous test is picked up above, not the default. For now skip this
-        # test (effectively) for test suite run. TODO: find way round this.
+        # When this module is run as part of full test-suite, the
+        # value set in previous test is picked up above, not the
+        # default. For now skip this test (effectively) for test suite
+        # run. TODO: find way round this.
         if __name__ != '__main__':
             cls.original = 'WARNING'
 
@@ -27,22 +30,26 @@ class FunctionsTest(unittest.TestCase):
         # Disable log messages to silence expected warning, but
         # save original state for test on logging (see test_LOG_LEVEL)
         cfdm.LOG_LEVEL('DISABLE')
-        # Note that test_LOG_LEVEL has been designed so the the above call will
-        # not influence it, so it may be adjusted without changing that test
+        # Note that test_LOG_LEVEL has been designed so the the above
+        # call will not influence it, so it may be adjusted without
+        # changing that test
 
-        # Note: to enable all messages for given methods, lines or calls (those
-        # without a 'verbose' option to do the same) e.g. to debug them, wrap
-        # them (for methods, start-to-end internally) as follows:
+        # Note: to enable all messages for given methods, lines or
+        # calls (those without a 'verbose' option to do the same)
+        # e.g. to debug them, wrap them (for methods, start-to-end
+        # internally) as follows:        
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')
 
-        # Cover all below except lower-case, not supported in some functions:
+        # Cover all below except lower-case, not supported in some
+        # functions:
         valid_log_values = [
             -1, 'INFO', 3, 2, 1, 'DEBUG', 'DETAIL', 'WARNING']
         # 'DISABLE' (0) is special case so exclude from levels list:
         self.valid_level_values = copy.copy(valid_log_values)
-        # Cover string names, numeric code equivalents, & case sensitivity:
+        # Cover string names, numeric code equivalents, & case
+        # sensitivity:
         self.valid_log_values_ci = valid_log_values[:-2] + [
             'Detail', 0, 'DISABLE', 'warning']
 
@@ -69,14 +76,16 @@ class FunctionsTest(unittest.TestCase):
         self.assertTrue(original == 'WARNING')  # test default
         cfdm.LOG_LEVEL(original)  # reset from setUp() value to avoid coupling
 
-        # Now test getting and setting for all valid values in turn, where use
-        # fact that setting returns old value hence set value on next call:
+        # Now test getting and setting for all valid values in turn,
+        # where use fact that setting returns old value hence set
+        # value on next call:
         previous = cfdm.LOG_LEVEL()
         for value in self.valid_log_values_ci:
             self.assertTrue(cfdm.LOG_LEVEL(value) == previous)
             previous = cfdm.LOG_LEVEL()  # update previous value
 
-            # Some conversions to equivalent, standardised return value:
+            # Some conversions to equivalent, standardised return
+            # value:
             if isinstance(value, int):  # LOG_LEVEL returns the string not int
                 value = cfdm.constants.numeric_log_level_map[value]
             if isinstance(value, str):  # LOG_LEVEL returns all caps string
@@ -93,8 +102,9 @@ class FunctionsTest(unittest.TestCase):
         for value in self.valid_level_values:
             cfdm.functions._reset_log_emergence_level(value)
 
-            # getLevelName() converts to string. Otherwise gives Python
-            # logging int equivalent, which is not the scale we use.
+            # getLevelName() converts to string. Otherwise gives
+            # Python logging int equivalent, which is not the scale we
+            # use.
             if isinstance(value, int):
                 value = cfdm.constants.numeric_log_level_map[value]
 
@@ -115,7 +125,8 @@ class FunctionsTest(unittest.TestCase):
             cfdm.logging.getLogger().isEnabledFor(logging.WARNING))
 
     def test_disable_logging(self):
-        # Re-set to avoid coupling; use set level to check it is restored after
+        # Re-set to avoid coupling; use set level to check it is
+        # restored after
         original = cfdm.LOG_LEVEL('DETAIL')
         below_detail_values = [logging.DEBUG]
         at_or_above_detail_values = [
@@ -128,13 +139,16 @@ class FunctionsTest(unittest.TestCase):
         for value in below_detail_values + at_or_above_detail_values:
             self.assertFalse(cfdm.logging.getLogger().isEnabledFor(value))
 
-        # And does it re-enable after having disabled logging if use 'NOTSET'?
+        # And does it re-enable after having disabled logging if use
+        # 'NOTSET'?
         cfdm.functions._disable_logging('NOTSET')  # should re-enable
 
-        # Re-enabling should revert emergence in line with log severity level:
+        # Re-enabling should revert emergence in line with log
+        # severity level:
         for value in at_or_above_detail_values:  # as long as level >= 'DETAIL'
             self.assertTrue(cfdm.logging.getLogger().isEnabledFor(value))
-        # 'DEBUG' is effectively not "enabled" as is less severe than 'DETAIL'
+        # 'DEBUG' is effectively not "enabled" as is less severe than
+        # 'DETAIL'
         self.assertFalse(cfdm.logging.getLogger().isEnabledFor(logging.DEBUG))
 
     def test_CF(self):
@@ -164,6 +178,23 @@ class FunctionsTest(unittest.TestCase):
 
         with self.assertRaises(Exception):
             _ = cfdm.example_field(top + 1)
+
+    def test_abspath(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        filename = 'test_file.nc'
+        self.assertTrue(cfdm.abspath(filename) == os.path.abspath(filename))
+        filename = 'http://test_file.nc'
+        self.assertTrue(cfdm.abspath(filename) == filename)
+        filename = 'https://test_file.nc'
+        self.assertTrue(cfdm.abspath(filename) == filename)
+
+#    def test_default_netCDF_fill_values(self):
+#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+#            return
+#        
+#        self.assertIsInstance(cfdm.default_netCDF_fill_values(), dict)
 
 #--- End: class
 
