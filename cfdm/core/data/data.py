@@ -823,7 +823,10 @@ class Data(abstract.Container):
 
     **Examples:**
 
-    TODO
+    >>> f = cfdm.read('file.nc')[0]
+    >>> d = f.data
+    >>> d.source()
+    <NetCDFArray(149, 182): file=file.nc variable=latitude>
 
         '''
         return self._get_component('array', default=default)

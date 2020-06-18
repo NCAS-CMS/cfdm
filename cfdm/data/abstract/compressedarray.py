@@ -360,7 +360,10 @@ class CompressedArray(Array, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> TODO
+    >>> array
+    <RaggedContiguousArray(2, 4): >
+    >>> array.source()
+    <Data(5): [280.0, ..., 279.5]>
 
         '''
         return self._get_compressed_Array(default=default)

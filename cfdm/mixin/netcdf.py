@@ -2290,13 +2290,13 @@ class NetCDFGeometry(NetCDF,
 
 
 class NetCDFHDF5(NetCDF):
-    '''Mixin class for TODO
+    '''Mixin class for accessing the netCDF HDF5 chunksizes.
 
     .. versionadded:: 1.7.2
 
     '''
     def nc_hdf5_chunksizes(self):
-        '''TODO
+        '''Return the HDF5 chunksizes for the data.
 
     .. note:: Chunksizes are cleared from the output of methods that
               change the data shape.
@@ -2311,8 +2311,7 @@ class NetCDFHDF5(NetCDF):
     :Returns:
 
         `tuple`
-            TODO The chunk sizes prior to the new setting, or the current
-            current sizes if no new values are specified.
+            The current chunksizes.
 
     **Examples:**
 
@@ -2330,7 +2329,7 @@ class NetCDFHDF5(NetCDF):
         return self._get_component('netcdf').get('hdf5_chunksizes', ())
 
     def nc_clear_hdf5_chunksizes(self):
-        '''TODO
+        '''Clear the HDF5 chunksizes for the data.
 
     .. note:: Chunksizes are cleared from the output of methods that
               change the data shape.
@@ -2345,7 +2344,7 @@ class NetCDFHDF5(NetCDF):
     :Returns:
 
         `tuple`
-            TODO
+            The chunksizes defined prior to being cleared.
 
     **Examples:**
 
@@ -2363,7 +2362,7 @@ class NetCDFHDF5(NetCDF):
         return self._get_component('netcdf').pop('hdf5_chunksizes', ())
 
     def nc_set_hdf5_chunksizes(self, chunksizes):
-        '''TODO
+        '''Set the HDF5 chunksizes for the data.
 
     .. note:: Chunksizes are cleared from the output of methods that
               change the data shape.
@@ -2427,7 +2426,7 @@ class NetCDFHDF5_exp(NetCDF):
 
     '''
     def nc_del_hdf5_chunksize(self, default=ValueError()):
-        '''TODO
+        '''Remove the HDF5 chunksize for the data.
 
     .. note:: Chunksizes are cleared from the output of methods that
               change the data shape, and chunksizes are ignored for
@@ -2460,7 +2459,7 @@ class NetCDFHDF5_exp(NetCDF):
         return 'hdf5_chunksize' in self._get_component('netcdf')
 
     def nc_get_hdf5_chunksize(self, default=ValueError()):
-        '''TODO
+        '''Return the HDF5 chunksizes for the data.
 
     .. note:: Chunksizes are cleared from the output of methods that
               change the data shape, and chunksizes are ignored for
@@ -2472,9 +2471,7 @@ class NetCDFHDF5_exp(NetCDF):
                  `nc_set_hdf5_chunksize`
 
     :Returns:
-
-            TODO The chunk sizes prior to the new setting, or the current
-            current sizes if no new values are specified.
+        TODO
 
     **Examples:**
 
@@ -2500,7 +2497,7 @@ class NetCDFHDF5_exp(NetCDF):
                     self.__class__.__name__))
 
     def nc_has_hdf5_chunksize(self):
-        '''TODO
+        '''Whether HDF5 chunksizes are defined for the data.
 
     .. note:: Chunksizes are cleared from the output of methods that
               change the data shape, and chunksizes are ignored for
@@ -2514,8 +2511,7 @@ class NetCDFHDF5_exp(NetCDF):
     :Returns:
 
         `bool`
-            TODO The chunk sizes prior to the new setting, or the current
-            current sizes if no new values are specified.
+            Return `True` if HDF5 chunksizes are defined for the data.
 
     **Examples:**
 
@@ -2535,7 +2531,7 @@ class NetCDFHDF5_exp(NetCDF):
         return 'hdf5_chunksize' in self._get_component('netcdf')
 
     def nc_set_hdf5_chunksize(self, value):
-        '''TODO
+        '''Set the HDF5 chunksizes for the data.
 
     .. note:: Chunksizes are cleared from the output of methods that
               change the data shape, and chunksizes are ignored for
