@@ -502,7 +502,21 @@ class Field(mixin.NetCDFVariable,
 
     **Examples:**
 
-                TODO DCH
+    >>> print(f.data.array)
+    [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
+     9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36],
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
+     9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36]])
+    >>> masked_f = f.apply_masking()
+    >>> print(masked_f.data.array)
+    [[   --    --    --    --    --    --    --    --]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [   --    --    --    --    --    --    --    --]]
 
         '''
         if inplace:
@@ -522,19 +536,34 @@ class Field(mixin.NetCDFVariable,
         return f
 
     def climatological_time_axes(self):
-        '''TODO
+        '''Return all axes which are climatological time axes.
 
     .. versionadded:: 1.7.0
 
     :Returns:
 
         `list`
-            TODO
+            The list of all axes on the field which are climatological time
+            axes. If there are none, this will be an empty list.
 
     **Examples:**
 
-    TODO
+    >>> f
+    <Field: air_temperature(time(12), latitude(145), longitude(192)) K>
+    >>> print(f.cell_methods())
+    Constructs:
+    {'cellmethod0': <CellMethod: domainaxis0: minimum within days>,
+     'cellmethod1': <CellMethod: domainaxis0: mean over days>}
+    >>> f.climatological_time_axes()
+    [('domainaxis0',), ('domainaxis0',)]
 
+    >>> g
+    <Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
+    >>> print(g.cell_methods())
+    Constructs:
+    {'cellmethod0': <CellMethod: area: mean>}
+    >>> g.climatological_time_axes()
+    []
         '''
         out = []
 
@@ -745,7 +774,7 @@ class Field(mixin.NetCDFVariable,
 
         def _compress_metadata(f, method, count, N, axes, Array_func,
                                **kwargs):
-            '''TODO
+            '''Compress metadata constructs for a field by a chosen method.
 
         :Parameters:
 
