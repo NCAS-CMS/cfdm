@@ -62,7 +62,6 @@ class DomainAxis(mixin.NetCDFDimension,
 
         self._initialise_netcdf(source)
 
-
     def __str__(self):
         '''Called by the `str` built-in function.
 
@@ -146,7 +145,7 @@ class DomainAxis(mixin.NetCDFDimension,
         other = pp
 
         # Check that each axis has the same size
-        self_size  = self.get_size(None)
+        self_size = self.get_size(None)
         other_size = other.get_size(None)
         if not self_size == other_size:
             logger.info(
@@ -156,7 +155,6 @@ class DomainAxis(mixin.NetCDFDimension,
             return False
 
         return True
-
 
     def identity(self, default=''):
         '''Return the canonical identity.
@@ -201,7 +199,6 @@ class DomainAxis(mixin.NetCDFDimension,
             return 'ncdim%{0}'.format(n)
 
         return default
-
 
     def identities(self):
         '''Return all possible identities.

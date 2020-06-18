@@ -92,7 +92,6 @@ class DimensionCoordinate(mixin.NetCDFVariable,
 
         self._initialise_netcdf(source)
 
-
     def dump(self, display=True, _omit_properties=None, _key=None,
              _level=0, _title=None, _axes=None, _axis_names=None):
         '''A full description of the dimension coordinate construct.
@@ -128,7 +127,6 @@ class DimensionCoordinate(mixin.NetCDFVariable,
                             _omit_properties=_omit_properties,
                             _key=_key, _level=_level, _title=_title,
                             _axes=_axes, _axis_names=_axis_names)
-
 
     def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,

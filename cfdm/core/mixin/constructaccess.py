@@ -1,10 +1,10 @@
 from builtins import object
-#from future.utils import with_metaclass
+# from future.utils import with_metaclass
 
-#import abc
+# import abc
 
 
-#class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
+# class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
 class ConstructAccess(object):
     '''Mixin class for accessing an embedded `Constructs` object.
 

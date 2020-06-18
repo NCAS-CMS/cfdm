@@ -278,7 +278,7 @@ class Domain(mixin.ConstructAccess,
         # Cell measures
         for cid, value in sorted(self.cell_measures.items()):
             string.append('')
-            string.append( value.dump(
+            string.append(value.dump(
                 display=False, _key=cid,
                 _level=_level, _title='Cell measure: {0}'.format(
                     construct_name[cid]),
