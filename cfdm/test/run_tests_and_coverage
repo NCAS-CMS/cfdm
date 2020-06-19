@@ -17,8 +17,17 @@ else
     generate_html="true"
 fi
 
+if ! command -v coverage &> /dev/null
+then
+    echo "Requires the coverage module: install it e.g. via 'pip install coverage'"
+    exit 3
+fi
+
 coverage erase
-coverage run --source=.. --omit="*/test/*" run_tests.py
+coverage run --source=.. --omit="*/test/*" test_Field.py # run_tests.py
+# Capture exit status from unit tests
+rc=$?
+
 coverage report
 
 if [[ $generate_html == "true" ]] ; then
@@ -28,5 +37,8 @@ if [[ $generate_html == "true" ]] ; then
     echo "coverage docs: https://coverage.readthedocs.io"
     echo "coverage report URL: file://$PWD/cfdm_coverage_report/index.html"
 fi
-    
+
+# Return exit status from unit tests
+exit $rc
+
 #set +x
