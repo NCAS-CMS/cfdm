@@ -80,7 +80,7 @@ jobs:
       shell: bash -l {0}
       run: |
         cd cfdm/test
-        python run_tests.py
+        ./run_tests_and_coverage --nohtml
     # End with a message indicating the suite has completed its run
     - name: Notify about a completed run
       run: |
