@@ -19,8 +19,8 @@ class NetCDFArray(abstract.Array):
 
     '''
     def __init__(self, filename=None, ncvar=None, varid=None,
-                 dtype=None, ndim=None, shape=None, size=None,
-                 mask=True):
+                 group=None, dtype=None, ndim=None, shape=None,
+                 size=None, mask=True):
         '''**Initialization**
 
     :Parameters:
@@ -36,6 +36,22 @@ class NetCDFArray(abstract.Array):
             The UNIDATA netCDF interface ID of the variable containing
             the array. Required if *ncvar* is not set, ignored if
             *ncvar* is set.
+
+        group: sequence of `str`, optional
+            Specify the netCDF4 group to which the netCDF variable
+            belongs. By default, or if an empty sequence is specified,
+            it assumed to be in the root group. The last element in
+            the sequence isw the name of the group in which the
+            variable lies, with other elements naming any parent
+            groups (excluding the root group).
+
+            :Parameter example:
+              To specify that a variable is in the group 'forecasts':
+              ``group=['forecasts']``
+
+            :Parameter example:
+              To specify that a variable is in the group
+              'forecasts/model2': ``group=['forecasts', 'model2']``
 
         dtype: `numpy.dtype`
             The data type of the array in the netCDF file. May be
@@ -111,19 +127,21 @@ class NetCDFArray(abstract.Array):
         '''
         netcdf = self.open()
 
-#        indices = tuple(self.parse_indices(indices))
-
+        # Traverse the group structure, if there is one (CF>=1.8).
+        if group:
+            for g in group[:-1]:
+                netcdf = netcdf.groups[g]
+            
+            netcdf = netcdf.groups[group[-1]]
+            
         ncvar = self.get_ncvar()
         mask = self.get_mask()
 
         if ncvar is not None:
             # Get the variable by netCDF name
             variable = netcdf.variables[ncvar]
-#            print (mask, variable.mask)
             variable.set_auto_mask(mask)
-#            print (mask, variable.mask)
             array = variable[indices]
-#            print(array.max())
         else:
             # Get the variable by netCDF ID
             varid = self.get_varid()
@@ -195,8 +213,7 @@ class NetCDFArray(abstract.Array):
             array = array.astype('S')  # , copy=False)
 
             # --------------------------------------------------------
-            # netCDF4-pytohn does not auto-mask VLEN variable, so do
-            # it here.
+            # netCDF4 does not auto-mask VLEN variable, so do it here.
             # --------------------------------------------------------
             array = numpy.ma.where(array == b'', numpy.ma.masked, array)
 

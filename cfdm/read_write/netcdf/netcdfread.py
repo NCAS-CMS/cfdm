@@ -263,6 +263,20 @@ class NetCDFRead(IORead):
         except RuntimeError as error:
             raise RuntimeError("{}: {}".format(error, filename))
 
+        # ------------------------------------------------------------
+        # If the file has a group structure then flatten it (CF>=1.8)
+        # ------------------------------------------------------------
+        if g['CF>=1.8'] and nc.groups:
+            tmp = tempfile.NamedTemporaryFile(mode='wb', dir=tempfile.gettempdir(),
+                                              prefix='cfdm_', suffix='.nc')
+            nc = netCDF4.Dataset(tmp, 'w', diskless=True, persist=False)
+            netcdf_flatter.flatten(nc, flat_nc)
+
+            nc.close()
+            nc = flat_nc
+
+            self.read_vars['has_groups'] = True
+                
         return nc
 
     @classmethod
@@ -582,6 +596,9 @@ class NetCDFRead(IORead):
             # attributes?
             'warn_valid': bool(warn_valid),
             'valid_properties': set(('valid_min', 'valid_max', 'valid_range')),
+
+            # Assume that the does not have a group structure
+            'has_groups': False, 
         }
 
         g = self.read_vars
@@ -720,7 +737,9 @@ class NetCDFRead(IORead):
         variable_dimensions = {}
         variable_dataset    = {}
         variable_filename   = {}
-        variables           = {}
+        variable_group      = {}
+        variable_basename   = {}
+        variables           = {}        
         for ncvar in nc.variables:
             variable = nc.variables[ncvar]
 
@@ -747,6 +766,30 @@ class NetCDFRead(IORead):
             variable_filename[ncvar]   = g['filename']
             variables[ncvar]           = variable
 
+        # ------------------------------------------------------------
+        # Specify the group structure for each variable (CF>=1.8)
+        #
+        # If the file only has the root group then this dictionary
+        # will be empty. Variables in the root group when there are
+        # sub-groups will have dictionary values of None.
+        # ------------------------------------------------------------
+        if g['CF>=1.8'] and g['has_groups']:
+            flattened_mapping = getattr(nc, 'flattener_name_mapping_variables', None)
+            if flattened_mapping:
+                for ncvar_groups in flattened_mapping:
+                    ncvar, groups = ncvar_groups.split(': ')
+                    groups = groups.split('/')[1:-1]
+
+                    if groups:
+                        variable_basename[ncvar] = re.sub(
+                            '^{}#'.format('#'.join(group)), '', ncvar)
+                    else:
+                        variable_basename[ncvar] = ncvar
+                        groups = None
+                    
+                    variable_group[ncvar] = groups        
+        # --- End: if
+            
         # The netCDF attributes for each variable
         #
         # E.g. {'grid_lon': {'standard_name': 'grid_longitude'}}
@@ -781,6 +824,20 @@ class NetCDFRead(IORead):
 
         g['internal_dimension_sizes'] = internal_dimension_sizes
 
+        # The group structure for each variable (CF>=1.8)
+        #
+        # E.g. {'forecasts#model1': ['forecasts']  # var=model1
+        #       'forecasts#model#1': ['forecasts']  # var=model#2
+        #       'forecasts#model#2': ['forecasts', 'model']}  # var=2
+        g['variable_group'] = variable_group
+        
+        # The basename of each variable in a group (CF>=1.8)
+        #
+        # E.g. {'forecasts#model1': 'model1',
+        #       'forecasts#model#1': 'model#1',
+        #       'forecasts#model#2': '2'}
+        g['variable_basename'] = variable_basename
+        
         logger.detail(
             "    netCDF dimensions:\n" +
             pformat(internal_dimension_sizes, indent=4)
@@ -1178,6 +1235,8 @@ class NetCDFRead(IORead):
                 'variable_dimensions',
                 'variable_dataset',
                 'variable_filename',
+                'variable_group',
+                'variable_basename',
                 'variables')
 
         found = []
@@ -1249,11 +1308,12 @@ class NetCDFRead(IORead):
 
                 if ok:
                     # Update the read parameters so that this external
-                    # variable looks like its internal
+                    # variable looks like it is internal
                     for key in keys:
                         self.read_vars[key][ncvar] = (
                             external_read_vars[key][ncvar]
                         )
+TODO the key to external_read_vars needs to be prepended wit the hash conscatentaed groups of the parent internal variable
 
                     # Remove this ncvar from the set of external variables
                     external_variables.remove(ncvar)
@@ -3802,8 +3862,16 @@ class NetCDFRead(IORead):
 
         filename = g['variable_filename'][ncvar]
 
+        # Find the group that this variable is in (the group will be
+        # None if the variable in the root group) (CF>=1.8).
+        if g['has_groups']:
+            group = g['variable_group'].get(ncvar)
+            if group:
+                ncvar = g['variable_basename'][ncvar]
+        # --- End: if
+        
         return self.implementation.initialise_NetCDFArray(
-            filename=filename, ncvar=ncvar,
+            filename=filename, ncvar=ncvar, group=group,
             dtype=dtype,
             ndim=ndim,
             shape=shape,
@@ -3836,7 +3904,7 @@ class NetCDFRead(IORead):
 
         '''
         g = self.read_vars
-
+        
         array = self._create_netcdfarray(ncvar,
                                          unpacked_dtype=unpacked_dtype)
 
