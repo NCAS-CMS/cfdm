@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# --------------------------------------------------------------------
+# Run the full test suite and produce a coverage report.
+#
+# $ run_test_and_coverage
+#
+# Or to omit the generation of an html report:
+#
+# $ run_test_and_coverage --nohtml
+# --------------------------------------------------------------------
+#set -x
+
+if [[ $1 == "--nohtml" ]] ; then 
+    generate_html="false"
+else
+    generate_html="true"
+fi
+
+coverage erase
+coverage run --source=.. --omit="*/test/*" run_tests.py
+coverage report
+
+if [[ $generate_html == "true" ]] ; then
+    mkdir -p cfdm_coverage_report
+    coverage html --title "cfdm test suite coverage report" -d cfdm_coverage_report
+    
+    echo "coverage docs: https://coverage.readthedocs.io"
+    echo "coverage report URL: file://$PWD/cfdm_coverage_report/index.html"
+fi
+    
+#set +x
