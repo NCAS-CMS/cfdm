@@ -71,6 +71,13 @@ jobs:
         # Important! Must install our development version of cfdm to test:
         pip install -e .
 
+    # Install the coverage library
+    # We do so with conda which was setup in a previous step.
+    - name: Install coverage
+      shell: bash -l {0}
+      run: |
+        conda install coverage
+
     # Provide another notification message
     - name: Notify about starting testing
       run: echo Setup complete. Now starting to run the cfdm test suite...
