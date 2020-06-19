@@ -75,7 +75,7 @@ jobs:
     - name: Notify about starting testing
       run: echo Setup complete. Now starting to run the cfdm test suite...
 
-    # Finally run the test suite!
+    # Finally run the test suite and generate a coverage report!
     - name: Run test suite
       shell: bash -l {0}
       run: |
