@@ -281,7 +281,17 @@ class NetCDFRead(IORead):
 
     @classmethod
     def cdl_to_netcdf(cls, filename):
-        '''TODO
+        '''Create temporary netCDF file from a CDL text file.
+
+    :Parameters:
+
+        filename: `str`
+            The name of the CDL file.
+
+    :Returns:
+
+        `str`
+            The name of the new netCDF file.
 
         '''
         x = tempfile.NamedTemporaryFile(mode='wb', dir=tempfile.gettempdir(),
@@ -518,10 +528,6 @@ class NetCDFRead(IORead):
 
         `list`
             The fields in the file.
-
-    **Examples:**
-
-    TODO
 
         '''
         # ------------------------------------------------------------
@@ -773,20 +779,27 @@ class NetCDFRead(IORead):
         # will be empty. Variables in the root group when there are
         # sub-groups will have dictionary values of None.
         # ------------------------------------------------------------
-        if g['CF>=1.8'] and g['has_groups']:
-            flattened_mapping = getattr(nc, 'flattener_name_mapping_variables', None)
-            if flattened_mapping:
+        if g['has_groups']:
+            flattened_mapping = getattr(
+                nc, 'flattener_name_mapping_variables', None)
+            if flattened_mapping is None:
                 for ncvar_groups in flattened_mapping:
                     ncvar, groups = ncvar_groups.split(': ')
                     groups = groups.split('/')[1:-1]
 
                     if groups:
-                        variable_basename[ncvar] = re.sub(
-                            '^{}#'.format('#'.join(group)), '', ncvar)
+                        # Remove the group structure that was
+                        # prepended to the netCDF variable name by the
+                        # netCDF flattener. Note that the flattener
+                        # uses # (hash) as the groups delimiter in its
+                        # modified variable names.
+                        ncvar = re.sub('^{}#'.format('#'.join(groups)),
+                                       '', ncvar)
                     else:
-                        variable_basename[ncvar] = ncvar
+                        # Replace an empty groups list with None
                         groups = None
-                    
+
+                    variable_basename[ncvar] = ncvar
                     variable_group[ncvar] = groups        
         # --- End: if
             
@@ -833,7 +846,8 @@ class NetCDFRead(IORead):
         
         # The basename of each variable in a group (CF>=1.8)
         #
-        # E.g. {'forecasts#model1': 'model1',
+        # E.g. {'modelA': 'modelA',
+        #       'forecasts#model1': 'model1',
         #       'forecasts#model#1': 'model#1',
         #       'forecasts#model#2': '2'}
         g['variable_basename'] = variable_basename
@@ -1146,13 +1160,15 @@ class NetCDFRead(IORead):
         print(message)
 
     def _plural(self, x, singular):
-        '''TODO
+        '''Return the plural of a word if *x* has zero elements or more than
+    one element, otherwise return the word unchanged.
 
     :Parameters:
 
         x: sequence
 
         singular: `str`
+            The word in it's singular form.
 
     :Returns:
 
@@ -1308,12 +1324,11 @@ class NetCDFRead(IORead):
 
                 if ok:
                     # Update the read parameters so that this external
-                    # variable looks like it is internal
+                    # variable looks like it is an internal variable
                     for key in keys:
                         self.read_vars[key][ncvar] = (
                             external_read_vars[key][ncvar]
                         )
-TODO the key to external_read_vars needs to be prepended wit the hash conscatentaed groups of the parent internal variable
 
                     # Remove this ncvar from the set of external variables
                     external_variables.remove(ncvar)
@@ -3097,7 +3112,8 @@ TODO the key to external_read_vars needs to be prepended wit the hash conscatent
         if variable is None:
             variable = ncvar
 
-        g['dataset_compliance'][field_ncvar]['non-compliance'].setdefault(ncvar, []).append(d)
+        g['dataset_compliance'][field_ncvar]['non-compliance'].setdefault(
+            ncvar, []).append(d)
 
         e = g['component_report'].setdefault(variable, {})
         e.setdefault(ncvar, []).append(d)
@@ -3107,7 +3123,6 @@ TODO the key to external_read_vars needs to be prepended wit the hash conscatent
         else:  # pragma: no cover
             dimensions = '(' + ', '.join(dimensions) + ')'  # pragma: no cover
 
-        # Though an error of sorts, set as warning as does not terminate read
         logger.info(
             "    Error processing netCDF variable {} {}: {}".format(
                 ncvar, dimensions, d['reason'])
@@ -3156,11 +3171,25 @@ TODO the key to external_read_vars needs to be prepended wit the hash conscatent
 
     def _create_auxiliary_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
-        '''TODO
+        '''Create an auxiliary coordinate constuct.
+
+    :Parameters:
+
+        field_ncvar: `str`
+            The netCDF variable name of the parent field construct.
+
+        ncvar: `str`
+            The netCDF name of the variable.
+
+        field: field construct
+            The parent field construct.
+
+        bounds_ncvar: `str`, optional
+            The netCDF variable name of the coordinate bounds.
 
     :Returns:
 
-        The auxiliary coordinate constuct.
+            The auxiliary coordinate constuct.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
@@ -3170,11 +3199,25 @@ TODO the key to external_read_vars needs to be prepended wit the hash conscatent
 
     def _create_dimension_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
-        '''TODO
+        '''Create a dimension coordinate constuct.
+
+    :Parameters:
+
+        field_ncvar: `str`
+            The netCDF variable name of the parent field construct.
+
+        ncvar: `str`
+            The netCDF name of the variable.
+
+        field: field construct
+            The parent field construct.
+
+        bounds_ncvar: `str`, optional
+            The netCDF variable name of the coordinate bounds.
 
     :Returns:
 
-        The dimension coordinate constuct.
+            The dimension coordinate constuct.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
@@ -3862,16 +3905,24 @@ TODO the key to external_read_vars needs to be prepended wit the hash conscatent
 
         filename = g['variable_filename'][ncvar]
 
-        # Find the group that this variable is in (the group will be
-        # None if the variable in the root group) (CF>=1.8).
+        # Find the group that this variable is in. The group will be
+        # None if the variable is in the root group.
         if g['has_groups']:
             group = g['variable_group'].get(ncvar)
             if group:
+                # Make sure that we use the variable name without any
+                # group structure prepended to it
                 ncvar = g['variable_basename'][ncvar]
-        # --- End: if
-        
+        else:
+            # This variable is in the root group
+            group = None
+
+TODO: think using e.g. '/forecasts/model1' ahas the value for nc_set_vairbale. What about nc_set_dimension?
+            
         return self.implementation.initialise_NetCDFArray(
-            filename=filename, ncvar=ncvar, group=group,
+            filename=filename,
+            ncvar=ncvar,
+            group=group,
             dtype=dtype,
             ndim=ndim,
             shape=shape,
@@ -3984,7 +4035,7 @@ TODO the key to external_read_vars needs to be prepended wit the hash conscatent
 
                         i = dimensions.index(ncdim)
                         if i != 0:
-                            raise ValueError("TODO")
+                            raise ValueError("TODO 1")
 
                         uncompressed_shape = list(array.shape)
                         uncompressed_shape[i:i+1] = [
@@ -4010,7 +4061,7 @@ TODO the key to external_read_vars needs to be prepended wit the hash conscatent
 
                         i = dimensions.index(ncdim)
                         if i != 0:
-                            raise ValueError("TODO")
+                            raise ValueError("TODO 2")
 
                         uncompressed_shape = list(array.shape)
                         uncompressed_shape[i:i+1] = [
@@ -4031,7 +4082,7 @@ TODO the key to external_read_vars needs to be prepended wit the hash conscatent
 
                         i = dimensions.index(ncdim)
                         if i != 0:
-                            raise ValueError("TODO")
+                            raise ValueError("TODO 3")
 
                         uncompressed_shape = list(array.shape)
                         uncompressed_shape[i:i+1] = [
