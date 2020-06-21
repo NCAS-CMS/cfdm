@@ -121,16 +121,12 @@ The following file types can be read:
   <https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_working_with_netcdf_files.html#netcdf_utilities>`_,
   with or without the data array values.
 
-..
-
-* A future |version|.\ *x* release of cfdm will include support for
-  :ref:`netCDF4 files containing data organised in hierarchical groups
-  <Hierarchical-groups>`, but this is not available in version
-  |release| (even though it is allowed in CF-|version|).
-
+Note that when reading netCDF4 files that contain :ref:`hierachical
+groups <Hierarchical-groups>`, the group structure is flattened prior
+to the creation of field constructs.
+       
 For example, to read the file ``file.nc`` (found in the :ref:`sample
-datasets <Sample-datasets>`), which contains two field
-constructs:
+datasets <Sample-datasets>`), which contains two field constructs:
 
 .. code-block:: python
    :caption: *Read file.nc and show that the result is a two-element
@@ -3412,6 +3408,8 @@ by setting the *string* keyword of the `cfdm.write` function.
 
 **Hierarchical groups**
 -----------------------
+
+TODO
 
 `Hierarchical groups`_ provide a powerful mechanism to structure
 variables within datasets. A future |version|.\ *x* release of cfdm

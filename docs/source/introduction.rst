@@ -73,6 +73,11 @@ The cfdm package can
   datasets,
 
 * create new field constructs in memory,
+  
+* write field constructs to netCDF datasets on disk,
+
+* read netCDF and CDL datasets containing hierarchical groups (**new
+  in version 1.8.6**),
 
 * inspect field constructs,
 
@@ -81,8 +86,6 @@ The cfdm package can
 * modify field construct metadata and data,
 
 * create subspaces of field constructs,
-
-* write field constructs to netCDF datasets on disk,
 
 * incorporate, and create, metadata stored in external files,
 
@@ -112,16 +115,6 @@ outside of a Python environment:
                    : latitude(64) = [-87.8638, ..., 87.8638] degrees_north
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
-
-  
-Hierarchical groups
-^^^^^^^^^^^^^^^^^^^
-
-Hierarchical groups provide a powerful mechanism to structure
-variables within datasets. A future |version|.\ *x* release of cfdm
-will include support for netCDF4 files containing data organised in
-hierarchical groups, but this is not available in version |release|
-(even though it is allowed in CF-|version|).
 
 Related packages
 ^^^^^^^^^^^^^^^^
