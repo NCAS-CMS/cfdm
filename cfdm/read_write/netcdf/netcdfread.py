@@ -433,8 +433,8 @@ class NetCDFRead(IORead):
     @_manage_log_level_via_verbosity
     def read(self, filename, extra=None, default_version=None,
              external=None, extra_read_vars=None, _scan_only=False,
-             verbose=None, mask=True, warnings=True,
-             warn_valid=False):
+             verbose=None, mask=True, warnings=True, warn_valid=False,
+             absolute_netCDF_names=True):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
     location.
 
@@ -523,6 +523,30 @@ class NetCDFRead(IORead):
             turning off all automatic masking.
 
             .. versionadded:: 1.8.3
+
+        absolute_netCDF_names: `bool`, optional
+            If False then assign relative netCDF names the returned
+            field constructs and their components. By default,
+            absolute names are used. 
+
+            This parameter is ignored unless the input file is a
+            netCDF4 dataset with a hierarchical group structure,
+            i.e. one with at least one group within the root group.
+
+            *Parameter example:*
+              Suppose that a netCDF4 file contains two CF-netCDF data
+              variables, one called 'pr' in the root group and a one
+              called 'tas' inside a group called 'forecasts'. By
+              default the netCDF variable names assigned to the
+              resulting field constructs would be ``'pr'`` and
+              ``'/forecasts/tas'`` respectively (note that the leading
+              '/' is omitted if the variable or dimension is in the
+              root group). If *absolute_netCDF_names* is False then
+              the netCDF variable names assigned to the field
+              constructs would instead be ``'pr'`` and ``'tas'``
+              respectively.
+
+            .. versionadded:: 1.8.6
 
     :Returns:
 
