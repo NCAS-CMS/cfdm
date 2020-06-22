@@ -6,6 +6,7 @@ from . import core
 
 class PartNodeCountProperties(mixin.NetCDFVariable,
                               mixin.NetCDFDimension,
+                              mixin.NetCDFGroups,
                               mixin.Properties,
                               core.abstract.Properties):
     '''Properties for a netCDF part node count variable.

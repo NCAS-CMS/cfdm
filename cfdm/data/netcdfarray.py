@@ -37,12 +37,12 @@ class NetCDFArray(abstract.Array):
             the array. Required if *ncvar* is not set, ignored if
             *ncvar* is set.
 
-        group: sequence of `str`, optional
+        group: `None` or sequence of `str`, optional
             Specify the netCDF4 group to which the netCDF variable
-            belongs. By default, or if an empty sequence is specified,
-            it assumed to be in the root group. The last element in
-            the sequence isw the name of the group in which the
-            variable lies, with other elements naming any parent
+            belongs. By default, or if *group* is `None` or an empty
+            sequence, it assumed to be in the root group. The last
+            element in the sequence isw the name of the group in which
+            the variable lies, with other elements naming any parent
             groups (excluding the root group).
 
             :Parameter example:
@@ -52,6 +52,8 @@ class NetCDFArray(abstract.Array):
             :Parameter example:
               To specify that a variable is in the group
               'forecasts/model2': ``group=['forecasts', 'model2']``
+
+            .. versionadded:: 1.8.6
 
         dtype: `numpy.dtype`
             The data type of the array in the netCDF file. May be
@@ -90,6 +92,7 @@ class NetCDFArray(abstract.Array):
         super().__init__(filename=filename, ncvar=ncvar, varid=varid)
 
         self._set_component('netcdf', None, copy=False)
+        self._set_component('group', group, copy=False)
 
         # By default, close the netCDF file after data array access
         self._set_component('close', True, copy=False)
@@ -128,6 +131,7 @@ class NetCDFArray(abstract.Array):
         netcdf = self.open()
 
         # Traverse the group structure, if there is one (CF>=1.8).
+        group = self.get_group()
         if group:
             for g in group[:-1]:
                 netcdf = netcdf.groups[g]
@@ -353,6 +357,18 @@ class NetCDFArray(abstract.Array):
 
         '''
         return self._get_component('filename')
+
+    def get_group(self):
+        '''The netCDF4 group structure to which the netCDF variable belongs.
+
+    .. versionadded:: 1.8.6
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return self._get_component('group')
 
     def get_mask(self):
         '''TODO

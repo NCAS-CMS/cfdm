@@ -7,6 +7,7 @@ from . import core
 class Index(mixin.NetCDFVariable,
             mixin.NetCDFDimension,
             mixin.NetCDFSampleDimension,
+            mixin.NetCDFGroups,
             mixin.PropertiesData,
             core.abstract.PropertiesData):
     '''An index variable required to uncompress a ragged array.

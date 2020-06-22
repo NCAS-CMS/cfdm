@@ -32,6 +32,8 @@ logger = logging.getLogger(__name__)
 class Field(mixin.NetCDFVariable,
             mixin.NetCDFGeometry,
             mixin.NetCDFGlobalAttributes,
+            mixin.NetCDFGroups,
+            mixin.NetCDFGroupAttributes,
             mixin.ConstructAccess,
             mixin.PropertiesData,
             core.Field):

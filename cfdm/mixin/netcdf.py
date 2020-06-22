@@ -47,7 +47,6 @@ class NetCDF(object):
 
         self._set_component('netcdf', netcdf, copy=False)
 
-
 # --- End: class
 
 
@@ -215,7 +214,6 @@ class NetCDFDimension(NetCDF):
 
         '''
         self._get_component('netcdf')['dimension'] = value
-
 
 # --- End: class
 
@@ -386,7 +384,6 @@ class NetCDFVariable(NetCDF):
         '''
         self._get_component('netcdf')['variable'] = value
 
-
 # --- End: class
 
 
@@ -554,7 +551,6 @@ class NetCDFSampleDimension(NetCDF):
 
         '''
         self._get_component('netcdf')['sample_dimension'] = value
-
 
 # --- End: class
 
@@ -830,6 +826,317 @@ class NetCDFGlobalAttributes(NetCDF):
 
         self._get_component('netcdf')['global_attributes'] = out
 
+# --- End: class
+
+
+class NetCDFGroups(NetCDF):
+    '''Mixin class for accessing netCDF groups.
+    
+    Classes which inherit from this class must also inherit from
+    `NetCDFVariable`
+
+    .. versionadded:: 1.8.6
+
+    '''
+    def nc_groups(self):
+        '''TODO Return the netCDF variable name.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: TODO
+
+    :Returns:
+
+        `tuple`
+            TODO The netCDF variable name. If unset then *default* is
+            returned, if provided.
+
+    **Examples:**
+
+TODO
+
+        '''
+        ncvar = self.nc_get_variable(None)
+        if ncvar is None:
+            return ()
+
+        return tuple(ncvar.split('/')[1:-1])
+        
+class NetCDFGroupAttributes(NetCDF):
+    '''Mixin class for accessing netCDF group attributes.
+    
+    .. versionadded:: 1.8.6
+
+    '''
+    def nc_group_attributes(self, values=False):
+        '''Return the selection of properties to be written as netCDF4 group
+    attributes.
+
+TODO
+    When multiple field constructs are being written to the same file,
+    it is only possible to create a netCDF global attribute from a
+    property that has identical values for each field construct. If
+    any field construct's property has a different value then the
+    property will not be written as a netCDF global attribute, even if
+    it has been selected as such, but will appear instead as
+    attributes on the netCDF data variables corresponding to each
+    field construct.
+
+    The standard description-of-file-contents properties are always
+    written as netCDF global attributes, if possible, so selecting
+    them is optional.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `write`, `nc_clear_global_attributes`,
+                 `nc_set_global_attribute`, `nc_set_global_attributes`
+
+    :Parameters:
+
+        values: `bool`, optional
+            Return the value (rather than `None`) for any global
+            attribute that has, by definition, the same value as a
+            construct property.
+
+            .. versionadded:: 1.8.2
+
+    :Returns:
+
+        `dict`
+            The selection of properties requested for writting to
+            netCDF global attributes.
+
+    **Examples:**
+
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': None}
+    >>> f.nc_set_global_attribute('foo')
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': None, 'foo': None}
+    >>> f.nc_set_global_attribute('comment', 'global comment')
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
+    >>> f.nc_global_attributes(values=True)
+    {'Conventions': 'CF-1.8', 'comment': 'global_comment', 'foo': 'bar'}
+    >>> f.nc_clear_global_attributes()
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
+    >>> f.nc_global_attributes()
+    {}
+
+        '''
+        out = self._get_component('netcdf').get('group_attributes')
+
+        if out is None:
+            return {}
+
+        out = out.copy()
+
+        if values:
+            # Replace a None value with the value from the variable
+            # properties
+            properties = self.properties()
+            if properties:
+                for prop, value in out.items():
+                    if value is None and prop in properties:
+                        out[prop] = properties[prop]
+        # --- End: if
+
+        return out
+
+    def nc_clear_group_attributes(self):
+        '''Remove the selection of properties to be written as netCDF4 group
+    attributes.
+
+TODO
+    When multiple field constructs are being written to the same file,
+    it is only possible to create a netCDF global attribute from a
+    property that has identical values for each field construct. If
+    any field construct's property has a different value then the
+    property will not be written as a netCDF global attribute, even if
+    it has been selected as such, but will appear instead as
+    attributes on the netCDF data variables corresponding to each
+    field construct.
+
+    The standard description-of-file-contents properties are always
+    written as netCDF global attributes, if possible, so selecting
+    them is optional.
+
+    .. versionadded:: 1.7.0
+
+    .. seealso:: `write`, `nc_global_attributes`,
+                 `nc_set_global_attribute`, `nc_set_global_attributes`
+
+    :Returns:
+
+        `dict`
+            The removed selection of properties requested for writting
+            to netCDF global attributes.
+
+    **Examples:**
+
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': None}
+    >>> f.nc_set_global_attribute('foo')
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': None, 'foo': None}
+    >>> f.nc_set_global_attribute('comment', 'global comment')
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
+    >>> f.nc_clear_global_attributes()
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
+    >>> f.nc_global_attributes()
+    {}
+
+        '''
+        out = self._get_component('netcdf').get('group_attributes')
+
+        if out is None:
+            out = {}
+
+        self._get_component('netcdf')['group_attributes'] = {}
+
+        return out
+
+    def nc_set_group_attribute(self, prop, value=None):
+        '''Select a property to be written as a netCDF4 group attribute.
+
+TODO
+    When multiple field constructs are being written to the same file,
+    it is only possible to create a netCDF global attribute from a
+    property that has identical values for each field construct. If
+    any field construct's property has a different value then the
+    property will not be written as a netCDF global attribute, even if
+    it has been selected as such, but will appear instead as
+    attributes on the netCDF data variables corresponding to each
+    field construct.
+
+    The standard description-of-file-contents properties are always
+    written as netCDF global attributes, if possible, so selecting
+    them is optional.
+
+    .. versionadded:: 1.7.0
+
+    .. seealso:: `write`, `nc_global_attributes`,
+                 `nc_clear_global_attributes`,
+                 `nc_set_global_attributes`
+
+    :Parameters:
+
+        prop: `str`
+            Select the property to be written (if possible) as a
+            netCDF global attribute.
+
+        value: optional
+            The value of the netCDF global attribute, which will be
+            created (if possible) in addition to the property as
+            written to a netCDF data variable. If unset (or `None`)
+            then this acts as an instruction to write the property (if
+            possible) to a netCDF global attribute instead of to a
+            netCDF data variable.
+
+    :Returns:
+
+        `None`
+
+    **Examples:**
+
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': None}
+    >>> f.nc_set_global_attribute('foo')
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': None, 'foo': None}
+    >>> f.nc_set_global_attribute('comment', 'global comment')
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
+    >>> f.nc_clear_global_attributes()
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
+    >>> f.nc_global_attributes()
+    {}
+
+        '''
+        out = self._get_component('netcdf').get('group_attributes')
+
+        if out is None:
+            out = {}
+
+        out[prop] = value
+
+        self._get_component('netcdf')['group_attributes'] = out
+
+    def nc_set_group_attributes(self, properties, copy=True):
+        '''Set properties to be written as netCDF4 group attributes.
+
+TODO
+
+    When multiple field constructs are being written to the same file,
+    it is only possible to create a netCDF global attribute from a
+    property that has identical values for each field construct. If
+    any field construct's property has a different value then the
+    property will not be written as a netCDF global attribute, even if
+    it has been selected as such, but will appear instead as
+    attributes on the netCDF data variables corresponding to each
+    field construct.
+
+    The standard description-of-file-contents properties are always
+    written as netCDF global attributes, if possible, so selecting
+    them is optional.
+
+    .. versionadded:: 1.7.10
+
+    .. seealso:: `write`, `nc_clear_global_attributes`,
+                 `nc_global_attributes`, `nc_set_global_attribute`
+
+    :Parameters:
+
+        properties: `dict`
+            Set the properties be written as a netCDF global attribute
+            from the dictionary supplied. The value of a netCDF global
+            attribute, which will be created (if possible) in addition
+            to the property as written to a netCDF data variable. If a
+            value of `None` is used then this acts as an instruction
+            to write the property (if possible) to a netCDF global
+            attribute instead of to a netCDF data variable.
+
+            *Parameter example:*
+              ``properties={'Conventions': None, 'project': 'research'}``
+
+        copy: `bool`, optional
+            If False then any property values provided by the
+            *properties* parameter are not copied before insertion. By
+            default they are deep copied.
+
+    :Returns:
+
+        `None`
+
+    **Examples:**
+
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': None}
+    >>> f.nc_set_global_attributes({})
+    >>> f.nc_set_global_attributes({'foo': None})
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': None, 'foo': None}
+    >>> f.nc_set_global_attributes('comment', 'global comment')
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': 'global_comment', 'foo': None}
+    >>> f.nc_set_global_attributes('foo', 'bar')
+    >>> f.nc_global_attributes()
+    {'Conventions': None, 'comment': 'global_comment', 'foo': 'bar'}
+
+        '''
+        if copy:
+            properties = deepcopy(properties)
+        else:
+            properties = properties.copy()
+
+        out = self._get_component('netcdf').get('group_attributes')
+        if out is None:
+            out = {}
+
+        out.update(properties)
+
+        self._get_component('netcdf')['group_attributes'] = out
 
 # --- End: class
 
@@ -876,7 +1183,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
         '''
         raise DeprecationError(
-            "Field.nc_unlimited_dimensions was deprecated at v1.7.4 "
+            "Field.nc_unlimited_dimensions was deprecated at version 1.7.4 "
             "and is no longer available. Use DomainAxis.nc_is_unlimited "
             "instead")
 
@@ -932,9 +1239,9 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
         '''
         raise DeprecationError(
-            "Field.nc_set_unlimited_dimensions was deprecated at v1.7.4 "
-            "and is no longer available. Use DomainAxis.nc_set_unlimited "
-            "instead")
+            "Field.nc_set_unlimited_dimensions was deprecated at version "
+            "1.7.4 and is no longer available. "
+            "Use DomainAxis.nc_set_unlimited instead")
 
         out = self._get_component('netcdf').get('unlimited_dimensions')
 
@@ -980,9 +1287,9 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
         '''
         raise DeprecationError(
-            "Field.nc_clear_unlimited_dimensions was deprecated at v1.7.4 "
-            "and is no longer available. Use DomainAxis.nc_set_unlimited "
-            "instead")
+            "Field.nc_clear_unlimited_dimensions was deprecated at version "
+            "1.7.4 and is no longer available. "
+            "Use DomainAxis.nc_set_unlimited instead.")
 
         out = self._get_component('netcdf').get('unlimited_dimensions')
 
@@ -994,7 +1301,6 @@ class NetCDFUnlimitedDimensions(NetCDF):
         self._get_component('netcdf')['unlimited_dimensions'] = ()
 
         return out
-
 
 # --- End: class
 
@@ -1058,8 +1364,8 @@ class NetCDFExternal(NetCDF):
         '''
         self._get_component('netcdf')['external'] = bool(external)
 
-
 # --- End: class
+
 
 class NetCDFGeometry(NetCDF):
     '''Mixin class for accessing the netCDF geometry container variable
@@ -1514,7 +1820,6 @@ class NetCDFHDF5_exp(NetCDF):
 
         '''
         self._get_component('netcdf')['hdf5_chunksize'] = int(value)
-
 
 # --- End: class
 

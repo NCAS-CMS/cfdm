@@ -62,6 +62,26 @@ class NetCDFWrite(IOWrite):
             'comment',
         ))
 
+    def _create_netcdf_group(self, nc, group_name):
+        '''TODO
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        nc: `netCDF4._netCDF4.Group` or `netCDF4.Dataset`
+
+        group_name: `str`
+            The name of the group.
+
+    :Returns:
+
+        `netCDF4._netCDF4.Group`
+            The new group object.
+
+        '''
+        return nc.createGroup(group_name)
+        
     def _create_netcdf_variable_name(self, parent, default):
 #                                     force_use_existing=False):
         '''TODO
@@ -2181,9 +2201,10 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Write attributes to the netCDF variable
         # ------------------------------------------------------------
+        
         attributes = self._write_attributes(cfvar, ncvar, extra=extra,
                                             omit=omit)
-
+        
         # ------------------------------------------------------------
         # Write data to the netCDF variable
         #
@@ -3158,8 +3179,13 @@ class NetCDFWrite(IOWrite):
         # --- End: if
 
         # Create a new CF-netCDF data variable
-        self._write_netcdf_variable(ncvar, ncdimensions, f,
-                                    omit=g['global_attributes'],
+        omit = g['global_attributes']
+        groups = self.implementation.nc_get_group_attributes(f)
+        if groups:
+            omit = tuple(omit)
+            omit += tuple(groups)
+
+        self._write_netcdf_variable(ncvar, ncdimensions, f, omit=omit,
                                     extra=extra, data_variable=True)
 
         # Update the 'seen' dictionary, if required
@@ -3253,6 +3279,83 @@ class NetCDFWrite(IOWrite):
         '''
         return self.implementation.nc_is_unlimited_axis(field, axis)
 
+    def _write_group_attributes(self, fields):
+        '''Find the netCDF global properties from all of the input fields and
+    write them to the netCDF4.Dataset.
+
+    :Parameters:
+
+        fields : `list` of field constructs
+
+    :Returns:
+
+        `None`
+
+        '''
+        g = self.write_vars
+
+        group_attributes = {}
+        
+        # ------------------------------------------------------------
+        # Add properties that have been marked as group-level on each
+        # field
+        # ------------------------------------------------------------
+        xx = {}
+        for f in fields:
+            groups = self.implementation.nc_get_groups(f)
+            if groups:
+                xx.setdefault(groups, []).append(f)
+                group_attributes.setdefault(groups, {}).update(
+                    self.implementation.nc_get_group_attributes(f))
+        # --- End: for
+
+        for groups, fields in xx.items():
+            this_group_attributes = group_attributes[groups]
+            
+            f0 = fields[0]
+            for prop in tuple(this_group_attributes):
+                prop0 = self.implementation.get_property(f0, prop, None)
+                
+                if prop0 is None:
+                    this_group_attributes.pop(prop)
+                    continue
+                
+                if len(fields) > 1:
+                    for f in fields[1:]:
+                        prop1 = self.implementation.get_property(f, prop, None)
+                        if not self.implementation.equal_properties(
+                                prop0, prop1):
+                            this_group_attributes.pop(prop)
+                            break                        
+            # --- End: for
+            
+            # --------------------------------------------------------
+            # Write the group-level attributes to the file
+            # --------------------------------------------------------
+            # Replace None values with actual values
+            for attr, value in this_group_attributes.items():
+                if value is not None:
+                    continue
+
+                this_group_attributes[attr] = (
+                    self.implementation.get_property(f0, attr)
+                )
+
+            nc = g['netcdf']
+            for group in groups:
+                if group in nc.groups:
+                    nc = nc.groups[group]
+                else:
+                    nc = self._create_netcdf_group(nc, group)
+            # --- End: for
+            
+            nc.setncatts(this_group_attributes)
+            
+            group_attributes[groups] = tuple(this_group_attributes)
+        # --- End: for    
+        
+        g['group_attributes'] = group_attributes
+    
     def _write_global_attributes(self, fields):
         '''Find the netCDF global properties from all of the input fields and
     write them to the netCDF4.Dataset.
@@ -3292,7 +3395,7 @@ class NetCDFWrite(IOWrite):
                     global_attributes.add(attr)
                 else:
                     force_global.setdefault(attr, []).append(v)
-        # --- End: for
+        # --- End: forf
 
         if 'Conventions' not in force_global:
             for f in fields:
@@ -3658,6 +3761,8 @@ class NetCDFWrite(IOWrite):
             'global_attributes'  : set(),
             'file_descriptors'   : {},
 
+            'group_attributes' : {},
+
             'bounds': {},
             # NetCDF compression/endian
             'netcdf_compression': {},
@@ -3842,6 +3947,11 @@ class NetCDFWrite(IOWrite):
         # is used in the _write_field function.
         # ------------------------------------------------------------
         self._write_global_attributes(fields)
+
+        # ------------------------------------------------------------
+        # Write grouo-level properties to the file first.
+        # ------------------------------------------------------------
+        self._write_group_attributes(fields)
 
         if external is not None:
             if g['output_version'] < g['CF-1.7']:

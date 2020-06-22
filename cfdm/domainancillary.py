@@ -5,6 +5,7 @@ from . import core
 
 
 class DomainAncillary(mixin.NetCDFVariable,
+                      mixin.NetCDFGroups,
                       mixin.PropertiesDataBounds,
                       core.DomainAncillary):
     '''A domain ancillary construct of the CF data model.

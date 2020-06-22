@@ -6,6 +6,7 @@ from . import core
 
 
 class DimensionCoordinate(mixin.NetCDFVariable,
+                          mixin.NetCDFGroups,
                           mixin.Coordinate,
                           core.DimensionCoordinate):
     '''A dimension coordinate construct of the CF data model.

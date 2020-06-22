@@ -26,6 +26,7 @@ from .. import IORead
 
 from . import constants
 
+import netcdf_flattener
 
 _cached_temporary_files = {}
 
@@ -266,11 +267,14 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
-        if g['CF>=1.8'] and nc.groups:
-            tmp = tempfile.NamedTemporaryFile(mode='wb', dir=tempfile.gettempdir(),
-                                              prefix='cfdm_', suffix='.nc')
-            nc = netCDF4.Dataset(tmp, 'w', diskless=True, persist=False)
-            netcdf_flatter.flatten(nc, flat_nc)
+        if nc.groups:
+            tmp = tempfile.NamedTemporaryFile(
+                mode='wb',
+                dir=tempfile.gettempdir(),
+                prefix='cfdm_', suffix='.nc')
+
+            flat_nc = netCDF4.Dataset(tmp, 'w', diskless=True, persist=False)
+            netcdf_flattener.flatten(nc, flat_nc)
 
             nc.close()
             nc = flat_nc
@@ -729,7 +733,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Find the CF version for the file
         # ------------------------------------------------------------
-        Conventions =  g['global_attributes'].get('Conventions', '')
+        Conventions = g['global_attributes'].get('Conventions', '')
         
         all_conventions = re.split(',', Conventions)
         if all_conventions[0] == Conventions:
@@ -758,6 +762,10 @@ class NetCDFRead(IORead):
         for vn in ('1.6', '1.7', '1.8', '1.9'):
             g['CF>='+vn] = (g['file_version'] >= g['version'][vn])
 
+#        # Can't deal with groups before CF-1.8
+#        if g['has_groups'] and not g['CF>=1.8']:
+#            g['has_groups'] = False
+            
         # ------------------------------------------------------------
         # Create a dictionary keyed by netCDF variable names where
         # each key's value is a dictionary of that variable's netCDF
@@ -767,11 +775,124 @@ class NetCDFRead(IORead):
         variable_dimensions = {}
         variable_dataset    = {}
         variable_filename   = {}
-        variable_group      = {}
-        variable_basename   = {}
-        variables           = {}        
+        variables           = {}
+        variable_group = {}
+        variable_group_attributes = {}
+        variable_basename = {}
+
+        # ------------------------------------------------------------
+        # For grouped files (i.e. files with groups other than the
+        # root group) map each flattened variable name to its absolute
+        # path (CF>=1.8).
+        # ------------------------------------------------------------
+        has_groups = g['has_groups']
+        if has_groups:
+            flattener_mapping = {'variables': {},
+                                 'dimensions': {},
+                                 'attributes': {},
+            }
+            
+            flattener_name_mapping_variables = getattr(
+                nc, 'flattener_name_mapping_variables', None)
+            if flattener_name_mapping_variables is not None:
+                flattener_mapping['variables'] = dict(
+                    tuple(x.split(': '))
+                    for x in flattener_name_mapping_variables
+                )
+            
+            flattener_name_mapping_dimensions = getattr(
+                nc, 'flattener_name_mapping_dimensions', None)
+            if flattener_name_mapping_variables is not None:
+                flattener_mapping['dimensions'] = dict(
+                    tuple(x.split(': '))
+                    for x in flattener_name_mapping_dimensions
+                )
+            
+            flattener_name_mapping_attributes = getattr(
+                nc, 'flattener_name_mapping_attributes', None)
+            if flattener_name_mapping_attributes is not None:
+                flattener_mapping['attributes'] = dict(
+                    tuple(x.split(': '))
+                    for x in flattener_name_mapping_attributes
+                )
+                
+                # Remove group attributes from the global attributes,
+                # and vice versa.
+                for flat_attr in flattener_mapping['attributes'].copy():
+                    attr = flattener_mapping['attributes'].pop(flat_attr)
+                        
+                    x = attr.split('/')
+                    groups = x[1:-1]
+                    
+                    if groups:
+                        g['global_attributes'].pop(flat_attr)
+
+                        group_attr = x[-1]
+                        flattener_mapping['attributes'].setdefault(
+                            tuple(groups), {}
+                        )[group_attr] = nc.getncattr(flat_attr)
+            # --- End: if
+    
+            # Remove flattener attributes from the global attributes
+            for attr in ('flattener_name_mapping_variables',
+                         'flattener_name_mapping_dimensions',
+                         'flattener_name_mapping_attributes'):
+                g['global_attributes'].pop(attr, None)
+        # --- End: if
+
+        print('flattener_mapping=',flattener_mapping)
+        print('GLOABL ATTR=',g['global_attributes'])
+        
         for ncvar in nc.variables:
+            ncvar_basename = ncvar
+            groups = None
+            group_attributes = {}
+            
             variable = nc.variables[ncvar]
+
+            # --------------------------------------------------------
+            # Specify the group structure for each variable (CF>=1.8)
+            # TODO
+            # If the file only has the root group then this dictionary
+            # will be empty. Variables in the root group when there
+            # are sub-groups will have dictionary values of None.
+            # --------------------------------------------------------
+            if has_groups:
+                # Replace the flattened variable name with its
+                # absolute path.
+                ncvar_flat = ncvar
+                ncvar = flattener_mapping['variables'][ncvar]
+                
+                groups = ncvar.split('/')[1:-1]
+                
+                if groups:
+                    # Remove the group structure that was prepended to
+                    # the netCDF variable name by the netCDF
+                    # flattener. Note that the flattener uses # (hash)
+                    # as the groups delimiter in its modified variable
+                    # names.
+                    ncvar_basename = re.sub(
+                        '^{}#'.format('#'.join(groups)),
+                        '', ncvar_flat
+                    )
+                            
+                    # ------------------------------------------------
+                    # Group attributes for sub-groups of the root
+                    # group. Note that, currently, sub-group
+                    # attributes superced parent group attirbutes
+                    # ------------------------------------------------
+                    group_attributes = {}
+                    for i in range(1, len(groups)+1):
+                       group_attributes.update(
+                           flattener_mapping['attributes'][tuple(groups[:i])]
+                       )
+                else:                
+                    groups = None
+
+                    # Remove the leading / from the absolute netCDF
+                    # variable path
+                    ncvar = ncvar[1:]
+            # --- End: if
 
             variable_attributes[ncvar] = {}
             for attr in map(str, variable.ncattrs()):
@@ -785,7 +906,8 @@ class NetCDFRead(IORead):
                             )
                         except UnicodeEncodeError:
                             variable_attributes[ncvar][attr] = (
-                                variable_attributes[ncvar][attr].encode(errors='ignore')
+                                variable_attributes[ncvar][attr].encode(
+                                    errors='ignore')
                             )
                 except UnicodeDecodeError:
                     pass
@@ -796,36 +918,10 @@ class NetCDFRead(IORead):
             variable_filename[ncvar]   = g['filename']
             variables[ncvar]           = variable
 
-        # ------------------------------------------------------------
-        # Specify the group structure for each variable (CF>=1.8)
-        #
-        # If the file only has the root group then this dictionary
-        # will be empty. Variables in the root group when there are
-        # sub-groups will have dictionary values of None.
-        # ------------------------------------------------------------
-        if g['has_groups']:
-            flattened_mapping = getattr(
-                nc, 'flattener_name_mapping_variables', None)
-            if flattened_mapping is None:
-                for ncvar_groups in flattened_mapping:
-                    ncvar, groups = ncvar_groups.split(': ')
-                    groups = groups.split('/')[1:-1]
-
-                    if groups:
-                        # Remove the group structure that was
-                        # prepended to the netCDF variable name by the
-                        # netCDF flattener. Note that the flattener
-                        # uses # (hash) as the groups delimiter in its
-                        # modified variable names.
-                        ncvar = re.sub('^{}#'.format('#'.join(groups)),
-                                       '', ncvar)
-                    else:
-                        # Replace an empty groups list with None
-                        groups = None
-
-                    variable_basename[ncvar] = ncvar
-                    variable_group[ncvar] = groups        
-        # --- End: if
+            variable_basename[ncvar] = ncvar_basename
+            variable_group[ncvar] = groups
+            variable_group_attributes[ncvar] = group_attributes            
+        # --- End: for
             
         # The netCDF attributes for each variable
         #
@@ -868,6 +964,9 @@ class NetCDFRead(IORead):
         #       'forecasts#model#2': ['forecasts', 'model']}  # var=2
         g['variable_group'] = variable_group
         
+        # TODO
+        g['variable_group_attributes'] = variable_group_attributes
+
         # The basename of each variable in a group (CF>=1.8)
         #
         # E.g. {'modelA': 'modelA',
@@ -2308,9 +2407,18 @@ class NetCDFRead(IORead):
                 field_ncvar, ', '.join(dimensions))
         )  # pragma: no cover
 
-        # Combine the global properties with the data variable
-        # properties, giving precedence to those of the data variable.
+        # ------------------------------------------------------------
+        # Combine the global and group properties with the data
+        # variable properties, giving precedence to those of the data
+        # variable and then those of any groups.
+        # ------------------------------------------------------------
         field_properties = g['global_attributes'].copy()
+
+        if g['has_groups']:
+            field_properties.update(
+                g['variable_group_attributes'][field_ncvar]
+            )
+            
         field_properties.update(g['variable_attributes'][field_ncvar])
 
         logger.detail(
@@ -2360,13 +2468,28 @@ class NetCDFRead(IORead):
         # Store the field's netCDF variable name
         self.implementation.nc_set_variable(f, field_ncvar)
 
+        # Store the field's netCDF global attributes
         x = g['global_attributes'].copy()
         for k, v in g['global_attributes'].items():
-            if k not in g['variable_attributes'][field_ncvar]:
+            if (
+                    k not in g['variable_attributes'][field_ncvar]
+                    and k not in g['variable_group_attributes'][field_ncvar]
+            ):
+                    
                 x[k] = None
         # --- End: for
 
         self.implementation.nc_set_global_attributes(f, x)
+
+        # Store the field's netCDF group attributes
+        if g['has_groups']:
+            x = g['variable_group_attributes'][field_ncvar].copy()
+            for k, v in g['variable_group_attributes'][field_ncvar].items():
+                if k not in g['variable_attributes'][field_ncvar]:
+                    x[k] = None
+            # --- End: for
+            
+            self.implementation.nc_set_group_attributes(f, x)
 
         # ------------------------------------------------------------
         # Remove the field construct's "geometry" property, saving its
@@ -3407,7 +3530,7 @@ class NetCDFRead(IORead):
 #                                            geometry_bounds=(geometry is not None))
 
 #                                            non_compressed_dimensions=nc_dimensions=bounds_dimensions)
-#ppp
+#
 #            else:
 #                bounds_data = self._create_data(ncvar, bounds)
 #                self.implementation.set_data_units(bounds_data, properties.get('units'))
@@ -3941,7 +4064,7 @@ class NetCDFRead(IORead):
             # This variable is in the root group
             group = None
 
-TODO: think using e.g. '/forecasts/model1' ahas the value for nc_set_vairbale. What about nc_set_dimension?
+#TODO: think using e.g. '/forecasts/model1' ahas the value for nc_set_vairbale. What about nc_set_dimension?
             
         return self.implementation.initialise_NetCDFArray(
             filename=filename,

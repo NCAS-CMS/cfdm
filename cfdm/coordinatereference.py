@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class CoordinateReference(mixin.NetCDFVariable,
+                          mixin.NetCDFGroups,
                           mixin.Container,
                           core.CoordinateReference):
     '''A coordinate reference construct of the CF data model.

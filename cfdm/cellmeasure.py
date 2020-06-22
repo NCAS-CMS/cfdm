@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 class CellMeasure(mixin.NetCDFVariable,
                   mixin.NetCDFExternal,
+                  mixin.NetCDFGroups,
                   mixin.PropertiesData,
                   core.CellMeasure):
     '''A cell measure construct of the CF data model.

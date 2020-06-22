@@ -820,6 +820,38 @@ class CFDMImplementation(Implementation):
         '''
         return field.nc_get_geometry_variable(default)
 
+    def nc_get_group_attributes(self, field):
+        '''Return the netCDF sub-group attribtues for the field construct.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        field: field construct
+
+    :Returns:
+
+        `dict`
+
+        '''
+        return field.nc_group_attributes()
+
+    def nc_get_groups(self, field):
+        '''Return the netCDF sub-groups for the field construct.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        field: field construct
+
+    :Returns:
+
+        `tuple`
+
+        '''
+        return field.nc_groups()
+
     def nc_get_hdf5_chunksizes(self, data):
         '''Return the HDF5 chunksizes for the data.
 
@@ -929,6 +961,25 @@ class CFDMImplementation(Implementation):
         '''
         for attr, value in attributes.items():
             field.nc_set_global_attribute(attr, value)
+
+    def nc_set_group_attributes(self, field, attributes):
+        '''Set netCDF group attributes.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        field: field construct
+
+        attributes: `dict`
+
+    :Returns:
+        
+        `None`
+
+        '''
+        for attr, value in attributes.items():
+            field.nc_set_group_attribute(attr, value)
 
     def equal_constructs(self, construct0, construct1,
                          ignore_type=False):
@@ -1628,8 +1679,8 @@ class CFDMImplementation(Implementation):
         return cls()
 
     def initialise_NetCDFArray(self, filename=None, ncvar=None,
-                               dtype=None, ndim=None, shape=None,
-                               size=None, mask=True):
+                               group=None, dtype=None, ndim=None,
+                               shape=None, size=None, mask=True):
         '''Return a netCDF array instance.
 
     :Parameters:
@@ -1637,6 +1688,8 @@ class CFDMImplementation(Implementation):
         filename: `str`
 
         ncvar: `str`
+
+        group: `None` or sequence of str`
 
         dytpe: `numpy.dtype`
 
@@ -1654,8 +1707,9 @@ class CFDMImplementation(Implementation):
 
         '''
         cls = self.get_class('NetCDFArray')
-        return cls(filename=filename, ncvar=ncvar, dtype=dtype,
-                   ndim=ndim, shape=shape, size=size, mask=mask)
+        return cls(filename=filename, ncvar=ncvar, group=group,
+                   dtype=dtype, ndim=ndim, shape=shape, size=size,
+                   mask=mask)
 
     def initialise_NodeCount(self):
         '''Return a node count properties variable.

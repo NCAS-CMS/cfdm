@@ -6,6 +6,7 @@ from . import core
 
 class InteriorRing(mixin.NetCDFDimension,
                    mixin.NetCDFVariable,
+                   mixin.NetCDFGroups,
                    mixin.PropertiesData,
                    core.InteriorRing):
     '''An interior ring array with properties.

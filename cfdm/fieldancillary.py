@@ -5,6 +5,7 @@ from . import core
 
 
 class FieldAncillary(mixin.NetCDFVariable,
+                     mixin.NetCDFGroups,
                      mixin.PropertiesData,
                      core.FieldAncillary):
     '''A field ancillary construct of the CF data model.

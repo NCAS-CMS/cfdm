@@ -5,6 +5,7 @@ from . import core
 
 
 class NodeCountProperties(mixin.NetCDFVariable,
+                          mixin.NetCDFGroups,
                           mixin.Properties,
                           core.abstract.Properties):
     '''Properties for a netCDF node count variable.

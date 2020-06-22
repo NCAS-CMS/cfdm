@@ -7,6 +7,7 @@ from . import core
 class Count(mixin.NetCDFVariable,
             mixin.NetCDFDimension,
             mixin.NetCDFSampleDimension,
+            mixin.NetCDFGroups,
             mixin.PropertiesData,
             core.abstract.PropertiesData):
     '''A count variable required to uncompress a ragged array.
