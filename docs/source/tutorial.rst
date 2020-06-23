@@ -123,7 +123,9 @@ The following file types can be read:
 
 Note that when reading netCDF4 files that contain :ref:`hierachical
 groups <Hierarchical-groups>`, the group structure is flattened prior
-to the creation of field constructs.
+to the creation of field constructs, but the groups structure is
+preseved so ot may be resued if the field constructs are written to
+back to disk.
        
 For example, to read the file ``file.nc`` (found in the :ref:`sample
 datasets <Sample-datasets>`), which contains two field constructs:

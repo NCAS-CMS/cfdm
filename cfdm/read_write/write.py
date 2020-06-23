@@ -11,7 +11,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           file_descriptors=None, external=None, Conventions=None,
           datatype=None, least_significant_digit=None,
           endian='native', compress=0, fletcher32=False, shuffle=True,
-          string=True, verbose=None, warn_valid=True,
+          string=True, verbose=None, warn_valid=True, group=True,
           _implementation=_implementation):
     '''Write field constructs to a netCDF file.
 
@@ -383,6 +383,16 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
             .. versionadded:: 1.8.3
 
+        group: `bool`, optional
+    
+            If False then create a "flat" netCDF file, i.e. one with
+            only the root group, regardless of any group structure
+            specified by the field constructs. By default 
+
+TODO    
+
+            .. versionadded:: 1.8.6
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
             and metadata constructs and their components.
@@ -418,4 +428,5 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
                      string=string, verbose=verbose,
-                     warn_valid=warn_valid, extra_write_vars=None)
+                     warn_valid=warn_valid, group=group,
+                     extra_write_vars=None)

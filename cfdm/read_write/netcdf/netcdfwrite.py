@@ -115,7 +115,10 @@ class NetCDFWrite(IOWrite):
                                                          default)
             except AttributeError:
                 ncvar = default
-        # --- End: if
+        elif not self.write_vars['group']:
+            # A flat file has been requested, so strip off any group
+            # structure from the name.
+            ncvar = self._remove_group_structure(ncvar)
 
         return self._netcdf_name(ncvar)
 
@@ -1137,10 +1140,14 @@ class NetCDFWrite(IOWrite):
 #        ncdim = self._netcdf_name('bounds{0}'.format(size),
 #                                  dimsize=size, role='bounds')
 
-        ncdim = self._netcdf_name(
-            self.implementation.nc_get_dimension(bounds,
-                                                 'bounds{0}'.format(size)),
-            dimsize=size, role='bounds')
+        ncdim = self.implementation.nc_get_dimension(bounds,
+                                                     'bounds{0}'.format(size))
+        if not g['group']:
+            # A flat file has been requested, so strip off any group
+            # structure from the name.
+            ncdim = self._remove_group_structure(ncdim)  
+
+        ncdim = self._netcdf_name(ncdim, dimsize=size, role='bounds')
 
         # Check if this bounds variable has not been previously
         # created.
@@ -1169,6 +1176,11 @@ class NetCDFWrite(IOWrite):
 
             ncvar = self.implementation.nc_get_variable(bounds,
                                                         default=default)
+            if not self.write_vars['group']:
+                # A flat file has been requested, so strip off any
+                # group structure from the name.
+                ncvar = self._remove_group_structure(ncvar)
+                
             ncvar = self._netcdf_name(ncvar)
 
             # Note that, in a field, bounds always have equal units to
@@ -1299,6 +1311,11 @@ class NetCDFWrite(IOWrite):
 
             ncvar = self.implementation.nc_get_variable(bounds,
                                                         default=default)
+            if not self.write_vars['group']:
+                # A flat file has been requested, so strip off any
+                # group structure from the name.
+                ncvar = self._remove_group_structure(ncvar)
+
             ncvar = self._netcdf_name(ncvar)
 
             # Create the netCDF node coordinates variable
@@ -1377,6 +1394,11 @@ class NetCDFWrite(IOWrite):
         if nc is not None:
             ncvar = self.implementation.nc_get_variable(nc,
                                                         default='node_count')
+            if not self.write_vars['group']:
+                # A flat file has been requested, so strip off any
+                # group structure from the name.
+                ncvar = self._remove_group_structure(ncvar)
+
             # Copy node count variable properties to the new count
             # variable
             properties = self.implementation.get_properties(nc)
@@ -1437,12 +1459,35 @@ class NetCDFWrite(IOWrite):
 
         if ncdim is not None:
             # Found a netCDF dimension
+            if not self.write_vars['group']:
+                # A flat file has been requested, so strip off any
+                # group structure from the name.
+                ncdim = self._remove_group_structure(ncdim)
+
             return ncdim
 
         # Return the default
         return default
 
+
+    def _remove_group_structure(self, name):
+        '''Strip off any group structure from the name.
+
+    .. versionaddedd:: 1.8.6
+
+    :Parameters:
+
+        name: `str`
+
+    :Returns:
+        
+        `str`
+
+        '''        
+        return name.split('/')[-1]
+    
     def _get_node_ncdimension(self, bounds, default=None):
+
         '''TODO
 
     .. versionadded:: 1.8.0
@@ -1455,6 +1500,11 @@ class NetCDFWrite(IOWrite):
         ncdim = self.implementation.nc_get_dimension(bounds, default=None)
         if ncdim is not None:
             # Found a netCDF dimension
+            if not self.write_vars['group']:
+                # A flat file has been requested, so strip off any
+                # group structure from the name.
+                ncdim = self._remove_group_structure(ncdim)
+                
             return ncdim
 
         # Retrun the default
@@ -1515,6 +1565,11 @@ class NetCDFWrite(IOWrite):
             ncvar = self.implementation.nc_get_variable(
                 pnc,
                 default='part_node_count')
+            if not self.write_vars['group']:
+                # A flat file has been requested, so strip off any
+                # group structure from the name.
+                ncvar = self._remove_group_structure(ncvar)
+
             # Copy part node count variable properties to the new
             # count variable
             properties = self.implementation.get_properties(pnc)
@@ -1593,6 +1648,11 @@ class NetCDFWrite(IOWrite):
 
         ncvar = self.implementation.nc_get_variable(interior_ring,
                                                     default='interior_ring')
+        if not self.write_vars['group']:
+            # A flat file has been requested, so strip off any group
+            # structure from the name.
+            ncvar = self._remove_group_structure(ncvar)
+
 
         size = self.implementation.get_data_size(interior_ring)
         if g['part_ncdim'] is not None:
@@ -2803,7 +2863,12 @@ class NetCDFWrite(IOWrite):
                             self.implementation.get_domain_axes(f)[axis]
                         )
                         ncdim = self.implementation.nc_get_dimension(
-                            domain_axis, 'dim')
+                            domain_axis, 'dim')                        
+                        if not g['group']:
+                            # A flat file has been requested, so strip
+                            # off any group structure from the name.
+                            ncdim = self._remove_group_structure(ncdim)
+                            
                         ncdim = self._netcdf_name(ncdim)
                         unlimited = self.implementation.nc_is_unlimited_axis(
                             f, axis)
@@ -2863,6 +2928,11 @@ class NetCDFWrite(IOWrite):
                 index = self.implementation.get_index(f)
                 index_ncdim = self.implementation.nc_get_dimension(
                     index, default='sample')
+                if not g['group']:
+                    # A flat file has been requested, so strip off any
+                    # group structure from the name.
+                    index_ncdim = self._remove_group_structure(index_ncdim)
+                            
                 sample_ncdim = self._write_index_variable(
                     f, index,
                     sample_dimension=index_ncdim,
@@ -2879,10 +2949,19 @@ class NetCDFWrite(IOWrite):
                 count = self.implementation.get_count(f)
                 count_ncdim = self.implementation.nc_get_dimension(
                     count, default='feature')
+                if not g['group']:
+                    # A flat file has been requested, so strip off any
+                    # group structure from the name.
+                    count_ncdim = self._remove_group_structure(count_ncdim)
+             
                 sample_ncdim = self._write_count_variable(
                     f, count,
                     ncdim=count_ncdim, create_ncdim=True)
-
+                if not g['group']:
+                    # A flat file has been requested, so strip off any
+                    # group structure from the name.
+                    smaple_ncdim = self._remove_group_structure(sample_ncdim)
+                            
                 index_ncdim = count_ncdim
                 index = self.implementation.get_index(f)
                 self._write_index_variable(
@@ -3178,13 +3257,19 @@ class NetCDFWrite(IOWrite):
                 extra['geometry'] = gc_ncvar
         # --- End: if
 
+        # ------------------------------------------------------------
         # Create a new CF-netCDF data variable
+        # ------------------------------------------------------------
+        # Omit any global attributes from the variable
         omit = g['global_attributes']
-        groups = self.implementation.nc_get_group_attributes(f)
-        if groups:
-            omit = tuple(omit)
-            omit += tuple(groups)
-
+        if g['group'] and self.implementation.nc_get_groups(f):
+            # Omit any group-level attributes from the variable
+            groups = self.implementation.nc_get_group_attributes(f)
+            if groups:
+                omit = tuple(omit)
+                omit += tuple(groups)
+        #--- End: if
+        
         self._write_netcdf_variable(ncvar, ncdimensions, f, omit=omit,
                                     extra=extra, data_variable=True)
 
@@ -3257,6 +3342,11 @@ class NetCDFWrite(IOWrite):
 
             ncvar = self.implementation.nc_get_variable(datum)
             if ncvar is not None:
+                if not self.write_vars['group']:
+                    # A flat file has been requested, so strip off any
+                    # group structure from the name.
+                    ncvar = self._remove_group_structure(ncvar)
+
                 self.implementation.nc_set_variable(new_grid_mapping, ncvar)
 
             g['grid_mapping_refs'].append(new_grid_mapping)
@@ -3576,8 +3666,8 @@ class NetCDFWrite(IOWrite):
               datatype=None, least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
               shuffle=True, scalar=True, string=True,
-              extra_write_vars=None, verbose=None,
-              warn_valid=True):
+              extra_write_vars=None, verbose=None, warn_valid=True,
+              group=True):
         '''Write fields to a netCDF file.
 
     NetCDF dimension and variable names will be taken from variables'
@@ -3713,6 +3803,11 @@ class NetCDFWrite(IOWrite):
 
             .. versionadded:: 1.8.3
 
+        group: `bool`, optional
+            TODO
+
+            .. versionadded:: 1.8.6
+
     :Returns:
 
         `None`
@@ -3761,6 +3856,7 @@ class NetCDFWrite(IOWrite):
             'global_attributes'  : set(),
             'file_descriptors'   : {},
 
+            'group': group,
             'group_attributes' : {},
 
             'bounds': {},
@@ -3831,6 +3927,11 @@ class NetCDFWrite(IOWrite):
                                 'NETCDF3_64BIT_OFFSET', 'NETCDF3_64BIT_DATA'):
             raise ValueError("Can't compress {} format file".format(fmt))
 
+        if group and fmt in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT',
+                             'NETCDF3_64BIT_OFFSET', 'NETCDF3_64BIT_DATA'):
+            # Can't write groups to a netCDF3 file
+            g['group'] = False
+            
         # ------------------------------------------------------------
         # Set up global/non-global attributes
         # ------------------------------------------------------------
@@ -3847,7 +3948,8 @@ class NetCDFWrite(IOWrite):
                     "Can't prevent the 'Conventions' property from being "
                     "a netCDF global variable: {0}".format(
                         variable_attributes))
-
+        # --- End: if
+        
         if global_attributes:
             if isinstance(global_attributes, basestring):
                 global_attributes = set((global_attributes,))
@@ -3951,7 +4053,8 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Write grouo-level properties to the file first.
         # ------------------------------------------------------------
-        self._write_group_attributes(fields)
+        if g['group']:
+            self._write_group_attributes(fields)
 
         if external is not None:
             if g['output_version'] < g['CF-1.7']:

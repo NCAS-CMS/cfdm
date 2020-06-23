@@ -840,8 +840,6 @@ class NetCDFRead(IORead):
                 g['global_attributes'].pop(attr, None)
         # --- End: if
 
-        print('flattener_mapping=',flattener_mapping)
-        print('GLOABL ATTR=',g['global_attributes'])
         
         for ncvar in nc.variables:
             ncvar_basename = ncvar
@@ -864,7 +862,7 @@ class NetCDFRead(IORead):
                 ncvar = flattener_mapping['variables'][ncvar]
                 
                 groups = ncvar.split('/')[1:-1]
-                
+                print ('#groups=', groups)
                 if groups:
                     # Remove the group structure that was prepended to
                     # the netCDF variable name by the netCDF
@@ -892,6 +890,8 @@ class NetCDFRead(IORead):
                     # Remove the leading / from the absolute netCDF
                     # variable path
                     ncvar = ncvar[1:]
+                    print (9999999, ncvar)
+                    flattener_mapping['variables'][ncvar] = ncvar
             # --- End: if
 
             variable_attributes[ncvar] = {}
@@ -922,7 +922,9 @@ class NetCDFRead(IORead):
             variable_group[ncvar] = groups
             variable_group_attributes[ncvar] = group_attributes            
         # --- End: for
-            
+        print('flattener_mapping=',flattener_mapping)
+        print('GLOABL ATTR=',g['global_attributes'])
+ 
         # The netCDF attributes for each variable
         #
         # E.g. {'grid_lon': {'standard_name': 'grid_longitude'}}
@@ -967,6 +969,9 @@ class NetCDFRead(IORead):
         # TODO
         g['variable_group_attributes'] = variable_group_attributes
 
+        # TODO
+        g['flattener_mapping'] = flattener_mapping
+        
         # The basename of each variable in a group (CF>=1.8)
         #
         # E.g. {'modelA': 'modelA',
@@ -2621,13 +2626,16 @@ class NetCDFRead(IORead):
         # the field
         # ----------------------------------------------------------------
         coordinates = self.implementation.del_property(f, 'coordinates', None)
-
+        print('coordinates =', coordinates)
         if coordinates is not None:
             parsed_coordinates = self._split_string_by_white_space(
                 field_ncvar,
                 coordinates)
             for ncvar in parsed_coordinates:
-
+                if g['has_groups']:
+                    ncvar = g['flattener_mapping']['variables'][ncvar]
+                
+                print ('ncvar=', ncvar)
                 # Skip dimension coordinates which are in the list
                 if ncvar in field_ncdimensions:
                     continue
@@ -2635,6 +2643,7 @@ class NetCDFRead(IORead):
                 cf_compliant = self._check_auxiliary_scalar_coordinate(
                     field_ncvar, ncvar, coordinates)
                 if not cf_compliant:
+                    print (999)
                     continue
 
                 # Set dimensions for this variable
