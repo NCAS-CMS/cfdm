@@ -144,6 +144,8 @@ The cfdm package requires:
 
 * `future <https://python-future.org/>`_, version 0.16.0 or newer.
 
+* `netcdf_flattener <https://pypi.org/project/netcdf_flattener/>`_, version 1.1.0 or newer.
+  
 ----
 
 .. _Code-repository:

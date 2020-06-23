@@ -104,7 +104,8 @@ NetCDF
    ~cfdm.Count.nc_del_dimension
    ~cfdm.Count.nc_get_dimension
    ~cfdm.Count.nc_has_dimension
-   ~cfdm.Count.nc_set_dimension 
+   ~cfdm.Count.nc_set_dimension
+   ~cfdm.Count.nc_groups
 
 Special
 -------

@@ -135,7 +135,8 @@ NetCDF
    ~cfdm.DimensionCoordinate.nc_del_variable
    ~cfdm.DimensionCoordinate.nc_get_variable
    ~cfdm.DimensionCoordinate.nc_has_variable
-   ~cfdm.DimensionCoordinate.nc_set_variable 
+   ~cfdm.DimensionCoordinate.nc_set_variable
+   ~cfdm.DimensionCoordinate.nc_groups
 
 Special
 -------

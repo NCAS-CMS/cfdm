@@ -26,7 +26,12 @@ from .. import IORead
 
 from . import constants
 
-import netcdf_flattener
+try:
+    import netcdf_flattener
+except ModuleNotFoundError:
+    _found_flattener = False
+else:
+    _found_flattener = True
 
 _cached_temporary_files = {}
 
@@ -236,6 +241,8 @@ class NetCDFRead(IORead):
     def file_close(self):
         '''Close the netCDF files that have been read.
 
+    Includes any external files.
+
     :Returns:
 
         `None`
@@ -244,6 +251,10 @@ class NetCDFRead(IORead):
         for nc in self.read_vars['datasets']:
             nc.close()
 
+        # Close temporary flattened files
+        for flat_file in self.read_vars['flat_files']:
+            flat_file.close()
+            
     def file_open(self, filename):
         '''Open the netCDf file for reading.
 
@@ -267,20 +278,34 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
+        g = self.read_vars
         if nc.groups:
-            tmp = tempfile.NamedTemporaryFile(
+            if not _found_flattener:
+                raise ModuleNotFoundError(
+                    "File {} contains hierarchical groups and "
+                    "can't be read without the netcdf_flattener package. "
+                    "See https://ncas-cms.github.io/cfdm/installation.html "
+                    "for details.".format(filename)
+                )
+            
+            flat_file = tempfile.NamedTemporaryFile(
                 mode='wb',
                 dir=tempfile.gettempdir(),
-                prefix='cfdm_', suffix='.nc')
+                prefix='cfdm_',
+                suffix='.nc',
+                delete=True)
+            
+            g['has_groups'] = True
+            g['flat_files'].append(flat_file)
 
-            flat_nc = netCDF4.Dataset(tmp, 'w', diskless=True, persist=False)
+            flat_nc = netCDF4.Dataset(flat_file, 'w', diskless=True,
+                                      persist=False)
+
             netcdf_flattener.flatten(nc, flat_nc)
 
             nc.close()
             nc = flat_nc
-
-            self.read_vars['has_groups'] = True
-                
+            
         return nc
 
     @classmethod
@@ -437,8 +462,8 @@ class NetCDFRead(IORead):
     @_manage_log_level_via_verbosity
     def read(self, filename, extra=None, default_version=None,
              external=None, extra_read_vars=None, _scan_only=False,
-             verbose=None, mask=True, warnings=True, warn_valid=False,
-             absolute_netCDF_names=True):
+             verbose=None, mask=True, warnings=True, warn_valid=False):
+#             absolute_netCDF_names=True):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
     location.
 
@@ -528,29 +553,29 @@ class NetCDFRead(IORead):
 
             .. versionadded:: 1.8.3
 
-        absolute_netCDF_names: `bool`, optional
-            If False then assign relative netCDF names the returned
-            field constructs and their components. By default,
-            absolute names are used. 
-
-            This parameter is ignored unless the input file is a
-            netCDF4 dataset with a hierarchical group structure,
-            i.e. one with at least one group within the root group.
-
-            *Parameter example:*
-              Suppose that a netCDF4 file contains two CF-netCDF data
-              variables, one called 'pr' in the root group and a one
-              called 'tas' inside a group called 'forecasts'. By
-              default the netCDF variable names assigned to the
-              resulting field constructs would be ``'pr'`` and
-              ``'/forecasts/tas'`` respectively (note that the leading
-              '/' is omitted if the variable or dimension is in the
-              root group). If *absolute_netCDF_names* is False then
-              the netCDF variable names assigned to the field
-              constructs would instead be ``'pr'`` and ``'tas'``
-              respectively.
-
-            .. versionadded:: 1.8.6
+#        absolute_netCDF_names: `bool`, optional
+#            If False then assign relative netCDF names the returned
+#            field constructs and their components. By default,
+#            absolute names are used. 
+#
+#            This parameter is ignored unless the input file is a
+#            netCDF4 dataset with a hierarchical group structure,
+#            i.e. one with at least one group within the root group.
+#
+#            *Parameter example:*
+#              Suppose that a netCDF4 file contains two CF-netCDF data
+#              variables, one called 'pr' in the root group and a one
+#              called 'tas' inside a group called 'forecasts'. By
+#              default the netCDF variable names assigned to the
+#              resulting field constructs would be ``'pr'`` and
+#              ``'/forecasts/tas'`` respectively (note that the leading
+#              '/' is omitted if the variable or dimension is in the
+#              root group). If *absolute_netCDF_names* is False then
+#              the netCDF variable names assigned to the field
+#              constructs would instead be ``'pr'`` and ``'tas'``
+#              respectively.
+#
+#            .. versionadded:: 1.8.6
 
     :Returns:
 
@@ -631,8 +656,11 @@ class NetCDFRead(IORead):
             'warn_valid': bool(warn_valid),
             'valid_properties': set(('valid_min', 'valid_max', 'valid_range')),
 
-            # Assume that the does not have a group structure
-            'has_groups': False, 
+            # Assume a priori that the dataset does not have a group
+            # structure
+            'has_groups': False,
+            # Keep a list of flattened file names
+            'flat_files': [],
         }
 
         g = self.read_vars
@@ -839,7 +867,6 @@ class NetCDFRead(IORead):
                          'flattener_name_mapping_attributes'):
                 g['global_attributes'].pop(attr, None)
         # --- End: if
-
         
         for ncvar in nc.variables:
             ncvar_basename = ncvar
@@ -862,22 +889,21 @@ class NetCDFRead(IORead):
                 ncvar = flattener_mapping['variables'][ncvar]
                 
                 groups = ncvar.split('/')[1:-1]
-                print ('#groups=', groups)
                 if groups:
-                    # Remove the group structure that was prepended to
-                    # the netCDF variable name by the netCDF
-                    # flattener. Note that the flattener uses # (hash)
-                    # as the groups delimiter in its modified variable
-                    # names.
+                    # This variable is in a group. Remove the group
+                    # structure that was prepended to the netCDF
+                    # variable name by the netCDF flattener. Note that
+                    # the flattener uses # (hash) as the groups
+                    # delimiter in its modified variable names.
                     ncvar_basename = re.sub(
                         '^{}#'.format('#'.join(groups)),
                         '', ncvar_flat
                     )
                             
                     # ------------------------------------------------
-                    # Group attributes for sub-groups of the root
-                    # group. Note that, currently, sub-group
-                    # attributes superced parent group attirbutes
+                    # Group attributes. Note that, currently,
+                    # sub-group attributes supercede all parent group
+                    # attributes (but not global attributes).
                     # ------------------------------------------------
                     group_attributes = {}
                     for i in range(1, len(groups)+1):
@@ -886,11 +912,10 @@ class NetCDFRead(IORead):
                        )
                 else:                
                     groups = None
-
+            
                     # Remove the leading / from the absolute netCDF
                     # variable path
                     ncvar = ncvar[1:]
-                    print (9999999, ncvar)
                     flattener_mapping['variables'][ncvar] = ncvar
             # --- End: if
 
@@ -914,14 +939,15 @@ class NetCDFRead(IORead):
             # --- End: for
 
             variable_dimensions[ncvar] = tuple(variable.dimensions)
-            variable_dataset[ncvar]    = nc
-            variable_filename[ncvar]   = g['filename']
-            variables[ncvar]           = variable
+            variable_dataset[ncvar] = nc
+            variable_filename[ncvar] = g['filename']
+            variables[ncvar] = variable
 
             variable_basename[ncvar] = ncvar_basename
             variable_group[ncvar] = groups
             variable_group_attributes[ncvar] = group_attributes            
         # --- End: for
+
         print('flattener_mapping=',flattener_mapping)
         print('GLOABL ATTR=',g['global_attributes'])
  
@@ -1231,9 +1257,10 @@ class NetCDFRead(IORead):
         # --- End: if
 
         # ------------------------------------------------------------
-        # Close the netCDF file(s)
+        # Close the netCDF file and any external files
         # ------------------------------------------------------------
         self.file_close()
+        
         # ------------------------------------------------------------
         # Return the fields
         # ------------------------------------------------------------
@@ -2486,7 +2513,9 @@ class NetCDFRead(IORead):
 
         self.implementation.nc_set_global_attributes(f, x)
 
-        # Store the field's netCDF group attributes
+        # ------------------------------------------------------------
+        # Store the data variable's group-level attributes
+        # ------------------------------------------------------------
         if g['has_groups']:
             x = g['variable_group_attributes'][field_ncvar].copy()
             for k, v in g['variable_group_attributes'][field_ncvar].items():
@@ -2635,7 +2664,6 @@ class NetCDFRead(IORead):
                 if g['has_groups']:
                     ncvar = g['flattener_mapping']['variables'][ncvar]
                 
-                print ('ncvar=', ncvar)
                 # Skip dimension coordinates which are in the list
                 if ncvar in field_ncdimensions:
                     continue
@@ -2643,7 +2671,6 @@ class NetCDFRead(IORead):
                 cf_compliant = self._check_auxiliary_scalar_coordinate(
                     field_ncvar, ncvar, coordinates)
                 if not cf_compliant:
-                    print (999)
                     continue
 
                 # Set dimensions for this variable

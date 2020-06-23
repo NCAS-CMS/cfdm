@@ -6,6 +6,7 @@ from . import core
 
 class Datum(mixin.Parameters,
             mixin.NetCDFVariable,
+            mixin.NetCDFGroups,
             core.Datum):
     '''A datum component of a coordinate reference construct of the CF
     data model.

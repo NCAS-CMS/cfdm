@@ -119,6 +119,7 @@ NetCDF
    ~cfdm.CellMeasure.nc_set_variable
    ~cfdm.CellMeasure.nc_get_external
    ~cfdm.CellMeasure.nc_set_external
+   ~cfdm.CellMeasure.nc_groups
 
 Special
 -------

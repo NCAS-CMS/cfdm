@@ -123,9 +123,9 @@ The following file types can be read:
 
 Note that when reading netCDF4 files that contain :ref:`hierachical
 groups <Hierarchical-groups>`, the group structure is flattened prior
-to the creation of field constructs, but the groups structure is
-preseved so ot may be resued if the field constructs are written to
-back to disk.
+to the creation of field constructs, but the groups structure is saved
+so that it may be resued if the field constructs are written to back
+to disk.
        
 For example, to read the file ``file.nc`` (found in the :ref:`sample
 datasets <Sample-datasets>`), which contains two field constructs:
@@ -780,8 +780,8 @@ case, the data axes may be set at any time with the
    >>> t.data
    <Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
 
-See the section :ref:`field construct creation <Field-creation>` for
-more examples.
+See the section :ref:`field construct creation
+<Field-creation-in-memory>` for more examples.
 
 .. _Date-time:
 
@@ -2102,7 +2102,7 @@ variances is generally not the same as a variance of means), so a
 `Constructs` instance has an `~Constructs.ordered` method to retrieve
 the cell method constructs in the same order that they were were added
 to the field construct during :ref:`field construct creation
-<Field-creation>`.
+<Field-creation-in-memory>`.
 
 .. code-block:: python
    :caption: *Retrieve the cell method constructs in the same order
@@ -2163,10 +2163,10 @@ over the same spatiotemporal domain).
 
 ----
 
-.. _Field-creation:
+.. _Field-creation-in-memory:
 
-**Field creation**
-------------------
+**Field creation in memory**
+----------------------------
 
 There are three methods for creating a field construct in memory:
 
@@ -2984,6 +2984,22 @@ Method                                  Description
 `~Field.nc_clear_global_attributes`     Clear the selection of properties
                                         to be written as netCDF global
                                         attributes
+
+`~Field.nc_group_attributes`            Return the selection of properties to 
+                                        be written as netCDF group attributes
+				        
+`~Field.nc_set_group_attribute`         Set a property to be written as a
+                                        netCDF group attribute
+
+`~Field.nc_set_group_attributes`        Set properties to be written as
+                                        netCDF group attributes
+
+`~Field.nc_clear_group_attributes`      Clear the selection of properties
+                                        to be written as netCDF group
+                                        attributes
+					
+`~Field.nc_groups`                      Return the selection of properties to 
+                                        be written as netCDF group attributes
 ======================================  ======================================
 
 .. code-block:: python
@@ -3029,6 +3045,12 @@ Method                            Classes                                  NetCD
                                   `CoordinateReference`, `Bounds`,
 			          `Datum`, `Count`, `Index`, `List`
 			          
+`!nc_groups`                      `Field`, `DimensionCoordinate`,          Group hierarchy
+                                  `AuxiliaryCoordinate`, `CellMeasure`,
+                                  `DomainAncillary`, `FieldAncillary`,
+                                  `CoordinateReference`, `Bounds`,
+			          `Datum`, `Count`, `Index`, `List`
+			          
 `!nc_del_dimension`               `DomainAxis`, `Count`, `Index`           Dimension name
 			          
 `!nc_get_dimension`	          `DomainAxis`, `Count`, `Index`           Dimension name
@@ -3048,6 +3070,14 @@ Method                            Classes                                  NetCD
 `!nc_set_global_attributes`       `Field`                                  Global attributes
 			          
 `!nc_clear_global_attributes`     `Field`                                  Global attributes
+			          
+`!nc_group_attributes`	           `Field`                                 Group attributes
+			          
+`!nc_set_group_attribute`          `Field`                                 Group attributes
+			          
+`!nc_set_group_attributes`        `Field`                                  Group attributes
+			          
+`!nc_clear_group_attributes`      `Field`                                  Group attributes
 			          
 `!nc_get_external`                `CellMeasure`                            External variable status
 
@@ -3404,6 +3434,15 @@ and in all other cases netCDF character arrays will be
 used. Alternatively, netCDF character arrays can be used in all cases
 by setting the *string* keyword of the `cfdm.write` function.
 
+Groups
+^^^^^^
+
+NetCDF4 files with hierarchical groups may be created if a group
+structure is defined by the netCDF variable and dimension names,
+accessed via the :ref:`netCDF interface <NetCDF-interface>`.  See the
+section on :ref:`hierarchical groups <Hierarchical-groups>` for
+details.
+
 ----
       
 .. _Hierarchical-groups:
@@ -3411,13 +3450,216 @@ by setting the *string* keyword of the `cfdm.write` function.
 **Hierarchical groups**
 -----------------------
 
-TODO
-
 `Hierarchical groups`_ provide a powerful mechanism to structure
-variables within datasets. A future |version|.\ *x* release of cfdm
-will include support for netCDF4 files containing data organised in
-hierarchical groups, but this is not available in version |release|
-(even though it is allowed in CF-|version|).
+variables within netCDF4 datasets, with well defined rules for
+resolving references to out-of-group netCDF variables and dimensions.
+
+This is illustrated with the file ``grouped.nc`` (found in the
+:ref:`sample datasets <Sample-datasets>`):
+
+.. code-block:: console
+   :caption: *Inspect the new grouped dataset with the ncdump command
+             line tool.*
+   
+   $ ncdump -h grouped.nc
+   netcdf grouped {
+   dimensions:
+   	   bounds = 2 ;
+   	   lat = 5 ;
+   	   lon = 8 ;
+   variables:
+   	   double lat(lat) ;
+   	   	   lat:units = "degrees_north" ;
+   	   	   lat:standard_name = "latitude" ;
+   	   	   lat:bounds = "lat_bnds" ;
+   	   double lon(lon) ;
+   	   	   lon:units = "degrees_east" ;
+   	   	   lon:standard_name = "longitude" ;
+   	   	   lon:bounds = "lon_bnds" ;
+   	   double lon_bnds(lon, bounds) ;
+   	   double lat_bnds(lat, bounds) ;
+   	   double time ;
+   	   	   time:units = "days since 2018-12-01" ;
+   	      	   time:standard_name = "time" ;
+   
+   // global attributes:
+   		   :comment = "global comment" ;
+   		   :history = "created in 2020" ;
+   
+   group: forecast {
+     variables:
+     	   double q(lat, lon) ;
+     		   q:standard_name = "specific_humidity" ;
+     		   q:units = "1" ;
+     		   q:coordinates = "time" ;
+     		   q:cell_methods = "area: mean" ;
+   
+     // group attributes:
+     		   :comment = "forecast comment" ;
+     } // group forecast
+   }
+
+When reading a netCDF dataset, the group structure is recorded in the
+returned netCDF variable and dimension names, accessed via the
+:ref:`netCDF interface <NetCDF-interface>`.
+
+.. code-block:: python
+   :caption: *Read the grouped file and inspect its group structure.*
+
+   >>> q = cfdm.read('grouped.nc')[0]
+   >>> print(f)
+   Field: specific_humidity (ncvar%/forecast/q)
+   --------------------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> q.nc_get_variable()
+   '/forecast/q'
+   >>> q.construct('latitude').nc_get_variable()
+   'lat'
+   >>> q.nc_group_attributes(values=True)
+   {'comment': 'forecast comment'}
+
+When writing field constructs to disk, the group structure defined by
+its netCDF variable and dimension names is used by default.
+
+Alternatively, the field constructs may be written out to a flat file,
+i.e. one without any sub-groups. This my be done by removing the group
+structure from the netCDF interface, or more simply by overriding the
+existing group structure by setting the *group* keyword to
+`cfdm.write` to `False`.
+   
+.. code-block:: python
+   :caption: *Write the field construct to a file with the same group
+             structure, and also to a flat file.*
+
+   >>> cfdm.write(q, 'group_out.nc')
+   >>> cfdm.write(q, 'flat_out.nc', group=False)
+
+NetCDF variables in flat output file will inherit any netCDF group
+attributes, providing that they are not superceded by varaible
+attributes. This is the case in file ``flat_out.nc``, for which the
+netCDF variable ``q`` has inherited the ``comment`` attribute that was
+originally set on the ``forecast`` group. NetCDF group attributes may
+be set and accessed via the :ref:`netCDF interface
+<NetCDF-interface>`.
+
+.. code-block:: console
+   :caption: *Inspect the flat version of the dataset with the ncdump
+             command line tool.*
+   
+   $ ncdump -h flat_out.nc
+   ncdump -h flat_out.nc 
+   netcdf flat_out {
+   dimensions:
+   	   lat = 5 ;
+   	   bounds = 2 ;
+   	   lon = 8 ;
+   variables:
+   	   double lat_bnds(lat, bounds) ;
+   	   double lat(lat) ;
+   	   	   lat:units = "degrees_north" ;
+   	   	   lat:standard_name = "latitude" ;
+   	   	   lat:bounds = "lat_bnds" ;
+   	   double lon_bnds(lon, bounds) ;
+   	   double lon(lon) ;
+   	   	   lon:units = "degrees_east" ;
+   	   	   lon:standard_name = "longitude" ;
+   	   	   lon:bounds = "lon_bnds" ;
+   	   double time ;
+   	   	   time:units = "days since 2018-12-01" ;
+   	   	   time:standard_name = "time" ;
+   	   double q(lat, lon) ;
+   		   q:comment = "forecast comment" ;
+   		   q:standard_name = "specific_humidity" ;
+   		   q:units = "1" ;
+   		   q:coordinates = "time" ;
+   		   q:cell_methods = "area: mean" ;
+   
+   // global attributes:
+   		   :Conventions = "CF-1.8" ;
+   		   :history = "created in 2020" ;
+   		   :comment = "global comment" ;
+   }
+
+The fields constructs read from a grouped file are identical to those
+read from the flat version of the file:
+   
+.. code-block:: python
+   :caption: *Demonstrate that the field constructs are indpendent of
+             the file structure.*
+
+   >>> q1 = cfdm.read('flat_out.nc')[0]
+   >>> q1.equals(q)
+   True
+   
+The group structure may be manipulated by changing the netCDF
+dimension and variable names of the field construct and its
+components. For example, the "time" dimension coordinate construct may
+moved from the root group to the ``forecast`` group by prefixing its
+netCDF variable name with ``'/forecast/'``
+
+.. code-block:: python
+   :caption: *Map the "time" dimension coordinate construct to a the
+              /forecast group, and the data variable corresponding to
+              the field constructs to the new group
+              /forecast/model.*
+	      
+   >>> q.nc_get_variable()
+   '/forecast/q'
+   >>> q.nc_set_variable('/forecast/model/q')
+   >>> q.construct('time').nc_get_variable()
+   'time'
+   >>> q.construct('time').nc_set_variable('/forecast/time')
+   >>> cfdm.write(q, 'grouped_out_2.nc')
+
+.. code-block:: console
+   :caption: *Inspect the re-grouped version of the dataset with the
+             ncdump command line tool.*
+   
+   $ ncdump -h group_out_2.nc
+   netcdf grouped_out_2 {
+   dimensions:
+   	   lat = 5 ;
+   	   bounds = 2 ;
+   	   lon = 8 ;
+   variables:
+   	   double lat_bnds(lat, bounds) ;
+   	   double lat(lat) ;
+   	   	   lat:units = "degrees_north" ;
+   	   	   lat:standard_name = "latitude" ;
+   	   	   lat:bounds = "lat_bnds" ;
+   	   double lon_bnds(lon, bounds) ;
+   	   double lon(lon) ;
+   	   	   lon:units = "degrees_east" ;
+   	   	   lon:standard_name = "longitude" ;
+   	   	   lon:bounds = "lon_bnds" ;
+   	   double time ;
+   		   time:units = "days since 2018-12-01" ;
+   		   time:standard_name = "time" ;
+   
+   // global attributes:
+   		   :Conventions = "CF-1.8" ;
+   		   :history = "created in 2020" ;
+   		   :comment = "global comment" ;
+   
+   group: forecast {
+   
+     group: model {
+       variables:
+       	   double q(lat, lon) ;
+       		   q:standard_name = "specific_humidity" ;
+       		   q:units = "1" ;
+       		   q:coordinates = "time" ;
+       		   q:cell_methods = "area: mean" ;
+   
+       // group attributes:
+       		   :comment = "forecast comment" ;
+       } // group model
+     } // group forecast
+   }
 
 ----
    
@@ -4204,8 +4446,8 @@ messaging:
 * **globally** i.e. for all cfdm operations, by setting the
   `cfdm.LOG_LEVEL` which controls the project-wide logging;
 * **for a specific function only** (for many functions) by setting
-  that function's *verbose* keyword argument (which overrides the
-  global setting for the duration of the function call).
+  that function's *verbose* keyword (which overrides the global
+  setting for the duration of the function call).
 
 Both possibilities use a consistent level-based cut-off system, as
 detailed below.

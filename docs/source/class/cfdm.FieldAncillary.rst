@@ -111,7 +111,8 @@ NetCDF
    ~cfdm.FieldAncillary.nc_del_variable
    ~cfdm.FieldAncillary.nc_get_variable
    ~cfdm.FieldAncillary.nc_has_variable
-   ~cfdm.FieldAncillary.nc_set_variable 
+   ~cfdm.FieldAncillary.nc_set_variable
+   ~cfdm.FieldAncillary.nc_groups
 
 Special
 -------

@@ -135,7 +135,8 @@ NetCDF
    ~cfdm.AuxiliaryCoordinate.nc_del_variable
    ~cfdm.AuxiliaryCoordinate.nc_get_variable
    ~cfdm.AuxiliaryCoordinate.nc_has_variable
-   ~cfdm.AuxiliaryCoordinate.nc_set_variable 
+   ~cfdm.AuxiliaryCoordinate.nc_set_variable
+   ~cfdm.AuxiliaryCoordinate.nc_groups
 
 Special
 -------

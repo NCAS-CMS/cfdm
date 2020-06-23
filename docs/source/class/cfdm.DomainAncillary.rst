@@ -135,7 +135,8 @@ NetCDF
    ~cfdm.DomainAncillary.nc_del_variable
    ~cfdm.DomainAncillary.nc_get_variable
    ~cfdm.DomainAncillary.nc_has_variable
-   ~cfdm.DomainAncillary.nc_set_variable 
+   ~cfdm.DomainAncillary.nc_set_variable
+   ~cfdm.DomainAncillary.nc_groups
 
 Special
 -------

@@ -120,7 +120,8 @@ NetCDF
    ~cfdm.CoordinateReference.nc_del_variable
    ~cfdm.CoordinateReference.nc_get_variable
    ~cfdm.CoordinateReference.nc_has_variable
-   ~cfdm.CoordinateReference.nc_set_variable 
+   ~cfdm.CoordinateReference.nc_set_variable
+   ~cfdm.CoordinateReference.nc_groups
       
 Special
 -------
