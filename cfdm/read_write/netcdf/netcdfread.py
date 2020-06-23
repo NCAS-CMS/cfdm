@@ -814,12 +814,11 @@ class NetCDFRead(IORead):
         # path (CF>=1.8).
         # ------------------------------------------------------------
         has_groups = g['has_groups']
-        if has_groups:
-            flattener_mapping = {'variables': {},
-                                 'dimensions': {},
-                                 'attributes': {},
-            }
-            
+        flattener_mapping = {'variables': {},
+                             'dimensions': {},
+                             'attributes': {},
+        }
+        if has_groups:            
             flattener_name_mapping_variables = getattr(
                 nc, 'flattener_name_mapping_variables', None)
             if flattener_name_mapping_variables is not None:
@@ -948,8 +947,9 @@ class NetCDFRead(IORead):
             variable_group_attributes[ncvar] = group_attributes            
         # --- End: for
 
-        print('flattener_mapping=',flattener_mapping)
-        print('GLOABL ATTR=',g['global_attributes'])
+        if g['has_groups']:
+            print('flattener_mapping=',flattener_mapping)
+            print('GLOABL ATTR=',g['global_attributes'])
  
         # The netCDF attributes for each variable
         #
@@ -2655,7 +2655,7 @@ class NetCDFRead(IORead):
         # the field
         # ----------------------------------------------------------------
         coordinates = self.implementation.del_property(f, 'coordinates', None)
-        print('coordinates =', coordinates)
+
         if coordinates is not None:
             parsed_coordinates = self._split_string_by_white_space(
                 field_ncvar,
