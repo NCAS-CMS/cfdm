@@ -81,7 +81,7 @@ which generates text descriptions of the field constructs contained in
 a netCDF dataset.
 
 
-    >>> print(f[0])
+    $ cfdump file.nc
     Field: air_temperature (ncvar%tas)
     ----------------------------------
     Data            : air_temperature(time(12), latitude(64), longitude(128)) K
