@@ -97,7 +97,7 @@ Command line utility
 
 During installation the `cfdump` command line tool is also installed,
 which generates text descriptions of the field constructs contained
-in a netCDF dataset.
+in a netCDF dataset:
 
     $ cfdump file.nc
     Field: air_temperature (ncvar%tas)
@@ -122,7 +122,7 @@ Source code
 ===========
 
 This project is hosted in a `GitHub repository
-<https://github.com/NCAS-CMS/cfdm>`_ where you may access the most
+<https://github.com/NCAS-CMS/cfdm>`_ where you can access the most
 up-to-date source."""
 
 setup(name = "cfdm",

@@ -78,8 +78,7 @@ Command line utility
 
 During installation the `cfdump` command line tool is also installed,
 which generates text descriptions of the field constructs contained in
-a netCDF dataset.
-
+a netCDF dataset:
 
     $ cfdump file.nc
     Field: air_temperature (ncvar%tas)
