@@ -91,16 +91,6 @@ a netCDF dataset.
                     : longitude(128) = [0.0, ..., 357.1875] degrees_east
                     : height(1) = [2.0] m
 
-    $ cfdump file.nc
-    Field: air_temperature (ncvar%tas)
-    ----------------------------------
-    Data            : air_temperature(time(12), latitude(64), longitude(128)) K
-    Cell methods    : time(12): mean (interval: 1.0 month)
-    Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap
-                    : latitude(64) = [-87.8638, ..., 87.8638] degrees_north
-                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
-                    : height(1) = [2.0] m
-
 Tests
 =====
 
