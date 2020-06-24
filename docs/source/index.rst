@@ -26,7 +26,6 @@
    philosophy
    performance
    extensions
-   versioning
    releases
    Changelog
    

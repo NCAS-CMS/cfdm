@@ -3099,9 +3099,9 @@ Method                            Classes                                  NetCD
 			          
 `!nc_clear_global_attributes`     `Field`                                  Global attributes
 			          
-`!nc_group_attributes`	           `Field`                                 Group attributes
+`!nc_group_attributes`	          `Field`                                  Group attributes
 			          
-`!nc_set_group_attribute`          `Field`                                 Group attributes
+`!nc_set_group_attribute`         `Field`                                  Group attributes
 			          
 `!nc_set_group_attributes`        `Field`                                  Group attributes
 			          
@@ -3527,9 +3527,10 @@ This is illustrated with the file ``grouped.nc`` (found in the
      } // group forecast
    }
 
-When reading a netCDF dataset, the group structure is recorded in the
-returned netCDF variable and dimension names, accessed via the
-:ref:`netCDF interface <NetCDF-interface>`.
+When reading a netCDF dataset, the group structure and groups
+attributes are recorded and are made accessible via the :ref:`netCDF
+interface <NetCDF-interface>`, which can also be used to modify their
+values.
 
 .. code-block:: python
    :caption: *Read the grouped file and inspect its group structure.*
@@ -3545,11 +3546,13 @@ returned netCDF variable and dimension names, accessed via the
                    : time(1) = [2019-01-01 00:00:00]
    >>> q.nc_get_variable()
    '/forecast/q'
-   >>> q.construct('latitude').nc_get_variable()
-   'lat'
+   >>> q.nc_variable_groups()
+   ('forecast',)
    >>> q.nc_group_attributes(values=True)
    {'comment': 'forecast comment'}
-
+   >>> q.construct('latitude').nc_get_variable()
+   'lat'
+ 
 When writing field constructs to disk, the group structure defined by
 its netCDF variable and dimension names is used by default.
 
@@ -3636,6 +3639,7 @@ with ``'/forecast/'``. The `!nc_set_variable_groups` or
               the field construct to the new group /forecast/model.*
 	      
    >>> q.nc_set_variable('/forecast/model/q')
+   >>> q.nc_set_group_attribute('model', 'climate model')
    >>> q.construct('time').nc_set_variable_groups(['forecast'])
    >>> cfdm.write(q, 'grouped_out_2.nc')
 
@@ -3682,6 +3686,7 @@ with ``'/forecast/'``. The `!nc_set_variable_groups` or
    
        // group attributes:
        		   :comment = "forecast comment" ;
+       		   :model = "climate model" ;
        } // group model
      } // group forecast
    }
