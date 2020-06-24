@@ -6,13 +6,18 @@ version 1.8.6
 
 * Implemented reading and writing netCDF4 group hierarchies for CF-1.8
   (https://github.com/NCAS-CMS/cfdm/issues/13)
-* New method: `cfdm.Field.nc_groups`
+* New method: `cfdm.Field.nc_variable_groups`
+* New method: `cfdm.Field.nc_set_variable_groups`
+* New method: `cfdm.Field.nc_clear_variable_groups`
 * New method: `cfdm.Field.nc_group_attributes`
 * New method: `cfdm.Field.nc_set_group_attribute`
 * New method: `cfdm.Field.nc_set_group_attributes`
 * New method: `cfdm.Field.nc_clear_group_attributes`
+* New method: `cfdm.Domain.nc_dimension_groups`
+* New method: `cfdm.Domain.nc_set_dimension_groups`
+* New method: `cfdm.Domain.nc_clear_dimension_groups`
 * New keyword parameter to `cfdm.write`: ``group``
-* new dependency: ``netcdf_flattener>=1.1.0``
+* New dependency: ``netcdf_flattener>=1.1.0``
 
 version 1.8.5
 -------------

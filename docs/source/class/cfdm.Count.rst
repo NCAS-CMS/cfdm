@@ -96,7 +96,7 @@ NetCDF
    ~cfdm.Count.nc_del_variable
    ~cfdm.Count.nc_get_variable
    ~cfdm.Count.nc_has_variable
-   ~cfdm.Count.nc_set_variable 
+   ~cfdm.Count.nc_set_variable
    ~cfdm.Count.nc_del_sample_dimension
    ~cfdm.Count.nc_get_sample_dimension
    ~cfdm.Count.nc_has_sample_dimension
@@ -105,8 +105,10 @@ NetCDF
    ~cfdm.Count.nc_get_dimension
    ~cfdm.Count.nc_has_dimension
    ~cfdm.Count.nc_set_dimension
-   ~cfdm.Count.nc_groups
-
+   ~cfdm.Count.nc_variable_groups
+   ~cfdm.Count.nc_clear_variable_groups
+   ~cfdm.Count.nc_set_variable_groups
+   
 Special
 -------
 

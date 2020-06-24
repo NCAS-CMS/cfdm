@@ -139,7 +139,7 @@ class NetCDFDimension(NetCDF):
 
         '''
         try:
-            return self._get_component('netcdf')['dimension']
+            return self._get_component('netcdf')['dimension']   
         except KeyError:
             return self._default(
                 default,
@@ -182,6 +182,11 @@ class NetCDFDimension(NetCDF):
     def nc_set_dimension(self, value):
         '''Set the netCDF dimension name.
 
+    If there are any ``/`` (slash) characters in the netCDF name then
+    these act as delimiters for a group hierarchy. By default, or if
+    the name starts with a ``/`` character and contains no others, the
+    name is assumed to be in the root group.
+    
     .. versionadded:: 1.7.0
 
     .. seealso:: `nc_del_dimension`, `nc_get_dimension`,
@@ -213,8 +218,199 @@ class NetCDFDimension(NetCDF):
     None
 
         '''
+        if not value or value == '/':
+            raise ValueError(
+                "Invalid netCDF dimension name: {!r}".format(value))
+
+        if '/' in value:
+            if not value.startswith('/'):
+                raise ValueError(
+                    "A netCDF dimension name with a group structure "
+                    "must start with a '/'. Got {!r}".format(value)
+                )
+            
+            if value.count('/') == 1:
+                value = value[1:]
+            elif value.endswith('/'):
+                raise ValueError(
+                    "A netCDF dimension name with a group structure "
+                    "can't end with a '/'. Got {!r}".format(value)
+                )         
+        # --- End: if
+
         self._get_component('netcdf')['dimension'] = value
 
+    def nc_dimension_groups(self):
+        '''Return the netCDF dimension group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+    
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_clear_dimension_groups`,
+                 `nc_set_dimension_groups`
+    
+    :Returns:
+
+        `tuple` of `str`
+            The group structure.
+
+    **Examples:**
+
+    >>> f.nc_set_dimension('time')
+    >>> f.nc_dimension_groups()
+    ()
+    >>> f.nc_set_dimension_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_dimension()
+    '/forecast/model/time'
+    >>> f.nc_clear_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_dimension()
+    'time'
+
+    >>> f.nc_set_dimension('/forecast/model/time')
+    >>> f.nc_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_del_dimension('/forecast/model/time')
+    '/forecast/model/time'
+    >>> f.nc_dimension_groups()
+    ()
+
+        '''
+        name = self.nc_get_dimension('')
+        return tuple(name.split('/')[1:-1])
+
+    def nc_set_dimension_groups(self, groups):
+        '''Set the netCDF dimension group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+        
+    An alternative technique for setting the group structure is to set
+    the netCDF dimension name, with `nc_set_dimension`, with the group
+    structure delimited by ``/`` characters.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_clear_dimension_groups`, `nc_dimension_groups`
+    
+    :Parameters:
+                
+        groups: sequence of `str`
+            The new group structure.
+
+    :Returns:
+
+        `tuple` of `str`
+            The group structure prior to being reset.
+
+    **Examples:**
+
+    >>> f.nc_set_dimension('time')
+    >>> f.nc_dimension_groups()
+    ()
+    >>> f.nc_set_dimension_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_dimension()
+    '/forecast/model/time'
+    >>> f.nc_clear_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_dimension()
+    'time'
+
+    >>> f.nc_set_dimension('/forecast/model/time')
+    >>> f.nc_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_del_dimension('/forecast/model/time')
+    '/forecast/model/time'
+    >>> f.nc_dimension_groups()
+    ()
+
+        '''
+        old =  self.nc_dimension_groups()
+
+        name = self.nc_get_dimension('')
+        name = name.split('/')[-1]
+        if not name:
+            raise ValueError("Can't set dimension groups when there is "
+                             "no dimension name")
+
+        if groups:
+            name = '/'.join(('',) + tuple(groups) + (name,))
+
+        if name:
+            self.nc_set_dimension(name)
+        
+        return old    
+
+    def nc_clear_dimension_groups(self):
+        '''Remove the netCDF dimension group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+    
+    An alternative technique for removing the group structure is to
+    set the netCDF dimension name, with `nc_set_dimension`, with no
+    ``/`` characters.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_dimension_groups`, `nc_set_dimension_groups`
+    
+    :Returns:
+
+        `tuple` of `str`
+            The removed group structure.
+
+    **Examples:**
+
+    >>> f.nc_set_dimension('time')
+    >>> f.nc_dimension_groups()
+    ()
+    >>> f.nc_set_dimension_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_dimension()
+    '/forecast/model/time'
+    >>> f.nc_clear_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_dimension()
+    'time'
+
+    >>> f.nc_set_dimension('/forecast/model/time')
+    >>> f.nc_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_del_dimension('/forecast/model/time')
+    '/forecast/model/time'
+    >>> f.nc_dimension_groups()
+    ()
+
+        '''
+        old =  self.nc_dimension_groups()
+        
+        name = self.nc_get_dimension('')
+        name = name.split('/')[-1]
+        if name:
+            self.nc_set_dimension(name)
+        
+        return old
+    
 # --- End: class
 
 
@@ -351,6 +547,11 @@ class NetCDFVariable(NetCDF):
     def nc_set_variable(self, value):
         '''Set the netCDF variable name.
 
+    If there are any ``/`` (slash) characters in the netCDF name then
+    these act as delimiters for a group hierarchy. By default, or if
+    the name starts with a ``/`` character and contains no others, the
+    name is assumed to be in the root group.
+    
     .. versionadded:: 1.7.0
 
     .. seealso:: `nc_del_variable`, `nc_get_variable`,
@@ -381,8 +582,199 @@ class NetCDFVariable(NetCDF):
     >>> print(f.nc_del_variable(None))
     None
 
-        '''
+        '''        
+        if not value or value == '/':
+            raise ValueError(
+                "Invalid netCDF variable name: {!r}".format(value))
+
+        if '/' in value:
+            if not value.startswith('/'):
+                raise ValueError(
+                    "A netCDF variable name with a group structure "
+                    "must start with a '/'. Got {!r}".format(value)
+                )
+            
+            if value.count('/') == 1:
+                value = value[1:]
+            elif value.endswith('/'):
+                raise ValueError(
+                    "A netCDF variable name with a group structure "
+                    "can't end with a '/'. Got {!r}".format(value)
+                )         
+        # --- End: if
+        
         self._get_component('netcdf')['variable'] = value
+
+    def nc_variable_groups(self):
+        '''Return the netCDF variable group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+    
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_clear_variable_groups`,
+                 `nc_set_variable_groups`
+    
+    :Returns:
+
+        `tuple` of `str`
+            The group structure.
+
+    **Examples:**
+
+    >>> f.nc_set_variable('time')
+    >>> f.nc_variable_groups()
+    ()
+    >>> f.nc_set_variable_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_variable()
+    '/forecast/model/time'
+    >>> f.nc_clear_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_variable()
+    'time'
+
+    >>> f.nc_set_variable('/forecast/model/time')
+    >>> f.nc_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_del_variable('/forecast/model/time')
+    '/forecast/model/time'
+    >>> f.nc_variable_groups()
+    ()
+
+        '''
+        name = self.nc_get_variable('')
+        return tuple(name.split('/')[1:-1])
+
+    def nc_set_variable_groups(self, groups):
+        '''Set the netCDF variable group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+    
+    An alternative technique for setting the group structure is to set
+    the netCDF variable name, with `nc_set_variable`, with the group
+    structure delimited by ``/`` characters.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_clear_variable_groups`, `nc_variable_groups`
+    
+    :Parameters:
+                
+        groups: sequence of `str`
+            The new group structure.
+
+    :Returns:
+
+        `tuple` of `str`
+            The group structure prior to being reset.
+
+    **Examples:**
+        
+    >>> f.nc_set_variable('time')
+    >>> f.nc_variable_groups()
+    ()
+    >>> f.nc_set_variable_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_variable()
+    '/forecast/model/time'
+    >>> f.nc_clear_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_variable()
+    'time'
+
+    >>> f.nc_set_variable('/forecast/model/time')
+    >>> f.nc_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_del_variable('/forecast/model/time')
+    '/forecast/model/time'
+    >>> f.nc_variable_groups()
+    ()
+
+        '''
+        old =  self.nc_variable_groups()
+
+        name = self.nc_get_variable('')
+        name = name.split('/')[-1]
+        if not name:
+            raise ValueError("Can't set variable groups when there is "
+                             "no variable name")
+
+        if groups:
+            name = '/'.join(('',) + tuple(groups) + (name,))
+
+        if name:
+            self.nc_set_variable(name)
+        
+        return old    
+
+    def nc_clear_variable_groups(self):
+        '''Remove the netCDF variable group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+
+    An alternative technique for removing the group structure is to
+    set the netCDF variable name, with `nc_set_variable`, with no
+    ``/`` characters.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_variable_groups`, `nc_set_variable_groups`
+    
+    :Returns:
+
+        `tuple` of `str`
+            The removed group structure.
+
+    **Examples:**
+
+    >>> f.nc_set_variable('time')
+    >>> f.nc_variable_groups()
+    ()
+    >>> f.nc_set_variable_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_variable()
+    '/forecast/model/time'
+    >>> f.nc_clear_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_variable()
+    'time'
+
+    >>> f.nc_set_variable('/forecast/model/time')
+    >>> f.nc_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_del_variable('/forecast/model/time')
+    '/forecast/model/time'
+    >>> f.nc_variable_groups()
+    ()
+
+        '''
+        old =  self.nc_variable_groups()
+        
+        name = self.nc_get_variable('')
+        name = name.split('/')[-1]
+        if name:
+            self.nc_set_variable(name)
+        
+        return old
 
 # --- End: class
 
@@ -519,6 +911,11 @@ class NetCDFSampleDimension(NetCDF):
     def nc_set_sample_dimension(self, value):
         '''Set the netCDF sample dimension name.
 
+    If there are any ``/`` (slash) characters in the netCDF name then
+    these act as delimiters for a group hierarchy. By default, or if
+    the name starts with a ``/`` character and contains no others, the
+    name is assumed to be in the root group.
+    
     .. versionadded:: 1.7.0
 
     .. seealso:: `nc_del_sample_dimension`, `nc_get_sample_dimension`,
@@ -550,6 +947,26 @@ class NetCDFSampleDimension(NetCDF):
     None
 
         '''
+        if not value or value == '/':
+            raise ValueError(
+                "Invalid netCDF sample dimension name: {!r}".format(value))
+        
+        if '/' in value:
+            if not value.startswith('/'):
+                raise ValueError(
+                    "A netCDF sample dimension name with a group structure "
+                    "must start with a '/'. Got {!r}".format(value)
+                )
+            
+            if value.count('/') == 1:
+                value = value[1:]
+            elif value.endswith('/'):
+                raise ValueError(
+                    "A netCDF sample dimension name with a group structure "
+                    "can't end with a '/'. Got {!r}".format(value)
+                )         
+        # --- End: if
+        
         self._get_component('netcdf')['sample_dimension'] = value
 
 # --- End: class
@@ -828,54 +1245,6 @@ class NetCDFGlobalAttributes(NetCDF):
 
 # --- End: class
 
-
-class NetCDFGroups(NetCDF):
-    '''Mixin class for accessing netCDF groups.
-    
-    Classes which inherit from this class must also inherit from the
-    `NetCDFVariable` mixin class.
-
-    .. versionadded:: 1.8.6
-
-    '''
-    def nc_groups(self):
-        '''Return the netCDF group hierarchy.
-
-    The group hierarchy is defined by the netCDF variable name. Groups
-    are delimited by / (slash) characters in the netCDF variable
-    name. The groups are returned, in hierarchical order, as a
-    sequence of strings. If the netCDF variable is not set, or
-    contains no / characters then an empty sequence is returned,
-    signifying the root group.
-    
-    .. versionadded:: 1.8.6
-
-    .. seealso:: `nc_get_variable`, `nc_set_variable`
-    
-    :Returns:
-
-        `tuple` of `str`
-            The netCDF group names. An empty tuple signifies the root
-            group.
-
-    **Examples:**
-
-    >>> f.nc_get_variable()
-    'q'
-    >>> nc.groups()
-    ()
-        
-    >>> f.nc_set_variable('/forecast/model/q')
-    >>> nc.groups()
-    ('forecast', 'model')
-
-        '''
-        ncvar = self.nc_get_variable(None)
-        if ncvar is None:
-            return ()
-
-        return tuple(ncvar.split('/')[1:-1])
-
     
 class NetCDFGroupAttributes(NetCDF):
     '''Mixin class for accessing netCDF group attributes.
@@ -1149,13 +1518,6 @@ class NetCDFUnlimitedDimensions(NetCDF):
             "and is no longer available. Use DomainAxis.nc_is_unlimited "
             "instead")
 
-        out = self._get_component('netcdf').get('unlimited_dimensions')
-
-        if out is None:
-            return set()
-
-        return set(out)
-
     def nc_set_unlimited_dimensions(self, axes):
         '''Select domain axis constructs to be written as netCDF unlimited
     dimensions.
@@ -1205,17 +1567,6 @@ class NetCDFUnlimitedDimensions(NetCDF):
             "1.7.4 and is no longer available. "
             "Use DomainAxis.nc_set_unlimited instead")
 
-        out = self._get_component('netcdf').get('unlimited_dimensions')
-
-        if out is None:
-            out = set()
-        else:
-            out = set(out)
-
-        out.update(axes)
-
-        self._get_component('netcdf')['unlimited_dimensions'] = tuple(out)
-
     def nc_clear_unlimited_dimensions(self):
         '''Remove the selection of domain axis constructs to be written as
     netCDF unlimited dimensions.
@@ -1252,17 +1603,6 @@ class NetCDFUnlimitedDimensions(NetCDF):
             "Field.nc_clear_unlimited_dimensions was deprecated at version "
             "1.7.4 and is no longer available. "
             "Use DomainAxis.nc_set_unlimited instead.")
-
-        out = self._get_component('netcdf').get('unlimited_dimensions')
-
-        if out is None:
-            out = set()
-        else:
-            out = set(out)
-
-        self._get_component('netcdf')['unlimited_dimensions'] = ()
-
-        return out
 
 # --- End: class
 
@@ -1464,6 +1804,11 @@ class NetCDFGeometry(NetCDF):
     def nc_set_geometry_variable(self, value):
         '''Set the netCDF geometry container variable name.
 
+    If there are any ``/`` (slash) characters in the netCDF name then
+    these act as delimiters for a group hierarchy. By default, or if
+    the name starts with a ``/`` character and contains no others, the
+    name is assumed to be in the root group.
+    
     .. versionadded:: 1.8.0
 
     .. seealso:: `nc_del_geometry_variable`,
@@ -1495,6 +1840,26 @@ class NetCDFGeometry(NetCDF):
     None
 
         '''
+        if not value or value == '/':
+            raise ValueError(
+                "Invalid netCDF geometry variable name: {!r}".format(value))
+        
+        if '/' in value:
+            if not value.startswith('/'):
+                raise ValueError(
+                    "A netCDF geometry variable name with a group structure "
+                    "must start with a '/'. Got {!r}".format(value)
+                )
+            
+            if value.count('/') == 1:
+                value = value[1:]                
+            elif value.endswith('/'):
+                raise ValueError(
+                    "A netCDF geometry variable name with a group structure "
+                    "can't end with a '/'. Got {!r}".format(value)
+                )         
+        # --- End: if
+
         self._get_component('netcdf')['geometry_variable'] = value
 
 # --- End: class

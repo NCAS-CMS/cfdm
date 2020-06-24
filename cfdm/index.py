@@ -7,7 +7,6 @@ from . import core
 class Index(mixin.NetCDFVariable,
             mixin.NetCDFDimension,
             mixin.NetCDFSampleDimension,
-            mixin.NetCDFGroups,
             mixin.PropertiesData,
             core.abstract.PropertiesData):
     '''An index variable required to uncompress a ragged array.
@@ -48,6 +47,10 @@ class Index(mixin.NetCDFVariable,
     "instance_dimension" netCDF attribute) is accessed via the
     corresponding domain axis construct.
 
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+   
     .. versionadded:: 1.7.0
 
     '''

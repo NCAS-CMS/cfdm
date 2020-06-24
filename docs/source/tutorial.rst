@@ -123,7 +123,7 @@ The following file types can be read:
 
 Note that when reading netCDF4 files that contain :ref:`hierachical
 groups <Hierarchical-groups>`, the group structure is flattened prior
-to the creation of field constructs, but the groups structure is saved
+to the creation of field constructs, but the group structure is saved
 so that it may be resued if the field constructs are written to back
 to disk.
        
@@ -2998,8 +2998,11 @@ Method                                  Description
                                         to be written as netCDF group
                                         attributes
 					
-`~Field.nc_groups`                      Return the selection of properties to 
-                                        be written as netCDF group attributes
+`~Field.nc_variable_groups`             Return the netCDF group structure
+
+`~Field.nc_set_variable_groups`         Set the netCDF group structure
+
+`~Field.nc_clear_variable_groups`       Remove the netCDF group structure
 ======================================  ======================================
 
 .. code-block:: python
@@ -3045,19 +3048,44 @@ Method                            Classes                                  NetCD
                                   `CoordinateReference`, `Bounds`,
 			          `Datum`, `Count`, `Index`, `List`
 			          
-`!nc_groups`                      `Field`, `DimensionCoordinate`,          Group hierarchy
+`!nc_variable_groups`             `Field`, `DimensionCoordinate`,          Group hierarchy
                                   `AuxiliaryCoordinate`, `CellMeasure`,
                                   `DomainAncillary`, `FieldAncillary`,
                                   `CoordinateReference`, `Bounds`,
 			          `Datum`, `Count`, `Index`, `List`
 			          
-`!nc_del_dimension`               `DomainAxis`, `Count`, `Index`           Dimension name
+`!nc_set_variable_groups`         `Field`, `DimensionCoordinate`,          Group hierarchy
+                                  `AuxiliaryCoordinate`, `CellMeasure`,
+                                  `DomainAncillary`, `FieldAncillary`,
+                                  `CoordinateReference`, `Bounds`,
+			          `Datum`, `Count`, `Index`, `List`
 			          
-`!nc_get_dimension`	          `DomainAxis`, `Count`, `Index`           Dimension name
+`!nc_clear_variable_groups`       `Field`, `DimensionCoordinate`,          Group hierarchy
+                                  `AuxiliaryCoordinate`, `CellMeasure`,
+                                  `DomainAncillary`, `FieldAncillary`,
+                                  `CoordinateReference`, `Bounds`,
+			          `Datum`, `Count`, `Index`, `List`
+			          
+`!nc_del_dimension`               `DomainAxis`, `Bounds`, `Count`,         Dimension name
+                                  `Index`
+			          
+`!nc_get_dimension`	          `DomainAxis`, `Bounds`, `Count`,         Dimension name
+                                  `Index`
 			          			                    
-`!nc_has_dimension`	          `DomainAxis`, `Count`, `Index`           Dimension name
+`!nc_has_dimension`	          `DomainAxis`, `Bounds`, `Count`,         Dimension name
+                                  `Index`
 			          			                    
-`!nc_set_dimension`	          `DomainAxis`, `Count`, `Index`           Dimension name
+`!nc_set_dimension`	          `DomainAxis`, `Bounds`, `Count`,         Dimension name
+                                  `Index`
+			          
+`!nc_dimension_groups`            `DomainAxis`, `Bounds`, `Count`,         Group hierarchy
+                                  `Index`
+			          
+`!nc_set_dimension_groups`	  `DomainAxis`, `Bounds`, `Count`,         Group hierarchy
+                                  `Index`
+			          			                    
+`!nc_clear_dimension_groups`	  `DomainAxis`, `Bounds`, `Count`,         Group hierarchy
+                                  `Index`
 
 `!nc_is_unlimited`                `DomainAxis`                             Unlimited dimension
 
@@ -3544,7 +3572,7 @@ attributes. This is the case in file ``flat_out.nc``, for which the
 netCDF variable ``q`` has inherited the ``comment`` attribute that was
 originally set on the ``forecast`` group. NetCDF group attributes may
 be set and accessed via the :ref:`netCDF interface
-<NetCDF-interface>`.
+<NetCDF-interface>`, for both netCDF variable and netCDF dimensions.
 
 .. code-block:: console
    :caption: *Inspect the flat version of the dataset with the ncdump
@@ -3597,22 +3625,18 @@ read from the flat version of the file:
    
 The group structure may be manipulated by changing the netCDF
 dimension and variable names of the field construct and its
-components. For example, the "time" dimension coordinate construct may
-moved from the root group to the ``forecast`` group by prefixing its
-netCDF variable name with ``'/forecast/'``
+components. For example, the construct may be place in the
+``/forecast`` group by prefixing its netCDF variable or dimension name
+with ``'/forecast/'``. The `!nc_set_variable_groups` or
+`!nc_set_dimension_groups` methods may also be used to the same effect.
 
 .. code-block:: python
    :caption: *Map the "time" dimension coordinate construct to a the
               /forecast group, and the data variable corresponding to
-              the field constructs to the new group
-              /forecast/model.*
+              the field construct to the new group /forecast/model.*
 	      
-   >>> q.nc_get_variable()
-   '/forecast/q'
    >>> q.nc_set_variable('/forecast/model/q')
-   >>> q.construct('time').nc_get_variable()
-   'time'
-   >>> q.construct('time').nc_set_variable('/forecast/time')
+   >>> q.construct('time').nc_set_variable_groups(['forecast'])
    >>> cfdm.write(q, 'grouped_out_2.nc')
 
 .. code-block:: console
@@ -3636,9 +3660,6 @@ netCDF variable name with ``'/forecast/'``
    	   	   lon:units = "degrees_east" ;
    	   	   lon:standard_name = "longitude" ;
    	   	   lon:bounds = "lon_bnds" ;
-   	   double time ;
-   		   time:units = "days since 2018-12-01" ;
-   		   time:standard_name = "time" ;
    
    // global attributes:
    		   :Conventions = "CF-1.8" ;
@@ -3646,7 +3667,11 @@ netCDF variable name with ``'/forecast/'``
    		   :comment = "global comment" ;
    
    group: forecast {
-   
+       variables:
+	     double time ;
+   		   time:units = "days since 2018-12-01" ;
+   		   time:standard_name = "time" ;
+
      group: model {
        variables:
        	   double q(lat, lon) ;

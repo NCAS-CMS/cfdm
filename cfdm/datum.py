@@ -6,7 +6,6 @@ from . import core
 
 class Datum(mixin.Parameters,
             mixin.NetCDFVariable,
-            mixin.NetCDFGroups,
             core.Datum):
     '''A datum component of a coordinate reference construct of the CF
     data model.
@@ -25,6 +24,16 @@ class Datum(mixin.Parameters,
     referenced by the `CoordinateReference` instance that contains the
     datum.
 
+    **NetCDF interface**
+
+    The netCDF variable name of the construct may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+    `nc_has_variable` methods.
+
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+   
     .. versionadded:: 1.7.0
 
     '''

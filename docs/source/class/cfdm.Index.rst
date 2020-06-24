@@ -105,7 +105,9 @@ NetCDF
    ~cfdm.Index.nc_get_dimension
    ~cfdm.Index.nc_has_dimension
    ~cfdm.Index.nc_set_dimension
-   ~cfdm.Index.nc_groups
+   ~cfdm.Index.nc_variable_groups
+   ~cfdm.Index.nc_clear_variable_groups
+   ~cfdm.Index.nc_set_variable_groups
 
 Special
 -------

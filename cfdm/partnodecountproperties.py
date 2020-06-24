@@ -6,7 +6,6 @@ from . import core
 
 class PartNodeCountProperties(mixin.NetCDFVariable,
                               mixin.NetCDFDimension,
-                              mixin.NetCDFGroups,
                               mixin.Properties,
                               core.abstract.Properties):
     '''Properties for a netCDF part node count variable.
@@ -22,6 +21,10 @@ class PartNodeCountProperties(mixin.NetCDFVariable,
     `nc_get_dimension`, `nc_del_dimension` and `nc_has_dimension`
     methods.
 
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+   
     .. versionadded:: 1.8.0
 
     '''

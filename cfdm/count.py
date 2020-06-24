@@ -7,7 +7,6 @@ from . import core
 class Count(mixin.NetCDFVariable,
             mixin.NetCDFDimension,
             mixin.NetCDFSampleDimension,
-            mixin.NetCDFGroups,
             mixin.PropertiesData,
             core.abstract.PropertiesData):
     '''A count variable required to uncompress a ragged array.
@@ -38,6 +37,10 @@ class Count(mixin.NetCDFVariable,
     `nc_get_sample_dimension`, `nc_del_sample_dimension` and
     `nc_has_sample_dimension` methods.
 
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+   
     .. versionadded:: 1.7.0
 
     '''

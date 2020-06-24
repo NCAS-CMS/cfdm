@@ -97,7 +97,9 @@ NetCDF
    ~cfdm.List.nc_get_variable
    ~cfdm.List.nc_has_variable
    ~cfdm.List.nc_set_variable 
-   ~cfdm.List.nc_groups
+   ~cfdm.List.nc_variable_groups
+   ~cfdm.List.nc_clear_variable_groups
+   ~cfdm.List.nc_set_variable_groups
    
 Special
 -------

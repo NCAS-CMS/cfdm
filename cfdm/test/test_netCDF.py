@@ -52,6 +52,30 @@ class NetCDFTest(unittest.TestCase):
         self.assertIsNone(f.nc_get_variable(default=None))
         self.assertIsNone(f.nc_del_variable(default=None))
 
+        f.nc_set_variable('/ncvar')
+        self.assertEqual(f.nc_get_variable(), 'ncvar')
+
+        f.nc_set_variable('/ncvar/qwerty')
+        self.assertEqual(f.nc_get_variable(), '/ncvar/qwerty')
+
+        with self.assertRaises(ValueError):
+            f.nc_set_variable(None)
+        
+        with self.assertRaises(ValueError):
+            f.nc_set_variable('/')
+        
+        with self.assertRaises(ValueError):
+            f.nc_set_variable('group/ncvar')
+        
+        with self.assertRaises(ValueError):
+            f.nc_set_variable('group/')
+        
+        with self.assertRaises(ValueError):
+            f.nc_set_variable('group/ncvar/')
+        
+        with self.assertRaises(ValueError):
+            f.nc_set_variable('/group/ncvar/')
+        
         d = cfdm.DomainAxis()
 
         d.nc_set_dimension('qwerty')
@@ -63,6 +87,30 @@ class NetCDFTest(unittest.TestCase):
         self.assertIsNone(d.nc_get_dimension(default=None))
         self.assertIsNone(d.nc_del_dimension(default=None))
 
+        d.nc_set_dimension('/ncdim')
+        self.assertEqual(d.nc_get_dimension(), 'ncdim')
+
+        d.nc_set_dimension('/ncdim/qwerty')
+        self.assertEqual(d.nc_get_dimension(), '/ncdim/qwerty')
+
+        with self.assertRaises(ValueError):
+            d.nc_set_dimension(None)
+        
+        with self.assertRaises(ValueError):
+            d.nc_set_dimension('/')
+        
+        with self.assertRaises(ValueError):
+            d.nc_set_dimension('group/ncdim')
+        
+        with self.assertRaises(ValueError):
+            d.nc_set_dimension('group/')
+        
+        with self.assertRaises(ValueError):
+            d.nc_set_dimension('group/ncdim/')
+        
+        with self.assertRaises(ValueError):
+            d.nc_set_dimension('/group/ncdim/')
+        
         d = cfdm.Count()
 
         d.nc_set_sample_dimension('qwerty')
@@ -73,7 +121,31 @@ class NetCDFTest(unittest.TestCase):
         self.assertFalse(d.nc_has_sample_dimension())
         self.assertIsNone(d.nc_get_sample_dimension(default=None))
         self.assertIsNone(d.nc_del_sample_dimension(default=None))
+        
+        d.nc_set_sample_dimension('/ncdim')
+        self.assertEqual(d.nc_get_sample_dimension(), 'ncdim')
 
+        d.nc_set_sample_dimension('/ncdim/qwerty')
+        self.assertEqual(d.nc_get_sample_dimension(), '/ncdim/qwerty')
+
+        with self.assertRaises(ValueError):
+            d.nc_set_sample_dimension(None)
+        
+        with self.assertRaises(ValueError):
+            d.nc_set_sample_dimension('/')
+        
+        with self.assertRaises(ValueError):
+            d.nc_set_sample_dimension('group/ncdim')
+        
+        with self.assertRaises(ValueError):
+            d.nc_set_sample_dimension('group/')
+        
+        with self.assertRaises(ValueError):
+            d.nc_set_sample_dimension('group/ncdim/')
+        
+        with self.assertRaises(ValueError):
+            d.nc_set_sample_dimension('/group/ncdim/')
+        
         # ------------------------------------------------------------
         # Global attributes
         # ------------------------------------------------------------
@@ -172,7 +244,194 @@ class NetCDFTest(unittest.TestCase):
             self.assertTrue(y.equals(x, verbose=3))
 #        os.remove('tempfilename.nc')
 
+    def test_netCDF_geometry_variable(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
 
+        f = cfdm.Field()
+
+        f.nc_set_geometry_variable('qwerty')
+        self.assertTrue(f.nc_has_geometry_variable())
+        self.assertEqual(f.nc_get_geometry_variable(), 'qwerty')
+        self.assertEqual(f.nc_get_geometry_variable(default=None), 'qwerty')
+        self.assertEqual(f.nc_del_geometry_variable(), 'qwerty')
+        self.assertFalse(f.nc_has_geometry_variable())
+        self.assertIsNone(f.nc_get_geometry_variable(default=None))
+        self.assertIsNone(f.nc_del_geometry_variable(default=None))
+
+        f.nc_set_geometry_variable('/ncvar')
+        self.assertEqual(f.nc_get_geometry_variable(), 'ncvar')
+
+        f.nc_set_geometry_variable('/ncvar/qwerty')
+        self.assertEqual(f.nc_get_geometry_variable(), '/ncvar/qwerty')
+
+        with self.assertRaises(ValueError):
+            f.nc_set_geometry_variable('group/ncvar')
+        
+        with self.assertRaises(ValueError):
+            f.nc_set_geometry_variable('group/')
+        
+        with self.assertRaises(ValueError):
+            f.nc_set_geometry_variable('group/ncvar/')
+        
+        with self.assertRaises(ValueError):
+            f.nc_set_geometry_variable('/group/ncvar/')
+        
+        with self.assertRaises(ValueError):
+            f.nc_set_geometry_variable('/')
+        
+    def test_netCDF_group_attributes(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.Field()
+
+        attrs = f.nc_group_attributes()
+        self.assertIsInstance(attrs, dict)
+        self.assertFalse(attrs)
+
+        attrs = f.nc_clear_group_attributes()
+        self.assertIsInstance(attrs, dict)
+        self.assertFalse(attrs)
+
+        attrs = f.nc_group_attributes()
+        self.assertIsInstance(attrs, dict)
+        self.assertFalse(attrs)
+
+        f.nc_set_group_attributes({'comment': 'somthing'})       
+        attrs = f.nc_group_attributes()
+        self.assertTrue(attrs == {'comment': 'somthing'})      
+
+        attrs = f.nc_clear_group_attributes()
+        self.assertTrue(attrs == {'comment': 'somthing'})      
+
+        attrs = f.nc_group_attributes()
+        self.assertIsInstance(attrs, dict)
+        self.assertFalse(attrs)
+
+        f.nc_set_group_attributes({'comment': 'something'})       
+        f.nc_set_group_attributes({'foo': 'bar'})
+        attrs = f.nc_group_attributes()
+        self.assertTrue(attrs == {'comment': 'something', 'foo': 'bar'})
+
+        f.nc_clear_group_attributes()
+        f.nc_set_group_attribute('foo', 'bar')
+        attrs = f.nc_group_attributes()
+        self.assertTrue(attrs == {'foo': 'bar'})
+        f.nc_set_group_attribute('foo', 'bar2')
+        attrs = f.nc_group_attributes()
+        self.assertTrue(attrs == {'foo': 'bar2'})
+
+    def test_netCDF_dimension_groups(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cfdm.DomainAxis()
+
+        d.nc_set_dimension('ncdim')
+        
+        attrs = d.nc_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        attrs = d.nc_clear_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        attrs = d.nc_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        d.nc_set_dimension_groups(['forecast', 'model'])
+        attrs = d.nc_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertTrue(attrs == ('forecast', 'model'))
+        self.assertTrue(d.nc_get_dimension() == '/forecast/model/ncdim')
+
+        attrs = d.nc_clear_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertTrue(attrs == ('forecast', 'model'))
+
+        attrs = d.nc_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        self.assertTrue(d.nc_get_dimension() == 'ncdim')
+        
+        d.nc_set_dimension('ncdim')
+        attrs = d.nc_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertTrue(attrs == ())
+        
+        d.nc_set_dimension('/ncdim')
+        attrs = d.nc_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        
+        d.nc_set_dimension('/forecast/model/ncdim')
+        attrs = d.nc_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertTrue(attrs == ('forecast', 'model'))
+        
+        d.nc_del_dimension()
+        attrs = d.nc_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        
+    def test_netCDF_variable_groups(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.Field()
+
+        f.nc_set_variable('ncdim')
+        
+        attrs = f.nc_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        attrs = f.nc_clear_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        attrs = f.nc_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        f.nc_set_variable_groups(['forecast', 'model'])
+        attrs = f.nc_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertTrue(attrs == ('forecast', 'model'))
+        self.assertTrue(f.nc_get_variable() == '/forecast/model/ncdim')
+
+        attrs = f.nc_clear_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertTrue(attrs == ('forecast', 'model'))
+
+        attrs = f.nc_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        self.assertTrue(f.nc_get_variable() == 'ncdim')
+        
+        f.nc_set_variable('ncdim')
+        attrs = f.nc_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertTrue(attrs == ())
+        
+        f.nc_set_variable('/ncdim')
+        attrs = f.nc_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        
+        f.nc_set_variable('/forecast/model/ncdim')
+        attrs = f.nc_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertTrue(attrs == ('forecast', 'model'))
+        
+        f.nc_del_variable()
+        attrs = f.nc_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        
 #--- End: class
 
 if __name__ == '__main__':

@@ -836,8 +836,8 @@ class CFDMImplementation(Implementation):
         '''
         return field.nc_group_attributes()
 
-    def nc_get_groups(self, field):
-        '''Return the netCDF sub-groups for the field construct.
+    def nc_get_variable_groups(self, field):
+        '''Return the netCDF groups for the field construct.
 
     .. versionadded:: 1.8.6
 
@@ -850,7 +850,7 @@ class CFDMImplementation(Implementation):
         `tuple`
 
         '''
-        return field.nc_groups()
+        return field.nc_variable_groups()
 
     def nc_get_hdf5_chunksizes(self, data):
         '''Return the HDF5 chunksizes for the data.
@@ -1899,14 +1899,17 @@ class CFDMImplementation(Implementation):
 
         variable:
 
-        ncdim: `str`
-        
+        ncdim: `str` or `None`
+            The netCDF dimension name. If `None` then the name is not
+            set.
+
     :Returns:
 
         `None`
 
         '''
-        variable.nc_set_instance_dimension(ncdim)
+        if ncdim is not None:
+            variable.nc_set_instance_dimension(ncdim)
 
     def nc_set_sample_dimension(self, variable, ncdim):
         '''Set the netCDF sample dimension name.
@@ -1915,14 +1918,17 @@ class CFDMImplementation(Implementation):
 
         variable:
 
-        ncdim: `str`
-        
+        ncdim: `str` or `None`
+            The netCDF dimension name. If `None` then the name is not
+            set.
+
     :Returns:
 
         `None`
 
         '''
-        variable.nc_set_sample_dimension(ncdim)
+        if ncdim is not None:
+            variable.nc_set_sample_dimension(ncdim)
 
     def set_auxiliary_coordinate(self, field, construct, axes, copy=True):
         '''Insert a auxiliary coordinate object into a field.
@@ -2342,14 +2348,17 @@ class CFDMImplementation(Implementation):
 
         construct: construct
 
-        ncdim: `str`
-        
+        ncdim: `str` or `None`
+            The netCDF dimension name. If `None` then the name is not
+            set.
+
     :Returns:
 
         `None`
 
         '''
-        construct.nc_set_dimension(ncdim)
+        if ncdim is not None:
+            construct.nc_set_dimension(ncdim)
 
     def nc_set_geometry_variable(self, field, ncvar):
         '''Set the netCDF geometry container variable name.
@@ -2358,14 +2367,17 @@ class CFDMImplementation(Implementation):
 
         field: field construct
                 
-        ncvar: `str`
+        ncvar: `str` or `None`
+            The netCDF variable name. If `None` then the name is not
+            set.
 
     :Returns:
 
         `None`
 
         '''
-        field.nc_set_geometry_variable(ncvar)
+        if ncvar is not None:
+            field.nc_set_geometry_variable(ncvar)
 
     def nc_set_variable(self, parent, ncvar):
         '''Set the netCDF variable name.
@@ -2374,14 +2386,17 @@ class CFDMImplementation(Implementation):
 
         parent:
                 
-        ncvar: `str`
+        ncvar: `str` or `None`
+            The netCDF variable name. If `None` then the name is not
+            set.
 
     :Returns:
 
         `None`
 
         '''
-        parent.nc_set_variable(ncvar)
+        if ncvar is not None:
+            parent.nc_set_variable(ncvar)
 
     def nc_get_datum_variable(self, ref):
         '''Get the netCDF grid mapping variable name for a datum.
@@ -2407,15 +2422,18 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         ref: Coordinate reference construct
-    
-        ncvar: `str`
+
+        ncvar: `str` or `None`
+            The netCDF variable name. If `None` then the name is not
+            set.
 
     :Returns:
 
         `None`
 
         '''
-        ref.nc_set_datum_variable(ncvar)
+        if ncvar is not None:
+            ref.nc_set_datum_variable(ncvar)
 
     def set_properties(self, construct, properties, copy=True):
         '''Set construct proporties.

@@ -32,7 +32,6 @@ logger = logging.getLogger(__name__)
 class Field(mixin.NetCDFVariable,
             mixin.NetCDFGeometry,
             mixin.NetCDFGlobalAttributes,
-            mixin.NetCDFGroups,
             mixin.NetCDFGroupAttributes,
             mixin.ConstructAccess,
             mixin.PropertiesData,
@@ -68,6 +67,17 @@ class Field(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
     `nc_has_variable` methods.
 
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+   
+    The netCDF group attributes may be accessed with the
+    `nc_group_attributes`, `nc_clear_group_attributes`,
+    `nc_set_group_attribute` and `nc_set_group_attributes` methods.
+   
+    CF-compliance issues for field constructs read from a netCDF
+    dataset may be accessed with the `dataset_compliance` method.
+   
     .. versionadded:: 1.7.0
 
     '''

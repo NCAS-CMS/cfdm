@@ -104,7 +104,9 @@ NetCDF
    ~cfdm.Bounds.nc_get_dimension
    ~cfdm.Bounds.nc_has_dimension
    ~cfdm.Bounds.nc_set_dimension
-   ~cfdm.Bounds.nc_groups
+   ~cfdm.Bounds.nc_variable_groups
+   ~cfdm.Bounds.nc_clear_variable_groups
+   ~cfdm.Bounds.nc_set_variable_groups
 
 Special
 -------

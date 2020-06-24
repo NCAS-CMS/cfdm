@@ -198,7 +198,9 @@ NetCDF
    ~cfdm.Field.nc_clear_global_attributes
    ~cfdm.Field.nc_set_global_attribute
    ~cfdm.Field.nc_set_global_attributes
-   ~cfdm.Field.nc_groups
+   ~cfdm.Field.nc_variable_groups
+   ~cfdm.Field.nc_set_variable_groups
+   ~cfdm.Field.nc_clear_variable_groups
    ~cfdm.Field.nc_group_attributes
    ~cfdm.Field.nc_clear_group_attributes
    ~cfdm.Field.nc_set_group_attribute

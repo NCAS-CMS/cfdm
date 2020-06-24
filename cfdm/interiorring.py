@@ -6,7 +6,6 @@ from . import core
 
 class InteriorRing(mixin.NetCDFDimension,
                    mixin.NetCDFVariable,
-                   mixin.NetCDFGroups,
                    mixin.PropertiesData,
                    core.InteriorRing):
     '''An interior ring array with properties.
@@ -37,6 +36,10 @@ class InteriorRing(mixin.NetCDFDimension,
     `nc_get_dimension`, `nc_del_dimension` and `nc_has_dimension`
     methods.
 
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+   
     .. versionadded:: 1.8.0
 
     '''

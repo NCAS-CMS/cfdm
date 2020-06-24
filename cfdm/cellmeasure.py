@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 class CellMeasure(mixin.NetCDFVariable,
                   mixin.NetCDFExternal,
-                  mixin.NetCDFGroups,
                   mixin.PropertiesData,
                   core.CellMeasure):
     '''A cell measure construct of the CF data model.
@@ -43,6 +42,10 @@ class CellMeasure(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
     `nc_has_variable` methods.
 
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+   
     .. versionadded:: 1.7.0
 
     '''
