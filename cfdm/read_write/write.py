@@ -384,12 +384,11 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             .. versionadded:: 1.8.3
 
         group: `bool`, optional
-    
             If False then create a "flat" netCDF file, i.e. one with
             only the root group, regardless of any group structure
-            specified by the field constructs. By default 
-
-TODO    
+            specified by the field constructs. By default any groups
+            defined by the netCDF API of the field constucts and its
+            components will be created and populated.
 
             .. versionadded:: 1.8.6
 
