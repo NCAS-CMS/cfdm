@@ -1295,9 +1295,16 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         nodes = self.implementation.initialise_Bounds()
         self.implementation.set_data(nodes, data, copy=False)
+
         properties = self.implementation.get_properties(bounds)
         self.implementation.set_properties(nodes, properties)
 
+        # Set inherited properties on node variables
+        inherited_properties = self.implementation.get_inherited_properties(
+            bounds)
+        self.implementation.set_inherited_properties(nodes,
+                                                     inherited_properties)
+       
         # Find the base of the netCDF part dimension name
         size = self.implementation.get_data_size(nodes)
         ncdim = self._get_node_ncdimension(nodes, default='node')

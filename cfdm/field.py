@@ -75,6 +75,11 @@ class Field(mixin.NetCDFVariable,
     `nc_group_attributes`, `nc_clear_group_attributes`,
     `nc_set_group_attribute` and `nc_set_group_attributes` methods.
    
+    The netCDF geometry variable group structure may be accessed with
+    the `nc_set_geometry_variable`, `nc_get_geometry_variable`,
+    `nc_geometry_variable_groups`, `nc_clear_variable_groups` and
+    `nc_set_geometry_variable_groups` methods.
+   
     CF-compliance issues for field constructs read from a netCDF
     dataset may be accessed with the `dataset_compliance` method.
    

@@ -15,16 +15,20 @@ import cfdm
 
 warnings = False
 
-tmpfile = tempfile.mktemp('.cfdm_test')
-tmpfileh = tempfile.mktemp('.cfdm_test')
-tmpfileh2 = tempfile.mktemp('.cfdm_test')
-tmpfilec = tempfile.mktemp('.cfdm_test')
-tmpfile0 = tempfile.mktemp('.cfdm_test')
-tmpfile1 = tempfile.mktemp('.cfdm_test')
-tmpfiles = [tmpfile, tmpfileh, tmpfilec, tmpfile0, tmpfile1]
+n_tmpfiles = 6
+tmpfiles = [tempfile.mktemp('_test_read_write.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(tmpfile,
+ tmpfileh,
+ tmpfileh2,
+ tmpfilec,
+ tmpfile0,
+ tmpfile1,
+ ) = tmpfiles
 
 def _remove_tmpfiles():
-    '''
+    '''Remove temporary files created during tests.
+
     '''
     for f in tmpfiles:
         try:

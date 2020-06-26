@@ -300,10 +300,10 @@ class NetCDFTest(unittest.TestCase):
 
         f.nc_set_group_attributes({'comment': 'somthing'})       
         attrs = f.nc_group_attributes()
-        self.assertTrue(attrs == {'comment': 'somthing'})      
+        self.assertEqual(attrs, {'comment': 'somthing'})      
 
         attrs = f.nc_clear_group_attributes()
-        self.assertTrue(attrs == {'comment': 'somthing'})      
+        self.assertEqual(attrs, {'comment': 'somthing'})      
 
         attrs = f.nc_group_attributes()
         self.assertIsInstance(attrs, dict)
@@ -312,16 +312,25 @@ class NetCDFTest(unittest.TestCase):
         f.nc_set_group_attributes({'comment': 'something'})       
         f.nc_set_group_attributes({'foo': 'bar'})
         attrs = f.nc_group_attributes()
-        self.assertTrue(attrs == {'comment': 'something', 'foo': 'bar'})
+        self.assertEqual(attrs, {'comment': 'something', 'foo': 'bar'})
 
         f.nc_clear_group_attributes()
         f.nc_set_group_attribute('foo', 'bar')
         attrs = f.nc_group_attributes()
-        self.assertTrue(attrs == {'foo': 'bar'})
+        self.assertEqual(attrs, {'foo': 'bar'})
         f.nc_set_group_attribute('foo', 'bar2')
         attrs = f.nc_group_attributes()
-        self.assertTrue(attrs == {'foo': 'bar2'})
+        self.assertEqual(attrs, {'foo': 'bar2'})
 
+        f.set_properties({'prop1': 'value1',
+                          'comment': 'variable comment'})
+        f.nc_clear_group_attributes()
+        f.nc_set_group_attributes({'comment': None,
+                                   'foo': 'bar' })                
+        self.assertEqual(f.nc_group_attributes(values=True),
+                         {'comment': 'variable comment',
+                          'foo': 'bar' })                         
+        
     def test_netCDF_dimension_groups(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -345,22 +354,22 @@ class NetCDFTest(unittest.TestCase):
         d.nc_set_dimension_groups(['forecast', 'model'])
         attrs = d.nc_dimension_groups()
         self.assertIsInstance(attrs, tuple)
-        self.assertTrue(attrs == ('forecast', 'model'))
-        self.assertTrue(d.nc_get_dimension() == '/forecast/model/ncdim')
+        self.assertEqual(attrs, ('forecast', 'model'))
+        self.assertEqual(d.nc_get_dimension(), '/forecast/model/ncdim')
 
         attrs = d.nc_clear_dimension_groups()
         self.assertIsInstance(attrs, tuple)
-        self.assertTrue(attrs == ('forecast', 'model'))
+        self.assertEqual(attrs, ('forecast', 'model'))
 
         attrs = d.nc_dimension_groups()
         self.assertIsInstance(attrs, tuple)
         self.assertFalse(attrs)
-        self.assertTrue(d.nc_get_dimension() == 'ncdim')
+        self.assertEqual(d.nc_get_dimension(), 'ncdim')
         
         d.nc_set_dimension('ncdim')
         attrs = d.nc_dimension_groups()
         self.assertIsInstance(attrs, tuple)
-        self.assertTrue(attrs == ())
+        self.assertEqual(attrs, ())
         
         d.nc_set_dimension('/ncdim')
         attrs = d.nc_dimension_groups()
@@ -370,7 +379,7 @@ class NetCDFTest(unittest.TestCase):
         d.nc_set_dimension('/forecast/model/ncdim')
         attrs = d.nc_dimension_groups()
         self.assertIsInstance(attrs, tuple)
-        self.assertTrue(attrs == ('forecast', 'model'))
+        self.assertEqual(attrs, ('forecast', 'model'))
         
         d.nc_del_dimension()
         attrs = d.nc_dimension_groups()
@@ -400,22 +409,22 @@ class NetCDFTest(unittest.TestCase):
         f.nc_set_variable_groups(['forecast', 'model'])
         attrs = f.nc_variable_groups()
         self.assertIsInstance(attrs, tuple)
-        self.assertTrue(attrs == ('forecast', 'model'))
-        self.assertTrue(f.nc_get_variable() == '/forecast/model/ncdim')
+        self.assertEqual(attrs, ('forecast', 'model'))
+        self.assertEqual(f.nc_get_variable(), '/forecast/model/ncdim')
 
         attrs = f.nc_clear_variable_groups()
         self.assertIsInstance(attrs, tuple)
-        self.assertTrue(attrs == ('forecast', 'model'))
+        self.assertEqual(attrs, ('forecast', 'model'))
 
         attrs = f.nc_variable_groups()
         self.assertIsInstance(attrs, tuple)
         self.assertFalse(attrs)
-        self.assertTrue(f.nc_get_variable() == 'ncdim')
+        self.assertEqual(f.nc_get_variable(), 'ncdim')
         
         f.nc_set_variable('ncdim')
         attrs = f.nc_variable_groups()
         self.assertIsInstance(attrs, tuple)
-        self.assertTrue(attrs == ())
+        self.assertEqual(attrs, ())
         
         f.nc_set_variable('/ncdim')
         attrs = f.nc_variable_groups()
@@ -425,13 +434,75 @@ class NetCDFTest(unittest.TestCase):
         f.nc_set_variable('/forecast/model/ncdim')
         attrs = f.nc_variable_groups()
         self.assertIsInstance(attrs, tuple)
-        self.assertTrue(attrs == ('forecast', 'model'))
+        self.assertEqual(attrs, ('forecast', 'model'))
         
         f.nc_del_variable()
         attrs = f.nc_variable_groups()
         self.assertIsInstance(attrs, tuple)
         self.assertFalse(attrs)
+
+        with self.assertRaises(ValueError):
+            f.nc_set_variable_groups(['forecast', 'model'])
+               
+    def test_netCDF_geometry_variable_groups(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.Field()
+
+        f.nc_set_geometry_variable('ncvar')
         
+        attrs = f.nc_geometry_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        attrs = f.nc_clear_geometry_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        attrs = f.nc_geometry_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        f.nc_set_geometry_variable_groups(['forecast', 'model'])
+        attrs = f.nc_geometry_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertEqual(attrs, ('forecast', 'model'))
+        self.assertEqual(f.nc_get_geometry_variable(),
+                         '/forecast/model/ncvar')
+
+        attrs = f.nc_clear_geometry_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertEqual(attrs, ('forecast', 'model'))
+
+        attrs = f.nc_geometry_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        self.assertEqual(f.nc_get_geometry_variable(), 'ncvar')
+        
+        f.nc_set_geometry_variable('ncvar')
+        attrs = f.nc_geometry_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertEqual(attrs, ())
+        
+        f.nc_set_geometry_variable('/ncvar')
+        attrs = f.nc_geometry_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        
+        f.nc_set_geometry_variable('/forecast/model/ncvar')
+        attrs = f.nc_geometry_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertEqual(attrs, ('forecast', 'model'))
+        
+        f.nc_del_geometry_variable()
+        attrs = f.nc_geometry_variable_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        
+        with self.assertRaises(ValueError):
+            f.nc_set_geometry_variable_groups(['forecast', 'model'])
+               
 #--- End: class
 
 if __name__ == '__main__':

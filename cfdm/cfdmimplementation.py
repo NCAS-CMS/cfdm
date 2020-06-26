@@ -1182,6 +1182,24 @@ class CFDMImplementation(Implementation):
         '''
         return construct.get_data().get_index(default=None)
 
+    def get_inherited_properties(self, parent):
+        '''Return all inherited properties.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        parent:
+            The object that inherits the properties.
+
+    :Returns:
+
+        `dict`
+            The inherited property names and their values
+
+        '''
+        return parent.inherited_properties()
+
     def get_interior_ring(self, construct):
         '''Return the interior ring variable of geometry coordiantes.
 
@@ -2259,6 +2277,28 @@ class CFDMImplementation(Implementation):
 
         '''
         coordinate.set_geometry(value)
+
+    def set_inherited_properties(self, parent, inherited_properties,
+                                 copy=True):
+        '''Set any inherited properties.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        parent:
+            The object that inherits the properties.
+
+        inherited_properties: `dict`
+
+        copy: `bool``
+
+    :Returns:
+
+        `None`
+
+        '''
+        parent.set_properties(inherited_properties, copy=copy)
 
     def set_node_count(self, parent, node_count, copy=True):
         '''Set a node count properties variable.

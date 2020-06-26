@@ -49,8 +49,141 @@ class NetCDF(object):
 
 # --- End: class
 
+class _NetCDFGroupsMixin(object):
+    '''TODO
 
-class NetCDFDimension(NetCDF):
+    .. versionadded:: 1.8.6
+    '''
+    def _nc_groups(self, nc_get):
+        '''Return the netCDF group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+    
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `_nc_clear_groups`, `_nc_set_groups`
+    
+    :Parameters:
+
+        nc_get: function
+            The method which gets the netCDF name.
+
+    :Returns:
+
+        `tuple` of `str`
+            The group structure.
+
+    **Examples:**
+
+    See the examples in classes which inherit this method.
+
+        '''
+        name = nc_get(default='')
+        return tuple(name.split('/')[1:-1])
+
+    def _nc_set_groups(self, groups, nc_get, nc_set, nc_groups):
+        '''Set the netCDF group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+    
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `_nc_clear_groups`, `_nc_groups`
+    
+    :Parameters:
+                
+        groups: sequence of `str`
+            The new group structure.
+        
+        nc_get: function
+            The method which gets the netCDF name.
+
+        nc_set: function
+            The method which sets the netCDF name.
+
+        nc_groups: function
+            The method which returns existing group structure.
+
+    :Returns:
+
+        `tuple` of `str`
+            The group structure prior to being reset.
+
+    **Examples:**
+        
+    See the examples in classes which inherit this method.
+
+        '''
+        old = nc_groups()
+
+        name = nc_get(default='')
+        name = name.split('/')[-1]
+        if not name:
+            raise ValueError(
+                "Can't set groups when there is no netCDF name")
+
+        if groups:
+            name = '/'.join(('',) + tuple(groups) + (name,))
+
+        if name:
+            nc_set(name)
+        
+        return old    
+
+    def _nc_clear_groups(self, nc_get, nc_set, nc_groups):
+        '''Remove the netCDF group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `_nc_groups`, `_nc_set_groups`
+    
+    :Parameters:
+
+        nc_get: function
+            The method which gets the netCDF name.
+
+        nc_set: function
+            The method which sets the netCDF name.
+
+        nc_groups: function
+            The method which returns existing group structure.
+
+    :Returns:
+
+        `tuple` of `str`
+            The removed group structure.
+
+    **Examples:**
+
+    See the examples in classes which inherit this method.
+
+        '''
+        old =  nc_groups()
+        
+        name = nc_get(default='')
+        name = name.split('/')[-1]
+        if name:
+            nc_set(name)
+        
+        return old
+
+
+class NetCDFDimension(NetCDF,
+                      _NetCDFGroupsMixin):
     '''Mixin class for accessing the netCDF dimension name.
 
     .. versionadded:: 1.7.0
@@ -284,8 +417,10 @@ class NetCDFDimension(NetCDF):
     ()
 
         '''
-        name = self.nc_get_dimension('')
-        return tuple(name.split('/')[1:-1])
+        return self._nc_groups(nc_get=self.nc_get_dimension)
+    
+#        name = self.nc_get_dimension('')
+#        return tuple(name.split('/')[1:-1])
 
     def nc_set_dimension_groups(self, groups):
         '''Set the netCDF dimension group hierarchy.
@@ -339,21 +474,26 @@ class NetCDFDimension(NetCDF):
     ()
 
         '''
-        old =  self.nc_dimension_groups()
+        return self._nc_set_groups(groups,
+                                   nc_get=self.nc_get_dimension,
+                                   nc_set=self.nc_set_dimension,
+                                   nc_groups=self.nc_dimension_groups)
 
-        name = self.nc_get_dimension('')
-        name = name.split('/')[-1]
-        if not name:
-            raise ValueError("Can't set dimension groups when there is "
-                             "no dimension name")
-
-        if groups:
-            name = '/'.join(('',) + tuple(groups) + (name,))
-
-        if name:
-            self.nc_set_dimension(name)
-        
-        return old    
+#        old =  self.nc_dimension_groups()
+#
+#        name = self.nc_get_dimension('')
+#        name = name.split('/')[-1]
+#        if not name:
+#            raise ValueError("Can't set dimension groups when there is "
+#                             "no dimension name")
+#
+#        if groups:
+#            name = '/'.join(('',) + tuple(groups) + (name,))
+#
+#        if name:
+#            self.nc_set_dimension(name)
+#        
+#        return old    
 
     def nc_clear_dimension_groups(self):
         '''Remove the netCDF dimension group hierarchy.
@@ -402,19 +542,25 @@ class NetCDFDimension(NetCDF):
     ()
 
         '''
-        old =  self.nc_dimension_groups()
-        
-        name = self.nc_get_dimension('')
-        name = name.split('/')[-1]
-        if name:
-            self.nc_set_dimension(name)
-        
-        return old
+        return self._nc_clear_groups(
+            nc_get=self.nc_get_dimension,
+            nc_set=self.nc_set_dimension,
+            nc_groups=self.nc_dimension_groups)
+    #
+#        old =  self.nc_dimension_groups()
+#        
+#        name = self.nc_get_dimension('')
+#        name = name.split('/')[-1]
+#        if name:
+#            self.nc_set_dimension(name)
+#        
+#        return old
     
 # --- End: class
 
 
-class NetCDFVariable(NetCDF):
+class NetCDFVariable(NetCDF,
+                     _NetCDFGroupsMixin):
     '''Mixin class for accessing the netCDF variable name.
 
     .. versionadded:: 1.7.0
@@ -649,8 +795,10 @@ class NetCDFVariable(NetCDF):
     ()
 
         '''
-        name = self.nc_get_variable('')
-        return tuple(name.split('/')[1:-1])
+        return self._nc_groups(nc_get=self.nc_get_variable)
+
+#        name = self.nc_get_variable('')
+#        return tuple(name.split('/')[1:-1])
 
     def nc_set_variable_groups(self, groups):
         '''Set the netCDF variable group hierarchy.
@@ -704,21 +852,26 @@ class NetCDFVariable(NetCDF):
     ()
 
         '''
-        old =  self.nc_variable_groups()
+        return self._nc_set_groups(groups,
+                                   nc_get=self.nc_get_variable,
+                                   nc_set=self.nc_set_variable,
+                                   nc_groups=self.nc_variable_groups)
 
-        name = self.nc_get_variable('')
-        name = name.split('/')[-1]
-        if not name:
-            raise ValueError("Can't set variable groups when there is "
-                             "no variable name")
-
-        if groups:
-            name = '/'.join(('',) + tuple(groups) + (name,))
-
-        if name:
-            self.nc_set_variable(name)
-        
-        return old    
+#        old =  self.nc_variable_groups()
+#
+#        name = self.nc_get_variable('')
+#        name = name.split('/')[-1]
+#        if not name:
+#            raise ValueError("Can't set variable groups when there is "
+#                             "no variable name")
+#
+#        if groups:
+#            name = '/'.join(('',) + tuple(groups) + (name,))
+#
+#        if name:
+#            self.nc_set_variable(name)
+#        
+#        return old    
 
     def nc_clear_variable_groups(self):
         '''Remove the netCDF variable group hierarchy.
@@ -767,15 +920,20 @@ class NetCDFVariable(NetCDF):
     ()
 
         '''
-        old =  self.nc_variable_groups()
-        
-        name = self.nc_get_variable('')
-        name = name.split('/')[-1]
-        if name:
-            self.nc_set_variable(name)
-        
-        return old
-
+        return self._nc_clear_groups(
+            nc_get=self.nc_get_variable,
+            nc_set=self.nc_set_variable,
+            nc_groups=self.nc_variable_groups)
+    
+#        old =  self.nc_variable_groups()
+#        
+#        name = self.nc_get_variable('')
+#        name = name.split('/')[-1]
+#        if name:
+#            self.nc_set_variable(name)
+#        
+#        return old
+#
 # --- End: class
 
 
@@ -1669,7 +1827,8 @@ class NetCDFExternal(NetCDF):
 # --- End: class
 
 
-class NetCDFGeometry(NetCDF):
+class NetCDFGeometry(NetCDF,
+                     _NetCDFGroupsMixin):
     '''Mixin class for accessing the netCDF geometry container variable
     name.
 
@@ -1862,6 +2021,163 @@ class NetCDFGeometry(NetCDF):
 
         self._get_component('netcdf')['geometry_variable'] = value
 
+    def nc_geometry_variable_groups(self):
+        '''Return the netCDF geometry variable group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+    
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_clear_geometry_variable_groups`,
+    `nc_set_geometry_variable_groups`
+    
+    :Returns:
+
+        `tuple` of `str`
+            The group structure.
+
+    **Examples:**
+
+    >>> f.nc_set_geometry_variable('geometry1')
+    >>> f.nc_geometry_variable_groups()
+    ()
+    >>> f.nc_set_geometry_variable_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_geometry_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_geometry_variable()
+    '/forecast/model/geometry1'
+    >>> f.nc_clear_geometry_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_geometry_variable()
+    'geometry1'
+
+    >>> f.nc_set_geometry_variable('/forecast/model/geometry1')
+    >>> f.nc_geometry_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_del_geometry_variable('/forecast/model/geometry1')
+    '/forecast/model/geometry1'
+    >>> f.nc_geometry_variable_groups()
+    ()
+
+        '''
+        return self._nc_groups(nc_get=self.nc_get_geometry_variable)
+
+    def nc_set_geometry_variable_groups(self, groups):
+        '''Set the netCDF geometry variable group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+    
+    An alternative technique for setting the group structure is to set
+    the netCDF variable name, with `nc_set_geometry_variable`, with
+    the group structure delimited by ``/`` characters.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_clear_geometry_variable_groups`,
+                 `nc_geometry_variable_groups`
+    
+    :Parameters:
+                
+        groups: sequence of `str`
+            The new group structure.
+
+    :Returns:
+
+        `tuple` of `str`
+            The group structure prior to being reset.
+
+    **Examples:**
+
+    >>> f.nc_set_geometry_variable('geometry1')
+    >>> f.nc_geometry_variable_groups()
+    ()
+    >>> f.nc_set_geometry_variable_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_geometry_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_geometry_variable()
+    '/forecast/model/geometry1'
+    >>> f.nc_clear_geometry_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_geometry_variable()
+    'geometry1'
+
+    >>> f.nc_set_geometry_variable('/forecast/model/geometry1')
+    >>> f.nc_geometry__variablegroups()
+    ('forecast', 'model')
+    >>> f.nc_del_geometry_variable('/forecast/model/geometry1')
+    '/forecast/model/geometry1'
+    >>> f.nc_geometry_variable_groups()
+    ()
+
+        '''
+        return self._nc_set_groups(groups,
+                                   nc_get=self.nc_get_geometry_variable,
+                                   nc_set=self.nc_set_geometry_variable,
+                                   nc_groups=self.nc_geometry_variable_groups)
+
+    def nc_clear_geometry_variable_groups(self):
+        '''Remove the netCDF geometry variable group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+
+    An alternative technique for removing the group structure is to
+    set the netCDF variable name, with `nc_set_geometry_variable`,
+    with no ``/`` characters.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_geometry_variable_groups`,
+                 `nc_set_geometry_variable_groups`
+    
+    :Returns:
+
+        `tuple` of `str`
+            The removed group structure.
+
+    **Examples:**
+
+    >>> f.nc_set_geometry_variable('geometry1')
+    >>> f.nc_geometry_variable_groups()
+    ()
+    >>> f.nc_set_geometry_variable_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_geometry_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_geometry_variable()
+    '/forecast/model/geometry1'
+    >>> f.nc_clear_geometry_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_geometry_variable()
+    'geometry1'
+
+    >>> f.nc_set_geometry_variable('/forecast/model/geometry1')
+    >>> f.nc_geometry_variable_groups()
+    ('forecast', 'model')
+    >>> f.nc_del_geometry_variable('/forecast/model/geometry1')
+    '/forecast/model/geometry1'
+    >>> f.nc_geometry_variable_groups()
+    ()
+
+        '''
+        return self._nc_clear_groups(
+            nc_get=self.nc_get_geometry_variable,
+            nc_set=self.nc_set_geometry_variable,
+            nc_groups=self.nc_geometry_variable_groups)
+    
 # --- End: class
 
 

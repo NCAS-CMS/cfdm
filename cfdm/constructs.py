@@ -859,6 +859,7 @@ class Constructs(core.Constructs):
                 if log:
                     logger.info('\n'.join(log))
                 if not _return_axis_map:
+                    print ('arse 9', log)
                     return False
             else:
                 # Map item axes in the two instances

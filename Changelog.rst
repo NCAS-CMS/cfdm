@@ -13,9 +13,12 @@ version 1.8.6
 * New method: `cfdm.Field.nc_set_group_attribute`
 * New method: `cfdm.Field.nc_set_group_attributes`
 * New method: `cfdm.Field.nc_clear_group_attributes`
-* New method: `cfdm.Domain.nc_dimension_groups`
-* New method: `cfdm.Domain.nc_set_dimension_groups`
-* New method: `cfdm.Domain.nc_clear_dimension_groups`
+* New method: `cfdm.Field.nc_geometry_variable_groups`
+* New method: `cfdm.Field.nc_set_geometry_variable_groups`
+* New method: `cfdm.Field.nc_clear_geometry_variable_groups`
+* New method: `cfdm.DomainAxis.nc_dimension_groups`
+* New method: `cfdm.DomainAxis.nc_set_dimension_groups`
+* New method: `cfdm.DomainAxis.nc_clear_dimension_groups`
 * New keyword parameter to `cfdm.write`: ``group``
 * New dependency: ``netcdf_flattener>=1.1.0``
 

@@ -14,9 +14,11 @@ class CoordinateReferenceTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL('DISABLE')
-        # Note: to enable all messages for given methods, lines or calls (those
-        # without a 'verbose' option to do the same) e.g. to debug them, wrap
-        # them (for methods, start-to-end internally) as follows:
+        # Note: to enable all messages for given methods, lines or
+        # calls (those without a 'verbose' option to do the same)
+        # e.g. to debug them, wrap them (for methods, start-to-end
+        # internally) as follows:
+        # 
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')
@@ -28,7 +30,6 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.f = f[0]
 
         self.test_only = []
-
 
     def test_CoordinateReference__repr__str__dump_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -42,7 +43,6 @@ class CoordinateReferenceTest(unittest.TestCase):
             _ = cr.dump(display=False)
             self.assertTrue(cr.construct_type == 'coordinate_reference')
 
-
     def test_CoordinateReference_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -53,7 +53,8 @@ class CoordinateReferenceTest(unittest.TestCase):
         t = cfdm.CoordinateReference(
             coordinates=('coord1',),
             coordinate_conversion=cfdm.CoordinateConversion(
-                parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
+                parameters={
+                    'standard_name': 'atmosphere_hybrid_height_coordinate'},
                 domain_ancillaries={'a': 'aux0', 'b': 'aux1', 'orog': 'orog'})
         )
         self.assertTrue(t.equals(t.copy(), verbose=3))
@@ -86,11 +87,12 @@ class CoordinateReferenceTest(unittest.TestCase):
         t = cfdm.CoordinateReference(
                coordinates=['coord1', 'fred', 'coord3'],
                coordinate_conversion=cfdm.CoordinateConversion(
-                   parameters={'grid_mapping_name': 'albers_conical_equal_area',
-                               'standard_parallel': [-30, 10],
-                               'longitude_of_projection_origin': 34.8,
-                               'false_easting': -20000,
-                               'false_northing': -30000})
+                   parameters={
+                       'grid_mapping_name': 'albers_conical_equal_area',
+                       'standard_parallel': [-30, 10],
+                       'longitude_of_projection_origin': 34.8,
+                       'false_easting': -20000,
+                       'false_northing': -30000})
         )
         self.assertTrue(t.equals(t.copy(), verbose=3))
 
@@ -98,14 +100,14 @@ class CoordinateReferenceTest(unittest.TestCase):
         t = cfdm.CoordinateReference(
                coordinates=['coord1', 'fred', 'coord3'],
                coordinate_conversion=cfdm.CoordinateConversion(
-                   parameters={'grid_mapping_name': 'albers_conical_equal_area',
-                               'standard_parallel': cfdm.Data([-30, 10]),
-                               'longitude_of_projection_origin': 34.8,
-                               'false_easting': -20000,
-                               'false_northing': -30000})
+                   parameters={
+                       'grid_mapping_name': 'albers_conical_equal_area',
+                       'standard_parallel': cfdm.Data([-30, 10]),
+                       'longitude_of_projection_origin': 34.8,
+                       'false_easting': -20000,
+                       'false_northing': -30000})
         )
         self.assertTrue(t.equals(t.copy(), verbose=3))
-
 
     def test_CoordinateConversion(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -189,7 +191,6 @@ class CoordinateReferenceTest(unittest.TestCase):
         cr = f.construct('standard_name:atmosphere_hybrid_height_coordinate')
         cr.datum.nc_set_variable('my_name')
         cfdm.write(f, 'delme.nc')
-
 
 #--- End: class
 

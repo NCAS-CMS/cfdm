@@ -198,6 +198,17 @@ NetCDF
    ~cfdm.Field.nc_clear_global_attributes
    ~cfdm.Field.nc_set_global_attribute
    ~cfdm.Field.nc_set_global_attributes
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
    ~cfdm.Field.nc_variable_groups
    ~cfdm.Field.nc_set_variable_groups
    ~cfdm.Field.nc_clear_variable_groups
@@ -205,6 +216,36 @@ NetCDF
    ~cfdm.Field.nc_clear_group_attributes
    ~cfdm.Field.nc_set_group_attribute
    ~cfdm.Field.nc_set_group_attributes
+  
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.Field.nc_del_geometry_variable
+   ~cfdm.Field.nc_get_geometry_variable
+   ~cfdm.Field.nc_has_geometry_variable
+   ~cfdm.Field.nc_set_geometry_variable 
+   ~cfdm.Field.nc_geometry_variable_groups
+   ~cfdm.Field.nc_set_geometry_variable_groups
+   ~cfdm.Field.nc_clear_geometry_variable_groups
+
+Dataset compliance
+^^^^^^^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
    ~cfdm.Field.dataset_compliance
 
 .. _Field-Special:

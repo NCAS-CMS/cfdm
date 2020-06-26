@@ -13,6 +13,7 @@ import netCDF4
 import cftime
 import numpy
 import future
+import netcdf_flattener
 
 from . import (__version__,
                __cf_version__,
@@ -347,6 +348,13 @@ def environment(display=True, paths=True):
     if paths:
         out[-1] += ' ' + str(os.path.abspath(numpy.__file__))
 
+    try:
+        out.append('netcdf_flattener: ' + str(netcdf_flattener.__version__))
+    except AttributeError:
+        out.append('netcdf_flattener: unknown version')        
+    if paths:
+        out[-1] += ' ' + str(os.path.abspath(netcdf_flattener.__file__))
+        
     out.append('cfdm: ' + str(__version__))
     if paths:
         out[-1] += ' ' + str(os.path.abspath(__file__))

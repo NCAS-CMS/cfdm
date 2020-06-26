@@ -13,10 +13,14 @@ import numpy
 
 import cfdm
 
-tmpfile  = tempfile.mktemp('.cfdm_test')
-tmpfiles = [tmpfile]
+n_tmpfiles = 1
+tmpfiles = [tempfile.mktemp('_test_Field.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(tmpfile,) = tmpfiles
+
 def _remove_tmpfiles():
-    '''
+    '''Remove temporary files created during tests.
+
     '''
     for f in tmpfiles:
         try:
