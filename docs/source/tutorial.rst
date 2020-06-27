@@ -122,10 +122,9 @@ The following file types can be read:
   with or without the data array values.
 
 Note that when reading netCDF4 files that contain :ref:`hierachical
-groups <Hierarchical-groups>`, the group structure is flattened prior
-to the creation of field constructs, but the group structure is saved
-so that it may be resued if the field constructs are written to back
-to disk.
+groups <Hierarchical-groups>`, the group structure is saved via the
+:ref:`netCDF interface <NetCDF-interface>` so that it may be re-used,
+or modified, if the field constructs are written to back to disk.
        
 For example, to read the file ``file.nc`` (found in the :ref:`sample
 datasets <Sample-datasets>`), which contains two field constructs:
@@ -3499,9 +3498,9 @@ details.
 **Hierarchical groups**
 -----------------------
 
-`Hierarchical groups`_ provide a powerful mechanism to structure
-variables within netCDF4 datasets, with well defined rules for
-resolving references to out-of-group netCDF variables and dimensions.
+`Hierarchical groups`_ provide a mechanism to structure variables
+within netCDF4 datasets, with well defined rules for resolving
+references to out-of-group netCDF variables and dimensions.
 
 This is illustrated with the file ``grouped.nc`` (found in the
 :ref:`sample datasets <Sample-datasets>`):
@@ -3590,13 +3589,15 @@ existing group structure by setting the *group* keyword to
    >>> cfdm.write(q, 'group_out.nc')
    >>> cfdm.write(q, 'flat_out.nc', group=False)
 
-NetCDF variables in flat output file will inherit any netCDF group
-attributes, providing that they are not superceded by varaible
-attributes. This is the case in file ``flat_out.nc``, for which the
-netCDF variable ``q`` has inherited the ``comment`` attribute that was
-originally set on the ``forecast`` group. NetCDF group attributes may
-be set and accessed via the :ref:`netCDF interface
-<NetCDF-interface>`, for both netCDF variable and netCDF dimensions.
+NetCDF variables in the flattened output file will inherit any netCDF
+group attributes, providing that they are not superceded by variable
+attributes. The output netCDF variable and dimension names will be
+taken as the basenames of any that have been pre-defined. This is the
+case in file ``flat_out.nc``, for which the netCDF variable ``q`` has
+inherited the ``comment`` attribute that was originally set on the
+``/forecast`` group. NetCDF group attributes may be set and accessed
+via the :ref:`netCDF interface <NetCDF-interface>`, for both netCDF
+variable and netCDF dimensions.
 
 .. code-block:: console
    :caption: *Inspect the flat version of the dataset with the ncdump
@@ -3647,12 +3648,14 @@ read from the flat version of the file:
    >>> q1.equals(q)
    True
    
-The group structure may be manipulated by changing the netCDF
-dimension and variable names of the field construct and its
+A group structure may be created or modified for any field construct,
+whether it was read from a dataset or created ab initio, by changing
+the netCDF dimension and variable names of the field construct and its
 components. For example, the construct may be place in the
 ``/forecast`` group by prefixing its netCDF variable or dimension name
 with ``'/forecast/'``. The `!nc_set_variable_groups` or
-`!nc_set_dimension_groups` methods may also be used to the same effect.
+`!nc_set_dimension_groups` methods may also be used to the same
+effect.
 
 .. code-block:: python
    :caption: *Map the "time" dimension coordinate construct to a the

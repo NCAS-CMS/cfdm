@@ -49,6 +49,16 @@ def read(filename, external=None, extra=None, verbose=None,
     `~cf.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
 
+    
+    **NetCDF hierarchical groups**
+    
+    Hierarchical groups in CF provide a mechanism to structure
+    variables within netCDF4 datasets. Field constructs are
+    constructed from grouped datasets by applying the well defined
+    rules in the CF conventions for resolving references to
+    out-of-group netCDF variables and dimensions. The group structure
+    is preserved in the field construct's netCDF interface.
+
 
     **CF-compliance**
 
@@ -69,7 +79,7 @@ def read(filename, external=None, extra=None, verbose=None,
     `~cfdm.Field.dataset_compliance` method of the field construct, as
     well as optionally displayed when the dataset is read by setting
     the *warnings* parameter.
-
+    
 
     **Performance**
 

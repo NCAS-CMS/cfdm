@@ -61,6 +61,17 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     `~cfdm.DomainAxis.nc_is_unlimited` and
     `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
+    
+
+    **NetCDF hierarchical groups**
+    
+    Hierarchical groups in CF provide a mechanism to structure
+    variables within netCDF4 datasets with well defined rules for
+    resolving references to out-of-group netCDF variables and
+    dimensions. The group structure defined by a field construct's
+    netCDF interface will, by default, be recreated in the output
+    dataset. See the *group* parameter for details.
+
 
     **NetCDF4 HDF chunk sizes**
 
@@ -387,8 +398,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             If False then create a "flat" netCDF file, i.e. one with
             only the root group, regardless of any group structure
             specified by the field constructs. By default any groups
-            defined by the netCDF API of the field constucts and its
-            components will be created and populated.
+            defined by the netCDF interface of the field constucts and
+            its components will be created and populated.
 
             .. versionadded:: 1.8.6
 

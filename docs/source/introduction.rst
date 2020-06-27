@@ -35,19 +35,16 @@ being modified in memory to be (more) CF-compliant.
 
 ----
 
-With few exceptions, cfdm only has the functionality required to read
-and write datasets, and to create, modify and inspect field constructs
-in memory. This limited scope is intentional, because
+The cdfm library can create field constructs ab initio, or read them
+from netCDF files, inspect, subspace and modify in memory, and write
+them to CF-netCDF dataset files. As long as it can interpret the data,
+cfdm does not enforce CF-compliance, allowing non-compliant datasets
+to be read, processed, corrected and rewritten.
 
-i) many tasks do not require any higher-level functionality (such as
-   inspecting the values of metadata properties, or creating datasets
-   from raw data), and
-   
-ii) the expectation is that other libraries will build on cfdm,
-    inheriting its comprehensive knowledge of the CF conventions, to
-    add more sophisticated methods appropriate to their user base. To
-    this end, cfdm has been designed to be :ref:`highly extensible
-    <Extensions>`.
+It does not contain higher-level analysis functions (such as
+regidding) because the expectation is that other libraries will build
+on cfdm, inheriting its comprehensive knowledge of the CF conventions,
+to add more sophisticated methods. 
 
 .. code-block:: python
    :caption: *A simple example of reading a field construct from a
@@ -93,8 +90,7 @@ The cfdm package can
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form, and
 
-* read, write, and create coordinates defined by geometry cells (**new
-  in version 1.8.0**).
+* read, write, and create coordinates defined by geometry cells.
 
 Note that the cfdm package enables the representation and creation of
 CF field constructs, but it is largely :ref:`up to the user to use
