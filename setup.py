@@ -125,6 +125,11 @@ This project is hosted in a `GitHub repository
 <https://github.com/NCAS-CMS/cfdm>`_ where you can access the most
 up-to-date source."""
 
+# Get dependencies
+requirements = open('requirements.txt', 'r')
+install_requires = requirements.read().splitlines() 
+
+print (install_requires )
 setup(name = "cfdm",
       long_description = long_description,
       version      = version,
@@ -163,12 +168,6 @@ setup(name = "cfdm",
                       'cfdm.read_write.netcdf',
                       'cfdm.test',],
       scripts      = ['scripts/cfdump'],
+      install_requires = install_requires,
 #      python_requires = '>= 2.7',
-      install_requires = [
-          'future>=0.16.0',
-          'netcdf4>=1.5.3',
-          'cftime>=1.1.3',
-          'numpy>=1.15',
-          'netcdf_flattener>=1.1.0',
-      ],
 )
