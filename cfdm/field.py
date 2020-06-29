@@ -75,15 +75,15 @@ class Field(mixin.NetCDFVariable,
         '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs
-        instance._Domain     = Domain
-        instance._Data       = Data
-        instance._RaggedContiguousArray        = RaggedContiguousArray
-        instance._RaggedIndexedArray           = RaggedIndexedArray
+        instance._Domain = Domain
+        instance._Data = Data
+        instance._RaggedContiguousArray = RaggedContiguousArray
+        instance._RaggedIndexedArray = RaggedIndexedArray
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray
-        instance._GatheredArray                = GatheredArray
+        instance._GatheredArray = GatheredArray
         instance._Count = Count
         instance._Index = Index
-        instance._List  = List
+        instance._List = List
         return instance
 
     def __init__(self, properties=None, source=None, copy=True,
@@ -213,7 +213,6 @@ class Field(mixin.NetCDFVariable,
             string.append('Field ancils    : {}'.format(
                 '\n                : '.join(x)))
 
-
         string.append(str(self.domain))
 
         return '\n'.join(string)
@@ -263,13 +262,13 @@ class Field(mixin.NetCDFVariable,
     (1, 10, 1)
 
         '''
-        data  = self.get_data()
+        data = self.get_data()
         shape = data.shape
 
         indices = data._parse_indices(indices)
         indices = tuple(indices)
 
-        new = self.copy() #data=False)
+        new = self.copy()  # data=False)
 
         data_axes = self.get_data_axes()
 
@@ -325,13 +324,14 @@ class Field(mixin.NetCDFVariable,
         if axis_names_sizes is None:
             axis_names_sizes = self._unique_domain_axis_identities()
 
-        x = [axis_names_sizes[axis] for axis in self.get_data_axes(default=())]
+        x = [
+            axis_names_sizes[axis] for axis in self.get_data_axes(default=())]
         axis_names = ', '.join(x)
         if axis_names:
             axis_names = '({0})'.format(axis_names)
 
         # Field units
-        units    = self.get_property('units', None)
+        units = self.get_property('units', None)
         calendar = self.get_property('calendar', None)
         if units is not None:
             units = ' {0}'.format(units)
@@ -588,7 +588,7 @@ class Field(mixin.NetCDFVariable,
         return out
 
     @_inplace_enabled
-    def compress(self, method,axes=None, count_properties=None,
+    def compress(self, method, axes=None, count_properties=None,
                  index_properties=None, list_properties=None,
                  inplace=False):
         '''Compress the field construct.
@@ -867,8 +867,8 @@ class Field(mixin.NetCDFVariable,
                             compressed_data[start:end] = d[:last]
                             start += last
                     else:
-                        for last, d in zip(count,
-                                           data.flatten(range(c.data.ndim-1))):
+                        for last, d in zip(
+                                count, data.flatten(range(c.data.ndim-1))):
                             if not last:
                                 continue
 
@@ -893,7 +893,7 @@ class Field(mixin.NetCDFVariable,
         current_compression_type = data.get_compression_type().replace(
             ' ', '_')
         if (current_compression_type
-            and current_compression_type == 'ragged_'+method):
+                and current_compression_type == 'ragged_'+method):
             # The field is already compressed by the correct method
             return f
 
@@ -913,8 +913,9 @@ class Field(mixin.NetCDFVariable,
             if self.data.ndim != 3:
                 raise ValueError(
                     "The field data must have exactly 3 dimensions for "
-                    "DSG ragged indexed contiguous compression. Got {}".format(
-                        self.data.ndim))
+                    "DSG ragged indexed contiguous compression. Got "
+                    "{}".format(self.data.ndim)
+                )
         # --- End: if
 
         # Make sure that the metadata constructs have the same
@@ -1072,7 +1073,8 @@ class Field(mixin.NetCDFVariable,
                 "Compression by gathering is not yet available - sorry!")
 
         else:
-            raise ValueError("Unknown compression method: {!r}".format(method))
+            raise ValueError(
+                "Unknown compression method: {!r}".format(method))
 
         f.data._set_CompressedArray(x, copy=False)
 
@@ -1157,7 +1159,7 @@ class Field(mixin.NetCDFVariable,
             _title = 'Field: {0}'.format(_title)
         # --- End: if
 
-        line  = '{0}{1}'.format(indent0, ''.ljust(len(_title), '-'))
+        line = '{0}{1}'.format(indent0, ''.ljust(len(_title), '-'))
 
         # Title
         string = [line, indent0+_title, line]
@@ -1171,12 +1173,13 @@ class Field(mixin.NetCDFVariable,
         # Simple properties
         properties = self.properties()
         if properties:
-           string.append(self._dump_properties(_level=_level))
+            string.append(self._dump_properties(_level=_level))
 
         # Data
         data = self.get_data(None)
         if data is not None:
-            x = [axis_to_name[axis] for axis in self.get_data_axes(default=())]
+            x = [
+                axis_to_name[axis] for axis in self.get_data_axes(default=())]
 
             units = self.get_property('units', None)
             if units is None:
@@ -1632,7 +1635,8 @@ class Field(mixin.NetCDFVariable,
 
                 # Still here?
                 ok = True
-                for ccid in ref.coordinate_conversion.domain_ancillaries().values():
+                for ccid in ref.coordinate_conversion.domain_ancillaries(
+                        ).values():
                     axes = constructs_data_axes[ccid]
                     if not set(axes).issubset(data_axes):
                         ok = False
@@ -1646,7 +1650,8 @@ class Field(mixin.NetCDFVariable,
                     f.set_construct(ref, key=rcid, copy=False)
 
                     # Copy domain ancillary constructs
-                    for dakey in ref.coordinate_conversion.domain_ancillaries().values():
+                    for dakey in ref.coordinate_conversion.domain_ancillaries(
+                            ).values():
                         construct = self.constructs.get(dakey)
                         if construct is not None:
                             axes = constructs_data_axes.get(dakey)
@@ -1789,7 +1794,7 @@ class Field(mixin.NetCDFVariable,
                 raise ValueError("Can't squeeze data: {}".format(error))
 
         data_axes = f.get_data_axes(default=None)
-        if data_axes is  not None:
+        if data_axes is not None:
             new_data_axes = [data_axes[i]
                              for i in range(f.data.ndim) if i not in iaxes]
 
