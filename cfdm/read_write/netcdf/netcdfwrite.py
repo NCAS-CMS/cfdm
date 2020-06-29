@@ -255,7 +255,7 @@ class NetCDFWrite(IOWrite):
                                                  dtype=dtype)
         # --- End: for
 
-        self.write_vars['nc'][ncvar].setncatts(netcdf_attrs)
+        g['nc'][ncvar].setncatts(netcdf_attrs)
 
         return netcdf_attrs
 
@@ -559,7 +559,7 @@ class NetCDFWrite(IOWrite):
         if axis is not None:
             domain_axis = self.implementation.get_domain_axes(f)[axis]
             logger.info(
-                '    Writing {!r} to netCDF dimension:{}'.format(
+                '    Writing {!r} to netCDF dimension: {}'.format(
                     domain_axis, ncdim)
             )  # pragma: no cover
 
@@ -571,11 +571,12 @@ class NetCDFWrite(IOWrite):
         # Define (and create if necessary) the group in which to place
         # this netCDF dimension.
         parent_group = self._parent_group(ncdim)
- 
+        print ('111 ncdim=', ncdim, g['group'])
         if g['group'] and '/' in ncdim:
             # This dimension needs to go into a sub-group so replace
             # its name with its basename (CF>=1.8)
             ncdim = self._remove_group_structure(ncdim)
+        print ('222 ncdim=', ncdim, g['group'], parent_group)
         
         if unlimited:
             # Create an unlimited dimension
@@ -605,8 +606,8 @@ class NetCDFWrite(IOWrite):
                         size, ncdim, g['netcdf'].file_format, error))
         # --- End: if
 
-    def _write_dimension_coordinate(self, f, key, coord):
-        '''Write a coordinate variable and its bound variable to the file.
+    def _write_dimension_coordinate(self, f, key, coord, ncdim):
+        '''Write a coordinate variable and its bounds variable to the file.
 
     This also writes a new netCDF dimension to the file and, if
     required, a new netCDF dimension for the bounds.
@@ -618,6 +619,12 @@ class NetCDFWrite(IOWrite):
         key: `str`
 
         coord: Dimension coordinate construct
+
+        ncdim: `str` or `None`
+            The name of the netCDF dimension for this dimension
+            coordinate construct, including any groups structure. Note
+            that the group structure may be different to the
+            corodinate variable, and the basename.
 
     :Returns:
 
@@ -648,12 +655,35 @@ class NetCDFWrite(IOWrite):
                                                       default='coordinate')
 
             # Create a new dimension
-#            unlimited = self._unlimited(f, axis)
             unlimited = self.implementation.nc_is_unlimited_axis(f, axis)
-            self._write_dimension(ncvar, f, axis, unlimited=unlimited)
+
+            # --------------------------------------------------------
+            # Replace the netCDF dimension name with that of the
+            # coordinate variable, putting it in the approrpriate
+            # group.
+            # --------------------------------------------------------
+            if ncdim is None or not['group']:
+                # Either: A netCDF dimension name has NOT been
+                #         specified, so put the dimension in the root
+                #         group with the same name as the coordinate
+                #         variable.
+                #
+                # Or: A flat file has been requested, so put the
+                #     netCDF dimension in the root group with the same
+                #     name as the coordinate variable.
+                ncdim = self._remove_group_structure(ncvar)
+            else:
+                # A netCDF dimension name HAS been specified, so put
+                # the dimension its given group, with the same name as
+                # the coordinate variable.
+                _, groups = self._remove_group_structure(ncdim,
+                                                         return_groups=True)
+                ncdim = groups + self._remove_group_structure(ncvar)
+                    
+            self._write_dimension(ncdim, f, axis, unlimited=unlimited)
 
             ncdimensions = self._netcdf_dimensions(f, key, coord)
-
+            print('ncdimensions=',ncdimensions)
             # If this dimension coordinate has bounds then write the
             # bounds to the netCDF file and add the 'bounds' or
             # 'climatology' attribute (as appropriate) to a dictionary
@@ -1546,7 +1576,7 @@ class NetCDFWrite(IOWrite):
 
         return parent_group
 
-    def _remove_group_structure(self, name):
+    def _remove_group_structure(self, name, return_groups=False):
         '''Strip off any group structure from the name.
 
     .. versionaddedd:: 1.8.6
@@ -1555,12 +1585,39 @@ class NetCDFWrite(IOWrite):
 
         name: `str`
 
+        return_groups: `bool`, optional
+
     :Returns:
         
         `str`
+    
+    **Examples:**        
+        
+    w._remove_group_structure('lat')
+    'lat'
+    w._remove_group_structure('/forecast/lat')
+    'lat'
+    w._remove_group_structure('/forecast/model/lat')
+    'lat'
+    w._remove_group_structure('lat', return_groups=True)
+    'lat', ''
+    w._remove_group_structure('/forecast/lat', return_groups=True)
+    'lat', '/forecast/'
+    w._remove_group_structure('/forecast/model/lat', return_groups=True)
+    'lat', '/forecast/model/'
 
         '''
-        return name.split('/')[-1]
+        structure = name.split('/')
+        basename = structure[-1]
+        
+        if return_groups:
+            groups = '/'.join(structure[:-1])
+            if groups:
+                groups += '/'
+                
+            return basename, groups
+
+        return basename
     
     def _get_node_ncdimension(self, bounds, default=None):
 
@@ -2787,8 +2844,11 @@ class NetCDFWrite(IOWrite):
 
         # For each of the field's domain axes ...
         domain_axes = self.implementation.get_domain_axes(f)
-
-        for axis in sorted(domain_axes):
+        print('domain_axes=',domain_axes)
+        for axis, domain_axis in sorted(domain_axes.items()):
+            ncdim = self.implementation.nc_get_dimension(domain_axis,
+                                                         default=None)
+            print ('axis=', axis, ncdim)
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
                 if self.implementation.get_construct_data_axes(f, key) != (axis,):
@@ -2802,7 +2862,11 @@ class NetCDFWrite(IOWrite):
                     # The data array spans this domain axis, so write
                     # the dimension coordinate to the file as a
                     # coordinate variable.
-                    ncvar = self._write_dimension_coordinate(f, key, dim_coord)
+                    print (7777777777777777)
+                    ncvar = self._write_dimension_coordinate(f , key,
+                                                             dim_coord,
+                                                             ncdim=ncdim)
+                    print (8888888888888888888888)
                 else:
                     # The data array does not span this axis (and
                     # therefore the dimension coordinate must have
@@ -2817,8 +2881,10 @@ class NetCDFWrite(IOWrite):
                         # this domain axis. Therefore write the
                         # dimension coordinate to the file as a
                         # coordinate variable.
-                        ncvar = self._write_dimension_coordinate(
-                            f, key, dim_coord)
+                        ncvar = self._write_dimension_coordinate(f,
+                                                                 key,
+                                                                 dim_coord,
+                                                                 ncdim=ncdim)
 
                         # Expand the field's data array to include
                         # this domain axis

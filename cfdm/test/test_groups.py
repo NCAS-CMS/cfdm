@@ -71,7 +71,7 @@ class GroupsTest(unittest.TestCase):
         g = cfdm.read(ungrouped_file)[0]
         self.assertTrue(f.equals(g, verbose=2))
 
-        grouped_file = 'delme1.nc'a
+        grouped_file = 'delme1.nc'
         filename = grouped_file
 
         # ------------------------------------------------------------
@@ -92,86 +92,61 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h[0], verbose=2))
         
         # ------------------------------------------------------------
-        # Move the time dimension coordinate to the /forecast group
+        # Move constructs one by one to the /forecast group
         # ------------------------------------------------------------
-        g.construct('time').nc_set_variable_groups(['forecast'])
-        cfdm.write(g, filename)
-        
-        nc = netCDF4.Dataset(filename, 'r')
-        self.assertIn(
-            f.construct('time').nc_get_variable(),
-            nc.groups['forecast'].variables
-        )
-        nc.close()
-        
-        h = cfdm.read(filename)
-        self.assertEqual(len(h), 1, repr(h))
-        self.assertTrue(f.equals(h[0], verbose=2))
-        
-        # ------------------------------------------------------------
-        # Move a cell measure to the /forecast group
-        # ------------------------------------------------------------
-        c = g.construct('measure:area')
-        c.nc_set_variable_groups(['forecast'])
-        cfdm.write(g, filename)
+        for name in ('time',  # Dimension coordinate
+                     'grid_latitude',  # Dimension coordinate
+                     'longitude', # Auxiliary coordinate
+                     'measure:area',  # Cell measure
+                     'surface_altitude',  # Domain ancillary
+                     'air_temperature standard_error',  # Field ancillary
+                     'grid_mapping_name:rotated_latitude_longitude',
+    ):
+#        for name in ('grid_latitude',):  # Dimension coordinate
+            print(9999999999, name)
+            g.construct(name).nc_set_variable_groups(['forecast'])
+            cfdm.write(g, filename, verbose=2)
+            
+            # Check that the variable is in the right group
+            nc = netCDF4.Dataset(filename, 'r')
+            self.assertIn(
+                f.construct(name).nc_get_variable(),
+                nc.groups['forecast'].variables)
+            nc.close()
 
-        # Check that the variable is in the right group
+            # Check that the field construct hasn't changed
+            h = cfdm.read(filename)
+            self.assertEqual(len(h), 1, repr(h))
+            self.assertTrue(f.equals(h[0], verbose=2), name)
+        
+        # ------------------------------------------------------------
+        # Move bounds to the /forecast group
+        # ------------------------------------------------------------
+        name = 'grid_latitude'
+        g.construct(name).bounds.nc_set_variable_groups(['forecast'])
+        cfdm.write(g, filename)
+        
         nc = netCDF4.Dataset(filename, 'r')
         self.assertIn(
-            f.construct('measure:area').nc_get_variable(),
+            f.construct(name).bounds.nc_get_variable(),
             nc.groups['forecast'].variables)
         nc.close()
 
-        # Check that the field construct hasn't changed
         h = cfdm.read(filename)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
         
-        # ------------------------------------------------------------
-        # Move a domain ancillary to the /forecast group
-        # ------------------------------------------------------------
-        c = g.construct('surface_altitude')
-        c.nc_set_variable_groups(['forecast'])
-        cfdm.write(g, filename)
-
-        # Check that the variable is in the right group
-        nc = netCDF4.Dataset(filename, 'r')
-        self.assertIn(
-            f.construct('surface_altitude').nc_get_variable(),
-            nc.groups['forecast'].variables)
-        nc.close()
-
-        # Check that the field construct hasn't changed
-        h = cfdm.read(filename)
-        self.assertEqual(len(h), 1, repr(h))
-        self.assertTrue(f.equals(h[0], verbose=2))
-        
-        # ------------------------------------------------------------
-        # Move a grid mapping to the /forecast group
-        # ------------------------------------------------------------
-        c = g.construct('grid_mapping_name:rotated_latitude_longitude')
-        c.nc_set_variable_groups(['forecast'])
-        cfdm.write(g, filename)
-        
-        nc = netCDF4.Dataset(filename, 'r')
-        self.assertIn(
-            f.construct('grid_mapping_name:rotated_latitude_longitude').nc_get_variable(),
-            nc.groups['forecast'].variables)
-        nc.close()
-        
-        h = cfdm.read(filename)
-        self.assertEqual(len(h), 1, repr(h))
-        self.assertTrue(f.equals(h[0], verbose=2))
+        f.dump()
         
     def test_groups_geometry(self):
         f = cfdm.example_field(6)
-                
+
         ungrouped_file = 'ungrouped1.nc'
         cfdm.write(f, ungrouped_file)
         g = cfdm.read(ungrouped_file)[0]
         self.assertTrue(f.equals(g, verbose=2))
 
-        grouped_file = 'delme1.nc'
+        grouped_file = 'delme2.nc'
         filename = grouped_file
 
         # ------------------------------------------------------------
