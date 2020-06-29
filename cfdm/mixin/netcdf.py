@@ -418,9 +418,6 @@ class NetCDFDimension(NetCDF,
 
         '''
         return self._nc_groups(nc_get=self.nc_get_dimension)
-    
-#        name = self.nc_get_dimension('')
-#        return tuple(name.split('/')[1:-1])
 
     def nc_set_dimension_groups(self, groups):
         '''Set the netCDF dimension group hierarchy.
@@ -479,22 +476,6 @@ class NetCDFDimension(NetCDF,
                                    nc_set=self.nc_set_dimension,
                                    nc_groups=self.nc_dimension_groups)
 
-#        old =  self.nc_dimension_groups()
-#
-#        name = self.nc_get_dimension('')
-#        name = name.split('/')[-1]
-#        if not name:
-#            raise ValueError("Can't set dimension groups when there is "
-#                             "no dimension name")
-#
-#        if groups:
-#            name = '/'.join(('',) + tuple(groups) + (name,))
-#
-#        if name:
-#            self.nc_set_dimension(name)
-#        
-#        return old    
-
     def nc_clear_dimension_groups(self):
         '''Remove the netCDF dimension group hierarchy.
 
@@ -546,15 +527,6 @@ class NetCDFDimension(NetCDF,
             nc_get=self.nc_get_dimension,
             nc_set=self.nc_set_dimension,
             nc_groups=self.nc_dimension_groups)
-    #
-#        old =  self.nc_dimension_groups()
-#        
-#        name = self.nc_get_dimension('')
-#        name = name.split('/')[-1]
-#        if name:
-#            self.nc_set_dimension(name)
-#        
-#        return old
     
 # --- End: class
 
@@ -937,7 +909,8 @@ class NetCDFVariable(NetCDF,
 # --- End: class
 
 
-class NetCDFSampleDimension(NetCDF):
+class NetCDFSampleDimension(NetCDF,
+                            _NetCDFGroupsMixin):
     '''Mixin class for accessing the netCDF sample dimension name.
 
     .. versionadded:: 1.7.0
@@ -1126,6 +1099,164 @@ class NetCDFSampleDimension(NetCDF):
         # --- End: if
         
         self._get_component('netcdf')['sample_dimension'] = value
+        
+    def nc_sample_dimension_groups(self):
+        '''Return the netCDF dimension group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+    
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_clear_sample_dimension_groups`,
+                 `nc_set_sample_dimension_groups`
+    
+    :Returns:
+
+        `tuple` of `str`
+            The group structure.
+
+    **Examples:**
+
+    >>> f.nc_set_sample_dimension('element')
+    >>> f.nc_sample_dimension_groups()
+    ()
+    >>> f.nc_set_sample_dimension_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_sample_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_sample_dimension()
+    '/forecast/model/element'
+    >>> f.nc_clear_sample_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_sample_dimension()
+    'element'
+
+    >>> f.nc_set_sample_dimension('/forecast/model/element')
+    >>> f.nc_sample_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_del_sample_dimension('/forecast/model/element')
+    '/forecast/model/element'
+    >>> f.nc_sample_dimension_groups()
+    ()
+
+        '''
+        return self._nc_groups(nc_get=self.nc_get_sample_dimension)
+    
+    def nc_set_sample_dimension_groups(self, groups):
+        '''Set the netCDF dimension group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+        
+    An alternative technique for setting the group structure is to set
+    the netCDF dimension name, with `nc_set_sample_dimension`, with
+    the group structure delimited by ``/`` characters.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_clear_sample_dimension_groups`,
+                 `nc_sample_dimension_groups`
+    
+    :Parameters:
+                
+        groups: sequence of `str`
+            The new group structure.
+
+    :Returns:
+
+        `tuple` of `str`
+            The group structure prior to being reset.
+
+    **Examples:**
+
+    >>> f.nc_set_sample_dimension('element')
+    >>> f.nc_sample_dimension_groups()
+    ()
+    >>> f.nc_set_sample_dimension_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_sample_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_sample_dimension()
+    '/forecast/model/element'
+    >>> f.nc_clear_sample_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_sample_dimension()
+    'element'
+
+    >>> f.nc_set_sample_dimension('/forecast/model/element')
+    >>> f.nc_sample_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_del_sample_dimension('/forecast/model/element')
+    '/forecast/model/element'
+    >>> f.nc_sample_dimension_groups()
+    ()
+
+        '''
+        return self._nc_set_groups(groups,
+                                   nc_get=self.nc_get_sample_dimension,
+                                   nc_set=self.nc_set_sample_dimension,
+                                   nc_groups=self.nc_sample_dimension_groups)
+
+    def nc_clear_sample_dimension_groups(self):
+        '''Remove the netCDF dimension group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+    
+    An alternative technique for removing the group structure is to
+    set the netCDF dimension name, with `nc_set_sample_dimension`,
+    with no ``/`` characters.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `nc_sample_dimension_groups`,
+                 `nc_set_sample_dimension_groups`
+    
+    :Returns:
+
+        `tuple` of `str`
+            The removed group structure.
+
+    **Examples:**
+
+    >>> f.nc_set_sample_dimension('element')
+    >>> f.nc_sample_dimension_groups()
+    ()
+    >>> f.nc_set_sample_dimension_groups(['forecast', 'model'])
+    >>> ()
+    >>> f.nc_sample_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_sample_dimension()
+    '/forecast/model/element'
+    >>> f.nc_clear_sample_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_get_sample_dimension()
+    'element'
+
+    >>> f.nc_set_sample_dimension('/forecast/model/element')
+    >>> f.nc_sample_dimension_groups()
+    ('forecast', 'model')
+    >>> f.nc_del_sample_dimension('/forecast/model/element')
+    '/forecast/model/element'
+    >>> f.nc_sample_dimension_groups()
+    ()
+
+        '''
+        return self._nc_clear_groups(
+            nc_get=self.nc_get_sample_dimension,
+            nc_set=self.nc_set_sample_dimension,
+            nc_groups=self.nc_sample_dimension_groups)
+    
 
 # --- End: class
 

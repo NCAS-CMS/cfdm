@@ -76,6 +76,17 @@ NetCDF
    ~cfdm.DomainAxis.nc_set_dimension 
    ~cfdm.DomainAxis.nc_is_unlimited
    ~cfdm.DomainAxis.nc_set_unlimited
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
    ~cfdm.DomainAxis.nc_dimension_groups
    ~cfdm.DomainAxis.nc_clear_dimension_groups
    ~cfdm.DomainAxis.nc_set_dimension_groups

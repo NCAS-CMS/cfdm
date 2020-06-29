@@ -104,9 +104,23 @@ NetCDF
    ~cfdm.Bounds.nc_get_dimension
    ~cfdm.Bounds.nc_has_dimension
    ~cfdm.Bounds.nc_set_dimension
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
    ~cfdm.Bounds.nc_variable_groups
    ~cfdm.Bounds.nc_clear_variable_groups
    ~cfdm.Bounds.nc_set_variable_groups
+   ~cfdm.Bounds.nc_dimension_groups
+   ~cfdm.Bounds.nc_clear_dimension_groups
+   ~cfdm.Bounds.nc_set_dimension_groups
 
 Special
 -------

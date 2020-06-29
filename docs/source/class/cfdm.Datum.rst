@@ -55,6 +55,17 @@ NetCDF
    ~cfdm.Datum.nc_get_variable
    ~cfdm.Datum.nc_has_variable
    ~cfdm.Datum.nc_set_variable
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
    ~cfdm.Datum.nc_variable_groups
    ~cfdm.Datum.nc_set_variable_groups
    ~cfdm.Datum.nc_clear_variable_groups

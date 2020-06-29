@@ -336,11 +336,6 @@ class NetCDFRead(IORead):
             nc.close()
             nc = flat_nc
 
-#            print ('___________________________')
-#            for a in nc.ncattrs():
-#                print(a,'=', nc.getncattr(a))
-#            print ('___________________________')
-            
         g['nc'] = nc
         return nc
 
@@ -2082,6 +2077,8 @@ class NetCDFRead(IORead):
         # Record the fact that this parent netCDF variable has a
         # geometry variable
         g['variable_geometry'][parent_ncvar] = geometry_ncvar
+        print ('GEOM_PPPPPP',g['geometries'])
+        
         
         return geometry_ncvar        
 
@@ -2696,7 +2693,7 @@ class NetCDFRead(IORead):
         # Add axes and non-scalar dimension coordinates to the field
         # ------------------------------------------------------------
         field_ncdimensions = self._ncdimensions(field_ncvar)
-
+        print ("g['variable_dimensions']=",g['variable_dimensions'])
         for ncdim in field_ncdimensions:
             if g['variable_dimensions'].get(ncdim) == (ncdim,):
                 # There is a Unidata coordinate variable for this
@@ -3523,7 +3520,7 @@ class NetCDFRead(IORead):
         # Replace the netCDF dimension name with its full group
         # path. E.g. if dimension 'time' is in group '/forecast' then
         # it will be renamed '/forecast/time'. (CF>=1.8)
-        return g['flattener_mapping']['dimensions'][ncdim]
+        return g['flattener_mapping']['dimensions'].get(ncdim, ncdim)
                 
     def _create_auxiliary_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
@@ -3667,8 +3664,13 @@ class NetCDFRead(IORead):
                 if bounds_ncvar is not None:
                     attribute = 'climatology'
                 elif geometry:
-                    bounds_ncvar = properties.pop('nodes', None)
+                    bounds_ncvar = properties.pop('nodes', None) 
                     if bounds_ncvar is not None:
+                        if self.read_vars['has_groups']:
+                            bounds_ncvar = (
+                                g['flattener_mapping']['variables'][bounds_ncvar]
+                                    )
+                            
                         attribute = 'nodes'
         # --- End: if
 
@@ -3715,7 +3717,7 @@ class NetCDFRead(IORead):
                     pass
             else:
                 pass
-
+        
             bounds = self.implementation.initialise_Bounds()
 
             bounds_properties = g['variable_attributes'][bounds_ncvar].copy()

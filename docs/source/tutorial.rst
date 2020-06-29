@@ -3138,6 +3138,13 @@ Method                                Classes                                  N
 `!nc_has_sample_dimension`            `Count`, `Index`                         Sample dimension name
 			              
 `!nc_set_sample_dimension`            `Count`, `Index`                         Sample dimension name
+
+`!nc_sample_dimension_groups`         `Count`                                  Group hierarchy
+ 
+`!nc_set_sample_dimension_groups`     `Count`                                   Group hierarchy
+ 
+`!nc_clear_sample_dimension_groups`   `Count`                                  Group hierarchy
+
 ====================================  =======================================  =====================================
 
 ----

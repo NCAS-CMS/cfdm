@@ -502,6 +502,65 @@ class NetCDFTest(unittest.TestCase):
         
         with self.assertRaises(ValueError):
             f.nc_set_geometry_variable_groups(['forecast', 'model'])
+
+    def test_netCDF_sample_dimension_groups(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        c = cfdm.Count()
+
+        c.nc_set_sample_dimension('ncvar')
+        
+        attrs = c.nc_sample_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        attrs = c.nc_clear_sample_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        attrs = c.nc_sample_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+
+        c.nc_set_sample_dimension_groups(['forecast', 'model'])
+        attrs = c.nc_sample_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertEqual(attrs, ('forecast', 'model'))
+        self.assertEqual(c.nc_get_sample_dimension(),
+                         '/forecast/model/ncvar')
+
+        attrs = c.nc_clear_sample_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertEqual(attrs, ('forecast', 'model'))
+
+        attrs = c.nc_sample_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        self.assertEqual(c.nc_get_sample_dimension(), 'ncvar')
+        
+        c.nc_set_sample_dimension('ncvar')
+        attrs = c.nc_sample_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertEqual(attrs, ())
+        
+        c.nc_set_sample_dimension('/ncvar')
+        attrs = c.nc_sample_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        
+        c.nc_set_sample_dimension('/forecast/model/ncvar')
+        attrs = c.nc_sample_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertEqual(attrs, ('forecast', 'model'))
+        
+        c.nc_del_sample_dimension()
+        attrs = c.nc_sample_dimension_groups()
+        self.assertIsInstance(attrs, tuple)
+        self.assertFalse(attrs)
+        
+        with self.assertRaises(ValueError):
+            c.nc_set_sample_dimension_groups(['forecast', 'model'])
                
 #--- End: class
 
