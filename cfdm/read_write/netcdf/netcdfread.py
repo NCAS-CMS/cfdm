@@ -314,27 +314,29 @@ class NetCDFRead(IORead):
                     "for details.".format(filename)
                 )
             
+            # Create a diskless container for the flattened file
             flat_file = tempfile.NamedTemporaryFile(
                 mode='wb',
                 dir=tempfile.gettempdir(),
-                prefix='cfdm_',
+                prefix='cfdm_flat_',
                 suffix='.nc',
                 delete=True)
             
-            g['has_groups'] = True
-            g['flat_files'].append(flat_file)
-
             flat_nc = netCDF4.Dataset(flat_file, 'w',
                                       diskless=True,
                                       persist=False)
             flat_nc.set_fill_off()
 
+            # Flatten the file
             netcdf_flattener.flatten(nc, flat_nc,
                                      lax_mode=True,
                                      _copy_data=False)
 
             nc.close()
             nc = flat_nc
+
+            g['has_groups'] = True
+            g['flat_files'].append(flat_file)
 
         g['nc'] = nc
         return nc
@@ -354,7 +356,8 @@ class NetCDFRead(IORead):
             The name of the new netCDF file.
 
         '''
-        x = tempfile.NamedTemporaryFile(mode='wb', dir=tempfile.gettempdir(),
+        x = tempfile.NamedTemporaryFile(mode='wb',
+                                        dir=tempfile.gettempdir(),
                                         prefix='cfdm_', suffix='.nc')
         tmpfile = x.name
 
@@ -582,30 +585,6 @@ class NetCDFRead(IORead):
             turning off all automatic masking.
 
             .. versionadded:: 1.8.3
-
-#        absolute_netCDF_names: `bool`, optional
-#            If False then assign relative netCDF names the returned
-#            field constructs and their components. By default,
-#            absolute names are used. 
-#
-#            This parameter is ignored unless the input file is a
-#            netCDF4 dataset with a hierarchical group structure,
-#            i.e. one with at least one group within the root group.
-#
-#            *Parameter example:*
-#              Suppose that a netCDF4 file contains two CF-netCDF data
-#              variables, one called 'pr' in the root group and a one
-#              called 'tas' inside a group called 'forecasts'. By
-#              default the netCDF variable names assigned to the
-#              resulting field constructs would be ``'pr'`` and
-#              ``'/forecasts/tas'`` respectively (note that the leading
-#              '/' is omitted if the variable or dimension is in the
-#              root group). If *absolute_netCDF_names* is False then
-#              the netCDF variable names assigned to the field
-#              constructs would instead be ``'pr'`` and ``'tas'``
-#              respectively.
-#
-#            .. versionadded:: 1.8.6
 
     :Returns:
 
@@ -1022,7 +1001,11 @@ class NetCDFRead(IORead):
             pformat(variable_dimensions, indent=12)
         )  # pragma: no cover
         
-        
+        logger.debug(
+            "        read_vars['variable_basename'] =\n" +
+            pformat(variable_basename, indent=12)
+        )  # pragma: no cover
+                
         if g['has_groups']:
             logger.debug("    Groups:")  # pragma: no cover
             logger.debug(
@@ -1297,22 +1280,25 @@ class NetCDFRead(IORead):
         # --- End: for
 
         logger.info(
-            "Referenced netCDF variables:\n    "
-            + "\n    ".join(
-                [ncvar for  ncvar in all_fields
+            "    Referenced netCDF variables:\n        "
+            + "\n        ".join(
+                [ncvar for  ncvar in sorted(all_fields)
                  if not self._is_unreferenced(ncvar)]
             )
         )  # pragma: no cover
+        
+        if g['do_not_create_field']:
+            logger.info(
+                "        "
+                + "\n        ".join(
+                    [ncvar
+                     for ncvar in sorted(g['do_not_create_field'])])
+            )  # pragma: no cover
+            
         logger.info(
-            "    "
-            + "\n    ".join([ncvar
-                             for ncvar in sorted(g['do_not_create_field'])])
-        )  # pragma: no cover
-
-        logger.info(
-            "Unreferenced netCDF variables:\n    " +
-            "\n    ".join(
-                [ncvar for ncvar in all_fields
+            "    Unreferenced netCDF variables:\n        " +
+            "\n        ".join(
+                [ncvar for ncvar in sorted(all_fields)
                 if self._is_unreferenced(ncvar)]
             )
         )  # pragma: no cover
@@ -2621,8 +2607,8 @@ class NetCDFRead(IORead):
         field_properties.update(g['variable_attributes'][field_ncvar])
 
         logger.debug(
-            "    netCDF attributes:\n" +
-            pformat(field_properties, indent=4)
+            "        netCDF attributes:\n" +
+            pformat(field_properties, indent=12)
         )  # pragma: no cover
 
         # Take cell_methods out of the data variable's properties
@@ -2673,8 +2659,7 @@ class NetCDFRead(IORead):
             if (
                     k not in g['variable_attributes'][field_ncvar]
                     and k not in g['variable_group_attributes'][field_ncvar]
-            ):
-                    
+            ):                    
                 x[k] = None
         # --- End: for
 
@@ -2721,19 +2706,78 @@ class NetCDFRead(IORead):
         # Add axes and non-scalar dimension coordinates to the field
         # ------------------------------------------------------------
         field_ncdimensions = self._ncdimensions(field_ncvar)
-#        print ("g['variable_dimensions']=",g['variable_dimensions'])
+
+        field_group = g['variable_group'][field_ncvar]        
+        if not field_group:
+            field_group = []
+            
+        print ('field_ncdimensions=',field_ncdimensions)
+        
         for ncdim in field_ncdimensions:
-            if g['variable_dimensions'].get(ncdim) == (ncdim,):
+            found_coordinate_variable = False
+
+            ncvar = ncdim
+            if g['variable_dimensions'].get(ncvar) == (ncdim,):
                 # There is a Unidata coordinate variable for this
                 # dimension, so create a domain axis and dimension
                 # coordinate
-                if ncdim in g['dimension_coordinate']:
+                found_coordinate_variable = True
+            elif g['has_groups']:
+                proximal_candidates = {}
+                lateral_search_candidates = []
+                for ncvar, ncdims in g['variable_dimensions'].items():
+                    if ncvar == field_ncvar or ncdims != (ncdim,):
+                        continue
+
+                    basename = g['variable_basename'][ncvar]
+                    if basename != ncdim:
+                        continue
+
+                    groups = g['variable_group'][ncvar]
+                    if not groups:
+                        groups = []
+
+                    n_groups = len(groups)
+                    if (n_groups <= len(field_group)
+                        and field_group[:n_groups] == groups):
+                        proximal_candidates[ncvar] = groups
+                    else:
+                        lateral_search_candidates.append(ncvar)
+                # --- End: for
+
+                if proximal_candidates:
+                    # Choose the oordinate variable closest to the
+                    # field
+                    found_coordinate_variable = True
+                    ncvar = [k
+                             for k in sorted(proximal_candidates.items(),
+                                             reverse=True,
+                                             key=lambda item: len(item[1]))]
+                    ncvar = ncvar[0][0]
+                elif len(lateral_search_candidates) == 1:
+                    # Choose this unique coordinate variable that is
+                    # somewhere (anywhere!) in the file
+                    found_coordinate_variable = True
+                    ncvar = lateral_search_candidates[0]
+                elif lateral_search_candidates:
+                    self._add_message(
+                        field_ncvar, None,
+                        message=("Multiple coordinate variables",
+                                 "identified by lateral search"),
+                        dimensions=g['variable_dimensions'][field_ncvar])
+            # --- End: if
+
+            if found_coordinate_variable:
+                # There is a Unidata coordinate variable for this
+                # dimension, so create a domain axis and dimension
+                # coordinate
+                if ncvar in g['dimension_coordinate']:
                     coord = self._copy_construct('dimension_coordinate',
-                                                 field_ncvar, ncdim)
+                                                 field_ncvar, ncvar)
                 else:
                     coord = self._create_dimension_coordinate(field_ncvar,
-                                                              ncdim, f)
-                    g['dimension_coordinate'][ncdim] = coord
+                                                              ncvar, f)
+                    g['dimension_coordinate'][ncvar] = coord
 
                 domain_axis = self._create_domain_axis(
                     self.implementation.get_construct_data_size(coord),
@@ -2754,7 +2798,7 @@ class NetCDFRead(IORead):
                     field=f, construct=coord,
                     axes=[axis], copy=False)
 
-                self._reference(ncdim)
+                self._reference(ncvar)
                 if coord.has_bounds():
                     bounds = self.implementation.get_bounds(coord)
                     self._reference(self.implementation.nc_get_variable(
@@ -2766,6 +2810,7 @@ class NetCDFRead(IORead):
 
                 ncvar_to_key[ncdim] = dim
                 g['coordinates'].setdefault(field_ncvar, []).append(ncdim)
+                
             else:
                 # There is no dimension coordinate for this dimension,
                 # so just create a domain axis with the correct size.
@@ -2788,11 +2833,10 @@ class NetCDFRead(IORead):
                 try:
                     if nc.dimensions[ncdim].isunlimited():
                         self.implementation.nc_set_unlimited_axis(f, axis)
-#                        unlimited.append(axis)
                 except KeyError:
-                    # This dimension is not in the netCDF file (as might
-                    # be the case for an element dimension implied by a
-                    # ragged array).
+                    # This dimension is not in the netCDF file (as
+                    # might be the case for an element dimension
+                    # implied by a ragged array).
                     pass
             # --- End: if
 
@@ -2801,9 +2845,6 @@ class NetCDFRead(IORead):
 
             ncdim_to_axis[ncdim] = axis
         # --- End: for
-
-#        if unlimited:
-#            self.implementation.nc_set_unlimited_dimensions(f, unlimited)
 
         data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)
 
@@ -3324,8 +3365,8 @@ class NetCDFRead(IORead):
         # --- End: if
 
         logger.debug(
-            "    Field properties:\n" +
-            pformat(self.implementation.get_properties(f), indent=4)
+            "        Field properties:\n" +
+            pformat(self.implementation.get_properties(f), indent=12)
         )  # pragma: no cover
 
         # Add the structural read report to the field
@@ -3447,7 +3488,11 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         if message is not None:
-            code = self._code0[message[0]]*1000 + self._code1[message[1]]
+            try:
+                code = self._code0[message[0]]*1000 + self._code1[message[1]]
+            except KeyError:
+                code = None
+                
             message = ' '.join(message)
         else:
             code = None
