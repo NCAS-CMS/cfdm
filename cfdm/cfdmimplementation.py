@@ -981,9 +981,14 @@ class CFDMImplementation(Implementation):
         for attr, value in attributes.items():
             field.nc_set_group_attribute(attr, value)
 
-    def equal_constructs(self, construct0, construct1,
+    def equal_components(self, construct0, construct1,
                          ignore_type=False):
-        '''Whether or not two constructs are equal.
+        '''Whether or not two field construct components are equal.
+        
+    A "component" is either a metadata construct or a metadata
+    construct component (such as a bounds component).
+        
+    .. versionadded::: 1.8.6
 
     :Parameter:
 
@@ -998,7 +1003,33 @@ class CFDMImplementation(Implementation):
         `bool`
 
         '''
-        return construct0.equals(construct1, ignore_type=ignore_type)
+        return construct0.equals(construct1, ignore_type=ignore_type,
+                                 verbose=0)
+
+    def equal_constructs(self, construct0, construct1,
+                         ignore_type=False):
+        '''Whether or not two field construct components are equal.
+        
+    A "component" is either a metadata construct or a metadata
+    construct component (such as a bounds component).
+        
+    .. versionadded::: 1.7.0
+
+    :Parameter:
+
+        construct0: construct
+
+        construct1: construct
+
+        ignore_type: `bool`, optional
+
+    :Retuns:
+
+        `bool`
+
+        '''
+        raise NotImplementedError("Deprecated at version 1.8.6. "
+                                  + "Use 'equal_components' instead.")
 
     def equal_properties(self, property_value0, property_value1):
         '''Whether or not two property values are equal.

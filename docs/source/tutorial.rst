@@ -2961,57 +2961,99 @@ filters to a `Constructs` instance:
 Each construct has methods to access the netCDF elements which it
 requires. For example, the field construct has the following methods:
 
-==========================================  ======================================
-Method                                      Description
-==========================================  ======================================
-`~Field.nc_get_variable`                    Return the netCDF variable name
-`~Field.nc_set_variable`                    Set the netCDF variable name
-`~Field.nc_del_variable`                    Remove the netCDF variable name
-				            
-`~Field.nc_has_variable`                    Whether the netCDF variable name has
-                                            been set
-				            
-`~Field.nc_global_attributes`               Return the selection of properties to 
-                                            be written as netCDF global attributes
-				            
-`~Field.nc_set_global_attribute`            Set a property to be written as a
-                                            netCDF global attribute
-					    
-`~Field.nc_set_global_attributes`           Set properties to be written as
-                                            netCDF global attributes
-					    
-`~Field.nc_clear_global_attributes`         Clear the selection of properties
-                                            to be written as netCDF global
-                                            attributes
-					    
-`~Field.nc_group_attributes`                Return the selection of properties to 
-                                            be written as netCDF group attributes
-				            
-`~Field.nc_set_group_attribute`             Set a property to be written as a
-                                            netCDF group attribute
-					    
-`~Field.nc_set_group_attributes`            Set properties to be written as
-                                            netCDF group attributes
-					    
-`~Field.nc_clear_group_attributes`          Clear the selection of properties
-                                            to be written as netCDF group
-                                            attributes
-					    
-`~Field.nc_variable_groups`                 Return the netCDF group structure
-					    
-`~Field.nc_set_variable_groups`             Set the netCDF group structure
-					    
-`~Field.nc_clear_variable_groups`           Remove the netCDF group structure
+===================================================  ======================================
+Method                                               Description
+===================================================  ======================================
+`~Field.nc_get_variable`                             Return the netCDF variable name
+`~Field.nc_set_variable`                             Set the netCDF variable name
+`~Field.nc_del_variable`                             Remove the netCDF variable name
+				                     
+`~Field.nc_has_variable`                             Whether the netCDF variable name has
+                                                     been set
+				                     
+`~Field.nc_global_attributes`                        Return the selection of properties to 
+                                                     be written as netCDF global attributes
+				                     
+`~Field.nc_set_global_attribute`                     Set a property to be written as a
+                                                     netCDF global attribute
+					             
+`~Field.nc_set_global_attributes`                    Set properties to be written as
+                                                     netCDF global attributes
+					             
+`~Field.nc_clear_global_attributes`                  Clear the selection of properties
+                                                     to be written as netCDF global
+                                                     attributes
+					             
+`~Field.nc_group_attributes`                         Return the selection of properties to 
+                                                     be written as netCDF group attributes
+				                     
+`~Field.nc_set_group_attribute`                      Set a property to be written as a
+                                                     netCDF group attribute
+					             
+`~Field.nc_set_group_attributes`                     Set properties to be written as
+                                                     netCDF group attributes
+					             
+`~Field.nc_clear_group_attributes`                   Clear the selection of properties
+                                                     to be written as netCDF group
+                                                     attributes
+					             
+`~Field.nc_variable_groups`                          Return the netCDF group structure
+					             
+`~Field.nc_set_variable_groups`                      Set the netCDF group structure
+					             
+`~Field.nc_clear_variable_groups`                    Remove the netCDF group structure
+					             
+`~Field.nc_geometry_variable_groups`                 Return the netCDF geometry
+                                                     variable ggroup structure
+					             
+`~Field.nc_set_geometry_variable_groups`             Set the netCDF geometry
+                                                     variable group structure
+					             
+`~Field.nc_clear_geometry_variable_groups`           Remove the netCDF geometry
+                                                     variable group structure
+					             
+`~Field.nc_del_component_variable`                   Remove the netCDF variable name for
+                                                     all components of the given type.
 
-`~Field.nc_geometry_variable_groups`        Return the netCDF geometry
-                                            variable ggroup structure
+`~Field.nc_set_component_variable`                   Set the netCDF variable name for all
+                                                     components of the given type.
 
-`~Field.nc_set_geometry_variable_groups`    Set the netCDF geometry
-                                            variable group structure
+`~Field.nc_set_component_variable_groups`            Set the netCDF variable groups
+                                                     hierarchy for all components of
+						     the given type.
 
-`~Field.nc_clear_geometry_variable_groups`  Remove the netCDF geometry
-                                            variable group structure
-==========================================  ======================================
+`~Field.nc_clear_component_variable_groups`          Remove the netCDF variable groups
+                                                     hierarchy for all components of the
+						     given type.
+
+`~Field.nc_del_component_dimension`                  Remove the netCDF dimension name for
+                                                     all components of the given type.
+
+`~Field.nc_set_component_dimension`                  Set the netCDF dimension name for all
+                                                     components of the given type.
+
+`~Field.nc_set_component_dimension_groups`           Set the netCDF dimension groups
+                                                     hierarchy for all components of the
+						     given type.
+
+`~Field.nc_clear_component_dimension_groups`         Remove the netCDF dimension groups
+                                                     hierarchy for all components of the
+						     given type.
+
+`~Field.nc_del_component_sample_dimension`           Remove the netCDF sample dimension
+                                                     name for all components of the given type.
+
+`~Field.nc_set_component_sample_dimension`           Set the netCDF sample dimension name
+                                                     for all components of the given type.
+
+`~Field.nc_set_component_sample_dimension_groups`    Set the netCDF sample dimension
+                                                     groups hierarchy for all components
+						     of the given type.
+
+`~Field.nc_clear_component_sample_dimension_groups`  Remove the netCDF sample dimension
+                                                     groups hierarchy for all components
+						     of the given type.
+===================================================  ======================================
 
 .. code-block:: python
    :caption: *Access netCDF elements associated with the field and
@@ -3029,123 +3071,147 @@ Method                                      Description
 
 The complete collection of netCDF interface methods is:
 
-====================================  =======================================  =====================================
-Method                                Classes                                  NetCDF element
-====================================  =======================================  =====================================
-`!nc_del_variable`                    `Field`, `DimensionCoordinate`,          Variable name
-                                      `AuxiliaryCoordinate`, `CellMeasure`,
-                                      `DomainAncillary`, `FieldAncillary`,
-                                      `CoordinateReference`,  `Bounds`,
-			              `Datum`, `Count`, `Index`, `List`
-			              				
-`!nc_get_variable`                    `Field`, `DimensionCoordinate`,          Variable name
-                                      `AuxiliaryCoordinate`, `CellMeasure`,
-                                      `DomainAncillary`, `FieldAncillary`,
-                                      `CoordinateReference`, `Bounds`,
-			              `Datum`, `Count`, `Index`, `List`
-			              
-`!nc_has_variable`                    `Field`, `DimensionCoordinate`,          Variable name
-                                      `AuxiliaryCoordinate`, `CellMeasure`,
-                                      `DomainAncillary`, `FieldAncillary`,
-                                      `CoordinateReference`, `Bounds`,
-			              `Datum`, `Count`, `Index`, `List`
-			              
-`!nc_set_variable`                    `Field`, `DimensionCoordinate`,          Variable name
-                                      `AuxiliaryCoordinate`, `CellMeasure`,
-                                      `DomainAncillary`, `FieldAncillary`,
-                                      `CoordinateReference`, `Bounds`,
-			              `Datum`, `Count`, `Index`, `List`
-			              
-`!nc_variable_groups`                 `Field`, `DimensionCoordinate`,          Group hierarchy
-                                      `AuxiliaryCoordinate`, `CellMeasure`,
-                                      `DomainAncillary`, `FieldAncillary`,
-                                      `CoordinateReference`, `Bounds`,
-			              `Datum`, `Count`, `Index`, `List`
-			              
-`!nc_set_variable_groups`             `Field`, `DimensionCoordinate`,          Group hierarchy
-                                      `AuxiliaryCoordinate`, `CellMeasure`,
-                                      `DomainAncillary`, `FieldAncillary`,
-                                      `CoordinateReference`, `Bounds`,
-			              `Datum`, `Count`, `Index`, `List`
-			              
-`!nc_clear_variable_groups`           `Field`, `DimensionCoordinate`,          Group hierarchy
-                                      `AuxiliaryCoordinate`, `CellMeasure`,
-                                      `DomainAncillary`, `FieldAncillary`,
-                                      `CoordinateReference`, `Bounds`,
-			              `Datum`, `Count`, `Index`, `List`
-			              
-`!nc_del_dimension`                   `DomainAxis`, `Bounds`, `Count`,         Dimension name
-                                      `Index`
-			              
-`!nc_get_dimension`	              `DomainAxis`, `Bounds`, `Count`,         Dimension name
-                                      `Index`
-			              			                    
-`!nc_has_dimension`	              `DomainAxis`, `Bounds`, `Count`,         Dimension name
-                                      `Index`
-			              			                    
-`!nc_set_dimension`	              `DomainAxis`, `Bounds`, `Count`,         Dimension name
-                                      `Index`
-			              
-`!nc_dimension_groups`                `DomainAxis`, `Bounds`, `Count`,         Group hierarchy
-                                      `Index`
-			              
-`!nc_set_dimension_groups`	      `DomainAxis`, `Bounds`, `Count`,         Group hierarchy
-                                      `Index`
-			              			                    
-`!nc_clear_dimension_groups`	      `DomainAxis`, `Bounds`, `Count`,         Group hierarchy
-                                      `Index`
-				      
-`!nc_is_unlimited`                    `DomainAxis`                             Unlimited dimension
-				      
-`!nc_set_unlimited` 	              `DomainAxis`   	                       Unlimited dimension
-				      
-`!nc_global_attributes`	              `Field`                                  Global attributes
-			              
-`!nc_set_global_attribute`            `Field`                                  Global attributes
-			              
-`!nc_set_global_attributes`           `Field`                                  Global attributes
-			              
-`!nc_clear_global_attributes`         `Field`                                  Global attributes
-				      
-`!nc_variable_groups`                 `Field`                                  Group hierarchy
- 				    
-`!nc_set_variable_groups`             `Field`                                   Group hierarchy
- 				    
-`!nc_clear_variable_groups`           `Field`                                  Group hierarchy
+=============================================  =======================================  =====================================
+Method                                         Classes                                  NetCDF element
+=============================================  =======================================  =====================================
+`!nc_del_variable`                             `Field`, `DimensionCoordinate`,          Variable name
+                                               `AuxiliaryCoordinate`, `CellMeasure`,
+                                               `DomainAncillary`, `FieldAncillary`,
+                                               `CoordinateReference`,  `Bounds`,
+			                       `Datum`, `Count`, `Index`, `List`
+			                       				
+`!nc_get_variable`                             `Field`, `DimensionCoordinate`,          Variable name
+                                               `AuxiliaryCoordinate`, `CellMeasure`,
+                                               `DomainAncillary`, `FieldAncillary`,
+                                               `CoordinateReference`, `Bounds`,
+			                       `Datum`, `Count`, `Index`, `List`
+			                       
+`!nc_has_variable`                             `Field`, `DimensionCoordinate`,          Variable name
+                                               `AuxiliaryCoordinate`, `CellMeasure`,
+                                               `DomainAncillary`, `FieldAncillary`,
+                                               `CoordinateReference`, `Bounds`,
+			                       `Datum`, `Count`, `Index`, `List`
+			                       
+`!nc_set_variable`                             `Field`, `DimensionCoordinate`,          Variable name
+                                               `AuxiliaryCoordinate`, `CellMeasure`,
+                                               `DomainAncillary`, `FieldAncillary`,
+                                               `CoordinateReference`, `Bounds`,
+			                       `Datum`, `Count`, `Index`, `List`
+			                       
+`!nc_variable_groups`                          `Field`, `DimensionCoordinate`,          Group hierarchy
+                                               `AuxiliaryCoordinate`, `CellMeasure`,
+                                               `DomainAncillary`, `FieldAncillary`,
+                                               `CoordinateReference`, `Bounds`,
+			                       `Datum`, `Count`, `Index`, `List`
+			                       
+`!nc_set_variable_groups`                      `Field`, `DimensionCoordinate`,          Group hierarchy
+                                               `AuxiliaryCoordinate`, `CellMeasure`,
+                                               `DomainAncillary`, `FieldAncillary`,
+                                               `CoordinateReference`, `Bounds`,
+			                       `Datum`, `Count`, `Index`, `List`
+			                       
+`!nc_clear_variable_groups`                    `Field`, `DimensionCoordinate`,          Group hierarchy
+                                               `AuxiliaryCoordinate`, `CellMeasure`,
+                                               `DomainAncillary`, `FieldAncillary`,
+                                               `CoordinateReference`, `Bounds`,
+			                       `Datum`, `Count`, `Index`, `List`
+			                       
+`!nc_del_dimension`                            `DomainAxis`, `Bounds`, `Count`,         Dimension name
+                                               `Index`
+			                       
+`!nc_get_dimension`	                       `DomainAxis`, `Bounds`, `Count`,         Dimension name
+                                               `Index`
+			                       			                    
+`!nc_has_dimension`	                       `DomainAxis`, `Bounds`, `Count`,         Dimension name
+                                               `Index`
+			                       			                    
+`!nc_set_dimension`	                       `DomainAxis`, `Bounds`, `Count`,         Dimension name
+                                               `Index`
+			                       
+`!nc_dimension_groups`                         `DomainAxis`, `Bounds`, `Count`,         Group hierarchy
+                                               `Index`
+			                       
+`!nc_set_dimension_groups`	               `DomainAxis`, `Bounds`, `Count`,         Group hierarchy
+                                               `Index`
+			                       			                    
+`!nc_clear_dimension_groups`	               `DomainAxis`, `Bounds`, `Count`,         Group hierarchy
+                                               `Index`
+				               
+`!nc_is_unlimited`                             `DomainAxis`                             Unlimited dimension
+				               
+`!nc_set_unlimited` 	                       `DomainAxis`   	                        Unlimited dimension
+				               
+`!nc_global_attributes`	                       `Field`                                  Global attributes
+			                       
+`!nc_set_global_attribute`                     `Field`                                  Global attributes
+			                       
+`!nc_set_global_attributes`                    `Field`                                  Global attributes
+			                       
+`!nc_clear_global_attributes`                  `Field`                                  Global attributes
+				               
+`!nc_variable_groups`                          `Field`                                  Group hierarchy
+ 				               
+`!nc_set_variable_groups`                      `Field`                                  Group hierarchy
+ 				               
+`!nc_clear_variable_groups`                    `Field`                                  Group hierarchy
+				               
+`!nc_geometry_variable_groups`                 `Field`                                  Group hierarchy
+ 				               
+`!nc_set_geometry_variable_groups`             `Field`                                  Group hierarchy
+ 				               
+`!nc_clear_geometry_variable_groups`           `Field`                                  Group hierarchy
+				               
+`!nc_group_attributes`	                       `Field`                                  Group attributes
+			                       
+`!nc_set_group_attribute`                      `Field`                                  Group attributes
+			                       
+`!nc_set_group_attributes`                     `Field`                                  Group attributes
+			                       
+`!nc_clear_group_attributes`                   `Field`                                  Group attributes
+			                       
+`!nc_del_component_variable`                   `Field`                                  Component common netCDF properties
 
-`!nc_geometry_variable_groups`        `Field`                                  Group hierarchy
- 
-`!nc_set_geometry_variable_groups`    `Field`                                   Group hierarchy
- 
-`!nc_clear_geometry_variable_groups`  `Field`                                  Group hierarchy
+`!nc_set_component_variable`                   `Field`                                  Component common netCDF properties
+					       
+`!nc_set_component_variable_groups`            `Field`                                  Component common netCDF properties
+					       
+`!nc_clear_component_variable_groups`          `Field`                                  Component common netCDF properties
+					       
+`!nc_del_component_dimension`                  `Field`                                  Component common netCDF properties
+					       
+`!nc_set_component_dimension`                  `Field`                                  Component common netCDF properties
+					       
+`!nc_set_component_dimension_groups`           `Field`                                  Component common netCDF properties
+					       
+`!nc_clear_component_dimension_groups`         `Field`                                  Component common netCDF properties
 
-`!nc_group_attributes`	              `Field`                                  Group attributes
-			          
-`!nc_set_group_attribute`             `Field`                                  Group attributes
-			              
-`!nc_set_group_attributes`            `Field`                                  Group attributes
-			              
-`!nc_clear_group_attributes`          `Field`                                  Group attributes
-			              
-`!nc_get_external`                    `CellMeasure`                            External variable status
-				      
-`!nc_set_external`                    `CellMeasure`                            External variable status
-			              
-`!nc_del_sample_dimension`            `Count`, `Index`                         Sample dimension name
-			              
-`!nc_get_sample_dimension`            `Count`, `Index`                         Sample dimension name
-    			              
-`!nc_has_sample_dimension`            `Count`, `Index`                         Sample dimension name
-			              
-`!nc_set_sample_dimension`            `Count`, `Index`                         Sample dimension name
+`!nc_del_component_sample_dimension`           `Field`                                  Component common netCDF properties
 
-`!nc_sample_dimension_groups`         `Count`                                  Group hierarchy
- 
-`!nc_set_sample_dimension_groups`     `Count`                                   Group hierarchy
- 
-`!nc_clear_sample_dimension_groups`   `Count`                                  Group hierarchy
+`!nc_set_component_sample_dimension`           `Field`                                  Component common netCDF properties
 
-====================================  =======================================  =====================================
+`!nc_set_component_sample_dimension_groups`    `Field`                                  Component common netCDF properties
+
+`!nc_clear_component_sample_dimension_groups`  `Field`                                  Component common netCDF properties
+
+`!nc_get_external`                             `CellMeasure`                            External variable status
+				               
+`!nc_set_external`                             `CellMeasure`                            External variable status
+			                       
+`!nc_del_sample_dimension`                     `Count`, `Index`                         Sample dimension name
+			                       
+`!nc_get_sample_dimension`                     `Count`, `Index`                         Sample dimension name
+    			                       
+`!nc_has_sample_dimension`                     `Count`, `Index`                         Sample dimension name
+			                       
+`!nc_set_sample_dimension`                     `Count`, `Index`                         Sample dimension name
+				               
+`!nc_sample_dimension_groups`                  `Count`                                  Group hierarchy
+ 				               
+`!nc_set_sample_dimension_groups`              `Count`                                  Group hierarchy
+ 				               
+`!nc_clear_sample_dimension_groups`            `Count`                                  Group hierarchy
+
+=============================================  =======================================  =====================================
 
 ----
 

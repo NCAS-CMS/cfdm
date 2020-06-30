@@ -205,11 +205,9 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Move interior ring variable to the /forecast group
         # ------------------------------------------------------------
-        g.construct('longitude').get_interior_ring().nc_set_variable_groups(
-            ['forecast'])
+        g.nc_set_component_variable('interior_ring', 'interior_ring')
+        g.nc_set_component_variable_groups('interior_ring', ['forecast'])
 
-        print (f.construct('longitude').get_interior_ring().nc_get_variable())
-        print (g.construct('longitude').get_interior_ring().nc_get_variable())
         cfdm.write(g, filename)
 
         # Check that the variable is in the right group
@@ -220,7 +218,7 @@ class GroupsTest(unittest.TestCase):
         nc.close()
 
         # Check that the field construct hasn't changed
-        h = cfdm.read(filename)
+        h = cfdm.read(filename, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
         
@@ -234,7 +232,7 @@ class GroupsTest(unittest.TestCase):
         ungrouped_file = 'ungrouped1.nc'
         cfdm.write(f, ungrouped_file , verbose=2)
         g = cfdm.read(ungrouped_file)[0]
-        self.assertTrue(f.equals(g, verbose=1))
+        self.assertTrue(f.equals(g, verbose=2))
 
         grouped_file = 'delme3.nc'
         filename = grouped_file
@@ -282,7 +280,7 @@ class GroupsTest(unittest.TestCase):
             nc.groups['forecast'].variables)
         nc.close()
         
-        h = cfdm.read(filename, verbose=2)
+        h = cfdm.read(filename, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
 

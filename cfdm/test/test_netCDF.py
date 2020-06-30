@@ -561,7 +561,130 @@ class NetCDFTest(unittest.TestCase):
         
         with self.assertRaises(ValueError):
             c.nc_set_sample_dimension_groups(['forecast', 'model'])
-               
+
+    def test_netCDF_field_components(self):
+        # Geometries
+        f = cfdm.example_field(6)
+        
+        for component in ('interior_ring',
+                          'node_count',
+                          'part_node_count'):
+            f.nc_set_component_variable(component, 'ncvar')
+            f.nc_set_component_variable_groups(component, ['forecast'])
+            
+            f.nc_clear_component_variable_groups(component)
+            f.nc_del_component_variable(component)
+            
+            f.nc_del_component_variable(component)
+            f.nc_clear_component_variable_groups(component)
+            
+            f.nc_set_component_variable(component, 'ncvar')
+            f.nc_set_component_variable_groups(component, ['forecast'])
+
+        for component in ('interior_ring',
+                          'part_node_count'):
+            f.nc_set_component_dimension(component, 'ncvar')
+            f.nc_set_component_dimension_groups(component, ['forecast'])
+            
+            f.nc_clear_component_dimension_groups(component)
+            f.nc_del_component_dimension(component)
+            
+            f.nc_del_component_dimension(component)
+            f.nc_clear_component_dimension_groups(component)
+            
+            f.nc_set_component_dimension(component, 'ncvar')
+            f.nc_set_component_dimension_groups(component, ['forecast'])
+     
+        # Compression: indexed and contiguous
+        f = cfdm.example_field(4)
+        f.compress('indexed_contiguous', inplace=True)
+
+        for component in ('count',
+                          'index'):
+            f.nc_set_component_variable(component, 'ncvar')
+            f.nc_set_component_variable_groups(component, ['forecast'])
+            
+            f.nc_clear_component_variable_groups(component)
+            f.nc_del_component_variable(component)
+            
+            f.nc_del_component_variable(component)
+            f.nc_clear_component_variable_groups(component)
+            
+            f.nc_set_component_variable(component, 'ncvar')
+            f.nc_set_component_variable_groups(component, ['forecast'])
+            
+        for component in ('count',
+                          'index'):
+            f.nc_set_component_dimension(component, 'ncvar')
+            f.nc_set_component_dimension_groups(component, ['forecast'])
+            
+            f.nc_clear_component_dimension_groups(component)
+            f.nc_del_component_dimension(component)
+            
+            f.nc_del_component_dimension(component)
+            f.nc_clear_component_dimension_groups(component)
+            
+            f.nc_set_component_dimension(component, 'ncvar')
+            f.nc_set_component_dimension_groups(component, ['forecast'])
+            
+        for component in ('count',
+                          'index'):
+            f.nc_set_component_sample_dimension(component, 'ncvar')
+            f.nc_set_component_sample_dimension_groups(component, ['forecast'])
+            
+            f.nc_clear_component_sample_dimension_groups(component)
+            f.nc_del_component_sample_dimension(component)
+            
+            f.nc_del_component_sample_dimension(component)
+            f.nc_clear_component_sample_dimension_groups(component)
+            
+            f.nc_set_component_sample_dimension(component, 'ncvar')
+            f.nc_set_component_sample_dimension_groups(component, ['forecast'])
+            
+        # Compression: gathered
+        component = 'list'
+
+        # Expected exceptions
+        for component in ('list',
+                          'node_count'):
+            with self.assertRaises(ValueError):
+                f.nc_set_component_dimension(component, 'ncvar')
+                
+            with self.assertRaises(ValueError):
+                f.nc_del_component_dimension(component)
+            
+            with self.assertRaises(ValueError):
+                f.nc_set_component_dimension_groups(component, 'ncvar')
+            
+            with self.assertRaises(ValueError):
+                f.nc_clear_component_dimension_groups(component)
+            
+            with self.assertRaises(ValueError):
+                f.nc_set_component_sample_dimension(component, 'ncvar')
+            
+            with self.assertRaises(ValueError):
+                f.nc_del_component_sample_dimension(component)
+            
+            with self.assertRaises(ValueError):
+                f.nc_set_component_sample_dimension_groups(component, 'ncvar')
+            
+            with self.assertRaises(ValueError):
+                f.nc_clear_component_sample_dimension_groups(component)
+            
+        # Expected exceptions
+        for component in ('WRONG',):
+            with self.assertRaises(ValueError):
+                f.nc_set_component_variable(component, 'ncvar')
+                
+            with self.assertRaises(ValueError):
+                f.nc_del_component_variable(component)
+            
+            with self.assertRaises(ValueError):
+                f.nc_set_component_variable_groups(component, 'ncvar')
+            
+            with self.assertRaises(ValueError):
+                f.nc_clear_component_variable_groups(component)
+            
 #--- End: class
 
 if __name__ == '__main__':

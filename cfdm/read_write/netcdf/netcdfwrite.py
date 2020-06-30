@@ -1032,11 +1032,15 @@ class NetCDFWrite(IOWrite):
     When `True` is returned, the input variable is added to the
     g['seen'] dictionary.
 
+    .. versionadded:: 1.7.0
+
     :Parameters:
 
-        variable :
+        variable:
 
-        ncdims : `tuple`, optional
+        ncdims: `tuple`, optional
+
+        ignore_type: `bool`, optional
 
     :Returns:
 
@@ -1057,7 +1061,7 @@ class NetCDFWrite(IOWrite):
                 continue
 
             # Still here?
-            if self.implementation.equal_constructs(variable,
+            if self.implementation.equal_components(variable,
                                                     value['variable'],
                                                     ignore_type=ignore_type):
                 seen[id(variable)] = {'variable': variable,
@@ -2980,7 +2984,7 @@ class NetCDFWrite(IOWrite):
 #                                matched_construct = False
                                 for key1, (construct1, index1) in constructs1.items():
                                     if (index0 == index1 and
-                                        self.implementation.equal_constructs(
+                                        self.implementation.equal_components(
                                             construct0, construct1)):
                                         del constructs1[key1]
                                         matched_construct = True
@@ -4199,7 +4203,7 @@ class NetCDFWrite(IOWrite):
         g['overwrite'] = overwrite
 
         # ------------------------------------------------------------
-        # Still here? Open the output netCDF file.
+        # Open the output netCDF file
         # ------------------------------------------------------------
         filename = os.path.expanduser(os.path.expandvars(filename))
         if os.path.isfile(filename):
@@ -4217,9 +4221,6 @@ class NetCDFWrite(IOWrite):
         else:
             g['overwrite'] = False
 
-        # ------------------------------------------------------------
-        # Open the netCDF file to be written
-        # ------------------------------------------------------------
         mode = 'w'
         g['filename'] = filename
         g['netcdf'] = self.file_open(filename, mode, fmt, fields)
@@ -4241,7 +4242,7 @@ class NetCDFWrite(IOWrite):
         self._write_global_attributes(fields)
 
         # ------------------------------------------------------------
-        # Write grouo-level properties to the file first.
+        # Write group-level properties to the file next
         # ------------------------------------------------------------
         if g['group']:
             self._write_group_attributes(fields)

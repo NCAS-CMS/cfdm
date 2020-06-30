@@ -235,6 +235,29 @@ Geometries
    ~cfdm.Field.nc_set_geometry_variable_groups
    ~cfdm.Field.nc_clear_geometry_variable_groups
 
+Components
+^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.Field.nc_del_component_variable
+   ~cfdm.Field.nc_set_component_variable
+   ~cfdm.Field.nc_set_component_variable_groups
+   ~cfdm.Field.nc_clear_component_variable_groups      
+   ~cfdm.Field.nc_del_component_dimension
+   ~cfdm.Field.nc_set_component_dimension
+   ~cfdm.Field.nc_set_component_dimension_groups
+   ~cfdm.Field.nc_clear_component_dimension_groups
+   ~cfdm.Field.nc_del_component_sample_dimension
+   ~cfdm.Field.nc_set_component_sample_dimension   
+   ~cfdm.Field.nc_set_component_sample_dimension_groups
+   ~cfdm.Field.nc_clear_component_sample_dimension_groups
+
 Dataset compliance
 ^^^^^^^^^^^^^^^^^^
 
