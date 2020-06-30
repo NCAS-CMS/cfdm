@@ -2730,6 +2730,7 @@ class NetCDFRead(IORead):
                         continue
 
                     basename = g['variable_basename'][ncvar]
+                    NOT QUITE - ncdim might have a path, or will it?
                     if basename != ncdim:
                         continue
 
@@ -2757,6 +2758,7 @@ class NetCDFRead(IORead):
                 elif len(lateral_search_candidates) == 1:
                     # Choose this unique coordinate variable that is
                     # somewhere (anywhere!) in the file
+                    NOT QUITE - can choose based on closeness to the apex group
                     found_coordinate_variable = True
                     ncvar = lateral_search_candidates[0]
                 elif lateral_search_candidates:
