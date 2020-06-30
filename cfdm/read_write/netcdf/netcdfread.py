@@ -995,6 +995,27 @@ class NetCDFRead(IORead):
             variable_group_attributes[ncvar] = group_attributes            
         # --- End: for
 
+        dimension_groups = {}
+
+        for ncdim in nc.dimensions:
+            groups = []
+            
+            # --------------------------------------------------------
+            # Specify the group structure for each dimension (CF>=1.8)
+            # 
+            # If the file only has the root group then this dictionary
+            # will be empty. Dimensions in the root group when there
+            # are sub-groups will have dictionary values of [].
+            # --------------------------------------------------------
+            if has_groups:
+                # Replace the flattened variable name with its
+                # absoxlute path.
+                ncdim = flattener_mapping['dimensions'][ncdim]
+                groups = ncdim.split('/')[1:-1]
+
+            dimension_groups[ncdim] = groups
+        # --- End: for
+        
         logger.debug("    General read variables:")  # pragma: no cover
         logger.debug(
             "        read_vars['variable_dimensions'] =\n" +
@@ -1023,6 +1044,10 @@ class NetCDFRead(IORead):
             logger.debug(
                 "        read_vars['variable_group'] =\n" +
                 pformat(variable_group, indent=12)
+            )  # pragma: no cover
+            logger.debug(
+                "        read_vars['dimension_groups'] =\n" +
+                pformat(dimension_groups, indent=12)
             )  # pragma: no cover
 
         # The netCDF attributes for each variable
@@ -2716,24 +2741,35 @@ class NetCDFRead(IORead):
         for ncdim in field_ncdimensions:
             found_coordinate_variable = False
 
-            ncvar = ncdim
-            if g['variable_dimensions'].get(ncvar) == (ncdim,):
+            if g['variable_dimensions'].get(ncdim) == (ncdim,):
                 # There is a Unidata coordinate variable for this
                 # dimension, so create a domain axis and dimension
                 # coordinate
                 found_coordinate_variable = True
+                ncvar = ncdim
             elif g['has_groups']:
                 proximal_candidates = {}
                 lateral_search_candidates = []
                 for ncvar, ncdims in g['variable_dimensions'].items():
                     if ncvar == field_ncvar or ncdims != (ncdim,):
                         continue
-
-                    basename = g['variable_basename'][ncvar]
-                    NOT QUITE - ncdim might have a path, or will it?
-                    if basename != ncdim:
+                    
+                    if g['variable_basename'][ncvar] != g['dimension_basename'][ncdim]:
                         continue
 
+                    # Still here? Then we have one of the following
+                    # combinations:
+                    #
+                    # ===================  ===================
+                    # ncvar                ncdim
+                    # ===================  ===================
+                    # lat                  lat
+                    # /forecast/lat        lat
+                    # /forecast/lat        /forecast/lat
+                    # /forecast/model/lat  /lat
+                    # /forecast/model/lat  /forecast/lat
+                    # /forecast/model/lat  /forecast/model/lat
+                    # ===================  ===================
                     groups = g['variable_group'][ncvar]
                     if not groups:
                         groups = []
