@@ -78,7 +78,6 @@ class InteriorRing(mixin.NetCDFDimension,
 
         self._initialise_netcdf(source)
 
-
     def dump(self, display=True, _key=None, _title=None,
              _create_title=True, _prefix='', _level=0,
              _omit_properties=None, _axes=None, _axis_names=None):

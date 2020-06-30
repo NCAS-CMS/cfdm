@@ -42,10 +42,10 @@ from distutils.version import LooseVersion
 
 from . import core
 
-__author__       = core.__author__
-__date__         = core.__date__
-__cf_version__   = core.__cf_version__
-__version__      = core.__version__
+__author__ = core.__author__
+__date__ = core.__date__
+__cf_version__ = core.__cf_version__
+__version__ = core.__version__
 
 _requires = ('cftime',)
 
@@ -151,8 +151,10 @@ logging.basicConfig(
 logging.DETAIL = 15  # set value as an attribute as done for built-in levels
 logging.addLevelName(logging.DETAIL, 'DETAIL')
 
+
 def detail(self, message, *args, **kwargs):
     if self.isEnabledFor(logging.DETAIL):
         self._log(logging.DETAIL, message, args, **kwargs)
+
 
 logging.Logger.detail = detail

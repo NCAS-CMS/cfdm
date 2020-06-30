@@ -68,6 +68,7 @@ def ATOL(*atol):
 
     return old
 
+
 def RTOL(*rtol):
     '''The tolerance on relative differences when testing for numerically
     tolerant equality.
@@ -254,9 +255,9 @@ def _reset_log_emergence_level(level, logger=None):
 
 def _disable_logging(at_level=None):
     '''Disable log messages at and below a given level, else completely.
-    
+
     This is an overriding level for all loggers.
-    
+
     If *at_level* is not provided, it defaults under the hood to
     ``'CRITICAL'`` (see
     https://docs.python.org/3/library/logging.html#logging.disable),
@@ -273,7 +274,7 @@ def _disable_logging(at_level=None):
     else:
         logging.disable()
 
-        
+
 def environment(display=True, paths=True):
     '''Return the names, versions and paths of all dependencies.
 
@@ -356,7 +357,7 @@ def environment(display=True, paths=True):
     else:
         return out
 
-    
+
 def CF():
     '''The version of the CF conventions.
 
@@ -417,29 +418,29 @@ def abspath(filename):
     return os.path.abspath(filename)
 
 
-#def default_netCDF_fill_values():
-#    '''The default netCDF fill values for each data type.
+# def default_netCDF_fill_values():
+#     '''The default netCDF fill values for each data type.
 #
-#    :Returns:
+#     :Returns:
 #
-#        `dict`
-#            The default fill values, keyed by `numpy` data type
-#            strings
+#         `dict`
+#             The default fill values, keyed by `numpy` data type
+#             strings
 #
-#    **Examples:**
+#     **Examples:**
 #
-#    >>> default_netCDF_fill_values()
-#    {'S1': '\x00',
-#     'i1': -127,
-#     'u1': 255,
-#     'i2': -32767,
-#     'u2': 65535,
-#     'i4': -2147483647,
-#     'u4': 4294967295,
-#     'i8': -9223372036854775806,
-#     'u8': 18446744073709551614,
-#     'f4': 9.969209968386869e+36,
-#     'f8': 9.969209968386869e+36}
+#     >>> default_netCDF_fill_values()
+#     {'S1': '\x00',
+#      'i1': -127,
+#      'u1': 255,
+#      'i2': -32767,
+#      'u2': 65535,
+#      'i4': -2147483647,
+#      'u4': 4294967295,
+#      'i8': -9223372036854775806,
+#      'u8': 18446744073709551614,
+#      'f4': 9.969209968386869e+36,
+#      'f8': 9.969209968386869e+36}
 #
-#    '''
-#    return netCDF4.default_fillvals
+#     '''
+#     return netCDF4.default_fillvals
