@@ -18,7 +18,7 @@ from . import (__version__,
                __cf_version__,
                __file__)
 
-from .constants import CONSTANTS, valid_log_levels, numeric_log_level_map
+from .constants import CONSTANTS, ValidLogLevels
 
 
 def ATOL(*atol):
@@ -135,27 +135,28 @@ def _log_level(constants_dict, log_level):
     if log_level:
         level = log_level[0]
 
-        if isinstance(level, str):
-            level = level.upper()
-        elif level in numeric_log_level_map:
-            level = numeric_log_level_map[level]  # convert to string ID first
-
         # Ensuring it is a valid level specifier to set & use, either
         # a case-insensitive string of valid log level or
         # dis/en-abler, or an integer 0 to 5 corresponding to one of
         # those as converted above:
-        if level in valid_log_levels:
-            constants_dict['LOG_LEVEL'] = level
-            _reset_log_emergence_level(level)
-        else:
+        if isinstance(level, str):
+            level = level.upper()
+        elif _is_valid_log_level_int(level):
+            level = ValidLogLevels(level).name  # convert to string ID first
+
+        if not hasattr(ValidLogLevels, level):
             raise ValueError(
-                "Logging level {!r} is not one of the valid values {}, or "
-                "a corresponding integer of 0 to {} and (lastly) -1, "
-                "respectively. Value remains as it was, at:".format(
-                    level, "', '".join(valid_log_levels),
-                    len(valid_log_levels) - 2
+                "Logging level {!r} is not one of the valid values '{}', "
+                "where either the string or the corrsponding integer is "
+                "accepted. Value remains as it was, at '{}'.".format(
+                    level, ", '".join([val.name + "' = " + str(val.value)
+                                        for val in ValidLogLevels]), old
                 )
             )
+        # Safe to reset now as guaranteed to be valid:
+        constants_dict['LOG_LEVEL'] = level
+        _reset_log_emergence_level(level)
+
     # --- End: if
 
     return old
@@ -218,6 +219,15 @@ def LOG_LEVEL(*log_level):
     return _log_level(CONSTANTS, log_level)
 
 
+def _is_valid_log_level_int(int_log_level):
+    '''Return a Boolean stating if input is a ValidLogLevels Enum integer.'''
+    try:
+        ValidLogLevels(int_log_level)
+    except KeyError:  # if verbose int not in Enum int constants
+        return False
+    return True
+
+
 def _reset_log_emergence_level(level, logger=None):
     '''Re-set minimum level for displayed log messages of a logger.
 
@@ -242,8 +252,8 @@ def _reset_log_emergence_level(level, logger=None):
     else:  # apply to root, which all other (module) loggers inherit from
         use_logger = logging.getLogger()
 
-    if level in numeric_log_level_map:
-        level = numeric_log_level_map[level]  # convert to string ID first
+    if isinstance(level, int) and _is_valid_log_level_int(level):
+        level = ValidLogLevels(level).name  # convert to string ID if valid
 
     if level == 'DISABLE':
         _disable_logging()

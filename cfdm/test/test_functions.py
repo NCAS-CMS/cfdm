@@ -84,10 +84,10 @@ class FunctionsTest(unittest.TestCase):
             self.assertTrue(cfdm.LOG_LEVEL(value) == previous)
             previous = cfdm.LOG_LEVEL()  # update previous value
 
-            # Some conversions to equivalent, standardised return
-            # value:
-            if isinstance(value, int):  # LOG_LEVEL returns the string not int
-                value = cfdm.constants.numeric_log_level_map[value]
+            # Some conversions to equivalent, standardised return value:
+            if (isinstance(value, int) and
+                cfdm._is_valid_log_level_int(value)):
+                value = cfdm.constants.ValidLogLevels(value).name
             if isinstance(value, str):  # LOG_LEVEL returns all caps string
                 value = value.upper()
             self.assertTrue(previous == value)
@@ -103,10 +103,10 @@ class FunctionsTest(unittest.TestCase):
             cfdm.functions._reset_log_emergence_level(value)
 
             # getLevelName() converts to string. Otherwise gives
-            # Python logging int equivalent, which is not the scale we
-            # use.
-            if isinstance(value, int):
-                value = cfdm.constants.numeric_log_level_map[value]
+            # Python logging int equivalent, which is not the scale we use:
+            if (isinstance(value, int) and
+                cfdm._is_valid_log_level_int(value)):
+                value = cfdm.constants.ValidLogLevels(value).name
 
             self.assertTrue(
                 cfdm.logging.getLevelName(cfdm.logging.getLogger().level) ==

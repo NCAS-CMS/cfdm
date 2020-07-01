@@ -78,6 +78,7 @@ from .functions import (
     _log_level,
     _disable_logging,
     _reset_log_emergence_level,
+    _is_valid_log_level_int,
 )
 
 # Though these are internal-use methods, include them in the namespace
