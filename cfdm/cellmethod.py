@@ -402,7 +402,7 @@ class CellMethod(mixin.Container,
         if self.get_method(None) != other.get_method(None):
             logger.info(
                 "{0}: Different methods: {1!r} != {2!r}".format(
-                    cm0.__class__.__name__, self.get_method(None),
+                    self.__class__.__name__, self.get_method(None),
                     other.get_method(None)
                 )
             )
