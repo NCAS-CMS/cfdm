@@ -35,7 +35,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.aux1 = aux1
 
     def test_AuxiliaryCoordinate__repr__str__dump(self):
-        f = cfdm.read(self.filename)[0]
+        f = cfdm.read(self.filename, verbose=1)[0]
         x = f.auxiliary_coordinates('latitude').value()
 
         _ = repr(x)

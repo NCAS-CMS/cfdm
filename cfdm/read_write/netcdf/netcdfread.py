@@ -815,9 +815,12 @@ class NetCDFRead(IORead):
         variable_dataset    = {}
         variable_filename   = {}
         variables           = {}
-        variable_group = {}
+        variable_groups = {}
         variable_group_attributes = {}
         variable_basename = {}
+
+        dimension_groups = {}
+        dimension_basename = {}
 
         # ------------------------------------------------------------
         # For grouped files (CF>=1.8) map:
@@ -913,7 +916,7 @@ class NetCDFRead(IORead):
         
         for ncvar in nc.variables:
             ncvar_basename = ncvar
-            groups = None
+            groups = ()
             group_attributes = {}
             
             variable = nc.variables[ncvar]
@@ -931,15 +934,16 @@ class NetCDFRead(IORead):
                 ncvar_flat = ncvar
                 ncvar = flattener_mapping['variables'][ncvar]
                 
-                groups = ncvar.split('/')[1:-1]
+                groups = tuple(ncvar.split('/')[1:-1])
+                
                 if groups:
                     # This variable is in a group. Remove the group
                     # structure that was prepended to the netCDF
                     # variable name by the netCDF flattener. Note that
-                    # the flattener uses # (hash) as the groups
-                    # delimiter in its modified variable names.
+                    # the flattener uses __ (double underscore) as the
+                    # groups delimiter in its modified variable names.
                     ncvar_basename = re.sub(
-                        '^{}#'.format('#'.join(groups)),
+                        '^{}__'.format('__'.join(groups)),
                         '', ncvar_flat
                     )
                             
@@ -950,7 +954,7 @@ class NetCDFRead(IORead):
                     # ------------------------------------------------
                     group_attributes = {}
                     for i in range(1, len(groups)+1):
-                        hierarchy = tuple(groups[:i])
+                        hierarchy = groups[:i]
                         if hierarchy not in flattener_mapping['attributes']:
                             continue
 
@@ -958,8 +962,6 @@ class NetCDFRead(IORead):
                             flattener_mapping['attributes'][hierarchy]
                         )
                 else:                
-                    groups = None
-            
                     # Remove the leading / from the absolute netCDF
                     # variable path
                     ncvar = ncvar[1:]
@@ -991,30 +993,38 @@ class NetCDFRead(IORead):
             variables[ncvar] = variable
 
             variable_basename[ncvar] = ncvar_basename
-            variable_group[ncvar] = groups
+            variable_groups[ncvar] = groups
             variable_group_attributes[ncvar] = group_attributes            
         # --- End: for
 
-        dimension_groups = {}
-
+        # Populate dimensions_groups abd dimension_basename
+        # dictionaries
         for ncdim in nc.dimensions:
-            groups = []
-            
-            # --------------------------------------------------------
-            # Specify the group structure for each dimension (CF>=1.8)
-            # 
-            # If the file only has the root group then this dictionary
-            # will be empty. Dimensions in the root group when there
-            # are sub-groups will have dictionary values of [].
-            # --------------------------------------------------------
+            ncdim_basename = ncdim
+            groups = ()
+            ncdim_basename = ncdim
+
             if has_groups:
                 # Replace the flattened variable name with its
-                # absoxlute path.
-                ncdim = flattener_mapping['dimensions'][ncdim]
-                groups = ncdim.split('/')[1:-1]
+                # absolute path.
+                ncdim_flat = ncdim
+                ncdim = flattener_mapping['dimensions'][ncdim_flat]
+                
+                groups = tuple(ncdim.split('/')[1:-1])
 
+                if groups:
+                    # This dimension is in a group. Note that the
+                    # netCDF flattener uses __ (double underscore) as
+                    # the groups delimiter in its modified dimension
+                    # names.
+                    ncdim_basename = re.sub(
+                        '^{}__'.format('__'.join(groups)),
+                        '', ncdim_flat
+                    )
+            # --- End: if
+            
             dimension_groups[ncdim] = groups
-        # --- End: for
+            dimension_basename[ncdim] = ncdim_basename
         
         logger.debug("    General read variables:")  # pragma: no cover
         logger.debug(
@@ -1022,34 +1032,6 @@ class NetCDFRead(IORead):
             pformat(variable_dimensions, indent=12)
         )  # pragma: no cover
         
-        logger.debug(
-            "        read_vars['variable_basename'] =\n" +
-            pformat(variable_basename, indent=12)
-        )  # pragma: no cover
-                
-        if g['has_groups']:
-            logger.debug("    Groups:")  # pragma: no cover
-            logger.debug(
-                "        read_vars['flattener_mapping']['variables'] =\n" +
-                pformat(flattener_mapping['variables'], indent=12)
-            )  # pragma: no cover
-            logger.debug(
-                "        read_vars['flattener_mapping']['dimensions'] =\n" +
-                pformat(flattener_mapping['dimensions'], indent=12)
-            )  # pragma: no cover
-            logger.debug(
-                "        read_vars['flattener_mapping']['attributes'] =\n" +
-                pformat(flattener_mapping['attributes'], indent=12)
-            )  # pragma: no cover
-            logger.debug(
-                "        read_vars['variable_group'] =\n" +
-                pformat(variable_group, indent=12)
-            )  # pragma: no cover
-            logger.debug(
-                "        read_vars['dimension_groups'] =\n" +
-                pformat(dimension_groups, indent=12)
-            )  # pragma: no cover
-
         # The netCDF attributes for each variable
         #
         # E.g. {'grid_lon': {'standard_name': 'grid_longitude'}}
@@ -1084,12 +1066,13 @@ class NetCDFRead(IORead):
 
         g['internal_dimension_sizes'] = internal_dimension_sizes
 
-        # The group structure for each variable (CF>=1.8)
+        # The group structure for each variable. Variables in the root
+        # group have a group structure of ().
         #
-        # E.g. {'forecasts#model1': ['forecasts']  # var=model1
-        #       'forecasts#model#1': ['forecasts']  # var=model#2
-        #       'forecasts#model#2': ['forecasts', 'model']}  # var=2
-        g['variable_group'] = variable_group
+        # E.g. {'lat': (),
+        #       '/forecasts/lon': ('forecasts',)
+        #       '/forecasts/model/t': 'forecasts', 'model')}
+        g['variable_groups'] = variable_groups
         
         # The group attributes that apply to each variable
         #
@@ -1100,16 +1083,61 @@ class NetCDFRead(IORead):
         # TODO
         g['flattener_mapping'] = flattener_mapping
         
-        # The basename of each variable in a group (CF>=1.8)
+        # The basename of each variable. I.e. the dimension name
+        # without its prefixed group structure.
         #
-        # I.e. the variable any prefixed group structure.
-        #
-        # E.g. {'modelA': 'modelA',
-        #       'forecasts#model1': 'model1',
-        #       'forecasts#model#1': 'model#1',
-        #       'forecasts#model#2': '2'}
+        # E.g. {'lat': 'lat',
+        #       '/forecasts/lon': 'lon',
+        #       '/forecasts/model/t': 't'}
         g['variable_basename'] = variable_basename
+
+        # The group structure for each dimension. Dimensions in the
+        # root group have a group structure of ().
+        #
+        # E.g. {'lat': (),
+        #       '/forecasts/lon': ('forecasts',)
+        #       '/forecasts/model/t': 9'forecasts', 'model')}
+        g['dimension_groups'] = dimension_groups
         
+        # The basename of each dimension. I.e. the dimension name
+        # without its prefixed group structure.
+        #
+        # E.g. {'lat': 'lat',
+        #       '/forecasts/lon': 'lon',
+        #       '/forecasts/model/t': 't'}
+        g['dimension_basename'] = dimension_basename
+        
+        logger.debug("    Groups read vars:")  # pragma: no cover
+        logger.debug(
+            "        read_vars['variable_groups'] =\n" +
+            pformat(g['variable_groups'], indent=12)
+        )  # pragma: no cover
+        logger.debug(
+            "        read_vars['variable_basename'] =\n" +
+            pformat(variable_basename, indent=12)
+        )  # pragma: no cover
+        logger.debug(
+            "        read_vars['dimension_groups'] =\n" +
+            pformat(g['dimension_groups'], indent=12)
+        )  # pragma: no cover
+        logger.debug(
+            "        read_vars['dimension_basename'] =\n" +
+            pformat(g['dimension_basename'], indent=12)
+        )  # pragma: no cover
+                 
+        logger.debug(
+            "        read_vars['flattener_mapping']['variables'] =\n" +
+            pformat(g['flattener_mapping']['variables'], indent=12)
+        )  # pragma: no cover
+        logger.debug(
+            "        read_vars['flattener_mapping']['dimensions'] =\n" +
+            pformat(g['flattener_mapping']['dimensions'], indent=12)
+        )  # pragma: no cover
+        logger.debug(
+            "        read_vars['flattener_mapping']['attributes'] =\n" +
+            pformat(g['flattener_mapping']['attributes'], indent=12)
+        )  # pragma: no cover
+
         logger.debug(
             "    netCDF dimensions: " +
             pformat(internal_dimension_sizes)
@@ -1523,7 +1551,7 @@ class NetCDFRead(IORead):
                 'variable_dimensions',
                 'variable_dataset',
                 'variable_filename',
-                'variable_group',
+                'variable_groups',
                 'variable_group_attributes',
                 'variable_basename',
                 'variables')
@@ -1979,6 +2007,7 @@ class NetCDFRead(IORead):
                 g['variable_dimensions'][parsed_node_coordinates[0]][0])
         else:
             # Find the netCDF dimension for the total number of cells
+            node_count= parsed_node_count[0]
             geometry_dimension = g['variable_dimensions'][node_count][0]
 
             nodes_per_geometry = self._create_Count(ncvar=node_count,
@@ -2022,6 +2051,7 @@ class NetCDFRead(IORead):
             # => we must treat the nodes as an indexed contiguous
             # ragged array
             # --------------------------------------------------------
+            part_node_count= parsed_part_node_count[0]
 
             # Do not attempt to create a field construct from a
             # netCDF part node count variable
@@ -2732,80 +2762,14 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         field_ncdimensions = self._ncdimensions(field_ncvar)
 
-        field_group = g['variable_group'][field_ncvar]        
-        if not field_group:
-            field_group = []
-            
-        print ('field_ncdimensions=',field_ncdimensions)
-        
+        field_groups = g['variable_groups'][field_ncvar]        
+
         for ncdim in field_ncdimensions:
-            found_coordinate_variable = False
-
-            if g['variable_dimensions'].get(ncdim) == (ncdim,):
-                # There is a Unidata coordinate variable for this
-                # dimension, so create a domain axis and dimension
-                # coordinate
-                found_coordinate_variable = True
-                ncvar = ncdim
-            elif g['has_groups']:
-                proximal_candidates = {}
-                lateral_search_candidates = []
-                for ncvar, ncdims in g['variable_dimensions'].items():
-                    if ncvar == field_ncvar or ncdims != (ncdim,):
-                        continue
-                    
-                    if g['variable_basename'][ncvar] != g['dimension_basename'][ncdim]:
-                        continue
-
-                    # Still here? Then we have one of the following
-                    # combinations:
-                    #
-                    # ===================  ===================
-                    # ncvar                ncdim
-                    # ===================  ===================
-                    # lat                  lat
-                    # /forecast/lat        lat
-                    # /forecast/lat        /forecast/lat
-                    # /forecast/model/lat  /lat
-                    # /forecast/model/lat  /forecast/lat
-                    # /forecast/model/lat  /forecast/model/lat
-                    # ===================  ===================
-                    groups = g['variable_group'][ncvar]
-                    if not groups:
-                        groups = []
-
-                    n_groups = len(groups)
-                    if (n_groups <= len(field_group)
-                        and field_group[:n_groups] == groups):
-                        proximal_candidates[ncvar] = groups
-                    else:
-                        lateral_search_candidates.append(ncvar)
-                # --- End: for
-
-                if proximal_candidates:
-                    # Choose the oordinate variable closest to the
-                    # field
-                    found_coordinate_variable = True
-                    ncvar = [k
-                             for k in sorted(proximal_candidates.items(),
-                                             reverse=True,
-                                             key=lambda item: len(item[1]))]
-                    ncvar = ncvar[0][0]
-                elif len(lateral_search_candidates) == 1:
-                    # Choose this unique coordinate variable that is
-                    # somewhere (anywhere!) in the file
-                    NOT QUITE - can choose based on closeness to the apex group
-                    found_coordinate_variable = True
-                    ncvar = lateral_search_candidates[0]
-                elif lateral_search_candidates:
-                    self._add_message(
-                        field_ncvar, None,
-                        message=("Multiple coordinate variables",
-                                 "identified by lateral search"),
-                        dimensions=g['variable_dimensions'][field_ncvar])
-            # --- End: if
-
-            if found_coordinate_variable:
+            ncvar, method = self._find_coordinate_variable(field_ncvar,
+                                                           field_groups,
+                                                           ncdim)
+            
+            if ncvar is not None:
                 # There is a Unidata coordinate variable for this
                 # dimension, so create a domain axis and dimension
                 # coordinate
@@ -2822,7 +2786,7 @@ class NetCDFRead(IORead):
                     ncdim)
 
                 logger.detail(
-                    "        [0] Inserting {!r}".format(domain_axis)
+                    "        [a] Inserting {!r}".format(domain_axis)
                 )  # pragma: no cover
                 axis = self.implementation.set_domain_axis(
                     field=f,
@@ -2830,7 +2794,7 @@ class NetCDFRead(IORead):
                     copy=False)
 
                 logger.detail(
-                    "        [1] Inserting {!r}".format(coord)
+                    "        [b] Inserting {!r}{}".format(coord, method)
                 )  # pragma: no cover
                 dim = self.implementation.set_dimension_coordinate(
                     field=f, construct=coord,
@@ -2846,8 +2810,8 @@ class NetCDFRead(IORead):
                 if nc.dimensions[ncdim].isunlimited():
                     self.implementation.nc_set_unlimited_axis(f, axis)
 
-                ncvar_to_key[ncdim] = dim
-                g['coordinates'].setdefault(field_ncvar, []).append(ncdim)
+                ncvar_to_key[ncvar] = dim
+                g['coordinates'].setdefault(field_ncvar, []).append(ncvar)
                 
             else:
                 # There is no dimension coordinate for this dimension,
@@ -2860,7 +2824,7 @@ class NetCDFRead(IORead):
 
                 domain_axis = self._create_domain_axis(size, ncdim)
                 logger.detail(
-                    "        [2] Inserting {!r}".format(domain_axis)
+                    "        [c] Inserting {!r}".format(domain_axis)
                 )  # pragma: no cover
                 axis = self.implementation.set_domain_axis(
                     field=f,
@@ -2887,7 +2851,7 @@ class NetCDFRead(IORead):
         data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)
 
         logger.detail(
-            "        [3] Inserting {!r}".format(data)
+            "        [d] Inserting {!r}".format(data)
         )  # pragma: no cover
 
         self.implementation.set_data(f, data, axes=data_axes, copy=False)
@@ -2935,7 +2899,7 @@ class NetCDFRead(IORead):
                         # into a 1-d auxiliary coordinate construct.
                         domain_axis = self._create_domain_axis(1)
                         logger.detail(
-                            "        [4] Inserting {!r}".format(domain_axis)
+                            "        [d] Inserting {!r}".format(domain_axis)
                         )  # pragma: no cover
                         dim = self.implementation.set_domain_axis(
                             f, domain_axis)
@@ -2965,7 +2929,7 @@ class NetCDFRead(IORead):
                         self.implementation.get_construct_data_size(coord)
                     )
                     logger.detail(
-                        "        [5] Inserting {!r}".format(domain_axis)
+                        "        [e] Inserting {!r}".format(domain_axis)
                     )  # pragma: no cover
                     axis = self.implementation.set_domain_axis(
                         field=f,
@@ -2973,7 +2937,7 @@ class NetCDFRead(IORead):
                         copy=False)
 
                     logger.detail(
-                        "        [5] Inserting {!r}".format(coord)
+                        "        [e] Inserting {!r}".format(coord)
                     )  # pragma: no cover
                     dim = self.implementation.set_dimension_coordinate(
                         f, coord,
@@ -2994,7 +2958,7 @@ class NetCDFRead(IORead):
                 else:
                     # Insert auxiliary coordinate
                     logger.detail(
-                        "        [6] Inserting {!r}".format(coord)
+                        "        [f] Inserting {!r}".format(coord)
                     )  # pragma: no cover
 
                     aux = self.implementation.set_auxiliary_coordinate(
@@ -3050,7 +3014,7 @@ class NetCDFRead(IORead):
 
                 # Insert auxiliary coordinate
                 logger.detail(
-                    "        [6] Inserting {!r}".format(coord)
+                    "        [f] Inserting {!r}".format(coord)
                 )  # pragma: no cover
 
                 # TODO check that geometry_dimension is a dimension of
@@ -3144,7 +3108,7 @@ class NetCDFRead(IORead):
             # Still here? Create a formula terms coordinate reference.
             for ncvar, domain_anc, axes in domain_ancillaries:
                 logger.detail(
-                    "        [7] Inserting {!r}".format(domain_anc)
+                    "        [g] Inserting {!r}".format(domain_anc)
                 )  # pragma: no cover
 
                 da_key = self.implementation.set_domain_ancillary(field=f,
@@ -3186,9 +3150,10 @@ class NetCDFRead(IORead):
             parsed_grid_mapping = self._parse_grid_mapping(
                 field_ncvar, grid_mapping)
 
-            print ('\nTODO - check multiple grid mappings read for groups')
-            print ('       grid_mapping =', grid_mapping)
-            print ('       parsed_grid_mapping =', parsed_grid_mapping)
+            if g['has_groups']:
+                print ('\nTODO - check multiple grid mappings read for groups')
+                print ('       grid_mapping =', grid_mapping)
+                print ('       parsed_grid_mapping =', parsed_grid_mapping)
                 
             cf_compliant = self._check_grid_mapping(field_ncvar,
                                                     grid_mapping,
@@ -3253,7 +3218,7 @@ class NetCDFRead(IORead):
                                 # Add the datum to an already existing
                                 # vertical coordinate reference
                                 logger.detail(
-                                    "        [ ] Inserting "
+                                    "        [k] Inserting "
                                     "{!r} into {!r}".format(datum, vcr)
                                 )  # pragma: no cover
 
@@ -3318,7 +3283,7 @@ class NetCDFRead(IORead):
                         g['cell_measure'][ncvar] = cell
 
                     logger.detail(
-                        "        [8] Inserting {!r}".format(cell)
+                        "        [h] Inserting {!r}".format(cell)
                     )  # pragma: no cover
 
                     key = self.implementation.set_cell_measure(
@@ -3343,11 +3308,16 @@ class NetCDFRead(IORead):
             cell_methods = self._parse_cell_methods(
                 cell_methods_string, field_ncvar)
 
+            if g['has_groups']:
+                print ('\nTODO - check cell methods bug')
+                print('      https://gitlab.eumetsat.int/additional-data-services/netcdf-flattener/-/issues/30')
+            
             for properties in cell_methods:
                 axes = properties.pop('axes')
-                if g['has_groups']:
-                    axes = [g['flattener_mapping']['variables'].get(axis, axis)
-                            for axis in axes]                    
+#                print (name_to_axis)
+#                if g['has_groups']:
+#                    axes = [g['flattener_mapping']['variables'].get(axis, axis#)
+#                            for axis in axes]                    
                     
                 axes = [name_to_axis.get(axis, axis) for axis in axes]
  
@@ -3355,8 +3325,9 @@ class NetCDFRead(IORead):
 
                 cell_method = self._create_cell_method(
                     axes, method, properties)
+
                 logger.detail(
-                    "        [ ] Inserting {!r}".format(cell_method)
+                    "        [i] Inserting {!r}".format(cell_method)
                 )  # pragma: no cover
 
                 self.implementation.set_cell_method(field=f,
@@ -3392,7 +3363,7 @@ class NetCDFRead(IORead):
 
                     # Insert the field ancillary
                     logger.detail(
-                        "        [9] Inserting {!r}".format(field_anc)
+                        "        [j] Inserting {!r}".format(field_anc)
                     )  # pragma: no cover
                     key = self.implementation.set_field_ancillary(field=f,
                                                      construct=field_anc,
@@ -3402,10 +3373,10 @@ class NetCDFRead(IORead):
                     ncvar_to_key[ncvar] = key
         # --- End: if
 
-        logger.debug(
-            "        Field properties:\n" +
-            pformat(self.implementation.get_properties(f), indent=12)
-        )  # pragma: no cover
+#        logger.debug(
+#            "        Field properties:\n" +
+ #           pformat(self.implementation.get_properties(f), indent=12)
+#        )  # pragma: no cover
 
         # Add the structural read report to the field
         dataset_compliance = g['dataset_compliance'][field_ncvar]
@@ -3420,6 +3391,131 @@ class NetCDFRead(IORead):
         # Return the finished field
         return f
 
+    def _find_coordinate_variable(self, field_ncvar, field_groups,
+                                  ncdim):
+        '''Find a Unidata coordinate variable for a particular CF-netCDF data
+    variable and netCDF dimension combination.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        field_ncvar: `str`
+
+        field_groups: `tuple`
+
+        ncdim: `str`
+
+    :Returns:
+
+        (`str`, `str`) or (`None`, str`)
+            The second item is a message saying how the coordinate
+            variable was discovered.
+
+        '''
+        g = self.read_vars
+        
+        ncdim_groups = g['dimension_groups'].get(ncdim, ())
+        n_ncdim_groups = len(ncdim_groups)
+            
+        if g['variable_dimensions'].get(ncdim) == (ncdim,):
+            # There is a Unidata coordinate variable for this
+            # dimension, so create a domain axis and dimension
+            # coordinate
+            return ncdim, ''
+
+        if not g['has_groups']:
+            # This file has no group structurea and there is no
+            # coordinate variable for this dimension
+            return None, ''
+
+        # ------------------------------------------------------------
+        # File has groups. Look for a coordiante variable by proximal
+        # and lateral search techniques
+        # ------------------------------------------------------------
+        proximal_candidates = {}
+        lateral_candidates = {}
+        
+        for ncvar, ncdims in g['variable_dimensions'].items():
+            if ncvar == field_ncvar:
+                # A data variable can not be its own coordinate
+                # variable
+                continue
+            
+            if ncdims != (ncdim,):
+                # This variable does not span the correct dimension
+                continue
+            
+            if g['variable_basename'][ncvar] != g['dimension_basename'][ncdim]:
+                # This variable does not have the same basename as the
+                # dimension. E.g. if ncdim is '/forecast/lon' and
+                # ncvar is '/forecast/model/lat' then their basenames
+                # are 'lon' and 'lat' respectively.
+                continue
+
+            ncvar_groups = g['variable_groups'][ncvar]
+            
+            if ncvar_groups[:n_ncdim_groups] != ncdim_groups:
+                # The variable's group is not the same as, nor a
+                # subgroup of, the local apex group.
+                continue
+            
+            if field_groups[:len(ncvar_groups)] == ncvar_groups:
+                # Group is acceptable for proximal search
+                proximal_candidates[ncvar] = ncvar_groups
+            else:
+                # Group is acceptable for lateral search
+                lateral_candidates[ncvar] = ncvar_groups
+        # --- End: for
+
+        if proximal_candidates:
+            # Choose the coordinate variable closest to the field by
+            # proximal search
+            ncvars = [k
+                      for k in sorted(proximal_candidates.items(),
+                                      reverse=True,
+                                      key=lambda item: len(item[1]))
+            ]
+            ncvar = ncvars[0][0]
+            return ncvar, ' (found by proximal serach)'
+        
+        if lateral_candidates:
+            # Choose the coordinate variable that is closest the local
+            # apex group by proximal search. If more than one such
+            # vaiable exists then lateral search has failed.
+            ncvars = [k
+                      for k in sorted(lateral_candidates.items(),
+                                      key=lambda item: len(item[1]))
+            ]
+            ncvar, group = ncvars[0]
+
+            if len(lateral_candidates) == 1:
+                # There is a unique coordinate variable found by
+                # lateral search that is closest to the local apex
+                # group
+                return ncvar, ' (found by lateral serach)'
+            else:
+                group2 = ncvars[1][1]
+                if len(group) < len(group2):
+                    # There is a unique coordinate variable found by
+                    # lateral search that is closest to the local apex
+                    # group
+                    return ncvar, ' (found by lateral serach)'
+
+                # Two coordinate variables found by lateral search are
+                # the same distance from the local apex group
+                lateral_candidates = []
+        # --- End: if
+
+        if not lateral_candidates:
+            self._add_message(
+                field_ncvar, None,
+                message=("Multiple coordinate variable candidates",
+                         "identified by lateral search"),
+                dimensions=g['variable_dimensions'][field_ncvar])
+
+        return None, ''
+    
     def _is_char_or_string(self, ncvar):
         '''Return True if the netCDf variable has string or char datatype.
 
@@ -4386,7 +4482,7 @@ class NetCDFRead(IORead):
         # Find the group that this variable is in. The group will be
         # None if the variable is in the root group.
         if g['has_groups']:
-            group = g['variable_group'].get(ncvar)
+            group = g['variable_groups'].get(ncvar, ())
             if group:
                 # Make sure that we use the variable name without any
                 # group structure prepended to it

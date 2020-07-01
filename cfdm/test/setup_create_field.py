@@ -44,6 +44,7 @@ class create_fieldTest(unittest.TestCase):
         dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(data))
         dim0.set_property('standard_name', 'grid_longitude')
         dim0.set_property('units', 'degrees')
+        dim0.nc_set_variable('x')
 
         array = dim0.data.array
 
@@ -52,9 +53,11 @@ class create_fieldTest(unittest.TestCase):
         array[-1, :] = [30, 36]
         dim0.set_bounds(cfdm.Bounds(data=cfdm.Data(array)))
 
-        dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]),
-                                        bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
-        dim2.set_property('standard_name'         , 'atmosphere_hybrid_height_coordinate')
+        dim2 = cfdm.DimensionCoordinate(
+            data=cfdm.Data([1.5]),
+            bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
+        dim2.set_property(
+            'standard_name' , 'atmosphere_hybrid_height_coordinate')
         dim2.set_property('computed_standard_name', 'altitude')
 
         # Auxiliary coordinates
@@ -99,7 +102,7 @@ class create_fieldTest(unittest.TestCase):
         f.set_property('standard_name', 'eastward_wind')
 
         da = cfdm.DomainAxis(9)
-        da.nc_set_dimension('x')
+        da.nc_set_dimension('grid_longitude')
         axisX = f.set_construct(da)
         axisY = f.set_construct(cfdm.DomainAxis(10))
         axisZ = f.set_construct(cfdm.DomainAxis(1))
@@ -206,7 +209,7 @@ class create_fieldTest(unittest.TestCase):
 
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
 
-        g = cfdm.read(self.filename, verbose=verbose)
+        g = cfdm.read(self.filename, verbose=1)
 
         if verbose:
             print(g)

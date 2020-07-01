@@ -131,6 +131,13 @@ class _NetCDFGroupsMixin(object):
                 "Can't set groups when there is no netCDF name")
 
         if groups:
+            for group in groups:
+                if '/' in group:
+                    raise ValueError(
+                        "Can't have '/' character in group name: "
+                        "{!r}".format(group))
+            # --- End: for
+            
             name = '/'.join(('',) + tuple(groups) + (name,))
 
         if name:

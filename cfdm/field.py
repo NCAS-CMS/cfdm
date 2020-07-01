@@ -67,6 +67,11 @@ class Field(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
     `nc_has_variable` methods.
 
+    The selection of properties to be written as netCDF global
+    attributes may be accessed with the `nc_global_attributes`,
+    `nc_clear_global_attributes` and `nc_set_global_attribute`
+    methods.
+
     The netCDF variable group structure may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
@@ -80,19 +85,13 @@ class Field(mixin.NetCDFVariable,
     `nc_geometry_variable_groups`, `nc_clear_variable_groups` and
     `nc_set_geometry_variable_groups` methods.
    
-    The netCDF geometry variable group structure may be accessed with
-    the `nc_set_geometry_variable`, `nc_get_geometry_variable`,
-    `nc_geometry_variable_groups`, `nc_clear_variable_groups` and
-    `nc_set_geometry_variable_groups` methods.
-
     Some components exist within multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. The netCDF variable, dimension
-    and sample dimension names and group structures for such
-    components may be set or removed consistently with the
-    `nc_del_component_variable`, `nc_set_component_variable`,
-    `nc_set_component_variable_groups`,
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    variable, dimension and sample dimension names and group
+    structures for such components may be set or removed consistently
+    across all such components with the `nc_del_component_variable`,
+    `nc_set_component_variable`, `nc_set_component_variable_groups`,
     `nc_clear_component_variable_groups`,
     `nc_del_component_dimension`, `nc_set_component_dimension`,
     `nc_set_component_dimension_groups`,
@@ -1839,12 +1838,12 @@ class Field(mixin.NetCDFVariable,
     def nc_set_component_variable(self, component, value):
         '''Set the netCDF variable name for all components of the given type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 
@@ -1906,12 +1905,12 @@ class Field(mixin.NetCDFVariable,
         '''Remove the netCDF variable name for all components of the given
     type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 
@@ -1970,12 +1969,12 @@ class Field(mixin.NetCDFVariable,
         '''Set the netCDF variable groups hierarchy for all components of the
     given type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 
@@ -2036,12 +2035,12 @@ class Field(mixin.NetCDFVariable,
         '''Remove the netCDF variable groups hierarchy for all components of
     the given type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 
@@ -2098,12 +2097,12 @@ class Field(mixin.NetCDFVariable,
     def nc_set_component_dimension(self, component, value):
         '''Set the netCDF dimension name for all components of the given type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 
@@ -2158,12 +2157,12 @@ class Field(mixin.NetCDFVariable,
         '''Remove the netCDF dimension name for all components of the given
     type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 
@@ -2215,12 +2214,12 @@ class Field(mixin.NetCDFVariable,
         '''Set the netCDF dimension groups hierarchy for all components of the
     given type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 
@@ -2275,12 +2274,12 @@ class Field(mixin.NetCDFVariable,
         '''Remove the netCDF dimension groups hierarchy for all components of
     the given type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 
@@ -2332,12 +2331,12 @@ class Field(mixin.NetCDFVariable,
         '''Set the netCDF sample dimension name for all components of the
     given type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 
@@ -2385,12 +2384,12 @@ class Field(mixin.NetCDFVariable,
         '''Remove the netCDF sample dimension name for all components of the
     given type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 
@@ -2434,12 +2433,12 @@ class Field(mixin.NetCDFVariable,
         '''Set the netCDF sample dimension groups hierarchy for all components
     of the given type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 
@@ -2486,12 +2485,12 @@ class Field(mixin.NetCDFVariable,
         '''Remove the netCDF sample dimension groups hierarchy for all
     components of the given type.
 
-    The component may exist in multiple constructs, but when written
-    to a netCDF dataset all occurences need to map to a unique netCDF
-    variable. This can only happen if the components have the same
-    netCDF name and group structure. These can be set on all
-    occurences individually, or preferably by using this method to
-    ensure consistency.
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    names can be set on all such occurences individually, or
+    preferably by using this method to ensure consistency across all
+    such components.
 
     .. versionadded:: 1.8.6
 

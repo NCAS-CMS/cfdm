@@ -46,12 +46,16 @@ class NetCDFArray(abstract.Array):
             groups (excluding the root group).
 
             :Parameter example:
-              To specify that a variable is in the group 'forecasts':
+              To specify that a variable is in the root group:
+              ``group=()` or ``group=None`
+
+            :Parameter example:
+              To specify that a variable is in the group '/forecasts':
               ``group=['forecasts']``
 
             :Parameter example:
               To specify that a variable is in the group
-              'forecasts/model2': ``group=['forecasts', 'model2']``
+              '/forecasts/model2': ``group=['forecasts', 'model2']``
 
             .. versionadded:: 1.8.6
 
@@ -85,7 +89,8 @@ class NetCDFArray(abstract.Array):
     >>> import netCDF4
     >>> nc = netCDF4.Dataset('file.nc', 'r')
     >>> v = nc.variable['tas']
-    >>> a = NetCDFFileArray(filename='file.nc', ncvar='tas', dtype=v.dtype,
+    >>> a = NetCDFFileArray(filename='file.nc', ncvar='tas',
+    ...                     group=['forecast'], dtype=v.dtype,
     ...                     ndim=v.ndim, shape=v.shape, size=v.size)
 
         '''

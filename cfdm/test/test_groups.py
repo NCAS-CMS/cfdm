@@ -79,7 +79,7 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         g.nc_set_variable_groups(['forecast', 'model'])
         cfdm.write(g, filename)
-
+        
         nc = netCDF4.Dataset(filename, 'r')
         self.assertIn(
             f.nc_get_variable(),
@@ -87,7 +87,7 @@ class GroupsTest(unittest.TestCase):
         )
         nc.close()
         
-        h = cfdm.read(filename)
+        h = cfdm.read(filename, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
         
@@ -106,7 +106,7 @@ class GroupsTest(unittest.TestCase):
             print(9999999999, name)
             g.construct(name).nc_set_variable_groups(['forecast'])
             cfdm.write(g, filename, verbose=1)
-            
+            g.dump()
             # Check that the variable is in the right group
             nc = netCDF4.Dataset(filename, 'r')
             self.assertIn(
@@ -141,8 +141,12 @@ class GroupsTest(unittest.TestCase):
     def test_groups_geometry(self):
         f = cfdm.example_field(6)
 
-        return True
-        
+#        return True
+#        pnc = cfdm.PartNodeCountProperties()
+#        pnc.set_property('long_name', 'part node count')
+#        pnc.nc_set_variable('part_node_count')
+#        f.construct('longitude').set_part_node_count(pnc)
+            
         ungrouped_file = 'ungrouped1.nc'
         cfdm.write(f, ungrouped_file)
         g = cfdm.read(ungrouped_file)[0]
@@ -205,6 +209,48 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h[0], verbose=2))
 
         # ------------------------------------------------------------
+        # Move a node count variable to the /forecast group
+        # ------------------------------------------------------------
+        ncvar = g.construct('longitude').get_node_count().nc_get_variable()
+        g.nc_set_component_variable_groups('node_count', ['forecast'])
+
+        cfdm.write(g, filename)
+
+        # Check that the variable is in the right group
+        nc = netCDF4.Dataset(filename, 'r')
+        self.assertIn(            
+            ncvar,
+            nc.groups['forecast'].variables)
+        nc.close()
+
+        # Check that the field construct hasn't changed
+        h = cfdm.read(filename, verbose=1)
+        self.assertEqual(len(h), 1, repr(h))
+        self.assertTrue(f.equals(h[0], verbose=2))
+
+        # ------------------------------------------------------------
+        # Move a part node count variable to the /forecast group
+        # ------------------------------------------------------------
+        ncvar = (
+            g.construct('longitude').get_part_node_count().nc_get_variable()
+        )
+        g.nc_set_component_variable_groups('part_node_count', ['forecast'])
+
+        cfdm.write(g, filename)
+
+        # Check that the variable is in the right group
+        nc = netCDF4.Dataset(filename, 'r')
+        self.assertIn(            
+            ncvar,
+            nc.groups['forecast'].variables)
+        nc.close()
+
+        # Check that the field construct hasn't changed
+        h = cfdm.read(filename)
+        self.assertEqual(len(h), 1, repr(h))
+        self.assertTrue(f.equals(h[0], verbose=2))
+
+        # ------------------------------------------------------------
         # Move interior ring variable to the /forecast group
         # ------------------------------------------------------------
         g.nc_set_component_variable('interior_ring', 'interior_ring')
@@ -226,13 +272,14 @@ class GroupsTest(unittest.TestCase):
         
     def test_groups_compression(self):
         f = cfdm.example_field(4)
-        return True
+
+#        return True
         f.compress('indexed_contiguous', inplace=True)
         f.data.get_count().nc_set_variable('count')
         f.data.get_index().nc_set_variable('index')
         
         ungrouped_file = 'ungrouped1.nc'
-        cfdm.write(f, ungrouped_file , verbose=2)
+        cfdm.write(f, ungrouped_file , verbose=1)
         g = cfdm.read(ungrouped_file)[0]
         self.assertTrue(f.equals(g, verbose=2))
 

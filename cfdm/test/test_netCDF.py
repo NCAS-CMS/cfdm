@@ -339,6 +339,9 @@ class NetCDFTest(unittest.TestCase):
 
         d.nc_set_dimension('ncdim')
         
+        with self.assertRaises(ValueError):
+            d.nc_set_dimension_groups(['/forecast'])
+        
         attrs = d.nc_dimension_groups()
         self.assertIsInstance(attrs, tuple)
         self.assertFalse(attrs)
@@ -393,6 +396,9 @@ class NetCDFTest(unittest.TestCase):
         f = cfdm.Field()
 
         f.nc_set_variable('ncdim')
+
+        with self.assertRaises(ValueError):
+            f.nc_set_variable_groups(['/forecast'])
         
         attrs = f.nc_variable_groups()
         self.assertIsInstance(attrs, tuple)
@@ -442,8 +448,8 @@ class NetCDFTest(unittest.TestCase):
         self.assertFalse(attrs)
 
         with self.assertRaises(ValueError):
-            f.nc_set_variable_groups(['forecast', 'model'])
-               
+            f.nc_set_variable_groups(['forecast', 'model'])          
+            
     def test_netCDF_geometry_variable_groups(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -451,6 +457,9 @@ class NetCDFTest(unittest.TestCase):
         f = cfdm.Field()
 
         f.nc_set_geometry_variable('ncvar')
+        
+        with self.assertRaises(ValueError):
+            f.nc_set_geometry_variable_groups(['/forecast'])
         
         attrs = f.nc_geometry_variable_groups()
         self.assertIsInstance(attrs, tuple)
@@ -510,6 +519,9 @@ class NetCDFTest(unittest.TestCase):
         c = cfdm.Count()
 
         c.nc_set_sample_dimension('ncvar')
+        
+        with self.assertRaises(ValueError):
+            c.nc_set_sample_dimension_groups(['/forecast'])
         
         attrs = c.nc_sample_dimension_groups()
         self.assertIsInstance(attrs, tuple)
