@@ -33,7 +33,6 @@ class ConstructAccess(object):
         key_to_name = {}
         name_to_keys = {}
 
-
         for d in self.constructs._constructs.values():
             name_to_keys = {}
 
@@ -543,7 +542,7 @@ class ConstructAccess(object):
         c = c.filter_by_naxes(1)
         c = c.filter_by_identity(identity)
 
-        if not len(c) :
+        if not len(c):
             return self._default(
                 default,
                 "No 1-d coordinate constructs have identity {!r}".format(

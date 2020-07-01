@@ -1553,10 +1553,10 @@ class PropertiesDataBounds(PropertiesData):
 
             data = bounds.get_data(None)
             if (data is not None
-                and ndim == 2
-                and data.ndim == 3
-                and data.shape[-1] == 4
-                and b_axes[0:2] == [1, 0]):
+                    and ndim == 2
+                    and data.ndim == 3
+                    and data.shape[-1] == 4
+                    and b_axes[0:2] == [1, 0]):
                 # Swap elements 1 and 3 of the trailing dimension so
                 # that the values are still contiguous (if they ever
                 # were). See section 7.1 of the CF conventions.

@@ -134,7 +134,7 @@ class Container(object):
 
         if not ignore_data_type and x.dtype != y.dtype:
             if (x.dtype.kind not in ('S', 'U')
-                and y.dtype.kind not in ('S', 'U')):
+                    and y.dtype.kind not in ('S', 'U')):
                 return False
 
         x_is_masked = numpy.ma.isMA(x)
