@@ -59,20 +59,20 @@ class FunctionsTest(unittest.TestCase):
             return
 
         org = cfdm.RTOL()
-        self.assertTrue(cfdm.RTOL(1e-5) == org)
-        self.assertTrue(cfdm.RTOL() == 1e-5)
-        self.assertTrue(cfdm.RTOL(org) == 1e-5)
-        self.assertTrue(cfdm.RTOL() == org)
+        self.assertEqual(cfdm.RTOL(1e-5), org)
+        self.assertEqual(cfdm.RTOL(), 1e-5)
+        self.assertEqual(cfdm.RTOL(org), 1e-5)
+        self.assertEqual(cfdm.RTOL(), org)
 
         org = cfdm.ATOL()
-        self.assertTrue(cfdm.ATOL(1e-5) == org)
-        self.assertTrue(cfdm.ATOL() == 1e-5)
-        self.assertTrue(cfdm.ATOL(org) == 1e-5)
-        self.assertTrue(cfdm.ATOL() == org)
+        self.assertEqual(cfdm.ATOL(1e-5), org)
+        self.assertEqual(cfdm.ATOL(), 1e-5)
+        self.assertEqual(cfdm.ATOL(org), 1e-5)
+        self.assertEqual(cfdm.ATOL(), org)
 
     def test_LOG_LEVEL(self):
         original = self.__class__.original  # original to module i.e. default
-        self.assertTrue(original == 'WARNING')  # test default
+        self.assertEqual(original, 'WARNING')  # test default
         cfdm.LOG_LEVEL(original)  # reset from setUp() value to avoid coupling
 
         # Now test getting and setting for all valid values in turn,
@@ -80,7 +80,7 @@ class FunctionsTest(unittest.TestCase):
         # value on next call:
         previous = cfdm.LOG_LEVEL()
         for value in self.valid_log_values_ci:
-            self.assertTrue(cfdm.LOG_LEVEL(value) == previous)
+            self.assertEqual(cfdm.LOG_LEVEL(value), previous)
             previous = cfdm.LOG_LEVEL()  # update previous value
 
             # Some conversions to equivalent, standardised return
@@ -89,7 +89,7 @@ class FunctionsTest(unittest.TestCase):
                 value = cfdm.constants.numeric_log_level_map[value]
             if isinstance(value, str):  # LOG_LEVEL returns all caps string
                 value = value.upper()
-            self.assertTrue(previous == value)
+            self.assertEqual(previous, value)
 
         with self.assertRaises(ValueError):
             cfdm.LOG_LEVEL(4)
@@ -154,7 +154,7 @@ class FunctionsTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        self.assertTrue(cfdm.CF() == cfdm.core.__cf_version__)
+        self.assertEqual(cfdm.CF(), cfdm.core.__cf_version__)
 
     def test_environment(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -183,11 +183,11 @@ class FunctionsTest(unittest.TestCase):
             return
 
         filename = 'test_file.nc'
-        self.assertTrue(cfdm.abspath(filename) == os.path.abspath(filename))
+        self.assertEqual(cfdm.abspath(filename), os.path.abspath(filename))
         filename = 'http://test_file.nc'
-        self.assertTrue(cfdm.abspath(filename) == filename)
+        self.assertEqual(cfdm.abspath(filename), filename)
         filename = 'https://test_file.nc'
-        self.assertTrue(cfdm.abspath(filename) == filename)
+        self.assertEqual(cfdm.abspath(filename), filename)
 
 #    def test_default_netCDF_fill_values(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:

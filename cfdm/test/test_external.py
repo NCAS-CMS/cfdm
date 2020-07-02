@@ -14,9 +14,11 @@ class ExternalVariableTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL('DISABLE')
-        # Note: to enable all messages for given methods, lines or calls (those
-        # without a 'verbose' option to do the same) e.g. to debug them, wrap
-        # them (for methods, start-to-end internally) as follows:
+        # Note: to enable all messages for given methods, lines or
+        # calls (those without a 'verbose' option to do the same)
+        # e.g. to debug them, wrap them (for methods, start-to-end
+        # internally) as follows:
+        #
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')
@@ -54,14 +56,14 @@ class ExternalVariableTest(unittest.TestCase):
             _ = str(i)
             _ = i.dump(display=False)
 
-        self.assertTrue(len(f) == 1)
+        self.assertEqual(len(f), 1)
         f = f[0]
 
         cell_measure = f.constructs.filter_by_identity('measure:area').value()
 
         self.assertTrue(cell_measure.nc_get_external())
-        self.assertTrue(cell_measure.nc_get_variable() == 'areacella')
-        self.assertTrue(cell_measure.properties() == {})
+        self.assertEqual(cell_measure.nc_get_variable(), 'areacella')
+        self.assertEqual(cell_measure.properties(), {})
         self.assertFalse(cell_measure.has_data())
 
         # External file contains only the cell measure variable
@@ -77,8 +79,8 @@ class ExternalVariableTest(unittest.TestCase):
 
         cell_measure = f[0].constructs.filter_by_identity('measure:area').value()
 
-        self.assertTrue(len(f) == 1)
-        self.assertTrue(len(c) == 1)
+        self.assertEqual(len(f), 1)
+        self.assertEqual(len(c), 1)
 
         for i in range(len(f)):
             self.assertTrue(c[i].equals(f[i], verbose=3))
@@ -92,8 +94,8 @@ class ExternalVariableTest(unittest.TestCase):
             _ = str(i)
             _ = i.dump(display=False)
 
-        self.assertTrue(len(f) == 1)
-        self.assertTrue(len(c) == 1)
+        self.assertEqual(len(f), 1)
+        self.assertEqual(len(c), 1)
 
         for i in range(len(f)):
             self.assertTrue(c[i].equals(f[i], verbose=3))
@@ -108,8 +110,8 @@ class ExternalVariableTest(unittest.TestCase):
             _ = str(i)
             _ = i.dump(display=False)
 
-        self.assertTrue(len(f) == 1)
-        self.assertTrue(len(c) == 1)
+        self.assertEqual(len(f), 1)
+        self.assertEqual(len(c), 1)
 
         for i in range(len(f)):
             self.assertTrue(c[i].equals(f[i], verbose=3))
@@ -128,7 +130,7 @@ class ExternalVariableTest(unittest.TestCase):
         cfdm.write(f, self.tempfilename)
         g = cfdm.read(self.tempfilename)
 
-        self.assertTrue(len(g) == len(combined))
+        self.assertEqual(len(g), len(combined))
 
         for i in range(len(g)):
             self.assertTrue(combined[i].equals(g[i], verbose=3))
@@ -149,7 +151,7 @@ class ExternalVariableTest(unittest.TestCase):
 
         h = cfdm.read(self.tempfilename_parent, verbose=False)
 
-        self.assertTrue(len(h) == len(parent))
+        self.assertEqual(len(h), len(parent))
 
         for i in range(len(h)):
             self.assertTrue(parent[i].equals(h[i], verbose=3))
@@ -157,7 +159,7 @@ class ExternalVariableTest(unittest.TestCase):
         h = cfdm.read(self.tempfilename_external)
         external = cfdm.read(self.external_file)
 
-        self.assertTrue(len(h) == len(external))
+        self.assertEqual(len(h), len(external))
 
         for i in range(len(h)):
             self.assertTrue(external[i].equals(h[i], verbose=3))

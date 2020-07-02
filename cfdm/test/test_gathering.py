@@ -115,7 +115,7 @@ class GatheredTest(unittest.TestCase):
   [-99, -99, -99, -99],
   [-99, -99, -99, -99]]])
 
-        b = numpy.ma.where(b==-99, numpy.ma.masked, b)
+        b = numpy.ma.where(b == -99, numpy.ma.masked, b)
         self.b = b
 
         self.test_only = []
@@ -131,7 +131,7 @@ class GatheredTest(unittest.TestCase):
 
         f = cfdm.read(self.gathered, verbose=False)
 
-        self.assertTrue(len(f) == 3)
+        self.assertEqual(len(f), 3)
 
         for g in f:
             if g.get_property('long_name') == 'temp3':
@@ -139,7 +139,7 @@ class GatheredTest(unittest.TestCase):
 
         cfdm.write(f, self.tempfilename, verbose=False)
         g = cfdm.read(self.tempfilename, verbose=False)
-        self.assertTrue(len(g) == len(f))
+        self.assertEqual(len(g), len(f))
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], verbose=3))
@@ -196,7 +196,7 @@ class GatheredTest(unittest.TestCase):
             fill_value=1e+20,
             dtype='float32')).all())
 
-        self.assertTrue(tas.data.get_compression_type() == 'gathered')
+        self.assertEqual(tas.data.get_compression_type(), 'gathered')
 
         self.assertTrue((tas.data.compressed_array == numpy.array(
             [[280. , 282.5, 281. ],

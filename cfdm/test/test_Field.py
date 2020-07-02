@@ -36,7 +36,8 @@ class FieldTest(unittest.TestCase):
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
-        # internally) as follows:        
+        # internally) as follows:
+        #
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')
@@ -55,7 +56,7 @@ class FieldTest(unittest.TestCase):
             'DSG_timeSeriesProfile_indexed_contiguous.nc')
 
         f = cfdm.read(self.filename)
-        self.assertTrue(len(f)==1, 'f={}'.format(f))
+        self.assertEqual(len(f), 1, 'f={}'.format(f))
         self.f = f[0]
 
         self.test_only = []
@@ -183,7 +184,7 @@ class FieldTest(unittest.TestCase):
 #            self.assertTrue((array == -1).all())
 #
 #            values, counts = numpy.unique(f.data.array, return_counts=True)
-#            self.assertTrue(counts[0] == array.size)
+#            self.assertEqual(counts[0], array.size)
 
     def test_Field_get_filenames(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

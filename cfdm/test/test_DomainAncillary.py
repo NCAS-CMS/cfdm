@@ -16,6 +16,7 @@ class DomainAncillaryTest(unittest.TestCase):
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
         # internally) as follows:
+        #
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')
@@ -49,8 +50,8 @@ class DomainAncillaryTest(unittest.TestCase):
 
         x.set_property('long_name', 'qwerty')
         
-        self.assertTrue(x.get_property('long_name') == 'qwerty')    
-        self.assertTrue(x.del_property('long_name') == 'qwerty')
+        self.assertEqual(x.get_property('long_name'), 'qwerty')    
+        self.assertEqual(x.del_property('long_name'), 'qwerty')
         self.assertIsNone(x.get_property('long_name', None))
         self.assertIsNone(x.del_property('long_name', None))
 
@@ -59,16 +60,16 @@ class DomainAncillaryTest(unittest.TestCase):
         d = f.dimension_coordinates('grid_longitude').value()
         x = cfdm.DomainAncillary(source=d)
 
-        self.assertTrue(x.shape == (9,))
-        self.assertTrue(x.bounds.shape == (9, 2))
+        self.assertEqual(x.shape, (9,))
+        self.assertEqual(x.bounds.shape, (9, 2))
 
         y = x.insert_dimension(0)
-        self.assertTrue(y.shape == (1, 9))
-        self.assertTrue(y.bounds.shape == (1, 9, 2), y.bounds.shape)
+        self.assertEqual(y.shape, (1, 9))
+        self.assertEqual(y.bounds.shape, (1, 9, 2), y.bounds.shape)
 
         x.insert_dimension(-1, inplace=True)
-        self.assertTrue(x.shape == (9, 1))
-        self.assertTrue(x.bounds.shape == (9, 1, 2), x.bounds.shape)
+        self.assertEqual(x.shape, (9, 1))
+        self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
     def test_DomainAncillary_transpose(self):
         f = cfdm.read(self.filename)[0]
@@ -78,16 +79,16 @@ class DomainAncillaryTest(unittest.TestCase):
         a.set_bounds(bounds)
         x = cfdm.DomainAncillary(source=a)
 
-        self.assertTrue(x.shape == (9, 10))
-        self.assertTrue(x.bounds.shape == (9, 10, 4))
+        self.assertEqual(x.shape, (9, 10))
+        self.assertEqual(x.bounds.shape, (9, 10, 4))
 
         y = x.transpose()
-        self.assertTrue(y.shape == (10, 9))
-        self.assertTrue(y.bounds.shape == (10, 9, 4), y.bounds.shape)
+        self.assertEqual(y.shape, (10, 9))
+        self.assertEqual(y.bounds.shape, (10, 9, 4), y.bounds.shape)
 
         x.transpose([1, 0], inplace=True)
-        self.assertTrue(x.shape == (10, 9))
-        self.assertTrue(x.bounds.shape == (10, 9, 4), x.bounds.shape)
+        self.assertEqual(x.shape, (10, 9))
+        self.assertEqual(x.bounds.shape, (10, 9, 4), x.bounds.shape)
 
     def test_DomainAncillary_squeeze(self):
         f = cfdm.read(self.filename)[0]
@@ -100,16 +101,16 @@ class DomainAncillaryTest(unittest.TestCase):
         x.insert_dimension(1, inplace=True)
         x.insert_dimension(0, inplace=True)
 
-        self.assertTrue(x.shape == (1, 9, 1, 10))
-        self.assertTrue(x.bounds.shape == (1, 9, 1, 10, 4))
+        self.assertEqual(x.shape, (1, 9, 1, 10))
+        self.assertEqual(x.bounds.shape, (1, 9, 1, 10, 4))
 
         y = x.squeeze()
-        self.assertTrue(y.shape == (9, 10))
-        self.assertTrue(y.bounds.shape == (9, 10, 4), y.bounds.shape)
+        self.assertEqual(y.shape, (9, 10))
+        self.assertEqual(y.bounds.shape, (9, 10, 4), y.bounds.shape)
 
         x.squeeze(2, inplace=True)
-        self.assertTrue(x.shape == (1, 9, 10))
-        self.assertTrue(x.bounds.shape == (1, 9, 10, 4), x.bounds.shape)
+        self.assertEqual(x.shape, (1, 9, 10))
+        self.assertEqual(x.bounds.shape, (1, 9, 10, 4), x.bounds.shape)
 
 #--- End: class
 

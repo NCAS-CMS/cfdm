@@ -16,6 +16,7 @@ class FieldAncillaryTest(unittest.TestCase):
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
         # internally) as follows:
+        #
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')
@@ -43,8 +44,8 @@ class FieldAncillaryTest(unittest.TestCase):
 
         x.set_property('long_name', 'qwerty')
         
-        self.assertTrue(x.get_property('long_name') == 'qwerty')    
-        self.assertTrue(x.del_property('long_name') == 'qwerty')
+        self.assertEqual(x.get_property('long_name'), 'qwerty')    
+        self.assertEqual(x.del_property('long_name'), 'qwerty')
         self.assertIsNone(x.get_property('long_name', None))
         self.assertIsNone(x.del_property('long_name', None))
 
@@ -53,26 +54,26 @@ class FieldAncillaryTest(unittest.TestCase):
         d = f.dimension_coordinates('grid_longitude').value()
         x = cfdm.FieldAncillary(source=d)
 
-        self.assertTrue(x.shape == (9,))
+        self.assertEqual(x.shape, (9,))
 
         y = x.insert_dimension(0)
-        self.assertTrue(y.shape == (1, 9))
+        self.assertEqual(y.shape, (1, 9))
 
         x.insert_dimension(-1, inplace=True)
-        self.assertTrue(x.shape == (9, 1))
+        self.assertEqual(x.shape, (9, 1))
 
     def test_FieldAncillary_transpose(self):
         f = cfdm.read(self.filename)[0]
         a = f.auxiliary_coordinates('longitude').value()
         x = cfdm.FieldAncillary(source=a)
 
-        self.assertTrue(x.shape == (9, 10))
+        self.assertEqual(x.shape, (9, 10))
 
         y = x.transpose()
-        self.assertTrue(y.shape == (10, 9))
+        self.assertEqual(y.shape, (10, 9))
 
         x.transpose([1, 0], inplace=True)
-        self.assertTrue(x.shape == (10, 9))
+        self.assertEqual(x.shape, (10, 9))
 
     def test_FieldAncillary_squeeze(self):
         f = cfdm.read(self.filename)[0]
@@ -82,13 +83,13 @@ class FieldAncillaryTest(unittest.TestCase):
         x.insert_dimension(1, inplace=True)
         x.insert_dimension(0, inplace=True)
 
-        self.assertTrue(x.shape == (1, 9, 1, 10))
+        self.assertEqual(x.shape, (1, 9, 1, 10))
 
         y = x.squeeze()
-        self.assertTrue(y.shape == (9, 10))
+        self.assertEqual(y.shape, (9, 10))
 
         x.squeeze(2, inplace=True)
-        self.assertTrue(x.shape == (1, 9, 10))
+        self.assertEqual(x.shape, (1, 9, 10))
 
 #--- End: class
 

@@ -16,6 +16,7 @@ class DomainTest(unittest.TestCase):
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
         # internally) as follows:
+        # 
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')
@@ -23,7 +24,7 @@ class DomainTest(unittest.TestCase):
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
         f = cfdm.read(self.filename)
-        self.assertTrue(len(f)==1, 'f={!r}'.format(f))
+        self.assertEqual(len(f), 1, 'f={!r}'.format(f))
         self.f = f[0]
 
         self.test_only = []
@@ -37,7 +38,7 @@ class DomainTest(unittest.TestCase):
         for d in f.domain_axes.values():
             _ = repr(d)
             _ = str(d)
-            self.assertTrue(d.construct_type == 'domain_axis')
+            self.assertEqual(d.construct_type, 'domain_axis')
 
     def test_DomainAxis_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -74,8 +75,8 @@ class DomainTest(unittest.TestCase):
         d.set_size(99)
 
         self.assertTrue(d.has_size())
-        self.assertTrue(d.get_size() == 99)
-        self.assertTrue(d.del_size() == 99)
+        self.assertEqual(d.get_size(), 99)
+        self.assertEqual(d.del_size(), 99)
         self.assertIsNone(d.get_size(None))
         self.assertIsNone(d.del_size(None))
         self.assertFalse(d.has_size())

@@ -24,7 +24,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
         f = cfdm.read(self.filename)
-        self.assertTrue(len(f)==1, 'f={!r}'.format(f))
+        self.assertEqual(len(f), 1, 'f={!r}'.format(f))
         self.f = f[0]
 
         self.test_only = []
@@ -39,7 +39,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             _ = repr(cr)
             _ = str(cr)
             _ = cr.dump(display=False)
-            self.assertTrue(cr.construct_type == 'coordinate_reference')
+            self.assertEqual(cr.construct_type, 'coordinate_reference')
 
     def test_CoordinateReference_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -119,18 +119,18 @@ class CoordinateReferenceTest(unittest.TestCase):
         _ = str(cc)
 
         domain_ancillaries = cc.domain_ancillaries()
-        self.assertTrue(len(domain_ancillaries) == 3)
+        self.assertEqual(len(domain_ancillaries), 3)
 
         for key, value in domain_ancillaries.items():
             self.assertTrue(cc.has_domain_ancillary(key))
-            self.assertTrue(cc.get_domain_ancillary(key) == value)
+            self.assertEqual(cc.get_domain_ancillary(key), value)
             _ = cc.del_domain_ancillary(key)
             self.assertFalse(cc.has_domain_ancillary(key))
-            self.assertTrue(cc.get_domain_ancillary(key, None) == None)
-            self.assertTrue(cc.del_domain_ancillary(key, None) == None)
+            self.assertIsNone(cc.get_domain_ancillary(key, None))
+            self.assertIsNone(cc.del_domain_ancillary(key, None))
             cc.set_domain_ancillary(key, _)
             self.assertTrue(cc.has_domain_ancillary(key))
-            self.assertTrue(cc.get_domain_ancillary(key) == value)
+            self.assertEqual(cc.get_domain_ancillary(key), value)
 
         cr = f.construct('grid_mapping_name:rotated_latitude_longitude')
         cc = cr.coordinate_conversion
@@ -138,18 +138,18 @@ class CoordinateReferenceTest(unittest.TestCase):
         _ = str(cc)
 
         parameters = cc.parameters()
-        self.assertTrue(len(parameters) == 3, parameters)
+        self.assertEqual(len(parameters), 3, parameters)
 
         for key, value in parameters.items():
             self.assertTrue(cc.has_parameter(key))
-            self.assertTrue(cc.get_parameter(key) == value)
+            self.assertEqual(cc.get_parameter(key), value)
             _ = cc.del_parameter(key)
             self.assertFalse(cc.has_parameter(key))
-            self.assertTrue(cc.get_parameter(key, None) == None)
-            self.assertTrue(cc.del_parameter(key, None) == None)
+            self.assertIsNone(cc.get_parameter(key, None))
+            self.assertIsNone(cc.del_parameter(key, None))
             cc.set_parameter(key, _)
             self.assertTrue(cc.has_parameter(key))
-            self.assertTrue(cc.get_parameter(key) == value)
+            self.assertEqual(cc.get_parameter(key), value)
 
         _ = cr.del_coordinate_conversion()
         self.assertTrue(_.equals(cc))
@@ -167,18 +167,18 @@ class CoordinateReferenceTest(unittest.TestCase):
         _ = str(d)
 
         parameters = d.parameters()
-        self.assertTrue(len(parameters) == 1, parameters)
+        self.assertEqual(len(parameters), 1, parameters)
 
         for key, value in parameters.items():
             self.assertTrue(d.has_parameter(key))
-            self.assertTrue(d.get_parameter(key) == value)
+            self.assertEqual(d.get_parameter(key), value)
             _ = d.del_parameter(key)
             self.assertFalse(d.has_parameter(key))
-            self.assertTrue(d.get_parameter(key, None) == None)
-            self.assertTrue(d.del_parameter(key, None) == None)
+            self.assertIsNone(d.get_parameter(key, None))
+            self.assertIsNone(d.del_parameter(key, None))
             d.set_parameter(key, _)
             self.assertTrue(d.has_parameter(key))
-            self.assertTrue(d.get_parameter(key) == value)
+            self.assertEqual(d.get_parameter(key), value)
 
         _ = cr.del_datum()
         self.assertTrue(_.equals(d))

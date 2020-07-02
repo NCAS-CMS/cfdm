@@ -14,7 +14,8 @@ class DimensionCoordinateTest(unittest.TestCase):
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
-        # internally) as follows:        
+        # internally) as follows:
+        # 
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')

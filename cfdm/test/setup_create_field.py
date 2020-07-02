@@ -216,23 +216,27 @@ class create_fieldTest(unittest.TestCase):
             g[0].dump()
 
 #        units = g[0].construct('ncvar%ancillary_data_1').get_property('units', None)
-#        self.assertTrue(units =='m s-1', 'units: '+str(units))
+#        self.assertEqual(units, 'm s-1', 'units: '+str(units))
 
 
 #        sys.exit(1)
         array = g[0].constructs.filter_by_identity('long_name=greek_letters').value().data.array
-        self.assertTrue(array[1] == b'beta', 'greek_letters = {!r}'.format(array))
+        self.assertEqual(array[1], b'beta',
+                         'greek_letters = {!r}'.format(array))
 
-        self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))
+        self.assertEqual(
+            len(g), 1,
+            'Read produced the wrong number of fields: {} != 1'.format(len(g)))
 
         g = g[0].squeeze()
 
-        self.assertTrue(sorted(f.constructs) == sorted(g.constructs),
-                        '\n\nf (created in memory)\n{}\n\n{}\n\ng (read from disk)\n{}\n\n{}'.format(
-                            sorted(f.constructs),
-                            sorted(f.constructs.items()),
-                            sorted(g.constructs),
-                            sorted(g.constructs.items())))
+        self.assertEqual(
+            sorted(f.constructs), sorted(g.constructs),
+            '\n\nf (created in memory)\n{}\n\n{}\n\ng (read from disk)\n{}\n\n{}'.format(
+                sorted(f.constructs),
+                sorted(f.constructs.items()),
+                sorted(g.constructs),
+                sorted(g.constructs.items())))
 
         self.assertTrue(
             f.equals(f, verbose=verbose),
