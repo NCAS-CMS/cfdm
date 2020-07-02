@@ -1,6 +1,3 @@
-from builtins import super
-from past.builtins import basestring
-
 from . import abstract
 from . import mixin
 
@@ -523,7 +520,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     >>> f.set_data_axes(['domainaxis1'], key='dimensioncoordinate1')
 
         '''
-        if isinstance(axes, basestring):
+        if isinstance(axes, str):
             axes = (axes,)
 
         if key is not None:

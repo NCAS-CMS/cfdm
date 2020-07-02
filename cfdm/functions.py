@@ -1,8 +1,3 @@
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-
 import logging
 import os
 import platform
@@ -12,7 +7,6 @@ import urllib.parse
 import netCDF4
 import cftime
 import numpy
-import future
 import netcdf_flattener
 
 from . import (__version__,
@@ -303,8 +297,6 @@ def environment(display=True, paths=True):
     HDF5 library: 1.10.2
     netcdf library: 4.6.1
     python: 3.7.3 /home/user/anaconda3/bin/python
-    python: 3.7.3 /home/user/anaconda3/bin/python
-    future: 0.17.1 /home/user/anaconda3/lib/python3.7/site-packages/future/__init__.py
     netCDF4: 1.5.3 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
     cftime: 1.1.0 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
     numpy: 1.16.2 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
@@ -315,7 +307,6 @@ def environment(display=True, paths=True):
     HDF5 library: 1.10.2
     netcdf library: 4.6.1
     python: 3.7.3
-    future: 0.17.1
     netCDF4: 1.5.3
     cftime: 1.1.0
     numpy: 1.16.2
@@ -331,10 +322,6 @@ def environment(display=True, paths=True):
     out.append('python: ' + str(platform.python_version()))
     if paths:
         out[-1] += ' ' + str(sys.executable)
-
-    out.append('future: ' + str(future.__version__))
-    if paths:
-        out[-1] += ' ' + str(os.path.abspath(future.__file__))
 
     out.append('netCDF4: ' + str(netCDF4.__version__))
     if paths:

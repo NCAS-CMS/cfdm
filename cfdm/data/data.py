@@ -1,6 +1,3 @@
-from __future__ import print_function
-from builtins import (range, str, super, zip)
-
 import itertools
 import logging
 

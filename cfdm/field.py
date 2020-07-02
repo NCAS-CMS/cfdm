@@ -1,6 +1,3 @@
-from __future__ import print_function
-from builtins import (str, super, zip)
-
 import logging
 
 from . import mixin

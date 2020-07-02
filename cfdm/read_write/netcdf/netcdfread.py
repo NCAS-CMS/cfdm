@@ -1,7 +1,3 @@
-from __future__ import print_function
-from builtins import (map, range, str)
-from past.builtins import basestring
-
 import logging
 import operator
 import os
@@ -701,7 +697,7 @@ class NetCDFRead(IORead):
 
         # Parse the 'external' keyword parameter
         if external:
-            if isinstance(external, basestring):
+            if isinstance(external, str):
                 external = (external,)
         else:
             external = ()
@@ -710,7 +706,7 @@ class NetCDFRead(IORead):
 
         # Parse 'extra' keyword parameter
         if extra:
-            if isinstance(extra, basestring):
+            if isinstance(extra, str):
                 field = (extra,)
 
             for f in extra:
@@ -750,7 +746,7 @@ class NetCDFRead(IORead):
         for attr in map(str, nc.ncattrs()):
             try:
                 value = nc.getncattr(attr)
-                if isinstance(value, basestring):
+                if isinstance(value, str):
                     try:
                         global_attributes[attr] = str(value)
                     except UnicodeEncodeError:
@@ -972,8 +968,7 @@ class NetCDFRead(IORead):
             for attr in map(str, variable.ncattrs()):
                 try:
                     variable_attributes[ncvar][attr] = variable.getncattr(attr)
-                    if isinstance(variable_attributes[ncvar][attr],
-                                  basestring):
+                    if isinstance(variable_attributes[ncvar][attr], str):
                         try:
                             variable_attributes[ncvar][attr] = (
                                 str(variable_attributes[ncvar][attr])

@@ -1,5 +1,3 @@
-from builtins import super
-
 from copy import deepcopy
 
 from . import mixin

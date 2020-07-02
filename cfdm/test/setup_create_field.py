@@ -1,4 +1,3 @@
-from __future__ import print_function
 import datetime
 import os
 import sys
@@ -7,6 +6,7 @@ import unittest
 import numpy
 
 import cfdm
+
 
 verbose  = False
 warnings = False

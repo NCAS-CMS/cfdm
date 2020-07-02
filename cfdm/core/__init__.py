@@ -12,7 +12,7 @@ import platform
 
 _requires = ('numpy',
              'netCDF4',
-             'future')
+)
 
 _error0 = 'cfdm.core requires the modules {}. '.format(', '.join(_requires))
 
@@ -23,11 +23,6 @@ except ImportError as error1:
 
 try:
     import numpy
-except ImportError as error1:
-    raise ImportError(_error0+str(error1))
-
-try:
-    import future
 except ImportError as error1:
     raise ImportError(_error0+str(error1))
 

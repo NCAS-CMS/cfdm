@@ -1,6 +1,3 @@
-from __future__ import print_function
-from past.builtins import basestring
-
 import os
 
 from ..cfdmimplementation import implementation
@@ -13,7 +10,6 @@ _implementation = implementation()
 
 def read(filename, external=None, extra=None, verbose=None,
          warnings=False, warn_valid=False, mask=True,
-#         absolute_netCDF_names=True,
          _implementation=_implementation):
     '''Read field constructs from a dataset.
 
@@ -257,7 +253,7 @@ def read(filename, external=None, extra=None, verbose=None,
     # Parse the field parameter
     if extra is None:
         extra = ()
-    elif isinstance(extra, basestring):
+    elif isinstance(extra, str):
         extra = (extra,)
 
     filename = os.path.expanduser(os.path.expandvars(filename))

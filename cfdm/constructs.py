@@ -1,7 +1,3 @@
-from __future__ import print_function
-from builtins import (super, zip)
-from past.builtins import basestring
-
 import logging
 import textwrap
 from copy import deepcopy

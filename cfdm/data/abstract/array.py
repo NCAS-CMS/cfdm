@@ -1,5 +1,4 @@
-from future.utils import with_metaclass
-from builtins import str
+#from future.utils import with_metaclass
 
 import abc
 
@@ -8,7 +7,8 @@ import numpy
 from ...core.data import Array as core_Array
 
 
-class Array(with_metaclass(abc.ABCMeta, core_Array)):
+#class Array(with_metaclass(abc.ABCMeta, core_Array)):
+class Array(core_Array, metaclass=abc.ABCMeta):
     '''Abstract base class for a container of an underlying array.
 
     The form of the array is defined by the initialization parameters

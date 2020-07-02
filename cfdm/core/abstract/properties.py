@@ -1,5 +1,4 @@
-from future.utils import with_metaclass
-from builtins import (str, super)
+#from future.utils import with_metaclass
 
 import abc
 
@@ -8,7 +7,8 @@ from copy import deepcopy
 from . import Container
 
 
-class Properties(with_metaclass(abc.ABCMeta, Container)):
+#class Properties(with_metaclass(abc.ABCMeta, Container)):
+class Properties(Container, metaclass=abc.ABCMeta):
     '''Abstract base class for an object with descriptive properties.
 
     .. versionadded:: 1.7.0

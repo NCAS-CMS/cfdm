@@ -1,7 +1,3 @@
-from __future__ import print_function
-from builtins import (str, zip)
-from past.builtins import basestring
-
 import copy
 import logging
 import os
@@ -3732,7 +3728,7 @@ class NetCDFWrite(IOWrite):
         delimiter = ' '
         set_Conventions = force_global.pop('Conventions', None)
         if g['Conventions']:
-            if isinstance(g['Conventions'], basestring):
+            if isinstance(g['Conventions'], str):
                 g['Conventions'] = [g['Conventions']]
             else:
                 g['Conventions'] = list(g['Conventions'])
@@ -4122,7 +4118,7 @@ class NetCDFWrite(IOWrite):
         # Set up global/non-global attributes
         # ------------------------------------------------------------
         if variable_attributes:
-            if isinstance(variable_attributes, basestring):
+            if isinstance(variable_attributes, str):
                 variable_attributes = set((variable_attributes,))
             else:
                 variable_attributes = set(variable_attributes)
@@ -4137,7 +4133,7 @@ class NetCDFWrite(IOWrite):
         # --- End: if
         
         if global_attributes:
-            if isinstance(global_attributes, basestring):
+            if isinstance(global_attributes, str):
                 global_attributes = set((global_attributes,))
             else:
                 global_attributes = set(global_attributes)

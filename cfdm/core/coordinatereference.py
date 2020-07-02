@@ -1,6 +1,3 @@
-from builtins import super
-from past.builtins import basestring
-
 from . import abstract
 
 from . import CoordinateConversion
@@ -544,7 +541,7 @@ class CoordinateReference(abstract.Container):
 
 
         '''
-        if isinstance(coordinates, basestring):
+        if isinstance(coordinates, str):
             coordinates = (coordinates,)
 
         self._get_component('coordinates').update(coordinates)

@@ -1,14 +1,12 @@
-from __future__ import print_function
-from builtins import (range, str)
-
+import atexit
 import datetime
-import tempfile
+import inspect
 import os
 import platform
-import unittest
-import atexit
-import inspect
 import subprocess
+import tempfile
+import unittest
+
 import numpy
 
 import cfdm

@@ -1,5 +1,3 @@
-from builtins import object
-
 from copy import deepcopy
 
 
@@ -7,7 +5,7 @@ class DeprecationError(Exception):
     pass
 
 
-class NetCDF(object):
+class NetCDF():
     '''Mixin class for storing simple netCDF elements.
 
     .. versionadded:: 1.7.0
@@ -49,7 +47,7 @@ class NetCDF(object):
 
 # --- End: class
 
-class _NetCDFGroupsMixin(object):
+class _NetCDFGroupsMixin():
     '''TODO
 
     .. versionadded:: 1.8.6

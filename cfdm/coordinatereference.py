@@ -1,7 +1,3 @@
-from __future__ import print_function
-from builtins import (str, super)
-from past.builtins import basestring
-
 import logging
 
 from . import mixin

@@ -1,15 +1,13 @@
-from __future__ import print_function
-from builtins import range
-
 import copy
 import datetime
 import inspect
 import itertools
-from operator import mul
 import os
 import sys
 import time
 import unittest
+
+from operator import mul
 
 import numpy
 

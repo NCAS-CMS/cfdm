@@ -1,7 +1,4 @@
-from builtins import object
-
-
-class RaggedContiguous(object):
+class RaggedContiguous():
     '''Mixin class for an underlying compressed ragged array.
 
     .. versionadded:: 1.7.0
@@ -38,7 +35,7 @@ class RaggedContiguous(object):
 # --- End: class
 
 
-class RaggedIndexed(object):
+class RaggedIndexed():
     '''Mixin class for an underlying indexed ragged array.
 
     '''
