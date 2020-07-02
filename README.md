@@ -9,12 +9,6 @@ About | [![Conda](https://img.shields.io/conda/pn/ncas/cfdm?color=2d8659)](https
 
 References | [![Website](https://img.shields.io/website?color=264d73&down_message=10.5281%2Fzenodo.3894525&label=DOI&up_message=10.5281%2Fzenodo.3894525&url=https%3A%2F%2Fzenodo.org%2Frecord%2F3894525%23.Xuf2uXVKjeQ)](https://doi.org/10.5281/zenodo.3894525) [![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5194%2Fgmd-10-4619-2017&label=GMD&up_color=264d73&up_message=10.5194%2Fgmd-10-4619-2017&url=https%3A%2F%2Fwww.geosci-model-dev.net%2F10%2F4619%2F2017%2F)](https://www.geosci-model-dev.net/10/4619/2017/)
 
-References | [![DOI](https://img.shields.io/website?color=264d73&down_message=10.5281%2Fzenodo.3894525&label=DOI&up_message=10.5281%2Fzenodo.3894525&url=https%3A%2F%2Fzenodo.org%2Frecord%2F3894525%23.Xuf2uXVKjeQ)](https://doi.org/10.5281/zenodo.3894525)
-[![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5194%2Fgmd-10-4619-2017&label=GMD&up_color=264d73&up_message=10.5194%2Fgmd-10-4619-2017&url=https%3A%2F%2Fwww.geosci-model-dev.net%2F10%2F4619%2F2017%2F)](https://www.geosci-model-dev.net/10/4619/2017/)
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2592291.svg)](https://doi.org/10.5281/zenodo.2592290)
-
-
 Documentation
 =============
 
