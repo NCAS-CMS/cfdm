@@ -21,7 +21,7 @@ from . import (__version__,
 from .constants import CONSTANTS, ValidLogLevels
 
 
-def ATOL(*atol):
+def atol(*atol):
     '''The tolerance on absolute differences when testing for numerically
     tolerant equality.
 
@@ -35,7 +35,7 @@ def ATOL(*atol):
 
     .. versionadded:: 1.7.0
 
-    .. seealso:: `RTOL`
+    .. seealso:: `rtol`
 
     :Parameters:
 
@@ -51,14 +51,14 @@ def ATOL(*atol):
 
     **Examples:**
 
-    >>> ATOL()
+    >>> atol()
     2.220446049250313e-16
-    >>> old = ATOL(1e-10)
-    >>> ATOL()
+    >>> old = atol(1e-10)
+    >>> atol()
     1e-10
-    >>> ATOL(old)
+    >>> atol(old)
     1e-10
-    >>> ATOL()
+    >>> atol()
     2.220446049250313e-16
 
     '''
@@ -69,7 +69,7 @@ def ATOL(*atol):
     return old
 
 
-def RTOL(*rtol):
+def rtol(*rtol):
     '''The tolerance on relative differences when testing for numerically
     tolerant equality.
 
@@ -83,7 +83,7 @@ def RTOL(*rtol):
 
     .. versionadded:: 1.7.0
 
-    .. seealso:: `ATOL`
+    .. seealso:: `atol`
 
     :Parameters:
 
@@ -99,14 +99,14 @@ def RTOL(*rtol):
 
     **Examples:**
 
-    >>> RTOL()
+    >>> rtol()
     2.220446049250313e-16
-    >>> old = RTOL(1e-10)
-    >>> RTOL()
+    >>> old = rtol(1e-10)
+    >>> rtol()
     1e-10
-    >>> RTOL(old)
+    >>> rtol(old)
     1e-10
-    >>> RTOL()
+    >>> rtol()
     2.220446049250313e-16
 
     '''
@@ -118,15 +118,15 @@ def RTOL(*rtol):
 
 
 def _log_level(constants_dict, log_level):
-    ''' Equivalent to LOG_LEVEL, but with dict to modify as an argument.
+    ''' Equivalent to log_level, but with dict to modify as an argument.
 
     This internal function is designed specifically so that a different
     constants_dict can be manipulated with setting or reading of the
     log level, without the constants dictionary becoming a user-facing
-    argument. LOG_LEVEL is the only function of the pair documented for use.
+    argument. log_level is the only function of the pair documented for use.
 
     Overall, this means that cf-python can import these functions and use
-    them such that it can manipulate (its own separate) LOG_LEVEL constant.
+    them such that it can manipulate (its own separate) log_level constant.
 
     Note: relies on the mutability of arguments (here the constants_dict).
     '''
@@ -162,7 +162,7 @@ def _log_level(constants_dict, log_level):
     return old
 
 
-def LOG_LEVEL(*log_level):
+def log_level(*log_level):
     '''The minimal level of seriousness of log messages which are shown.
 
     This can be adjusted to filter out potentially-useful log messages
@@ -204,15 +204,15 @@ def LOG_LEVEL(*log_level):
 
     **Examples:**
 
-    >>> LOG_LEVEL()  # get the current value
+    >>> log_level()  # get the current value
     'WARNING'
-    >>> LOG_LEVEL('INFO')  # change the value to 'INFO'
+    >>> log_level('INFO')  # change the value to 'INFO'
     'WARNING'
-    >>> LOG_LEVEL()
+    >>> log_level()
     'INFO'
-    >>> LOG_LEVEL(0)  # set to 'DISABLE' via corresponding integer
+    >>> log_level(0)  # set to 'DISABLE' via corresponding integer
     'INFO'
-    >>> LOG_LEVEL()
+    >>> log_level()
     'DISABLE'
 
     '''
@@ -236,7 +236,7 @@ def _reset_log_emergence_level(level, logger=None):
     that case).
 
     The level specified must be a valid logging level string name or
-    equivalent integer (see valid_log_levels in LOG_LEVEL above), else
+    equivalent integer (see valid_log_levels in log_level above), else
     a ValueError will be raised by the logging module.
 
     Unless another logger is specified, this will apply to the root

@@ -1,7 +1,7 @@
 from functools import wraps
 
 from .functions import (
-    LOG_LEVEL,
+    log_level,
     _disable_logging,
     _reset_log_emergence_level,
     _is_valid_log_level_int,
@@ -87,11 +87,11 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
 
     This enables overriding of the log severity level such that an integer
     input (lying in the valid range) to the decorated function will ignore
-    the global cfdm.LOG_LEVEL() to configure a custom verbosity
+    the global cfdm.log_level() to configure a custom verbosity
     for the individual function call, applying to its logic and any
     functions it calls internally and lasting only the duration of the call.
 
-    If verbose=None, as is the default, the LOG_LEVEL() determines
+    If verbose=None, as is the default, the log_level() determines
     which log messages are shown, as standard.
 
     Only use this to decorate functions which make log calls directly
@@ -131,7 +131,7 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
                     "Accepted values are integers corresponding in positive"
                     "cases to increasing verbosity (namely {}), or None, "
                     "to configure the verbosity according to the global "
-                    "LOG_LEVEL setting.".format(
+                    "log_level setting.".format(
                         ", ".join([val.name + " = " + str(val.value)
                                    for val in ValidLogLevels])
                     )
@@ -139,7 +139,7 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
 
         # First need to (temporarily) re-enable global logging if disabled
         # in the cases where you do not want to disable it anyway:
-        if (LOG_LEVEL() == 'DISABLE' and verbose not in (0, None)):
+        if (log_level() == 'DISABLE' and verbose not in (0, None)):
             _disable_logging(at_level='NOTSET')  # enables all logging again
 
         # After method completes, re-set any changes to log level or enabling
@@ -160,8 +160,8 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
                     _disable_logging(at_level='NOTSET')  # lift deactivation
                 elif (verbose is not None and
                       _is_valid_log_level_int(verbose)):
-                    _reset_log_emergence_level(LOG_LEVEL())
-                if LOG_LEVEL() == 'DISABLE' and verbose != 0:
+                    _reset_log_emergence_level(log_level())
+                if log_level() == 'DISABLE' and verbose != 0:
                     _disable_logging()  # disable again after re-enabling
 
     return verbose_override_wrapper

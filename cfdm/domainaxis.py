@@ -99,11 +99,11 @@ class DomainAxis(mixin.NetCDFDimension,
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cfdm.LOG_LEVEL`.
+            regardless of the global configured `cfdm.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cfdm.LOG_LEVEL` setting.
+            `cfdm.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to

@@ -14,7 +14,7 @@ CONSTANTS = {
     # equality.
     'ATOL': sys.float_info.epsilon,
     # The minimal level of seriousness for which log messages are shown. See
-    # functions.LOG_LEVEL().
+    # functions.log_level().
     'LOG_LEVEL': logging.getLevelName(logging.getLogger().level),
 }
 

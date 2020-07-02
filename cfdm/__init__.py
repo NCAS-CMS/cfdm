@@ -69,10 +69,10 @@ from .constants import masked
 # Internal ones passed on so they can be used in cf-python (see
 # comment below)
 from .functions import (
-    ATOL,
-    RTOL,
+    atol,
+    rtol,
     CF,
-    LOG_LEVEL,
+    log_level,
     abspath,
     environment,
     _log_level,
@@ -143,7 +143,7 @@ logging.basicConfig(
     stream=sys.stdout,
     style='{',              # default is old style ('%') string formatting
     format='{message}',     # no module names or datetimes etc. for basic case
-    level=logging.WARNING,  # default but change level via LOG_LEVEL()
+    level=logging.WARNING,  # default but change level via log_level()
 )
 
 # And create custom level inbetween 'INFO' & 'DEBUG', to understand

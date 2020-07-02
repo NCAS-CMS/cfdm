@@ -112,32 +112,32 @@ class DecoratorsTest(unittest.TestCase):
         ]
 
         for level in levels:
-            cfdm.LOG_LEVEL(level)  # reset to level
+            cfdm.log_level(level)  # reset to level
 
-            # Default verbose(=None) cases: LOG_LEVEL should determine output
-            with self.assertLogs(level=cfdm.LOG_LEVEL()) as catch:
+            # Default verbose(=None) cases: log_level should determine output
+            with self.assertLogs(level=cfdm.log_level()) as catch:
                 test_class.decorated_logging_func()
 
                 for msg in log_message:
-                    # LOG_LEVEL should prevent messages less severe appearing:
+                    # log_level should prevent messages less severe appearing:
                     if levels.index(level) >= log_message.index(msg):
                         self.assertIn(msg, catch.output)
                     else:  # less severe, should be effectively filtered out
                         self.assertNotIn(msg, catch.output)
 
-            # Cases where verbose is set; value should override LOG_LEVEL...
+            # Cases where verbose is set; value should override log_level...
 
             # Highest verbosity case (note -1 == 'DEBUG', highest verbosity):
-            # all messages should appear, regardless of global LOG_LEVEL:
-            with self.assertLogs(level=cfdm.LOG_LEVEL()) as catch:
+            # all messages should appear, regardless of global log_level:
+            with self.assertLogs(level=cfdm.log_level()) as catch:
                 test_class.decorated_logging_func(verbose=-1)
                 for msg in log_message:
                     self.assertIn(msg, catch.output)
 
             # Lowest verbosity case ('WARNING' / 1) excluding special case of
             # 'DISABLE' (see note above): only warning messages should appear,
-            # regardless of global LOG_LEVEL value set:
-            with self.assertLogs(level=cfdm.LOG_LEVEL()) as catch:
+            # regardless of global log_level value set:
+            with self.assertLogs(level=cfdm.log_level()) as catch:
                 test_class.decorated_logging_func(verbose=1)
                 for msg in log_message:
                     if msg.split(":")[0] == 'WARNING':
@@ -148,7 +148,7 @@ class DecoratorsTest(unittest.TestCase):
             # Boolean cases for testing backwards compatibility...
 
             # ... verbose=True should be equivalent to verbose=3 now:
-            with self.assertLogs(level=cfdm.LOG_LEVEL()) as catch:
+            with self.assertLogs(level=cfdm.log_level()) as catch:
                 test_class.decorated_logging_func(verbose=True)
                 for msg in log_message:
                     if msg.split(":")[0] == 'DEBUG':
@@ -160,14 +160,14 @@ class DecoratorsTest(unittest.TestCase):
             # test along with 'DISABLE' special case below...
 
             # Special 'DISABLE' (0) case: note this needs to be last as we
-            # reset the LOG_LEVEL to it but need to use 'NOTSET' for the
+            # reset the log_level to it but need to use 'NOTSET' for the
             # assertLogs level, which sends all log messages through:
             with self.assertLogs(level='NOTSET') as catch:
                 # Note get 'AssertionError' if don't log anything at all, so
                 # avoid this and allow check for disabled logging, first log
                 # something then disable and check nothing else emerges:
                 logger.info("Purely to keep 'assertLog' happy: see comment!")
-                cfdm.LOG_LEVEL('DISABLE')
+                cfdm.log_level('DISABLE')
                 test_class.decorated_logging_func(verbose=0)
                 for msg in log_message:  # nothing else should be logged
                     self.assertNotIn(msg, catch.output)

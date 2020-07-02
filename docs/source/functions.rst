@@ -30,9 +30,9 @@ Version |release| for version |version| of the CF conventions.
    :template: function.rst
 
    cfdm.CF
-   cfdm.ATOL
-   cfdm.RTOL
-   cfdm.LOG_LEVEL
+   cfdm.atol
+   cfdm.rtol
+   cfdm.log_level
 
 **Miscellaneous**
 -----------------
