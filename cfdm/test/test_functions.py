@@ -60,12 +60,16 @@ class FunctionsTest(unittest.TestCase):
             return
 
         org = cfdm.rtol()
+        self.assertTrue(org == cfdm.RTOL())  # check alias
+
         self.assertTrue(cfdm.rtol(1e-5) == org)
         self.assertTrue(cfdm.rtol() == 1e-5)
         self.assertTrue(cfdm.rtol(org) == 1e-5)
         self.assertTrue(cfdm.rtol() == org)
 
         org = cfdm.atol()
+        self.assertTrue(org == cfdm.ATOL())  # check alias
+
         self.assertTrue(cfdm.atol(1e-5) == org)
         self.assertTrue(cfdm.atol() == 1e-5)
         self.assertTrue(cfdm.atol(org) == 1e-5)
@@ -81,6 +85,7 @@ class FunctionsTest(unittest.TestCase):
         # value on next call:
         previous = cfdm.log_level()
         for value in self.valid_log_values_ci:
+            self.assertTrue(previous == cfdm.LOG_LEVEL())  # check alias
             self.assertTrue(cfdm.log_level(value) == previous)
             previous = cfdm.log_level()  # update previous value
 
@@ -94,8 +99,10 @@ class FunctionsTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             cfdm.log_level(4)
+            cfdm.LOG_LEVEL(4)  # check alias too
         with self.assertRaises(ValueError):
             cfdm.log_level('ERROR')  # notable as is valid Python logging level
+            cfdm.LOG_LEVEL('ERROR')
 
     def test_reset_log_emergence_level(self):
         # 'DISABLE' is special case so test it afterwards (see below)

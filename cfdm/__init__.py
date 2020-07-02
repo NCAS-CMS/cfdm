@@ -69,12 +69,15 @@ from .constants import masked
 # Internal ones passed on so they can be used in cf-python (see
 # comment below)
 from .functions import (
-    atol,
-    rtol,
+    ATOL,
     CF,
-    log_level,
+    LOG_LEVEL,
+    RTOL,
     abspath,
+    atol,
     environment,
+    log_level,
+    rtol,
     _log_level,
     _disable_logging,
     _reset_log_emergence_level,

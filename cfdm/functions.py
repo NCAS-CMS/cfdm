@@ -69,6 +69,12 @@ def atol(*atol):
     return old
 
 
+def ATOL(*new_atol):
+    '''Alias for `cfdm.atol`.
+    '''
+    return atol(*new_atol)
+
+
 def rtol(*rtol):
     '''The tolerance on relative differences when testing for numerically
     tolerant equality.
@@ -115,6 +121,12 @@ def rtol(*rtol):
         CONSTANTS['RTOL'] = float(rtol[0])
 
     return old
+
+
+def RTOL(*new_rtol):
+    '''Alias for `cfdm.rtol`.
+    '''
+    return rtol(*new_rtol)
 
 
 def _log_level(constants_dict, log_level):
@@ -217,6 +229,12 @@ def log_level(*log_level):
 
     '''
     return _log_level(CONSTANTS, log_level)
+
+
+def LOG_LEVEL(*new_log_level):
+    '''Alias for `cfdm.log_level`.
+    '''
+    return log_level(*new_log_level)
 
 
 def _is_valid_log_level_int(int_log_level):
