@@ -4,8 +4,10 @@ version 1.8.6
 
 **2020-07-??**
 
-* Implemented reading and writing netCDF4 group hierarchies for CF-1.8
-  (https://github.com/NCAS-CMS/cfdm/issues/13)
+* Removed Python 2.7 support
+  (https://github.com/NCAS-CMS/cfdm/issues/55)
+* Implemented the reading and writing of netCDF4 group hierarchies for
+  CF-1.8 (https://github.com/NCAS-CMS/cfdm/issues/13)
 * New method: `cfdm.Field.nc_variable_groups`
 * New method: `cfdm.Field.nc_set_variable_groups`
 * New method: `cfdm.Field.nc_clear_variable_groups`
