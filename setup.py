@@ -129,7 +129,6 @@ up-to-date source."""
 requirements = open('requirements.txt', 'r')
 install_requires = requirements.read().splitlines() 
 
-print (install_requires )
 setup(name = "cfdm",
       long_description = long_description,
       version      = version,

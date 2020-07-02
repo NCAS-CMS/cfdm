@@ -1,7 +1,0 @@
-cfdm.Field.create_field
-=======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.create_field

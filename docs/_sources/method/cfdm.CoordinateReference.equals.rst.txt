@@ -1,7 +1,0 @@
-cfdm.CoordinateReference.equals
-===============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CoordinateReference.equals

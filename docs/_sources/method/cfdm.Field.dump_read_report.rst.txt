@@ -1,7 +1,0 @@
-cfdm.Field.dump_read_report
-===========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.dump_read_report

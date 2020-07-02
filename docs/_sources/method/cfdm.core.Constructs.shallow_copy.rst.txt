@@ -1,7 +1,0 @@
-cfdm.core.Constructs.shallow_copy
-=================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Constructs.shallow_copy

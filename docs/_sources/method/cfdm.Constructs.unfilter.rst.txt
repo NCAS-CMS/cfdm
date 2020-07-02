@@ -1,7 +1,0 @@
-cfdm.Constructs.unfilter
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Constructs.unfilter

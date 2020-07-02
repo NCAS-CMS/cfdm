@@ -1,7 +1,0 @@
-cfdm.core.Data.__hash__
-=======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Data.__hash__

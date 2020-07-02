@@ -1,7 +1,0 @@
-cfdm.CellMethod.name
-====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMethod.name

@@ -1,7 +1,0 @@
-cfdm.DomainAncillary.transpose
-==============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DomainAncillary.transpose

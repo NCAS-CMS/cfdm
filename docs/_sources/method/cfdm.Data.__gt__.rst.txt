@@ -1,7 +1,0 @@
-cfdm.Data.__gt__
-================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.__gt__

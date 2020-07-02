@@ -1,7 +1,0 @@
-cfdm.mixin.PropertiesDataBounds.name
-====================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.PropertiesDataBounds.name

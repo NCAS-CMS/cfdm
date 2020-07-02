@@ -1,7 +1,0 @@
-cfdm.Constructs.property
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Constructs.property

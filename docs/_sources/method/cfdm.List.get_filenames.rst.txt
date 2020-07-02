@@ -1,7 +1,0 @@
-cfdm.List.get_filenames
-=======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.List.get_filenames
