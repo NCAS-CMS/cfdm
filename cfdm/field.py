@@ -692,7 +692,7 @@ class Field(mixin.NetCDFVariable,
         return out
 
     @_inplace_enabled
-    def compress(self, method,axes=None, count_properties=None,
+    def compress(self, method, axes=None, count_properties=None,
                  index_properties=None, list_properties=None,
                  inplace=False):
         '''Compress the field construct.
@@ -707,13 +707,12 @@ class Field(mixin.NetCDFVariable,
     Whether or not the field construct is compressed does not alter
     its functionality nor external appearance.
 
-    A field that is already compressed will returned compressed by the
-    chosen method.
+    A field that is already compressed will be returned compressed by
+    the chosen method.
 
-    When writing a compressed field construct to a dataset space will
-    be saved by the creation of compressed netCDF variables, along
-    with the supplementary netCDF variables and attributes that are
-    required for the encoding.
+    When writing a compressed field construct to a dataset, compressed
+    netCDF variables are written, along with the supplementary netCDF
+    variables and attributes that are required for the encoding.
 
     The following type of compression are available (see the *method*
     parameter):
@@ -821,9 +820,12 @@ class Field(mixin.NetCDFVariable,
      [0.86  0.8 0.75  0.0 4.56   --   --  --  --]
      [ 0.0 0.09  0.0 0.91 2.96 1.14 3.86 0.0 0.0]]
     >>> g = f.compress('contiguous')
-    >>> cfdm.write(g, 'compressed_file_contiguous.nc')
-
     >>> g.equals(f)
+    True
+
+    >>> cfdm.write(g, 'compressed_file_contiguous.nc')
+    >>> h = cfdm.read( 'compressed_file_contiguous.nc')[0]
+    >>> h.equals(f)
     True
 
     >>> g.data.get_compression_type()
@@ -2703,11 +2705,14 @@ class Field(mixin.NetCDFVariable,
 
     @_inplace_enabled
     def uncompress(self, inplace=False):
-        '''Uncompress the construct.
+        '''Uncompress the field construct.
 
     Compression saves space by identifying and removing unwanted
     missing data. Such compression techniques store the data more
     efficiently and result in no precision loss.
+
+    The field construct data is uncompressed, along with any
+    applicable metadata constructs.
 
     Whether or not the construct is compressed does not alter its
     functionality nor external appearance.
@@ -2715,15 +2720,25 @@ class Field(mixin.NetCDFVariable,
     A field construct that is already uncompressed will be returned
     uncompressed.
         
-    The following type of compression are available:
+    The compression type can be discovered by the
+    `~Data.get_compression_type` method  of the data:
 
-        * Ragged arrays for discrete sampling geometries (DSG). Three
-          different types of ragged array representation are
-          supported.
+    The following types of compression can be uncompressed:
 
-        ..
-
-        * Compression by gathering.
+      * Compression type ``'ragged_contiguous'``: Contiguous ragged
+        array representation for DSG "point", "timeSeries",
+        "trajectory" or "profile" features.
+      
+      * Compression type ``'ragged_indexed'``: Indexed ragged array
+        representation for DSG "point", "timeSeries", "trajectory", or
+        "profile" features.
+      
+      * Compression type ``'ragged_indexed_contiguous'``: Indexed
+        contiguous ragged array representation for DSG
+        "timeSeriesProfile", or "trajectoryProfile" features.
+      
+      * Compression type ``'gathered'``: Compression by gathering over
+        any subset of the field construct data dimensions.
 
     .. versionadded:: 1.7.11
 

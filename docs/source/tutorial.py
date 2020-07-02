@@ -5,6 +5,7 @@ print("\n**Tutorial**\n")
 print("\n**Import**\n")
 
 import cfdm
+cfdm.LOG_LEVEL('INFO')
 cfdm.CF()
 
 print("\n**Field construct**\n")
@@ -325,7 +326,7 @@ a
 a.properties()
 a.data
 
-print("\n**Field creation**\n")
+print("\n**Field creation in memory**\n")
 
 
 print("\n**Stage 1:** The field construct is created without metadata\n")
@@ -365,9 +366,6 @@ key = p.set_construct(dc, axes=longitude_axis)
 key
 cm = cfdm.CellMethod(axes=longitude_axis, method='minimum')
 p.set_construct(cm)
-
-import numpy
-import cfdm
 
 # Initialise the field construct with properties
 Q = cfdm.Field(
@@ -438,9 +436,6 @@ Q.set_construct(dimY, axes=axisY)
 Q.set_construct(dimX, axes=axisX)
 
 Q.dump()
-
-import numpy
-import cfdm
 
 # Initialize the field construct
 tas = cfdm.Field(
@@ -595,6 +590,7 @@ cell_measure = cfdm.CellMeasure(measure='area',
 
 tas.set_construct(cell_measure, axes=[axis_X, axis_Y])
 
+
 print(tas)
 import netCDF4
 nc = netCDF4.Dataset('file.nc', 'r')
@@ -694,6 +690,22 @@ cfdm.write(q2, 'q2_file.nc')
 
 print("\n**Hierarchical groups**\n")
 
+q, t = cfdm.read('file.nc')
+print(q)
+q.set_property('comment', 'comment')
+q.nc_set_group_attribute('comment', 'group comment')
+q.nc_set_variable_groups(['forecast', 'model'])
+q.construct('time').nc_set_variable_groups(['forecast'])
+cfdm.write(q, 'grouped.nc')
+g = cfdm.read('grouped.nc')[0]
+print(g)
+g.nc_get_variable()
+g.nc_variable_groups()
+g.nc_group_attributes(values=True)
+g.construct('latitude').nc_get_variable()
+cfdm.write(g, 'flat.nc', group=False)
+f = cfdm.read('flat.nc')[0]
+f.equals(g)
 
 print("\n**External variables**\n")
 

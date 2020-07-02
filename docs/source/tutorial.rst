@@ -2169,10 +2169,9 @@ over the same spatiotemporal domain).
 
 There are three methods for creating a field construct in memory:
 
-* :ref:`Manual creation <Manual-creation>`: Instantiate instances of
-  field and metadata construct classes and manually provide the
-  connections between them.
-
+* :ref:`Ab initio creation <Ab-initio-creation>`: Instantiate
+  instances of field and metadata construct classes and manually
+  provide the connections between them.
 ..
 
 * :ref:`Creation by conversion <Creation-by-conversion>`: Convert a
@@ -2180,16 +2179,16 @@ There are three methods for creating a field construct in memory:
   construct
 
 ..
-  
+
 * :ref:`Creation by reading <Creation-by-reading>`: Create field
   constructs from the netCDF variables in a dataset.
 
-.. _Manual-creation:
+.. _Ab-initio-creation:
 
-Manual creation
-^^^^^^^^^^^^^^^
+Ab initio creation
+^^^^^^^^^^^^^^^^^^
 
-Manual creation of a field construct has three stages:
+Ab initio creation of a field construct has three stages:
 
 **Stage 1:** The field construct is created without metadata
 constructs.
@@ -2717,7 +2716,7 @@ constructs.
    Field: surface_altitude
    -----------------------
    Data            : surface_altitude(key%domainaxis2(10), key%domainaxis3(9)) m
-   
+
 .. _Creation-by-reading:
 
 Creation by reading
@@ -2776,6 +2775,9 @@ latter. This is because the surface altitude netCDF variable in
 ``grid_mapping`` netCDF attributes that would link it to auxiliary
 coordinate, cell measure and grid mapping netCDF variables.
 
+
+Creating compressed constructs
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ----
 
 .. _Copying-and-equality:
@@ -3538,6 +3540,15 @@ variable):
    		:project = "research" ;
    }
 
+.. _Compressed-constructs:
+
+Compressed constructs
+^^^^^^^^^^^^^^^^^^^^^
+
+Constructs that contain compressed data will be automatically written
+to a dataset with the correct compression encoding. See the section on
+:ref:`compression <Compression>` for details.
+   
 .. _Strings:
   
 Strings
@@ -3575,8 +3586,32 @@ details.
 within netCDF4 datasets, with well defined rules for resolving
 references to out-of-group netCDF variables and dimensions.
 
-This is illustrated with the file ``grouped.nc`` (found in the
-:ref:`sample datasets <Sample-datasets>`):
+A group structure that may be applied when writing to disk can be
+created ab initio with the :ref:`netCDF interface
+<NetCDF-interface>`. For example, the data variable and a coordinate
+construct may be moved to a sub-group that has its own group
+attribute, and a coordinate construct may be moved to a different
+sub-group:
+
+.. code-block:: python
+   :caption: *Create a group structure and write it to disk.*
+
+   >>> q, t = cfdm.read('file.nc')
+   >>> print(q)
+   Field: specific_humidity (ncvar%/forecast/model/q)
+   --------------------------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> q.set_property('comment', 'comment')
+   >>> q.nc_set_group_attribute('comment', 'group comment')
+   >>> q.nc_set_variable_groups(['forecast', 'model'])
+   ()
+   >>> q.construct('time').nc_set_variable_groups(['forecast'])
+   ()
+   >>> cfdm.write(q, 'grouped.nc')
 
 .. code-block:: console
    :caption: *Inspect the new grouped dataset with the ncdump command
@@ -3585,51 +3620,55 @@ This is illustrated with the file ``grouped.nc`` (found in the
    $ ncdump -h grouped.nc
    netcdf grouped {
    dimensions:
-   	   bounds = 2 ;
    	   lat = 5 ;
+   	   bounds2 = 2 ;
    	   lon = 8 ;
    variables:
+   	   double lat_bnds(lat, bounds2) ;
    	   double lat(lat) ;
    	   	   lat:units = "degrees_north" ;
    	   	   lat:standard_name = "latitude" ;
    	   	   lat:bounds = "lat_bnds" ;
+   	   double lon_bnds(lon, bounds2) ;
    	   double lon(lon) ;
    	   	   lon:units = "degrees_east" ;
    	   	   lon:standard_name = "longitude" ;
    	   	   lon:bounds = "lon_bnds" ;
-   	   double lon_bnds(lon, bounds) ;
-   	   double lat_bnds(lat, bounds) ;
-   	   double time ;
-   	   	   time:units = "days since 2018-12-01" ;
-   	      	   time:standard_name = "time" ;
    
    // global attributes:
-   		   :comment = "global comment" ;
-   		   :history = "created in 2020" ;
+   		   :Conventions = "CF-1.8" ;
+   		   :comment = "comment" ;
    
    group: forecast {
      variables:
-     	   double q(lat, lon) ;
-     		   q:standard_name = "specific_humidity" ;
-     		   q:units = "1" ;
-     		   q:coordinates = "time" ;
-     		   q:cell_methods = "area: mean" ;
+     	   double time ;
+  		   time:units = "days since 2018-12-01" ;
+  		   time:standard_name = "time" ;
+
+     group: model {
+       variables:
+       	   double q(lat, lon) ;
+       		   q:project = "research" ;
+       		   q:standard_name = "specific_humidity" ;
+       		   q:units = "1" ;
+       		   q:coordinates = "time" ;
+       		   q:cell_methods = "area: mean" ;
    
-     // group attributes:
-     		   :comment = "forecast comment" ;
+       // group attributes:
+       		   :comment = "group comment" ;
+       } // group model
      } // group forecast
    }
 
 When reading a netCDF dataset, the group structure and groups
 attributes are recorded and are made accessible via the :ref:`netCDF
-interface <NetCDF-interface>`, which can also be used to modify their
-values.
+interface <NetCDF-interface>`.
 
 .. code-block:: python
    :caption: *Read the grouped file and inspect its group structure.*
 
-   >>> q = cfdm.read('grouped.nc')[0]
-   >>> print(f)
+   >>> g = cfdm.read('grouped.nc')[0]
+   >>> print(g)
    Field: specific_humidity (ncvar%/forecast/q)
    --------------------------------------------
    Data            : specific_humidity(latitude(5), longitude(8)) 1
@@ -3637,59 +3676,56 @@ values.
    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : time(1) = [2019-01-01 00:00:00]
-   >>> q.nc_get_variable()
-   '/forecast/q'
-   >>> q.nc_variable_groups()
-   ('forecast',)
-   >>> q.nc_group_attributes(values=True)
-   {'comment': 'forecast comment'}
-   >>> q.construct('latitude').nc_get_variable()
+   >>> g.nc_get_variable()
+   '/forecast/model/q'
+   >>> g.nc_variable_groups()
+   ('forecast', 'model')
+   >>> g.nc_group_attributes(values=True)
+   {'comment': 'group comment'}
+   >>> g.construct('latitude').nc_get_variable()
    'lat'
  
-When writing field constructs to disk, the group structure defined by
-its netCDF variable and dimension names is used by default.
-
-Alternatively, the field constructs may be written out to a flat file,
-i.e. one without any sub-groups. This my be done by removing the group
-structure from the netCDF interface, or more simply by overriding the
-existing group structure by setting the *group* keyword to
-`cfdm.write` to `False`.
+By default field constructs are written out to a dataset with their
+groups struct (if any) intact. It is always possible, however, to
+create a "flat" dataset, i.e. one without any sub-groups. This does
+not require the removal of the group structure from the field
+construct and all of its components (although that is possible), as it
+can be done by simply by overriding the existing group structure by
+setting the *group* keyword to `cfdm.write` to `False`.
    
 .. code-block:: python
    :caption: *Write the field construct to a file with the same group
              structure, and also to a flat file.*
 
-   >>> cfdm.write(q, 'group_out.nc')
-   >>> cfdm.write(q, 'flat_out.nc', group=False)
+   >>> cfdm.write(g, 'flat.nc', group=False)
 
 NetCDF variables in the flattened output file will inherit any netCDF
 group attributes, providing that they are not superceded by variable
 attributes. The output netCDF variable and dimension names will be
 taken as the basenames of any that have been pre-defined. This is the
-case in file ``flat_out.nc``, for which the netCDF variable ``q`` has
+case in file ``flat.nc``, for which the netCDF variable ``q`` has
 inherited the ``comment`` attribute that was originally set on the
-``/forecast`` group. NetCDF group attributes may be set and accessed
-via the :ref:`netCDF interface <NetCDF-interface>`, for both netCDF
-variable and netCDF dimensions.
+``/forecast/model`` group. NetCDF group attributes may be set and
+accessed via the :ref:`netCDF interface <NetCDF-interface>`, for both
+netCDF variable and netCDF dimensions.
 
 .. code-block:: console
    :caption: *Inspect the flat version of the dataset with the ncdump
              command line tool.*
    
    $ ncdump -h flat_out.nc
-   ncdump -h flat_out.nc 
-   netcdf flat_out {
+   netcdf flat {
    dimensions:
    	   lat = 5 ;
-   	   bounds = 2 ;
+   	   bounds2 = 2 ;
    	   lon = 8 ;
    variables:
-   	   double lat_bnds(lat, bounds) ;
+   	   double lat_bnds(lat, bounds2) ;
    	   double lat(lat) ;
    	   	   lat:units = "degrees_north" ;
    	   	   lat:standard_name = "latitude" ;
    	   	   lat:bounds = "lat_bnds" ;
-   	   double lon_bnds(lon, bounds) ;
+   	   double lon_bnds(lon, bounds2) ;
    	   double lon(lon) ;
    	   	   lon:units = "degrees_east" ;
    	   	   lon:standard_name = "longitude" ;
@@ -3698,16 +3734,16 @@ variable and netCDF dimensions.
    	   	   time:units = "days since 2018-12-01" ;
    	   	   time:standard_name = "time" ;
    	   double q(lat, lon) ;
-   		   q:comment = "forecast comment" ;
-   		   q:standard_name = "specific_humidity" ;
-   		   q:units = "1" ;
-   		   q:coordinates = "time" ;
-   		   q:cell_methods = "area: mean" ;
-   
+   	   	   q:comment = "group comment" ;
+		   q:project = "research" ;
+   	   	   q:standard_name = "specific_humidity" ;
+   	   	   q:units = "1" ;
+   	   	   q:coordinates = "time" ;
+   	   	   q:cell_methods = "area: mean" ;
+   		   
    // global attributes:
    		   :Conventions = "CF-1.8" ;
-   		   :history = "created in 2020" ;
-   		   :comment = "global comment" ;
+   		   :comment = "comment" ;
    }
 
 The fields constructs read from a grouped file are identical to those
@@ -3715,78 +3751,11 @@ read from the flat version of the file:
    
 .. code-block:: python
    :caption: *Demonstrate that the field constructs are indpendent of
-             the file structure.*
+             the dataset structure.*
 
-   >>> q1 = cfdm.read('flat_out.nc')[0]
-   >>> q1.equals(q)
+   >>> f = cfdm.read('flat.nc')[0]
+   >>> f.equals(g)
    True
-   
-A group structure may be created or modified for any field construct,
-whether it was read from a dataset or created ab initio, by changing
-the netCDF dimension and variable names of the field construct and its
-components. For example, the construct may be place in the
-``/forecast`` group by prefixing its netCDF variable or dimension name
-with ``'/forecast/'``. The `!nc_set_variable_groups` or
-`!nc_set_dimension_groups` methods may also be used to the same
-effect.
-
-.. code-block:: python
-   :caption: *Map the "time" dimension coordinate construct to a the
-              /forecast group, and the data variable corresponding to
-              the field construct to the new group /forecast/model.*
-	      
-   >>> q.nc_set_variable('/forecast/model/q')
-   >>> q.nc_set_group_attribute('model', 'climate model')
-   >>> q.construct('time').nc_set_variable_groups(['forecast'])
-   >>> cfdm.write(q, 'grouped_out_2.nc')
-
-.. code-block:: console
-   :caption: *Inspect the re-grouped version of the dataset with the
-             ncdump command line tool.*
-   
-   $ ncdump -h group_out_2.nc
-   netcdf grouped_out_2 {
-   dimensions:
-   	   lat = 5 ;
-   	   bounds = 2 ;
-   	   lon = 8 ;
-   variables:
-   	   double lat_bnds(lat, bounds) ;
-   	   double lat(lat) ;
-   	   	   lat:units = "degrees_north" ;
-   	   	   lat:standard_name = "latitude" ;
-   	   	   lat:bounds = "lat_bnds" ;
-   	   double lon_bnds(lon, bounds) ;
-   	   double lon(lon) ;
-   	   	   lon:units = "degrees_east" ;
-   	   	   lon:standard_name = "longitude" ;
-   	   	   lon:bounds = "lon_bnds" ;
-   
-   // global attributes:
-   		   :Conventions = "CF-1.8" ;
-   		   :history = "created in 2020" ;
-   		   :comment = "global comment" ;
-   
-   group: forecast {
-       variables:
-	     double time ;
-   		   time:units = "days since 2018-12-01" ;
-   		   time:standard_name = "time" ;
-
-     group: model {
-       variables:
-       	   double q(lat, lon) ;
-       		   q:standard_name = "specific_humidity" ;
-       		   q:units = "1" ;
-       		   q:coordinates = "time" ;
-       		   q:cell_methods = "area: mean" ;
-   
-       // group attributes:
-       		   :comment = "forecast comment" ;
-       		   :model = "climate model" ;
-       } // group model
-     } // group forecast
-   }
 
 ----
    
@@ -4186,10 +4155,10 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    ''
 
-Perhaps the easiest way to create a compressed field construct is to
-create the equivalent uncompressed field construct and then compress
-it with its `~Field.compress` method, which also compresses the
-metadata constructs as required.
+The easiest way to create a compressed field construct is to create
+the equivalent uncompressed field construct and then compress it with
+its `~Field.compress` method, which also compresses the metadata
+constructs as required.
    
 .. Code Block 3
 
