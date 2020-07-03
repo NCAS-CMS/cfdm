@@ -42,7 +42,7 @@ The cfdm package is imported as follows:
          .. code-block:: python
             :caption: *Increase the verbosity of cfdm from the default.*
 
-            >>> cfdm.LOG_LEVEL('INFO')
+            >>> cfdm.log_level('INFO')
 
          See :ref:`the section on 'Logging' <Logging>` for
          more information.
@@ -2877,22 +2877,22 @@ on relative differences) are positive, typically very small
 numbers. By default both are set to the system epsilon (the difference
 between 1 and the least value greater than 1 that is representable as
 a float). Their values may be inspected and changed with the
-`cfdm.ATOL` and `cfdm.RTOL` functions:
+`cfdm.atol` and `cfdm.rtol` functions:
 
 .. code-block:: python
-   :caption: *The ATOL and RTOL functions allow the numerical equality
+   :caption: *The atol and rtol functions allow the numerical equality
              tolerances to be inspected and changed.*
       
-   >>> cfdm.ATOL()
+   >>> cfdm.atol()
    2.220446049250313e-16
-   >>> cfdm.RTOL()
+   >>> cfdm.rtol()
    2.220446049250313e-16
-   >>> original = cfdm.RTOL(0.00001)
-   >>> cfdm.RTOL()
+   >>> original = cfdm.rtol(0.00001)
+   >>> cfdm.rtol()
    1e-05
-   >>> cfdm.RTOL(original)
+   >>> cfdm.rtol(original)
    1e-05
-   >>> cfdm.RTOL()
+   >>> cfdm.rtol()
    2.220446049250313e-16
 
 Note that the above equation is not symmetric in :math:`x` and
@@ -4540,7 +4540,7 @@ the sub-sections below. Namely, you may configure the extent of
 messaging:
 
 * **globally** i.e. for all cfdm operations, by setting the
-  `cfdm.LOG_LEVEL` which controls the project-wide logging;
+  `cfdm.log_level` which controls the project-wide logging;
 * **for a specific function only** (for many functions) by setting
   that function's *verbose* keyword (which overrides the global
   setting for the duration of the function call).
@@ -4565,13 +4565,13 @@ verbosity. From highest to lowest on this scale, these levels are:
 * ``'DEBUG'``: produces highly-verbose information intended mainly for
   the purposes of debugging and cfdm library development.
 
-The function `cfdm.LOG_LEVEL` sets the minimum of these levels for
+The function `cfdm.log_level` sets the minimum of these levels for
 which messages are displayed. Any message marked as being of any lower
 level will be filtered out. Note it sets the verbosity *globally*, for
 *all* cfdm library operations (unless these are overridden for
 individual functions, as covered below).
 
-As well as the named log levels above, `cfdm.LOG_LEVEL` accepts a
+As well as the named log levels above, `cfdm.log_level` accepts a
 further identifier, ``'DISABLE'``. Each of these potential settings
 has a numerical value that is treated interchangeably and may instead
 be set (as this may be easier to recall and write, if less
@@ -4610,7 +4610,7 @@ to ``-1`` rather than ``4`` which would follow the increasing integer
 code pattern.  ``-1`` reflects that it is the final value in the
 sequence, as with Python indexing.
 
-The default value for `cfdm.LOG_LEVEL` is ``'WARNING'`` (``1``).
+The default value for `cfdm.log_level` is ``'WARNING'`` (``1``).
 However, whilst completing this tutorial, it may be instructive to set
 the log level` to a higher verbosity level such as `'INFO'` to gain
 insight into the internal workings of cfdm calls.
@@ -4626,13 +4626,13 @@ or especially complex processing, for example the `cfdm.read` and
 `cfdm.write` functions, accept a keyword argument *verbose*. This be
 set to change the minimum log level at which messages are displayed
 for the function/method call only, without being influenced by, or
-influencing, the global `cfdm.LOG_LEVEL` value.
+influencing, the global `cfdm.log_level` value.
 
-A *verbose* value effectively overrides the value of `cfdm.LOG_LEVEL`
+A *verbose* value effectively overrides the value of `cfdm.log_level`
 for the function/method along with any functions/methods it calls in
 turn, until the origin function/method completes.
 
-The *verbose* argument accepts the same levels as `cfdm.LOG_LEVEL`
+The *verbose* argument accepts the same levels as `cfdm.log_level`
 (including ``0`` for ``'DISABLE'``), as described in :ref:`the logging
 section <logging>`, however to keep the keyword simple, only the
 integer code is recognised and should be used, not the string
@@ -4640,7 +4640,7 @@ name. For example, ``verbose=2`` should be set rather than
 ``verbose='INFO'``.
 
 By default, *verbose* is set to `None`, in which case the value of the
-`cfdm.LOG_LEVEL` setting is used to determine which messages,
+`cfdm.log_level` setting is used to determine which messages,
 if any, are filtered out.
 
 

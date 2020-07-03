@@ -19,21 +19,19 @@ class IO(metaclass=abc.ABCMeta):
         '''
         self.implementation = implementation
 
-
     @abc.abstractmethod
     def file_close(self, *args, **kwargs):
         '''Close the dataset file.
 
         '''
-        raise NotImplementedError() # pragma: no cover
-
+        raise NotImplementedError()  # pragma: no cover
 
     @abc.abstractmethod
     def file_open(self, *args, **kwargs):
         '''Open the dataset file.
 
         '''
-        raise NotImplementedError() # pragma: no cover
+        raise NotImplementedError()  # pragma: no cover
 
 # --- End: class
 
@@ -48,7 +46,7 @@ class IORead(IO, metaclass=abc.ABCMeta):
         '''Read fields from a netCDF file.
 
         '''
-        raise NotImplementedError() # pragma: no cover
+        raise NotImplementedError()  # pragma: no cover
 
 # --- End: class
 
@@ -63,6 +61,6 @@ class IOWrite(IO, metaclass=abc.ABCMeta):
         '''Write fields to a netCDF file.
 
         '''
-        raise NotImplementedError() # pragma: no cover
+        raise NotImplementedError()  # pragma: no cover
 
 # --- End: class

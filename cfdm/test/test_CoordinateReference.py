@@ -19,7 +19,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         # 
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
-        # cfdm.LOG_LEVEL('DISABLE')
+        # cfdm.log_level('DISABLE')
 
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')

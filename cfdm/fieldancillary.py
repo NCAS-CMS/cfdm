@@ -78,7 +78,6 @@ class FieldAncillary(mixin.NetCDFVariable,
 
         self._initialise_netcdf(source)
 
-
     def dump(self, display=True, _omit_properties=None, _key=None,
              _level=0, _title=None, _axes=None, _axis_names=None):
         '''A full description of the field ancillary construct.
@@ -109,7 +108,6 @@ class FieldAncillary(mixin.NetCDFVariable,
                             _omit_properties=_omit_properties,
                             _level=_level, _title=_title, _axes=_axes,
                             _axis_names=_axis_names)
-
 
     def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
@@ -156,12 +154,12 @@ class FieldAncillary(mixin.NetCDFVariable,
 
         atol: float, optional
             The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.ATOL`
+            numbers. The default value is set by the `cfdm.atol`
             function.
 
         rtol: float, optional
             The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.RTOL`
+            numbers. The default value is set by the `cfdm.rtol`
             function.
 
         ignore_fill_value: `bool`, optional
@@ -173,11 +171,11 @@ class FieldAncillary(mixin.NetCDFVariable,
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cfdm.LOG_LEVEL`.
+            regardless of the global configured `cfdm.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cfdm.LOG_LEVEL` setting.
+            `cfdm.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to

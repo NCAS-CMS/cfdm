@@ -42,10 +42,10 @@ from distutils.version import LooseVersion
 
 from . import core
 
-__author__       = core.__author__
-__date__         = core.__date__
-__cf_version__   = core.__cf_version__
-__version__      = core.__version__
+__author__ = core.__author__
+__date__ = core.__date__
+__cf_version__ = core.__cf_version__
+__version__ = core.__version__
 
 _requires = ('cftime',)
 
@@ -70,14 +70,18 @@ from .constants import masked
 # comment below)
 from .functions import (
     ATOL,
-    RTOL,
     CF,
     LOG_LEVEL,
+    RTOL,
     abspath,
+    atol,
     environment,
+    log_level,
+    rtol,
     _log_level,
     _disable_logging,
     _reset_log_emergence_level,
+    _is_valid_log_level_int,
 )
 
 # Though these are internal-use methods, include them in the namespace
@@ -142,7 +146,7 @@ logging.basicConfig(
     stream=sys.stdout,
     style='{',              # default is old style ('%') string formatting
     format='{message}',     # no module names or datetimes etc. for basic case
-    level=logging.WARNING,  # default but change level via LOG_LEVEL()
+    level=logging.WARNING,  # default but change level via log_level()
 )
 
 # And create custom level inbetween 'INFO' & 'DEBUG', to understand
@@ -151,8 +155,10 @@ logging.basicConfig(
 logging.DETAIL = 15  # set value as an attribute as done for built-in levels
 logging.addLevelName(logging.DETAIL, 'DETAIL')
 
+
 def detail(self, message, *args, **kwargs):
     if self.isEnabledFor(logging.DETAIL):
         self._log(logging.DETAIL, message, args, **kwargs)
+
 
 logging.Logger.detail = detail

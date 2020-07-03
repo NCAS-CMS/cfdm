@@ -3,7 +3,7 @@ import logging
 
 import numpy
 
-from ..functions import ATOL, RTOL
+from ..functions import atol, rtol
 
 from ..decorators import _manage_log_level_via_verbosity
 
@@ -39,16 +39,16 @@ class Container():
         return ', '.join(out)
 
     @property
-    def _ATOL(self):
+    def _atol(self):
         '''TODO
         '''
-        return ATOL()
+        return atol()
 
     @property
-    def _RTOL(self):
+    def _rtol(self):
         '''TODO
         '''
-        return RTOL()
+        return rtol()
 
 #    @classmethod
     def _equals(self, x, y, rtol=None, atol=None,
@@ -65,17 +65,17 @@ class Container():
 
         atol: float, optional
             The tolerance on absolute differences between real
-            numbers. The default value is set by the `ATOL` function.
+            numbers. The default value is set by the `atol` function.
 
         rtol: float, optional
             The tolerance on relative differences between real
-            numbers. The default value is set by the `RTOL` function.
+            numbers. The default value is set by the `rtol` function.
 
         '''
         if rtol is None:
-            rtol = self._RTOL
+            rtol = self._rtol
         if atol is None:
-            atol = self._ATOL
+            atol = self._atol
 
         kwargs['ignore_data_type'] = ignore_data_type
         kwargs['rtol'] = rtol
@@ -131,7 +131,7 @@ class Container():
 
         if not ignore_data_type and x.dtype != y.dtype:
             if (x.dtype.kind not in ('S', 'U')
-                and y.dtype.kind not in ('S', 'U')):
+                    and y.dtype.kind not in ('S', 'U')):
                 return False
 
         x_is_masked = numpy.ma.isMA(x)

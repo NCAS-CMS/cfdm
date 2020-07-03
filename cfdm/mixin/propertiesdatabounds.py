@@ -5,7 +5,7 @@ from operator import mul
 
 from . import PropertiesData
 
-from ..functions import RTOL, ATOL
+from ..functions import rtol, atol
 
 from ..decorators import (
     _inplace_enabled,
@@ -751,12 +751,12 @@ class PropertiesDataBounds(PropertiesData):
 
         atol: float, optional
             The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.ATOL`
+            numbers. The default value is set by the `cfdm.atol`
             function.
 
         rtol: float, optional
             The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.RTOL`
+            numbers. The default value is set by the `cfdm.rtol`
             function.
 
         ignore_fill_value: `bool`, optional
@@ -768,11 +768,11 @@ class PropertiesDataBounds(PropertiesData):
             verbosity (else ``-1`` as a special case of maximal and extreme
             verbosity), set for the duration of the method call (only) as
             the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cfdm.LOG_LEVEL`.
+            regardless of the global configured `cfdm.log_level`.
 
             Else, if `None` (the default value), log messages will be
             filtered out, or otherwise, according to the value of the
-            `cfdm.LOG_LEVEL` setting.
+            `cfdm.log_level` setting.
 
             Overall, the higher a non-negative integer that is set (up to
             a maximum of ``3``) the more description that is printed to
@@ -1551,10 +1551,10 @@ class PropertiesDataBounds(PropertiesData):
 
             data = bounds.get_data(None)
             if (data is not None
-                and ndim == 2
-                and data.ndim == 3
-                and data.shape[-1] == 4
-                and b_axes[0:2] == [1, 0]):
+                    and ndim == 2
+                    and data.ndim == 3
+                    and data.shape[-1] == 4
+                    and b_axes[0:2] == [1, 0]):
                 # Swap elements 1 and 3 of the trailing dimension so
                 # that the values are still contiguous (if they ever
                 # were). See section 7.1 of the CF conventions.

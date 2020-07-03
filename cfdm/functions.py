@@ -13,10 +13,10 @@ from . import (__version__,
                __cf_version__,
                __file__)
 
-from .constants import CONSTANTS, valid_log_levels, numeric_log_level_map
+from .constants import CONSTANTS, ValidLogLevels
 
 
-def ATOL(*atol):
+def atol(*atol):
     '''The tolerance on absolute differences when testing for numerically
     tolerant equality.
 
@@ -30,7 +30,7 @@ def ATOL(*atol):
 
     .. versionadded:: 1.7.0
 
-    .. seealso:: `RTOL`
+    .. seealso:: `rtol`
 
     :Parameters:
 
@@ -46,14 +46,14 @@ def ATOL(*atol):
 
     **Examples:**
 
-    >>> ATOL()
+    >>> atol()
     2.220446049250313e-16
-    >>> old = ATOL(1e-10)
-    >>> ATOL()
+    >>> old = atol(1e-10)
+    >>> atol()
     1e-10
-    >>> ATOL(old)
+    >>> atol(old)
     1e-10
-    >>> ATOL()
+    >>> atol()
     2.220446049250313e-16
 
     '''
@@ -63,7 +63,14 @@ def ATOL(*atol):
 
     return old
 
-def RTOL(*rtol):
+
+def ATOL(*new_atol):
+    '''Alias for `cfdm.atol`.
+    '''
+    return atol(*new_atol)
+
+
+def rtol(*rtol):
     '''The tolerance on relative differences when testing for numerically
     tolerant equality.
 
@@ -77,7 +84,7 @@ def RTOL(*rtol):
 
     .. versionadded:: 1.7.0
 
-    .. seealso:: `ATOL`
+    .. seealso:: `atol`
 
     :Parameters:
 
@@ -93,14 +100,14 @@ def RTOL(*rtol):
 
     **Examples:**
 
-    >>> RTOL()
+    >>> rtol()
     2.220446049250313e-16
-    >>> old = RTOL(1e-10)
-    >>> RTOL()
+    >>> old = rtol(1e-10)
+    >>> rtol()
     1e-10
-    >>> RTOL(old)
+    >>> rtol(old)
     1e-10
-    >>> RTOL()
+    >>> rtol()
     2.220446049250313e-16
 
     '''
@@ -111,16 +118,22 @@ def RTOL(*rtol):
     return old
 
 
+def RTOL(*new_rtol):
+    '''Alias for `cfdm.rtol`.
+    '''
+    return rtol(*new_rtol)
+
+
 def _log_level(constants_dict, log_level):
-    ''' Equivalent to LOG_LEVEL, but with dict to modify as an argument.
+    ''' Equivalent to log_level, but with dict to modify as an argument.
 
     This internal function is designed specifically so that a different
     constants_dict can be manipulated with setting or reading of the
     log level, without the constants dictionary becoming a user-facing
-    argument. LOG_LEVEL is the only function of the pair documented for use.
+    argument. log_level is the only function of the pair documented for use.
 
     Overall, this means that cf-python can import these functions and use
-    them such that it can manipulate (its own separate) LOG_LEVEL constant.
+    them such that it can manipulate (its own separate) log_level constant.
 
     Note: relies on the mutability of arguments (here the constants_dict).
     '''
@@ -129,33 +142,34 @@ def _log_level(constants_dict, log_level):
     if log_level:
         level = log_level[0]
 
-        if isinstance(level, str):
-            level = level.upper()
-        elif level in numeric_log_level_map:
-            level = numeric_log_level_map[level]  # convert to string ID first
-
         # Ensuring it is a valid level specifier to set & use, either
         # a case-insensitive string of valid log level or
         # dis/en-abler, or an integer 0 to 5 corresponding to one of
         # those as converted above:
-        if level in valid_log_levels:
-            constants_dict['LOG_LEVEL'] = level
-            _reset_log_emergence_level(level)
-        else:
+        if isinstance(level, str):
+            level = level.upper()
+        elif _is_valid_log_level_int(level):
+            level = ValidLogLevels(level).name  # convert to string ID first
+
+        if not hasattr(ValidLogLevels, level):
             raise ValueError(
-                "Logging level {!r} is not one of the valid values {}, or "
-                "a corresponding integer of 0 to {} and (lastly) -1, "
-                "respectively. Value remains as it was, at:".format(
-                    level, "', '".join(valid_log_levels),
-                    len(valid_log_levels) - 2
+                "Logging level {!r} is not one of the valid values '{}', "
+                "where either the string or the corrsponding integer is "
+                "accepted. Value remains as it was, at '{}'.".format(
+                    level, ", '".join([val.name + "' = " + str(val.value)
+                                        for val in ValidLogLevels]), old
                 )
             )
+        # Safe to reset now as guaranteed to be valid:
+        constants_dict['LOG_LEVEL'] = level
+        _reset_log_emergence_level(level)
+
     # --- End: if
 
     return old
 
 
-def LOG_LEVEL(*log_level):
+def log_level(*log_level):
     '''The minimal level of seriousness of log messages which are shown.
 
     This can be adjusted to filter out potentially-useful log messages
@@ -197,19 +211,34 @@ def LOG_LEVEL(*log_level):
 
     **Examples:**
 
-    >>> LOG_LEVEL()  # get the current value
+    >>> log_level()  # get the current value
     'WARNING'
-    >>> LOG_LEVEL('INFO')  # change the value to 'INFO'
+    >>> log_level('INFO')  # change the value to 'INFO'
     'WARNING'
-    >>> LOG_LEVEL()
+    >>> log_level()
     'INFO'
-    >>> LOG_LEVEL(0)  # set to 'DISABLE' via corresponding integer
+    >>> log_level(0)  # set to 'DISABLE' via corresponding integer
     'INFO'
-    >>> LOG_LEVEL()
+    >>> log_level()
     'DISABLE'
 
     '''
     return _log_level(CONSTANTS, log_level)
+
+
+def LOG_LEVEL(*new_log_level):
+    '''Alias for `cfdm.log_level`.
+    '''
+    return log_level(*new_log_level)
+
+
+def _is_valid_log_level_int(int_log_level):
+    '''Return a Boolean stating if input is a ValidLogLevels Enum integer.'''
+    try:
+        ValidLogLevels(int_log_level)
+    except KeyError:  # if verbose int not in Enum int constants
+        return False
+    return True
 
 
 def _reset_log_emergence_level(level, logger=None):
@@ -220,7 +249,7 @@ def _reset_log_emergence_level(level, logger=None):
     that case).
 
     The level specified must be a valid logging level string name or
-    equivalent integer (see valid_log_levels in LOG_LEVEL above), else
+    equivalent integer (see valid_log_levels in log_level above), else
     a ValueError will be raised by the logging module.
 
     Unless another logger is specified, this will apply to the root
@@ -236,8 +265,8 @@ def _reset_log_emergence_level(level, logger=None):
     else:  # apply to root, which all other (module) loggers inherit from
         use_logger = logging.getLogger()
 
-    if level in numeric_log_level_map:
-        level = numeric_log_level_map[level]  # convert to string ID first
+    if isinstance(level, int) and _is_valid_log_level_int(level):
+        level = ValidLogLevels(level).name  # convert to string ID if valid
 
     if level == 'DISABLE':
         _disable_logging()
@@ -249,9 +278,9 @@ def _reset_log_emergence_level(level, logger=None):
 
 def _disable_logging(at_level=None):
     '''Disable log messages at and below a given level, else completely.
-    
+
     This is an overriding level for all loggers.
-    
+
     If *at_level* is not provided, it defaults under the hood to
     ``'CRITICAL'`` (see
     https://docs.python.org/3/library/logging.html#logging.disable),
@@ -268,7 +297,7 @@ def _disable_logging(at_level=None):
     else:
         logging.disable()
 
-        
+
 def environment(display=True, paths=True):
     '''Return the names, versions and paths of all dependencies.
 
@@ -351,7 +380,7 @@ def environment(display=True, paths=True):
     else:
         return out
 
-    
+
 def CF():
     '''The version of the CF conventions.
 
@@ -412,29 +441,29 @@ def abspath(filename):
     return os.path.abspath(filename)
 
 
-#def default_netCDF_fill_values():
-#    '''The default netCDF fill values for each data type.
+# def default_netCDF_fill_values():
+#     '''The default netCDF fill values for each data type.
 #
-#    :Returns:
+#     :Returns:
 #
-#        `dict`
-#            The default fill values, keyed by `numpy` data type
-#            strings
+#         `dict`
+#             The default fill values, keyed by `numpy` data type
+#             strings
 #
-#    **Examples:**
+#     **Examples:**
 #
-#    >>> default_netCDF_fill_values()
-#    {'S1': '\x00',
-#     'i1': -127,
-#     'u1': 255,
-#     'i2': -32767,
-#     'u2': 65535,
-#     'i4': -2147483647,
-#     'u4': 4294967295,
-#     'i8': -9223372036854775806,
-#     'u8': 18446744073709551614,
-#     'f4': 9.969209968386869e+36,
-#     'f8': 9.969209968386869e+36}
+#     >>> default_netCDF_fill_values()
+#     {'S1': '\x00',
+#      'i1': -127,
+#      'u1': 255,
+#      'i2': -32767,
+#      'u2': 65535,
+#      'i4': -2147483647,
+#      'u4': 4294967295,
+#      'i8': -9223372036854775806,
+#      'u8': 18446744073709551614,
+#      'f4': 9.969209968386869e+36,
+#      'f8': 9.969209968386869e+36}
 #
-#    '''
-#    return netCDF4.default_fillvals
+#     '''
+#     return netCDF4.default_fillvals

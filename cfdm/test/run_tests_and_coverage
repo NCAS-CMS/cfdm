@@ -9,7 +9,7 @@
 #
 # $ run_test_and_coverage --nohtml
 # --------------------------------------------------------------------
-set -x
+#set -x
 
 library=cfdm
 

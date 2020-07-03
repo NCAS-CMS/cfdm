@@ -21,7 +21,7 @@ class ExternalVariableTest(unittest.TestCase):
         #
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
-        # cfdm.LOG_LEVEL('DISABLE')
+        # cfdm.log_level('DISABLE')
 
         self.parent_file           = 'parent.nc'
         self.external_file         = 'external.nc'
