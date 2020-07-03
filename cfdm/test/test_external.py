@@ -12,7 +12,7 @@ import cfdm
 
 
 n_tmpfiles = 3
-tmpfiles = [tempfile.mktemp('_test_gathering.nc', dir=os.getcwd())
+tmpfiles = [tempfile.mktemp('_test_external.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
 (tempfile,
  tempfile_parent,

@@ -73,6 +73,9 @@ The cfdm package can
   
 * write field constructs to netCDF datasets on disk,
 
+* read, write, and create coordinates defined by geometry cells (*new
+  in version 1.8.0*),
+  
 * read netCDF and CDL datasets containing hierarchical groups (**new
   in version 1.8.6**),
 

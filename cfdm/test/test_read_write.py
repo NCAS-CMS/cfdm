@@ -68,9 +68,6 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        tmpfile = tempfile.mktemp('.cfdm_test')
-        tmpfiles.append(tmpfile)
-
         f = cfdm.example_field(0)
         a = f.data.array
 
