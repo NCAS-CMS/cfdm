@@ -35,19 +35,16 @@ being modified in memory to be (more) CF-compliant.
 
 ----
 
-With few exceptions, cfdm only has the functionality required to read
-and write datasets, and to create, modify and inspect field constructs
-in memory. This limited scope is intentional, because
+The cdfm library can create field constructs ab initio, or read them
+from netCDF files, inspect, subspace and modify in memory, and write
+them to CF-netCDF dataset files. As long as it can interpret the data,
+cfdm does not enforce CF-compliance, allowing non-compliant datasets
+to be read, processed, corrected and rewritten.
 
-i) many tasks do not require any higher-level functionality (such as
-   inspecting the values of metadata properties, or creating datasets
-   from raw data), and
-   
-ii) the expectation is that other libraries will build on cfdm,
-    inheriting its comprehensive knowledge of the CF conventions, to
-    add more sophisticated methods appropriate to their user base. To
-    this end, cfdm has been designed to be :ref:`highly extensible
-    <Extensions>`.
+It does not contain higher-level analysis functions (such as
+regidding) because the expectation is that other libraries will build
+on cfdm, inheriting its comprehensive knowledge of the CF conventions,
+to add more sophisticated methods. 
 
 .. code-block:: python
    :caption: *A simple example of reading a field construct from a
@@ -73,6 +70,11 @@ The cfdm package can
   datasets,
 
 * create new field constructs in memory,
+  
+* write field constructs to netCDF datasets on disk,
+
+* read netCDF and CDL datasets containing hierarchical groups (**new
+  in version 1.8.6**),
 
 * inspect field constructs,
 
@@ -82,16 +84,13 @@ The cfdm package can
 
 * create subspaces of field constructs,
 
-* write field constructs to netCDF datasets on disk,
-
 * incorporate, and create, metadata stored in external files,
 
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form, and
 
-* read, write, and create coordinates defined by geometry cells (**new
-  in version 1.8.0**).
+* read, write, and create coordinates defined by geometry cells.
 
 Note that the cfdm package enables the representation and creation of
 CF field constructs, but it is largely :ref:`up to the user to use
@@ -112,16 +111,6 @@ outside of a Python environment:
                    : latitude(64) = [-87.8638, ..., 87.8638] degrees_north
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
-
-  
-Hierarchical groups
-^^^^^^^^^^^^^^^^^^^
-
-Hierarchical groups provide a powerful mechanism to structure
-variables within datasets. A future |version|.\ *x* release of cfdm
-will include support for netCDF4 files containing data organised in
-hierarchical groups, but this is not available in version |release|
-(even though it is allowed in CF-|version|).
 
 Related packages
 ^^^^^^^^^^^^^^^^

@@ -1,4 +1,3 @@
-from __future__ import print_function
 import copy
 import datetime
 import inspect
@@ -59,13 +58,17 @@ class FunctionsTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        org = cfdm.rtol()
-        self.assertTrue(org == cfdm.RTOL())  # check alias
+        org = cfdm.RTOL()
+        self.assertEqual(cfdm.RTOL(1e-5), org)
+        self.assertEqual(cfdm.RTOL(), 1e-5)
+        self.assertEqual(cfdm.RTOL(org), 1e-5)
+        self.assertEqual(cfdm.RTOL(), org)
 
-        self.assertTrue(cfdm.rtol(1e-5) == org)
-        self.assertTrue(cfdm.rtol() == 1e-5)
-        self.assertTrue(cfdm.rtol(org) == 1e-5)
-        self.assertTrue(cfdm.rtol() == org)
+        org = cfdm.ATOL()
+        self.assertEqual(cfdm.ATOL(1e-5), org)
+        self.assertEqual(cfdm.ATOL(), 1e-5)
+        self.assertEqual(cfdm.ATOL(org), 1e-5)
+        self.assertEqual(cfdm.ATOL(), org)
 
         org = cfdm.atol()
         self.assertTrue(org == cfdm.ATOL())  # check alias
@@ -77,25 +80,25 @@ class FunctionsTest(unittest.TestCase):
 
     def test_log_level(self):
         original = self.__class__.original  # original to module i.e. default
-        self.assertTrue(original == 'WARNING')  # test default
-        cfdm.log_level(original)  # reset from setUp() value to avoid coupling
+
+        self.assertEqual(original, 'WARNING')  # test default
+        cfdm.LOG_LEVEL(original)  # reset from setUp() value to avoid coupling
 
         # Now test getting and setting for all valid values in turn,
         # where use fact that setting returns old value hence set
         # value on next call:
         previous = cfdm.log_level()
         for value in self.valid_log_values_ci:
-            self.assertTrue(previous == cfdm.LOG_LEVEL())  # check alias
-            self.assertTrue(cfdm.log_level(value) == previous)
-            previous = cfdm.log_level()  # update previous value
+            self.assertEqual(cfdm.LOG_LEVEL(value), previous)
+            previous = cfdm.LOG_LEVEL()  # update previous value
 
-            # Some conversions to equivalent, standardised return value:
-            if (isinstance(value, int) and
-                cfdm._is_valid_log_level_int(value)):
-                value = cfdm.constants.ValidLogLevels(value).name
-            if isinstance(value, str):  # log_level returns all caps string
+            # Some conversions to equivalent, standardised return
+            # value:
+            if isinstance(value, int):  # LOG_LEVEL returns the string not int
+                value = cfdm.constants.numeric_log_level_map[value]
+            if isinstance(value, str):  # LOG_LEVEL returns all caps string
                 value = value.upper()
-            self.assertTrue(previous == value)
+            self.assertEqual(previous, value)
 
         with self.assertRaises(ValueError):
             cfdm.log_level(4)
@@ -162,7 +165,7 @@ class FunctionsTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        self.assertTrue(cfdm.CF() == cfdm.core.__cf_version__)
+        self.assertEqual(cfdm.CF(), cfdm.core.__cf_version__)
 
     def test_environment(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -191,11 +194,11 @@ class FunctionsTest(unittest.TestCase):
             return
 
         filename = 'test_file.nc'
-        self.assertTrue(cfdm.abspath(filename) == os.path.abspath(filename))
+        self.assertEqual(cfdm.abspath(filename), os.path.abspath(filename))
         filename = 'http://test_file.nc'
-        self.assertTrue(cfdm.abspath(filename) == filename)
+        self.assertEqual(cfdm.abspath(filename), filename)
         filename = 'https://test_file.nc'
-        self.assertTrue(cfdm.abspath(filename) == filename)
+        self.assertEqual(cfdm.abspath(filename), filename)
 
 #    def test_default_netCDF_fill_values(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:

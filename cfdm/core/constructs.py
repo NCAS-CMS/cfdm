@@ -1,6 +1,3 @@
-from builtins import (object, str)
-from past.builtins import basestring
-
 from collections import OrderedDict
 from copy import copy
 
@@ -701,7 +698,7 @@ class Constructs(object):
 
             construct = self[key]
 
-        if isinstance(axes, basestring):
+        if isinstance(axes, str):
             axes = (axes,)
 
         domain_axes = self.filter_by_type('domain_axis')

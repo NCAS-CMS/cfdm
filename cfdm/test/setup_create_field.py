@@ -1,4 +1,3 @@
-from __future__ import print_function
 import datetime
 import os
 import sys
@@ -7,6 +6,7 @@ import unittest
 import numpy
 
 import cfdm
+
 
 verbose  = False
 warnings = False
@@ -44,6 +44,7 @@ class create_fieldTest(unittest.TestCase):
         dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(data))
         dim0.set_property('standard_name', 'grid_longitude')
         dim0.set_property('units', 'degrees')
+        dim0.nc_set_variable('x')
 
         array = dim0.data.array
 
@@ -52,9 +53,11 @@ class create_fieldTest(unittest.TestCase):
         array[-1, :] = [30, 36]
         dim0.set_bounds(cfdm.Bounds(data=cfdm.Data(array)))
 
-        dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]),
-                                        bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
-        dim2.set_property('standard_name'         , 'atmosphere_hybrid_height_coordinate')
+        dim2 = cfdm.DimensionCoordinate(
+            data=cfdm.Data([1.5]),
+            bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
+        dim2.set_property(
+            'standard_name' , 'atmosphere_hybrid_height_coordinate')
         dim2.set_property('computed_standard_name', 'altitude')
 
         # Auxiliary coordinates
@@ -99,7 +102,7 @@ class create_fieldTest(unittest.TestCase):
         f.set_property('standard_name', 'eastward_wind')
 
         da = cfdm.DomainAxis(9)
-        da.nc_set_dimension('x')
+        da.nc_set_dimension('grid_longitude')
         axisX = f.set_construct(da)
         axisY = f.set_construct(cfdm.DomainAxis(10))
         axisZ = f.set_construct(cfdm.DomainAxis(1))
@@ -206,30 +209,34 @@ class create_fieldTest(unittest.TestCase):
 
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
 
-        g = cfdm.read(self.filename, verbose=verbose)
+        g = cfdm.read(self.filename, verbose=1)
 
         if verbose:
             print(g)
             g[0].dump()
 
 #        units = g[0].construct('ncvar%ancillary_data_1').get_property('units', None)
-#        self.assertTrue(units =='m s-1', 'units: '+str(units))
+#        self.assertEqual(units, 'm s-1', 'units: '+str(units))
 
 
 #        sys.exit(1)
         array = g[0].constructs.filter_by_identity('long_name=greek_letters').value().data.array
-        self.assertTrue(array[1] == b'beta', 'greek_letters = {!r}'.format(array))
+        self.assertEqual(array[1], b'beta',
+                         'greek_letters = {!r}'.format(array))
 
-        self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))
+        self.assertEqual(
+            len(g), 1,
+            'Read produced the wrong number of fields: {} != 1'.format(len(g)))
 
         g = g[0].squeeze()
 
-        self.assertTrue(sorted(f.constructs) == sorted(g.constructs),
-                        '\n\nf (created in memory)\n{}\n\n{}\n\ng (read from disk)\n{}\n\n{}'.format(
-                            sorted(f.constructs),
-                            sorted(f.constructs.items()),
-                            sorted(g.constructs),
-                            sorted(g.constructs.items())))
+        self.assertEqual(
+            sorted(f.constructs), sorted(g.constructs),
+            '\n\nf (created in memory)\n{}\n\n{}\n\ng (read from disk)\n{}\n\n{}'.format(
+                sorted(f.constructs),
+                sorted(f.constructs.items()),
+                sorted(g.constructs),
+                sorted(g.constructs.items())))
 
         self.assertTrue(
             f.equals(f, verbose=verbose),

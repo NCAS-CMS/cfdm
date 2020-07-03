@@ -1,8 +1,6 @@
-from __future__ import print_function
-from builtins import (range, super)
+import logging
 
 from functools import reduce
-import logging
 from operator import mul
 
 from . import PropertiesData

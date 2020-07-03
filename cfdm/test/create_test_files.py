@@ -2,8 +2,6 @@ import datetime
 import os
 import unittest
 
-from distutils.version import LooseVersion
-
 import numpy
 import netCDF4
 
@@ -1188,6 +1186,83 @@ def _make_string_char_file(filename):
 
     return filename
 
+#def _make_grouped_1_file(filename):
+#    nc = netCDF4.Dataset(filename, "w")
+#
+#    # ----------------------------------------------------------------
+#    # Root Group
+#    # ----------------------------------------------------------------
+#    lat = nc.createDimension('lat', 5)
+#    lon = nc.createDimension('lon', 8)
+#    bounds = nc.createDimension('bounds', 2)
+#    z = forecast.createDimension('z', 1)
+#    
+#    # Root group global attributes
+#    nc.setncattr('comment', 'global comment')
+#    nc.setncattr('history', 'created in 2020')
+#    
+#    lat = nc.createVariable('lat', 'f8', dimensions=('lat',))
+#    lat.units = "degrees_north" 
+#    lat.standard_name = "latitude" 
+#    lat.bounds = "lat_bnds" 
+#    lat[...] = numpy.array([-75., -45.,   0.,  45.,  75.])
+#    
+#    lon = nc.createVariable('lon', 'f8', dimensions=('lon',))
+#    lon.units = "degrees_east" 
+#    lon.standard_name = "longitude" 
+#    lon.bounds = "lon_bnds" 
+#    lon[...] = numpy.array(
+#        [ 22.5,  67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5])
+#    
+#    lon_bnds = nc.createVariable('lon_bnds', 'f8',
+#                                 dimensions=('lon', 'bounds'))
+#    lon_bnds[...] = numpy.array([[  0.,  45.],
+#                                 [ 45.,  90.],
+#                                 [ 90., 135.],
+#                                 [135., 180.],
+#                                 [180., 225.],
+#                                 [225., 270.],
+#                                 [270., 315.],
+#                                 [315., 360.]])
+#    
+#    lat_bnds = nc.createVariable('lat_bnds', 'f8',
+#                                 dimensions=('lat', 'bounds'))
+#    lat_bnds[...] = numpy.array([[-90., -60.],
+#                                 [-60., -30.],
+#                                 [-30.,  30.],
+#                                 [ 30.,  60.],
+#                                 [ 60.,  90.]])
+#    
+#    time = nc.createVariable('time', 'f8', dimensions=())
+#    time.units = "days since 2018-12-01" 
+#    time.standard_name = "time" 
+#    time[...] = 31
+#    
+#    # forecast/model group variables
+##    forecast = nc.createGroup('forecast')
+##    forecast = nc.createGroup('forecast')
+#
+##    # ----------------------------------------------------------------
+##    # Group: forecast
+##    # ----------------------------------------------------------------
+#    q = nc.createVariable('q', 'f8', dimensions=('z', 'lat', 'lon'))
+#    q.standard_name = "specific_humidity"
+#    q.units = "1"
+#    q.coordinates = "time" 
+#    q.cell_methods = "area: mean" 
+#    q[...] = numpy.array(
+#        [[[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029],
+#          [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066],
+#          [0.11 , 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011],
+#          [0.029, 0.059, 0.039, 0.07 , 0.058, 0.072, 0.009, 0.017],
+#          [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]]])
+#        
+#    # forecast group attributes
+##    nc.groups['forecast'].setncattr('comment', 'forecast comment')
+#    
+#    
+#    nc.close()
+
 
 (parent_file,
  external_file,
@@ -1199,9 +1274,12 @@ geometry_2_file    = _make_geometry_2_file('geometry_2.nc')
 geometry_3_file    = _make_geometry_3_file('geometry_3.nc')
 geometry_4_file    = _make_geometry_4_file('geometry_4.nc')
 interior_ring_file   = _make_interior_ring_file('geometry_interior_ring.nc')
-interior_ring_file_2 = _make_interior_ring_file_2('geometry_interior_ring_2.nc')
+interior_ring_file_2 = _make_interior_ring_file_2(
+    'geometry_interior_ring_2.nc')
 
 string_char_file   = _make_string_char_file('string_char.nc')
+
+#grouped_1_file = _make_grouped_1_file('grouped_1.nc')
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.utcnow())

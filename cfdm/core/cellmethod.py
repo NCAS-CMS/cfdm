@@ -1,6 +1,3 @@
-from builtins import (str, super)
-from past.builtins import basestring
-
 from copy import deepcopy
 
 from . import abstract
@@ -597,7 +594,7 @@ class CellMethod(abstract.Container):
         if copy:
             value = deepcopy(value)
 
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             value = (value,)
         else:
             value = tuple(value)

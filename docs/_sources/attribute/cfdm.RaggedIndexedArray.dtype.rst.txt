@@ -1,7 +1,0 @@
-cfdm.RaggedIndexedArray.dtype
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.RaggedIndexedArray.dtype

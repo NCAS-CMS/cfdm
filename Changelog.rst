@@ -1,3 +1,29 @@
+version 1.8.6
+-------------
+----
+
+**2020-07-??**
+
+* Removed Python 2.7 support
+  (https://github.com/NCAS-CMS/cfdm/issues/55)
+* Implemented the reading and writing of netCDF4 group hierarchies for
+  CF-1.8 (https://github.com/NCAS-CMS/cfdm/issues/13)
+* New method: `cfdm.Field.nc_variable_groups`
+* New method: `cfdm.Field.nc_set_variable_groups`
+* New method: `cfdm.Field.nc_clear_variable_groups`
+* New method: `cfdm.Field.nc_group_attributes`
+* New method: `cfdm.Field.nc_set_group_attribute`
+* New method: `cfdm.Field.nc_set_group_attributes`
+* New method: `cfdm.Field.nc_clear_group_attributes`
+* New method: `cfdm.Field.nc_geometry_variable_groups`
+* New method: `cfdm.Field.nc_set_geometry_variable_groups`
+* New method: `cfdm.Field.nc_clear_geometry_variable_groups`
+* New method: `cfdm.DomainAxis.nc_dimension_groups`
+* New method: `cfdm.DomainAxis.nc_set_dimension_groups`
+* New method: `cfdm.DomainAxis.nc_clear_dimension_groups`
+* New keyword parameter to `cfdm.write`: ``group``
+* New dependency: ``netcdf_flattener>=1.1.0``
+
 version 1.8.5
 -------------
 ----

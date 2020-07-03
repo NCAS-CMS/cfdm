@@ -1,11 +1,12 @@
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 import abc
 
 from . import PropertiesDataBounds
 
 
-class Coordinate(with_metaclass(abc.ABCMeta, PropertiesDataBounds)):
+#class Coordinate(with_metaclass(abc.ABCMeta, PropertiesDataBounds)):
+class Coordinate(PropertiesDataBounds, metaclass=abc.ABCMeta):
     '''Abstract base class for dimension and auxiliary coordinate
     constructs of the CF data model.
 

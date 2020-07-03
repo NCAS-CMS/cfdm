@@ -11,7 +11,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           file_descriptors=None, external=None, Conventions=None,
           datatype=None, least_significant_digit=None,
           endian='native', compress=0, fletcher32=False, shuffle=True,
-          string=True, verbose=None, warn_valid=True,
+          string=True, verbose=None, warn_valid=True, group=True,
           _implementation=_implementation):
     '''Write field constructs to a netCDF file.
 
@@ -61,6 +61,17 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     `~cfdm.DomainAxis.nc_is_unlimited` and
     `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
+    
+
+    **NetCDF hierarchical groups**
+    
+    Hierarchical groups in CF provide a mechanism to structure
+    variables within netCDF4 datasets with well defined rules for
+    resolving references to out-of-group netCDF variables and
+    dimensions. The group structure defined by a field construct's
+    netCDF interface will, by default, be recreated in the output
+    dataset. See the *group* parameter for details.
+
 
     **NetCDF4 HDF chunk sizes**
 
@@ -383,6 +394,15 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
             .. versionadded:: 1.8.3
 
+        group: `bool`, optional
+            If False then create a "flat" netCDF file, i.e. one with
+            only the root group, regardless of any group structure
+            specified by the field constructs. By default any groups
+            defined by the netCDF interface of the field constucts and
+            its components will be created and populated.
+
+            .. versionadded:: 1.8.6
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
             and metadata constructs and their components.
@@ -418,4 +438,5 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
                      string=string, verbose=verbose,
-                     warn_valid=warn_valid, extra_write_vars=None)
+                     warn_valid=warn_valid, group=group,
+                     extra_write_vars=None)

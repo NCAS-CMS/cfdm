@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import datetime
 import inspect
 import os
@@ -24,7 +22,7 @@ class CellMethodTest(unittest.TestCase):
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
         f = cfdm.read(self.filename)
-        self.assertTrue(len(f)==1, 'f={!r}'.format(f))
+        self.assertEqual(len(f), 1, 'f={!r}'.format(f))
         self.f = f[0]
 
         self.test_only = []
@@ -40,7 +38,7 @@ class CellMethodTest(unittest.TestCase):
             _ = repr(c)
             _ = str(c)
             _ = c.dump(display=False)
-            self.assertTrue(c.construct_type == 'cell_method')
+            self.assertEqual(c.construct_type, 'cell_method')
 
 
     def test_CellMethod(self):
@@ -57,8 +55,8 @@ class CellMethodTest(unittest.TestCase):
             self.assertTrue(c.equals(c, verbose=3))
             self.assertTrue(c.equals(d, verbose=3))
             self.assertTrue(d.equals(c, verbose=3))
-            self.assertTrue(c.identity() == 'method:'+c.get_method())
-            self.assertTrue(c.identities() == ['method:'+c.get_method()])
+            self.assertEqual(c.identity(), 'method:'+c.get_method())
+            self.assertEqual(c.identities(), ['method:'+c.get_method()])
 
         # ------------------------------------------------------------
         # Sorted

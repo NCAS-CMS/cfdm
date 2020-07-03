@@ -1,8 +1,8 @@
-from __future__ import print_function
 import datetime
 import os
-from random import choice, shuffle
 import unittest
+
+from random import choice, shuffle
 
 import cfdm
 

@@ -135,7 +135,21 @@ NetCDF
    ~cfdm.DomainAncillary.nc_del_variable
    ~cfdm.DomainAncillary.nc_get_variable
    ~cfdm.DomainAncillary.nc_has_variable
-   ~cfdm.DomainAncillary.nc_set_variable 
+   ~cfdm.DomainAncillary.nc_set_variable
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAncillary.nc_variable_groups
+   ~cfdm.DomainAncillary.nc_clear_variable_groups
+   ~cfdm.DomainAncillary.nc_set_variable_groups
 
 Special
 -------

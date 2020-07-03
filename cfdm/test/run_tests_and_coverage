@@ -11,6 +11,8 @@
 # --------------------------------------------------------------------
 #set -x
 
+library=cfdm
+
 if [[ $1 == "--nohtml" ]] ; then 
     generate_html="false"
 else
@@ -31,11 +33,12 @@ rc=$?
 coverage report
 
 if [[ $generate_html == "true" ]] ; then
-    mkdir -p cfdm_coverage_report
-    coverage html --title "cfdm test suite coverage report" -d cfdm_coverage_report
+    dir=${library}_coverage_report
+    mkdir -p $dir
+    coverage html --title "$library test suite coverage report" -d $dir
     
     echo "coverage docs: https://coverage.readthedocs.io"
-    echo "coverage report URL: file://$PWD/cfdm_coverage_report/index.html"
+    echo "coverage report URL: file://$PWD/$dir/index.html"
 fi
 
 # Return exit status from unit tests

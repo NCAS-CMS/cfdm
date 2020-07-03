@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import datetime
 import os
 import sys
@@ -16,11 +14,13 @@ warnings = False
 class create_fieldTest_2(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.log_level('DISABLE')
-        # Note: to enable all messages for given methods, lines or calls (those
-        # without a 'verbose' option to do the same) e.g. to debug them, wrap
-        # them (for methods, start-to-end internally) as follows:
-        # cfdm.log_level('DEBUG')
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or
+        # calls (those without a 'verbose' option to do the same)
+        # e.g. to debug them, wrap them (for methods, start-to-end
+        # internally) as follows:
+        #
+        # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
@@ -218,7 +218,7 @@ class create_fieldTest_2(unittest.TestCase):
                 for x in g:
                     x.print_read_report()
 
-            self.assertTrue(len(g) == 1, '{} != 1'.format(len(g)))
+            self.assertEqual(len(g), 1, '{} != 1'.format(len(g)))
 
             g = g[0].squeeze()
 
@@ -231,14 +231,13 @@ class create_fieldTest_2(unittest.TestCase):
                 print('g')
                 print(g)
 
-            self.assertTrue(sorted(f.constructs) == sorted(g.constructs),
-                            '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(
-                            sorted(f.constructs),
-                            sorted(f.constructs.items()),
-                            sorted(g.constructs),
-                            sorted(g.constructs.items())))
-
-
+            self.assertEqual(sorted(f.constructs), sorted(g.constructs),
+                             '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(
+                                 sorted(f.constructs),
+                                 sorted(f.constructs.items()),
+                                 sorted(g.constructs),
+                                 sorted(g.constructs.items())))
+            
             self.assertTrue(g.equals(g.copy(), verbose=verbose),
                             "Field g not equal to a copy of itself")
             if verbose:

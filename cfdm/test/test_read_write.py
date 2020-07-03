@@ -1,30 +1,32 @@
-from __future__ import print_function
-from builtins import (range, str)
-
+import atexit
 import datetime
-import tempfile
+import inspect
 import os
 import platform
-import unittest
-import atexit
-import inspect
 import subprocess
+import tempfile
+import unittest
+
 import numpy
 
 import cfdm
 
 warnings = False
 
-tmpfile = tempfile.mktemp('.cfdm_test')
-tmpfileh = tempfile.mktemp('.cfdm_test')
-tmpfileh2 = tempfile.mktemp('.cfdm_test')
-tmpfilec = tempfile.mktemp('.cfdm_test')
-tmpfile0 = tempfile.mktemp('.cfdm_test')
-tmpfile1 = tempfile.mktemp('.cfdm_test')
-tmpfiles = [tmpfile, tmpfileh, tmpfilec, tmpfile0, tmpfile1]
+n_tmpfiles = 6
+tmpfiles = [tempfile.mktemp('_test_read_write.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(tmpfile,
+ tmpfileh,
+ tmpfileh2,
+ tmpfilec,
+ tmpfile0,
+ tmpfile1,
+ ) = tmpfiles
 
 def _remove_tmpfiles():
-    '''
+    '''Remove temporary files created during tests.
+
     '''
     for f in tmpfiles:
         try:
@@ -38,11 +40,12 @@ atexit.register(_remove_tmpfiles)
 class read_writeTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.log_level('DISABLE')
-        # Note: to enable all messages for given methods, lines or calls (those
-        # without a 'verbose' option to do the same) e.g. to debug them, wrap
-        # them (for methods, start-to-end internally) as follows:
-        # cfdm.log_level('DEBUG')
+        cfdm.LOG_LEVEL('DISABLE')
+        # Note: to enable all messages for given methods, lines or
+        # calls (those without a 'verbose' option to do the same)
+        # e.g. to debug them, wrap them (for methods, start-to-end
+        # internally) as follows: cfdm.LOG_LEVEL('DEBUG')
+        #
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
         self.filename = os.path.join(
@@ -89,45 +92,45 @@ class read_writeTest(unittest.TestCase):
         filename = self.filename
 
         f = cfdm.read(filename)
-        self.assertTrue(len(f) == 1, '\n'+str(f))
+        self.assertEqual(len(f), 1, '\n'+str(f))
 
         f = cfdm.read(filename, extra=['dimension_coordinate'],
                       warnings=warnings)
-        self.assertTrue(len(f) == 4, '\n'+str(f))
+        self.assertEqual(len(f), 4, '\n'+str(f))
 
         f = cfdm.read(filename, extra=['auxiliary_coordinate'],
                       warnings=warnings)
-        self.assertTrue(len(f) == 4, '\n'+str(f))
+        self.assertEqual(len(f), 4, '\n'+str(f))
 
         f = cfdm.read(filename, extra='cell_measure')
-        self.assertTrue(len(f) == 2, '\n'+str(f))
+        self.assertEqual(len(f), 2, '\n'+str(f))
 
         f = cfdm.read(filename, extra=['field_ancillary'])
-        self.assertTrue(len(f) == 4, '\n'+str(f))
+        self.assertEqual(len(f), 4, '\n'+str(f))
 
         f = cfdm.read(filename, extra='domain_ancillary', warnings=warnings)
-        self.assertTrue(len(f) == 4, '\n'+str(f))
+        self.assertEqual(len(f), 4, '\n'+str(f))
 
         f = cfdm.read(filename, extra=['field_ancillary',
                                        'auxiliary_coordinate'],
                       warnings=warnings)
-        self.assertTrue(len(f) == 7, '\n'+str(f))
+        self.assertEqual(len(f), 7, '\n'+str(f))
 
-        self.assertTrue(len(cfdm.read(filename,
+        self.assertEqual(len(cfdm.read(filename,
                                       extra=['domain_ancillary',
                                              'auxiliary_coordinate'],
-                                      warnings=warnings)) == 7)
-        self.assertTrue(len(cfdm.read(filename,
+                                       warnings=warnings)), 7)
+        self.assertEqual(len(cfdm.read(filename,
                                       extra=['domain_ancillary',
                                              'cell_measure',
                                              'auxiliary_coordinate'],
-                                      warnings=warnings)) == 8)
+                                       warnings=warnings)), 8)
 
         f = cfdm.read(filename, extra=('field_ancillary',
                                        'dimension_coordinate',
                                        'cell_measure', 'auxiliary_coordinate',
                                        'domain_ancillary'), warnings=warnings)
-        self.assertTrue(len(f) == 14, '\n'+str(f))
+        self.assertEqual(len(f), 14, '\n'+str(f))
 
 
     def test_read_write_format(self):
@@ -143,7 +146,7 @@ class read_writeTest(unittest.TestCase):
                     'NETCDF4_CLASSIC',):
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)
-            self.assertTrue(len(g) == 1, 'g = '+repr(g))
+            self.assertEqual(len(g), 1, 'g = '+repr(g))
             g = g[0]
             self.assertTrue(f.equals(g, verbose=3),
                             'Bad read/write of format: {}'.format(fmt))
@@ -200,33 +203,33 @@ class read_writeTest(unittest.TestCase):
         cfdm.write(f, tmpfile)
 
         g = cfdm.read(tmpfile)[0]
-        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
 
         g = cfdm.read(tmpfile, mask=False)[0]
-        self.assertTrue(numpy.ma.count(g.data.array) == N)
+        self.assertEqual(numpy.ma.count(g.data.array), N)
 
         g.apply_masking(inplace=True)
-        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
 
         f.set_property('_FillValue', 999)
         f.set_property('missing_value', -111)
         cfdm.write(f, tmpfile)
 
         g = cfdm.read(tmpfile)[0]
-        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
 
         g = cfdm.read(tmpfile, mask=False)[0]
-        self.assertTrue(numpy.ma.count(g.data.array) == N)
+        self.assertEqual(numpy.ma.count(g.data.array), N)
 
         g.apply_masking(inplace=True)
-        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
 
     def test_write_datatype(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         f = cfdm.read(self.filename)[0]
-        self.assertTrue(f.data.dtype == numpy.dtype(float))
+        self.assertEqual(f.data.dtype, numpy.dtype(float))
 
         f.set_property('_FillValue'   , numpy.float64(-999.))
         f.set_property('missing_value', numpy.float64(-999.))
@@ -234,8 +237,8 @@ class read_writeTest(unittest.TestCase):
         cfdm.write(f, tmpfile, fmt='NETCDF4',
                  datatype={numpy.dtype(float): numpy.dtype('float32')})
         g = cfdm.read(tmpfile)[0]
-        self.assertTrue(g.data.dtype == numpy.dtype('float32'),
-                        'datatype read in is '+str(g.data.dtype))
+        self.assertEqual(g.data.dtype, numpy.dtype('float32'),
+                         'datatype read in is '+str(g.data.dtype))
 
     def test_read_write_unlimited(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -372,8 +375,8 @@ class read_writeTest(unittest.TestCase):
         for Conventions in (other,):
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
-            self.assertTrue(
-                g.get_property('Conventions') == ' '.join([version, other]),
+            self.assertEqual(
+                g.get_property('Conventions'), ' '.join([version, other]),
                 "{!r}, {!r}".format(
                     g.get_property('Conventions'), Conventions))
 
@@ -386,26 +389,26 @@ class read_writeTest(unittest.TestCase):
             Conventions = version
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
-            self.assertTrue(g.get_property('Conventions') == version,
-                            "{!r}, {!r}".format(
-                                g.get_property('Conventions'),
-                                Conventions))
+            self.assertEqual(g.get_property('Conventions'), version,
+                             "{!r}, {!r}".format(
+                                 g.get_property('Conventions'),
+                                 Conventions))
 
         for Conventions in ([version],                          
                             [version, other],
         ):
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
-            self.assertTrue(
-                g.get_property('Conventions') == ' '.join(Conventions),
+            self.assertEqual(
+                g.get_property('Conventions'), ' '.join(Conventions),
                 "{!r}, {!r}".format(
                     g.get_property('Conventions'), Conventions))
 
         for Conventions in ([other, version],):
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
-            self.assertTrue(
-                g.get_property('Conventions') == ' '.join([version, other]),
+            self.assertEqual(
+                g.get_property('Conventions'), ' '.join([version, other]),
                 "{!r}, {!r}".format(
                     g.get_property('Conventions'), Conventions))
 

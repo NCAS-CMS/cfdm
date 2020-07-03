@@ -1,6 +1,3 @@
-from __future__ import print_function
-from builtins import object
-
 import inspect
 import logging
 
@@ -14,7 +11,7 @@ from ..decorators import _manage_log_level_via_verbosity
 logger = logging.getLogger(__name__)
 
 
-class Container(object):
+class Container():
     '''Mixin class for storing object components.
 
     .. versionadded:: 1.7.0

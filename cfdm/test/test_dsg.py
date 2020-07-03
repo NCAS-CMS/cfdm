@@ -1,4 +1,3 @@
-from __future__ import print_function
 import datetime
 import os
 import tempfile
@@ -120,7 +119,7 @@ class DSGTest(unittest.TestCase):
                           [-99,-99,-99,-99],
                           [-99,-99,-99,-99]]])
 
-        b = numpy.ma.where(b==-99, numpy.ma.masked, b)
+        b = numpy.ma.where(b == -99, numpy.ma.masked, b)
         self.b = b
 
         self.test_only = []
@@ -132,7 +131,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.contiguous)
+        f = cfdm.read(self.contiguous, verbose=1)
 
         self.assertEqual(len(f), 2)
 
@@ -223,7 +222,7 @@ class DSGTest(unittest.TestCase):
 
         qa = q.data.array
 
-        message= repr(qa-self.b) +'\n'+repr(qa[2,0])+'\n'+repr(self.b[2, 0])
+        message = repr(qa-self.b) +'\n'+repr(qa[2,0])+'\n'+repr(self.b[2, 0])
         self.assertTrue(q._equals(qa, self.b), message)
 
         cfdm.write(f, self.tempfilename)

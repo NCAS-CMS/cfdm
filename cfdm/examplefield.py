@@ -231,7 +231,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees_north'})
         b.nc_set_variable('lat_bnds')
         data = Data(
             [[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0],
@@ -254,7 +253,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees_east'})
         b.nc_set_variable('lon_bnds')
         data = Data(
             [[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0],
@@ -333,7 +331,6 @@ def example_field(n, _implementation=_implementation):
         data = Data([10.0], units='m', dtype='f8')
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'm'})
         b.nc_set_variable('a_bounds')
         data = Data([[5.0, 15.0]], units='m', dtype='f8')
         b.set_data(data)
@@ -519,7 +516,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees'})
         b.nc_set_variable('y_bnds')
         data = Data(
             [[2.42, 1.98], [1.98, 1.54], [1.54, 1.1], [1.1, 0.66],
@@ -543,7 +539,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees'})
         b.nc_set_variable('x_bnds')
         data = Data(
             [[-4.92, -4.48], [-4.48, -4.04], [-4.04, -3.6], [-3.6, -3.16],
@@ -1835,7 +1830,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'days since 1959-01-01'})
         b.nc_set_variable('bounds')
         data = Data(
             [[334.0, 365.0],
@@ -1892,7 +1886,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees_north'})
         b.nc_set_variable('lat_bnds')
         data = Data(
             [[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0],
@@ -1915,7 +1908,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees_east'})
         b.nc_set_variable('lon_bnds')
         data = Data(
             [[0.0, 45.0],
@@ -2596,7 +2588,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'days since 1959-01-01'})
         b.nc_set_variable('bounds')
         data = Data(
             [[0.0, 0.5],
@@ -2735,7 +2726,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees_north'})
         b.nc_set_variable('lat_bnds')
         data = Data(
             [[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0],
@@ -2758,7 +2748,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'degrees_east'})
         b.nc_set_variable('lon_bnds')
         data = Data(
             [[0.0, 45.0],
@@ -2806,6 +2795,7 @@ def example_field(n, _implementation=_implementation):
         d = Data([[1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0]], dtype='f8')
         f.set_data(d)
         f.nc_set_variable('pr')
+        f.nc_set_geometry_variable('geometry1')
 
         # netCDF global attributes
         f.nc_set_global_attributes(

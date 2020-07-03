@@ -1,6 +1,5 @@
-from future import standard_library
-standard_library.install_aliases()
-from builtins import (str, super)
+#from future import standard_library
+#standard_library.install_aliases()
 
 import os
 import urllib.parse
@@ -19,8 +18,8 @@ class NetCDFArray(abstract.Array):
 
     '''
     def __init__(self, filename=None, ncvar=None, varid=None,
-                 dtype=None, ndim=None, shape=None, size=None,
-                 mask=True):
+                 group=None, dtype=None, ndim=None, shape=None,
+                 size=None, mask=True):
         '''**Initialization**
 
     :Parameters:
@@ -36,6 +35,28 @@ class NetCDFArray(abstract.Array):
             The UNIDATA netCDF interface ID of the variable containing
             the array. Required if *ncvar* is not set, ignored if
             *ncvar* is set.
+
+        group: `None` or sequence of `str`, optional
+            Specify the netCDF4 group to which the netCDF variable
+            belongs. By default, or if *group* is `None` or an empty
+            sequence, it assumed to be in the root group. The last
+            element in the sequence isw the name of the group in which
+            the variable lies, with other elements naming any parent
+            groups (excluding the root group).
+
+            :Parameter example:
+              To specify that a variable is in the root group:
+              ``group=()` or ``group=None`
+
+            :Parameter example:
+              To specify that a variable is in the group '/forecasts':
+              ``group=['forecasts']``
+
+            :Parameter example:
+              To specify that a variable is in the group
+              '/forecasts/model2': ``group=['forecasts', 'model2']``
+
+            .. versionadded:: 1.8.6
 
         dtype: `numpy.dtype`
             The data type of the array in the netCDF file. May be
@@ -67,13 +88,15 @@ class NetCDFArray(abstract.Array):
     >>> import netCDF4
     >>> nc = netCDF4.Dataset('file.nc', 'r')
     >>> v = nc.variable['tas']
-    >>> a = NetCDFFileArray(filename='file.nc', ncvar='tas', dtype=v.dtype,
+    >>> a = NetCDFFileArray(filename='file.nc', ncvar='tas',
+    ...                     group=['forecast'], dtype=v.dtype,
     ...                     ndim=v.ndim, shape=v.shape, size=v.size)
 
         '''
         super().__init__(filename=filename, ncvar=ncvar, varid=varid)
 
         self._set_component('netcdf', None, copy=False)
+        self._set_component('group', group, copy=False)
 
         # By default, close the netCDF file after data array access
         self._set_component('close', True, copy=False)
@@ -111,19 +134,22 @@ class NetCDFArray(abstract.Array):
         '''
         netcdf = self.open()
 
-#        indices = tuple(self.parse_indices(indices))
-
+        # Traverse the group structure, if there is one (CF>=1.8).
+        group = self.get_group()
+        if group:
+            for g in group[:-1]:
+                netcdf = netcdf.groups[g]
+            
+            netcdf = netcdf.groups[group[-1]]
+            
         ncvar = self.get_ncvar()
         mask = self.get_mask()
 
         if ncvar is not None:
             # Get the variable by netCDF name
             variable = netcdf.variables[ncvar]
-#            print (mask, variable.mask)
             variable.set_auto_mask(mask)
-#            print (mask, variable.mask)
             array = variable[indices]
-#            print(array.max())
         else:
             # Get the variable by netCDF ID
             varid = self.get_varid()
@@ -195,8 +221,7 @@ class NetCDFArray(abstract.Array):
             array = array.astype('S')  # , copy=False)
 
             # --------------------------------------------------------
-            # netCDF4-pytohn does not auto-mask VLEN variable, so do
-            # it here.
+            # netCDF4 does not auto-mask VLEN variable, so do it here.
             # --------------------------------------------------------
             array = numpy.ma.where(array == b'', numpy.ma.masked, array)
 
@@ -336,6 +361,18 @@ class NetCDFArray(abstract.Array):
 
         '''
         return self._get_component('filename')
+
+    def get_group(self):
+        '''The netCDF4 group structure to which the netCDF variable belongs.
+
+    .. versionadded:: 1.8.6
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return self._get_component('group')
 
     def get_mask(self):
         '''TODO

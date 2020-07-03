@@ -1,9 +1,9 @@
-from builtins import object
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 import abc
 
 
-class Implementation(with_metaclass(abc.ABCMeta, object)):
+#class Implementation(with_metaclass(abc.ABCMeta, object)):
+class Implementation(metaclass=abc.ABCMeta):
     '''Store an implementation of the CF data model.
 
     '''

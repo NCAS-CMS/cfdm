@@ -1,5 +1,3 @@
-from builtins import (str, super)
-
 import numpy
 
 from .. import abstract

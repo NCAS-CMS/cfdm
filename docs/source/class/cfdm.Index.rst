@@ -97,14 +97,45 @@ NetCDF
    ~cfdm.Index.nc_get_variable
    ~cfdm.Index.nc_has_variable
    ~cfdm.Index.nc_set_variable 
+   ~cfdm.Index.nc_del_dimension
+   ~cfdm.Index.nc_get_dimension
+   ~cfdm.Index.nc_has_dimension
+   ~cfdm.Index.nc_set_dimension
+
+Groups
+^^^^^^   
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Index.nc_variable_groups
+   ~cfdm.Index.nc_clear_variable_groups
+   ~cfdm.Index.nc_set_variable_groups
+   ~cfdm.Index.nc_dimension_groups
+   ~cfdm.Index.nc_clear_dimension_groups
+   ~cfdm.Index.nc_set_dimension_groups
+
+Sample dimension
+^^^^^^^^^^^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
    ~cfdm.Index.nc_del_sample_dimension
    ~cfdm.Index.nc_get_sample_dimension
    ~cfdm.Index.nc_has_sample_dimension
    ~cfdm.Index.nc_set_sample_dimension 
-   ~cfdm.Index.nc_del_dimension
-   ~cfdm.Index.nc_get_dimension
-   ~cfdm.Index.nc_has_dimension
-   ~cfdm.Index.nc_set_dimension 
+   ~cfdm.Index.nc_sample_dimension_groups
+   ~cfdm.Index.nc_clear_sample_dimension_groups
+   ~cfdm.Index.nc_set_sample_dimension_groups
 
 Special
 -------

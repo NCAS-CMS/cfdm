@@ -1,7 +1,0 @@
-cfdm.CellMeasure.construct_type
-===============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.CellMeasure.construct_type

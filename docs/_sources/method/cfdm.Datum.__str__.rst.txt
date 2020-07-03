@@ -1,7 +1,0 @@
-cfdm.Datum.__str__
-==================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Datum.__str__

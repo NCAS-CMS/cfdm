@@ -1,6 +1,3 @@
-from __future__ import print_function
-from past.builtins import basestring
-
 import os
 
 from ..cfdmimplementation import implementation
@@ -48,6 +45,16 @@ def read(filename, external=None, extra=None, verbose=None,
     `~cf.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
 
+    
+    **NetCDF hierarchical groups**
+    
+    Hierarchical groups in CF provide a mechanism to structure
+    variables within netCDF4 datasets. Field constructs are
+    constructed from grouped datasets by applying the well defined
+    rules in the CF conventions for resolving references to
+    out-of-group netCDF variables and dimensions. The group structure
+    is preserved in the field construct's netCDF interface.
+
 
     **CF-compliance**
 
@@ -68,7 +75,7 @@ def read(filename, external=None, extra=None, verbose=None,
     `~cfdm.Field.dataset_compliance` method of the field construct, as
     well as optionally displayed when the dataset is read by setting
     the *warnings* parameter.
-
+    
 
     **Performance**
 
@@ -246,7 +253,7 @@ def read(filename, external=None, extra=None, verbose=None,
     # Parse the field parameter
     if extra is None:
         extra = ()
-    elif isinstance(extra, basestring):
+    elif isinstance(extra, str):
         extra = (extra,)
 
     filename = os.path.expanduser(os.path.expandvars(filename))
@@ -258,13 +265,12 @@ def read(filename, external=None, extra=None, verbose=None,
         raise IOError("Can't read non-existent file {}".format(filename))
 
     # ----------------------------------------------------------------
-    # Read the fields in the file
+    # Read the file into field contructs
     # ----------------------------------------------------------------
 
     # Initialise a netCDF read object
     netcdf = NetCDFRead(_implementation)
 
-    # Read the file into fields.
     cdl = False
     if netcdf.is_cdl_file(filename):
         # Create a temporary netCDF file from input CDL
@@ -276,6 +282,7 @@ def read(filename, external=None, extra=None, verbose=None,
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
                              warn_valid=warn_valid, mask=mask,
+#                             absolute_netCDF_names=absolute_netCDF_names,
                              extra_read_vars=None)
     elif cdl:
         raise IOError(
@@ -286,6 +293,6 @@ def read(filename, external=None, extra=None, verbose=None,
         raise IOError("Can't determine format of file {}".format(filename))
 
     # ----------------------------------------------------------------
-    # Return the fields
+    # Return the field constructs
     # ----------------------------------------------------------------
     return fields

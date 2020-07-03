@@ -135,7 +135,21 @@ NetCDF
    ~cfdm.DimensionCoordinate.nc_del_variable
    ~cfdm.DimensionCoordinate.nc_get_variable
    ~cfdm.DimensionCoordinate.nc_has_variable
-   ~cfdm.DimensionCoordinate.nc_set_variable 
+   ~cfdm.DimensionCoordinate.nc_set_variable
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DimensionCoordinate.nc_variable_groups
+   ~cfdm.DimensionCoordinate.nc_clear_variable_groups
+   ~cfdm.DimensionCoordinate.nc_set_variable_groups
 
 Special
 -------

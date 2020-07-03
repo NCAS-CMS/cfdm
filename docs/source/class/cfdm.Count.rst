@@ -96,16 +96,47 @@ NetCDF
    ~cfdm.Count.nc_del_variable
    ~cfdm.Count.nc_get_variable
    ~cfdm.Count.nc_has_variable
-   ~cfdm.Count.nc_set_variable 
-   ~cfdm.Count.nc_del_sample_dimension
-   ~cfdm.Count.nc_get_sample_dimension
-   ~cfdm.Count.nc_has_sample_dimension
-   ~cfdm.Count.nc_set_sample_dimension 
+   ~cfdm.Count.nc_set_variable
    ~cfdm.Count.nc_del_dimension
    ~cfdm.Count.nc_get_dimension
    ~cfdm.Count.nc_has_dimension
-   ~cfdm.Count.nc_set_dimension 
+   ~cfdm.Count.nc_set_dimension
 
+Groups
+^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Count.nc_variable_groups
+   ~cfdm.Count.nc_clear_variable_groups
+   ~cfdm.Count.nc_set_variable_groups
+   ~cfdm.Count.nc_dimension_groups
+   ~cfdm.Count.nc_clear_dimension_groups
+   ~cfdm.Count.nc_set_dimension_groups
+   
+Sample dimension
+^^^^^^^^^^^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Count.nc_del_sample_dimension
+   ~cfdm.Count.nc_get_sample_dimension
+   ~cfdm.Count.nc_has_sample_dimension
+   ~cfdm.Count.nc_set_sample_dimension
+   ~cfdm.Count.nc_sample_dimension_groups
+   ~cfdm.Count.nc_clear_sample_dimension_groups
+   ~cfdm.Count.nc_set_sample_dimension_groups
+   
 Special
 -------
 

@@ -1,2 +1,5 @@
 include Changelog.rst
 include README.md
+include requirements.txt
+include LICENSE
+include CONTRIBUTING.md 

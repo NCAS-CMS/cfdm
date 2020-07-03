@@ -1,12 +1,12 @@
-from future.utils import with_metaclass
-from builtins import super
+#from future.utils import with_metaclass
 
 import abc
 
 from . import Properties
 
 
-class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
+#class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
+class PropertiesData(Properties, metaclass=abc.ABCMeta):
     '''Abstract base class for a data array with descriptive properties.
 
     .. versionadded:: 1.7.0

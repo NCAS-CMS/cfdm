@@ -820,6 +820,38 @@ class CFDMImplementation(Implementation):
         '''
         return field.nc_get_geometry_variable(default)
 
+    def nc_get_group_attributes(self, field):
+        '''Return the netCDF sub-group attribtues for the field construct.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        field: field construct
+
+    :Returns:
+
+        `dict`
+
+        '''
+        return field.nc_group_attributes()
+
+    def nc_get_variable_groups(self, field):
+        '''Return the netCDF groups for the field construct.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        field: field construct
+
+    :Returns:
+
+        `tuple`
+
+        '''
+        return field.nc_variable_groups()
+
     def nc_get_hdf5_chunksizes(self, data):
         '''Return the HDF5 chunksizes for the data.
 
@@ -930,9 +962,33 @@ class CFDMImplementation(Implementation):
         for attr, value in attributes.items():
             field.nc_set_global_attribute(attr, value)
 
-    def equal_constructs(self, construct0, construct1,
+    def nc_set_group_attributes(self, field, attributes):
+        '''Set netCDF group attributes.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        field: field construct
+
+        attributes: `dict`
+
+    :Returns:
+        
+        `None`
+
+        '''
+        for attr, value in attributes.items():
+            field.nc_set_group_attribute(attr, value)
+
+    def equal_components(self, construct0, construct1,
                          ignore_type=False):
-        '''Whether or not two constructs are equal.
+        '''Whether or not two field construct components are equal.
+        
+    A "component" is either a metadata construct or a metadata
+    construct component (such as a bounds component).
+        
+    .. versionadded::: 1.8.6
 
     :Parameter:
 
@@ -947,7 +1003,33 @@ class CFDMImplementation(Implementation):
         `bool`
 
         '''
-        return construct0.equals(construct1, ignore_type=ignore_type)
+        return construct0.equals(construct1, ignore_type=ignore_type,
+                                 verbose=0)
+
+    def equal_constructs(self, construct0, construct1,
+                         ignore_type=False):
+        '''Whether or not two field construct components are equal.
+        
+    A "component" is either a metadata construct or a metadata
+    construct component (such as a bounds component).
+        
+    .. versionadded::: 1.7.0
+
+    :Parameter:
+
+        construct0: construct
+
+        construct1: construct
+
+        ignore_type: `bool`, optional
+
+    :Retuns:
+
+        `bool`
+
+        '''
+        raise NotImplementedError("Deprecated at version 1.8.6. "
+                                  + "Use 'equal_components' instead.")
 
     def equal_properties(self, property_value0, property_value1):
         '''Whether or not two property values are equal.
@@ -1130,6 +1212,24 @@ class CFDMImplementation(Implementation):
 
         '''
         return construct.get_data().get_index(default=None)
+
+    def get_inherited_properties(self, parent):
+        '''Return all inherited properties.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        parent:
+            The object that inherits the properties.
+
+    :Returns:
+
+        `dict`
+            The inherited property names and their values
+
+        '''
+        return parent.inherited_properties()
 
     def get_interior_ring(self, construct):
         '''Return the interior ring variable of geometry coordiantes.
@@ -1628,8 +1728,8 @@ class CFDMImplementation(Implementation):
         return cls()
 
     def initialise_NetCDFArray(self, filename=None, ncvar=None,
-                               dtype=None, ndim=None, shape=None,
-                               size=None, mask=True):
+                               group=None, dtype=None, ndim=None,
+                               shape=None, size=None, mask=True):
         '''Return a netCDF array instance.
 
     :Parameters:
@@ -1637,6 +1737,8 @@ class CFDMImplementation(Implementation):
         filename: `str`
 
         ncvar: `str`
+
+        group: `None` or sequence of str`
 
         dytpe: `numpy.dtype`
 
@@ -1654,8 +1756,9 @@ class CFDMImplementation(Implementation):
 
         '''
         cls = self.get_class('NetCDFArray')
-        return cls(filename=filename, ncvar=ncvar, dtype=dtype,
-                   ndim=ndim, shape=shape, size=size, mask=mask)
+        return cls(filename=filename, ncvar=ncvar, group=group,
+                   dtype=dtype, ndim=ndim, shape=shape, size=size,
+                   mask=mask)
 
     def initialise_NodeCount(self):
         '''Return a node count properties variable.
@@ -1845,14 +1948,17 @@ class CFDMImplementation(Implementation):
 
         variable:
 
-        ncdim: `str`
-        
+        ncdim: `str` or `None`
+            The netCDF dimension name. If `None` then the name is not
+            set.
+
     :Returns:
 
         `None`
 
         '''
-        variable.nc_set_instance_dimension(ncdim)
+        if ncdim is not None:
+            variable.nc_set_instance_dimension(ncdim)
 
     def nc_set_sample_dimension(self, variable, ncdim):
         '''Set the netCDF sample dimension name.
@@ -1861,14 +1967,17 @@ class CFDMImplementation(Implementation):
 
         variable:
 
-        ncdim: `str`
-        
+        ncdim: `str` or `None`
+            The netCDF dimension name. If `None` then the name is not
+            set.
+
     :Returns:
 
         `None`
 
         '''
-        variable.nc_set_sample_dimension(ncdim)
+        if ncdim is not None:
+            variable.nc_set_sample_dimension(ncdim)
 
     def set_auxiliary_coordinate(self, field, construct, axes, copy=True):
         '''Insert a auxiliary coordinate object into a field.
@@ -2200,6 +2309,28 @@ class CFDMImplementation(Implementation):
         '''
         coordinate.set_geometry(value)
 
+    def set_inherited_properties(self, parent, inherited_properties,
+                                 copy=True):
+        '''Set any inherited properties.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        parent:
+            The object that inherits the properties.
+
+        inherited_properties: `dict`
+
+        copy: `bool``
+
+    :Returns:
+
+        `None`
+
+        '''
+        parent.set_properties(inherited_properties, copy=copy)
+
     def set_node_count(self, parent, node_count, copy=True):
         '''Set a node count properties variable.
 
@@ -2288,14 +2419,17 @@ class CFDMImplementation(Implementation):
 
         construct: construct
 
-        ncdim: `str`
-        
+        ncdim: `str` or `None`
+            The netCDF dimension name. If `None` then the name is not
+            set.
+
     :Returns:
 
         `None`
 
         '''
-        construct.nc_set_dimension(ncdim)
+        if ncdim is not None:
+            construct.nc_set_dimension(ncdim)
 
     def nc_set_geometry_variable(self, field, ncvar):
         '''Set the netCDF geometry container variable name.
@@ -2304,14 +2438,17 @@ class CFDMImplementation(Implementation):
 
         field: field construct
                 
-        ncvar: `str`
+        ncvar: `str` or `None`
+            The netCDF variable name. If `None` then the name is not
+            set.
 
     :Returns:
 
         `None`
 
         '''
-        field.nc_set_geometry_variable(ncvar)
+        if ncvar is not None:
+            field.nc_set_geometry_variable(ncvar)
 
     def nc_set_variable(self, parent, ncvar):
         '''Set the netCDF variable name.
@@ -2320,14 +2457,17 @@ class CFDMImplementation(Implementation):
 
         parent:
                 
-        ncvar: `str`
+        ncvar: `str` or `None`
+            The netCDF variable name. If `None` then the name is not
+            set.
 
     :Returns:
 
         `None`
 
         '''
-        parent.nc_set_variable(ncvar)
+        if ncvar is not None:
+            parent.nc_set_variable(ncvar)
 
     def nc_get_datum_variable(self, ref):
         '''Get the netCDF grid mapping variable name for a datum.
@@ -2353,15 +2493,18 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         ref: Coordinate reference construct
-    
-        ncvar: `str`
+
+        ncvar: `str` or `None`
+            The netCDF variable name. If `None` then the name is not
+            set.
 
     :Returns:
 
         `None`
 
         '''
-        ref.nc_set_datum_variable(ncvar)
+        if ncvar is not None:
+            ref.nc_set_datum_variable(ncvar)
 
     def set_properties(self, construct, properties, copy=True):
         '''Set construct proporties.

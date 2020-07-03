@@ -3,12 +3,15 @@ cfdm
 
 A Python reference implementation of the CF data model.
 
-Installation | [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/NCAS-CMS/cfdm?color=000000&label=latest%20version)](https://ncas-cms.github.io/cfdm/Changelog.html) [![PyPI](https://img.shields.io/pypi/v/cfdm?color=000000)](https://ncas-cms.github.io/cfdm/installation.html#pip) [![Conda](https://img.shields.io/conda/v/ncas/cfdm?color=000000)](https://ncas-cms.github.io/cfdm/installation.html#conda)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/NCAS-CMS/cfdm?color=000000&label=latest%20version)](https://ncas-cms.github.io/cfdm/Changelog.html)
+[![PyPI](https://img.shields.io/pypi/v/cfdm?color=000000)](https://pypi.org/project/cfdm/)
+[![Conda](https://img.shields.io/conda/v/ncas/cfdm?color=000000)](https://ncas-cms.github.io/cfdm/installation.html#conda)
 
-About | [![Conda](https://img.shields.io/conda/pn/ncas/cfdm?color=2d8659)](https://ncas-cms.github.io/cfdm/installation.html#operating-systems) [![Website](https://img.shields.io/website?color=2d8659&down_message=online&label=documentation&up_message=online&url=https%3A%2F%2Fncas-cms.github.io%2Fcfdm%2F)](https://ncas-cms.github.io/cfdm/index.html) [![GitHub](https://img.shields.io/github/license/NCAS-CMS/cfdm?color=2d8659)](https://github.com/NCAS-CMS/cfdm/blob/master/LICENSE)
+[![Conda](https://img.shields.io/conda/pn/ncas/cfdm?color=2d8659)](https://ncas-cms.github.io/cfdm/installation.html#operating-systems) [![Website](https://img.shields.io/website?color=2d8659&down_message=online&label=documentation&up_message=online&url=https%3A%2F%2Fncas-cms.github.io%2Fcfdm%2F)](https://ncas-cms.github.io/cfdm/index.html) [![GitHub](https://img.shields.io/github/license/NCAS-CMS/cfdm?color=2d8659)](https://github.com/NCAS-CMS/cfdm/blob/master/LICENSE)
 
-References | [![Website](https://img.shields.io/website?color=264d73&down_message=10.5281%2Fzenodo.3894525&label=DOI&up_message=10.5281%2Fzenodo.3894525&url=https%3A%2F%2Fzenodo.org%2Frecord%2F3894525%23.Xuf2uXVKjeQ)](https://doi.org/10.5281/zenodo.3894525) [![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5194%2Fgmd-10-4619-2017&label=GMD&up_color=264d73&up_message=10.5194%2Fgmd-10-4619-2017&url=https%3A%2F%2Fwww.geosci-model-dev.net%2F10%2F4619%2F2017%2F)](https://www.geosci-model-dev.net/10/4619/2017/)
+#### References
 
+[![Website](https://img.shields.io/website?color=264d73&down_message=10.5281%2Fzenodo.3894525&label=DOI&up_message=10.5281%2Fzenodo.3894525&url=https%3A%2F%2Fzenodo.org%2Frecord%2F3894525%23.Xuf2uXVKjeQ)](https://doi.org/10.5281/zenodo.3894525) [![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5194%2Fgmd-10-4619-2017&label=GMD&up_color=264d73&up_message=10.5194%2Fgmd-10-4619-2017&url=https%3A%2F%2Fwww.geosci-model-dev.net%2F10%2F4619%2F2017%2F)](https://www.geosci-model-dev.net/10/4619/2017/)
 
 Documentation
 =============
@@ -61,11 +64,12 @@ The ``cfdm`` package can:
 
 * read field constructs from netCDF datasets,
 * create new field constructs in memory,
+* write field constructs to netCDF datasets on disk,
+* read netCDF and CDL datasets containing hierarchical groups,
 * inspect field constructs,
 * test whether two field constructs are the same,
 * modify field construct metadata and data,
 * create subspaces of field constructs,
-* write field constructs to netCDF datasets on disk,
 * incorporate, and create, metadata stored in external files,
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
@@ -77,16 +81,17 @@ Command line utility
 
 During installation the `cfdump` command line tool is also installed,
 which generates text descriptions of the field constructs contained in
-a netCDF dataset.
+a netCDF dataset:
 
-Hierarchical groups
-===================
-
-Hierarchical groups provide a powerful mechanism to structure
-variables within datasets. A future 1.8.x release of cfdm will include
-support for netCDF4 files containing data organised in hierarchical
-groups, but this is not available in version 1.8.0 (even though it is
-allowed in CF-1.8).
+    $ cfdump file.nc
+    Field: air_temperature (ncvar%tas)
+    ----------------------------------
+    Data            : air_temperature(time(12), latitude(64), longitude(128)) K
+    Cell methods    : time(12): mean (interval: 1.0 month)
+    Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap
+                    : latitude(64) = [-87.8638, ..., 87.8638] degrees_north
+                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
+                    : height(1) = [2.0] m
 
 Tests
 =====

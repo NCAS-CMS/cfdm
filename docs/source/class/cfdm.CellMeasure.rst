@@ -120,6 +120,20 @@ NetCDF
    ~cfdm.CellMeasure.nc_get_external
    ~cfdm.CellMeasure.nc_set_external
 
+Groups
+^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CellMeasure.nc_variable_groups
+   ~cfdm.CellMeasure.nc_clear_variable_groups
+   ~cfdm.CellMeasure.nc_set_variable_groups
+
 Special
 -------
 

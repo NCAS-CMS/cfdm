@@ -1,5 +1,3 @@
-from builtins import super
-
 from . import abstract
 
 

@@ -1,6 +1,3 @@
-from __future__ import print_function
-from builtins import super
-
 import logging
 
 from . import mixin
@@ -31,8 +28,15 @@ class DomainAxis(mixin.NetCDFDimension,
 
     The netCDF dimension name of the construct may be accessed with
     the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension` and
+
+    Whether or not the netCDF is unlimited may be accessed with the
+    `nc_is_unlimited` and `nc_set_unlimited` methods.
     `nc_has_dimension` methods.
 
+    The netCDF dimension group structure may be accessed with the
+    `nc_set_dimension`, `nc_get_dimension`, `nc_dimension_groups`,
+    `nc_clear_dimension_groups` and `nc_set_dimension_groups` methods.
+   
     .. versionadded:: 1.7.0
 
     '''

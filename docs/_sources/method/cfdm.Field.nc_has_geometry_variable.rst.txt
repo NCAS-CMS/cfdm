@@ -1,7 +1,0 @@
-cfdm.Field.nc_has_geometry_variable
-===================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.nc_has_geometry_variable

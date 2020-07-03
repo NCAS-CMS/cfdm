@@ -1,9 +1,10 @@
-from builtins import object
-from future.utils import with_metaclass
+#from builtins import object
+#from future.utils import with_metaclass
 import abc
 
 
-class IO(with_metaclass(abc.ABCMeta, object)):
+#class IO(with_metaclass(abc.ABCMeta, object)):
+class IO(metaclass=abc.ABCMeta):
     '''Abstract base class for reading and writing Fields.
 
     '''
@@ -35,7 +36,8 @@ class IO(with_metaclass(abc.ABCMeta, object)):
 # --- End: class
 
 
-class IORead(with_metaclass(abc.ABCMeta, IO)):
+#class IORead(with_metaclass(abc.ABCMeta, IO)):
+class IORead(IO, metaclass=abc.ABCMeta):
     '''Abstract base class for instantiating Fields from a dataset.
 
     '''
@@ -49,7 +51,8 @@ class IORead(with_metaclass(abc.ABCMeta, IO)):
 # --- End: class
 
 
-class IOWrite(with_metaclass(abc.ABCMeta, IO)):
+#class IOWrite(with_metaclass(abc.ABCMeta, IO)):
+class IOWrite(IO, metaclass=abc.ABCMeta):
     '''Abstract base class for writing Fields to a dataset.
 
     '''

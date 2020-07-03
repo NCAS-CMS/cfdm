@@ -1,6 +1,3 @@
-from __future__ import print_function
-from builtins import (str, super)
-
 import logging
 
 from . import Properties
@@ -625,6 +622,26 @@ class PropertiesData(Properties):
             return data.get_filenames()
 
         return set()
+
+    def inherited_properties(self):
+        '''Return the properties inherited from a parent construct.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `properties`
+
+    :Returns:
+
+        `dict`
+            The inherited properties.
+
+    **Examples:**
+
+    >>> f.properties()
+    {}
+
+        '''
+        return {}
 
     @_inplace_enabled
     def insert_dimension(self, position=0, inplace=False):

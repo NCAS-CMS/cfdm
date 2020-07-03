@@ -1,10 +1,10 @@
 import copy
 import datetime
+import logging
 import unittest
 
 import cfdm
 
-import logging
 
 # Note: it is important we test on the cfdm logging config rather than the
 # generic Python module logging (i.e. 'cfdm.logging' not just 'logging').

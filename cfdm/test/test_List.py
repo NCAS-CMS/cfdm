@@ -1,4 +1,3 @@
-from __future__ import print_function
 import datetime
 import os
 import unittest
@@ -14,7 +13,8 @@ class ListTest(unittest.TestCase):
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
         # internally) as follows:
-        # cfdm.log_level('DEBUG')
+        #
+        # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 

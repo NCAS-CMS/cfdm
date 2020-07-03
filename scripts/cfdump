@@ -107,11 +107,8 @@ David Hassell
         p = subprocess.Popen(['man', '-r',
                               ' Manual page cfdump(1)\ ?ltline\ %lt?L/%L.:',
                               '-l', '-'], stdin=subprocess.PIPE)
-        if LooseVersion(platform.python_version()) < LooseVersion('3'):            
-            p.communicate(manpage)                # Python 2.7
-        else:
-            p.communicate(bytes(manpage, "utf8")) # Python 3+
-    #---- End: def
+        p.communicate(bytes(manpage, "utf8"))
+
 
     iam   = os.path.basename(sys.argv[0])
     usage = "USAGE: {0} [-s] [-c] [-e file [-e file] ...] [-h] file".format(iam)

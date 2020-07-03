@@ -1,7 +1,0 @@
-cfdm.NetCDFArray.size
-=====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.NetCDFArray.size
