@@ -2018,7 +2018,9 @@ class CFDMImplementation(Implementation):
         construct.set_bounds(bounds, copy=copy)
 
     def set_cell_measure(self, field, construct, axes, copy=True):
-        '''nsert a cell_measure object into a field.
+        '''Insert a cell_measure object into a field.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -2039,6 +2041,8 @@ class CFDMImplementation(Implementation):
 
     def set_cell_method(self, field, construct, copy=True):
         '''Insert a cell_method object into a field.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -2074,6 +2078,8 @@ class CFDMImplementation(Implementation):
     def set_cell_method_method(self, cell_method, method):
         '''Set the method of a cell method construct.
 
+    .. versionadded:: 1.7.0
+
     :Parameters:
 
         cell_method: cell method construct
@@ -2091,6 +2097,8 @@ class CFDMImplementation(Implementation):
                                   coordinate_conversion):
         '''Set the method of a cell method construct.
 
+    .. versionadded:: 1.7.0
+
     :Parameters:
 
         coordinate_reference: coordinate reference construct
@@ -2106,6 +2114,8 @@ class CFDMImplementation(Implementation):
 
     def set_coordinate_reference(self, field, construct, copy=True):
         '''Insert a coordinate reference object into a field.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -2126,6 +2136,8 @@ class CFDMImplementation(Implementation):
                                              coordinate_reference,
                                              coordinates):
         '''Set the coordinates of a coordinate reference construct.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 

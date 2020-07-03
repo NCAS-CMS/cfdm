@@ -188,7 +188,7 @@ class Constructs(core.Constructs):
         cell_methods1 = other.filter_by_type('cell_method')
 
         if len(cell_methods0) != len(cell_methods1):
-            logger.info(
+            logger(
                 "Different numbers of cell methods: "
                 "{0!r} != {1!r}".format(cell_methods0, cell_methods1)
             )
@@ -302,7 +302,7 @@ class Constructs(core.Constructs):
                     self.__class__.__name__, 'coordinate reference',
                     len(refs0), len(refs1)
                 )
-            )  # pragma: no cover
+            )
 
             return False
 

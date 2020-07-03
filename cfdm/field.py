@@ -1287,14 +1287,14 @@ class Field(mixin.NetCDFVariable,
             x = [
                 axis_to_name[axis] for axis in self.get_data_axes(default=())]
 
-            units = self.get_property('units', None)
-            if units is None:
-                isreftime = bool(self.get_property('calendar', False))
-            else:
-                isreftime = 'since' in units
-
-            if isreftime:
-                data = data.asdata(data.datatime_array)
+#            units = self.get_property('units', None)
+#            if units is None:
+#                isreftime = bool(self.get_property('calendar', False))
+#            else:
+#                isreftime = 'since' in units
+#
+#            if isreftime:
+#                data = data.asdata(data.datetime_array)
 
             string.append('')
             string.append('{0}Data({1}) = {2}'.format(indent0,

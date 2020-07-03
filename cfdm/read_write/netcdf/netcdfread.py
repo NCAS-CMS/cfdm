@@ -835,7 +835,7 @@ class NetCDFRead(IORead):
 
         if has_groups:            
             flattener_name_mapping_variables = getattr(
-                nc, 'flattener_name_mapping_variables', None)
+                nc, '__flattener_name_mapping_variables', None)
             if flattener_name_mapping_variables is not None:
                 if isinstance(flattener_name_mapping_variables, str):
                     flattener_name_mapping_variables = [
@@ -847,7 +847,7 @@ class NetCDFRead(IORead):
                 )
             
             flattener_name_mapping_dimensions = getattr(
-                nc, 'flattener_name_mapping_dimensions', None)
+                nc, '__flattener_name_mapping_dimensions', None)
             if flattener_name_mapping_dimensions is not None:
                 if isinstance(flattener_name_mapping_dimensions, str):
                     flattener_name_mapping_attributes = [
@@ -866,7 +866,7 @@ class NetCDFRead(IORead):
             # --- End: if
             
             flattener_name_mapping_attributes = getattr(
-                nc, 'flattener_name_mapping_attributes', None)
+                nc, '__flattener_name_mapping_attributes', None)
             if flattener_name_mapping_attributes is not None:
                 if isinstance(flattener_name_mapping_attributes, str):
                     flattener_name_mapping_attributes = [
@@ -895,9 +895,9 @@ class NetCDFRead(IORead):
             # --- End: if
     
             # Remove flattener attributes from the global attributes
-            for attr in ('flattener_name_mapping_variables',
-                         'flattener_name_mapping_dimensions',
-                         'flattener_name_mapping_attributes'):
+            for attr in ('__flattener_name_mapping_variables',
+                         '__flattener_name_mapping_dimensions',
+                         '__flattener_name_mapping_attributes'):
                 g['global_attributes'].pop(attr, None)
         # --- End: if
         
@@ -2153,6 +2153,8 @@ class NetCDFRead(IORead):
                                           instance_dimension=None):
         '''TODO
 
+    .. versionadded:: 1.7.0
+
     :Parameters:
 
         elements_per_instance: `Count`
@@ -2211,6 +2213,8 @@ class NetCDFRead(IORead):
                                        element_dimension=None,
                                        instance_dimension=None):
         '''TODO
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -2271,6 +2275,8 @@ class NetCDFRead(IORead):
     def _check_external_variables(self, external_variables,
                                   parsed_external_variables):
         '''TODO
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -3132,7 +3138,11 @@ class NetCDFRead(IORead):
                 field=f,
                 construct=coordinate_reference,
                 copy=False)
-
+            
+            logger.detail(
+                "        [l] Inserting {!r}".format(coordinate_reference)
+            )  # pragma: no cover     
+            
 #            g['vertical_crs'][coord_ncvar] = coordinate_reference
             g['vertical_crs'][key] = coordinate_reference
         # --- End: for
@@ -3164,7 +3174,7 @@ class NetCDFRead(IORead):
                     # Convert netCDF variable names to internal identifiers
                     coordinates = [ncvar_to_key[ncvar] for ncvar in coordinates
                                    if ncvar in ncvar_to_key]
-
+                    
                     # ------------------------------------------------
                     # Find the datum and coordinate conversion for the
                     # grid mapping
@@ -3221,6 +3231,8 @@ class NetCDFRead(IORead):
                                 create_new = bool(coordinates)
                     # --- End: if
 
+                    
+                    
                     if create_new:
                         coordref = self.implementation.initialise_CoordinateReference()
 
@@ -3243,9 +3255,15 @@ class NetCDFRead(IORead):
                             field=f,
                             construct=coordref,
                             copy=False)
+
+                        logger.detail(
+                            "        [l] Inserting {!r}".format(coordref)
+                        )  # pragma: no cover
+                    
                         self._reference(grid_mapping_ncvar)
                         ncvar_to_key[grid_mapping_ncvar] = key
                 # --- End: for
+            # --- End: if
         # --- End: if
 
         # ----------------------------------------------------------------
@@ -3513,6 +3531,8 @@ class NetCDFRead(IORead):
     def _is_char_or_string(self, ncvar):
         '''Return True if the netCDf variable has string or char datatype.
 
+    .. versionadded:: 1.8.0
+
     :Parameters:
 
         ncvar: `str`
@@ -3533,6 +3553,8 @@ class NetCDFRead(IORead):
 
     def _is_char(self, ncvar):
         '''Return True if the netCDf variable has char datatype.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -3580,6 +3602,8 @@ class NetCDFRead(IORead):
                      attribute=None, dimensions=None, variable=None,
                      conformance=None):
         '''TODO
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -3658,6 +3682,8 @@ class NetCDFRead(IORead):
         '''Return the domain axis identifiers that correspond to a netCDF
     variable's netCDF dimensions.
 
+    .. versionadded:: 1.7.0
+
     :Parameter:
 
         ncvar: `str`
@@ -3725,6 +3751,8 @@ class NetCDFRead(IORead):
                                      bounds_ncvar=None):
         '''Create an auxiliary coordinate constuct.
 
+    .. versionadded:: 1.7.0
+
     :Parameters:
 
         field_ncvar: `str`
@@ -3752,6 +3780,8 @@ class NetCDFRead(IORead):
     def _create_dimension_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
         '''Create a dimension coordinate constuct.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -4054,6 +4084,8 @@ class NetCDFRead(IORead):
     def _create_cell_measure(self, measure, ncvar):
         '''Create a cell measure object.
 
+    .. versionadded:: 1.7.0
+
     :Parameters:
 
         measure: `str`
@@ -4108,6 +4140,8 @@ class NetCDFRead(IORead):
 
     def _create_Count(self, ncvar, ncdim):
         '''Create a
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -4168,6 +4202,8 @@ class NetCDFRead(IORead):
 
     def _create_Index(self, ncvar, ncdim):
         '''Create a
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -4284,6 +4320,8 @@ class NetCDFRead(IORead):
 
     def _create_List(self, ncvar):
         '''Create a TODO
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -4413,6 +4451,8 @@ class NetCDFRead(IORead):
     def _create_cell_method(self, axes, method, qualifiers):
         '''Create a cell method object.
 
+    .. versionadded:: 1.7.0
+
     :Parameters:
 
         axes: `tuple`
@@ -4432,6 +4472,8 @@ class NetCDFRead(IORead):
 
     def _create_netcdfarray(self, ncvar, unpacked_dtype=False):
         '''Set the Data attribute of a variable.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -4503,8 +4545,10 @@ class NetCDFRead(IORead):
 
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None,
-                     parent_ncvar=None, nc_dimensions=None):
+                     parent_ncvar=None):
         '''TODO
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -4516,10 +4560,6 @@ class NetCDFRead(IORead):
         unpacked_dtype: `False` or `numpy.dtype`, optional
 
         uncompress_override: `bool`, optional
-
-        geometry_boounds: `bool`
-            If True then the data are destined to become simple
-            geometry coordinate bounds.
 
     :Returns:
 
@@ -4533,8 +4573,6 @@ class NetCDFRead(IORead):
 
         if array is None:
             return None
-
-#        insert_size1_geometry_bounds_part_dimension = geometry_bounds
 
         units    = g['variable_attributes'][ncvar].get('units', None)
         calendar = g['variable_attributes'][ncvar].get('calendar', None)
@@ -4624,7 +4662,6 @@ class NetCDFRead(IORead):
                             count_variable=c['count_variable'],
                             index_variable=c['index_variable'])
 
-#                        insert_size1_geometry_bounds_part_dimension = False
                     elif 'ragged_contiguous' in c:
                         # --------------------------------------------
                         # Contiguous ragged array
@@ -4679,6 +4716,8 @@ class NetCDFRead(IORead):
     def _create_domain_axis(self, size, ncdim=None):
         '''Create a domain axis construct.
 
+    .. versionadded:: 1.7.0
+
     :Parameters:
 
         size: `int`
@@ -4698,6 +4737,8 @@ class NetCDFRead(IORead):
 
     def _create_field_ancillary(self, ncvar):
         '''Create a field ancillary construct.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -4906,6 +4947,8 @@ class NetCDFRead(IORead):
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
         '''TODO
 
+    .. versionadded:: 1.7.0
+
     If the coordinate object has properties 'standard_name' or
     'computed_standard_name' then they are copied to coordinate
     conversion parameters.
@@ -5072,6 +5115,8 @@ class NetCDFRead(IORead):
         '''Create a `Data` object for a compressed-by-gathering netCDF
     variable.
 
+    .. versionadded:: 1.7.0
+
     :Parameters:
 
         gathered_array: `NetCDFArray`
@@ -5100,6 +5145,8 @@ class NetCDFRead(IORead):
                                         count_variable=None):
         '''Create a `Data` object for a compressed-by-contiguous-ragged-array
     netCDF variable.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -5130,6 +5177,8 @@ class NetCDFRead(IORead):
         '''Create a `Data` object for a compressed-by-indexed-ragged-array
     netCDF variable.
 
+    .. versionadded:: 1.7.0
+
     :Returns:
 
         `Data`
@@ -5154,6 +5203,8 @@ class NetCDFRead(IORead):
         '''Create a `Data` object for a
     compressed-by-indexed-contiguous-ragged-array netCDF variable.
 
+    .. versionadded:: 1.7.0
+
     :Returns:
 
         `Data`
@@ -5173,6 +5224,8 @@ class NetCDFRead(IORead):
     def _create_Data(self, array=None, units=None, calendar=None,
                      ncvar=None, **kwargs):
         '''TODO
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -5195,6 +5248,8 @@ class NetCDFRead(IORead):
 
     def _copy_construct(self, construct_type, field_ncvar, ncvar):
         '''Return a copy of an existing construct.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -5237,6 +5292,8 @@ class NetCDFRead(IORead):
                       bounds_ncvar, geometry=False):
         '''TODO
 
+    .. versionadded:: 1.7.0
+
     Checks that
 
     * The bounds variable has exactly one more dimension than the
@@ -5273,12 +5330,10 @@ class NetCDFRead(IORead):
             bounds_ncvar, message = self._check_missing_variable(
                 bounds_ncvar, 'Bounds variable'
             )
-            print (99)
             self._add_message(field_ncvar, bounds_ncvar,
                               message=message,
                               attribute=attribute,
                               variable=parent_ncvar)
-            print (999)
             return False
 
         ok = True
@@ -5323,6 +5378,8 @@ class NetCDFRead(IORead):
     * 7.2.requirement.1
     * 7.2.requirement.3
     * 7.2.requirement.4
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -5408,6 +5465,8 @@ class NetCDFRead(IORead):
     def _check_geometry_attribute(self, field_ncvar, string,
                                   parsed_string):
         '''Checks requirements
+
+    .. versionadded:: 1.8.0
 
     :Parameters:
 

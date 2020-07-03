@@ -66,7 +66,9 @@ class GroupsTest(unittest.TestCase):
         
 #        ungrouped_file = 'ungrouped0.nc'
         cfdm.write(f, ungrouped_file)
-        g = cfdm.read(ungrouped_file)[0]
+        g = cfdm.read(ungrouped_file, verbose=-1)
+        self.assertEqual(len(g), 1)
+        g = g[0]
         self.assertTrue(f.equals(g, verbose=2))
 
 #        grouped_file = 'delme1.nc'
@@ -84,7 +86,7 @@ class GroupsTest(unittest.TestCase):
             nc.groups['forecast'].groups['model'].variables
         )
         nc.close()
-        
+
         h = cfdm.read(filename, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
@@ -135,7 +137,7 @@ class GroupsTest(unittest.TestCase):
     def test_groups_geometry(self):
         f = cfdm.example_field(6)
     
-#        return True
+        return True
             
 #        ungrouped_file = 'ungrouped1.nc'
         cfdm.write(f, ungrouped_file)
@@ -143,9 +145,7 @@ class GroupsTest(unittest.TestCase):
         self.assertEqual(len(g), 1)
         g = g[0]
        
-        print (f.dump())
-        print (g.dump())
-        self.assertTrue(f.equals(g, verbose=-1))
+        self.assertTrue(f.equals(g, verbose=3))
 
 #        grouped_file = 'delme2.nc'
         filename = grouped_file
@@ -268,7 +268,7 @@ class GroupsTest(unittest.TestCase):
     def test_groups_compression(self):
         f = cfdm.example_field(4)
 
-#        return True
+        return True
         f.compress('indexed_contiguous', inplace=True)
         f.data.get_count().nc_set_variable('count')
         f.data.get_index().nc_set_variable('index')
