@@ -34,6 +34,7 @@ _cached_temporary_files = {}
 
 logger = logging.getLogger(__name__)
 
+_flattener_separator = netcdf_flattener._Flattener._Flattener__new_separator
 
 class NetCDFRead(IORead):
     '''
@@ -825,23 +826,13 @@ class NetCDFRead(IORead):
         # * each flattened dimension name to its absolute path
         # * each group to its group attributes
         #
-        # E.g.
-        #
-        # {'variables': {'lat': 'lat',
-        #                'lon': 'lon',
-        #                'forecast#q': '/forecast/q'},
-        #  'dimensions': {'lat': '/lat',
-        #                 'lon': '/lon'
-        #                 'forecast#t': '/forecast/t'},
-        #  'attributes': {('forecast',):
-        #                 {'comment': 'forecast comment'}}}
-        #
         # ------------------------------------------------------------
         has_groups = g['has_groups']
-        flattener_mapping = {'variables': {},
-                             'dimensions': {},
-                             'attributes': {},
-        }
+
+        flattener_variables = {}
+        flattener_dimensions = {}
+        flattener_attributes = {}
+
         if has_groups:            
             flattener_name_mapping_variables = getattr(
                 nc, 'flattener_name_mapping_variables', None)
@@ -850,7 +841,7 @@ class NetCDFRead(IORead):
                     flattener_name_mapping_variables = [
                         flattener_name_mapping_variables
                     ]
-                flattener_mapping['variables'] = dict(
+                flattener_variables = dict(
                     tuple(x.split(': '))
                     for x in flattener_name_mapping_variables
                 )
@@ -862,16 +853,16 @@ class NetCDFRead(IORead):
                     flattener_name_mapping_attributes = [
                         flattener_name_mapping_attributes
                     ]
-                flattener_mapping['dimensions'] = dict(
+                flattener_dimensions = dict(
                     tuple(x.split(': '))
                     for x in flattener_name_mapping_dimensions
                 )
 
                 # Remove a leading / (slash) from dimensions in the
                 # root group
-                for key, value in flattener_mapping['dimensions'].items():
+                for key, value in flattener_dimensions.items():
                     if value.startswith('/') and value.count('/') == 1:
-                        flattener_mapping['dimensions'][key] = value[1:]
+                        flattener_dimensions[key] = value[1:]
             # --- End: if
             
             flattener_name_mapping_attributes = getattr(
@@ -881,15 +872,15 @@ class NetCDFRead(IORead):
                     flattener_name_mapping_attributes = [
                         flattener_name_mapping_attributes
                     ]
-                flattener_mapping['attributes'] = dict(
+                flattener_attributes = dict(
                     tuple(x.split(': '))
                     for x in flattener_name_mapping_attributes
                 )
                 
                 # Remove group attributes from the global attributes,
                 # and vice versa.
-                for flat_attr in flattener_mapping['attributes'].copy():
-                    attr = flattener_mapping['attributes'].pop(flat_attr)
+                for flat_attr in flattener_attributes.copy():
+                    attr = flattener_attributes.pop(flat_attr)
                         
                     x = attr.split('/')
                     groups = x[1:-1]
@@ -898,7 +889,7 @@ class NetCDFRead(IORead):
                         g['global_attributes'].pop(flat_attr)
 
                         group_attr = x[-1]
-                        flattener_mapping['attributes'].setdefault(
+                        flattener_attributes.setdefault(
                             tuple(groups), {}
                         )[group_attr] = nc.getncattr(flat_attr)
             # --- End: if
@@ -928,21 +919,25 @@ class NetCDFRead(IORead):
                 # Replace the flattened variable name with its
                 # absolute path.
                 ncvar_flat = ncvar
-                ncvar = flattener_mapping['variables'][ncvar]
+                ncvar = flattener_variables[ncvar]
                 
                 groups = tuple(ncvar.split('/')[1:-1])
                 
                 if groups:
                     # This variable is in a group. Remove the group
                     # structure that was prepended to the netCDF
-                    # variable name by the netCDF flattener. Note that
-                    # the flattener uses __ (double underscore) as the
-                    # groups delimiter in its modified variable names.
+                    # variable name by the netCDF flattener.
+                    
+#                    ncvar_basename = re.sub(
+#                        '^{}__'.format('__'.join(groups)),
+#                        '', ncvar_flat
+#                    )
                     ncvar_basename = re.sub(
-                        '^{}__'.format('__'.join(groups)),
+                        '^{}{}'.format(_flattener_separator.join(groups),
+                                       _flattener_separator),
                         '', ncvar_flat
                     )
-                            
+
                     # ------------------------------------------------
                     # Group attributes. Note that, currently,
                     # sub-group attributes supercede all parent group
@@ -951,17 +946,17 @@ class NetCDFRead(IORead):
                     group_attributes = {}
                     for i in range(1, len(groups)+1):
                         hierarchy = groups[:i]
-                        if hierarchy not in flattener_mapping['attributes']:
+                        if hierarchy not in flattener_attributes:
                             continue
 
                         group_attributes.update(
-                            flattener_mapping['attributes'][hierarchy]
+                            flattener_attributes[hierarchy]
                         )
                 else:                
                     # Remove the leading / from the absolute netCDF
                     # variable path
                     ncvar = ncvar[1:]
-                    flattener_mapping['variables'][ncvar] = ncvar
+                    flattener_variables[ncvar] = ncvar
             # --- End: if
 
             variable_attributes[ncvar] = {}
@@ -1003,17 +998,20 @@ class NetCDFRead(IORead):
                 # Replace the flattened variable name with its
                 # absolute path.
                 ncdim_flat = ncdim
-                ncdim = flattener_mapping['dimensions'][ncdim_flat]
+                ncdim = flattener_dimensions[ncdim_flat]
                 
                 groups = tuple(ncdim.split('/')[1:-1])
 
                 if groups:
-                    # This dimension is in a group. Note that the
-                    # netCDF flattener uses __ (double underscore) as
-                    # the groups delimiter in its modified dimension
-                    # names.
+                    # This dimension is in a group.
+                    
+#                    ncdim_basename = re.sub(
+#                        '^{}__'.format('__'.join(groups)),
+#                        '', ncdim_flat
+ #                   )
                     ncdim_basename = re.sub(
-                        '^{}__'.format('__'.join(groups)),
+                        '^{}{}'.format(_flattener_separator.join(groups),
+                                       _flattener_separator),
                         '', ncdim_flat
                     )
             # --- End: if
@@ -1076,7 +1074,9 @@ class NetCDFRead(IORead):
         g['variable_group_attributes'] = variable_group_attributes
 
         # TODO
-        g['flattener_mapping'] = flattener_mapping
+        g['flattener_variables'] = flattener_variables
+        g['flattener_dimensions'] = flattener_dimensions
+        g['flattener_attributes'] = flattener_attributes
         
         # The basename of each variable. I.e. the dimension name
         # without its prefixed group structure.
@@ -1121,16 +1121,16 @@ class NetCDFRead(IORead):
         )  # pragma: no cover
                  
         logger.debug(
-            "        read_vars['flattener_mapping']['variables'] =\n" +
-            pformat(g['flattener_mapping']['variables'], indent=12)
+            "        read_vars['flattener_variables'] =\n" +
+            pformat(g['flattener_variables'], indent=12)
         )  # pragma: no cover
         logger.debug(
-            "        read_vars['flattener_mapping']['dimensions'] =\n" +
-            pformat(g['flattener_mapping']['dimensions'], indent=12)
+            "        read_vars['flattener_dimensions'] =\n" +
+            pformat(g['flattener_dimensions'], indent=12)
         )  # pragma: no cover
         logger.debug(
-            "        read_vars['flattener_mapping']['attributes'] =\n" +
-            pformat(g['flattener_mapping']['attributes'], indent=12)
+            "        read_vars['flattener_attributes'] =\n" +
+            pformat(g['flattener_attributes'], indent=12)
         )  # pragma: no cover
 
         logger.debug(
@@ -2595,6 +2595,8 @@ class NetCDFRead(IORead):
     :Returns:
 
         `str`, `tuple`
+            The (possibly modified) netCDF variable name, and the
+            appropriate full message about it being missing.
 
         '''                
         if self.read_vars['has_groups']:
@@ -3144,12 +3146,7 @@ class NetCDFRead(IORead):
         if grid_mapping is not None:
             parsed_grid_mapping = self._parse_grid_mapping(
                 field_ncvar, grid_mapping)
-
-            if g['has_groups']:
-                print ('\nTODO - check multiple grid mappings read for groups')
-                print ('       grid_mapping =', grid_mapping)
-                print ('       parsed_grid_mapping =', parsed_grid_mapping)
-                
+               
             cf_compliant = self._check_grid_mapping(field_ncvar,
                                                     grid_mapping,
                                                     parsed_grid_mapping)
@@ -3303,17 +3300,19 @@ class NetCDFRead(IORead):
             cell_methods = self._parse_cell_methods(
                 cell_methods_string, field_ncvar)
 
-            if g['has_groups']:
-                print ('\nTODO - check cell methods bug')
-                print('      https://gitlab.eumetsat.int/additional-data-services/netcdf-flattener/-/issues/30')
-            
             for properties in cell_methods:
                 axes = properties.pop('axes')
-#                print (name_to_axis)
-#                if g['has_groups']:
-#                    axes = [g['flattener_mapping']['variables'].get(axis, axis#)
-#                            for axis in axes]                    
+
+                if g['has_groups']:
+                    # Replace flattened names with absolute names
+                    axes = [
+                        g['flattener_dimensions'].get(
+                            axis, g['flattener_variables'].get(
+                                axis, axis))
+                        for axis in axes
+                    ]
                     
+                # Replace names with domain axis keys
                 axes = [name_to_axis.get(axis, axis) for axis in axes]
  
                 method = properties.pop('method', None)
@@ -3649,7 +3648,7 @@ class NetCDFRead(IORead):
             dimensions = '(' + ', '.join(dimensions) + ')'  # pragma: no cover
 
         logger.info(
-            "    Error processing netCDF variable {} {}: {}".format(
+            "    1 Error processing netCDF variable {}{}: {}".format(
                 ncvar, dimensions, d['reason'])
         )  # pragma: no cover
 
@@ -3720,7 +3719,7 @@ class NetCDFRead(IORead):
         # Replace the netCDF dimension name with its full group
         # path. E.g. if dimension 'time' is in group '/forecast' then
         # it will be renamed '/forecast/time'. (CF>=1.8)
-        return g['flattener_mapping']['dimensions'].get(ncdim, ncdim)
+        return g['flattener_dimensions'].get(ncdim, ncdim)
                 
     def _create_auxiliary_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
@@ -3782,6 +3781,8 @@ class NetCDFRead(IORead):
                                  bounds_ncvar=None):
         '''TODO
 
+    .. versionadded:: 1.7.0
+
     :Returns:
 
         The domain ancillary constuct.
@@ -3798,6 +3799,8 @@ class NetCDFRead(IORead):
                                   bounds_ncvar=None,
                                   has_coordinates=True):
         '''Create a variable which might have bounds.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -3866,11 +3869,6 @@ class NetCDFRead(IORead):
                 elif geometry:
                     bounds_ncvar = properties.pop('nodes', None) 
                     if bounds_ncvar is not None:
-                        if self.read_vars['has_groups']:
-                            bounds_ncvar = (
-                                g['flattener_mapping']['variables'][bounds_ncvar]
-                                    )
-                            
                         attribute = 'nodes'
         # --- End: if
 
@@ -3883,8 +3881,8 @@ class NetCDFRead(IORead):
             c = self.implementation.initialise_DomainAncillary()
         else:
             raise ValueError(
-                "Must set one of the dimension, auxiliary or domain_ancillary "
-                "parameters to True")
+                "Must set exactly one of the dimension, auxiliary or "
+                "domain_ancillary parameters to True")
 
         self.implementation.set_properties(c, properties)
 
@@ -3909,6 +3907,11 @@ class NetCDFRead(IORead):
         # Add any bounds
         # ------------------------------------------------------------
         if bounds_ncvar:
+            if g['has_groups']:
+                # Replace a flattened name with an absolute name
+                bounds_ncvar = g['flattener_variables'].get(
+                    bounds_ncvar, bounds_ncvar)
+            
             if geometry is None:
                 # Check "normal" boounds
                 cf_compliant = self._check_bounds(field_ncvar, ncvar,
@@ -4735,6 +4738,8 @@ class NetCDFRead(IORead):
     def _parse_cell_methods(self, cell_methods_string, field_ncvar=None):
         '''Parse a CF cell_methods string.
 
+    .. versionadded:: 1.7.0
+
     :Parameters:
 
         cell_methods_string: `str`
@@ -4746,7 +4751,8 @@ class NetCDFRead(IORead):
 
     **Examples:**
 
-    >>> c = parse_cell_methods('t: minimum within years t: mean over ENSO years)')
+    >>> c = parse_cell_methods('t: minimum within years '
+    ...                        't: mean over ENSO years)')
 
         '''
         if field_ncvar:
@@ -5263,14 +5269,16 @@ class NetCDFRead(IORead):
 
         g = self.read_vars
 
-        if bounds_ncvar not in g['internal_variables']:
+        if bounds_ncvar not in g['internal_variables']:            
             bounds_ncvar, message = self._check_missing_variable(
                 bounds_ncvar, 'Bounds variable'
-            )     
+            )
+            print (99)
             self._add_message(field_ncvar, bounds_ncvar,
                               message=message,
                               attribute=attribute,
                               variable=parent_ncvar)
+            print (999)
             return False
 
         ok = True
@@ -5930,7 +5938,7 @@ class NetCDFRead(IORead):
 
         variables: `bool`
             If True then *string* contains internal netCDF variable
-            names. (Not sure yet what to do a bout external names.)
+            names. (Not sure yet what to do about external names.)
         
             .. versionadded:: 1.8.6
 
@@ -5948,13 +5956,13 @@ class NetCDFRead(IORead):
             return []
         else:
             if variables and out and self.read_vars['has_groups']:
-                mapping = self.read_vars['flattener_mapping']['variables']
+                mapping = self.read_vars['flattener_variables']
                 out = [mapping[ncvar] for ncvar in out]
 
             return out
 
     def _parse_grid_mapping(self, parent_ncvar, string):
-        '''TODO
+        '''Parse a netCDF grid_mapping attribute.
 
     .. versionadded:: 1.7.0
 
@@ -5976,7 +5984,7 @@ class NetCDFRead(IORead):
                                                     string, variables=True)
 
 #            if g['has_groups']:
-#                out = [g['flattener_mapping']['variables'][ncvar]
+#                out = [g['flattener_variables'][ncvar]
 #                       for ncvar in out]
                 
             if len(out) == 1:
@@ -6077,9 +6085,9 @@ class NetCDFRead(IORead):
                 for key, value in x.copy().items():
                     if keys_are_variables:
                         del x[key]
-                        key = g['flattener_mapping']['variables'][key]
+                        key = g['flattener_variables'][key]
 
-                    x[key] = [g['flattener_mapping']['variables'][ncvar]
+                    x[key] = [g['flattener_variables'][ncvar]
                               for ncvar in value]
         # --- End: if
                 

@@ -46,26 +46,25 @@ class GroupsTest(unittest.TestCase):
     def test_groups(self):
         f = cfdm.example_field(1)
 
-#        # Add a second grid mapping    
-#        datum = cfdm.Datum(parameters={'earth_radius': 7000000})
-#        conversion = cfdm.CoordinateConversion(
-#            parameters={'grid_mapping_name': 'latitude_longitude'})
-#        
-#        grid = cfdm.CoordinateReference(
-#            coordinate_conversion=conversion,
-#            datum=datum,
-#            coordinates=['auxiliarycoordinate0', 'auxiliarycoordinate1']
-#        )
-#
-#        f.set_construct(grid)
-#        
-#        grid0 = f.construct('grid_mapping_name:rotated_latitude_longitude')
-#        grid0.del_coordinate('auxiliarycoordinate0')
-#        grid0.del_coordinate('auxiliarycoordinate1')
-#        
-#        f.dump()
+        # Add a second grid mapping    
+        datum = cfdm.Datum(parameters={'earth_radius': 7000000})
+        conversion = cfdm.CoordinateConversion(
+            parameters={'grid_mapping_name': 'latitude_longitude'})
         
-        ungrouped_file = 'ungrouped1.nc'
+        grid = cfdm.CoordinateReference(
+            coordinate_conversion=conversion,
+            datum=datum,
+            coordinates=['auxiliarycoordinate0', 'auxiliarycoordinate1']
+        )
+
+        f.set_construct(grid)
+        
+        grid0 = f.construct('grid_mapping_name:rotated_latitude_longitude')
+        grid0.del_coordinate('auxiliarycoordinate0')
+        grid0.del_coordinate('auxiliarycoordinate1')
+
+        
+        ungrouped_file = 'ungrouped0.nc'
         cfdm.write(f, ungrouped_file)
         g = cfdm.read(ungrouped_file)[0]
         self.assertTrue(f.equals(g, verbose=2))
@@ -93,7 +92,7 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Move constructs one by one to the /forecast group
         # ------------------------------------------------------------
-        for name in ( #'time',  # Dimension coordinate
+        for name in ('time',  # Dimension coordinate
                      'grid_latitude',  # Dimension coordinate
                      'longitude', # Auxiliary coordinate
                      'measure:area',  # Cell measure
@@ -101,11 +100,9 @@ class GroupsTest(unittest.TestCase):
                      'air_temperature standard_error',  # Field ancillary
                      'grid_mapping_name:rotated_latitude_longitude',
     ):
-#        for name in ('grid_latitude',):  # Dimension coordinate
-            print(9999999999, name)
             g.construct(name).nc_set_variable_groups(['forecast'])
             cfdm.write(g, filename, verbose=1)
-            g.dump()
+
             # Check that the variable is in the right group
             nc = netCDF4.Dataset(filename, 'r')
             self.assertIn(
@@ -114,10 +111,10 @@ class GroupsTest(unittest.TestCase):
             nc.close()
 
             # Check that the field construct hasn't changed
-            h = cfdm.read(filename, verbose=-1)
+            h = cfdm.read(filename, verbose=1)
             self.assertEqual(len(h), 1, repr(h))
             self.assertTrue(f.equals(h[0], verbose=2), name)
-        
+
         # ------------------------------------------------------------
         # Move bounds to the /forecast group
         # ------------------------------------------------------------
@@ -131,20 +128,14 @@ class GroupsTest(unittest.TestCase):
             nc.groups['forecast'].variables)
         nc.close()
 
-        h = cfdm.read(filename)
+        h = cfdm.read(filename, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
-        
-        f.dump()
         
     def test_groups_geometry(self):
         f = cfdm.example_field(6)
 
 #        return True
-#        pnc = cfdm.PartNodeCountProperties()
-#        pnc.set_property('long_name', 'part node count')
-#        pnc.nc_set_variable('part_node_count')
-#        f.construct('longitude').set_part_node_count(pnc)
             
         ungrouped_file = 'ungrouped1.nc'
         cfdm.write(f, ungrouped_file)
