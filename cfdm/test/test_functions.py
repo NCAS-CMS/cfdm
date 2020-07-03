@@ -11,7 +11,7 @@ import cfdm
 
 
 n_tmpfiles = 1
-tmpfiles = [tempfile.mktemp('_test_groups.nc', dir=os.getcwd())
+tmpfiles = [tempfile.mktemp('_test_functions.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
 (temp_file,
 ) = tmpfiles
