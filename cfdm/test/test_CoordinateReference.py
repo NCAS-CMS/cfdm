@@ -1,12 +1,32 @@
+import atexit
 import datetime
 import inspect
 import os
+import tempfile
 import unittest
 
 import numpy
 
 import cfdm
 
+
+n_tmpfiles = 1
+tmpfiles = [tempfile.mktemp('_test_netCDF.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(tempfile1,
+) = tmpfiles
+
+def _remove_tmpfiles():
+    '''Remove temporary files created during tests.
+
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+atexit.register(_remove_tmpfiles)
 
 class CoordinateReferenceTest(unittest.TestCase):
     def setUp(self):
@@ -188,7 +208,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         f.del_construct(key)
         cr = f.construct('standard_name:atmosphere_hybrid_height_coordinate')
         cr.datum.nc_set_variable('my_name')
-        cfdm.write(f, 'delme.nc')
+        cfdm.write(f, tempfile1)
 
 #--- End: class
 

@@ -1,3 +1,4 @@
+import atexit
 import datetime
 import os
 import tempfile
@@ -10,6 +11,24 @@ import numpy
 import cfdm
 
 
+n_tmpfiles = 1
+tmpfiles = [tempfile.mktemp('_test_gathering.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(tempfile,) = tmpfiles
+
+def _remove_tmpfiles():
+    '''Remove temporary files created during tests.
+
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+atexit.register(_remove_tmpfiles)
+
+
 class GatheredTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
@@ -17,15 +36,13 @@ class GatheredTest(unittest.TestCase):
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
-        # internally) as follows: cfdm.log_level('DEBUG')    
+        # internally) as follows:
+        #
+        # cfdm.log_level('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
         self.gathered = 'gathered.nc'
-
-        (fd, self.tempfilename) = tempfile.mkstemp(
-            suffix='.nc', prefix='cfdm_', dir='.')
-        os.close(fd)
 
         a = numpy.ma.masked_all((4, 9), dtype=float)
         a[0, 0:3] = [0.0, 1.0, 2.0]
@@ -120,11 +137,6 @@ class GatheredTest(unittest.TestCase):
 
         self.test_only = []
 
-
-    def tearDown(self):
-        os.remove(self.tempfilename)
-
-
     def test_GATHERING(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -137,8 +149,8 @@ class GatheredTest(unittest.TestCase):
             if g.get_property('long_name') == 'temp3':
                 break
 
-        cfdm.write(f, self.tempfilename, verbose=False)
-        g = cfdm.read(self.tempfilename, verbose=False)
+        cfdm.write(f, tempfile, verbose=False)
+        g = cfdm.read(tempfile, verbose=False)
         self.assertEqual(len(g), len(f))
 
         for i in range(len(f)):

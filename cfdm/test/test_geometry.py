@@ -1,3 +1,4 @@
+import atexit
 import datetime
 import inspect
 import os
@@ -8,6 +9,25 @@ import numpy
 import netCDF4
 
 import cfdm
+
+
+n_tmpfiles = 1
+tmpfiles = [tempfile.mktemp('_test_geometry.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(tempfile,) = tmpfiles
+
+def _remove_tmpfiles():
+    '''Remove temporary files created during tests.
+
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+atexit.register(_remove_tmpfiles)
+
 
 VN = cfdm.CF()
 
@@ -20,6 +40,7 @@ class DSGTest(unittest.TestCase):
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
         # internally) as follows:
+        #
         # cfdm.log_level('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
@@ -43,17 +64,7 @@ class DSGTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)),
             'geometry_interior_ring_2.nc')
 
-        (fd, self.tempfilename) = tempfile.mkstemp(
-            suffix='.nc', prefix='cfdm_', dir='.')
-        os.close(fd)
-#        self.tempfilename = 'delme.nc'
-
         self.test_only = []
-#        self.test_only = ['test_node_count']
-#        self.test_only = ['test_geometry_3']
-
-    def tearDown(self):
-        os.remove(self.tempfilename)
 
     def test_node_count(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -73,9 +84,9 @@ class DSGTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
-        cfdm.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
+        cfdm.write(f, tempfile, Conventions='CF-'+VN, verbose=False)
 
-        f2 = cfdm.read(self.tempfilename, verbose=False)
+        f2 = cfdm.read(tempfile, verbose=False)
         self.assertEqual(len(f2), 2, 'f2 = '+repr(f2))
         for a, b in zip(f, f2):
             self.assertTrue(a.equals(b, verbose=3))
@@ -83,11 +94,11 @@ class DSGTest(unittest.TestCase):
         # Setting of node count properties
         coord = f[0].construct('axis=X')
         nc = coord.get_node_count()
-        cfdm.write(f, self.tempfilename)
+        cfdm.write(f, tempfile)
         nc.set_property('long_name', 'Node counts')
-        cfdm.write(f, self.tempfilename)
+        cfdm.write(f, tempfile)
         nc.nc_set_variable('new_var_name_X')
-        cfdm.write(f, self.tempfilename)
+        cfdm.write(f, tempfile)
 
         # Node count access
         c = g.construct('longitude').copy()
@@ -121,9 +132,9 @@ class DSGTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
-        cfdm.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
+        cfdm.write(f, tempfile, Conventions='CF-'+VN, verbose=False)
 
-        f2 = cfdm.read(self.tempfilename, verbose=False)
+        f2 = cfdm.read(tempfile, verbose=False)
 
         self.assertEqual(len(f2), 2, 'f2 = '+repr(f2))
 
@@ -133,11 +144,11 @@ class DSGTest(unittest.TestCase):
         # Setting of node count properties
         coord = f[0].construct('axis=X')
         nc = coord.get_node_count()
-        cfdm.write(f, self.tempfilename)
+        cfdm.write(f, tempfile)
         nc.set_property('long_name', 'Node counts')
-        cfdm.write(f, self.tempfilename, verbose=False)
+        cfdm.write(f, tempfile, verbose=False)
         nc.nc_set_variable('new_var_name')
-        cfdm.write(f, self.tempfilename, verbose=False)
+        cfdm.write(f, tempfile, verbose=False)
 
     def test_geometry_3(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -158,18 +169,13 @@ class DSGTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
-        cfdm.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
+        cfdm.write(f, tempfile, Conventions='CF-'+VN, verbose=False)
 
-        f2 = cfdm.read(self.tempfilename, verbose=False)
-
-#        cfdm.write(f, 'delme.nc', Conventions='CF-'+VN, verbose=False)
-#        f2 = cfdm.read('delme.nc', verbose=False)
+        f2 = cfdm.read(tempfile, verbose=False)
 
         self.assertEqual(len(f2), 2, 'f2 = '+repr(f2))
 
         for a, b in zip(f, f2):
-#            a.dump()
-#            b.dump()
             self.assertTrue(a.equals(b, verbose=3))
 
     def test_geometry_4(self):
@@ -190,9 +196,9 @@ class DSGTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
-        cfdm.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
+        cfdm.write(f, tempfile, Conventions='CF-'+VN, verbose=False)
 
-        f2 = cfdm.read(self.tempfilename, verbose=False)
+        f2 = cfdm.read(tempfile, verbose=False)
 
         self.assertEqual(len(f2), 2, 'f2 = '+repr(f2))
 
@@ -202,11 +208,11 @@ class DSGTest(unittest.TestCase):
         # Setting of node count properties
         coord = f[0].construct('axis=X')
         nc = coord.get_node_count()
-        cfdm.write(f, self.tempfilename)
+        cfdm.write(f, tempfile)
         nc.set_property('long_name', 'Node counts')
-        cfdm.write(f, self.tempfilename, verbose=False)
+        cfdm.write(f, tempfile, verbose=False)
         nc.nc_set_variable('new_var_name')
-        cfdm.write(f, self.tempfilename, verbose=False)
+        cfdm.write(f, tempfile, verbose=False)
 
     def test_geometry_interior_ring(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -229,9 +235,9 @@ class DSGTest(unittest.TestCase):
                 self.assertTrue(coord.has_part_node_count(), 'axis='+axis)
                 self.assertTrue(coord.has_interior_ring(), 'axis='+axis)
 
-            cfdm.write(f, self.tempfilename, Conventions='CF-'+VN)
+            cfdm.write(f, tempfile, Conventions='CF-'+VN)
 
-            f2 = cfdm.read(self.tempfilename)
+            f2 = cfdm.read(tempfile)
 
             self.assertEqual(len(f2), 2, 'f2 = '+repr(f2))
 
@@ -278,22 +284,22 @@ class DSGTest(unittest.TestCase):
             coord = f[0].construct('axis=Y')
             nc = coord.get_node_count()
             nc.set_property('long_name', 'Node counts')
-            cfdm.write(f, self.tempfilename)
+            cfdm.write(f, tempfile)
 
             nc.nc_set_variable('new_var_name')
-            cfdm.write(f, self.tempfilename)
+            cfdm.write(f, tempfile)
 
             # Setting of part node count properties
             coord = f[0].construct('axis=X')
             pnc = coord.get_part_node_count()
             pnc.set_property('long_name', 'Part node counts')
-            cfdm.write(f, self.tempfilename)
+            cfdm.write(f, tempfile)
 
             pnc.nc_set_variable('new_var_name')
-            cfdm.write(f, self.tempfilename)
+            cfdm.write(f, tempfile)
 
             pnc.nc_set_dimension('new_dim_name')
-            cfdm.write(f, self.tempfilename)            
+            cfdm.write(f, tempfile)            
             
 #--- End: class
 

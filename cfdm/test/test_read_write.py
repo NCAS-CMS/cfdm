@@ -71,8 +71,6 @@ class read_writeTest(unittest.TestCase):
         tmpfile = tempfile.mktemp('.cfdm_test')
         tmpfiles.append(tmpfile)
 
-        tmpfile = 'delme.nc'
-
         f = cfdm.example_field(0)
         a = f.data.array
 

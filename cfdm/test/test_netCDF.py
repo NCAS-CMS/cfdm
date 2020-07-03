@@ -1,3 +1,4 @@
+import atexit
 import datetime
 import inspect
 import os
@@ -5,6 +6,27 @@ import tempfile
 import unittest
 
 import cfdm
+
+
+n_tmpfiles = 3
+tmpfiles = [tempfile.mktemp('_test_netCDF.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(tempfile1,
+ tempfile2,
+ tempfile3,
+) = tmpfiles
+
+def _remove_tmpfiles():
+    '''Remove temporary files created during tests.
+
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+atexit.register(_remove_tmpfiles)
 
 
 class NetCDFTest(unittest.TestCase):
@@ -26,14 +48,7 @@ class NetCDFTest(unittest.TestCase):
         self.assertEqual(len(f), 1, 'f={!r}'.format(f))
         self.f = f[0]
 
-        (fd, self.tempfilename) = tempfile.mkstemp(
-            suffix='.nc', prefix='cfdm_', dir='.')
-        os.close(fd)
-
         self.test_only = []
-
-    def tearDown(self):
-        os.remove(self.tempfilename)
 
     def test_netCDF_variable_dimension(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -204,11 +219,11 @@ class NetCDFTest(unittest.TestCase):
         f2 = f.copy()
         f2.nc_set_variable('ua')
 
-        cfdm.write([f, f2], 'tempfilename.nc',
+        cfdm.write([f, f2], tempfile1,
                    file_descriptors={'comment': 'global comment',
                                      'qwerty': 'asdf'})
 
-        g = cfdm.read('tempfilename.nc')
+        g = cfdm.read(tempfile1)
         self.assertEqual(len(g), 2)
 
         for x in g:
@@ -221,8 +236,8 @@ class NetCDFTest(unittest.TestCase):
                               'qwerty': None,
                               'Conventions': None})
             
-        cfdm.write(g, 'tempfilename2.nc')
-        h = cfdm.read('tempfilename2.nc')
+        cfdm.write(g, tempfile2)
+        h = cfdm.read(tempfile2)
         for x, y in zip(h, g):
             self.assertEqual(x.properties(), y.properties())
             self.assertEqual(x.nc_global_attributes(),
@@ -231,8 +246,8 @@ class NetCDFTest(unittest.TestCase):
             self.assertTrue(y.equals(x, verbose=3))
 
         g[1].nc_set_global_attribute('comment', 'different comment')
-        cfdm.write(g, 'tempfilename3.nc')
-        h = cfdm.read('tempfilename3.nc')
+        cfdm.write(g, tempfile3)
+        h = cfdm.read(tempfile3)
         for x, y in zip(h, g):
             self.assertEqual(x.properties(), y.properties())
             self.assertEqual(x.nc_global_attributes(), {'comment': None,
@@ -240,7 +255,6 @@ class NetCDFTest(unittest.TestCase):
                                                         'Conventions': None})
             self.assertTrue(x.equals(y, verbose=3))
             self.assertTrue(y.equals(x, verbose=3))
-#        os.remove('tempfilename.nc')
 
     def test_netCDF_geometry_variable(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

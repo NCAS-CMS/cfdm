@@ -1,3 +1,4 @@
+import atexit
 import datetime
 import os
 import tempfile
@@ -8,6 +9,27 @@ import netCDF4
 import numpy
 
 import cfdm
+
+
+n_tmpfiles = 3
+tmpfiles = [tempfile.mktemp('_test_gathering.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(tempfile,
+ tempfile_parent,
+ tempfile_external,
+) = tmpfiles
+
+def _remove_tmpfiles():
+    '''Remove temporary files created during tests.
+
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+atexit.register(_remove_tmpfiles)
 
 
 class ExternalVariableTest(unittest.TestCase):
@@ -29,20 +51,6 @@ class ExternalVariableTest(unittest.TestCase):
         self.external_missing_file = 'external_missing.nc'
 
         self.test_only = []
-
-        (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
-        os.close(fd)
-        (fd, self.tempfilename_parent) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_parent_', dir='.')
-        os.close(fd)
-        (fd, self.tempfilename_external) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_external_', dir='.')
-        os.close(fd)
-
-
-    def tearDown(self):
-        os.remove(self.tempfilename)
-        os.remove(self.tempfilename_parent)
-        os.remove(self.tempfilename_external)
-
 
     def test_EXTERNAL_READ(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -116,7 +124,6 @@ class ExternalVariableTest(unittest.TestCase):
         for i in range(len(f)):
             self.assertTrue(c[i].equals(f[i], verbose=3))
 
-
     def test_EXTERNAL_WRITE(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -127,8 +134,8 @@ class ExternalVariableTest(unittest.TestCase):
         # External file contains only the cell measure variable
         f = cfdm.read(self.parent_file, external=self.external_file)
 
-        cfdm.write(f, self.tempfilename)
-        g = cfdm.read(self.tempfilename)
+        cfdm.write(f, tempfile)
+        g = cfdm.read(tempfile)
 
         self.assertEqual(len(g), len(combined))
 
@@ -145,18 +152,18 @@ class ExternalVariableTest(unittest.TestCase):
 
         self.assertTrue(g[0].constructs.filter_by_identity('measure:area').value().nc_get_external())
 
-        cfdm.write(g, self.tempfilename_parent,
-                   external=self.tempfilename_external,
+        cfdm.write(g, tempfile_parent,
+                   external=tempfile_external,
                    verbose=False)
 
-        h = cfdm.read(self.tempfilename_parent, verbose=False)
+        h = cfdm.read(tempfile_parent, verbose=False)
 
         self.assertEqual(len(h), len(parent))
 
         for i in range(len(h)):
             self.assertTrue(parent[i].equals(h[i], verbose=3))
 
-        h = cfdm.read(self.tempfilename_external)
+        h = cfdm.read(tempfile_external)
         external = cfdm.read(self.external_file)
 
         self.assertEqual(len(h), len(external))

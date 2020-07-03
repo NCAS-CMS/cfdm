@@ -709,7 +709,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.set_properties({'units': 'days since 1970-01-01 00:00:00'})
         data_mask = Data(
             [[[False, False],
               [False, False],
@@ -2826,7 +2825,8 @@ def example_field(n, _implementation=_implementation):
         c.set_geometry('polygon')
         b = Bounds()
         b.set_properties(
-            {'units': 'degrees_north', 'standard_name': 'latitude',
+            {'units': 'degrees_north',
+             'standard_name': 'latitude',
              'axis': 'Y'}
         )
         d = Data(
@@ -2878,7 +2878,8 @@ def example_field(n, _implementation=_implementation):
         c.set_geometry('polygon')
         b = Bounds()
         b.set_properties(
-            {'units': 'degrees_east', 'standard_name': 'longitude',
+            {'units': 'degrees_east',
+             'standard_name': 'longitude',
              'axis': 'X'}
         )
         d = Data(
@@ -2935,7 +2936,9 @@ def example_field(n, _implementation=_implementation):
         c.set_geometry('polygon')
         b = Bounds()
         b.set_properties(
-            {'units': 'm', 'standard_name': 'altitude', 'axis': 'Z'})
+            {'units=': 'm',
+             'standard_name': 'altitude',
+             'axis': 'Z'})
         d = Data(
             [[[1.0, 2.0, 4.0, 9.969209968386869e+36],
               [2.0, 3.0, 4.0, 5.0],
@@ -2986,8 +2989,6 @@ def example_field(n, _implementation=_implementation):
         c.set_data(d)
         c.nc_set_variable('time')
         b = Bounds()
-        b.set_properties(
-            {'units': 'days since 2000-01-01', 'calendar': 'gregorian'})
         d = Data(
             [[0.0, 31.0], [31.0, 60.0], [60.0, 91.0], [91.0, 121.0]],
             units='days since 2000-01-01', calendar='gregorian', dtype='f8'
@@ -3076,7 +3077,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(d)
         b = Bounds()
-        b.set_properties({'units': 'degrees_north'})
         d = Data(
             [[[52.6378, 52.198, 52.2097, 52.6496],
               [52.6496, 52.2097, 52.217, 52.6569],
@@ -3120,7 +3120,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(d)
         b = Bounds()
-        b.set_properties({'units': 'degrees_east'})
         d = Data(
             [[[7.6928, 7.7155, 8.4332, 8.4176],
               [8.4176, 8.4332, 9.1512, 9.1428],
@@ -3163,8 +3162,6 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(d)
         b = Bounds()
-        b.set_properties(
-            {'units': 'days since 1979-1-1', 'calendar': 'gregorian'})
         d = Data(
             [[120.0, 121.0], [121.0, 122.0], [122.0, 123.0]],
             units='days since 1979-1-1', calendar='gregorian', dtype='f8'
@@ -3194,7 +3191,6 @@ def example_field(n, _implementation=_implementation):
         d = Data([0.44, 0.0, -0.44, -0.88], units='degrees', dtype='f8')
         c.set_data(d)
         b = Bounds()
-        b.set_properties({'units': 'degrees'})
         d = Data(
             [[0.66, 0.22], [0.22, -0.22], [-0.22, -0.66], [-0.66, -1.1]],
             units='degrees', dtype='f8'
@@ -3214,7 +3210,6 @@ def example_field(n, _implementation=_implementation):
             [-1.18, -0.74, -0.3, 0.14, 0.58], units='degrees', dtype='f8')
         c.set_data(d)
         b = Bounds()
-        b.set_properties({'units': 'degrees'})
         d = Data(
             [[-1.4, -0.96], [-0.96, -0.52], [-0.52, -0.08], [-0.08, 0.36],
              [0.36, 0.8]],

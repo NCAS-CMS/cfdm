@@ -1,3 +1,4 @@
+import atexit
 import datetime
 import os
 import tempfile
@@ -8,6 +9,24 @@ import netCDF4
 
 import cfdm
 
+
+n_tmpfiles = 1
+tmpfiles = [tempfile.mktemp('_test_gathering.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(tempfile,
+) = tmpfiles
+
+def _remove_tmpfiles():
+    '''Remove temporary files created during tests.
+
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+atexit.register(_remove_tmpfiles)
 
 class DSGTest(unittest.TestCase):
     def setUp(self):
@@ -25,10 +44,6 @@ class DSGTest(unittest.TestCase):
         self.contiguous = 'DSG_timeSeries_contiguous.nc'
         self.indexed = 'DSG_timeSeries_indexed.nc'
         self.indexed_contiguous = 'DSG_timeSeriesProfile_indexed_contiguous.nc'
-
-        (fd, self.tempfilename) = tempfile.mkstemp(
-            suffix='.nc', prefix='cfdm_', dir='.')
-        os.close(fd)
 
         a = numpy.ma.masked_all((4, 9), dtype=float)
         a[0, 0:3] = [0.0, 1.0, 2.0]
@@ -124,9 +139,6 @@ class DSGTest(unittest.TestCase):
 
         self.test_only = []
 
-    def tearDown(self):
-        os.remove(self.tempfilename)
-
     def test_DSG_contiguous(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -141,8 +153,8 @@ class DSGTest(unittest.TestCase):
 
         self.assertTrue(q._equals(self.a, q.data.array))
 
-        cfdm.write(f, self.tempfilename)
-        g = cfdm.read(self.tempfilename)
+        cfdm.write(f, tempfile)
+        g = cfdm.read(tempfile)
 
         self.assertEqual(len(g), len(f))
 
@@ -184,7 +196,7 @@ class DSGTest(unittest.TestCase):
         # Set the data for the field
         tas.set_data(cfdm.Data(array), axes=[Y, X])
 
-        cfdm.write(tas, self.tempfilename)
+        cfdm.write(tas, tempfile)
 
     def test_DSG_indexed(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -200,8 +212,8 @@ class DSGTest(unittest.TestCase):
 
         self.assertTrue(q._equals(q.data.array, self.a))
 
-        cfdm.write(f, self.tempfilename)
-        g = cfdm.read(self.tempfilename)
+        cfdm.write(f, tempfile)
+        g = cfdm.read(tempfile)
 
         self.assertEqual(len(g), len(f))
 
@@ -225,8 +237,8 @@ class DSGTest(unittest.TestCase):
         message = repr(qa-self.b) +'\n'+repr(qa[2,0])+'\n'+repr(self.b[2, 0])
         self.assertTrue(q._equals(qa, self.b), message)
 
-        cfdm.write(f, self.tempfilename)
-        g = cfdm.read(self.tempfilename)
+        cfdm.write(f, tempfile)
+        g = cfdm.read(tempfile)
 
         self.assertEqual(len(g), len(f))
 

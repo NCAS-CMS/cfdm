@@ -1,3 +1,4 @@
+import atexit
 import datetime
 import inspect
 import os
@@ -7,6 +8,25 @@ import unittest
 import numpy
 
 import cfdm
+
+
+n_tmpfiles = 1
+tmpfiles = [tempfile.mktemp('_test_netCDF.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(tempfile,
+) = tmpfiles
+
+def _remove_tmpfiles():
+    '''Remove temporary files created during tests.
+
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+atexit.register(_remove_tmpfiles)
 
 
 class StringTest(unittest.TestCase):
@@ -23,15 +43,6 @@ class StringTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
         self.test_only = []
-
-        (fd, self.tempfilename) = tempfile.mkstemp(
-            suffix='.nc', prefix='cfdm_', dir='.')
-        os.close(fd)
-
-
-    def tearDown(self):
-        os.remove(self.tempfilename)
-
 
     def test_STRING(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -83,16 +94,14 @@ class StringTest(unittest.TestCase):
 
             tas.set_construct(aux0, axes=[axis_Y])
 
-            cfdm.write(tas, self.tempfilename)
+            cfdm.write(tas, tempfile)
 
-            tas1 = cfdm.read(self.tempfilename)[0]
+            tas1 = cfdm.read(tempfile)[0]
 
             aux1 = tas1.constructs.filter_by_identity(
                 'long_name=Grid latitude name').value()
             self.assertEqual(aux0.data.shape, array.shape, aux0.data.shape)
             self.assertEqual(aux1.data.shape, array.shape, aux1.data.shape)
-        #--- End: for
-
 
 #--- End: class
 

@@ -1,11 +1,32 @@
+import atexit
 import copy
 import datetime
 import inspect
 import logging
 import os
+import tempfile
 import unittest
 
 import cfdm
+
+
+n_tmpfiles = 1
+tmpfiles = [tempfile.mktemp('_test_groups.nc', dir=os.getcwd())
+            for i in range(n_tmpfiles)]
+(temp_file,
+) = tmpfiles
+
+def _remove_tmpfiles():
+    '''Remove temporary files created during tests.
+
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+atexit.register(_remove_tmpfiles)
 
 
 class FunctionsTest(unittest.TestCase):
@@ -186,6 +207,12 @@ class FunctionsTest(unittest.TestCase):
             _ = f.data.array
             _ = f.dump(display=False)
 
+            cfdm.write(f, temp_file)
+            g = cfdm.read(temp_file)
+
+            self.assertEqual(len(g), 1)
+            self.assertTrue(f.equals(g[0], verbose=3), 'n={}'.format(n))
+            
         with self.assertRaises(Exception):
             _ = cfdm.example_field(top + 1)
 
