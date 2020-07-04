@@ -108,12 +108,6 @@ class Constructs(object):
             self._construct_type = source._construct_type.copy()
             self._constructs = source._constructs.copy()
 
-            # for construct_type in self._ignore:
-            #     self._key_base.pop(construct_type, None)
-            #     self._array_constructs.discard(construct_type)
-            #     self._non_array_constructs.discard(construct_type)
-            #     self._ordered_constructs.discard(construct_type)
-
             d = {}
             for construct_type in source._array_constructs:
                 if construct_type in self._ignore:
@@ -160,11 +154,6 @@ class Constructs(object):
                     for cid, construct in (
                             source._constructs[construct_type].items()):
                         new_v[cid] = construct.copy()
-#                    new_v = {
-#                        cid: construct.copy()
-#                        for cid, construct in (
-#                            source._constructs[construct_type].items())
-#                    }
                 else:
                     new_v = source._constructs[construct_type].copy()
 
@@ -599,16 +588,6 @@ class Constructs(object):
     >>> key = f.set_construct(c, key='cellmeasure0')
 
         '''
-#    extra_axes: `int`, optional
-#        The number of extra, trailing data array axes that do **not**
-#        correspond to a domain axis specified by the *axes*
-#        parameter. For example, a coordinate bounds data array may has
-#        one or two extra axes. By default it assumed that there are no
-#        extra axes.
-#
-#          *Parameter example:*
-#             ``extra_axes=1``
-
         construct_type = self._check_construct_type(construct.construct_type)
 
         if key is None:
@@ -619,12 +598,6 @@ class Constructs(object):
             # ---------------------------------------------------------
             # The construct could have a data array
             # ---------------------------------------------------------
-            # if axes is None:
-            #     raise ValueError(
-            #         "Can't set {} construct: Must specify the domain axes "
-            #         "for the data array".format(
-            #             self._construct_type_description(construct_type))
-            #     )
             if axes is not None:
                 self._set_construct_data_axes(key=key, axes=axes,
                                               construct=construct)

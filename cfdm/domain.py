@@ -150,8 +150,6 @@ class Domain(mixin.ConstructAccess,
             string.append('Domain ancils   : {}'.format(
                 '\n                : '.join(x)))
 
-#        string.append('')
-
         return '\n'.join(string)
 
     def _dump_axes(self, axis_names, display=True, _level=0):

@@ -1137,38 +1137,6 @@ class Field(mixin.NetCDFVariable,
                                f.get_data_axes()[:-1],
                                _RaggedIndexedArray,
                                index_variable=index_variable)
-
-#            axes = f.get_data_axes()[:-1]
-#            for key, c in f.constructs.filter_by_axis('or').items():
-#                c_axes = f.get_data_axes(key)
-#                if c_axes != axes:
-#                    # Skip metadata constructs which don't span
-#                    # exactly the same axes in the same order
-#                    continue
-#
-#                # Initialize the compressed data for the metadata
-#                # construct
-#                data = c.data
-#                compressed_data = _empty_compressed_data(data, len(index))
-#
-#                # Populate the compressed data for the metadata
-#                # construct
-#                start = 0
-#                c_start = 0
-#                for i, d in enumerate(data.flatten(range(data.ndim-1))):
-#                    c_start = shape1 * i
-#                    c_end = c_start + shape1
-#                    last = sum(n > 0 for n in count[c_start:c_end])
-#
-#                    end = start + last
-#                    compressed_data[start:end] = d[:last]
-#                    start += last
-#
-#                # Insert the compressed data into the metadata
-#                # construct
-#                y = _RaggedIndexedArray(compressed_data, data,
-#                                        index_variable=index_variable)
-#                data._create_partition_matrix_for_compressed_array(y)
         # --- End: if
 
         elif method == 'gathered':
@@ -1284,17 +1252,8 @@ class Field(mixin.NetCDFVariable,
         # Data
         data = self.get_data(None)
         if data is not None:
-            x = [
-                axis_to_name[axis] for axis in self.get_data_axes(default=())]
-
-#            units = self.get_property('units', None)
-#            if units is None:
-#                isreftime = bool(self.get_property('calendar', False))
-#            else:
-#                isreftime = 'since' in units
-#
-#            if isreftime:
-#                data = data.asdata(data.datetime_array)
+            x = [axis_to_name[axis]
+                 for axis in self.get_data_axes(default=())]
 
             string.append('')
             string.append('{0}Data({1}) = {2}'.format(indent0,

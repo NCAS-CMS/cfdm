@@ -432,105 +432,6 @@ class Constructs(core.Constructs):
 
         return out
 
-#    def domain_axis_key(self, identity, default=ValueError()):
-#        '''Return the key of the domain axis construct that is spanned
-#    by 1-d coordinate constructs.
-#
-#    .. versionadded:: 1.7.8
-#
-#    .. seealso:: `domain_axis_identity`
-#
-#    :Parameters:
-#
-#        identity:
-#
-#            Select the 1-d coordinate constructs that have the given
-#            identity.
-#
-#            An identity is specified by a string (e.g. ``'latitude'``,
-#            ``'long_name=time'``, etc.); or a compiled regular expression
-#            (e.g. ``re.compile('^atmosphere')``), for which all constructs
-#            whose identities match (via `re.search`) are selected.
-#
-#            Each coordinate construct has a number of identities, and is
-#            selected if any of them match any of those provided. A
-#            construct's identities are those returned by its `!identities`
-#            method. In the following example, the construct ``x`` has four
-#            identities:
-#
-#               >>> x.identities()
-#               ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
-#
-#            In addition, each construct also has an identity based its
-#            construct key (e.g. ``'key%dimensioncoordinate2'``)
-#
-#            Note that in the output of a `print` call or `!dump` method, a
-#            construct is always described by one of its identities, and so
-#            this description may always be used as an *identity* argument.
-#
-#        default: optional
-#            Return the value of the *default* parameter if a domain axis
-#            construct can not be found. If set to an `Exception` instance
-#            then it will be raised instead.
-#
-#    :Returns:
-#
-#        `str`
-#            The key of the domain axis construct that is spanned by the
-#            data of the selected 1-d coordinate constructs.
-#
-#    **Examples:**
-#
-#    TODO
-#
-#        '''
-#        # Select 1-d coordinate constructs with the given identity
-#        c = self.filter_by_type('dimension_coordinate',
-#                                'auxiliary_coordinates')
-#        c = c.filter_by_naxes(1)
-#        c = c.filter_by_identity(identity)
-#
-#        if not len(c) :
-#            return self._default(
-#                default,
-#                "No 1-d coordinate constructs have identity {!r}".format(
-#                    identity)
-#            )
-#
-#        data_axes = self.data_axes()
-#        domain_axes = self.filter_by_type('domain_axis')
-#
-#        keys = []
-#        for ckey, coord in c.items():
-#            axes = data_axes.get(ckey)
-#            if not axes:
-#                continue
-#
-#            key = axes[0]
-#            if domain_axes.get(key):
-#                keys.append(key)
-#        # --- End: for
-#
-#        keys = set(keys)
-#
-#        if not keys:
-#            return self._default(
-#                default,
-#                "1-d coordinate constructs selected with identity {!r} "
-#                "have not been assigned a domain axis constructs".format(
-#                    coord)
-#            )
-#
-#        if len(keys) > 1:
-#            return self._default(
-#                default,
-#                "Multiple 1-d coordinate constructs selected with "
-#                "identity {!r} span multiple domain axes: {!r}".format(
-#                    identity, keys)
-#            )
-#
-#        return keys.pop()
-
     def domain_axis_identity(self, key):
         '''Return the canonical identity for a domain axis construct.
 
@@ -788,8 +689,6 @@ class Constructs(core.Constructs):
                                        len(role_constructs0),
                                        len(role_constructs1)))
                         break
-#                    elif not role_constructs0:
-#                        break
 
                     # Note: the following set of log calls are not warnings
                     # as such, but set them as warnings so they only emerge
@@ -835,7 +734,6 @@ class Constructs(core.Constructs):
 
                     # Still here? Then all constructs of this type
                     # that spanning these axes match
-#                    del constructs1[construct_type]
                     constructs1.pop(construct_type, None)
                 # --- End: for
 
@@ -1001,7 +899,6 @@ class Constructs(core.Constructs):
         _or = False
         _exact = False
         _subset = False
-#        _superset = False
 
         if not axes and mode is None:
             mode = 'and'
@@ -1016,8 +913,6 @@ class Constructs(core.Constructs):
             _exact = True
         elif mode == 'subset':
             _subset = True
-        # elif mode == 'superset':
-            # _superset = True
         else:
             raise ValueError(
                 "mode parameter must be one of 'and', 'or', 'exact', subset'")
@@ -1054,9 +949,6 @@ class Constructs(core.Constructs):
             elif _subset:
                 if not set(x).issubset(axes):
                     ok = False
-#            elif _superset:
-#                if not set(x).issuperset(axes):
-#                    ok = False
             else:
                 for axis_key in axes:
                     ok = axis_key in x
@@ -1356,8 +1248,6 @@ class Constructs(core.Constructs):
                 continue
 
             if not measures:
-                # if not construct.has_measure():
-                #     out._pop(cid)
                 continue
 
             ok = False
@@ -1458,8 +1348,6 @@ class Constructs(core.Constructs):
                 continue
 
             if not methods:
-                # if not construct.has_method():
-                #     out._pop(cid)
                 continue
 
             ok = False
@@ -1537,8 +1425,6 @@ class Constructs(core.Constructs):
 
             x = constructs_data_axes.get(key)
             if x is None:
-                # This construct does not have data axes
-                # out._pop(key)
                 continue
 
             ok = True
@@ -1618,9 +1504,6 @@ class Constructs(core.Constructs):
                 continue
 
             if not ncdims:
-                # if not construct.nc_has_dimension():
-                #     out._pop(cid)
-
                 continue
 
             ok = False
@@ -1699,8 +1582,6 @@ class Constructs(core.Constructs):
                 continue
 
             if not ncvars:
-                # if not construct.nc_has_variable():
-                #     out._pop(cid)
                 continue
 
             ok = False
@@ -1831,8 +1712,6 @@ class Constructs(core.Constructs):
                 continue
 
             if not properties:
-                # if not construct.properties():
-                #     out._pop(cid)
                 continue
 
             ok = True
@@ -1910,8 +1789,6 @@ class Constructs(core.Constructs):
                 continue
 
             if not sizes:
-                # if not construct.has_size():
-                #     out._pop(cid)
                 continue
 
             ok = False

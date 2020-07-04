@@ -1,5 +1,3 @@
-#from future.utils import with_metaclass
-
 import abc
 
 from copy import deepcopy
@@ -7,7 +5,6 @@ from copy import deepcopy
 from . import Container
 
 
-#class Parameters(with_metaclass(abc.ABCMeta, Container)):
 class Parameters(Container, metaclass=abc.ABCMeta):
     '''Abstract base class for a collection of named parameters.
 

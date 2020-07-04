@@ -57,7 +57,7 @@ class PropertiesData(Properties):
     (1, 10, 1)
 
         '''
-        new = self.copy()  # data=False)
+        new = self.copy()
 
         data = self.get_data(None)
         if data is not None:
@@ -110,12 +110,6 @@ class PropertiesData(Properties):
             The conformed axes.
 
         '''
-#        ndim = self.data.ndim
-#        ndim = self.ndim
-
-#        if axes is None:
-#            return list(range(ndim))
-
         if axes is None:
             return axes
 

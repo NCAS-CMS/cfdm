@@ -774,9 +774,6 @@ class NetCDFVariable(NetCDF,
         '''
         return self._nc_groups(nc_get=self.nc_get_variable)
 
-#        name = self.nc_get_variable('')
-#        return tuple(name.split('/')[1:-1])
-
     def nc_set_variable_groups(self, groups):
         '''Set the netCDF variable group hierarchy.
 
@@ -834,22 +831,6 @@ class NetCDFVariable(NetCDF,
                                    nc_set=self.nc_set_variable,
                                    nc_groups=self.nc_variable_groups)
 
-#        old =  self.nc_variable_groups()
-#
-#        name = self.nc_get_variable('')
-#        name = name.split('/')[-1]
-#        if not name:
-#            raise ValueError("Can't set variable groups when there is "
-#                             "no variable name")
-#
-#        if groups:
-#            name = '/'.join(('',) + tuple(groups) + (name,))
-#
-#        if name:
-#            self.nc_set_variable(name)
-#        
-#        return old    
-
     def nc_clear_variable_groups(self):
         '''Remove the netCDF variable group hierarchy.
 
@@ -902,15 +883,6 @@ class NetCDFVariable(NetCDF,
             nc_set=self.nc_set_variable,
             nc_groups=self.nc_variable_groups)
     
-#        old =  self.nc_variable_groups()
-#        
-#        name = self.nc_get_variable('')
-#        name = name.split('/')[-1]
-#        if name:
-#            self.nc_set_variable(name)
-#        
-#        return old
-#
 # --- End: class
 
 

@@ -282,7 +282,6 @@ def read(filename, external=None, extra=None, verbose=None,
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
                              warn_valid=warn_valid, mask=mask,
-#                             absolute_netCDF_names=absolute_netCDF_names,
                              extra_read_vars=None)
     elif cdl:
         raise IOError(
