@@ -1,5 +1,3 @@
-#from future.utils import with_metaclass
-
 import abc
 
 import numpy
@@ -7,7 +5,6 @@ import numpy
 from ...core.data import Array as core_Array
 
 
-#class Array(with_metaclass(abc.ABCMeta, core_Array)):
 class Array(core_Array, metaclass=abc.ABCMeta):
     '''Abstract base class for a container of an underlying array.
 
@@ -171,11 +168,6 @@ class Array(core_Array, metaclass=abc.ABCMeta):
 
         '''
         if indices is not Ellipsis:
-            # if indices is Ellipsis:
-            #     pass
-            # elif not isinstance(indices, tuple):
-            #     array = array[indices]
-            # else:
             axes_with_list_indices = [i for i, x in enumerate(indices)
                                       if not isinstance(x, slice)]
             n_axes_with_list_indices = len(axes_with_list_indices)

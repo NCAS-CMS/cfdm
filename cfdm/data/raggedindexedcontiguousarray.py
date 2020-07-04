@@ -51,12 +51,6 @@ class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
             corresponding to a CF-netCDF CF-netCDF index variable.
 
         '''
-#        if not isinstance(compressed_array, abstract.Array):
-#            if not isinstance(compressed_array, numpy.ndarray):
-#                compressed_array = numpy.asanyarray(compressed_array)
-#
-#            compressed_array = NumpyArray(compressed_array)
-
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
                          count_variable=count_variable,

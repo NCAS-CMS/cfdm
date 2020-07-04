@@ -28,12 +28,6 @@ class Container(metaclass=abc.ABCMeta):
                 custom = {}
             else:
                 custom = custom.copy()
-#                if custom:
-#                        custom = deepcopy(custom)
-#                    else:
-#                        custom = custom.copy()
-#                else:
-#                    custom = {}
         else:
             custom = {}
 

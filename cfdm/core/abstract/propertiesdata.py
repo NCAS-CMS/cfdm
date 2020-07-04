@@ -1,11 +1,8 @@
-#from future.utils import with_metaclass
-
 import abc
 
 from . import Properties
 
 
-#class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 class PropertiesData(Properties, metaclass=abc.ABCMeta):
     '''Abstract base class for a data array with descriptive properties.
 
@@ -350,9 +347,6 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
         '''
         if copy:
             data = data.copy()
-
-#        data.set_units(None) # TODO
-#        data.set_calendar(None) # TODO
 
         self._set_component('data', data, copy=False)
 

@@ -50,7 +50,6 @@ class Container():
         '''
         return rtol()
 
-#    @classmethod
     def _equals(self, x, y, rtol=None, atol=None,
                 ignore_data_type=False, **kwargs):
         '''Whether two objects are the same.
@@ -111,10 +110,6 @@ class Container():
                 pass
             return eq(x, **kwargs)
 
-#        print (type(x), type(y))
-#        print (repr(x), repr(y))
-#        print (numpy.shape(x))
-#        print (numpy.shape(y))
         if numpy.shape(x) != numpy.shape(y):
             return False
 
