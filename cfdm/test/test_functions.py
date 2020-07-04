@@ -113,10 +113,10 @@ class FunctionsTest(unittest.TestCase):
             self.assertEqual(cfdm.LOG_LEVEL(value), previous)
             previous = cfdm.LOG_LEVEL()  # update previous value
 
-            # Some conversions to equivalent, standardised return
-            # value:
-            if isinstance(value, int):  # LOG_LEVEL returns the string not int
-                value = cfdm.constants.numeric_log_level_map[value]
+            # Some conversions to equivalent, standardised return value:
+            if (isinstance(value, int) and
+                cfdm._is_valid_log_level_int(value)):  # LOG_LEVEL returns str
+                value = cfdm.constants.ValidLogLevels(value).name  # convert
             if isinstance(value, str):  # LOG_LEVEL returns all caps string
                 value = value.upper()
             self.assertEqual(previous, value)
