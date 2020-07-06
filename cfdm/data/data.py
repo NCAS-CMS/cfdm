@@ -846,14 +846,14 @@ class Data(mixin.Container,
     :Returns:
 
         `Data`
-            TODO
+            The Boolean mask as data.
 
     **Examples:**
 
-   >>> d = Data(numpy.ma.array([[280.0,   -99,   -99,   -99],
-                                [281.0, 279.0, 278.0, 279.5]],
-                mask=[[0, 1, 1, 1],
-                      [0, 0, 0, 0]]))
+    >>> d = Data(numpy.ma.array([[280.0,   -99,   -99,   -99],
+                                 [281.0, 279.0, 278.0, 279.5]],
+                 mask=[[0, 1, 1, 1],
+                       [0, 0, 0, 0]]))
     >>> d
     <Data(2, 4): [[280.0, ..., 279.5]]>
     >>> print(d.array)

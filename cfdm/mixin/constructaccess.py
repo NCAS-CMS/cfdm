@@ -529,7 +529,20 @@ class ConstructAccess():
 
     **Examples:**
 
-    TODO
+    >>> print(f.constructs())
+    Constructs:
+    {'dimensioncoordinate0': <DimensionCoordinate: time(1) days since 1964-01-21 00:00:00 >,
+     'dimensioncoordinate1': <DimensionCoordinate: pressure(23) mbar>,
+     'dimensioncoordinate2': <DimensionCoordinate: latitude(160) degrees_north>,
+     'dimensioncoordinate3': <DimensionCoordinate: longitude(320) degrees_east>,
+     'domainaxis0': <DomainAxis: size(1)>,
+     'domainaxis1': <DomainAxis: size(23)>,
+     'domainaxis2': <DomainAxis: size(160)>,
+     'domainaxis3': <DomainAxis: size(320)>}
+    >>> f.domain.domain_axis_key('time')
+    'domainaxis0'
+    >>> f.domain.domain_axis_key('longitude')
+    'domainaxis3'
 
         '''
         constructs = self.constructs

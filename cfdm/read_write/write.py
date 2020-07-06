@@ -73,7 +73,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     dataset. See the *group* parameter for details.
 
 
-    **NetCDF4 HDF chunk sizes**
+    **NetCDF4 HDF chunksizes**
 
     HDF5 chunksizes may be set on construct's data. See the
     `~cfdm.Data.nc_hdf5_chunksizes`,

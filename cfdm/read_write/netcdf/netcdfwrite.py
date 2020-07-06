@@ -2351,7 +2351,7 @@ class NetCDFWrite(IOWrite):
         else:
             lsd = None
 
-        # Set HDF chunk sizes
+        # Set HDF chunksizes
         chunksizes = None
         if data is not None:
             chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
