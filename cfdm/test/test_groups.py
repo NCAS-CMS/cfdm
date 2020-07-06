@@ -48,7 +48,6 @@ class GroupsTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.LOG_LEVEL('DISABLE')
 
-#    @unittest.skip("skipping")
     def test_groups(self):
         f = cfdm.example_field(1)
 
@@ -139,7 +138,6 @@ class GroupsTest(unittest.TestCase):
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
 
-#    @unittest.skip("skipping")
     def test_groups_geometry(self):
         f = cfdm.example_field(6)
     
@@ -268,15 +266,11 @@ class GroupsTest(unittest.TestCase):
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
 
-#    @unittest.skip("skipping")
     def test_groups_compression(self):
         f = cfdm.example_field(4)
 
         ungrouped_file = ungrouped_file3
         grouped_file = grouped_file3
-
-        ungrouped_file = 'ungrouped_file3.nc'
-        grouped_file = 'grouped_file3.nc'
 
         f.compress('indexed_contiguous', inplace=True)
         f.data.get_count().nc_set_variable('count')
@@ -337,12 +331,11 @@ class GroupsTest(unittest.TestCase):
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
 
-#    @unittest.skip("skipping")
     def test_groups_dimension(self):
         f = cfdm.example_field(0)
 
-        ungrouped_file = 'ungrouped_file4.nc'
-        grouped_file = 'grouped_file4.nc'
+        ungrouped_file = ungrouped_file4
+        grouped_file = grouped_file4
         
         cfdm.write(f, ungrouped_file)
         g = cfdm.read(ungrouped_file, verbose=1)
