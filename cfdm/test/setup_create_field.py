@@ -31,7 +31,6 @@ class create_fieldTest(unittest.TestCase):
         except:
             pass
 
-
     def test_create_field(self):
 
         # Dimension coordinates
