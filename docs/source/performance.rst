@@ -26,12 +26,12 @@ data arrays, which means that no data is read into memory until the
 data is required for inspection or to modify the array contents. This
 maximises the number of :term:`field constructs <field construct>`
 that may be read within a session, and makes the read operation
-fast. If a :ref:`subspace <Subspacing>` of the data in the file is
+fast. If a :ref:`subspace <Subspacing>` of data still in the file is
 requested then only that subspace is read into memory. These
 behaviours are inherited from the `netCDF4 python package
 <http://unidata.github.io/netcdf4-python/netCDF4/index.html>`_.
 
-When an instance is copied with its `!copy` method, any data are
+When an instance is copied with its `!copy` method, all data are
 copied with a `copy-on-write
 <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This means
 that a copy takes up very little memory, even when the original data
@@ -54,7 +54,7 @@ in-place operation can be considerably faster. These methods have the
   
 For example, in one particular test using a dataset from the
 :ref:`tutorial <Tutorial>`, transposing the data dimensions of the
-field construct was ~10 times faster when done in-place, compared with
+field construct was ~11 times faster when done in-place, compared with
 creating a new independent field construct:
 
 .. code-block:: python
@@ -68,6 +68,7 @@ creating a new independent field construct:
    >>> q, t = cfdm.read('file.nc')
    >>> t.data.to_memory()
    >>> min(timeit.repeat('t.transpose()', globals=globals(), number=1000))
-   1.3255651500003296
+   2.1561493259978306
    >>> min(timeit.repeat('t.transpose(inplace=True)', globals=globals(), number=1000))
-   0.10816403700118826
+   0.18915946600100142
+

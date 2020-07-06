@@ -18,8 +18,8 @@ Version |release| for version |version| of the CF conventions.
    :local:
    :backlinks: entry
 
-**Core and extended implementations**
--------------------------------------
+**Two levels of implementation**
+--------------------------------
 	       
 The basic requirement of the reference implementation is to represent
 the logical :ref:`CF data model <CF-data-model>` in memory with a
@@ -32,10 +32,11 @@ In order to satisfy both needs there is a stand-alone core
 implementation, the :ref:`cfdm.core <class_core>` package, that
 includes no functionality beyond that mandated by the CF data model
 (and therefore excludes any information about the netCDF encoding of
-field constructs). This core implementation provides the basis for an
-extended implementation, the :ref:`cfdm <class_extended>` package,
-that allows the reading and writing of netCDF datasets, as well as
-having comprehensive inspection capabilities.
+field constructs). The core implementation provides the basis (via
+inheritance) for the :ref:`cfdm <class_extended>` package that allows,
+in addition, the reading and writing of netCDF datasets, as well as
+comprehensive inspection capabilities and extra field construct
+modification capabilities.
 
 ----
 
@@ -69,7 +70,7 @@ The cfdm package is not, and is not meant to be, a general analysis
 package. Therefore it can't, for example, regrid field constructs to
 new domains, perform statistical collapses, combine field constructs
 arithmetically, etc. It has, however, been designed to be
-:ref:`subclassable <subclassing>` to facilitate the creation of other
+:ref:`extensible <Extensions>` to facilitate the creation of other
 packages that build on this cfdm implementation whilst also adding
 extra, higher level functionality.
 
