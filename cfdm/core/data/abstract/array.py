@@ -1,11 +1,8 @@
-#from future.utils import with_metaclass
-
 import abc
 
 from ...abstract import Container
 
 
-#class Array(with_metaclass(abc.ABCMeta, Container)):
 class Array(Container, metaclass=abc.ABCMeta):
     '''Abstract base class for a container of an array.
 

@@ -1,11 +1,8 @@
-#from future.utils import with_metaclass
-
 import abc
 
 from . import PropertiesData
 
 
-#class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
 class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     '''Abstract base class for a data array with bounds and descriptive
     properties.

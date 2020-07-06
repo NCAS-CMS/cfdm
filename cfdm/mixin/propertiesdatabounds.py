@@ -187,12 +187,7 @@ class PropertiesDataBounds(PropertiesData):
             if data is not None:
                 # There is a bounds array
                 bounds_indices = list(data._parse_indices(indices))
-#                if self_bounds.has_geometry():
-#                    bounds_indices[-2] = [Ellipsis]
-#                else:
-#                    bounds_indices[-1] = Ellipsis
 
-#                if data.ndim <= 1 and not self.has_geometry():
                 if data.ndim <= 2:
                     index = bounds_indices[0]
                     if isinstance(index, slice):
@@ -229,35 +224,12 @@ class PropertiesDataBounds(PropertiesData):
         bounds = self.get_bounds(None)
         if data is not None:
             shape = data.shape
-        else:
-            pass
-#            bounds_data = bounds.get_data(None)
-#            if bounds_data is not None:
-#                shape = bounds_data.shape[:-1] # geometry TODO
-        # --- End: if
 
         if shape is not None:
             dims = ', '.join([str(x) for x in shape])
             dims = '({0})'.format(dims)
         else:
             dims = ''
-
-#        data = self.get_data(None)
-#        if data is not None:
-#            dims = ', '.join([str(x) for x in data.shape])
-#            dims = '({0})'.format(dims)
-#        else:
-#            bounds = self.get_bounds(None)
-#            if bounds is not None:
-#                data = bounds.get_data(None)
-#                if data is not None:
-#                    dims = ', '.join([str(x) for x in data.shape[:-1]])
-#                    dims = '({0})'.format(dims)
-#                else:
-#                    dims = ''
-#            else:
-#                dims = ''
-#        # --- End: if
 
         # ------------------------------------------------------------
         # Units and calendar
@@ -1221,10 +1193,6 @@ class PropertiesDataBounds(PropertiesData):
             return super().get_bounds(default=default)
 
         inherited_properties = self.properties()
-#        bounds_properties = bounds.properties()
-#
-#        inherited_properties = {prop: value
-#                                for prop, value in properties.items()}
 
         bounds._set_component('inherited_properties', inherited_properties)
 

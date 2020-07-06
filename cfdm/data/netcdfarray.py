@@ -1,6 +1,3 @@
-#from future import standard_library
-#standard_library.install_aliases()
-
 import os
 import urllib.parse
 
@@ -192,27 +189,10 @@ class NetCDFArray(abstract.Array):
 
             array = netCDF4.chartostring(array)
             shape = array.shape
-#            array.resize((array.size,))
             array = numpy.array([x.rstrip() for x in array.flat], dtype='S')
             array = numpy.reshape(array, shape)
             array = numpy.ma.masked_where(array == b'', array)
 
-#            array.set_fill_value('')
-#            strlen = array.shape[-1]
-#
-#            new_shape = array.shape[0:-1]
-#            new_size  = int(reduce(operator.mul, new_shape, 1))
-#
-#            array = numpy.ma.resize(array, (new_size, strlen))
-#
-#            array = array.filled(fill_value='')
-#            print('array=', array)
-#            array = numpy.array([''.join(x).rstrip() for x in array],
-#                                dtype='S{0}'.format(strlen))
-#
-#            array = array.reshape(new_shape)
-#
-#            array = numpy.ma.where(array=='', numpy.ma.masked, array)
         elif not string_type and kind == 'O':
             # --------------------------------------------------------
             # A netCDF string type N-d (N>=1) variable comes out as a

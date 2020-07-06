@@ -1509,41 +1509,6 @@ class Data(mixin.Container,
 
         return out
 
-#    def get_HDF_chunks(self, dddd):
-#        '''Set HDF5 chunks for the data array.
-#
-#    Chunking refers to a storage layout where the data array is
-#    partitioned into fixed-size multi-dimensional chunks when written to a
-#    netCDF4 file on disk. Chunking is ignored if the data array is written
-#    to a netCDF3 format file.
-#
-#    A chunk has the same rank as the data array, but with fewer (or no
-#    more) elements along each axis. The chunk is defined by a dictionary
-#    in which each key identifies an axis (by its index in the data array
-#    shape) and its value is the chunk size (i.e. number of axis elements)
-#    for that axis.
-#
-#    If a given chunk size for an axis is larger than the axis size, then
-#    the size of the axis at the time of writing to disk will be used
-#    instead.
-#
-#    If chunk sizes have been specified for some but not all axes, then the
-#    each unspecified chunk size is assumed to be the full size of its
-#    axis.
-#
-#    If no chunk sizes have been set for any axes then the netCDF default
-#    chunk is used. See
-#    http://www.unidata.ucar.edu/software/netcdf/docs/netcdf_perf_chunking.html
-#
-#    A detailed discussion of HDF chunking and I/O performance is available
-#    at https://www.hdfgroup.org/HDF5/doc/H5.user/Chunking.html and
-#    http://www.unidata.ucar.edu/software/netcdf/workshops/2011/nc4chunking.
-#    Basically, you want the chunks for each dimension to match as closely as
-#    possible the size and shape of the data block that users will read from
-#    the file.
-#
-#        '''
-
     @_inplace_enabled
     def squeeze(self, axes=None, inplace=False):
         '''Remove size 1 axes from the data.
@@ -2327,92 +2292,6 @@ class Data(mixin.Container,
         '''
         '''
         self._set_Array(self.source().to_memory())
-
-#    def astype(self, dtype, casting='unsafe'):
-#        '''Cast the data to a specified type.
-#
-#    .. versionadded:: 1.7.0
-#
-#    .. seealso:: `dtype`
-#
-#    :Parameters:
-#
-#        dtype: `str` or `numpy.dtype`
-#            Typecode or data-type to which the array is cast.
-#
-#        casting : `str`, optional
-#            Controls what kind of data casting may occur. Defaults to
-#            'unsafe'.
-#
-#            ===============  =============================================
-#            *casting*        Casting rules
-#            ===============  =============================================
-#            ``'no'``         The data types should not be cast at all.
-#            ``'equiv'``      Only byte-order changes are allowed.
-#            ``'safe'``       Only casts which can preserve values are
-#                             allowed.
-#            ``'same_kind'``  Only safe casts or casts within a kind, like
-#                             float64 to float32, are allowed.
-#            ``'unsafe'``     Any data conversions may be done.
-#            ===============  =============================================
-#
-#    :Returns:
-#
-#        `None`
-#
-#    **Examples:**
-#
-#    >>> d = Data([1.5, 2, 2.5])
-#    >>> d.dtype
-#    dtype('float64')
-#    >>> print(d.array)
-#    [1.5 2.  2.5]
-#    >>> d.astype('int32')
-#    >>> d.dtype
-#    dtype('int32')
-#    >>> print(d.array)
-#    [1 2 2]
-#    >>> d.astype(float)
-#    >>> print(d.array)
-#    [1. 2. 2.]
-#
-#    >>> d = Data([1.5, 2, 2.5])
-#    >>> d.dtype
-#    dtype('float64')
-#    >>> d.astype('int', casting='safe')
-#    TypeError: Cannot cast array from dtype('float64') to dtype('int64') according to the rule 'safe'
-#
-#        '''
-#        dtype = numpy.dtype(dtype)
-#        if dtype != self.dtype:
-#            array = self.array.astype(dtype, casting=casting)
-#            self._set_Array(array, copy=False)
-
-#    def underlying(self, default=ValueError()):
-#        '''Return the array object.
-#
-#    :Parameters:
-#
-#        default: optional
-#            Return the value of the *default* parameter if the array
-#            has not been set. If set to an `Exception` instance then it
-#            will be raised instead.
-#
-#    :Returns:
-#
-#            The array object.
-#
-#    **Examples:**
-#
-#    >>> TODO
-#
-#        '''
-#        underlying_array = super().underlying_array(default=default)
-#
-#        if self.get_compression_type():
-#            return underlying_array.underlying_array(default=default)
-#
-#        return underlying_array
 
     @_inplace_enabled
     def uncompress(self, inplace=False):

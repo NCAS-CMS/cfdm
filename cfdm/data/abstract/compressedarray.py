@@ -1,5 +1,3 @@
-#from future.utils import with_metaclass
-
 import abc
 
 import numpy
@@ -7,7 +5,6 @@ import numpy
 from .array import Array
 
 
-#class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
 class CompressedArray(Array, metaclass=abc.ABCMeta):
     '''Abstract base class for a container of an underlying compressed
     array.

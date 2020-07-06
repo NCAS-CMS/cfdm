@@ -69,25 +69,6 @@ class DomainAxis(abstract.Container):
         '''
         return 'domain_axis'
 
-# This is inherited
-#    def copy(self):
-#        '''Return a deep copy.
-#
-#    ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
-#
-#    .. versionadded:: 1.7.0
-#
-#    :Returns:
-#
-#            The deep copy.
-#
-#    **Examples:**
-#
-#    >>> e = d.copy()
-#
-#        '''
-#        return type(self)(source=self, copy=True)
-
     def del_size(self, default=ValueError()):
         '''Remove the size.
 
