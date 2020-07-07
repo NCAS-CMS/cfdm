@@ -227,6 +227,99 @@ class FunctionsTest(unittest.TestCase):
         filename = 'https://test_file.nc'
         self.assertEqual(cfdm.abspath(filename), filename)
 
+    def test_configuration(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # Test getting of all config. and store original values to test on:
+        org = cfdm.configuration()
+        self.assertIsInstance(org, dict)
+        self.assertEqual(len(org), 3)
+        org_atol = org['atol']
+        self.assertIsInstance(org_atol, float)
+        org_rtol = org['rtol']
+        self.assertIsInstance(org_rtol, float)
+        org_ll = org['log_level']  # will be 'DISABLE' as disable for test
+        self.assertIsInstance(org_ll, str)
+
+        # Store some sensible values to reset items to for testing,
+        # ensure these are kept to be different to the defaults:
+        atol_rtol_reset_value = 7e-10
+        ll_reset_value = 'DETAIL'
+
+        # Test the setting of each lone item:
+        cfdm.configuration(atol=atol_rtol_reset_value)
+        post_set = cfdm.configuration()
+        self.assertEqual(post_set['atol'], atol_rtol_reset_value)
+        self.assertEqual(post_set['rtol'], org_rtol)
+        self.assertEqual(post_set['log_level'], org_ll)
+        cfdm.configuration(atol=org_atol)  # reset to org
+
+        cfdm.configuration(rtol=atol_rtol_reset_value)
+        post_set = cfdm.configuration()
+        self.assertEqual(post_set['atol'], org_atol)
+        self.assertEqual(post_set['rtol'], atol_rtol_reset_value)
+        self.assertEqual(post_set['log_level'], org_ll)
+        # don't reset to org this time to test change persisting...
+
+        # Note setting of previous items persist, e.g. atol above
+        cfdm.configuration(log_level=ll_reset_value)
+        post_set = cfdm.configuration()
+        self.assertEqual(post_set['atol'], org_atol)
+        self.assertEqual(
+            post_set['rtol'], atol_rtol_reset_value)  # since changed it above
+        self.assertEqual(post_set['log_level'], ll_reset_value)
+
+        # Test the setting of more than one, but not all, items simultaneously:
+        new_atol_rtol_reset_value = 5e-18
+        new_ll_reset_value = 'DEBUG'
+        cfdm.configuration(
+            rtol=new_atol_rtol_reset_value, log_level=new_ll_reset_value)
+        post_set = cfdm.configuration()
+        self.assertEqual(post_set['atol'], org_atol)
+        self.assertEqual(post_set['rtol'], new_atol_rtol_reset_value)
+        self.assertEqual(post_set['log_level'], new_ll_reset_value)
+
+        # Test setting all possible items simultaneously (to originals):
+        cfdm.configuration(
+            atol=org_atol,  # same as current setting, testing on 'no change'
+            rtol=org_rtol,
+            log_level=org_ll
+        )
+        post_set = cfdm.configuration()
+        self.assertEqual(post_set['atol'], org_atol)
+        self.assertEqual(post_set['rtol'], org_rtol)
+        self.assertEqual(post_set['log_level'], org_ll)
+
+        # Test edge cases & invalid inputs...
+        # ... 1. User might set '0' or 'True' in some cases, which is
+        # somewhat a risk area for error as 0 is Falsy & True a Bool:
+        cfdm.configuration(rtol=0, atol=0.0, log_level=0)
+        post_set = cfdm.configuration()
+        self.assertEqual(post_set['atol'], 0.0)
+        self.assertEqual(post_set['rtol'], 0.0)
+        self.assertEqual(post_set['log_level'], 'DISABLE')  # DISABLE == 0
+        cfdm.configuration(log_level=True)  # deprecated but valid value
+        # Deprecated True is converted to value 'WARNING' by log_level
+        self.assertEqual(cfdm.configuration()['log_level'], 'WARNING')
+
+        # 2. None as an input kwarg rather than as a default:
+        cfdm.configuration(atol=None, log_level=None, rtol=org_rtol)
+        post_set = cfdm.configuration()
+        self.assertEqual(post_set['atol'], 0.0)  # 0.0 as set above
+        self.assertEqual(post_set['rtol'], org_rtol)
+        self.assertEqual(post_set['log_level'], 'WARNING')  # as set above
+
+        # 3. Gracefully error with useful error messages with invalid inputs:
+        with self.assertRaises(ValueError):
+            cfdm.configuration(rtol='bad')
+        with self.assertRaises(ValueError):
+            cfdm.configuration(log_level=7)
+
+        # 4. Check invalid kwarg given logic processes **kwargs:
+        with self.assertRaises(TypeError):
+            cfdm.configuration(bad_kwarg=1e-15)
+
 #    def test_default_netCDF_fill_values(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
 #            return
