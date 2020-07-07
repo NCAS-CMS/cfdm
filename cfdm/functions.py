@@ -16,6 +16,128 @@ from . import (__version__,
 from .constants import CONSTANTS, ValidLogLevels
 
 
+def configuration(atol=None, rtol=None, log_level=None):
+    '''View or set any number of constants in the project-wide configuration.
+
+    Global constants that are provided in a dictionary to view, and can be set
+    in any combination, are:
+
+    * `atol`
+    * `rtol`
+    * `log_level`
+
+    These are constants that apply throughout `cfdm`, except for specific
+    functions if overriden by keyword arguments provided to those.
+
+    Note that setting a constant using this function is equivalent to setting
+    it by means of a specific function of the same name, e.g. via `cfdm.atol`,
+    but in this case mutliple constants can be set at once.
+
+    .. versionadded:: 1.8.6
+
+    .. seealso:: `atol`, `rtol`, `log_level`
+
+    :Parameters:
+
+        atol: `float`, optional
+            The new value of absolute tolerance. The default is to not
+            change the current value.
+
+        rtol: `float`, optional
+            The new value of relative tolerance. The default is to not
+            change the current value.
+
+        log_level: `str` or `int`, optional
+            The new value of the minimal log severity level. This can
+            be specified either as a string equal (ignoring case) to
+            the named set of log levels or identifier 'DISABLE', or an
+            integer code corresponding to each of these, namely:
+
+            * ``'DISABLE'`` (``0``);
+            * ``'WARNING'`` (``1``);
+            * ``'INFO'`` (``2``);
+            * ``'DETAIL'`` (``3``);
+            * ``'DEBUG'`` (``-1``).
+
+    :Returns:
+
+        `dict`
+            The value of the project-wide constants prior to the change, or
+            the current value if no new value was specified.
+
+    **Examples:**
+
+    # View the full global configuration of constants:
+    >>> cfdm.configuration()
+    {'atol': 2.220446049250313e-16,
+     'rtol': 2.220446049250313e-16,
+     'log_level': 'WARNING'}
+    # See a change in the constants reflected in the return value:
+    >>> cfdm.log_level('DEBUG')
+    'WARNING'
+    >>> cfdm.configuration()
+    {'atol': 2.220446049250313e-16,
+     'rtol': 2.220446049250313e-16,
+     'log_level': 'DEBUG'}
+
+    # Access specific values by standard Python dictionary key querying, e.g:
+    >>> cfdm.configuration()['atol']
+    2.220446049250313e-16
+    # Note the equivalency:
+    >>> cfdm.configuration()['atol'] == cfdm.atol()
+    True
+
+    # Set multiple constants at once. Note this example is equivalent to
+    # running `cfdm.atol()` and `cfdm.log_level()` separately:
+    >>> cfdm.configuration(atol=5e-14, log_level='INFO')
+    {'atol': 2.220446049250313e-16,
+     'rtol': 2.220446049250313e-16,
+     'log_level': 'DEBUG'}
+    >>> cfdm.configuration()
+    {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
+
+    # Set just one constant, here equivalent to setting it via `cfdm.rtol()`:
+    >>> cfdm.configuration(rtol=1e-17)
+    {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
+    >>> cfdm.configuration()
+    {'atol': 5e-14, 'rtol': 1e-17, 'log_level': 'INFO'}
+    '''
+    return _configuration(
+        new_atol=atol, new_rtol=rtol, new_log_level=log_level)
+
+
+def _configuration(**kwargs):
+    '''Internal helper function to provide the logic for `cfdm.configuration`.
+
+    We delegate from the user-facing `cfdm.configuration` for two main reasons:
+
+    1) to avoid a name clash there between the keyword arguments and the
+    functions which they each call (e.g. `atol` and `cfdm.atol`) which
+    would otherwise necessitate aliasing every such function name; and
+
+    2) because the user-facing function must have the appropriate keywords
+    explicitly listed, but the very similar logic applied for each keyword
+    can be consolidated by iterating over the full dictionary of input kwargs.
+
+    '''
+    old = {name.lower(): val for name, val in CONSTANTS.items()}
+    # Filter out 'None' kwargs from configuration() defaults. Note that this
+    # does not filter out '0' or 'True' values, which is important as the user
+    # might be trying to set those, as opposed to None emerging as default.
+    kwargs = {name: val for name, val in kwargs.items() if val is not None}
+
+    # Note values are the functions not the keyword arguments of same name:
+    reset_mapping = {
+        'new_atol': atol,
+        'new_rtol': rtol,
+        'new_log_level': log_level,
+    }
+    for setting_alias, new_value in kwargs.items():  # for all input kwargs...
+        reset_mapping[setting_alias](new_value)  # ...run corresponding func
+
+    return old
+
+
 def atol(*atol):
     '''The tolerance on absolute differences when testing for numerically
     tolerant equality.
