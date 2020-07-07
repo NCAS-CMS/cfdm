@@ -6,15 +6,29 @@ from enum import Enum
 import numpy
 
 
+"""
+A dictionary of useful constants.
+
+Whilst the dictionary may be modified directly, it is safer to
+retrieve and set the values with the dedicated get-and-set functions.
+
+:Keys:
+
+    ATOL : float
+      The value of absolute tolerance for testing numerically
+      tolerant equality.
+
+    RTOL : float
+      The value of relative tolerance for testing numerically
+      tolerant equality.
+
+    LOG_LEVEL : str
+      The minimal level of seriousness for which log messages are shown.
+      See `cf.log_level`.
+"""
 CONSTANTS = {
-    # The value of absolute tolerance for testing numerically tolerant
-    # equality.
-    'RTOL': sys.float_info.epsilon,
-    # The value of relative tolerance for testing numerically tolerant
-    # equality.
     'ATOL': sys.float_info.epsilon,
-    # The minimal level of seriousness for which log messages are shown. See
-    # functions.log_level().
+    'RTOL': sys.float_info.epsilon,
     'LOG_LEVEL': logging.getLevelName(logging.getLogger().level),
 }
 

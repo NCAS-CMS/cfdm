@@ -75,6 +75,7 @@ from .functions import (
     RTOL,
     abspath,
     atol,
+    configuration,
     environment,
     log_level,
     rtol,
