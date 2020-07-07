@@ -19,19 +19,24 @@ from .constants import CONSTANTS, ValidLogLevels
 def configuration(atol=None, rtol=None, log_level=None):
     '''View or set any number of constants in the project-wide configuration.
 
-    Global constants that are provided in a dictionary to view, and can be set
-    in any combination, are:
+    The full list of global constants that are provided in a dictionary to
+    view, and can be set in any combination, are:
 
     * `atol`
     * `rtol`
     * `log_level`
 
-    These are constants that apply throughout `cfdm`, except for specific
-    functions if overriden by keyword arguments provided to those.
+    These are all constants that apply throughout `cfdm`, except for in
+    specific functions only if overriden by the corresponding keyword
+    argument to that function.
+
+    The value of `None`, either taken by default or supplied as a value,
+    will result in the constant in question not being changed from the
+    current value. That is, it will have no effect.
 
     Note that setting a constant using this function is equivalent to setting
     it by means of a specific function of the same name, e.g. via `cfdm.atol`,
-    but in this case mutliple constants can be set at once.
+    but in this case multiple constants can be set at once.
 
     .. versionadded:: 1.8.6
 
@@ -62,42 +67,36 @@ def configuration(atol=None, rtol=None, log_level=None):
     :Returns:
 
         `dict`
-            The value of the project-wide constants prior to the change, or
-            the current value if no new value was specified.
+            The names and values of the project-wide constants prior to the
+            change, or the current names and values if no new values are
+            specified.
 
     **Examples:**
 
-    # View the full global configuration of constants:
-    >>> cfdm.configuration()
+    >>> cfdm.configuration()  # view full global configuration of constants
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING'}
-    # See a change in the constants reflected in the return value:
-    >>> cfdm.log_level('DEBUG')
+    >>> cfdm.log_level('DEBUG')  # make a change to one constant...
     'WARNING'
-    >>> cfdm.configuration()
+    >>> cfdm.configuration()  # ...and it is reflected in the configuration
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG'}
 
-    # Access specific values by standard Python dictionary key querying, e.g:
-    >>> cfdm.configuration()['atol']
+    >>> cfdm.configuration()['atol']  # access specific values by key querying
     2.220446049250313e-16
-    # Note the equivalency:
-    >>> cfdm.configuration()['atol'] == cfdm.atol()
+    >>> cfdm.configuration()['atol'] == cfdm.atol()  # note the equivalency
     True
 
-    # Set multiple constants at once. Note this example is equivalent to
-    # running `cfdm.atol()` and `cfdm.log_level()` separately:
-    >>> cfdm.configuration(atol=5e-14, log_level='INFO')
+    >>> cfdm.configuration(atol=5e-14, log_level='INFO')  # set multiple items
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG'}
     >>> cfdm.configuration()
     {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
 
-    # Set just one constant, here equivalent to setting it via `cfdm.rtol()`:
-    >>> cfdm.configuration(rtol=1e-17)
+    >>> cfdm.configuration(rtol=1e-17)  # equivalent to setting cfdm.rtol(1e-17)
     {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
     >>> cfdm.configuration()
     {'atol': 5e-14, 'rtol': 1e-17, 'log_level': 'INFO'}

@@ -24,7 +24,7 @@ retrieve and set the values with the dedicated get-and-set functions.
 
     LOG_LEVEL : str
       The minimal level of seriousness for which log messages are shown.
-      See `cf.log_level`.
+      See `cfdm.log_level`.
 """
 CONSTANTS = {
     'ATOL': sys.float_info.epsilon,

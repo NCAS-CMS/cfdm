@@ -33,6 +33,10 @@ Version |release| for version |version| of the CF conventions.
    cfdm.atol
    cfdm.rtol
    cfdm.log_level
+   cfdm.ATOL
+   cfdm.RTOL
+   cfdm.LOG_LEVEL
+   cfdm.configuration
 
 **Miscellaneous**
 -----------------
