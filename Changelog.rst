@@ -8,6 +8,9 @@ version 1.8.6
   (https://github.com/NCAS-CMS/cfdm/issues/55)
 * Implemented the reading and writing of netCDF4 group hierarchies for
   CF-1.8 (https://github.com/NCAS-CMS/cfdm/issues/13)
+* Renamed to lower-case (but otherwise identical) names all functions which
+  get and set global constants: `cfdm.atol`, `cfdm.rtol`, `cfdm.log_level`.
+  The old names e.g. `cfdm.ATOL` remain functional as aliases.
 * New method: `cfdm.Field.nc_variable_groups`
 * New method: `cfdm.Field.nc_set_variable_groups`
 * New method: `cfdm.Field.nc_clear_variable_groups`
@@ -23,6 +26,7 @@ version 1.8.6
 * New method: `cfdm.DomainAxis.nc_clear_dimension_groups`
 * New keyword parameter to `cfdm.write`: ``group``
 * New dependency: ``netcdf_flattener>=1.1.0``
+* New function: `cfdm.configuration`
 
 version 1.8.5
 -------------
