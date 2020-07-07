@@ -74,10 +74,13 @@ The cfdm package can
 * write field constructs to netCDF datasets on disk,
 
 * read, write, and create coordinates defined by geometry cells (*new
-  in version 1.8.0*),
+  in version 1.8.0 for CF-1.8*),
+  
+* read and write netCDF4 string data-type variables (*new in version
+  1.8.0 for CF-1.8*),
   
 * read netCDF and CDL datasets containing hierarchical groups (**new
-  in version 1.8.6**),
+  in version 1.8.6 for CF-1.8**),
 
 * inspect field constructs,
 
@@ -92,8 +95,6 @@ The cfdm package can
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form, and
-
-* read, write, and create coordinates defined by geometry cells.
 
 Note that the cfdm package enables the representation and creation of
 CF field constructs, but it is largely :ref:`up to the user to use

@@ -153,7 +153,7 @@ The cfdm package requires:
 **Code repository**
 -------------------
 
-The complete source code is available at https://github.com/NCAS-CMS/cfdm
+The source code is available at https://github.com/NCAS-CMS/cfdm
 
 .. .. rubric:: Footnotes
 

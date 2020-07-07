@@ -52,8 +52,8 @@ in-place operation can be considerably faster. These methods have the
 `~Field.transpose`, `~Field.insert_dimension`, `~Field.compress`, and
 `~Field.uncompress` methods of a field construct.
   
-For example, in one particular test using a dataset from the
-:ref:`tutorial <Tutorial>`, transposing the data dimensions of the
+For example, in one particular test using a :ref:`dataset from the
+tutorial <Sample-datasets>`, transposing the data dimensions of the
 field construct was ~11 times faster when done in-place, compared with
 creating a new independent field construct:
 
@@ -67,8 +67,10 @@ creating a new independent field construct:
    >>> import cfdm
    >>> q, t = cfdm.read('file.nc')
    >>> t.data.to_memory()
-   >>> min(timeit.repeat('t.transpose()', globals=globals(), number=1000))
+   >>> min(timeit.repeat('t.transpose()',
+   ...                   globals=globals(), number=1000))
    2.1561493259978306
-   >>> min(timeit.repeat('t.transpose(inplace=True)', globals=globals(), number=1000))
+   >>> min(timeit.repeat('t.transpose(inplace=True)',
+   ...                   globals=globals(), number=1000))
    0.18915946600100142
 
