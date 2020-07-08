@@ -25,6 +25,10 @@ version 1.8.6
 * New method: `cfdm.DomainAxis.nc_set_dimension_groups`
 * New method: `cfdm.DomainAxis.nc_clear_dimension_groups`
 * New keyword parameter to `cfdm.write`: ``group``
+* Added test to check that cell bounds have more dimensions than the
+  data.
+* Added test to check that dimension coordinate construct data is
+  1-dimensional.
 * New dependency: ``netcdf_flattener>=1.1.0``
 * New function: `cfdm.configuration`
 

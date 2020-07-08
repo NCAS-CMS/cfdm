@@ -212,8 +212,6 @@ class CFDMImplementation(Implementation):
 
         position: `int`
 
-        copy: `bool`, optional
-
     :Returns:
 
         construct

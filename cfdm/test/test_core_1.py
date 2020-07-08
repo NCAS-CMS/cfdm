@@ -38,7 +38,8 @@ class create_fieldTest(unittest.TestCase):
         array = numpy.array([array-0.5, array+0.5]).transpose((1,0))
         array[-2, 1] = 30
         array[-1, :] = [30, 36]
-        dim0.set_bounds(cfdm.core.Bounds(data=cfdm.core.Data(cfdm.core.NumpyArray(array))))
+        data = cfdm.core.Data(cfdm.core.NumpyArray(array))
+        dim0.set_bounds(cfdm.core.Bounds(data=data))
 
         dim2 = cfdm.core.DimensionCoordinate(
             data=cfdm.core.Data(cfdm.core.NumpyArray(numpy.array([1.5]))),
