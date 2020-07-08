@@ -2289,7 +2289,21 @@ class Data(mixin.Container,
         return self._item((slice(0, 1),)*(self.ndim-1) + (slice(1, 2),))
 
     def to_memory(self):
-        '''
+        '''Bring data on disk into memory and retain it there.
+
+    There is no change to data that is already in memory.
+
+    :Returns:
+
+        `None`
+
+    **Examples:**
+
+    >>> f = cfdm.example_field(4)
+    >>> f.data
+    <Data(3, 26, 4): [[[290.0, ..., --]]] K>
+    >>> f.data.to_memory()
+
         '''
         self._set_Array(self.source().to_memory())
 

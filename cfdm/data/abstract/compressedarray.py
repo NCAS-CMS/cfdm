@@ -332,13 +332,19 @@ class CompressedArray(Array, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def to_memory(self):
-        '''TODO
+        '''Bring an array on disk into memory and retain it there.
+
+    There is no change to an array that is already in memory.
 
     :Returns:
-            TODO
+
+        `CompressedArray`
+            The array that is stored in memory.
 
     **Examples:**
-         TODO
+
+    >>> b = a.to_memory()
+
         '''
         self._get_compressed_Array(self._get_compressed_Array().to_memory())
         return self

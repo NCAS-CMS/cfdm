@@ -469,7 +469,18 @@ class NetCDFArray(abstract.Array):
         return netcdf
 
     def to_memory(self):
-        '''TODO
+        '''Bring an array on disk into memory and retain it there.
+
+    There is no change to an array that is already in memory.
+
+    :Returns:
+
+        `NetCDFArray`
+            The array that is stored in memory.
+
+    **Examples:**
+
+    >>> b = a.to_memory()
 
         '''
         return NumpyArray(self[...])

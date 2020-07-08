@@ -32,7 +32,18 @@ class NumpyArray(abstract.Array, core_NumpyArray):
                                  copy=True)
 
     def to_memory(self):
-        '''TODO
+        '''Bring an array on disk into memory and retain it there.
+
+    There is no change to an array that is already in memory.
+
+    :Returns:
+
+        `NumpyArray`
+            The array that is stored in memory.
+
+    **Examples:**
+
+    >>> b = a.to_memory()
         '''
         return self
 
