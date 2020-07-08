@@ -5,7 +5,7 @@ import numpy
 from .array import Array
 
 
-class CompressedArray(Array, metaclass=abc.ABCMeta):
+class CompressedArray(Array): #, metaclass=abc.ABCMeta):
     '''Abstract base class for a container of an underlying compressed
     array.
 

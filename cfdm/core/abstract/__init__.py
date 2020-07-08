@@ -1,4 +1,4 @@
-from .container                   import Container
+from .container                   import Container, RewriteDocstringMeta
 from .properties                  import Properties
 from .propertiesdata              import PropertiesData
 from .propertiesdatabounds        import PropertiesDataBounds

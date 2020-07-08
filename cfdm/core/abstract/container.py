@@ -1,12 +1,127 @@
-#from future.utils import with_metaclass
-
 import abc
+import re
 
 from copy import copy, deepcopy
 
+from ..functions import _doc_string_configuration
 
-#class Container(with_metaclass(abc.ABCMeta, object)):
-class Container(metaclass=abc.ABCMeta):
+docstring = {
+    # ----------------------------------------------------------------
+    '{+chunksizes}': '''chunksizes: `dict` or `None`, optional
+        Specify the chunk sizes for axes of the {+variable}. Axes are
+        given by dictionary keys, with a chunk size for those axes as
+        the dictionary values. A dictionary key may be an integer or a
+        tuple of integers defining axes by position in the data
+        array. In the special case of *chunksizes* being `None`, then
+        chunking is set to the ne'''}
+
+_xx = _doc_string_configuration()
+
+def _update_docstring(name, f, attr_name, module):
+    '''
+    
+    '''
+    doc = f.__doc__
+    if doc is None:
+        return
+
+    doc = doc.replace('{+class}', name)
+    
+    if module.startswith(_xx['{+package}'] + '.core.'):
+        doc = doc.replace('{+package}', _xx['{+package}'] + '.core')
+    else:
+        doc = doc.replace('{+package}', _xx['{+package}'])
+ 
+    doc = doc.replace('{+repr_prefix}', _xx['{+repr_prefix}'])
+
+    f.__doc__ = doc 
+
+
+class RewriteDocstringMeta(type): #, metaclass=abc.ABCMeta):
+    '''Modify docstrings.
+
+    To do this, we intercede before the class is created and modify
+    the docstrings of its attributes.
+    
+    This will not affect inherited methods, however, so we also need
+    to loop through the parent classes. We cannot simply modify the
+    docstrings, because then the parent classes' methods will have the
+    wrong docstring. Instead, we must actually copy the functions, and
+    then modify the docstring.
+
+    http://www.jesshamrick.com/2013/04/17/rewriting-python-docstrings-with-a-metaclass/
+    '''
+    def __new__(cls, name, parents, attrs):
+        for attr_name in attrs:
+            # Skip special methods
+            if attr_name.startswith('__'):
+                continue
+    
+            # Skip non-functions
+            attr = attrs[attr_name]
+            if not hasattr(attr, '__call__'):                
+                continue
+
+            if not hasattr(attr, '__doc__'):
+                continue
+
+            # Update docstring
+            _update_docstring(name, attr, attr_name, attrs['__module__'])
+ 
+        for parent in parents:
+            for attr_name in dir(parent):
+                # We already have this method
+                if attr_name in attrs:
+                    continue
+ 
+                # Skip special methods
+                if attr_name.startswith('__'):
+                    continue
+ 
+                # Get the original function and copy it
+                a = getattr(parent, attr_name)
+
+                if hasattr(a, 'fget'):                    
+                    attr = type(a)(
+                        a.fget,
+                        a.fset,
+                        a.fdel)
+
+                else:
+                    # Skip non-functions
+                    if not hasattr(a, '__call__'):
+                        continue
+    
+                    f = getattr(a, '__func__', a)
+    
+                    # Copy function
+                    attr = type(f)(
+                        f.__code__,
+                        f.__globals__,
+                        f.__name__,
+                        f.__defaults__,
+                        f.__closure__)
+
+                # Update docstring and add attr
+                _update_docstring(name,
+                                  attr,
+                                  attr_name,
+                                  attrs['__module__'])
+                
+                attrs[attr_name] = attr
+            # --- End: for
+        # --- End: for
+        
+        # Create the class
+        obj = super().__new__(
+            cls, name, parents, attrs)
+
+        return obj
+
+#--- End: class
+
+
+class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
     '''Abstract base class for storing components.
 
     .. versionadded:: 1.7.0

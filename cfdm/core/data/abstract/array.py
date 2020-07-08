@@ -3,7 +3,7 @@ import abc
 from ...abstract import Container
 
 
-class Array(Container, metaclass=abc.ABCMeta):
+class Array(Container): #, metaclass=abc.ABCMeta):
     '''Abstract base class for a container of an array.
 
     The form of the array is defined by the initialization parameters

@@ -3,7 +3,7 @@ import abc
 from . import PropertiesDataBounds
 
 
-class Coordinate(PropertiesDataBounds, metaclass=abc.ABCMeta):
+class Coordinate(PropertiesDataBounds): #, metaclass=abc.ABCMeta):
     '''Abstract base class for dimension and auxiliary coordinate
     constructs of the CF data model.
 

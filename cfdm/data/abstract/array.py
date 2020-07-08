@@ -5,7 +5,7 @@ import numpy
 from ...core.data import Array as core_Array
 
 
-class Array(core_Array, metaclass=abc.ABCMeta):
+class Array(core_Array): #, metaclass=abc.ABCMeta):
     '''Abstract base class for a container of an underlying array.
 
     The form of the array is defined by the initialization parameters

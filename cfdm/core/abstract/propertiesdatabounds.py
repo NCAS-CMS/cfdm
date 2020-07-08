@@ -6,7 +6,7 @@ import numpy
 from . import PropertiesData
 
 
-class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
+class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
     '''Abstract base class for a data array with bounds and descriptive
     properties.
 
@@ -134,7 +134,8 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {+package}.{+class}()
+    >>> b = {+package}.Bounds(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
@@ -168,7 +169,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> i = {+package}.InteriorRing(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
     True
@@ -207,7 +208,8 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {+package}.{+class}()
+    >>> b = {+package}.Bounds(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
@@ -283,7 +285,8 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {+package}.{+class}()
+    >>> b = {+package}.Bounds(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
@@ -361,7 +364,8 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {+package}.{+class}()
+    >>> i = {+package}.InteriorRing(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
     True
@@ -397,7 +401,8 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {+package}.{+class}()
+    >>> b = {+package}.Bounds(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
@@ -479,7 +484,8 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {+package}.{+class}()
+    >>> b = {+package}.Bounds(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True

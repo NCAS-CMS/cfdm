@@ -5,7 +5,7 @@ from copy import deepcopy
 from . import Container
 
 
-class Parameters(Container, metaclass=abc.ABCMeta):
+class Parameters(Container): #, metaclass=abc.ABCMeta):
     '''Abstract base class for a collection of named parameters.
 
     .. versionadded:: 1.7.0

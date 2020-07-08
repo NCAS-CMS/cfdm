@@ -303,13 +303,12 @@ class Properties(Container):
             The identity.
 
     **Examples:**
-
-    >>> f.properties()
-    {'foo': 'bar',
-     'long_name': 'Air Temperature',
-     'standard_name': 'air_temperature'}
-    >>> f.nc_get_variable()
-    'tas'
+        
+    >>> f = {+package}.{+class}()
+    >>> f.set_properties({'foo': 'bar',
+    ...                   'long_name': 'Air Temperature',
+    ...                   'standard_name': 'air_temperature'}
+    >>> f.nc_set_variable('tas')
     >>> f.identity()
     'air_temperature'
     >>> f.del_property('standard_name')

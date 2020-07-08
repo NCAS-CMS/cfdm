@@ -5,7 +5,7 @@ from copy import deepcopy
 from . import Parameters
 
 
-class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
+class ParametersDomainAncillaries(Parameters): #, metaclass=abc.ABCMeta):
     '''Abstract base class for a collection of named parameters and named
     domain ancillary constructs.
 

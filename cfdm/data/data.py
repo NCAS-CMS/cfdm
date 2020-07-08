@@ -2393,4 +2393,4 @@ class Data(mixin.Container,
 #
 # https://docs.python.org/3/library/abc.html
 # --------------------------------------------------------------------
-abstract.Array.register(Data)
+#abstract.Array.register(Data)

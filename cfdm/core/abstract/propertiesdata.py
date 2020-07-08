@@ -1,9 +1,9 @@
 import abc
 
-from . import Properties
+from . import Properties, RewriteDocstringMeta
 
 
-class PropertiesData(Properties, metaclass=abc.ABCMeta):
+class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
     '''Abstract base class for a data array with descriptive properties.
 
     .. versionadded:: 1.7.0
@@ -83,13 +83,14 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> d = cfdm.Data(range(10))
-    >>> f.set_data(d)
+    >>> import numpy
+    >>> f = {+package}.{+class}()
+    >>> f.set_data({+package}.Data(numpy.arange(9.)))
     >>> f.has_data()
     True
     >>> d = f.data
     >>> d
-    <Data(10): [0, ..., 9]>
+    <{+repr_prefix}Data(10): [0.0, ..., 9.0]>
     >>> f.data.shape
     (10,)
 
@@ -151,6 +152,7 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {+package}.{+class}()
     >>> d = cfdm.Data(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
@@ -199,6 +201,7 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {+package}.{+class}()
     >>> d = cfdm.Data(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
@@ -266,6 +269,7 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {+package}.{+class}()
     >>> f.has_bounds()
     False
 
@@ -286,6 +290,7 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {+package}.{+class}()
     >>> d = cfdm.Data(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
@@ -329,6 +334,7 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {+package}.{+class}()
     >>> d = Data(range(10))
     >>> f.set_data(d)
     >>> f.has_data()

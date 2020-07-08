@@ -102,3 +102,11 @@ def CF():
 
     '''
     return __cf_version__
+
+
+def _doc_string_configuration():
+    return {'core': True,
+            '{+package}': 'cfdm',
+            '{+repr_prefix}': '',
+    }
+

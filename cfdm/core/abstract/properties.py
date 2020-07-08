@@ -5,7 +5,7 @@ from copy import deepcopy
 from . import Container
 
 
-class Properties(Container, metaclass=abc.ABCMeta):
+class Properties(Container): #, metaclass=abc.ABCMeta):
     '''Abstract base class for an object with descriptive properties.
 
     .. versionadded:: 1.7.0
@@ -65,10 +65,12 @@ class Properties(Container, metaclass=abc.ABCMeta):
             The properties that have been removed.
 
     **Examples:**
-
+        
+    >>> f = {+package}.{+class}()
     >>> f.properties()
     {}
-    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.set_properties({'standard_name': 'air_pressure',
+    ...                   'long_name': 'Air Pressure'})
     >>> f.properties()
     {'standard_name': 'air_pressure',
      'foo': 'bar',
@@ -167,6 +169,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {+package}.{+class}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -212,6 +215,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {+package}.{+class}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -244,9 +248,11 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {+package}.{+class}()
     >>> f.properties()
     {}
-    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.set_properties({'standard_name': 'air_pressure',
+    ...                   'long_name': 'Air Pressure'})
     >>> f.properties()
     {'standard_name': 'air_pressure',
      'foo': 'bar',
@@ -293,9 +299,11 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {+package}.{+class}()
     >>> f.properties()
     {}
-    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.set_properties({'standard_name': 'air_pressure',
+    ...                   'long_name': 'Air Pressure'})
     >>> f.properties()
     {'standard_name': 'air_pressure',
      'foo': 'bar',
@@ -345,6 +353,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {+package}.{+class}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
