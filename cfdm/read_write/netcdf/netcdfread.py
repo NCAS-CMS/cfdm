@@ -69,6 +69,8 @@ class NetCDFRead(IORead):
         'Geometry variable': 180,
         'geometry attribute': 181,
 
+        'Node coordinate variable': 190,
+        
         # Purely structural
         'Compressed dimension': 300,
         'compress attribute': 301,
@@ -3971,10 +3973,16 @@ class NetCDFRead(IORead):
 
             if geometry is None:
                 # Check "normal" boounds
-                cf_compliant = self._check_bounds(field_ncvar, ncvar,
-                                                  attribute, bounds_ncvar)
+                cf_compliant = self._check_bounds(
+                    field_ncvar, ncvar,
+                    attribute,
+                    bounds_ncvar)
             else:
-                cf_compliant = True  ## until a test has been devised.
+                # Check geomerty node coordinate boounds
+                cf_compliant = self._check_geometry_node_coordinates(
+                    field_ncvar,
+                    bounds_ncvar,
+                    geometry)
                 
             if not cf_compliant:
                 bounds_ncvar = None
@@ -5268,7 +5276,7 @@ class NetCDFRead(IORead):
     # not grid mapping variable has a grid_mapping_name attribute).
     # ================================================================
     def _check_bounds(self, field_ncvar, parent_ncvar, attribute,
-                      bounds_ncvar, geometry=False):
+                      bounds_ncvar):
         '''TODO
 
     .. versionadded:: 1.7.0
@@ -5292,8 +5300,6 @@ class NetCDFRead(IORead):
 
         bounds_ncvar: `str`
             The netCDF variable name of the bounds.
-
-        geometry: `bool`, optional
 
     :Returns:
 
@@ -5319,29 +5325,11 @@ class NetCDFRead(IORead):
 
         ok = True
 
-        if geometry:
-            if bounds_ncvar not in geometry.get('node_coordinates', ()):
-                self._add_message(field_ncvar, bounds_ncvar,
-                                  message=('Node coordinate variable',
-                                           'not in node_coordinates'),
-                                  attribute=attribute,
-                                  variable=parent_ncvar)
-                ok = False
-        else:
-            c_ncdims = self._ncdimensions(parent_ncvar)
-            b_ncdims = self._ncdimensions(bounds_ncvar)
+        c_ncdims = self._ncdimensions(parent_ncvar)
+        b_ncdims = self._ncdimensions(bounds_ncvar)
 
-            if len(b_ncdims) == len(c_ncdims) + 1:
-                if c_ncdims != b_ncdims[:-1]:
-                    self._add_message(
-                        field_ncvar, bounds_ncvar,
-                        message=incorrect_dimensions,
-                        attribute=attribute,
-                        dimensions=g['variable_dimensions'][bounds_ncvar],
-                        variable=parent_ncvar)
-                    ok = False
-
-            else:
+        if len(b_ncdims) == len(c_ncdims) + 1:
+            if c_ncdims != b_ncdims[:-1]:
                 self._add_message(
                     field_ncvar, bounds_ncvar,
                     message=incorrect_dimensions,
@@ -5349,7 +5337,68 @@ class NetCDFRead(IORead):
                     dimensions=g['variable_dimensions'][bounds_ncvar],
                     variable=parent_ncvar)
                 ok = False
-        # --- End: if
+
+        else:
+            self._add_message(
+                field_ncvar, bounds_ncvar,
+                message=incorrect_dimensions,
+                attribute=attribute,
+                dimensions=g['variable_dimensions'][bounds_ncvar],
+                variable=parent_ncvar)
+            ok = False
+
+        return ok
+
+    def _check_geometry_node_coordinates(self, field_ncvar,
+                                         node_ncvar, geometry):
+        '''Check a geometry node corodinate variable.
+
+    .. versionadded:: 1.8.6
+
+    :Parameters:
+
+        field_ncvar: `str`
+            The netCDF variable name of the parent data variable.
+
+        node_ncvar: `str`
+            The netCDF variable name of the node coordinate variable.
+
+        geometry: `dict`
+
+    :Returns:
+
+        `bool`
+
+        '''
+        g = self.read_vars
+
+        geometry_ncvar = g['variable_geometry'].get(field_ncvar)
+
+        attribute = {field_ncvar + ':' + geometry_ncvar:
+                     ' '.join(geometry['node_coordinates'])}
+
+        incorrect_dimensions = ('Node coordinate variable',
+                                'spans incorrect dimensions')
+
+        if node_ncvar not in g['internal_variables']:
+            node_ncvar, message = self._check_missing_variable(
+                node_ncvar, 'Node coordinate variable'
+            )
+            self._add_message(field_ncvar, node_ncvar,
+                              message=message,
+                              attribute=attribute,
+                              variable=parent_ncvar)
+            return False
+
+        ok = True
+
+        if node_ncvar not in geometry.get('node_coordinates', ()):
+            self._add_message(field_ncvar, bounds_ncvar,
+                              message=('Node coordinate variable',
+                                       'not in node_coordinates'),
+                              attribute=attribute,
+                              variable=parent_ncvar)
+            ok = False
 
         return ok
 
