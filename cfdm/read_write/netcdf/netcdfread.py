@@ -3973,11 +3973,13 @@ class NetCDFRead(IORead):
                 # Check "normal" boounds
                 cf_compliant = self._check_bounds(field_ncvar, ncvar,
                                                   attribute, bounds_ncvar)
-                if not cf_compliant:
-                    pass
             else:
-                pass
+                cf_compliant = True  ## until a test has been devised.
+                
+            if not cf_compliant:
+                bounds_ncvar = None
 
+        if bounds_ncvar:
             bounds = self.implementation.initialise_Bounds()
 
             bounds_properties = g['variable_attributes'][bounds_ncvar].copy()
@@ -5290,6 +5292,8 @@ class NetCDFRead(IORead):
 
         bounds_ncvar: `str`
             The netCDF variable name of the bounds.
+
+        geometry: `bool`, optional
 
     :Returns:
 
