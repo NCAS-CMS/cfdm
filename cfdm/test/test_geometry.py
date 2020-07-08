@@ -299,8 +299,8 @@ class DSGTest(unittest.TestCase):
             cfdm.write(f, tempfile)
 
             pnc.nc_set_dimension('new_dim_name')
-            cfdm.write(f, tempfile)            
-            
+            cfdm.write(f, tempfile)
+
 #--- End: class
 
 

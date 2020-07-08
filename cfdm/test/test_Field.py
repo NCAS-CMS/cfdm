@@ -214,7 +214,7 @@ class FieldTest(unittest.TestCase):
         # --- End: for
 
         self.assertEqual(g.get_filenames(), set())
-        
+
         os.remove(tmpfile)
 
     def test_Field_apply_masking(self):

@@ -28,7 +28,7 @@ class ListTest(unittest.TestCase):
         _ = repr(l)
         _ = str(l)
         _ = l.dump(display=False)
-            
+
 #--- End: class
 
 

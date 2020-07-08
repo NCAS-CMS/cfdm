@@ -53,12 +53,12 @@ class GroupsTest(unittest.TestCase):
 
         ungrouped_file = ungrouped_file1
         grouped_file = grouped_file1
-        
-        # Add a second grid mapping    
+
+        # Add a second grid mapping
         datum = cfdm.Datum(parameters={'earth_radius': 7000000})
         conversion = cfdm.CoordinateConversion(
             parameters={'grid_mapping_name': 'latitude_longitude'})
-        
+
         grid = cfdm.CoordinateReference(
             coordinate_conversion=conversion,
             datum=datum,
@@ -66,12 +66,12 @@ class GroupsTest(unittest.TestCase):
         )
 
         f.set_construct(grid)
-        
+
         grid0 = f.construct('grid_mapping_name:rotated_latitude_longitude')
         grid0.del_coordinate('auxiliarycoordinate0')
         grid0.del_coordinate('auxiliarycoordinate1')
 
-        
+
         cfdm.write(f, ungrouped_file)
         g = cfdm.read(ungrouped_file, verbose=1)
         self.assertEqual(len(g), 1)
@@ -83,7 +83,7 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         g.nc_set_variable_groups(['forecast', 'model'])
         cfdm.write(g, grouped_file)
-        
+
         nc = netCDF4.Dataset(grouped_file, 'r')
         self.assertIn(
             f.nc_get_variable(),
@@ -94,7 +94,7 @@ class GroupsTest(unittest.TestCase):
         h = cfdm.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
-        
+
         # ------------------------------------------------------------
         # Move constructs one by one to the /forecast group
         # ------------------------------------------------------------
@@ -127,7 +127,7 @@ class GroupsTest(unittest.TestCase):
         name = 'grid_latitude'
         g.construct(name).bounds.nc_set_variable_groups(['forecast'])
         cfdm.write(g, grouped_file)
-        
+
         nc = netCDF4.Dataset(grouped_file, 'r')
         self.assertIn(
             f.construct(name).bounds.nc_get_variable(),
@@ -140,15 +140,15 @@ class GroupsTest(unittest.TestCase):
 
     def test_groups_geometry(self):
         f = cfdm.example_field(6)
-    
+
         ungrouped_file = ungrouped_file2
         grouped_file = grouped_file2
-        
+
         cfdm.write(f, ungrouped_file)
         g = cfdm.read(ungrouped_file, verbose=1)
         self.assertEqual(len(g), 1)
         g = g[0]
-       
+
         self.assertTrue(f.equals(g, verbose=3))
 
         # ------------------------------------------------------------
@@ -163,11 +163,11 @@ class GroupsTest(unittest.TestCase):
             nc.groups['forecast'].groups['model'].variables
         )
         nc.close()
-        
+
         h = cfdm.read(grouped_file)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=3))
-        
+
         # ------------------------------------------------------------
         # Move the geometry container to the /forecast group
         # ------------------------------------------------------------
@@ -176,7 +176,7 @@ class GroupsTest(unittest.TestCase):
 
         # Check that the variable is in the right group
         nc = netCDF4.Dataset(grouped_file, 'r')
-        self.assertIn(            
+        self.assertIn(
             f.nc_get_geometry_variable(),
             nc.groups['forecast'].variables)
         nc.close()
@@ -185,7 +185,7 @@ class GroupsTest(unittest.TestCase):
         h = cfdm.read(grouped_file)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
-        
+
         # ------------------------------------------------------------
         # Move a node coordinate variable to the /forecast group
         # ------------------------------------------------------------
@@ -194,7 +194,7 @@ class GroupsTest(unittest.TestCase):
 
         # Check that the variable is in the right group
         nc = netCDF4.Dataset(grouped_file, 'r')
-        self.assertIn(            
+        self.assertIn(
             f.construct('longitude').bounds.nc_get_variable(),
             nc.groups['forecast'].variables)
         nc.close()
@@ -214,7 +214,7 @@ class GroupsTest(unittest.TestCase):
 
         # Check that the variable is in the right group
         nc = netCDF4.Dataset(grouped_file, 'r')
-        self.assertIn(            
+        self.assertIn(
             ncvar,
             nc.groups['forecast'].variables)
         nc.close()
@@ -236,7 +236,7 @@ class GroupsTest(unittest.TestCase):
 
         # Check that the variable is in the right group
         nc = netCDF4.Dataset(grouped_file, 'r')
-        self.assertIn(            
+        self.assertIn(
             ncvar,
             nc.groups['forecast'].variables)
         nc.close()
@@ -256,7 +256,7 @@ class GroupsTest(unittest.TestCase):
 
         # Check that the variable is in the right group
         nc = netCDF4.Dataset(grouped_file, 'r')
-        self.assertIn(            
+        self.assertIn(
             f.construct('longitude').get_interior_ring().nc_get_variable(),
             nc.groups['forecast'].variables)
         nc.close()
@@ -275,7 +275,7 @@ class GroupsTest(unittest.TestCase):
         f.compress('indexed_contiguous', inplace=True)
         f.data.get_count().nc_set_variable('count')
         f.data.get_index().nc_set_variable('index')
-        
+
         cfdm.write(f, ungrouped_file , verbose=1)
         g = cfdm.read(ungrouped_file)[0]
         self.assertTrue(f.equals(g, verbose=2))
@@ -284,29 +284,29 @@ class GroupsTest(unittest.TestCase):
         # Move the field construct to the /forecast/model group
         # ------------------------------------------------------------
         g.nc_set_variable_groups(['forecast', 'model'])
-        
+
         # ------------------------------------------------------------
         # Move the count variable to the /forecast group
-        # ------------------------------------------------------------        
+        # ------------------------------------------------------------
         g.data.get_count().nc_set_variable_groups(['forecast'])
-        
+
         # ------------------------------------------------------------
         # Move the index variable to the /forecast group
-        # ------------------------------------------------------------        
+        # ------------------------------------------------------------
         g.data.get_index().nc_set_variable_groups(['forecast'])
-        
+
         # ------------------------------------------------------------
         # Move the coordinates that span the element dimension to the
         # /forecast group
         # ------------------------------------------------------------
         name = 'altitude'
         g.construct(name).nc_set_variable_groups(['forecast'])
-        
+
         # ------------------------------------------------------------
         # Move the sample dimension to the /forecast group
-        # ------------------------------------------------------------        
+        # ------------------------------------------------------------
         g.data.get_count().nc_set_sample_dimension_groups(['forecast'])
-        
+
         cfdm.write(g, grouped_file, verbose=1)
 
         nc = netCDF4.Dataset(grouped_file, 'r')
@@ -326,7 +326,7 @@ class GroupsTest(unittest.TestCase):
             f.construct('altitude').nc_get_variable(),
             nc.groups['forecast'].variables)
         nc.close()
-        
+
         h = cfdm.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
@@ -336,7 +336,7 @@ class GroupsTest(unittest.TestCase):
 
         ungrouped_file = ungrouped_file4
         grouped_file = grouped_file4
-        
+
         cfdm.write(f, ungrouped_file)
         g = cfdm.read(ungrouped_file, verbose=1)
         self.assertEqual(len(g), 1)
@@ -347,7 +347,7 @@ class GroupsTest(unittest.TestCase):
         # Move the field construct to the /forecast/model group
         # ------------------------------------------------------------
         g.nc_set_variable_groups(['forecast', 'model'])
-        
+
         # ------------------------------------------------------------
         # Move all data constructs to the /forecast group
         # ------------------------------------------------------------
@@ -363,7 +363,7 @@ class GroupsTest(unittest.TestCase):
             except ValueError:
                 pass
         # --- End: for
-        
+
         cfdm.write(g, grouped_file, verbose=1)
 
         nc = netCDF4.Dataset(grouped_file, 'r')
@@ -379,7 +379,7 @@ class GroupsTest(unittest.TestCase):
             )
 
         nc.close()
-        
+
         h = cfdm.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1)
         h = h[0]
@@ -391,7 +391,7 @@ class GroupsTest(unittest.TestCase):
         key = g.domain_axis_key('latitude')
         domain_axis = g.constructs[key]
         domain_axis.nc_set_dimension_groups(['forecast'])
-                
+
         cfdm.write(g, grouped_file, verbose=1)
 
         h = cfdm.read(grouped_file, verbose=-1)

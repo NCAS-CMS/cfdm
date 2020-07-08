@@ -57,7 +57,7 @@ class FunctionsTest(unittest.TestCase):
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
-        # internally) as follows:        
+        # internally) as follows:
         # cfdm.log_level('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
@@ -212,7 +212,7 @@ class FunctionsTest(unittest.TestCase):
 
             self.assertEqual(len(g), 1)
             self.assertTrue(f.equals(g[0], verbose=3), 'n={}'.format(n))
-            
+
         with self.assertRaises(Exception):
             _ = cfdm.example_field(top + 1)
 
@@ -323,7 +323,7 @@ class FunctionsTest(unittest.TestCase):
 #    def test_default_netCDF_fill_values(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
 #            return
-#        
+#
 #        self.assertIsInstance(cfdm.default_netCDF_fill_values(), dict)
 
 #--- End: class

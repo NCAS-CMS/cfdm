@@ -26,7 +26,7 @@ class PartNodeCountPropertiesTest(unittest.TestCase):
 
     def test_PartNodeCountProperties__repr__str__dump(self):
         f = cfdm.read(self.geometry_interior_ring_file)[0]
-        
+
         coord = f.construct('axis=X')
         self.assertTrue(coord.has_part_node_count())
 
@@ -35,7 +35,7 @@ class PartNodeCountPropertiesTest(unittest.TestCase):
         _ = repr(p)
         _ = str(p)
         _ = p.dump(display=False)
-            
+
 #--- End: class
 
 

@@ -16,7 +16,7 @@ class DomainTest(unittest.TestCase):
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
         # internally) as follows:
-        # 
+        #
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
@@ -50,7 +50,7 @@ class DomainTest(unittest.TestCase):
         _ = cfdm.DomainAxis(source=d)
 
         _ = cfdm.DomainAxis(source=f)
-            
+
     def test_DomainAxis_source(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

@@ -26,7 +26,7 @@ class ConstructsTest(unittest.TestCase):
         f = cfdm.read(self.filename)
         self.assertEqual(len(f), 1, 'f={!r}'.format(f))
         self.f = f[0]
-        
+
         self.test_only = []
 
     def test_Constructs__repr__str__dump(self):
@@ -98,7 +98,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(c.filter_by_type('cell_measure')), 1)
         self.assertEqual(len(c.filter_by_method('mean')), 1)
         self.assertEqual(len(c.filter_by_measure('area')), 1)
-        self.assertEqual(len(c.filter_by_ncvar('areacella')), 1) 
+        self.assertEqual(len(c.filter_by_ncvar('areacella')), 1)
         self.assertEqual(len(c.filter_by_ncdim('grid_longitude')), 1)
         self.assertEqual(len(c.filter_by_size(9)), 1)
 

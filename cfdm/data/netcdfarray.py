@@ -136,9 +136,9 @@ class NetCDFArray(abstract.Array):
         if group:
             for g in group[:-1]:
                 netcdf = netcdf.groups[g]
-            
+
             netcdf = netcdf.groups[group[-1]]
-            
+
         ncvar = self.get_ncvar()
         mask = self.get_mask()
 

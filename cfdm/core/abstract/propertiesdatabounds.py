@@ -498,14 +498,14 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
         '''
         data = self.get_data(None)
         if data is not None:
-            bounds_data = bounds.get_data(None)            
+            bounds_data = bounds.get_data(None)
             if (bounds_data is not None
                 and numpy.ndim(bounds_data) <= numpy.ndim(data)):
                 raise ValueError(
                     "Bounds data must have more dimensions than "
                     "the coordinate data.")
         # -- End: if
-        
+
         if copy:
             bounds = bounds.copy()
 

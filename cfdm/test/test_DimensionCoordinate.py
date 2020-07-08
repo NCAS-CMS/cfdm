@@ -15,14 +15,14 @@ class DimensionCoordinateTest(unittest.TestCase):
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
         # internally) as follows:
-        # 
+        #
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-        
+
         dim1 = cfdm.DimensionCoordinate()
         dim1.set_property('standard_name', 'latitude')
         a = numpy.array(

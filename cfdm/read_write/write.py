@@ -61,10 +61,10 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     `~cfdm.DomainAxis.nc_is_unlimited` and
     `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
-    
+
 
     **NetCDF hierarchical groups**
-    
+
     Hierarchical groups in CF provide a mechanism to structure
     variables within netCDF4 datasets with well defined rules for
     resolving references to out-of-group netCDF variables and

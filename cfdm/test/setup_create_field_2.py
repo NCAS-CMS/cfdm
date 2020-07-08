@@ -237,7 +237,7 @@ class create_fieldTest_2(unittest.TestCase):
                                  sorted(f.constructs.items()),
                                  sorted(g.constructs),
                                  sorted(g.constructs.items())))
-            
+
             self.assertTrue(g.equals(g.copy(), verbose=verbose),
                             "Field g not equal to a copy of itself")
             if verbose:

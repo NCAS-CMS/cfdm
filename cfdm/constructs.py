@@ -657,7 +657,7 @@ class Constructs(core.Constructs):
         log = []
         axes_to_constructs0 = self._axes_to_constructs()
         axes_to_constructs1 = other._axes_to_constructs()
-        
+
         for axes0, constructs0 in axes_to_constructs0.items():
             matched_all_constructs_with_these_axes = False
 
@@ -665,7 +665,7 @@ class Constructs(core.Constructs):
             for axes1, constructs1 in tuple(axes_to_constructs1.items()):
 
                 constructs1 = constructs1.copy()
-           
+
                 if len_axes0 != len(axes1):
                     # axes1 and axes0 contain different number of
                     # domain axes.

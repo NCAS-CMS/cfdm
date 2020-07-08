@@ -72,16 +72,16 @@ class Field(mixin.NetCDFVariable,
     The netCDF variable group structure may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
-   
+
     The netCDF group attributes may be accessed with the
     `nc_group_attributes`, `nc_clear_group_attributes`,
     `nc_set_group_attribute` and `nc_set_group_attributes` methods.
-   
+
     The netCDF geometry variable group structure may be accessed with
     the `nc_set_geometry_variable`, `nc_get_geometry_variable`,
     `nc_geometry_variable_groups`, `nc_clear_variable_groups` and
     `nc_set_geometry_variable_groups` methods.
-   
+
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
@@ -100,7 +100,7 @@ class Field(mixin.NetCDFVariable,
 
     CF-compliance issues for field constructs read from a netCDF
     dataset may be accessed with the `dataset_compliance` method.
-   
+
     .. versionadded:: 1.7.0
 
     '''
@@ -351,7 +351,7 @@ class Field(mixin.NetCDFVariable,
         return new
 
     # ----------------------------------------------------------------
-    # Private methods    
+    # Private methods
     # ----------------------------------------------------------------
     def _get_data_compression_variables(self, component):
         '''
@@ -362,13 +362,13 @@ class Field(mixin.NetCDFVariable,
             data = construct.get_data(None)
             if data is None:
                 continue
-            
+
             x = getattr(data, 'get_' + component)(None)
             if x is None:
                 continue
-            
+
             out.append(x)
-            
+
         for construct in self.constructs.filter_by_data().values():
             if not construct.has_bounds():
                 continue
@@ -380,33 +380,33 @@ class Field(mixin.NetCDFVariable,
             x = getattr(data, 'get_' + component)(None)
             if x is None:
                 continue
-            
+
             out.append(x)
 
         for construct in self.coordinates.values():
             interior_ring = construct.get_interior_ring(None)
-            if interior_ring is  None:
+            if interior_ring is None:
                 continue
-            
+
             data = interior_ring.get_data(None)
             if data is None:
                 continue
-          
+
             x = getattr(data, 'get_' + component)(None)
             if x is None:
                 continue
-            
+
             out.append(x)
-            
+
         return out
-    
+
     def _get_coordinate_geometry_variables(self, component):
         '''TODO
 
     :Parameters:
-        
+
         component:  `str`
-        
+
     :Returns:
 
         `list'
@@ -419,7 +419,7 @@ class Field(mixin.NetCDFVariable,
                 continue
 
             out.append(x)
-                    
+
         return out
 
     def _one_line_description(self, axis_names_sizes=None):
@@ -1818,7 +1818,7 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
@@ -1853,17 +1853,17 @@ class Field(mixin.NetCDFVariable,
 
     >>> f.nc_set_component_variable('interior_ring', 'interiorring_1')
 
-        '''            
+        '''
         if component in ('count', 'index', 'list'):
             variables = self._get_data_compression_variables(component)
         elif component in ('interior_ring', 'node_count', 'part_node_count'):
             variables = self._get_coordinate_geometry_variables(component)
         else:
             raise ValueError("Invalid component: {!r}".format(component))
-            
-        for v in variables:            
+
+        for v in variables:
             v.nc_set_variable(value)
-            
+
     def nc_del_component_variable(self, component):
         '''Remove the netCDF variable name for all components of the given
     type.
@@ -1885,7 +1885,7 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
@@ -1917,17 +1917,17 @@ class Field(mixin.NetCDFVariable,
 
     >>> f.nc_del_component_variable('interior_ring')
 
-        '''        
+        '''
         if component in ('count', 'index', 'list'):
             variables = self._get_data_compression_variables(component)
         elif component in ('interior_ring', 'node_count', 'part_node_count'):
             variables = self._get_coordinate_geometry_variables(component)
         else:
             raise ValueError("Invalid component: {!r}".format(component))
-            
-        for v in variables: 
+
+        for v in variables:
             v.nc_del_variable(None)
-            
+
     def nc_set_component_variable_groups(self, component, groups):
         '''Set the netCDF variable groups hierarchy for all components of the
     given type.
@@ -1949,7 +1949,7 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
@@ -1990,10 +1990,10 @@ class Field(mixin.NetCDFVariable,
             variables = self._get_coordinate_geometry_variables(component)
         else:
             raise ValueError("Invalid component: {!r}".format(component))
-            
-        for v in variables:            
+
+        for v in variables:
             v.nc_set_variable_groups(groups)
-            
+
     def nc_clear_component_variable_groups(self, component):
         '''Remove the netCDF variable groups hierarchy for all components of
     the given type.
@@ -2015,7 +2015,7 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
@@ -2054,9 +2054,9 @@ class Field(mixin.NetCDFVariable,
         else:
             raise ValueError("Invalid component: {!r}".format(component))
 
-        for v in variables: 
+        for v in variables:
             v.nc_clear_variable_groups()
-            
+
     def nc_set_component_dimension(self, component, value):
         '''Set the netCDF dimension name for all components of the given type.
 
@@ -2077,7 +2077,7 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
@@ -2105,17 +2105,17 @@ class Field(mixin.NetCDFVariable,
 
     >>> f.nc_set_component_dimension('interior_ring', 'part')
 
-        '''        
+        '''
         if component in ('count', 'index'):
             variables = self._get_data_compression_variables(component)
         elif component in ('interior_ring', 'part_node_count'):
             variables = self._get_coordinate_geometry_variables(component)
         else:
             raise ValueError("Invalid component: {!r}".format(component))
-        
-        for v in variables:         
+
+        for v in variables:
             v.nc_set_dimension(value)
-            
+
     def nc_del_component_dimension(self, component):
         '''Remove the netCDF dimension name for all components of the given
     type.
@@ -2137,7 +2137,7 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
@@ -2169,10 +2169,10 @@ class Field(mixin.NetCDFVariable,
             variables = self._get_coordinate_geometry_variables(component)
         else:
             raise ValueError("Invalid component: {!r}".format(component))
-            
-        for v in variables: 
+
+        for v in variables:
             v.nc_del_dimension(None)
-            
+
     def nc_set_component_dimension_groups(self, component, groups):
         '''Set the netCDF dimension groups hierarchy for all components of the
     given type.
@@ -2194,16 +2194,16 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
             ``'interior_ring'``    Interior ring variables for
                                    geometry coordinates
-  
+
             ``'part_node_count'``  Part node count variables for
                                    geometry coordinates
-  
+
             ``'count'``            Count variables for contiguous
                                    ragged arrays
 
@@ -2229,10 +2229,10 @@ class Field(mixin.NetCDFVariable,
             variables = self._get_coordinate_geometry_variables(component)
         else:
             raise ValueError("Invalid component: {!r}".format(component))
-          
-        for v in variables:            
+
+        for v in variables:
             v.nc_set_dimension_groups(groups)
-                
+
     def nc_clear_component_dimension_groups(self, component):
         '''Remove the netCDF dimension groups hierarchy for all components of
     the given type.
@@ -2254,7 +2254,7 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
@@ -2287,9 +2287,9 @@ class Field(mixin.NetCDFVariable,
         else:
             raise ValueError("Invalid component: {!r}".format(component))
 
-        for v in variables: 
+        for v in variables:
             v.nc_clear_dimension_groups()
-            
+
     def nc_set_component_sample_dimension(self, component, value):
         '''Set the netCDF sample dimension name for all components of the
     given type.
@@ -2311,7 +2311,7 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
@@ -2339,10 +2339,10 @@ class Field(mixin.NetCDFVariable,
             variables = self._get_data_compression_variables(component)
         else:
             raise ValueError("Invalid component: {!r}".format(component))
-        
-        for v in variables:         
+
+        for v in variables:
             v.nc_set_sample_dimension(value)
-            
+
     def nc_del_component_sample_dimension(self, component):
         '''Remove the netCDF sample dimension name for all components of the
     given type.
@@ -2364,7 +2364,7 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
@@ -2388,10 +2388,10 @@ class Field(mixin.NetCDFVariable,
             variables = self._get_data_compression_variables(component)
         else:
             raise ValueError("Invalid component: {!r}".format(component))
-        
-        for v in variables: 
+
+        for v in variables:
             v.nc_del_sample_dimension(None)
-            
+
     def nc_set_component_sample_dimension_groups(self, component, groups):
         '''Set the netCDF sample dimension groups hierarchy for all components
     of the given type.
@@ -2413,7 +2413,7 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
@@ -2440,10 +2440,10 @@ class Field(mixin.NetCDFVariable,
             variables = self._get_data_compression_variables(component)
         else:
             raise ValueError("Invalid component: {!r}".format(component))
-                    
-        for v in variables:            
+
+        for v in variables:
             v.nc_set_sample_dimension_groups(groups)
-                
+
     def nc_clear_component_sample_dimension_groups(self, component):
         '''Remove the netCDF sample dimension groups hierarchy for all
     components of the given type.
@@ -2465,7 +2465,7 @@ class Field(mixin.NetCDFVariable,
 
         component: `str`
             Specify the component type. One of:
-    
+
             =====================  ===================================
             *component*            Description
             =====================  ===================================
@@ -2490,9 +2490,9 @@ class Field(mixin.NetCDFVariable,
         else:
             raise ValueError("Invalid component: {!r}".format(component))
 
-        for v in variables: 
+        for v in variables:
             v.nc_clear_sample_dimension_groups()
-                                  
+
     @_inplace_enabled
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
@@ -2683,7 +2683,7 @@ class Field(mixin.NetCDFVariable,
 
     A field construct that is already uncompressed will be returned
     uncompressed.
-        
+
     The compression type can be discovered by the
     `~Data.get_compression_type` method  of the data:
 
@@ -2692,15 +2692,15 @@ class Field(mixin.NetCDFVariable,
       * Compression type ``'ragged_contiguous'``: Contiguous ragged
         array representation for DSG "point", "timeSeries",
         "trajectory" or "profile" features.
-      
+
       * Compression type ``'ragged_indexed'``: Indexed ragged array
         representation for DSG "point", "timeSeries", "trajectory", or
         "profile" features.
-      
+
       * Compression type ``'ragged_indexed_contiguous'``: Indexed
         contiguous ragged array representation for DSG
         "timeSeriesProfile", or "trajectoryProfile" features.
-      
+
       * Compression type ``'gathered'``: Compression by gathering over
         any subset of the field construct data dimensions.
 

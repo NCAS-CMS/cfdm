@@ -22,7 +22,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-        
+
         aux1 = cfdm.AuxiliaryCoordinate()
         aux1.standard_name = 'latitude'
         a = numpy.array([-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7, 11.30003, 17.8678678, 23.5, 30])
@@ -55,12 +55,12 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         x = f.auxiliary_coordinates('latitude').value()
 
         x.set_property('long_name', 'qwerty')
-        
-        self.assertEqual(x.get_property('long_name'), 'qwerty')    
+
+        self.assertEqual(x.get_property('long_name'), 'qwerty')
         self.assertEqual(x.del_property('long_name'), 'qwerty')
         self.assertIsNone(x.get_property('long_name', None))
         self.assertIsNone(x.del_property('long_name', None))
-        
+
     def test_AuxiliaryCoordinate_source(self):
         f = cfdm.read(self.filename)[0]
         d = f.dimension_coordinates('grid_longitude').value()

@@ -389,7 +389,7 @@ class read_writeTest(unittest.TestCase):
                                  g.get_property('Conventions'),
                                  Conventions))
 
-        for Conventions in ([version],                          
+        for Conventions in ([version],
                             [version, other],
         ):
             cfdm.write(f, tmpfile0, Conventions=Conventions)

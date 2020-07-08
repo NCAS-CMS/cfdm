@@ -36,7 +36,7 @@ class DomainAxis(mixin.NetCDFDimension,
     The netCDF dimension group structure may be accessed with the
     `nc_set_dimension`, `nc_get_dimension`, `nc_dimension_groups`,
     `nc_clear_dimension_groups` and `nc_set_dimension_groups` methods.
-   
+
     .. versionadded:: 1.7.0
 
     '''

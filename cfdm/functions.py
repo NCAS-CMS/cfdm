@@ -278,7 +278,7 @@ def _log_level(constants_dict, log_level):
                 "where either the string or the corrsponding integer is "
                 "accepted. Value remains as it was, at '{}'.".format(
                     level, ", '".join([val.name + "' = " + str(val.value)
-                                        for val in ValidLogLevels]), old
+                                       for val in ValidLogLevels]), old
                 )
             )
         # Safe to reset now as guaranteed to be valid:
@@ -489,10 +489,10 @@ def environment(display=True, paths=True):
     try:
         out.append('netcdf_flattener: ' + str(netcdf_flattener.__version__))
     except AttributeError:
-        out.append('netcdf_flattener: unknown version')        
+        out.append('netcdf_flattener: unknown version')
     if paths:
         out[-1] += ' ' + str(os.path.abspath(netcdf_flattener.__file__))
-        
+
     out.append('cfdm: ' + str(__version__))
     if paths:
         out[-1] += ' ' + str(os.path.abspath(__file__))
