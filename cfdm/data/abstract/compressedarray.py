@@ -340,7 +340,7 @@ class CompressedArray(Array, metaclass=abc.ABCMeta):
     **Examples:**
          TODO
         '''
-        self._set_compressed_Array(self._get_compressed_Array().to_memory())
+        self._get_compressed_Array(self._get_compressed_Array().to_memory())
         return self
 
     def source(self, default=ValueError()):

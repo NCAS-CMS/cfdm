@@ -709,7 +709,18 @@ class NetCDFTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 f.nc_clear_component_variable_groups(component)
 
+    def test_netCDF_to_memory(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.example_field(4)
+        f.data.to_memory()  # on non-compressed array
+        f.compress('indexed_contiguous', inplace=True)
+        f.data.to_memory()  # on compressed array
+
+
 #--- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
