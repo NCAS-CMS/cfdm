@@ -1,3 +1,5 @@
+import numpy
+
 from . import abstract
 
 
@@ -50,5 +52,54 @@ class DimensionCoordinate(abstract.Coordinate):
 
         '''
         return 'dimension_coordinate'
+
+    def set_data(self, data, copy=True):
+        '''Set the data.
+
+    The units, calendar and fill value of the incoming `Data` instance
+    are removed prior to insertion.
+
+    .. versionadded:: 1.7.0
+
+    .. seealso:: `data`, `del_data`, `get_data`, `has_data`
+
+    :Parameters:
+
+        data: `Data`
+            The data to be inserted. Must be 1-dimensional,
+            i.e. scalar or multidimensionl data is not allowed.
+
+        copy: `bool`, optional
+            If False then do not copy the data prior to insertion. By
+            default the data are copied.
+
+    :Returns:
+
+        `None`
+
+    **Examples:**
+
+    >>> d = Data(range(10))
+    >>> f.set_data(d)
+    >>> f.has_data()
+    True
+    >>> f.get_data()
+    <Data(10): [0, ..., 9]>
+    >>> f.del_data()
+    <Data(10): [0, ..., 9]>
+    >>> f.has_data()
+    False
+    >>> print(f.get_data(None))
+    None
+    >>> print(f.del_data(None))
+    None
+
+        '''
+        if numpy.ndim(data) != 1:
+            raise ValueError(
+                "Dimension coordinate construct must have 1-dimensional data. "
+                "Got {!r}".format(data))
+        
+        return super().set_data(data, copy=copy)
 
 # --- End: class

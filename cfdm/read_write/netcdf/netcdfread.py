@@ -2963,13 +2963,18 @@ class NetCDFRead(IORead):
                 if is_scalar_dimension_coordinate:
                     # Insert a domain axis and dimension coordinate
                     # derived from a numeric scalar auxiliary
-                    # coordinate
+                    # coordinate.
+
+                    # First turn the scalar auxiliary corodinate into
+                    # a 1-d auxiliary coordinate construct
+                    coord = self.implementation.construct_insert_dimension(
+                        construct=coord, position=0)
+
+                    # Now turn the 1-d size 1 auxiliary coordinate
+                    # into a dimension coordinate
                     coord = self.implementation.initialise_DimensionCoordinate_from_AuxiliaryCoordinate(
                         auxiliary_coordinate=coord,
                         copy=False)
-
-                    coord = self.implementation.construct_insert_dimension(
-                                construct=coord, position=0)
 
                     domain_axis = self._create_domain_axis(
                         self.implementation.get_construct_data_size(coord)
