@@ -245,6 +245,8 @@ class NetCDFRead(IORead):
             The netCDF name of the the variable that is doing the
             referencing.
 
+            .. versionaddedd:: 1.8.6
+
     :Returns:
 
         `int`
@@ -255,13 +257,14 @@ class NetCDFRead(IORead):
     >>> r._reference('longitude')
 
         '''
-        count = self.read_vars['references'].setdefault(ncvar, 0)
+        g = self.read_vars
+        
+        count = g['references'].setdefault(ncvar, 0)
         count += 1
-        self.read_vars['references'][ncvar] = count
+        g['references'][ncvar] = count
 
         # Keep a note of which variables are doing the referencing
-        self.read_vars['referencers'].setdefault(ncvar, []).append(
-            referencing_ncvar)
+        g['referencers'].setdefault(ncvar, set()).add(referencing_ncvar)
         
         return count
 
@@ -822,11 +825,6 @@ class NetCDFRead(IORead):
         # Set minimum versions
         for vn in ('1.6', '1.7', '1.8', '1.9'):
             g['CF>='+vn] = (g['file_version'] >= g['version'][vn])
-
-        # Only accept groups for CF>=1.8
-        if g['has_groups'] and not g['CF>=1.8']:
-            # Re-open the file without flattening it
-            nc = self.file_open(filename, flatten=False)
 
         # ------------------------------------------------------------
         # Create a dictionary keyed by netCDF variable names where
@@ -1404,17 +1402,13 @@ class NetCDFRead(IORead):
 
         referenced_variables = [ncvar for ncvar in sorted(all_fields)
                                if not self._is_unreferenced(ncvar)]
-#        print (referenced_variables)
         unreferenced_variables = [ncvar for ncvar in sorted(all_fields)
                                   if self._is_unreferenced(ncvar)]
         
         xx = []
         for ncvar in referenced_variables[:]:
-#            print ('GGG@', ncvar, [referencer  in referenced_variables
-#                       for referencer in g['referencers'][ncvar]])
             if all(referencer in referenced_variables
                    for referencer in g['referencers'][ncvar]):
-#                print ('nob',referenced_variables)
                 referenced_variables.remove(ncvar)
                 unreferenced_variables.append(ncvar)
                 fields[ncvar] = all_fields[ncvar]

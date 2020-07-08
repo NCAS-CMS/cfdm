@@ -53,7 +53,10 @@ def read(filename, external=None, extra=None, verbose=None,
     constructed from grouped datasets by applying the well defined
     rules in the CF conventions for resolving references to
     out-of-group netCDF variables and dimensions. The group structure
-    is preserved in the field construct's netCDF interface.
+    is preserved in the field construct's netCDF interface. Groups
+    were incorporated into C-1.8. For files with groups that state
+    compliance to earlier versions of the CF conventions, the groups
+    will be interpreted as per the latest release of CF.
 
 
     **CF-compliance**
