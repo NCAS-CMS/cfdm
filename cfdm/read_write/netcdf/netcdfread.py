@@ -209,6 +209,10 @@ class NetCDFRead(IORead):
         '''Return True if the netCDF variable is not referenced by any other
     netCDF variable.
 
+    .. versionadded:: 1.7.0
+        
+    .. seealso:: `_reference`
+
     :Parameters:
 
         ncvar: `str`
@@ -225,13 +229,21 @@ class NetCDFRead(IORead):
         '''
         return self.read_vars['references'].get(ncvar, 0) <= 0
 
-    def _reference(self, ncvar):
+    def _reference(self, ncvar, referencing_ncvar):
         '''Increment by one the reference count to a netCDF variable.
+
+    .. versionadded:: 1.7.0
+
+    .. seealso:: _is_unreferenced
 
     :Parameters:
 
         ncvar: `str`
             The netCDF variable name.
+
+        referencing_ncvar: `str`
+            The netCDF name of the the variable that is doing the
+            referencing.
 
     :Returns:
 
@@ -246,6 +258,11 @@ class NetCDFRead(IORead):
         count = self.read_vars['references'].setdefault(ncvar, 0)
         count += 1
         self.read_vars['references'][ncvar] = count
+
+        # Keep a note of which variables are doing the referencing
+        self.read_vars['referencers'].setdefault(ncvar, []).append(
+            referencing_ncvar)
+        
         return count
 
     def file_close(self):
@@ -635,6 +652,7 @@ class NetCDFRead(IORead):
 
             'do_not_create_field':  set(),
             'references': {},
+            'referencers': {},
 
             # --------------------------------------------------------
             # External variables
@@ -1364,6 +1382,16 @@ class NetCDFRead(IORead):
                 )
         # --- End: if
 
+        logger.debug("    Reference read vars:")  # pragma: no cover
+        logger.debug(
+            "        read_vars['references'] =\n" +
+            pformat(g['references'], indent=12)
+        )  # pragma: no cover
+        logger.debug(
+            "        read_vars['referencers'] =\n" +
+            pformat(g['referencers'], indent=12)
+        )  # pragma: no cover
+        
         # ------------------------------------------------------------
         # Discard fields created from netCDF variables that are
         # referenced by other netCDF variables
@@ -1374,14 +1402,28 @@ class NetCDFRead(IORead):
                 fields[ncvar] = f
         # --- End: for
 
+        referenced_variables = [ncvar for ncvar in sorted(all_fields)
+                               if not self._is_unreferenced(ncvar)]
+#        print (referenced_variables)
+        unreferenced_variables = [ncvar for ncvar in sorted(all_fields)
+                                  if self._is_unreferenced(ncvar)]
+        
+        xx = []
+        for ncvar in referenced_variables[:]:
+#            print ('GGG@', ncvar, [referencer  in referenced_variables
+#                       for referencer in g['referencers'][ncvar]])
+            if all(referencer in referenced_variables
+                   for referencer in g['referencers'][ncvar]):
+#                print ('nob',referenced_variables)
+                referenced_variables.remove(ncvar)
+                unreferenced_variables.append(ncvar)
+                fields[ncvar] = all_fields[ncvar]
+        # --- End: for
+        
         logger.info(
             "    Referenced netCDF variables:\n        "
-            + "\n        ".join(
-                [ncvar for ncvar in sorted(all_fields)
-                 if not self._is_unreferenced(ncvar)]
-            )
+            + "\n        ".join(referenced_variables)
         )  # pragma: no cover
-
         if g['do_not_create_field']:
             logger.info(
                 "        "
@@ -1389,19 +1431,16 @@ class NetCDFRead(IORead):
                     [ncvar
                      for ncvar in sorted(g['do_not_create_field'])])
             )  # pragma: no cover
-
         logger.info(
             "    Unreferenced netCDF variables:\n        " +
-            "\n        ".join(
-                [ncvar for ncvar in sorted(all_fields)
-                 if self._is_unreferenced(ncvar)]
-            )
+            "\n        ".join(unreferenced_variables)
         )  # pragma: no cover
 
         # ------------------------------------------------------------
         # If requested, reinstate fields created from netCDF variables
         # that are referenced by other netCDF variables.
         # ------------------------------------------------------------
+        self_referenced = {}
         if g['extra']:
             fields0 = list(fields.values())
             for construct_type in g['extra']:
@@ -1412,10 +1451,18 @@ class NetCDFRead(IORead):
                         if ncvar not in all_fields:
                             continue
 
-                        fields[ncvar] = all_fields[ncvar]
+                        if ncvar not in fields:
+                            fields[ncvar] = all_fields[ncvar]
+                        else:
+                            self_referenced[ncvar] = all_fields[ncvar]
         # --- End: if
 
-        out = [x[1] for x in sorted(fields.items())]
+        if not self_referenced:
+            items = fields.items()
+        else:
+            items = tuple(fields.items()) + tuple(self_referenced.items())
+
+        out = [x[1] for x in sorted(items)]
 
         if warnings:
             for x in out:
@@ -2847,11 +2894,12 @@ class NetCDFRead(IORead):
                     field=f, construct=coord,
                     axes=[axis], copy=False)
 
-                self._reference(ncvar)
+                self._reference(ncvar, field_ncvar)
                 if coord.has_bounds():
                     bounds = self.implementation.get_bounds(coord)
-                    self._reference(self.implementation.nc_get_variable(
-                        bounds))
+                    self._reference(
+                        self.implementation.nc_get_variable(bounds),
+                        field_ncvar)
 
                 # Set unlimited status of axis
 #                if nc.dimensions[ncdim].isunlimited():
@@ -2997,11 +3045,12 @@ class NetCDFRead(IORead):
                         axes=[axis],
                         copy=False)
 
-                    self._reference(ncvar)
+                    self._reference(ncvar, field_ncvar)
                     if self.implementation.has_bounds(coord):
                         bounds = self.implementation.get_bounds(coord)
                         self._reference(
-                            self.implementation.nc_get_variable(bounds))
+                            self.implementation.nc_get_variable(bounds),
+                            field_ncvar)
 
                     dimensions = [axis]
                     ncvar_to_key[ncvar] = dim
@@ -3017,11 +3066,12 @@ class NetCDFRead(IORead):
                     aux = self.implementation.set_auxiliary_coordinate(
                         f, coord, axes=dimensions, copy=False)
 
-                    self._reference(ncvar)
+                    self._reference(ncvar, field_ncvar)
                     if self.implementation.has_bounds(coord):
                         bounds = self.implementation.get_bounds(coord)
                         self._reference(
-                            self.implementation.nc_get_variable(bounds))
+                            self.implementation.nc_get_variable(bounds),
+                            field_ncvar)
 
                     ncvar_to_key[ncvar] = aux
 
@@ -3084,7 +3134,7 @@ class NetCDFRead(IORead):
                     axes=(g['ncdim_to_axis'][geometry_dimension],),
                     copy=False)
 
-                self._reference(node_ncvar)
+                self._reference(node_ncvar, field_ncvar)
                 ncvar_to_key[node_ncvar] = aux
         # --- End: if
 
@@ -3167,11 +3217,12 @@ class NetCDFRead(IORead):
                 da_key = self.implementation.set_domain_ancillary(
                     field=f, construct=domain_anc, axes=axes, copy=False)
 
-                self._reference(ncvar)
+                self._reference(ncvar, field_ncvar)
                 if self.implementation.has_bounds(domain_anc):
                     bounds = self.implementation.get_bounds(domain_anc)
                     self._reference(
-                        self.implementation.nc_get_variable(bounds))
+                        self.implementation.nc_get_variable(bounds),
+                        field_ncvar)
 
                 if ncvar not in ncvar_to_key:
                     ncvar_to_key[ncvar] = da_key
@@ -3310,15 +3361,16 @@ class NetCDFRead(IORead):
                             "        [l] Inserting {!r}".format(coordref)
                         )  # pragma: no cover
 
-                        self._reference(grid_mapping_ncvar)
+                        self._reference(grid_mapping_ncvar,
+                                        field_ncvar)
                         ncvar_to_key[grid_mapping_ncvar] = key
                 # --- End: for
             # --- End: if
         # --- End: if
 
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         # Add cell measures to the field
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         measures = self.implementation.del_property(f, 'cell_measures', None)
         if measures is not None:
             parsed_cell_measures = self._parse_x(field_ncvar, measures)
@@ -3330,7 +3382,7 @@ class NetCDFRead(IORead):
                 for x in parsed_cell_measures:
                     measure, ncvars = list(x.items())[0]
                     ncvar = ncvars[0]
-
+                    
                     # Set the domain axes for the cell measure
                     axes = self._get_domain_axes(ncvar, allow_external=True)
 
@@ -3350,7 +3402,11 @@ class NetCDFRead(IORead):
                         field=f, construct=cell,
                         axes=axes, copy=False)
 
-                    self._reference(ncvar)
+                    # Count a reference to the cell measure ...
+                    if ncvar != field_ncvar:
+                        # ... but only if it is not the same as its
+                        # parent data variable (introduced at v1.8.6).
+                        self._reference(ncvar, field_ncvar)
 
                     ncvar_to_key[ncvar] = key
 
@@ -3429,7 +3485,7 @@ class NetCDFRead(IORead):
                     )  # pragma: no cover
                     key = self.implementation.set_field_ancillary(
                         field=f, construct=field_anc, axes=axes, copy=False)
-                    self._reference(ncvar)
+                    self._reference(ncvar, field_ncvar)
 
                     ncvar_to_key[ncvar] = key
         # --- End: if
@@ -5392,6 +5448,7 @@ class NetCDFRead(IORead):
 
         ok = True
 
+        
         if node_ncvar not in geometry.get('node_coordinates', ()):
             self._add_message(field_ncvar, bounds_ncvar,
                               message=('Node coordinate variable',
@@ -5486,7 +5543,7 @@ class NetCDFRead(IORead):
                         field_ncvar, ncvar,
                         message=incorrect_dimensions,
                         attribute=attribute,
-                        dimensions=g['variable_dimensons'][ncvar],
+                        dimensions=g['variable_dimensions'][ncvar],
                         conformance='7.2.requirement.4')
                     ok = False
                     continue
