@@ -217,7 +217,7 @@ class GatheredTest(unittest.TestCase):
         self.assertTrue((tas.data.get_list().data.array == numpy.array(
             [1, 4, 5])).all())
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == '__main__':

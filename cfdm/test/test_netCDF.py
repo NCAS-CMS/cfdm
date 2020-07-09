@@ -719,7 +719,7 @@ class NetCDFTest(unittest.TestCase):
         f.data.to_memory()  # on compressed array
 
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == '__main__':

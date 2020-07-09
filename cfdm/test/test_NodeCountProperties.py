@@ -36,7 +36,7 @@ class NodeCountPropertiesTest(unittest.TestCase):
         _ = str(n)
         _ = n.dump(display=False)
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == '__main__':

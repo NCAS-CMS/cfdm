@@ -326,7 +326,7 @@ class FunctionsTest(unittest.TestCase):
 #
 #        self.assertIsInstance(cfdm.default_netCDF_fill_values(), dict)
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

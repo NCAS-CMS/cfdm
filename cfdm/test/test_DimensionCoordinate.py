@@ -47,7 +47,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         _ = x.dump(display=False)
         _ = x.dump(display=False, _key='qwerty')
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == "__main__":

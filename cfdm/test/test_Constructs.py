@@ -230,7 +230,7 @@ class ConstructsTest(unittest.TestCase):
                 d = c.filter_by_axis(mode, *args)
                 e = d.inverse_filter()
                 self.assertEqual(len(e), len(c) - len(d))
-        #--- End: for
+        # --- End: for
 
         # Inverse filter, filters applied
         self.assertEqual(len(c.filters_applied()), 0)
@@ -263,7 +263,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(d.unfilter(1).equals(c, verbose=3))
         self.assertTrue(c.unfilter(1).equals(c, verbose=3))
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

@@ -172,7 +172,7 @@ class ExternalVariableTest(unittest.TestCase):
             self.assertTrue(external[i].equals(h[i], verbose=3))
 
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == '__main__':

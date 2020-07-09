@@ -163,7 +163,7 @@ class read_writeTest(unittest.TestCase):
                         f.equals(g, verbose=3),
                         "Bad read/write with lossless compression: "
                         "{}, {}, {}".format(fmt, compress, shuffle))
-        #--- End: for
+        # --- End: for
 
     def test_read_write_missing_data(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -356,7 +356,7 @@ class read_writeTest(unittest.TestCase):
                         for i, j in zip(cfdm.read(tmpfile1),
                                         cfdm.read(tmpfile0)):
                             self.assertTrue(i.equals(j, verbose=3))
-        #--- End: for
+        # --- End: for
 
     def test_read_write_Conventions(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -407,7 +407,7 @@ class read_writeTest(unittest.TestCase):
                 "{!r}, {!r}".format(
                     g.get_property('Conventions'), Conventions))
 
-#--- End: class
+# --- End: class
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

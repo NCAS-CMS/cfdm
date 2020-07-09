@@ -36,7 +36,7 @@ class PartNodeCountPropertiesTest(unittest.TestCase):
         _ = str(p)
         _ = p.dump(display=False)
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == '__main__':

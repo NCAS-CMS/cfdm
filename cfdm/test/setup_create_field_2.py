@@ -248,7 +248,7 @@ class create_fieldTest_2(unittest.TestCase):
 
             self.assertTrue(g.equals(f, verbose=verbose),
                             "Field not equal to itself read back in")
-        #--- End: for
+        # --- End: for
 
         x = g.dump(display=False)
         x = f.dump(display=False)
@@ -277,7 +277,7 @@ class create_fieldTest_2(unittest.TestCase):
 #        print h
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

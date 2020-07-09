@@ -210,7 +210,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         cr.datum.nc_set_variable('my_name')
         cfdm.write(f, tempfile1)
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

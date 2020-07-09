@@ -62,7 +62,7 @@ class CellMeasureTest(unittest.TestCase):
         self.assertEqual(cm.get_measure(), 'area')
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

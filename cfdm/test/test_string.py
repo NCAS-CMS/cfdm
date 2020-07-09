@@ -103,7 +103,7 @@ class StringTest(unittest.TestCase):
             self.assertEqual(aux0.data.shape, array.shape, aux0.data.shape)
             self.assertEqual(aux1.data.shape, array.shape, aux1.data.shape)
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

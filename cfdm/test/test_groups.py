@@ -399,7 +399,7 @@ class GroupsTest(unittest.TestCase):
         h = h[0]
         self.assertTrue(f.equals(h, verbose=3))
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == '__main__':

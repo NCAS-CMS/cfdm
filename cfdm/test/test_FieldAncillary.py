@@ -91,7 +91,7 @@ class FieldAncillaryTest(unittest.TestCase):
         x.squeeze(2, inplace=True)
         self.assertEqual(x.shape, (1, 9, 10))
 
-#--- End: class
+# --- End: class
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

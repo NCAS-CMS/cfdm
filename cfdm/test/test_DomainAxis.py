@@ -96,7 +96,7 @@ class DomainTest(unittest.TestCase):
             d.nc_set_unlimited(False)
             self.assertFalse(d.nc_is_unlimited())
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
