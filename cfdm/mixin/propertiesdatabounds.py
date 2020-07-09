@@ -1342,7 +1342,16 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    TODO
+    >>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+    >>> c.set_node_count(n)
+    >>> c.has_node_count()
+    True
+    >>> c.get_node_count()
+    <NodeCount: long_name=node counts>
+    >>> c.del_node_count()
+    <NodeCount: long_name=node counts>
+    >>> c.has_node_count()
+    False
 
         '''
         if copy:
@@ -1373,7 +1382,16 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    TODO
+    >>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+    >>> c.set_part_node_count(p)
+    >>> c.has_part_node_count()
+    True
+    >>> c.get_part_node_count()
+    <PartNodeCount: long_name=part node counts>
+    >>> c.del_part_node_count()
+    <PartNodeCount: long_name=part node counts>
+    >>> c.has_part_node_count()
+    False
 
         '''
         if copy:

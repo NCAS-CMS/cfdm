@@ -48,7 +48,7 @@ class NetCDF():
 # --- End: class
 
 class _NetCDFGroupsMixin():
-    '''TODO
+    '''Mixin class for accessing netCDF(4) hierarchical groups.
 
     .. versionadded:: 1.8.6
     '''
