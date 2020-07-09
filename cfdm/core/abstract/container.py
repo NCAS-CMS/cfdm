@@ -28,7 +28,6 @@ class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
 
         '''
         self._components = {}
-#        self._components['docstring_rewrite'] = {'{+repr}': ('TEST: ', None)}
                 
         if source is not None:
             try:
@@ -57,8 +56,24 @@ class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
         '''
         return self.copy()
 
-
     def __docstring_rewrite__(self):
+        '''TODO
+
+
+Consider:
+
+        '''
+        out = (
+            (re.compile('{\.(\.?)class}'), None),
+            (re.compile('{\.(\.?)(\.?)(\w.*?)}'), None),
+            ('{{repr}}', 'test3: '),
+            
+#            (re.compile('{\+(\+?)class}'), None),
+#            (re.compile('{\+(\+?)(\+?)method}'), None),
+#            ('{{repr}}', 'test3: '),
+#            (re.compile('{\+(\+?)([A-Z].*?)}'), None),
+#            (re.compile('{\+(\+?)(\+?)(\w.*?)}'), None),
+        )
         return {
             '{+repr}': ('test3: ', None),
             '{+test}': (_replacement_class, re.compile('dddddd')),
