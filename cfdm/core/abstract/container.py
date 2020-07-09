@@ -5,7 +5,17 @@ import re
 from copy import copy, deepcopy
 
 from . import RewriteDocstringMeta
-
+def _replacement_class(match):
+    groups = list(match.groups())
+    
+    groups.append(class_name)
+    
+    if package_name and groups[0]:
+        groups[0] = package_name
+    else:
+        groups.pop(0)
+        
+    return '.'.join(groups)
 
 class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
     '''Base class for storing components.
@@ -18,7 +28,8 @@ class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
 
         '''
         self._components = {}
-
+#        self._components['docstring_rewrite'] = {'{+repr}': ('TEST: ', None)}
+                
         if source is not None:
             try:
                 custom = source._get_component('custom', {})
@@ -46,6 +57,13 @@ class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
         '''
         return self.copy()
 
+
+    def __docstring_rewrite__(self):
+        return {
+            '{+repr}': ('test3: ', None),
+            '{+test}': (_replacement_class, re.compile('dddddd')),
+        }
+    
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------

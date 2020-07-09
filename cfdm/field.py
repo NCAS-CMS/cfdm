@@ -1584,7 +1584,7 @@ class Field(mixin.NetCDFVariable,
 
     .. versionadded:: 1.7.0
 
-    .. seealso:: `cfdm.read`
+    .. seealso:: `cfdm.read` PPPPPP: {+repr}
 
     :Parameters:
 

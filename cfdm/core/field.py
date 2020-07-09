@@ -35,6 +35,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     .. versionadded:: 1.7.0
 
     '''
+    _docstring_rewrite = {'{+repr}': ('TEST2: ', None)}
     # ----------------------------------------------------------------
     # Define the base of the identity keys for each construct type
     # ----------------------------------------------------------------
