@@ -124,6 +124,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
     :Returns:
 
+        `Domain`
             The deep copy.
 
     **Examples:**
@@ -156,7 +157,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
     :Returns:
 
-        `Domain`
+        `{+class}`
             The domain created from a view of the constructs.
 
     **Examples:**

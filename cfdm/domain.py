@@ -32,6 +32,8 @@ class Domain(mixin.ConstructAccess,
     def __new__(cls, *args, **kwargs):
         '''This must be overridden in subclasses.
 
+    .. versionadded:: 1.7.0
+
         '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs
@@ -173,7 +175,6 @@ class Domain(mixin.ConstructAccess,
 
         '''
         indent1 = '    ' * _level
-        indent2 = '    ' * (_level+1)
 
         axes = self.domain_axes
 
@@ -193,6 +194,8 @@ class Domain(mixin.ConstructAccess,
     The domain components are described without abbreviation with the
     exception of data arrays, which are abbreviated to their first and
     last values.
+
+    .. versionadded:: 1.7.0
 
     :Parameters:
 
@@ -297,6 +300,10 @@ class Domain(mixin.ConstructAccess,
 
     .. versionadded:: 1.7.0
 
+    :Returns:
+
+        `bool`
+        
     **Examples:**
 
     >>> d.equals(d)
@@ -305,6 +312,7 @@ class Domain(mixin.ConstructAccess,
     True
     >>> d.equals('not a domain')
     False
+
         '''
         pp = super()._equals_preprocess(other, verbose=verbose,
                                         ignore_type=ignore_type)

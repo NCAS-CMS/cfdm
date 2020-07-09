@@ -85,7 +85,7 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
 
     >>> import numpy
     >>> f = {+package}.{+class}()
-    >>> f.set_data({+package}.Data(numpy.arange(9.)))
+    >>> f.set_data({+package}.{++Data}(numpy.arange(9.)))
     >>> f.has_data()
     True
     >>> d = f.data
@@ -148,19 +148,20 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
 
     :Returns:
 
+        `{+Data}`
             The removed data.
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
-    >>> d = cfdm.Data(range(10))
+    >>> f = {++class}()
+    >>> d = {++Data}(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{+repr}Data(10): [0, ..., 9]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{+repr}Data(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))

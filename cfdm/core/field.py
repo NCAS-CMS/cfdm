@@ -2,6 +2,7 @@ from . import abstract
 from . import mixin
 
 from . import Constructs
+from . import Domain
 
 
 class Field(mixin.ConstructAccess, abstract.PropertiesData):
@@ -51,9 +52,12 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def __new__(cls, *args, **kwargs):
         '''This must be overridden in subclasses.
 
+    .. versionadded:: 1.7.0
+
         '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs
+        instance._Domain = Domain
         return instance
 
     def __init__(self, properties={}, source=None, copy=True,
