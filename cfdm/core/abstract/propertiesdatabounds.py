@@ -326,7 +326,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    TODO
+    TODO SB
 
         '''
         try:
