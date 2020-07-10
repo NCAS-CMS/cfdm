@@ -3,6 +3,12 @@ import abc
 from . import Properties, RewriteDocstringMeta
 
 
+# --------------------------------------------------------------------
+# See cfdm.core.mixin.container.__docstring_substitution__ for
+# {{...}}  docstring substitutions
+# --------------------------------------------------------------------
+
+
 class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
     '''Abstract base class for a data array with descriptive properties.
 
@@ -26,7 +32,7 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
             *Parameter example:*
               ``properties={'standard_name': 'altitude'}``
 
-        data: `Data`, optional
+        data: `{{+Data}}`, optional
             Set the data. Ignored if the *source* parameter is set.
 
             The data also may be set after initialisation with the
@@ -65,8 +71,8 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
 
     ``f.data`` is equivalent to ``f.get_data()``
 
-    Note that a `Data` instance is returned. Use its `array` attribute
-    to return the data as a `numpy` array.
+    Note that a `{{+Data}}` instance is returned. Use its `array`
+    attribute to return the data as a `numpy` array.
 
     The units, calendar and fill value properties are, if set,
     inserted into the data.
@@ -78,19 +84,19 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
 
     :Returns:
 
-        `Data`
+        `{{+Data}}`
             The data.
 
     **Examples:**
 
     >>> import numpy
-    >>> f = {+package}.{+class}()
-    >>> f.set_data({+package}.{++Data}(numpy.arange(9.)))
+    >>> f = {{package}}.{{class}}()
+    >>> f.set_data({{package}}.{{+Data}}(numpy.arange(9.)))
     >>> f.has_data()
     True
     >>> d = f.data
     >>> d
-    <{+repr_prefix}Data(10): [0.0, ..., 9.0]>
+    <{{repr}}Data(10): [0.0, ..., 9.0]>
     >>> f.data.shape
     (10,)
 
@@ -105,10 +111,10 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    Arrays within `Data` instances are copied with a copy-on-write
-    technique. This means that a copy takes up very little extra
-    memory, even when the original contains very large data arrays,
-    and the copy operation is fast.
+    Arrays within `{{+Data}}` instances are copied with a
+    copy-on-write technique. This means that a copy takes up very
+    little extra memory, even when the original contains very large
+    data arrays, and the copy operation is fast.
 
     .. versionadded:: 1.7.0
 
@@ -120,6 +126,7 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
 
     :Returns:
 
+        `{{class}}`
             The deep copy.
 
     **Examples:**
@@ -141,27 +148,24 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if data have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
-        `{+Data}`
+        `{{+Data}}`
             The removed data.
 
     **Examples:**
 
-    >>> f = {++class}()
-    >>> d = {++Data}(range(10))
+    >>> f = {{package}}.{{class}}()
+    >>> d = {{package}}.{{+Data}}(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
     True
     >>> f.get_data()
-    <{+repr}Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.del_data()
-    <{+repr}Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -178,39 +182,37 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
                  _fill_value=True):
         '''Return the data.
 
-    Note that a `Data` instance is returned. Use its `array` attribute
-    to return the data as an independent `numpy` array.
+    Note that a `{{+Data}}` instance is returned. Use its `array`
+    attribute to return the data as an independent `numpy` array.
 
     The units, calendar and fill value properties are, if set,
     inserted into the data.
 
     .. versionadded:: 1.7.0
 
-    .. seealso:: `Data.array`, `data`, `del_data`, `has_data`,
+    .. seealso:: `{{+Data}}.array`, `data`, `del_data`, `has_data`,
                  `set_data`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if data have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
-
+        
+        `{{+Data}}`
             The data.
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
-    >>> d = cfdm.Data(range(10))
+    >>> f = {{package}}.{{class}}()
+    >>> d = {{package}}.{{+Data}}(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -270,7 +272,7 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class}}()
     >>> f.has_bounds()
     False
 
@@ -291,15 +293,15 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
-    >>> d = cfdm.Data(range(10))
+    >>> f = {{package}}.{{class}}()
+    >>> d = {{package}}.{{+Data}}(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -313,8 +315,8 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
     def set_data(self, data, copy=True):
         '''Set the data.
 
-    The units, calendar and fill value of the incoming `Data` instance
-    are removed prior to insertion.
+    The units, calendar and fill value of the incoming `{{+Data}}`
+    instance are removed prior to insertion.
 
     .. versionadded:: 1.7.0
 
@@ -322,7 +324,7 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
 
     :Parameters:
 
-        data: `Data`
+        data: `{{+Data}}`
             The data to be inserted.
 
         copy: `bool`, optional
@@ -335,15 +337,15 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
-    >>> d = Data(range(10))
+    >>> f = {{package}}.{{class}}()
+    >>> d = {{package}}.{{+Data}}(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))

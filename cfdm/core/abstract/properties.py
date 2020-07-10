@@ -5,6 +5,12 @@ from copy import deepcopy
 from . import Container
 
 
+# --------------------------------------------------------------------
+# See cfdm.core.mixin.container.__docstring_substitution__ for
+# {{...}}  docstring substitutions
+# --------------------------------------------------------------------
+
+
 class Properties(Container): #, metaclass=abc.ABCMeta):
     '''Abstract base class for an object with descriptive properties.
 
@@ -66,7 +72,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
 
     **Examples:**
         
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class}}()
     >>> f.properties()
     {}
     >>> f.set_properties({'standard_name': 'air_pressure',
@@ -108,10 +114,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
             *Parameter example:*
                ``prop='long_name'``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            property has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -119,6 +122,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -158,10 +162,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
             *Parameter example:*
                ``prop='standard_name'``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            property has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -169,7 +170,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -215,7 +216,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -248,7 +249,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class}}()
     >>> f.properties()
     {}
     >>> f.set_properties({'standard_name': 'air_pressure',
@@ -299,7 +300,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class}}()
     >>> f.properties()
     {}
     >>> f.set_properties({'standard_name': 'air_pressure',
@@ -353,7 +354,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True

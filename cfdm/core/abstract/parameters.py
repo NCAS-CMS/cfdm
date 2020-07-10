@@ -5,6 +5,12 @@ from copy import deepcopy
 from . import Container
 
 
+# --------------------------------------------------------------------
+# See cfdm.core.mixin.container.__docstring_substitution__ for
+# {{...}}  docstring substitutions
+# --------------------------------------------------------------------
+
+
 class Parameters(Container): #, metaclass=abc.ABCMeta):
     '''Abstract base class for a collection of named parameters.
 
@@ -97,10 +103,7 @@ class Parameters(Container): #, metaclass=abc.ABCMeta):
         parameter: `str`
             The name of the parameter to be deleted.
 
-        default: optional
-            Return the value of the *default* parameter if the
-            parameter has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -109,6 +112,7 @@ class Parameters(Container): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_parameter('earth_radius', 6371007)
     >>> f.has_parameter('earth_radius')
     True
@@ -141,10 +145,7 @@ class Parameters(Container): #, metaclass=abc.ABCMeta):
         parameter: `str`
             The name of the parameter.
 
-        default: optional
-            Return the value of the *default* parameter if the
-            parameter has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -152,6 +153,7 @@ class Parameters(Container): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_parameter('earth_radius', 6371007)
     >>> f.has_parameter('earth_radius')
     True
@@ -197,6 +199,7 @@ class Parameters(Container): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_parameter('earth_radius', 6371007)
     >>> f.has_parameter('earth_radius')
     True
@@ -305,6 +308,7 @@ class Parameters(Container): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_parameter('earth_radius', 6371007)
     >>> f.has_parameter('earth_radius')
     True

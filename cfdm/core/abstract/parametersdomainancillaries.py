@@ -5,6 +5,12 @@ from copy import deepcopy
 from . import Parameters
 
 
+# --------------------------------------------------------------------
+# See cfdm.core.mixin.container.__docstring_substitution__ for
+# {{...}}  docstring substitutions
+# --------------------------------------------------------------------
+
+
 class ParametersDomainAncillaries(Parameters): #, metaclass=abc.ABCMeta):
     '''Abstract base class for a collection of named parameters and named
     domain ancillary constructs.
@@ -121,10 +127,7 @@ class ParametersDomainAncillaries(Parameters): #, metaclass=abc.ABCMeta):
             *Parameter example:*
                ``domain_ancillary='orog'``
 
-        default: optional
-            Return the value of the *default* parameter if the domain
-            ancillary term has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -199,10 +202,7 @@ class ParametersDomainAncillaries(Parameters): #, metaclass=abc.ABCMeta):
         domain_ancillary: `str`
             The name of the term.
 
-        default: optional
-            Return the value of the *default* parameter if the domain
-            ancillary term has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -246,10 +246,7 @@ class ParametersDomainAncillaries(Parameters): #, metaclass=abc.ABCMeta):
         domain_ancillary: `str`
             The name of the term.
 
-        default: optional
-            Return the value of the *default* parameter if the domain
-            ancillary term has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 

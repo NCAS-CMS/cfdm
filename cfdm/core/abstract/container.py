@@ -5,17 +5,7 @@ import re
 from copy import copy, deepcopy
 
 from . import RewriteDocstringMeta
-def _replacement_class(match):
-    groups = list(match.groups())
-    
-    groups.append(class_name)
-    
-    if package_name and groups[0]:
-        groups[0] = package_name
-    else:
-        groups.pop(0)
-        
-    return '.'.join(groups)
+
 
 class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
     '''Base class for storing components.
@@ -56,27 +46,96 @@ class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
         '''
         return self.copy()
 
-    def __docstring_rewrite__(self):
+    def __docstring_substitution__(self):
         '''TODO
 
+    Substitutions may be easily modified by overriding the
+    __docstring_substitution__ method. Modifications can be applied to
+    any class, and will only apply to that class and all of its
+    subclases.
 
-Consider:
+       def __docstring_substitution__(self):
+           def upper(match):
+               return match.group(1).upper()
+
+           out = super().__docstring_substitution__()
+
+           out['{{repr}}'] = 'CF: ', 
+
+           out['{{foo}}'] = 'bar', 
+
+           out['{{parameter: `int`}}'] = """parameter: `int`
+               This parameter does something to `{{class}}`
+               instances. It has no default value.""",
+
+           # Convert the text to upper case
+           out['{{<upper>}}'] = (re.compile('{{<upper (.*?>}}'), upper)
+
+           return out
+
+    To disable docstring substitutions for a parent class and all of
+    its subclasses, override this method on the parent class to return
+    an empty dictionary. In this case note that substitions will still
+    be applied to methods inherited by the parent class, and any
+    special class name substitutions will use the class name of the
+    class that defines the method.
 
         '''
-        out = (
-            (re.compile('{\.(\.?)class}'), None),
-            (re.compile('{\.(\.?)(\.?)(\w.*?)}'), None),
-            ('{{repr}}', 'test3: '),
-            
-#            (re.compile('{\+(\+?)class}'), None),
-#            (re.compile('{\+(\+?)(\+?)method}'), None),
-#            ('{{repr}}', 'test3: '),
-#            (re.compile('{\+(\+?)([A-Z].*?)}'), None),
-#            (re.compile('{\+(\+?)(\+?)(\w.*?)}'), None),
-        )
+        def _replacement_class(match, core=False):
+            class_name = match.group(1)
+            if core:
+                class_name = 'core.' + class_name
+                
+            return class_name
+
         return {
-            '{+repr}': ('test3: ', None),
-            '{+test}': (_replacement_class, re.compile('dddddd')),
+            # --------------------------------------------------------
+            # Special susbstitutions that depend on the class
+            # containing the docstring. Do not override these.
+            # --------------------------------------------------------
+            # Replace {{package}} with the package name
+            '{{package}}': True,
+            # Replace {{class}} with the name of the parent class
+            # method
+            '{{class}}': True,
+            # Replace {{+Name}} with Name unless the parent class is
+            # in the cfdm.core package, in whcih case replace it with
+            # core.Name.
+            #
+            # E.g. {{+Data}} is replaced by either Data or core.Data
+            '{{+class}}': (re.compile('{{\+(\w.*?)}}'), _replacement_class),
+            
+            # --------------------------------------------------------
+            # General substition. The key must not contain a colon
+            # (:). The key must not contain a plus (+). The key must
+            # not be of the form {{<...>}}.
+            # --------------------------------------------------------
+            '{{repr}}': '',
+
+            # --------------------------------------------------------
+            # General regex substition. The key must be of the form
+            # {{<name>}}. The key is not expected to appear in te
+            # docstring that form. Instead, the text to be operated on
+            # should follow the name inside the angle brackets. The
+            # key must not contain a colon (:). The key must not
+            # contain a plus (+).
+            #
+            # The value must be tuple containing a compiled regular
+            # expression and function to define the susbstition for
+            # each occurrence. The function should operate on the
+            # Match object returned by the evaulation of the regular
+            # expression.
+            # --------------------------------------------------------
+
+            # --------------------------------------------------------
+            # Keyword parameter description substition. The key must
+            # contain a colon (:). Special substitutions will be
+            # applied to these values
+            # --------------------------------------------------------
+            '{{default: optional}}': '''default: optional
+            Return the value of the *default* parameter if data have
+            not been set. If set to an `Exception` instance then it
+            will be raised instead.''',
         }
     
     # ----------------------------------------------------------------

@@ -6,6 +6,12 @@ import numpy
 from . import PropertiesData
 
 
+# --------------------------------------------------------------------
+# See cfdm.core.mixin.container.__docstring_substitution__ for
+# {{...}}  docstring substitutions
+# --------------------------------------------------------------------
+
+
 class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
     '''Abstract base class for a data array with bounds and descriptive
     properties.
@@ -128,20 +134,20 @@ class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
 
     :Returns:
 
-        `Bounds`
+        `{{+Bounds}}`
             The bounds.
 
     **Examples:**
 
     >>> import numpy
-    >>> c = {+package}.{+class}()
-    >>> b = {+package}.Bounds(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> b = {{package}}.Bounds(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> b = c.bounds
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b.data
     <Data(5, 2): [[0, ..., 9]]>
     >>> b.data.shape
@@ -163,13 +169,13 @@ class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
 
     :Returns:
 
-        `InteriorRing`
+        `{{+InteriorRing}}`
             The interior ring variable.
 
     **Examples:**
 
     >>> import numpy
-    >>> i = {+package}.InteriorRing(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
+    >>> i = {{package}}.InteriorRing(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
     True
@@ -196,28 +202,26 @@ class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if bounds have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `{{+Bounds}}`
             The removed bounds.
 
     **Examples:**
 
     >>> import numpy
-    >>> c = {+package}.{+class}()
-    >>> b = {+package}.Bounds(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> b = {{package}}.Bounds(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -241,13 +245,11 @@ class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the
-            geometry type has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `str`
             The removed geometry type.
 
     **Examples:**
@@ -273,28 +275,26 @@ class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if bounds have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `{{+Bounds}}`
             The bounds.
 
     **Examples:**
 
     >>> import numpy
-    >>> c = {+package}.{+class}()
-    >>> b = {+package}.Bounds(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> b = {{package}}.Bounds(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -318,13 +318,11 @@ class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the
-            geometry type has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `str`
             TODO
 
     **Examples:**
@@ -352,20 +350,18 @@ class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if interior
-            ring data have not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `{{+InteriorRing}}`
             The interior ring variable.
 
     **Examples:**
 
     >>> import numpy
-    >>> c = {+package}.{+class}()
-    >>> i = {+package}.InteriorRing(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> i = {{package}}.InteriorRing(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
     True
@@ -401,16 +397,16 @@ class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> c = {+package}.{+class}()
-    >>> b = {+package}.Bounds(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> b = {{package}}.Bounds(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -484,16 +480,16 @@ class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> c = {+package}.{+class}()
-    >>> b = {+package}.Bounds(data={+package}.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> b = {{package}}.Bounds(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
