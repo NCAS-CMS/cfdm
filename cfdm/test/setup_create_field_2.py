@@ -7,7 +7,7 @@ import numpy
 
 import cfdm
 
-verbose  = False
+verbose = False
 warnings = False
 
 
@@ -42,28 +42,37 @@ class create_fieldTest_2(unittest.TestCase):
 
         array = dim0.data.array
 
-        array = numpy.array([array-0.5, array+0.5]).transpose((1,0))
+        array = numpy.array([array-0.5, array+0.5]).transpose((1, 0))
         array[-2, 1] = 30
         array[-1, :] = [30, 36]
         dim0.set_bounds(cfdm.Bounds(data=cfdm.Data(array)))
 
-        dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]),
-                                        bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
-        dim2.set_property('standard_name', 'atmosphere_hybrid_height_coordinate')
+        dim2 = cfdm.DimensionCoordinate(
+            data=cfdm.Data([1.5]),
+            bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]]))
+        )
+        dim2.set_property(
+            'standard_name', 'atmosphere_hybrid_height_coordinate')
 
         # Auxiliary coordinates
         aux2 = cfdm.AuxiliaryCoordinate(
-            data=cfdm.Data(numpy.arange(-45, 45, dtype='int32').reshape(10, 9)))
+            data=cfdm.Data(
+                numpy.arange(-45, 45, dtype='int32').reshape(10, 9)))
         aux2.set_property('units', 'degree_N')
         aux2.set_property('standard_name', 'latitude')
 
         aux3 = cfdm.AuxiliaryCoordinate(
-            data=cfdm.Data(numpy.arange(60, 150, dtype='int32').reshape(9, 10)))
+            data=cfdm.Data(numpy.arange(
+                60, 150, dtype='int32').reshape(9, 10))
+        )
         aux3.set_property('standard_name', 'longitude')
         aux3.set_property('units', 'degreeE')
 
-        array = numpy.ma.array(['alpha','beta','gamma','delta','epsilon',
-                                'zeta','eta','theta','iota','kappa'], dtype='S')
+        array = numpy.ma.array(
+            ['alpha', 'beta', 'gamma', 'delta', 'epsilon',
+             'zeta', 'eta', 'theta', 'iota', 'kappa'],
+            dtype='S'
+        )
         array[0] = numpy.ma.masked
         aux4 = cfdm.AuxiliaryCoordinate(data=cfdm.Data(array))
         aux4.set_property('standard_name', 'greek_letters')
@@ -100,8 +109,8 @@ class create_fieldTest_2(unittest.TestCase):
         y = f.set_construct(dim1, axes=[axisY])
         z = f.set_construct(dim2, axes=[axisZ])
 
-        lat   = f.set_construct(aux2, axes=[axisY, axisX])
-        lon   = f.set_construct(aux3, axes=[axisX, axisY])
+        lat = f.set_construct(aux2, axes=[axisY, axisX])
+        lon = f.set_construct(aux3, axes=[axisX, axisY])
         greek = f.set_construct(aux4, axes=[axisY])
 
         ak = f.set_construct(ak, axes=[axisZ])
@@ -121,9 +130,11 @@ class create_fieldTest_2(unittest.TestCase):
                                         'longitude_of_prime_meridian':  0.0,
                                         'semi_major_axis': 6377563.396})
 
-        ref0 = cfdm.CoordinateReference(coordinates=[x, y],
-                                        datum=datum0,
-                                        coordinate_conversion=coordinate_conversion)
+        ref0 = cfdm.CoordinateReference(
+            coordinates=[x, y],
+            datum=datum0,
+            coordinate_conversion=coordinate_conversion
+        )
 
         coordinate_conversion = cfdm.CoordinateConversion(
             parameters={'grid_mapping_name': "latitude_longitude"})
@@ -148,14 +159,21 @@ class create_fieldTest_2(unittest.TestCase):
         orog = f.set_construct(orog, axes=[axisY, axisX])
 
         coordinate_conversion = cfdm.CoordinateConversion(
-            parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
-            domain_ancillaries={'orog': orog,
-                                'a'   : ak,
-                                'b'   : bk})
+            parameters={
+                'standard_name': 'atmosphere_hybrid_height_coordinate'
+            },
+            domain_ancillaries={
+                'orog': orog,
+                'a': ak,
+                'b': bk
+            }
+        )
 
-        ref1 = cfdm.CoordinateReference(coordinates=[z],
-                                        datum=datum0,
-                                        coordinate_conversion=coordinate_conversion)
+        ref1 = cfdm.CoordinateReference(
+            coordinates=[z],
+            datum=datum0,
+            coordinate_conversion=coordinate_conversion
+        )
 
         f.set_construct(ref1)
 
@@ -177,19 +195,18 @@ class create_fieldTest_2(unittest.TestCase):
         anc.standard_name = 'ancillaryC'
         f.set_construct(anc, axes=[axisY])
 
-
         f.set_property('flag_values', numpy.array([1, 2, 4], 'int32'))
         f.set_property('flag_meanings', 'a bb ccc')
         f.set_property('flag_masks', [2, 1, 0])
 
-        cm0 =  cfdm.CellMethod(axes=[axisX],
-                               method='mean',
-                               qualifiers={'interval': [cfdm.Data(1, 'day')],
-                                           'comment' : 'ok'})
+        cm0 = cfdm.CellMethod(axes=[axisX],
+                              method='mean',
+                              qualifiers={'interval': [cfdm.Data(1, 'day')],
+                                          'comment': 'ok'})
 
-        cm1 =  cfdm.CellMethod(axes=[axisY],
-                               method='maximum',
-                               qualifiers={'where' : 'sea'})
+        cm1 = cfdm.CellMethod(axes=[axisY],
+                              method='maximum',
+                              qualifiers={'where': 'sea'})
 
         f.set_construct(cm0)
         f.set_construct(cm1)

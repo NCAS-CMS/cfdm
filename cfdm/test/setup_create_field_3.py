@@ -7,7 +7,8 @@ import numpy
 
 import cfdm
 
-verbose  = False
+
+verbose = False
 warnings = False
 
 
@@ -38,7 +39,7 @@ class create_fieldTest(unittest.TestCase):
 
         array = dim0.data.array
 
-        array = numpy.array([array-0.5, array+0.5]).transpose((1,0))
+        array = numpy.array([array-0.5, array+0.5]).transpose((1, 0))
         array[-2, 1] = 30
         array[-1, :] = [30, 36]
         dim0.set_bounds(cfdm.Bounds(data=cfdm.Data(array)))
@@ -47,9 +48,12 @@ class create_fieldTest(unittest.TestCase):
         dim1.set_property('standard_name', 'grid_latitude')
         dim1.set_property('units', 'degrees')
 
-        dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]),
-                                        bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
-        dim2.set_property('standard_name'         , 'atmosphere_hybrid_height_coordinate')
+        dim2 = cfdm.DimensionCoordinate(
+            data=cfdm.Data([1.5]),
+            bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]]))
+        )
+        dim2.set_property(
+            'standard_name', 'atmosphere_hybrid_height_coordinate')
         dim2.set_property('computed_standard_name', 'altitude')
 
         dim3 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.array([15.0])))
@@ -69,17 +73,23 @@ class create_fieldTest(unittest.TestCase):
         bk.set_bounds(cfdm.Bounds(data=cfdm.Data([[14, 26.]])))
 
         aux2 = cfdm.AuxiliaryCoordinate(
-            data=cfdm.Data(numpy.arange(-45, 45, dtype='int32').reshape(10, 9)))
+            data=cfdm.Data(
+                numpy.arange(-45, 45, dtype='int32').reshape(10, 9))
+        )
         aux2.set_property('units', 'degree_N')
         aux2.set_property('standard_name', 'latitude')
 
         aux3 = cfdm.AuxiliaryCoordinate(
-            data=cfdm.Data(numpy.arange(60, 150, dtype='int32').reshape(9, 10)))
+            data=cfdm.Data(
+                numpy.arange(60, 150, dtype='int32').reshape(9, 10)))
         aux3.set_property('standard_name', 'longitude')
         aux3.set_property('units', 'degreeE')
 
-        array = numpy.ma.array(['alpha','beta','gamma','delta','epsilon',
-                                'zeta','eta','theta','iota','kappa'], dtype='S')
+        array = numpy.ma.array(
+            ['alpha', 'beta', 'gamma', 'delta', 'epsilon',
+             'zeta', 'eta', 'theta', 'iota', 'kappa'],
+            dtype='S'
+        )
         array[0] = numpy.ma.masked
         aux4 = cfdm.AuxiliaryCoordinate(data=cfdm.Data(array))
         aux4.set_property('standard_name', 'greek_letters')
@@ -110,14 +120,14 @@ class create_fieldTest(unittest.TestCase):
         z = f.set_construct(dim2, axes=[axisZ])
         t = f.set_construct(dim3, axes=[axisT])
 
-        lat   = f.set_construct(aux2, axes=[axisY, axisX])
-        lon   = f.set_construct(aux3, axes=[axisX, axisY])
+        lat = f.set_construct(aux2, axes=[axisY, axisX])
+        lon = f.set_construct(aux3, axes=[axisX, axisY])
         greek = f.set_construct(aux4, axes=[axisY])
 
         ak = f.set_construct(ak, axes=[axisZ])
         bk = f.set_construct(bk, axes=[axisZ])
 
-       # Coordinate references
+        # Coordinate references
 #       ref0 = cfdm.CoordinateReference(
 #           parameters={'grid_mapping_name': 'rotated_latitude_longitude',
 #                       'grid_north_pole_latitude': 38.0,
@@ -148,14 +158,19 @@ class create_fieldTest(unittest.TestCase):
         orog.set_property('units', 'm')
         orog = f.set_construct(orog, axes=[axisY, axisX])
 
-        datum1 = cfdm.Datum({'earth_radius' : 6371007})
+        datum1 = cfdm.Datum({'earth_radius': 6371007})
 
         coordinate_conversion1 = cfdm.CoordinateConversion(
-            parameters={'standard_name': 'atmosphere_hybrid_height_coordinate',
-                        'computed_standard_name': 'altitude'},
-            domain_ancillaries={'orog': orog,
-                                'a'   : ak,
-                                'b'   : bk})
+            parameters={
+                'standard_name': 'atmosphere_hybrid_height_coordinate',
+                'computed_standard_name': 'altitude'
+            },
+            domain_ancillaries={
+                'orog': orog,
+                'a': ak,
+                'b': bk
+            }
+        )
 
         ref1 = cfdm.CoordinateReference(
             datum=datum1,
@@ -190,27 +205,30 @@ class create_fieldTest(unittest.TestCase):
         anc.standard_name = 'ancillaryC'
         f.set_construct(anc, axes=[axisY])
 
-
         f.set_property('flag_values', numpy.array([1, 2, 4], 'int32'))
         f.set_property('flag_meanings', 'a bb ccc')
         f.set_property('flag_masks', [2, 1, 0])
 
-        cm0 =  cfdm.CellMethod(axes=[axisX],
-                               method='mean',
-                               qualifiers={'interval': [cfdm.Data(1, 'day')],
-                                           'comment' : 'ok'})
+        cm0 = cfdm.CellMethod(
+            axes=[axisX],
+            method='mean',
+            qualifiers={
+                'interval': [cfdm.Data(1, 'day')],
+                'comment': 'ok'
+            }
+        )
 
-        cm1 =  cfdm.CellMethod(axes=[axisY],
-                               method='maximum',
-                               qualifiers={'where' : 'sea'})
+        cm1 = cfdm.CellMethod(axes=[axisY],
+                              method='maximum',
+                              qualifiers={'where': 'sea'})
 
-        cm2 =  cfdm.CellMethod(axes=[axisT],
-                               method='maximum',
-                               qualifiers={'within' : 'years'})
+        cm2 = cfdm.CellMethod(axes=[axisT],
+                              method='maximum',
+                              qualifiers={'within': 'years'})
 
-        cm3 =  cfdm.CellMethod(axes=[axisT],
-                               method='minimum',
-                               qualifiers={'over' : 'years'})
+        cm3 = cfdm.CellMethod(axes=[axisT],
+                              method='minimum',
+                              qualifiers={'over': 'years'})
 
         f.set_construct(cm0)
         f.set_construct(cm1)
@@ -229,11 +247,11 @@ class create_fieldTest(unittest.TestCase):
 
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
 
-        g = cfdm.read(self.filename, verbose=verbose) #, squeeze=True)
+        g = cfdm.read(self.filename, verbose=verbose)  # , squeeze=True)
 
         if verbose:
-#           g[0].dump()
-#           sys.exit(0)
+            # g[0].dump()
+            # sys.exit(0)
             for x in g:
                 x.print_read_report()
 
@@ -247,11 +265,14 @@ class create_fieldTest(unittest.TestCase):
 #        print g
         self.assertEqual(
             sorted(f.constructs), sorted(g.constructs),
-            '\n\nf (created in memory)\n{}\n\n{}\n\ng (read from disk)\n{}\n\n{}'.format(
+            '\n\nf (created in memory)\n{}\n\n{}\n\ng '
+            '(read from disk)\n{}\n\n{}'.format(
                 sorted(f.constructs),
                 sorted(f.constructs.items()),
                 sorted(g.constructs),
-                sorted(g.constructs.items())))
+                sorted(g.constructs.items())
+            )
+        )
 
         self.assertTrue(f.equals(f.copy(), verbose=verbose),
                         "Field f not equal to a copy of itself")
