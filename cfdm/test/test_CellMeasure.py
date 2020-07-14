@@ -29,7 +29,6 @@ class CellMeasureTest(unittest.TestCase):
 
         self.test_only = []
 
-
     def test_CellMeasure__repr__str__dump_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -41,7 +40,6 @@ class CellMeasureTest(unittest.TestCase):
             _ = str(cm)
             _ = cm.dump(display=False)
             self.assertEqual(cm.construct_type, 'cell_measure')
-
 
     def test_CellMeasure(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

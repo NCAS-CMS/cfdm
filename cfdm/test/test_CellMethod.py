@@ -27,7 +27,6 @@ class CellMethodTest(unittest.TestCase):
 
         self.test_only = []
 
-
     def test_CellMethod__repr__str__dump_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -39,7 +38,6 @@ class CellMethodTest(unittest.TestCase):
             _ = str(c)
             _ = c.dump(display=False)
             self.assertEqual(c.construct_type, 'cell_method')
-
 
     def test_CellMethod(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

@@ -7,6 +7,7 @@ import numpy
 
 import cfdm
 
+
 class AuxiliaryCoordinateTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
@@ -25,7 +26,10 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
         aux1 = cfdm.AuxiliaryCoordinate()
         aux1.standard_name = 'latitude'
-        a = numpy.array([-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7, 11.30003, 17.8678678, 23.5, 30])
+        a = numpy.array(
+            [-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7,
+             11.30003, 17.8678678, 23.5, 30]
+        )
         aux1.set_data(cfdm.Data(a, 'degrees_north'))
         bounds = cfdm.Bounds()
         b = numpy.empty(a.shape + (2,))
@@ -123,6 +127,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (1, 9, 10, 4), x.bounds.shape)
 
 # --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())
