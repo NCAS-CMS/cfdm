@@ -13,10 +13,11 @@ import numpy
 
 import cfdm
 
+
 def axes_combinations(ndim):
-    return  [axes
-             for n in range(1, ndim+1)
-             for axes in itertools.permutations(range(ndim), n)]
+    return [axes
+            for n in range(1, ndim+1)
+            for axes in itertools.permutations(range(ndim), n)]
 
 
 class DataTest(unittest.TestCase):
@@ -61,17 +62,18 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for d in [cfdm.Data(9, units='km'),
-                  cfdm.Data([9], units='km'),
-                  cfdm.Data([[9]], units='km'),
-                  cfdm.Data([8, 9], units='km'),
-                  cfdm.Data([[8, 9]], units='km'),
-                  cfdm.Data([7, 8, 9], units='km'),
-                  cfdm.Data([[7, 8, 9]], units='km'),
-                  cfdm.Data([6, 7, 8, 9], units='km'),
-                  cfdm.Data([[6, 7, 8, 9]], units='km'),
-                  cfdm.Data([[6, 7], [8, 9]], units='km'),
-                  cfdm.Data([[6, 7, 8, 9], [6, 7, 8, 9]], units='km'),
+        for d in [
+                cfdm.Data(9, units='km'),
+                cfdm.Data([9], units='km'),
+                cfdm.Data([[9]], units='km'),
+                cfdm.Data([8, 9], units='km'),
+                cfdm.Data([[8, 9]], units='km'),
+                cfdm.Data([7, 8, 9], units='km'),
+                cfdm.Data([[7, 8, 9]], units='km'),
+                cfdm.Data([6, 7, 8, 9], units='km'),
+                cfdm.Data([[6, 7, 8, 9]], units='km'),
+                cfdm.Data([[6, 7], [8, 9]], units='km'),
+                cfdm.Data([[6, 7, 8, 9], [6, 7, 8, 9]], units='km'),
         ]:
             _ = repr(d)
             _ = str(d)
@@ -89,11 +91,12 @@ class DataTest(unittest.TestCase):
 
         d = cfdm.Data(a.filled(), units='m')
 
-        for n, (j, i) in enumerate(((34, 23), (0, 0), (-1, -1),
-                                    (slice(40, 50), slice(58, 60)),
-                                    (Ellipsis, slice(None)),
-                                    (slice(None), Ellipsis),
-                                  )):
+        for n, (j, i) in enumerate(
+                ((34, 23), (0, 0), (-1, -1),
+                 (slice(40, 50), slice(58, 60)),
+                 (Ellipsis, slice(None)),
+                 (slice(None), Ellipsis),)
+        ):
             n = -n-1
             for dvalue, avalue in ((n, n),
                                    (cfdm.masked, numpy.ma.masked),
@@ -106,8 +109,11 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((x == a).all() in (True, numpy.ma.masked),
                                 message)
                 m = numpy.ma.getmaskarray(x)
-                self.assertTrue((m == numpy.ma.getmaskarray(a)).all(),
-                                'd.mask.array='+repr(m)+'\nnumpy.ma.getmaskarray(a)='+repr(numpy.ma.getmaskarray(a)))
+                self.assertTrue(
+                    (m == numpy.ma.getmaskarray(a)).all(),
+                    'd.mask.array=' + repr(m) + '\nnumpy.ma.getmaskarray(a)=' +
+                    repr(numpy.ma.getmaskarray(a))
+                )
         # --- End: for
 
         a = numpy.ma.arange(3000).reshape(50, 60)
@@ -115,7 +121,7 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(a.filled(), 'm')
 
         (j, i) = (slice(0, 2), slice(0, 3))
-        array = numpy.array([[1, 2, 6],[3, 4, 5]])*-1
+        array = numpy.array([[1, 2, 6], [3, 4, 5]])*-1
 
         for dvalue in (array,
                        numpy.ma.masked_where(array < -2, array),
@@ -164,17 +170,17 @@ class DataTest(unittest.TestCase):
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = numpy.ma.where(a<3, numpy.ma.masked, a)
+        b = numpy.ma.where(a < 3, numpy.ma.masked, a)
         e = d.apply_masking(valid_min=3)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = numpy.ma.where(a>6, numpy.ma.masked, a)
+        b = numpy.ma.where(a > 6, numpy.ma.masked, a)
         e = d.apply_masking(valid_max=6)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = numpy.ma.where((a<2) | (a>8), numpy.ma.masked, a)
+        b = numpy.ma.where((a < 2) | (a > 8), numpy.ma.masked, a)
         e = d.apply_masking(valid_range=[2, 8])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
@@ -238,7 +244,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(a.shape, b.shape)
         self.assertTrue((a == b).all())
 
-
         # Scalar numeric array
         d = cfdm.Data(9, units='km')
         a = d.array
@@ -253,9 +258,9 @@ class DataTest(unittest.TestCase):
         b = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
         d = cfdm.Data(b, 'km')
         a = d.array
-        a[0,0,0,0] = -999
+        a[0, 0, 0, 0] = -999
         a2 = d.array
-        self.assertEqual(a2[0,0,0,0], 0)
+        self.assertEqual(a2[0, 0, 0, 0], 0)
         self.assertEqual(a2.shape, b.shape)
         self.assertTrue((a2 == b).all())
         self.assertFalse((a2 == a).all())
@@ -309,7 +314,7 @@ class DataTest(unittest.TestCase):
             e = d.flatten(axes)
 
             if len(axes) <= 1:
-                shape  = d.shape
+                shape = d.shape
             else:
                 shape = [n for i, n in enumerate(d.shape) if i not in axes]
                 shape.insert(
@@ -333,8 +338,8 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(indices):
                 a = numpy.transpose(a, axes)
                 d = d.transpose(axes)
-                message = "cfdm.Data.transpose({}) failed: d.shape={}, a.shape={}".format(
-                    axes, d.shape, a.shape)
+                message = ("cfdm.Data.transpose({}) failed: d.shape={}, "
+                           "a.shape={}".format(axes, d.shape, a.shape))
                 self.assertEqual(d.shape, a.shape, message)
                 self.assertTrue((d.array == a).all(), message)
         # --- End: for

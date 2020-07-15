@@ -7,6 +7,7 @@ import numpy
 
 import cfdm
 
+
 class DimensionCoordinateTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
@@ -55,4 +56,3 @@ if __name__ == "__main__":
     cfdm.environment()
     print()
     unittest.main(verbosity=2)
-

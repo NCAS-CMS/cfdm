@@ -37,7 +37,6 @@ class DomainAncillaryTest(unittest.TestCase):
         x.nc_del_variable()
         _ = x.dump(display=False)
 
-
     def test_DomainAncillary_bounds(self):
         f = cfdm.read(self.filename)[0]
 
@@ -113,6 +112,7 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (1, 9, 10, 4), x.bounds.shape)
 
 # --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())
