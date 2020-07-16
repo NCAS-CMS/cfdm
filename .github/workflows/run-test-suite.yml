@@ -65,6 +65,7 @@ jobs:
       shell: bash -l {0}
       run: |
         conda install -c anaconda libnetcdf
+        pip install pycodestyle
         # (The other, Python-based, deps are installed during the below command)
         # Important! Must install our development version of cfdm to test:
         pip install -e .
