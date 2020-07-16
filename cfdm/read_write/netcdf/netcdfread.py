@@ -1229,7 +1229,7 @@ class NetCDFRead(IORead):
                     sample_dimension = attributes['sample_dimension']
 
                     if has_groups:
-                        sample_dimension  = g['flattener_dimensions'].get(
+                        sample_dimension = g['flattener_dimensions'].get(
                             sample_dimension, sample_dimension)
 
                     cf_compliant = self._check_sample_dimension(
@@ -1401,7 +1401,7 @@ class NetCDFRead(IORead):
         # --- End: for
 
         referenced_variables = [ncvar for ncvar in sorted(all_fields)
-                               if not self._is_unreferenced(ncvar)]
+                                if not self._is_unreferenced(ncvar)]
         unreferenced_variables = [ncvar for ncvar in sorted(all_fields)
                                   if self._is_unreferenced(ncvar)]
 
@@ -2923,7 +2923,7 @@ class NetCDFRead(IORead):
 
                 # Set unlimited status of axis
                 try:
-#                    if nc.dimensions[ncdim].isunlimited():
+                    # if nc.dimensions[ncdim].isunlimited():
                     if g['dimension_isunlimited'][ncdim]:
                         self.implementation.nc_set_unlimited_axis(f, axis)
                 except KeyError:
@@ -3968,7 +3968,7 @@ class NetCDFRead(IORead):
         geometry = self._get_geometry(field_ncvar)
 
         has_bounds = False
-        attribute = 'bounds' # TODO Bad default? consider if bounds != None
+        attribute = 'bounds'  # TODO Bad default? consider if bounds != None
 
         # If there are bounds then find the name of the attribute that
         # names them, and the netCDF variable name of the bounds.
@@ -5441,7 +5441,6 @@ class NetCDFRead(IORead):
             return False
 
         ok = True
-
 
         if node_ncvar not in geometry.get('node_coordinates', ()):
             self._add_message(field_ncvar, bounds_ncvar,

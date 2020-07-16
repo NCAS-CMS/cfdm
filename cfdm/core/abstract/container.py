@@ -1,11 +1,11 @@
-#from future.utils import with_metaclass
+# from future.utils import with_metaclass
 
 import abc
 
 from copy import copy, deepcopy
 
 
-#class Container(with_metaclass(abc.ABCMeta, object)):
+# class Container(with_metaclass(abc.ABCMeta, object)):
 class Container(metaclass=abc.ABCMeta):
     '''Abstract base class for storing components.
 

@@ -10,8 +10,9 @@ __version__ = '1.8.6'
 from distutils.version import LooseVersion
 import platform
 
-_requires = ('numpy',
-             'netCDF4',
+_requires = (
+    'numpy',
+    'netCDF4',
 )
 
 _error0 = 'cfdm.core requires the modules {}. '.format(', '.join(_requires))

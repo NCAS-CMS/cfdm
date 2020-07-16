@@ -47,6 +47,7 @@ class NetCDF():
 
 # --- End: class
 
+
 class _NetCDFGroupsMixin():
     '''Mixin class for accessing netCDF(4) hierarchical groups.
 
@@ -177,7 +178,7 @@ class _NetCDFGroupsMixin():
     See the examples in classes which inherit this method.
 
         '''
-        old =  nc_groups()
+        old = nc_groups()
 
         name = nc_get(default='')
         name = name.split('/')[-1]
