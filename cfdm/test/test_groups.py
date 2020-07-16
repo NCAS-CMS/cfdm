@@ -12,15 +12,17 @@ import cfdm
 n_tmpfiles = 8
 tmpfiles = [tempfile.mktemp('_test_groups.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
-(ungrouped_file1,
- ungrouped_file2,
- ungrouped_file3,
- ungrouped_file4,
- grouped_file1,
- grouped_file2,
- grouped_file3,
- grouped_file4,
+(
+    ungrouped_file1,
+    ungrouped_file2,
+    ungrouped_file3,
+    ungrouped_file4,
+    grouped_file1,
+    grouped_file2,
+    grouped_file3,
+    grouped_file4,
 ) = tmpfiles
+
 
 def _remove_tmpfiles():
     '''Remove temporary files created during tests.
@@ -31,6 +33,7 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
+
 
 atexit.register(_remove_tmpfiles)
 
@@ -71,7 +74,6 @@ class GroupsTest(unittest.TestCase):
         grid0.del_coordinate('auxiliarycoordinate0')
         grid0.del_coordinate('auxiliarycoordinate1')
 
-
         cfdm.write(f, ungrouped_file)
         g = cfdm.read(ungrouped_file, verbose=1)
         self.assertEqual(len(g), 1)
@@ -98,14 +100,15 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Move constructs one by one to the /forecast group
         # ------------------------------------------------------------
-        for name in ('time',  # Dimension coordinate
-                     'grid_latitude',  # Dimension coordinate
-                     'longitude', # Auxiliary coordinate
-                     'measure:area',  # Cell measure
-                     'surface_altitude',  # Domain ancillary
-                     'air_temperature standard_error',  # Field ancillary
-                     'grid_mapping_name:rotated_latitude_longitude',
-    ):
+        for name in (
+            'time',  # Dimension coordinate
+            'grid_latitude',  # Dimension coordinate
+            'longitude',  # Auxiliary coordinate
+            'measure:area',  # Cell measure
+            'surface_altitude',  # Domain ancillary
+            'air_temperature standard_error',  # Field ancillary
+            'grid_mapping_name:rotated_latitude_longitude',
+        ):
             g.construct(name).nc_set_variable_groups(['forecast'])
             cfdm.write(g, grouped_file, verbose=1)
 
@@ -276,7 +279,7 @@ class GroupsTest(unittest.TestCase):
         f.data.get_count().nc_set_variable('count')
         f.data.get_index().nc_set_variable('index')
 
-        cfdm.write(f, ungrouped_file , verbose=1)
+        cfdm.write(f, ungrouped_file, verbose=1)
         g = cfdm.read(ungrouped_file)[0]
         self.assertTrue(f.equals(g, verbose=2))
 
@@ -407,4 +410,3 @@ if __name__ == '__main__':
     cfdm.environment()
     print()
     unittest.main(verbosity=2)
-

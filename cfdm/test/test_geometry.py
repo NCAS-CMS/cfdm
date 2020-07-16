@@ -16,6 +16,7 @@ tmpfiles = [tempfile.mktemp('_test_geometry.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
 (tempfile,) = tmpfiles
 
+
 def _remove_tmpfiles():
     '''Remove temporary files created during tests.
 
@@ -25,6 +26,7 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
+
 
 atexit.register(_remove_tmpfiles)
 
@@ -80,7 +82,7 @@ class DSGTest(unittest.TestCase):
         g = f[0]
         for axis in ('X', 'Y'):
             coord = g.construct('axis='+axis)
-            self.assertTrue( coord.has_node_count(), 'axis='+axis)
+            self.assertTrue(coord.has_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
@@ -128,7 +130,7 @@ class DSGTest(unittest.TestCase):
         g = f[0]
         for axis in ('X', 'Y', 'Z'):
             coord = g.construct('axis='+axis)
-            self.assertTrue( coord.has_node_count(), 'axis='+axis)
+            self.assertTrue(coord.has_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
@@ -192,7 +194,7 @@ class DSGTest(unittest.TestCase):
 
         for axis in ('X', 'Y'):
             coord = g.construct('axis='+axis)
-            self.assertTrue( coord.has_node_count(), 'axis='+axis)
+            self.assertTrue(coord.has_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_part_node_count(), 'axis='+axis)
             self.assertFalse(coord.has_interior_ring(), 'axis='+axis)
 
@@ -309,4 +311,3 @@ if __name__ == '__main__':
     cfdm.environment()
     print()
     unittest.main(verbosity=2)
-

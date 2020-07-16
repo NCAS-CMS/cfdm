@@ -13,8 +13,10 @@ import cfdm
 n_tmpfiles = 1
 tmpfiles = [tempfile.mktemp('_test_functions.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
-(temp_file,
+(
+    temp_file,
 ) = tmpfiles
+
 
 def _remove_tmpfiles():
     '''Remove temporary files created during tests.
@@ -25,6 +27,7 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
+
 
 atexit.register(_remove_tmpfiles)
 
@@ -115,7 +118,7 @@ class FunctionsTest(unittest.TestCase):
 
             # Some conversions to equivalent, standardised return value:
             if (isinstance(value, int) and
-                cfdm._is_valid_log_level_int(value)):  # LOG_LEVEL returns str
+                    cfdm._is_valid_log_level_int(value)):  # str from LOG_LEVEL
                 value = cfdm.constants.ValidLogLevels(value).name  # convert
             if isinstance(value, str):  # LOG_LEVEL returns all caps string
                 value = value.upper()
@@ -136,7 +139,7 @@ class FunctionsTest(unittest.TestCase):
             # getLevelName() converts to string. Otherwise gives
             # Python logging int equivalent, which is not the scale we use:
             if (isinstance(value, int) and
-                cfdm._is_valid_log_level_int(value)):
+                    cfdm._is_valid_log_level_int(value)):
                 value = cfdm.constants.ValidLogLevels(value).name
 
             self.assertTrue(
@@ -327,6 +330,7 @@ class FunctionsTest(unittest.TestCase):
 #        self.assertIsInstance(cfdm.default_netCDF_fill_values(), dict)
 
 # --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

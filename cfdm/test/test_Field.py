@@ -16,6 +16,7 @@ tmpfiles = [tempfile.mktemp('_test_Field.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
 (tmpfile,) = tmpfiles
 
+
 def _remove_tmpfiles():
     '''Remove temporary files created during tests.
 
@@ -25,6 +26,7 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
+
 
 atexit.register(_remove_tmpfiles)
 
@@ -109,18 +111,18 @@ class FieldTest(unittest.TestCase):
         self.assertTrue((g.data.array == d).all())
 
         for indices, shape, multiple_list_indices in (
-                [(slice(0, None, 1), slice(0, None)) , (10, 9), False],
-                [(slice(3, 7)      , slice(2, 5))    , ( 4, 3), False],
-                [(slice(6, 2, -1)  , slice(4, 1, -1)), ( 4, 3), False],
-#               [(1                , 3)              , ( 1, 1), False],
-#               [(-2               , -4)             , ( 1, 1), False],
-#               [(-2               , slice(1, 5))    , ( 1, 4), False],
-#               [(slice(5, 1, -2)  , 7)              , ( 2, 1), False],
-                [([1, 4, 7]        , slice(1, 5))    , ( 3, 4), False],
-                [([1, 4, 7]        , slice(6, 8))    , ( 3, 2), False],
-                [(slice(6, 8)      , [1, 4, 7])      , ( 2, 3), False],
-                [([0, 3, 8]        , [1, 7, 8])      , ( 3, 3), True],
-                [([8, 3, 0]        , [8, 7, 1])      , ( 3, 3), True]
+                [(slice(0, None, 1), slice(0, None)), (10, 9), False],
+                [(slice(3, 7), slice(2, 5)), (4, 3), False],
+                [(slice(6, 2, -1), slice(4, 1, -1)), (4, 3), False],
+                # [(1, 3), ( 1, 1), False],
+                # [(-2, -4), ( 1, 1), False],
+                # [(-2, slice(1, 5)), ( 1, 4), False],
+                # [(slice(5, 1, -2), 7), ( 2, 1), False],
+                [([1, 4, 7], slice(1, 5)), (3, 4), False],
+                [([1, 4, 7], slice(6, 8)), (3, 2), False],
+                [(slice(6, 8), [1, 4, 7]), (2, 3), False],
+                [([0, 3, 8], [1, 7, 8]), (3, 3), True],
+                [([8, 3, 0], [8, 7, 1]), (3, 3), True]
         ):
             g = f[indices]
 
@@ -137,15 +139,18 @@ class FieldTest(unittest.TestCase):
                 e = e[tuple(indices)]
             # --- End: if
 
-            self.assertEqual(g.data.shape, e.data.shape,
-                            'Bad shape for {}: {} != {}'.format(
-                                indices,
-                                g.data.shape,
-                                e.data.shape))
-            self.assertTrue((g.data.array == e).all(),
-                            'Bad values for {}: {} != {}'.format(indices,
-                                                                 g.data.array,
-                                                                 e))
+            self.assertEqual(
+                g.data.shape, e.data.shape,
+                'Bad shape for {}: {} != {}'.format(
+                    indices,
+                    g.data.shape,
+                    e.data.shape
+                )
+            )
+            self.assertTrue(
+                (g.data.array == e).all(),
+                'Bad values for {}: {} != {}'.format(indices, g.data.array, e)
+            )
         # --- End: for
 
         # Check slicing of bounds
@@ -596,6 +601,7 @@ class FieldTest(unittest.TestCase):
         # --- End: for
 
 # --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
