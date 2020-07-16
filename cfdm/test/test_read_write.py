@@ -16,13 +16,15 @@ warnings = False
 n_tmpfiles = 6
 tmpfiles = [tempfile.mktemp('_test_read_write.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
-(tmpfile,
- tmpfileh,
- tmpfileh2,
- tmpfilec,
- tmpfile0,
- tmpfile1,
+(
+    tmpfile,
+    tmpfileh,
+    tmpfileh2,
+    tmpfilec,
+    tmpfile0,
+    tmpfile1,
  ) = tmpfiles
+
 
 def _remove_tmpfiles():
     '''Remove temporary files created during tests.
@@ -33,6 +35,7 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
+
 
 atexit.register(_remove_tmpfiles)
 
@@ -112,13 +115,13 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(f), 7, '\n'+str(f))
 
         self.assertEqual(len(cfdm.read(filename,
-                                      extra=['domain_ancillary',
-                                             'auxiliary_coordinate'],
+                                       extra=['domain_ancillary',
+                                              'auxiliary_coordinate'],
                                        warnings=warnings)), 7)
         self.assertEqual(len(cfdm.read(filename,
-                                      extra=['domain_ancillary',
-                                             'cell_measure',
-                                             'auxiliary_coordinate'],
+                                       extra=['domain_ancillary',
+                                              'cell_measure',
+                                              'auxiliary_coordinate'],
                                        warnings=warnings)), 8)
 
         f = cfdm.read(filename, extra=('field_ancillary',
@@ -126,7 +129,6 @@ class read_writeTest(unittest.TestCase):
                                        'cell_measure', 'auxiliary_coordinate',
                                        'domain_ancillary'), warnings=warnings)
         self.assertEqual(len(f), 14, '\n'+str(f))
-
 
     def test_read_write_format(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -226,11 +228,11 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
         self.assertEqual(f.data.dtype, numpy.dtype(float))
 
-        f.set_property('_FillValue'   , numpy.float64(-999.))
+        f.set_property('_FillValue', numpy.float64(-999.))
         f.set_property('missing_value', numpy.float64(-999.))
 
         cfdm.write(f, tmpfile, fmt='NETCDF4',
-                 datatype={numpy.dtype(float): numpy.dtype('float32')})
+                   datatype={numpy.dtype(float): numpy.dtype('float32')})
         g = cfdm.read(tmpfile)[0]
         self.assertEqual(g.data.dtype, numpy.dtype('float32'),
                          'datatype read in is '+str(g.data.dtype))
@@ -263,7 +265,6 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(f.domain_axes['domainaxis0'].nc_is_unlimited())
         self.assertTrue(f.domain_axes['domainaxis2'].nc_is_unlimited())
 
-
     def test_read_CDL(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -272,10 +273,12 @@ class read_writeTest(unittest.TestCase):
                        shell=True, check=True)
         subprocess.run(
             ' '.join(['ncdump', '-h', self.filename, '>', tmpfileh]),
-                                shell=True, check=True)
+            shell=True, check=True
+        )
         subprocess.run(
             ' '.join(['ncdump', '-c', self.filename, '>', tmpfilec]),
-                       shell=True, check=True)
+            shell=True, check=True
+        )
 
         f0 = cfdm.read(self.filename)[0]
         f = cfdm.read(tmpfile)[0]
@@ -389,8 +392,9 @@ class read_writeTest(unittest.TestCase):
                                  g.get_property('Conventions'),
                                  Conventions))
 
-        for Conventions in ([version],
-                            [version, other],
+        for Conventions in (
+            [version],
+            [version, other],
         ):
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
@@ -408,6 +412,7 @@ class read_writeTest(unittest.TestCase):
                     g.get_property('Conventions'), Conventions))
 
 # --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

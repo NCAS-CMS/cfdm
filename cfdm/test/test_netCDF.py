@@ -11,10 +11,12 @@ import cfdm
 n_tmpfiles = 3
 tmpfiles = [tempfile.mktemp('_test_netCDF.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
-(tempfile1,
- tempfile2,
- tempfile3,
+(
+    tempfile1,
+    tempfile2,
+    tempfile3,
 ) = tmpfiles
+
 
 def _remove_tmpfiles():
     '''Remove temporary files created during tests.
@@ -25,6 +27,7 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
+
 
 atexit.register(_remove_tmpfiles)
 
@@ -338,10 +341,10 @@ class NetCDFTest(unittest.TestCase):
                           'comment': 'variable comment'})
         f.nc_clear_group_attributes()
         f.nc_set_group_attributes({'comment': None,
-                                   'foo': 'bar' })
+                                   'foo': 'bar'})
         self.assertEqual(f.nc_group_attributes(values=True),
                          {'comment': 'variable comment',
-                          'foo': 'bar' })
+                          'foo': 'bar'})
 
     def test_netCDF_dimension_groups(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

@@ -13,8 +13,10 @@ import cfdm
 n_tmpfiles = 1
 tmpfiles = [tempfile.mktemp('_test_string.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
-(tempfile,
+(
+    tempfile,
 ) = tmpfiles
+
 
 def _remove_tmpfiles():
     '''Remove temporary files created during tests.
@@ -25,6 +27,7 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
+
 
 atexit.register(_remove_tmpfiles)
 
@@ -78,7 +81,7 @@ class StringTest(unittest.TestCase):
 
             dimension_coordinate_X = cfdm.DimensionCoordinate(
                 properties={'standard_name': 'grid_longitude',
-                        'units': 'degrees'},
+                            'units': 'degrees'},
                 data=cfdm.Data(numpy.arange(9.)),
                 bounds=cfdm.Bounds(
                     data=cfdm.Data(numpy.arange(18).reshape(9, 2))))
@@ -104,6 +107,7 @@ class StringTest(unittest.TestCase):
             self.assertEqual(aux1.data.shape, array.shape, aux1.data.shape)
 
 # --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
