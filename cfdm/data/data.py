@@ -540,7 +540,7 @@ class Data(mixin.Container,
         return numpy.ma.masked
 
     def _parse_axes(self, axes):
-        '''TODO
+        '''Parse data axes and return valid non-duplicate axes as a tuple.
 
     :Parameters:
 
@@ -557,7 +557,11 @@ class Data(mixin.Container,
 
     **Examples:**
 
-    TODO
+    >>> d._parse_axes(1)
+    (1,)
+
+    >>> e._parse_axes([0, 2])
+    (0, 2)
 
         '''
         if axes is None:
@@ -638,7 +642,7 @@ class Data(mixin.Container,
 
     @classmethod
     def _set_subspace(cls, array, indices, value):
-        '''TODO
+        '''Set a subspace of the data array defined by indices.
         '''
         axes_with_list_indices = [i for i, x in enumerate(indices)
                                   if not isinstance(x, slice)]
@@ -1330,7 +1334,7 @@ class Data(mixin.Container,
                                      self.__class__.__name__))
 
     def _parse_indices(self, indices):
-        '''TODO
+        '''Parse indices of the data and return valid indices in a list.
 
     :Parameters:
 
@@ -1341,6 +1345,13 @@ class Data(mixin.Container,
         `list`
 
     **Examples:**
+
+    >>> import numpy
+    >>> d = cfdm.Data(numpy.arange(100, 190).reshape(1, 10, 9))
+    >>> d._parse_indices((slice(None, None, None), 1, 2))
+    [slice(None, None, None), slice(1, 2, 1), slice(2, 3, 1)]
+    >>> d._parse_indices((1,))
+    [slice(1, 2, 1), slice(None, None, None), slice(None, None, None)]
 
         '''
         shape = self.shape

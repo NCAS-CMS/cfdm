@@ -349,19 +349,19 @@ class NetCDFArray(abstract.Array):
 
     **Examples:**
 
-    TODO
+    >>> b = a.get_group()
 
         '''
         return self._get_component('group')
 
     def get_mask(self):
-        '''TODO
+        '''The mask of the data array.
 
     .. versionadded:: 1.8.2
 
     **Examples:**
 
-        TODO
+    >>> b = a.get_mask()
 
         '''
         return self._get_component('mask')
