@@ -47,7 +47,7 @@ def _docstring_update(class_name, f, method_name, module, config):
             doc = doc.replace(key, value)
     # --- End: for
 
-    # ---------------------------------------------------------------
+    # ----------------------------------------------------------------
     # Now do special substitutions
     # ----------------------------------------------------------------
     doc = doc.replace('{{package}}', package_name)
@@ -89,11 +89,26 @@ class RewriteDocstringMeta(type):
 
     '''
     def __new__(cls, name, parents, attrs):
-        docstring_rewrite = attrs.get('__docstring_substitution__', None)
-        if docstring_rewrite is not None:
-            docstring_rewrite = docstring_rewrite(cls)
-        else:
-            docstring_rewrite = {}
+        
+#        docstring_rewrite = attrs.get('__docstring_substitution__', None)
+#        if docstring_rewrite is not None:
+#            docstring_rewrite = docstring_rewrite(None)
+#            print  ('      XXX', name, parents)
+#        else:
+#            print ('      {}', name, parents)
+#            docstring_rewrite = {}
+
+        docstring_rewrite = {}
+        for parent in parents[::-1]:
+            parent_docstring_rewrite = getattr(
+                parent, '__docstring_substitution__', None)
+            if parent_docstring_rewrite is not None:
+                docstring_rewrite.update(parent_docstring_rewrite(None))
+        # --- End: for
+        
+        class_docstring_rewrite = attrs.get('__docstring_substitution__', None)
+        if class_docstring_rewrite is not None:
+             docstring_rewrite.update(class_docstring_rewrite(None))
 
         for attr_name in attrs:
             # Skip special and private methods
@@ -109,10 +124,10 @@ class RewriteDocstringMeta(type):
             # @property or normal method
             if hasattr(attr, '__call__') or hasattr(attr, 'fget'):
                 # Update docstring
-                if docstring_rewrite:
-                    _docstring_update(name, attr, attr_name,
-                                      attrs['__module__'],
-                                      docstring_rewrite)
+                RewriteDocstringMeta._docstring_update(name, attr,
+                                                       attr_name,
+                                                       attrs['__module__'],
+                                                       docstring_rewrite)
 
                 continue
 
@@ -126,25 +141,29 @@ class RewriteDocstringMeta(type):
                                f.__closure__)
                 
                 # Update docstring
-                if docstring_rewrite:
-                    _docstring_update(name, attr, attr_name,
-                                      attrs['__module__'],
-                                      docstring_rewrite)
+                RewriteDocstringMeta._docstring_update(name, attr,
+                                                       attr_name,
+                                                       attrs['__module__'],
+                                                       docstring_rewrite)
 
                 attrs[attr_name] = classmethod(attr)
         # --- End: for
  
         for parent in parents:
-            docstring_rewrite = getattr(
-                parent, '__docstring_substitution__', None)
-            if docstring_rewrite is not None:
-                docstring_rewrite = docstring_rewrite(parent)
-            else:
-                docstring_rewrite = {}
-
-            if not docstring_rewrite:
-                # Docstring rewriting has been disabled for this class
-                continue
+#            if name == 'Field':
+#                print (parent)
+#            docstring_rewrite_2 = getattr(
+#                parent, '__docstring_substitution__', None)
+#            if docstring_rewrite_2 is not None:
+##                docstring_rewrite = docstring_rewrite(parent)
+#                docstring_rewrite.update(docstring_rewrite_2(None))
+#                print ('update', parent)
+##            else:
+#                docstring_rewrite = {}
+#
+#            if not docstring_rewrite:
+#                # Docstring rewriting has been disabled for this class
+#                continue
             
             for attr_name in dir(parent):
                 # We already have this method
@@ -188,10 +207,10 @@ class RewriteDocstringMeta(type):
                                        f.__closure__)
 
                     # Update the docstring
-                    if docstring_rewrite:
-                        _docstring_update(name, attr, attr_name,
-                                          attrs['__module__'],
-                                          docstring_rewrite)
+                    RewriteDocstringMeta._docstring_update(name, attr,
+                                                           attr_name,
+                                                           attrs['__module__'],
+                                                           docstring_rewrite)
                     
                     # Register a classmethod
                     if class_method:
@@ -208,4 +227,59 @@ class RewriteDocstringMeta(type):
         # Create the class
         return super().__new__(cls, name, parents, attrs)
 
+    @staticmethod
+    def _docstring_update(class_name, f, method_name, module, config):
+        '''
+        
+        '''
+        
+        doc = f.__doc__
+        if doc is None:
+            return
+    
+        # ----------------------------------------------------------------
+        # Find the package name, class name, and whether or we are in the
+        # cfdm.core package.
+        # ----------------------------------------------------------------
+        core = False
+        module = module.split('.')
+        if len(module) >= 2:
+            package_name, package2 = module[:2]
+            if package_name == 'cfdm' and package2 == 'core':
+                class_name = 'core.' + class_name
+                core = True
+        else:
+            package_name = module[0]
+#        if core:
+#            print (876, package_name, core, class_name, method_name, config.keys())
+        # ----------------------------------------------------------------
+        # Do general substitutions first
+        # ----------------------------------------------------------------
+        for key, value in config.items():
+            try:
+                doc = key.sub(value, doc)
+            except AttributeError:
+                doc = doc.replace(key, value)
+        # --- End: for
+    
+        # ----------------------------------------------------------------
+        # Now do special substitutions
+        # ----------------------------------------------------------------
+        doc = doc.replace('{{package}}', package_name)
+        doc = doc.replace('{{class}}', class_name)
+    
+        if '{{+' in doc:
+            if core:
+                func = _replacement_core_class
+            else:
+                func = _replacement_class
+                
+            doc = _plus_class_regex.sub(func, doc)
+        
+        # ----------------------------------------------------------------
+        # Add the rewritten docstring to the method
+        # ----------------------------------------------------------------
+        f.__doc__ = doc 
+
+    
 #--- End: class

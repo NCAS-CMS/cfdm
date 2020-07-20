@@ -1,4 +1,7 @@
-class ConstructAccess():
+from ..abstract import RewriteDocstringMeta
+
+
+class ConstructAccess(metaclass=RewriteDocstringMeta):
     '''Mixin class for accessing an embedded `Constructs` object.
 
     .. versionadded:: 1.7.0

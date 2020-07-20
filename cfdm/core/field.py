@@ -155,7 +155,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
     :Returns:
 
-        `Constructs`
+        `{{+Constructs}}`
             The constructs.
 
     **Examples:**
@@ -181,6 +181,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
     .. versionadded:: 1.7.0
 
+    repr: <{{repr}}>
+
     .. seealso:: `get_domain`
 
     :Returns:
@@ -205,6 +207,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         '''Remove the keys of the domain axis constructs spanned by the data
     of the field or of a metadata construct.
 
+        TODO {{class}}
+
     .. versionadded:: 1.7.0
 
     .. seealso:: `get_data_axes`, `has_data_axes`, `set_data_axes`
@@ -218,10 +222,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             *Parameter example:*
               ``key='auxiliarycoordinate0'``
 
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set. If set to an `Exception` instance
-            then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 

@@ -1,4 +1,5 @@
 from .rewritedocstring import RewriteDocstringMeta
+from .zero import ZeroContainer
 
 from .container                   import Container, RewriteDocstringMeta
 from .properties                  import Properties

@@ -7,11 +7,16 @@ from ..functions import atol, rtol
 
 from ..decorators import _manage_log_level_via_verbosity
 
+from ..core import abstract
 
 logger = logging.getLogger(__name__)
 
 
-class Container():
+#from ..core.abstract import RewriteDocstringMeta
+
+
+class Container(abstract.ZeroContainer): #,
+#                metaclass=abstract.RewriteDocstringMeta): #abstract.Container):
     '''Mixin class for storing object components.
 
     .. versionadded:: 1.7.0

@@ -2,7 +2,6 @@ import abc
 
 import numpy
 
-
 from . import PropertiesData
 
 

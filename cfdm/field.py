@@ -278,7 +278,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `Field`
+        `{{class}}`
             The subspace of the field construct.
 
     **Examples:**
@@ -600,7 +600,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `Field` or `None`
+        `{{class}}` or `None`
             A new field construct with masked values, or `None` if the
             operation was in-place.
 
@@ -806,7 +806,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `Field` or `None`
+        `{{class}}` or `None`
             The compressed field construct, or `None` if the operation
             was in-place.
 
@@ -823,8 +823,8 @@ class Field(mixin.NetCDFVariable,
     >>> g.equals(f)
     True
 
-    >>> cfdm.write(g, 'compressed_file_contiguous.nc')
-    >>> h = cfdm.read( 'compressed_file_contiguous.nc')[0]
+    >>> {{package}}.write(g, 'compressed_file_contiguous.nc')
+    >>> h = {{package}}.read( 'compressed_file_contiguous.nc')[0]
     >>> h.equals(f)
     True
 
@@ -839,7 +839,7 @@ class Field(mixin.NetCDFVariable,
      <CF Index: (24) >
     >>> print(g.data.get_index().array)
     [0 0 0 1 1 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 3 3]
-    >>> cfdm.write(g, 'compressed_file_indexed.nc')
+    >>> {{package}}.write(g, 'compressed_file_indexed.nc')
 
         '''
         def _empty_compressed_data(data, shape):
@@ -884,7 +884,7 @@ class Field(mixin.NetCDFVariable,
 
         :Parameters:
 
-            f: `Field`
+            f: `{{class}}`
 
             count: sequence of `int`
 
@@ -1159,10 +1159,10 @@ class Field(mixin.NetCDFVariable,
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    Arrays within `Data` instances are copied with a copy-on-write
-    technique. This means that a copy takes up very little extra
-    memory, even when the original contains very large data arrays,
-    and the copy operation is fast.
+    Arrays within `{{+Data}}` instances are copied with a
+    copy-on-write technique. This means that a copy takes up very
+    little extra memory, even when the original contains very large
+    data arrays, and the copy operation is fast.
 
     .. versionadded:: 1.7.0
 
@@ -1175,6 +1175,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
+        `{{class}}`
             The deep copy.
 
     **Examples:**
@@ -1389,7 +1390,7 @@ class Field(mixin.NetCDFVariable,
             Any type of object may be tested but, in general, equality
             is only possible with another field construct, or a
             subclass of one. If *ignore_type* is True then
-            ``Field(source=other)`` is tested, rather than the
+            ``{{class}}(source=other)`` is tested, rather than the
             ``other`` defined by the *other* parameter.
 
     :Returns:
@@ -1464,9 +1465,9 @@ class Field(mixin.NetCDFVariable,
 
     **Examples:**
 
-    >>> f = cfdm.example_field(0)
-    >>> cfdm.write(f, 'temp_file.nc')
-    >>> g = cfdm.read('temp_file.nc')[0]
+    >>> f = {{package}}.example_field(0)
+    >>> {{package}}.write(f, 'temp_file.nc')
+    >>> g = {{package}}.read('temp_file.nc')[0]
     >>> g.get_filenames()
     {'/data/user/file1.nc'}
 
@@ -1515,7 +1516,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `Field` or `None`
+        `{{class}}` or `None`
             The new field construct with expanded data axes. If the
             operation was in-place then `None` is returned.
 
@@ -1573,18 +1574,18 @@ class Field(mixin.NetCDFVariable,
     (such as dimension coordinate and coordinate reference constructs)
     that define its domain.
 
-    The `cfdm.read` function allows a field construct to be derived
-    directly from a netCDF variable that corresponds to a metadata
-    construct. In this case, the new field construct will have a
-    domain limited to that which can be inferred from the
+    The `{{package}}.read` function allows a field construct to be
+    derived directly from a netCDF variable that corresponds to a
+    metadata construct. In this case, the new field construct will
+    have a domain limited to that which can be inferred from the
     corresponding netCDF variable - typically only domain axis and
     dimension coordinate constructs. This will usually result in a
     different field construct to that created with the
-    `~Field.convert` method.
+    `~{{class}}.convert` method.
 
     .. versionadded:: 1.7.0
 
-    .. seealso:: `cfdm.read` PPPPPP: {+repr}
+    .. seealso:: `{{package}}.read`
 
     :Parameters:
 
@@ -1600,12 +1601,12 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `Field`
+        `{{class}}`
             The new field construct.
 
     **Examples:**
 
-    >>> f = cfdm.read('file.nc')[0]
+    >>> f = {{package}}.read('file.nc')[0]
     >>> print(f)
     Field: air_temperature (ncvar%ta)
     ---------------------------------
@@ -1746,7 +1747,7 @@ class Field(mixin.NetCDFVariable,
 
     .. versionadded:: 1.7.0
 
-    .. seealso:: `cfdm.read`
+    .. seealso:: `{{package}}.read`
 
     :Parameters:
 
@@ -2526,7 +2527,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `Field` or `None`
+        `{{class}}` or `None`
             The field construct with removed data axes. If the
             operation was in-place then `None` is returned.
 
@@ -2599,7 +2600,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `Field` or `None`
+        `{{class}}` or `None`
             The field construct with permuted data axes. If the
             operation was in-place then `None` is returned.
 
@@ -2715,7 +2716,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `Field` or `None`
+        `{{class}}` or `None`
             The uncompressed field construct, or `None` if the
             operation was in-place.
 

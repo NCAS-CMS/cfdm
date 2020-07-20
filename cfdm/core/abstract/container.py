@@ -1,13 +1,15 @@
-import abc
+#import abc
 import inspect
 import re
 
 from copy import copy, deepcopy
 
 from . import RewriteDocstringMeta
+#from . import ZeroContainer
 
 
 class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
+#class Container(ZeroContainer):
     '''Base class for storing components.
 
     .. versionadded:: 1.7.0
@@ -86,12 +88,6 @@ class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
 
            return out
 
-    To disable docstring substitutions for a class and all of its
-    subclasses, override this method on the class to return an empty
-    dictionary. In this case note that substitions will still be
-    applied to methods inherited by the class, and any special
-    substitutions be made regardless.
-
         '''
         return {
             # --------------------------------------------------------
@@ -110,7 +106,7 @@ class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
             will be raised instead.''',
 
             # --------------------------------------------------------
-            # Regular expression subsititions.
+            # Regular expression substitutions.
             #
             # The key must be an `re.Pattern` object, i.e. a compiled
             # regular expression, e.g as created by `re.compile`.
