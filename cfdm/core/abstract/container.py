@@ -50,92 +50,80 @@ class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
         '''TODO
 
     Substitutions may be easily modified by overriding the
-    __docstring_substitution__ method. Modifications can be applied to
-    any class, and will only apply to that class and all of its
-    subclases.
+    __docstring_substitution__ method.
+
+    Modifications can be applied to any class, and will only apply to
+    that class and all of its subclases.
+
+    If the key is a string then the special subtitutions will be
+    applied to the dictionary values prior to replacement in the
+    docstring.
+
+    If the key is a compiled regular expession then the special
+    subtitutions will be applied to the match of the regular
+    expression prior to replacement in the docstring.
+
+    For example:
 
        def __docstring_substitution__(self):
-           def upper(match):
+           def _upper(match):
                return match.group(1).upper()
 
            out = super().__docstring_substitution__()
 
-           out['{{repr}}'] = 'CF: ', 
-
-           out['{{foo}}'] = 'bar', 
+           # Simple substitutions 
+           out['{{repr}}'] = 'CF: '
+           out['{{foo}}'] = 'bar'
 
            out['{{parameter: `int`}}'] = """parameter: `int`
                This parameter does something to `{{class}}`
                instances. It has no default value.""",
 
-           # Convert the text to upper case
-           out['{{<upper>}}'] = (re.compile('{{<upper (.*?>}}'), upper)
+           # Regular expression subsititions
+           # 
+           # Convert text to upper case
+           out[re.compile('{{<upper (.*?)>}}')] = _upper
 
            return out
 
-    To disable docstring substitutions for a parent class and all of
-    its subclasses, override this method on the parent class to return
-    an empty dictionary. In this case note that substitions will still
-    be applied to methods inherited by the parent class, and any
-    special class name substitutions will use the class name of the
-    class that defines the method.
+    To disable docstring substitutions for a class and all of its
+    subclasses, override this method on the class to return an empty
+    dictionary. In this case note that substitions will still be
+    applied to methods inherited by the class, and any special
+    substitutions be made regardless.
 
         '''
-        def _replacement_class(match, core=False):
-            class_name = match.group(1)
-            if core:
-                class_name = 'core.' + class_name
-                
-            return class_name
-
         return {
             # --------------------------------------------------------
-            # Special susbstitutions that depend on the class
-            # containing the docstring. Do not override these.
-            # --------------------------------------------------------
-            # Replace {{package}} with the package name
-            '{{package}}': True,
-            # Replace {{class}} with the name of the parent class
-            # method
-            '{{class}}': True,
-            # Replace {{+Name}} with Name unless the parent class is
-            # in the cfdm.core package, in whcih case replace it with
-            # core.Name.
+            # Simple substitutions.
             #
-            # E.g. {{+Data}} is replaced by either Data or core.Data
-            '{{+class}}': (re.compile('{{\+(\w.*?)}}'), _replacement_class),
-            
-            # --------------------------------------------------------
-            # General substition. The key must not contain a colon
-            # (:). The key must not contain a plus (+). The key must
-            # not be of the form {{<...>}}.
+            # All occurences of the key are replaced with the value.
+            #
+            # Note that special subtitutions will be applied to the
+            # value prior to replacement in the docstring.
             # --------------------------------------------------------
             '{{repr}}': '',
-
-            # --------------------------------------------------------
-            # General regex substition. The key must be of the form
-            # {{<name>}}. The key is not expected to appear in te
-            # docstring that form. Instead, the text to be operated on
-            # should follow the name inside the angle brackets. The
-            # key must not contain a colon (:). The key must not
-            # contain a plus (+).
-            #
-            # The value must be tuple containing a compiled regular
-            # expression and function to define the susbstition for
-            # each occurrence. The function should operate on the
-            # Match object returned by the evaulation of the regular
-            # expression.
-            # --------------------------------------------------------
-
-            # --------------------------------------------------------
-            # Keyword parameter description substition. The key must
-            # contain a colon (:). Special substitutions will be
-            # applied to these values
-            # --------------------------------------------------------
+            
             '{{default: optional}}': '''default: optional
             Return the value of the *default* parameter if data have
             not been set. If set to an `Exception` instance then it
             will be raised instead.''',
+
+            # --------------------------------------------------------
+            # Regular expression subsititions.
+            #
+            # The key must be an `re.Pattern` object, i.e. a compiled
+            # regular expression, e.g as created by `re.compile`.
+            #
+            # The value must be a callable that, when passed the Match
+            # object created by evaulating the regular expression
+            # against the docstring, must return the replacement
+            # string to be used.
+            #
+            # Note that special subtitutions will be applied to the
+            # match of the regular expression prior to replacement in
+            # the docstring.
+            # --------------------------------------------------------
         }
     
     # ----------------------------------------------------------------

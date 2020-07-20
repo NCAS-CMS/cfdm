@@ -1,6 +1,19 @@
-import functools
 import inspect
+import re
 
+_plus_class_regex = regex = re.compile('{{\+(\w.*?)}}')
+
+def _replacement_class(match):
+    '''Return the first of the match groups.
+
+    '''
+    return match.group(1)
+
+def _replacement_core_class(match):
+    '''Return the first of the match groups prefixed by 'core.'
+
+    '''
+    return 'core.' + match.group(1)
 
 def _docstring_update(class_name, f, method_name, module, config):
     '''
@@ -9,7 +22,11 @@ def _docstring_update(class_name, f, method_name, module, config):
     doc = f.__doc__
     if doc is None:
         return
-    
+
+    # ----------------------------------------------------------------
+    # Find the package name, class name, and whether or we are in the
+    # cfdm.core package.
+    # ----------------------------------------------------------------
     core = False
     module = module.split('.')
     if len(module) >= 2:
@@ -21,52 +38,29 @@ def _docstring_update(class_name, f, method_name, module, config):
         package_name = module[0]
 
     # ----------------------------------------------------------------
-    # Do special substitutions first
-    # ----------------------------------------------------------------
-    config = config.copy()
-
-    key = '{{package}}'
-    if config.pop(key, None):
-        doc = doc.replace(key, package_name)
-    
-    key = '{{class}}'
-    if config.pop(key, None):
-        doc = doc.replace(key, class_name)
-    
-    key = '{{+class}}'
-    value = config.pop(key, None)
-    if value is not None:
-        regex, func = value
-        class_func = functools.partial(func, core=core)
-        doc = regex.sub(class_func, doc)
-        
-    # ----------------------------------------------------------------
-    # Process keyword parameter descriptions
-    # ----------------------------------------------------------------
-    for key, value in config.copy().items():
-        if ':' not in key:
-            continue
-
-        value = value.replace('{{package}}', package_name)
-        value = value.replace('{{class}}', class_name)
-        if '{{+' in value:
-            value = regex.sub(class_func, value)
-
-        doc = doc.replace(key, value)
-        
-        del config[key]
-            
-    # ----------------------------------------------------------------
-    # Process everything else
+    # Do general substitutions first
     # ----------------------------------------------------------------
     for key, value in config.items():
-        if key.startswith('{{<'):
-            regex, func = value
-            doc = regex.sub(func, doc)
-        else:        
+        try:
+            doc = key.sub(value, doc)
+        except AttributeError:
             doc = doc.replace(key, value)
     # --- End: for
 
+    # ---------------------------------------------------------------
+    # Now do special substitutions
+    # ----------------------------------------------------------------
+    doc = doc.replace('{{package}}', package_name)
+    doc = doc.replace('{{class}}', class_name)
+
+    if '{{+' in doc:
+        if core:
+            func = _replacement_core_class
+        else:
+            func = _replacement_class
+            
+        doc = _plus_class_regex.sub(func, doc)
+    
     # ----------------------------------------------------------------
     # Add the rewritten docstring to the method
     # ----------------------------------------------------------------
