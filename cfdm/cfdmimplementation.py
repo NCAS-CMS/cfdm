@@ -791,7 +791,7 @@ class CFDMImplementation(Implementation):
         return field.domain_axes[axis].get_size()
 
     def get_sample_dimension_position(self, construct):
-        '''Return the postion of the sample dimension of dompressed data.
+        '''Return the position of the sample dimension of compressed data.
 
     :Parameters:
 
@@ -805,7 +805,7 @@ class CFDMImplementation(Implementation):
         return construct.get_data().get_compressed_dimension()
 
     def nc_get_geometry_variable(self, field, default=None):
-        '''Return the netCDF variable name of the geometry containier.
+        '''Return the netCDF variable name of the geometry container.
 
     .. versionadded:: 1.8.0
 
@@ -1230,7 +1230,7 @@ class CFDMImplementation(Implementation):
         return parent.inherited_properties()
 
     def get_interior_ring(self, construct):
-        '''Return the interior ring variable of geometry coordiantes.
+        '''Return the interior ring variable of geometry coordinates.
 
     :Parameters:
 
@@ -1389,7 +1389,7 @@ class CFDMImplementation(Implementation):
         return construct.get_property(prop, default=default)
 
     def get_geometry(self, construct, default=None):
-        '''Return a the geometry type of coordinates.
+        '''Return the geometry type of coordinates.
 
     :Parameters:
 
@@ -1400,7 +1400,7 @@ class CFDMImplementation(Implementation):
     :Returns:
 
         `str` or `None`
-            The geomtry type.
+            The geometry type.
 
         '''
         return construct.get_geometry(default=default)
@@ -2302,7 +2302,7 @@ class CFDMImplementation(Implementation):
         return field.set_construct(construct, axes=axes, copy=copy)
 
     def set_geometry(self, coordinate, value):
-        '''Set the geometry type of a coordiante construct.
+        '''Set the geometry type of a coordinate construct.
 
     .. versionadded:: 1.8.0
 

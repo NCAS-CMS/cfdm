@@ -231,7 +231,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
                 default, "{!r} has no bounds".format(self.__class__.__name__))
 
     def del_geometry(self, default=ValueError()):
-        '''TODO
+        '''Remove the geometry type.
 
     .. versionadded:: 1.8.0
 
@@ -246,11 +246,26 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     :Returns:
 
+        `str`
             The removed geometry type.
 
     **Examples:**
 
-    TODO
+    f = cfdm.read('file.nc')[0]
+    c = f.construct('axis=X')
+    c.has_geometry()
+    True
+    c.get_geometry()
+    'line'
+    b = c.del_geometry()
+    c.has_geometry()
+    False
+    print(c.get_geometry(None))
+    None
+
+    c.set_geometry(b)
+    c.has_geometry()
+    True
 
         '''
         try:
@@ -311,7 +326,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     .. versionadded:: 1.8.0
 
-    .. seealso:: `get_data`, `has_bounds`, `set_bounds`
+    .. seealso:: `has_geometry`, `set_geometry`, `del_geometry`
 
     :Parameters:
 
@@ -322,11 +337,26 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     :Returns:
 
-            TODO
+        `str`
+            The geometry type.
 
     **Examples:**
 
-    TODO SB
+    f = cfdm.read('file.nc')[0]
+    c = f.construct('axis=X')
+    c.has_geometry()
+    True
+    c.get_geometry()
+    'line'
+    b = c.del_geometry()
+    c.has_geometry()
+    False
+    print(c.get_geometry(None))
+    None
+
+    c.set_geometry(b)
+    c.has_geometry()
+    True
 
         '''
         try:
@@ -417,19 +447,34 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
         return self._has_component('bounds')
 
     def has_geometry(self):
-        '''True if there is a goemetry type. TODO
+        '''True if there is a geometry type.
 
     .. versionadded:: 1.8.0
 
-    .. seealso:: TODO
+    .. seealso:: `get_geometry`, `set_geometry`, `del_geometry`
 
     :Returns:
 
         `bool`
+            Whether or not there is a geometry type.
 
     **Examples:**
 
-    >>> x = c.has_geometry()
+    f = cfdm.read('file.nc')[0]
+    c = f.construct('axis=X')
+    c.has_geometry()
+    True
+    c.get_geometry()
+    'line'
+    b = c.del_geometry()
+    c.has_geometry()
+    False
+    print(c.get_geometry(None))
+    None
+
+    c.set_geometry(b)
+    c.has_geometry()
+    True
 
             '''
         return self._has_component('geometry')
@@ -516,12 +561,12 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     .. versionadded:: 1.8.0
 
-    .. seealso:: TODO
+    .. seealso:: `get_geometry`, `set_geometry`, `del_geometry`
 
     :Parameters:
 
         value: `str`
-            TODO
+            The geometry type to set.
 
     :Returns:
 
@@ -529,7 +574,22 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    TODO
+    f = cfdm.read('file.nc')[0]
+    c = f.construct('axis=X')
+    c.has_geometry()
+    True
+    c.get_geometry()
+    'line'
+    b = c.del_geometry()
+    c.has_geometry()
+    False
+    print(c.get_geometry(None))
+    None
+
+    c.set_geometry(b)
+    c.has_geometry()
+    True
+
         '''
         self._set_component('geometry', value, copy=copy)
 
