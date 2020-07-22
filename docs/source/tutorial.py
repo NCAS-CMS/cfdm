@@ -5,7 +5,7 @@ print("\n**Tutorial**\n")
 print("\n**Import**\n")
 
 import cfdm
-cfdm.LOG_LEVEL('INFO')
+cfdm.log_level('INFO')
 cfdm.CF()
 
 print("\n**Field construct**\n")
@@ -367,6 +367,9 @@ key
 cm = cfdm.CellMethod(axes=longitude_axis, method='minimum')
 p.set_construct(cm)
 
+import numpy
+import cfdm
+
 # Initialise the field construct with properties
 Q = cfdm.Field(
           properties={'project': 'research',
@@ -436,6 +439,9 @@ Q.set_construct(dimY, axes=axisY)
 Q.set_construct(dimX, axes=axisX)
 
 Q.dump()
+
+import numpy
+import cfdm
 
 # Initialize the field construct
 tas = cfdm.Field(
@@ -589,7 +595,6 @@ cell_measure = cfdm.CellMeasure(measure='area',
                  data=cfdm.Data(numpy.arange(90.).reshape(9, 10)))
 
 tas.set_construct(cell_measure, axes=[axis_X, axis_Y])
-
 
 print(tas)
 import netCDF4
@@ -864,7 +869,6 @@ X = P.set_construct(cfdm.DomainAxis(2))
 # Set the data for the field
 P.set_data(cfdm.Data(array), axes=[T, Y, X])
 
-P
 print(P.data.array)
 P.data.get_compression_type()
 print(P.data.compressed_array)
