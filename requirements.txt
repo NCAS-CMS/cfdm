@@ -1,4 +1,3 @@
-future>=0.16.0
 netcdf4>=1.5.3
 cftime>=1.2.1
 numpy>=1.15

@@ -449,9 +449,9 @@ def environment(display=True, paths=True):
     netcdf library: 4.6.1
     python: 3.7.3 /home/user/anaconda3/bin/python
     netCDF4: 1.5.3 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
-    cftime: 1.1.0 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
+    cftime: 1.2.1 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
     numpy: 1.16.2 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    cfdm: 1.8.0
+    cfdm: 1.8.6.0
 
     >>> environment(paths=False)
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
@@ -459,9 +459,9 @@ def environment(display=True, paths=True):
     netcdf library: 4.6.1
     python: 3.7.3
     netCDF4: 1.5.3
-    cftime: 1.1.0
+    cftime: 1.2.1
     numpy: 1.16.2
-    cfdm: 1.8.0
+    cfdm: 1.8.6.0
 
     '''
     out = []

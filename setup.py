@@ -109,15 +109,6 @@ in a netCDF dataset:
                     : longitude(128) = [0.0, ..., 357.1875] degrees_east
                     : height(1) = [2.0] m
 
-Hierarchical groups
-===================
-
-Hierarchical groups provide a powerful mechanism to structure
-variables within datasets. A future 1.8.x release of cfdm will include
-support for netCDF4 files containing data organised in hierarchical
-groups, but this is not available in version 1.8.0 (even though it is
-allowed in CF-1.8).
-
 Source code
 ===========
 

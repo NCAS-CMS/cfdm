@@ -1,5 +1,5 @@
-version 1.8.6
--------------
+version 1.8.6.0
+---------------
 ----
 
 **2020-07-??**
@@ -11,6 +11,7 @@ version 1.8.6
 * Renamed to lower-case (but otherwise identical) names all functions which
   get and set global constants: `cfdm.atol`, `cfdm.rtol`, `cfdm.log_level`.
   The old names e.g. `cfdm.ATOL` remain functional as aliases.
+* New function: `cfdm.configuration`
 * New method: `cfdm.Field.nc_variable_groups`
 * New method: `cfdm.Field.nc_set_variable_groups`
 * New method: `cfdm.Field.nc_clear_variable_groups`
@@ -30,7 +31,7 @@ version 1.8.6
 * Added test to check that dimension coordinate construct data is
   1-dimensional.
 * New dependency: ``netcdf_flattener>=1.1.0``
-* New function: `cfdm.configuration`
+* Removed dependency: ``future``
 
 version 1.8.5
 -------------

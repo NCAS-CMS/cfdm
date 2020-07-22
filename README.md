@@ -62,19 +62,19 @@ inspecting it:
 
 The ``cfdm`` package can:
 
-* read field constructs from netCDF datasets,
+* read field constructs from netCDF and CDL datasets,
 * create new field constructs in memory,
 * write field constructs to netCDF datasets on disk,
-* read netCDF and CDL datasets containing hierarchical groups,
+* read, write, and create datasets containing hierarchical groups,
+* read, write, and create coordinates defined by geometry cells,
 * inspect field constructs,
 * test whether two field constructs are the same,
 * modify field construct metadata and data,
 * create subspaces of field constructs,
-* incorporate, and create, metadata stored in external files,
+* incorporate, and create, metadata stored in external files, and
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
-  data in its uncompressed form, and
-* read, write, and create coordinates defined by geometry cells.
+  data in its uncompressed form.
 
 Command line utility
 ====================
