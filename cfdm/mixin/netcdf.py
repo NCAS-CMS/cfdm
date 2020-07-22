@@ -1,12 +1,12 @@
 from copy import deepcopy
 
-from ..core import abstract
+#from ..core import abstract
 
 class DeprecationError(Exception):
     pass
 
 
-class NetCDF(abstract.ZeroContainer):
+class NetCDF: #(abstract.ZeroContainer):
     '''Mixin class for storing simple netCDF elements.
 
     .. versionadded:: 1.7.0

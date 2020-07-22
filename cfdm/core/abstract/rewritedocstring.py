@@ -1,70 +1,69 @@
 import inspect
 import re
 
-_plus_class_regex = regex = re.compile('{{\+(\w.*?)}}')
 
-def _replacement_class(match):
-    '''Return the first of the match groups.
+#def _replacement_class(match):
+#    '''Return the first of the match groups.
+#
+#    '''
+#    return match.group(1)
+#
+#def _replacement_core_class(match):
+#    '''Return the first of the match groups prefixed by 'core.'
+#
+#    '''
+#    return 'core.' + match.group(1)
 
-    '''
-    return match.group(1)
-
-def _replacement_core_class(match):
-    '''Return the first of the match groups prefixed by 'core.'
-
-    '''
-    return 'core.' + match.group(1)
-
-def _docstring_update(class_name, f, method_name, module, config):
-    '''
-    
-    '''
-    doc = f.__doc__
-    if doc is None:
-        return
-
-    # ----------------------------------------------------------------
-    # Find the package name, class name, and whether or we are in the
-    # cfdm.core package.
-    # ----------------------------------------------------------------
-    core = False
-    module = module.split('.')
-    if len(module) >= 2:
-        package_name, package2 = module[:2]
-        if package_name == 'cfdm' and package2 == 'core':
-            class_name = 'core.' + class_name
-            core = True
-    else:
-        package_name = module[0]
-
-    # ----------------------------------------------------------------
-    # Do general substitutions first
-    # ----------------------------------------------------------------
-    for key, value in config.items():
-        try:
-            doc = key.sub(value, doc)
-        except AttributeError:
-            doc = doc.replace(key, value)
-    # --- End: for
-
-    # ----------------------------------------------------------------
-    # Now do special substitutions
-    # ----------------------------------------------------------------
-    doc = doc.replace('{{package}}', package_name)
-    doc = doc.replace('{{class}}', class_name)
-
-    if '{{+' in doc:
-        if core:
-            func = _replacement_core_class
-        else:
-            func = _replacement_class
-            
-        doc = _plus_class_regex.sub(func, doc)
-    
-    # ----------------------------------------------------------------
-    # Add the rewritten docstring to the method
-    # ----------------------------------------------------------------
-    f.__doc__ = doc 
+#def _docstring_update(class_name, f, method_name, module, config):
+#    '''
+#    
+#    '''
+#    doc = f.__doc__
+#    if doc is None:
+#        return
+#
+#    # ----------------------------------------------------------------
+#    # Find the package name, class name, and whether or we are in the
+#    # cfdm.core package.
+#    # ----------------------------------------------------------------
+#    core = False
+#    module = module.split('.')
+#    if len(module) >= 2:
+#        package_name, package2 = module[:2]
+#        if package_name == 'cfdm' and package2 == 'core':
+#            class_name = 'core.' + class_name
+#            core = True
+#    else:
+#        package_name = module[0]
+#
+#    # ----------------------------------------------------------------
+#    # Do general substitutions first
+#    # ----------------------------------------------------------------
+#    for key, value in config.items():
+#        try:
+#            doc = key.sub(value, doc)
+#        except AttributeError:
+#            doc = doc.replace(key, value)
+#    # --- End: for
+#
+#    # ----------------------------------------------------------------
+#    # Now do special substitutions
+#    # ----------------------------------------------------------------
+#    doc = doc.replace('{{package}}', package_name)
+#    doc = doc.replace('{{class}}', class_name)
+#
+#    if '{{+' in doc:
+#        if core:
+#            func = _replacement_core_class
+#        else:
+#            func = _replacement_class
+#            
+#        doc = _plus_class_regex.sub(func, doc)
+#    
+#    # ----------------------------------------------------------------
+#    # Add the rewritten docstring to the method
+#    # ----------------------------------------------------------------
+#    f.__doc__ = doc 
 
     
 class RewriteDocstringMeta(type):
@@ -88,6 +87,8 @@ class RewriteDocstringMeta(type):
     .. versionadded:: 1.8.7
 
     '''
+    _plus_class_regex = re.compile('{{\+(\w.*?)}}')
+
     def __new__(cls, name, parents, attrs):
         
 #        docstring_rewrite = attrs.get('__docstring_substitution__', None)
@@ -229,18 +230,17 @@ class RewriteDocstringMeta(type):
 
     @staticmethod
     def _docstring_update(class_name, f, method_name, module, config):
-        '''
+        '''TODO
         
         '''
-        
         doc = f.__doc__
         if doc is None:
             return
     
-        # ----------------------------------------------------------------
-        # Find the package name, class name, and whether or we are in the
-        # cfdm.core package.
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
+        # Find the package name, class name, and whether or we are in
+        # the cfdm.core package.
+        # ------------------------------------------------------------
         core = False
         module = module.split('.')
         if len(module) >= 2:
@@ -250,11 +250,10 @@ class RewriteDocstringMeta(type):
                 core = True
         else:
             package_name = module[0]
-#        if core:
-#            print (876, package_name, core, class_name, method_name, config.keys())
-        # ----------------------------------------------------------------
+
+        # ------------------------------------------------------------
         # Do general substitutions first
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         for key, value in config.items():
             try:
                 doc = key.sub(value, doc)
@@ -262,24 +261,37 @@ class RewriteDocstringMeta(type):
                 doc = doc.replace(key, value)
         # --- End: for
     
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         # Now do special substitutions
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         doc = doc.replace('{{package}}', package_name)
         doc = doc.replace('{{class}}', class_name)
     
         if '{{+' in doc:
             if core:
-                func = _replacement_core_class
+                func = RewriteDocstringMeta._docstring_replacement_core_class
             else:
-                func = _replacement_class
+                func = RewriteDocstringMeta._docstring_replacement_class
                 
-            doc = _plus_class_regex.sub(func, doc)
+            doc = RewriteDocstringMeta._plus_class_regex.sub(func, doc)
         
         # ----------------------------------------------------------------
-        # Add the rewritten docstring to the method
+        # Set the rewritten docstring on the method
         # ----------------------------------------------------------------
         f.__doc__ = doc 
-
     
+    @staticmethod
+    def _docstring_replacement_class(match):
+        '''Return the first of the match groups.
+        
+        '''
+        return match.group(1)
+
+    @staticmethod
+    def _docstring_replacement_core_class(match):
+        '''Return the first of the match groups prefixed by 'core.'
+        
+        '''
+        return 'core.' + match.group(1)
+
 #--- End: class

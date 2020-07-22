@@ -1,15 +1,12 @@
-#import abc
 import inspect
 import re
 
 from copy import copy, deepcopy
 
 from . import RewriteDocstringMeta
-#from . import ZeroContainer
 
 
-class Container(metaclass=RewriteDocstringMeta): #abc.ABCMeta):
-#class Container(ZeroContainer):
+class Container(metaclass=RewriteDocstringMeta):
     '''Base class for storing components.
 
     .. versionadded:: 1.7.0

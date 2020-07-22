@@ -35,7 +35,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     .. versionadded:: 1.7.0
 
     '''
-    _docstring_rewrite = {'{+repr}': ('TEST2: ', None)}
     # ----------------------------------------------------------------
     # Define the base of the identity keys for each construct type
     # ----------------------------------------------------------------
@@ -162,13 +161,13 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
     >>> print(f.constructs)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
         '''
         return self._get_component('constructs')
@@ -181,13 +180,11 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
     .. versionadded:: 1.7.0
 
-    repr: <{{repr}}>
-
     .. seealso:: `get_domain`
 
     :Returns:
 
-        `Domain`
+        `{{+Domain}}`
             The domain.
 
     **Examples:**
@@ -206,8 +203,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def del_data_axes(self, key=None, default=ValueError()):
         '''Remove the keys of the domain axis constructs spanned by the data
     of the field or of a metadata construct.
-
-        TODO {{class}}
 
     .. versionadded:: 1.7.0
 
@@ -264,7 +259,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
     :Returns:
 
-        `Domain`
+        `{{+Domain}}`
              The domain.
 
     **Examples:**
@@ -291,10 +286,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             *Parameter example:*
               ``key='auxiliarycoordinate0'``
 
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set. If set to an `Exception` instance
-            then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -388,10 +380,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             *Parameter example:*
               ``key='auxiliarycoordinate0'``
 
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set. If set to an `Exception` instance
-            then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -401,7 +390,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
 
     >>> f.del_construct('auxiliarycoordinate2')
-    <AuxiliaryCoordinate: latitude(111, 106) degrees_north>
+    <{{repr}}AuxiliaryCoordinate: latitude(111, 106) degrees_north>
     >>> f.del_construct('auxiliarycoordinate2')
     ValueError: Can't get remove non-existent construct
     >>> f.del_construct('auxiliarycoordinate2', default=False)
@@ -464,7 +453,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     construct:
 
     >>> d
-    <Data(10, 9): [[23.6, ..., 76.8]]>
+    <{{repr}}Data(10, 9): [[23.6, ..., 76.8]]>
     >>> f.set_data(d, axes=['domainaxis0', 'domainaxis1'])
     >>> f.set_data(d)
 

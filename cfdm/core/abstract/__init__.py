@@ -1,7 +1,6 @@
 from .rewritedocstring import RewriteDocstringMeta
-from .zero import ZeroContainer
 
-from .container                   import Container, RewriteDocstringMeta
+from .container                   import Container
 from .properties                  import Properties
 from .propertiesdata              import PropertiesData
 from .propertiesdatabounds        import PropertiesDataBounds
