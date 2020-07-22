@@ -45,19 +45,19 @@
   the dev build.)
 
   ```bash
-  ./release_docs <vn> dev-clean # E.g. ./release_docs 1.8.2 dev-clean
+  ./release_docs <vn> dev-clean # E.g. ./release_docs 1.8.6.0 dev-clean
   ```
   
 * Create an archived copy of the documentation:
 
   ```bash
-  ./release_docs <vn> archive # E.g. ./release_docs 1.8.2 archive
+  ./release_docs <vn> archive # E.g. ./release_docs 1.8.6.0 archive
   ```
 
 * Update the latest documentation:
 
   ```bash
-  ./release_docs <vn> latest # E.g. ./release_docs 1.8.2 latest
+  ./release_docs <vn> latest # E.g. ./release_docs 1.8.6.0 latest
   ```
 
 * Create a source tarball:
@@ -69,7 +69,7 @@
 * Test the tarball release using
 
   ```bash
-  ./test_release <vn> # E.g. ./test_release 1.8.2
+  ./test_release <vn> # E.g. ./test_release 1.8.6.0
   ```
 
 * Push recent commits using
@@ -81,7 +81,7 @@
 * Tag the release:
 
   ```bash
-  ./tag <vn> # E.g. ./tag 1.8.2
+  ./tag <vn> # E.g. ./tag 1.8.6.0
   ```
   
 * Upload the source tarball to PyPi. Note this requires the `twine`
@@ -89,5 +89,5 @@
   privileges on PyPi.
 
   ```bash
-  ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 1.8.2
+  ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 1.8.6.0
   ```

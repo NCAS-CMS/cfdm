@@ -12,11 +12,17 @@ GitHub issue tracker: https://github.com/NCAS-CMS/cfdm/issues, prior
 to submitting a pull request containing the new code made from a fork
 of the cfdm GitHub code repository: https://github.com/NCAS-CMS/cfdm.
 
+# Change log
+
+See the change log
+(https://github.com/NCAS-CMS/cfdm/blob/master/Changelog.rst) for the
+changes introduced by each version.
+
 # Versioning
 
 A ``CF.major.minor`` numeric version scheme is used, where ``CF`` is
 the version of the CF conventions (e.g. ``1.9``) to which a particular
-version ofcfdm applies.
+version of cfdm applies.
 
 ## Major changes comprise
 
@@ -37,9 +43,3 @@ version ofcfdm applies.
   * bug fixes that do not change the API;
   * changes to the documentation;
   * code tidying.
-
-# Change log
-
-See the change log
-(https://github.com/NCAS-CMS/cfdm/blob/master/Changelog.rst) for the
-changes introduced by each version.

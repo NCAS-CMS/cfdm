@@ -25,16 +25,13 @@ this release of the cfdm package, and therefore the version can not be
 changed.
 
 The version identifier of the cfdm package is based on the version of
-the CF conventions to which it applies, with the addition of an extra
-integer value that is incremented each time the package is
-updated. For example, the first release for version 1.7 of the CF
-conventions (CF-1.7) had cfdm version ``1.7.0``, and subsequent
-releases to the package had versions ``1.7.1``, ``1.7.2``, etc. This
-carried on until the first release to apply to version CF-1.8, which
-was cfdm version ``1.8.0``.
+the CF conventions to which it applies, with the addition of extra
+integer values for updates that apply to the same version of CF. See
+https://github.com/NCAS-CMS/cfdm/blob/master/CONTRIBUTING.md for
+details.
 
 .. code-block:: python
    :caption: *Retrieve the version of the cfdm package.*
 	     	     
    >>> cfdm.__version__
-   '1.8.2'
+   '1.8.6.0'
