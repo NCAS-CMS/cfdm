@@ -789,6 +789,11 @@ class Data(mixin.Container,
                 array = array.view(numpy.ndarray)
         # --- End: if
 
+        if mask is not None and not array.ndim:
+            # Fix until num2date copes with scalar aarrays containing
+            # missing data
+            return array
+
         array = netCDF4.num2date(array, units=self.get_units(None),
                                  calendar=self.get_calendar('standard'),
                                  only_use_cftime_datetimes=True)
