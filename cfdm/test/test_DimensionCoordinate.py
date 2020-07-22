@@ -45,8 +45,8 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         _ = repr(x)
         _ = str(x)
-        _ = x.dump(display=False)
-        _ = x.dump(display=False, _key='qwerty')
+        self.assertIsInstance(x.dump(display=False), str)
+        self.assertIsInstance(x.dump(display=False, _key='qwerty'), str)
 
 # --- End: class
 

@@ -30,7 +30,7 @@ class FieldAncillaryTest(unittest.TestCase):
 
         _ = repr(x)
         _ = str(x)
-        _ = x.dump(display=False)
+        self.assertIsInstance(x.dump(display=False), str)
 
     def test_FieldAncillary_source(self):
         f = cfdm.read(self.filename)[0]

@@ -36,7 +36,7 @@ class CellMethodTest(unittest.TestCase):
         for c in f.cell_methods.values():
             _ = repr(c)
             _ = str(c)
-            _ = c.dump(display=False)
+            self.assertIsInstance(c.dump(display=False), str)
             self.assertEqual(c.construct_type, 'cell_method')
 
     def test_CellMethod(self):

@@ -34,7 +34,7 @@ class InteriorRingTest(unittest.TestCase):
 
         _ = repr(i)
         _ = str(i)
-        _ = i.dump(display=False)
+        self.assertIsInstance(i.dump(display=False), str)
 
 # --- End: class
 

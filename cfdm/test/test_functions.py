@@ -195,9 +195,9 @@ class FunctionsTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        _ = cfdm.environment(display=False)
-        _ = cfdm.environment(display=False, paths=False)
-        _ = cfdm.environment(display=False)
+        self.assertIsInstance(cfdm.environment(display=False), list)
+        self.assertIsInstance(cfdm.environment(display=False, paths=False), list)
+        self.assertIsInstance(cfdm.environment(display=False), list)
 
     def test_example_field(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -208,7 +208,7 @@ class FunctionsTest(unittest.TestCase):
         for n in range(top + 1):
             f = cfdm.example_field(n)
             _ = f.data.array
-            _ = f.dump(display=False)
+            self.assertIsInstance(f.dump(display=False), str)
 
             cfdm.write(f, temp_file)
             g = cfdm.read(temp_file)
@@ -322,12 +322,6 @@ class FunctionsTest(unittest.TestCase):
         # 4. Check invalid kwarg given logic processes **kwargs:
         with self.assertRaises(TypeError):
             cfdm.configuration(bad_kwarg=1e-15)
-
-#    def test_default_netCDF_fill_values(self):
-#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#            return
-#
-#        self.assertIsInstance(cfdm.default_netCDF_fill_values(), dict)
 
 # --- End: class
 

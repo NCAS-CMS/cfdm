@@ -34,7 +34,7 @@ class PartNodeCountPropertiesTest(unittest.TestCase):
 
         _ = repr(p)
         _ = str(p)
-        _ = p.dump(display=False)
+        self.assertIsInstance(p.dump(display=False), str)
 
 # --- End: class
 

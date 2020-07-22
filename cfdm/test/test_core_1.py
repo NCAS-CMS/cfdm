@@ -213,7 +213,7 @@ class create_fieldTest(unittest.TestCase):
     def test_core_FUNCTIONS(self):
         self.assertEqual(cfdm.core.CF(), cfdm.core.__cf_version__)
 
-        _ = cfdm.core.environment(display=False)
+        self.assertIsInstance(cfdm.core.environment(display=False), list)
 
 # --- End: class
 

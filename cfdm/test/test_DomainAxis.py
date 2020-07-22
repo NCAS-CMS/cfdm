@@ -47,9 +47,9 @@ class DomainTest(unittest.TestCase):
         f = self.f
 
         d = f.construct('key%domainaxis0')
-        _ = cfdm.DomainAxis(source=d)
+        self.assertIsInstance(cfdm.DomainAxis(source=d), cfdm.DomainAxis)
 
-        _ = cfdm.DomainAxis(source=f)
+        self.assertIsInstance(cfdm.DomainAxis(source=f), cfdm.DomainAxis)
 
     def test_DomainAxis_source(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

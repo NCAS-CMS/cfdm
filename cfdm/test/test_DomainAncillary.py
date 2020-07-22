@@ -30,12 +30,14 @@ class DomainAncillaryTest(unittest.TestCase):
 
         _ = repr(x)
         _ = str(x)
-        _ = x.dump(display=False)
+        self.assertIsInstance(x.dump(display=False), str)
 
-        _ = x.dump(display=False, _key=f.domain_ancillaries('ncvar%a').key())
+        self.assertIsInstance(
+            x.dump(display=False, _key=f.domain_ancillaries('ncvar%a').key()),
+            str)
 
         x.nc_del_variable()
-        _ = x.dump(display=False)
+        self.assertIsInstance(x.dump(display=False), str)
 
     def test_DomainAncillary_bounds(self):
         f = cfdm.read(self.filename)[0]

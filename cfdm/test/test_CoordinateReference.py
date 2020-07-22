@@ -62,7 +62,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         for cr in f.coordinate_references.values():
             _ = repr(cr)
             _ = str(cr)
-            _ = cr.dump(display=False)
+            self.assertIsInstance(cr.dump(display=False), str)
             self.assertEqual(cr.construct_type, 'coordinate_reference')
 
     def test_CoordinateReference_equals(self):

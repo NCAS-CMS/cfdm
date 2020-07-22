@@ -397,7 +397,7 @@ class GroupsTest(unittest.TestCase):
 
         cfdm.write(g, grouped_file, verbose=1)
 
-        h = cfdm.read(grouped_file, verbose=-1)
+        h = cfdm.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1)
         h = h[0]
         self.assertTrue(f.equals(h, verbose=3))

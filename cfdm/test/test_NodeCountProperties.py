@@ -34,7 +34,7 @@ class NodeCountPropertiesTest(unittest.TestCase):
 
         _ = repr(n)
         _ = str(n)
-        _ = n.dump(display=False)
+        self.assertIsInstance(n.dump(display=False), str)
 
 # --- End: class
 

@@ -37,7 +37,7 @@ class DomainTest(unittest.TestCase):
 
         _ = repr(d)
         _ = str(d)
-        _ = d.dump(display=False)
+        self.assertIsInstance(d.dump(display=False), str)
 
     def test_Domain_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

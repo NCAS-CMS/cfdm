@@ -45,8 +45,8 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
         _ = repr(x)
         _ = str(x)
-        _ = x.dump(display=False)
-        _ = x.dump(display=False, _title=None)
+        self.assertIsInstance(x.dump(display=False), str)
+        self.assertIsInstance(x.dump(display=False, _title=None), str)
 
     def test_AuxiliaryCoordinate_bounds(self):
         f = cfdm.read(self.filename)[0]

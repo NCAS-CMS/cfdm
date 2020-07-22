@@ -27,7 +27,7 @@ class ListTest(unittest.TestCase):
 
         _ = repr(list_)
         _ = str(list_)
-        _ = list_.dump(display=False)
+        self.assertIsInstance(list_.dump(display=False), str)
 
 # --- End: class
 
