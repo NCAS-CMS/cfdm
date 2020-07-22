@@ -14,11 +14,32 @@ of the cfdm GitHub code repository: https://github.com/NCAS-CMS/cfdm.
 
 # Versioning
 
-A version of the cfdm package will always be based on the latest
-version of the CF conventions to which it applies, with the addition
-of an extra integer value that is incremented each time the package is
-updated. For example, the first release of cfdm for version 1.7 of the
-CF conventions (CF-1.7) had version `1.7.0`, and subsequent changes to
-the package were `1.7.1`, `1.7.2`, etc. This carried on until the
-first release to apply to version CF-1.8, which was cfdm version
-`1.8.0`.
+A ``CF.major.minor`` numeric version scheme is used, where ``CF`` is
+the version of the CF conventions (e.g. ``1.9``) to which a particular
+version ofcfdm applies.
+
+## Major changes comprise
+
+  * changes to the API, such as
+    - changing the name of an existing function or method;
+    - changing the behaviour of an existing function or method;
+    - changing the name of an existing keyword parameter;
+    - changing the default value of an existing keyword parameter;
+    - changing the meaning of a value of an existing keyword parameter.
+    - introducing a new function or method;
+    - introducing a new keyword parameter;
+    - introducing a new permitted value of a keyword parameter;
+
+ * changes to required versions of the dependencies.
+
+## Minor changes comprise
+
+  * bug fixes that do not change the API;
+  * changes to the documentation;
+  * code tidying.
+
+# Change log
+
+See the change log
+(https://github.com/NCAS-CMS/cfdm/blob/master/Changelog.rst) for the
+changes introduced by each version.
