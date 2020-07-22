@@ -47,7 +47,9 @@ __date__ = core.__date__
 __cf_version__ = core.__cf_version__
 __version__ = core.__version__
 
-_requires = ('cftime',)
+_requires = ('cftime',
+             'netcdf_flattener',
+)
 
 _error0 = 'cfdm requires the modules {}. '.format(', '.join(_requires))
 
@@ -63,6 +65,20 @@ if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
         "Bad cftime version: cfdm requires cftime>={}. "
         "Got {} at {}".format(
             _minimum_vn, cftime.__version__, cftime.__file__))
+
+try:
+    import netcdf_flattener
+except ImportError as error1:
+    raise ImportError(_error0+str(error1))
+
+# Check the version of cftime
+_minimum_vn = '1.0.1b6' 
+if LooseVersion(netcdf_flattener.__version__) < LooseVersion(_minimum_vn):
+    raise ValueError(
+        "Bad netcdf_flattener version: cfdm requires netcdf_flattener>={}. "
+        "Got {} at {}".format(
+            _minimum_vn,
+            netcdf_flattener.__version__, netcdf_flattener.__file__))
 
 from .constants import masked
 
