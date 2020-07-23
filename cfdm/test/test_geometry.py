@@ -254,7 +254,7 @@ class DSGTest(unittest.TestCase):
             self.assertEqual(c.interior_ring.data.ndim, c.data.ndim + 1)
             self.assertEqual(c.interior_ring.data.shape[0], c.data.shape[0])
 
-            _ = g.dump(display=False)
+            self.assertIsInstance(g.dump(display=False), str)
 
             d = c.insert_dimension(0)
             self.assertEqual(d.data.shape, (1,) + c.data.shape)

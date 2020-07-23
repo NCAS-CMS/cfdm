@@ -23,7 +23,6 @@ class create_fieldTest_2(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file_b.nc')
 
@@ -211,18 +210,8 @@ class create_fieldTest_2(unittest.TestCase):
         f.set_construct(cm0)
         f.set_construct(cm1)
 
-        if verbose:
-            print(repr(f))
-            print(f)
-            print(f.constructs)
-            print(f.construct_data_axes())
-
         self.assertTrue(f.equals(f.copy(), verbose=verbose),
                         "Field f not equal to a copy of itself")
-
-#        f.dump()
-        if verbose:
-            print("####################################################")
 
         for fmt in ('NETCDF3_CLASSIC',
                     'NETCDF3_64BIT',
@@ -231,22 +220,10 @@ class create_fieldTest_2(unittest.TestCase):
             cfdm.write(f, self.filename, fmt=fmt, verbose=verbose)
 
             g = cfdm.read(self.filename, verbose=verbose)
-            if verbose:
-                for x in g:
-                    x.print_read_report()
 
             self.assertEqual(len(g), 1, '{} != 1'.format(len(g)))
 
             g = g[0].squeeze()
-
-            #            g[0].dump()
-
-            #        g.dump
-            if verbose:
-                print('f')
-                print(f)
-                print('g')
-                print(g)
 
             self.assertEqual(sorted(f.constructs), sorted(g.constructs),
                              '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(
@@ -257,11 +234,6 @@ class create_fieldTest_2(unittest.TestCase):
 
             self.assertTrue(g.equals(g.copy(), verbose=verbose),
                             "Field g not equal to a copy of itself")
-            if verbose:
-                print('f')
-                f.dump()
-                print('g')
-                g.dump()
 
             self.assertTrue(g.equals(f, verbose=verbose),
                             "Field not equal to itself read back in")
@@ -272,29 +244,9 @@ class create_fieldTest_2(unittest.TestCase):
 
         g = cfdm.read(self.filename, verbose=verbose,
                       extra=['domain_ancillary'], warnings=warnings)
-        if verbose:
-            for x in g:
-                x.print_read_report()
-
-            print(g)
-#        for x in g:
-#            x.dump()
-#        h = g.field('domainancillary2')
-#        h.dump()
-#        print h
-#
-#
-#        h = g.field('domainancillary1')
-#        print h
-#
-#        h = g.field('domainancillary0')
-#        print h
-#
-#        h = g.field('cellmeasure0')
-#        print h
-
 
 # --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

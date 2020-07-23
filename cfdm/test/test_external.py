@@ -65,7 +65,7 @@ class ExternalVariableTest(unittest.TestCase):
         for i in f:
             _ = repr(i)
             _ = str(i)
-            _ = i.dump(display=False)
+            self.assertIsInstance(i.dump(display=False), str)
 
         self.assertEqual(len(f), 1)
         f = f[0]
@@ -86,7 +86,7 @@ class ExternalVariableTest(unittest.TestCase):
         for i in c + f:
             _ = repr(i)
             _ = str(i)
-            _ = i.dump(display=False)
+            self.assertIsInstance(i.dump(display=False), str)
 
         cell_measure = f[0].constructs.filter_by_identity(
             'measure:area').value()
@@ -104,7 +104,7 @@ class ExternalVariableTest(unittest.TestCase):
         for i in f:
             _ = repr(i)
             _ = str(i)
-            _ = i.dump(display=False)
+            self.assertIsInstance(i.dump(display=False), str)
 
         self.assertEqual(len(f), 1)
         self.assertEqual(len(c), 1)
@@ -122,7 +122,7 @@ class ExternalVariableTest(unittest.TestCase):
         for i in f:
             _ = repr(i)
             _ = str(i)
-            _ = i.dump(display=False)
+            self.assertIsInstance(i.dump(display=False), str)
 
         self.assertEqual(len(f), 1)
         self.assertEqual(len(c), 1)

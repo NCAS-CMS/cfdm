@@ -235,25 +235,9 @@ class create_fieldTest(unittest.TestCase):
         f.set_construct(cm2)
         f.set_construct(cm3)
 
-        if verbose:
-            print(repr(f))
-            print(f)
-            print(f.constructs)
-            print(f.construct_data_axes())
-
-            f.dump()
-
-#        sys.exit(0)
-
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
 
-        g = cfdm.read(self.filename, verbose=verbose)  # , squeeze=True)
-
-        if verbose:
-            # g[0].dump()
-            # sys.exit(0)
-            for x in g:
-                x.print_read_report()
+        g = cfdm.read(self.filename, verbose=verbose)
 
         self.assertEqual(
             len(g), 1,
@@ -261,8 +245,6 @@ class create_fieldTest(unittest.TestCase):
 
         g = g[0].squeeze()
 
-
-#        print g
         self.assertEqual(
             sorted(f.constructs), sorted(g.constructs),
             '\n\nf (created in memory)\n{}\n\n{}\n\ng '
@@ -279,24 +261,9 @@ class create_fieldTest(unittest.TestCase):
 
         self.assertTrue(g.equals(g.copy(), verbose=verbose),
                         "Field g not equal to a copy of itself")
-#        print f.dump()
-
-#        print'f'
-#        print f
-#        print 'g'
-#        print g
-#        f.dump()
-#        g.dump()
-
-        if verbose:
-            f.dump()
-            g.dump()
-#        sys.exit(0)
 
         self.assertTrue(g.equals(f, verbose=verbose),
                         "Field not equal to itself read back in")
-
-#        sys.exit(0)
 
         x = g.dump(display=False)
         x = f.dump(display=False)
@@ -304,30 +271,8 @@ class create_fieldTest(unittest.TestCase):
         g = cfdm.read(self.filename, verbose=verbose,
                       extra=['domain_ancillary'], warnings=warnings)
 
-        if verbose:
-            for x in g:
-                x.print_read_report()
-
-            print(g)
-            g[0].dump()
-#        for x in g:
-#            x.dump()
-#        h = g.field('domainancillary2')
-#        h.dump()
-#        print h
-#
-#
-#        h = g.field('domainancillary1')
-#        print h
-#
-#        h = g.field('domainancillary0')
-#        print h
-#
-#        h = g.field('cellmeasure0')
-#        print h
-
-
 # --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())
