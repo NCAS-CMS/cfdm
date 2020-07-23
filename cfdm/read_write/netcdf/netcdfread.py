@@ -16,18 +16,16 @@ from pprint            import (pformat, pprint)
 import numpy
 import netCDF4
 
+import netcdf_flattener
+
 from ...decorators import _manage_log_level_via_verbosity
+
+from ...functions import log_level
 
 from .. import IORead
 
 from . import constants
 
-try:
-    import netcdf_flattener
-except ModuleNotFoundError:
-    _found_flattener = False
-else:
-    _found_flattener = True
 
 _cached_temporary_files = {}
 
@@ -290,7 +288,7 @@ class NetCDFRead(IORead):
         for flat_file in self.read_vars['flat_files']:
             flat_file.close()
 
-    def file_open(self, filename, flatten=True):
+    def file_open(self, filename, flatten=True, verbose=None):
         '''Open the netCDf file for reading.
 
     If the file has hierarchical groups then a flattened version of it
@@ -331,15 +329,8 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         if flatten and nc.groups:
-            if not _found_flattener:
-                raise ModuleNotFoundError(
-                    "File {} contains hierarchical groups and "
-                    "can't be read without the netcdf_flattener package. "
-                    "See https://ncas-cms.github.io/cfdm/installation.html "
-                    "for details.".format(filename)
-                )
-
-            # Create a diskless container for the flattened file
+            # Create a diskless, non-persistent container for the
+            # flattened file
             flat_file = tempfile.NamedTemporaryFile(
                 mode='wb',
                 dir=tempfile.gettempdir(),
@@ -760,7 +751,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Open the netCDF file to be read
         # ------------------------------------------------------------
-        nc = self.file_open(filename)
+        nc = self.file_open(filename, flatten=True, verbose=None)
         logger.info(
             "Reading netCDF file: {}".format(filename)
         )  # pragma: no cover

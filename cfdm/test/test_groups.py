@@ -137,7 +137,7 @@ class GroupsTest(unittest.TestCase):
             nc.groups['forecast'].variables)
         nc.close()
 
-        h = cfdm.read(grouped_file, verbose=1)
+        h = cfdm.read(grouped_file, verbose='WARNING')
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))
 
