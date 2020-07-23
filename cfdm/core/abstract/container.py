@@ -49,25 +49,37 @@ class Container(metaclass=abc.ABCMeta):
     # Private methods
     # ----------------------------------------------------------------
     def _default(self, default, message=None):
-        '''TODO
+        '''Return a value or raise an Exception for a default case.
 
     .. versionadded:: 1.7.0
 
     :Parameters:
 
         default:
-            TODO
+            The value to return, or to raise if set to an `Exception`
+            instance.
 
         message: `str`, optional
-            TODO
+            The error message to raise with *default* if it is an
+            `Exception` instance.
 
     :Returns:
 
-        TODO
+        The value of *default* if it is not an `Exception` instance.
 
     **Examples:**
 
-    TODO
+    >>> f = cfdm.example_field(0)
+    >>> f._default(AttributeError())  # Raises Exception
+    AttributeError
+    >>> f._default(ValueError(), message="No component")  # Raises Exception
+    ValueError: No component
+    >>> f._default(False)
+    False
+    >>> f._default('Not set')
+    'Not set'
+    >>> f._default(1)
+    1
 
         '''
         if isinstance(default, Exception):
