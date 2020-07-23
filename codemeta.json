@@ -26,5 +26,5 @@
   "keywords": "cf, metadata, netcdf, python",
   "license": "MIT",
   "title": "cfdm",
-  "version": "1.8.6"
+  "version": "1.8.6.0"
 }
