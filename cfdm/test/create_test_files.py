@@ -948,10 +948,12 @@ def _make_interior_ring_file(filename):
     '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    # Global arttributes
+    # Global attributes
     n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
-    n.comment = 'TODO'
+    n.comment = ('A netCDF file with an interior ring variable of geometry '
+                 'coordinates where x and y (but not z) are node '
+                 'coordinates.')
 
     # Dimensions
     time = n.createDimension('time', 4)
@@ -1060,10 +1062,11 @@ def _make_interior_ring_file_2(filename):
     '''
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    # Global arttributes
+    # Global attributes
     n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
-    n.comment = 'TODO'
+    n.comment = ('A netCDF file with an interior ring variable of geometry '
+                 'coordinates where x, y and z are node coordinates.')
 
     # Dimensions
     time = n.createDimension('time', 4)

@@ -401,7 +401,7 @@ class Field(mixin.NetCDFVariable,
         return out
 
     def _get_coordinate_geometry_variables(self, component):
-        '''TODO
+        '''Return the list of variables for the geometry coordinates.
 
     :Parameters:
 

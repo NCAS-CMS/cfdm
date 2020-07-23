@@ -2786,7 +2786,7 @@ def example_field(n, _implementation=_implementation):
             {
                 'Conventions': 'CF-1.8',
                 'featureType': 'timeSeries',
-                'comment': 'TODO',
+                'comment': 'global comment',
                 'standard_name': 'precipitation_amount',
                 'standard_units': 'kg m-2'
             }
