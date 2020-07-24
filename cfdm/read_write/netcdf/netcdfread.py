@@ -5428,7 +5428,7 @@ class NetCDFRead(IORead):
             self._add_message(field_ncvar, node_ncvar,
                               message=message,
                               attribute=attribute,
-                              variable=parent_ncvar)
+                              variable=field_ncvar)
             return False
 
         ok = True
@@ -5438,7 +5438,7 @@ class NetCDFRead(IORead):
                               message=('Node coordinate variable',
                                        'not in node_coordinates'),
                               attribute=attribute,
-                              variable=parent_ncvar)
+                              variable=field_ncvar)
             ok = False
 
         return ok

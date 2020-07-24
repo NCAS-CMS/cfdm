@@ -49,7 +49,7 @@ jobs:
         miniconda-version: 'latest'
         activate-environment: cfdm-latest
         python-version: ${{ matrix.python-version }}
-        channels: anaconda
+        channels: conda-forge
 
     # Ensure shell is configured with conda activated and pip up-to-date:
     - name: Check conda config
@@ -66,17 +66,13 @@ jobs:
     - name: Install cfdm with its dependencies
       shell: bash -l {0}
       run: |
-        # HDF5 libraries for the OS if Linux (Ubuntu):
-        if [[ "${{ matrix.os }}" == ubuntu-* ]]; then
-            # (GH Actions VMs run with password-less sudo so this works fine)
-            sudo apt-get install libhdf5-serial-dev netcdf-bin libnetcdf-dev
-            export HDF5_DIR=/usr/include/hdf5
-        fi
-
         # Install dependencies required for the tests only:
         pip install pycodestyle
 
         # Install Python-based deps and our dev version of cfdm to test:
+        # NOTE: temporarily bypassing latest netCDF4, v.1.5.4, as it is
+        # causing setup issues relating to HDF5 headers not being found:
+        pip install netCDF4==1.5.3
         pip install -e .
 
     # Install the coverage library
