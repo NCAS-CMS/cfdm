@@ -142,7 +142,7 @@ The cfdm package requires:
   newer,
 
 * `netcdf_flattener <https://pypi.org/project/netcdf-flattener/>`_,
-  version 1.1.0 or newer.
+  version 1.2.0 or newer.
   
 ----
 
