@@ -1,0 +1,7 @@
+cfdm.CellMeasure.ndim
+=====================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.CellMeasure.ndim

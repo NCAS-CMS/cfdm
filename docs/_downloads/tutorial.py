@@ -5,6 +5,7 @@ print("\n**Tutorial**\n")
 print("\n**Import**\n")
 
 import cfdm
+cfdm.log_level('INFO')
 cfdm.CF()
 
 print("\n**Field construct**\n")
@@ -325,7 +326,7 @@ a
 a.properties()
 a.data
 
-print("\n**Field creation**\n")
+print("\n**Field creation in memory**\n")
 
 
 print("\n**Stage 1:** The field construct is created without metadata\n")
@@ -637,12 +638,12 @@ t.equals(t.copy())
 t.equals(t[...])
 t.equals(q)
 t.equals(q, verbose=True)
-cfdm.ATOL()
-cfdm.RTOL()
-original = cfdm.RTOL(0.00001)
-cfdm.RTOL()
-cfdm.RTOL(original)
-cfdm.RTOL()
+cfdm.atol()
+cfdm.rtol()
+original = cfdm.rtol(0.00001)
+cfdm.rtol()
+cfdm.rtol(original)
+cfdm.rtol()
 orog = t.constructs('surface_altitude').value()
 orog.equals(orog.copy())
 
@@ -694,6 +695,22 @@ cfdm.write(q2, 'q2_file.nc')
 
 print("\n**Hierarchical groups**\n")
 
+q, t = cfdm.read('file.nc')
+print(q)
+q.set_property('comment', 'comment')
+q.nc_set_group_attribute('comment', 'group comment')
+q.nc_set_variable_groups(['forecast', 'model'])
+q.construct('time').nc_set_variable_groups(['forecast'])
+cfdm.write(q, 'grouped.nc')
+g = cfdm.read('grouped.nc')[0]
+print(g)
+g.nc_get_variable()
+g.nc_variable_groups()
+g.nc_group_attributes(values=True)
+g.construct('latitude').nc_get_variable()
+cfdm.write(g, 'flat.nc', group=False)
+f = cfdm.read('flat.nc')[0]
+f.equals(g)
 
 print("\n**External variables**\n")
 
@@ -852,7 +869,6 @@ X = P.set_construct(cfdm.DomainAxis(2))
 # Set the data for the field
 P.set_data(cfdm.Data(array), axes=[T, Y, X])
 
-P
 print(P.data.array)
 P.data.get_compression_type()
 print(P.data.compressed_array)

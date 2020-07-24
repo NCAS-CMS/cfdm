@@ -10,17 +10,18 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Older releases" href="releases.html" />
+    <link rel="prev" title="Releases" href="releases.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -35,11 +36,11 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.5</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.6.0</a></h1>
 
 
 
-<p class="blurb">A complete Python implementation of the CF data model</p>
+<p class="blurb">A Python reference implementation of the CF data model</p>
 
 
 
@@ -63,35 +64,28 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="versioning.html"><strong>Versioning</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="releases.html" title="previous chapter"><strong>Older releases</strong></a></li>
+      <li>Previous: <a href="releases.html" title="previous chapter"><strong>Releases</strong></a></li>
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/Changelog.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,6 +96,46 @@
             
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-1-8-6-0">
+<h2>version 1.8.6.0<a class="headerlink" href="#version-1-8-6-0" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2020-07-24</strong></p>
+<ul class="simple">
+<li><p>Removed Python 2.7 support
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/55">https://github.com/NCAS-CMS/cfdm/issues/55</a>)</p></li>
+<li><p>Implemented the reading and writing of netCDF4 group hierarchies for
+CF-1.8 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/13">https://github.com/NCAS-CMS/cfdm/issues/13</a>)</p></li>
+<li><p>Renamed to lower-case (but otherwise identical) names all functions which
+get and set global constants: <a class="reference internal" href="function/cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a>, <a class="reference internal" href="function/cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a>, <a class="reference internal" href="function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a>.
+The old names e.g. <a class="reference internal" href="function/cfdm.ATOL.html#cfdm.ATOL" title="cfdm.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a> remain functional as aliases.</p></li>
+<li><p>New function: <a class="reference internal" href="function/cfdm.configuration.html#cfdm.configuration" title="cfdm.configuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.configuration</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_variable_groups.html#cfdm.Field.nc_variable_groups" title="cfdm.Field.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_set_variable_groups.html#cfdm.Field.nc_set_variable_groups" title="cfdm.Field.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_set_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_clear_variable_groups.html#cfdm.Field.nc_clear_variable_groups" title="cfdm.Field.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_clear_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_group_attributes.html#cfdm.Field.nc_group_attributes" title="cfdm.Field.nc_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_group_attributes</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_set_group_attribute.html#cfdm.Field.nc_set_group_attribute" title="cfdm.Field.nc_set_group_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_set_group_attribute</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_set_group_attributes.html#cfdm.Field.nc_set_group_attributes" title="cfdm.Field.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_set_group_attributes</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_clear_group_attributes.html#cfdm.Field.nc_clear_group_attributes" title="cfdm.Field.nc_clear_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_clear_group_attributes</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_geometry_variable_groups.html#cfdm.Field.nc_geometry_variable_groups" title="cfdm.Field.nc_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_geometry_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_set_geometry_variable_groups.html#cfdm.Field.nc_set_geometry_variable_groups" title="cfdm.Field.nc_set_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_set_geometry_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_clear_geometry_variable_groups.html#cfdm.Field.nc_clear_geometry_variable_groups" title="cfdm.Field.nc_clear_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_clear_geometry_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.DomainAxis.nc_dimension_groups.html#cfdm.DomainAxis.nc_dimension_groups" title="cfdm.DomainAxis.nc_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DomainAxis.nc_dimension_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.DomainAxis.nc_set_dimension_groups.html#cfdm.DomainAxis.nc_set_dimension_groups" title="cfdm.DomainAxis.nc_set_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DomainAxis.nc_set_dimension_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.DomainAxis.nc_clear_dimension_groups.html#cfdm.DomainAxis.nc_clear_dimension_groups" title="cfdm.DomainAxis.nc_clear_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DomainAxis.nc_clear_dimension_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.AuxiliaryCoordinate.del_interior_ring.html#cfdm.AuxiliaryCoordinate.del_interior_ring" title="cfdm.AuxiliaryCoordinate.del_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.AuxiliaryCoordinate.del_interior_ring</span></code></a></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>: <code class="docutils literal notranslate"><span class="pre">group</span></code></p></li>
+<li><p>Keyword parameter <code class="docutils literal notranslate"><span class="pre">verbose</span></code> to multiple methods now accepts named
+strings, not just the equivalent integer levels, to set verbosity.</p></li>
+<li><p>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CompressedArray.to_memory</span></code>.</p></li>
+<li><p>Added test to check that cell bounds have more dimensions than the
+data.</p></li>
+<li><p>Added test to check that dimension coordinate construct data is
+1-dimensional.</p></li>
+<li><p>New dependency: <code class="docutils literal notranslate"><span class="pre">netcdf_flattener&gt;=1.1.0</span></code></p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.2.1</span></code></p></li>
+<li><p>Removed dependency: <code class="docutils literal notranslate"><span class="pre">future</span></code></p></li>
+</ul>
+</div>
 <div class="section" id="version-1-8-5">
 <h2>version 1.8.5<a class="headerlink" href="#version-1-8-5" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -395,15 +429,12 @@ default.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
-      |
-      <a href="_sources/Changelog.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

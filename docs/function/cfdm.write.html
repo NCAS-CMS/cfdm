@@ -10,14 +10,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.CF" href="cfdm.CF.html" />
@@ -36,11 +37,11 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.5</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.6.0</a></h1>
 
 
 
-<p class="blurb">A complete Python implementation of the CF data model</p>
+<p class="blurb">A Python reference implementation of the CF data model</p>
 
 
 
@@ -64,18 +65,18 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../versioning.html"><strong>Versioning</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -91,13 +92,6 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/function/cfdm.write.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
         </div>
       </div>
       <div class="documentwrapper">
@@ -110,7 +104,7 @@
 <h1>cfdm.write<a class="headerlink" href="#cfdm-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.write">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">string=True</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.5/cfdm/read_write/write.py#L9-L421"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">string=True</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">group=True</em>, <em class="sig-param">_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/read_write/write.py#L9-L452"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -147,7 +141,14 @@ dimensions may be accessed with the
 <a class="reference internal" href="../method/cfdm.DomainAxis.nc_is_unlimited.html#cfdm.DomainAxis.nc_is_unlimited" title="cfdm.DomainAxis.nc_is_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_is_unlimited</span></code></a> and
 <a class="reference internal" href="../method/cfdm.DomainAxis.nc_set_unlimited.html#cfdm.DomainAxis.nc_set_unlimited" title="cfdm.DomainAxis.nc_set_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited</span></code></a> methods of a domain axis
 construct.</p>
-<p><strong>NetCDF4 HDF chunk sizes</strong></p>
+<p><strong>NetCDF hierarchical groups</strong></p>
+<p>Hierarchical groups in CF provide a mechanism to structure
+variables within netCDF4 datasets with well defined rules for
+resolving references to out-of-group netCDF variables and
+dimensions. The group structure defined by a field construct’s
+netCDF interface will, by default, be recreated in the output
+dataset. See the <em>group</em> parameter for details.</p>
+<p><strong>NetCDF4 HDF chunksizes</strong></p>
 <p>HDF5 chunksizes may be set on construct’s data. See the
 <a class="reference internal" href="../method/cfdm.Data.nc_hdf5_chunksizes.html#cfdm.Data.nc_hdf5_chunksizes" title="cfdm.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>,
 <a class="reference internal" href="../method/cfdm.Data.nc_clear_hdf5_chunksizes.html#cfdm.Data.nc_clear_hdf5_chunksizes" title="cfdm.Data.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a> and
@@ -341,7 +342,7 @@ do not support 64-bit integers). By default, input data
 types are preserved. Any data type conversion is only
 applied to the arrays on disk, and not to the input field
 constructs themselves.</p>
-<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
+<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
 objects in a dictionary whose keys are input data types
 with values of output data types.</p>
 <dl class="simple">
@@ -403,11 +404,7 @@ parameter is <code class="docutils literal notranslate"><span class="pre">0</spa
 <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for more
 details.</p>
 </dd>
-</dl>
-</div></blockquote>
-<dl>
-<dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><blockquote>
-<div><p>By default string-valued construct data are written as
+<dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>By default string-valued construct data are written as
 netCDF arrays of type string if the output file format is
 <code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code>, or of type char with an extra dimension
 denoting the maximum string length for any other output
@@ -416,23 +413,33 @@ then string-valued construct data are written as netCDF
 arrays of type char with an extra dimension denoting the
 maximum string length, regardless of the selected output
 file format.</p>
-</div></blockquote>
-<dl>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, corresponding to increasing
-verbosity (else <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case of maximal and extreme
-verbosity), set for the duration of the method call (only) as
-the minimum severity level cut-off of displayed log messages,
-regardless of the global configured <a class="reference internal" href="cfdm.LOG_LEVEL.html#cfdm.LOG_LEVEL" title="cfdm.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.LOG_LEVEL</span></code></a>.</p>
-<p>Else, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), log messages will be
-filtered out, or otherwise, according to the value of the
-<a class="reference internal" href="cfdm.LOG_LEVEL.html#cfdm.LOG_LEVEL" title="cfdm.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.LOG_LEVEL</span></code></a> setting.</p>
-<p>Overall, the higher a non-negative integer that is set (up to
-a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code>) the more description that is printed to
+</dd>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
+equal ignoring case to one of:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'WARNING'</span></code> (<code class="docutils literal notranslate"><span class="pre">1</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'INFO'</span></code> (<code class="docutils literal notranslate"><span class="pre">2</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code> (<code class="docutils literal notranslate"><span class="pre">3</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code> (<code class="docutils literal notranslate"><span class="pre">-1</span></code>)</p></li>
+</ul>
+<p>set for the duration of the method call only as the minimum
+cut-off for the verboseness level of displayed output (log)
+messages, regardless of the globally-configured <a class="reference internal" href="cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a>.
+Note that increasing numerical value corresponds to increasing
+verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case of
+maximal and extreme verbosity.</p>
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output messages will
+be shown according to the value of the <a class="reference internal" href="cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a> setting.</p>
+<p>Overall, the higher a non-negative integer or equivalent string
+that is set (up to a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code>/<code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code>) for
+increasing verbosity, the more description that is printed to
 convey how constructs map to output netCDF dimensions, variables
 and attributes.</p>
 </dd>
 </dl>
-</dd>
+</div></blockquote>
+<dl>
 <dt>warn_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><blockquote>
 <div><p>If False then do not print a warning when writing
 “out-of-range” data, as indicated by the values, if
@@ -455,7 +462,16 @@ resulting warning may be suppressed by setting
 <p><span class="versionmodified added">New in version 1.8.3.</span></p>
 </div>
 </div></blockquote>
-<dl class="simple">
+<dl>
+<dt>group: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then create a “flat” netCDF file, i.e. one with
+only the root group, regardless of any group structure
+specified by the field constructs. By default any groups
+defined by the netCDF interface of the field constucts and
+its components will be created and populated.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.8.6.</span></p>
+</div>
+</dd>
 <dt>_implementation: (subclass of) <code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code>, optional</dt><dd><p>Define the CF data model implementation that defines field
 and metadata constructs and their components.</p>
 </dd>
@@ -492,15 +508,12 @@ and metadata constructs and their components.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
-      |
-      <a href="../_sources/function/cfdm.write.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

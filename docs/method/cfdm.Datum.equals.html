@@ -10,14 +10,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Datum.nc_del_variable" href="cfdm.Datum.nc_del_variable.html" />
@@ -36,11 +37,11 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.5</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.6.0</a></h1>
 
 
 
-<p class="blurb">A complete Python implementation of the CF data model</p>
+<p class="blurb">A Python reference implementation of the CF data model</p>
 
 
 
@@ -64,18 +65,18 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../versioning.html"><strong>Versioning</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
@@ -93,13 +94,6 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/method/cfdm.Datum.equals.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
         </div>
       </div>
       <div class="documentwrapper">
@@ -112,7 +106,7 @@
 <h1>cfdm.Datum.equals<a class="headerlink" href="#cfdm-datum-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Datum.equals">
-<code class="sig-prename descclassname">Datum.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.5/cfdm/mixin/parameters.py#L50-L171"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Datum.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/mixin/parameters.py#L47-L178"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -135,23 +129,33 @@ one. See the <em>ignore_type</em> parameter.</p>
 <dt>other:</dt><dd><p>The object to compare for equality.</p>
 </dd>
 <dt>atol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>The tolerance on absolute differences between real
-numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.ATOL.html#cfdm.ATOL" title="cfdm.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a>
+numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a>
 function.</p>
 </dd>
 <dt>rtol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>The tolerance on relative differences between real
-numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a>
+numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a>
 function.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, corresponding to increasing
-verbosity (else <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case of maximal and extreme
-verbosity), set for the duration of the method call (only) as
-the minimum severity level cut-off of displayed log messages,
-regardless of the global configured <a class="reference internal" href="../function/cfdm.LOG_LEVEL.html#cfdm.LOG_LEVEL" title="cfdm.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.LOG_LEVEL</span></code></a>.</p>
-<p>Else, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), log messages will be
-filtered out, or otherwise, according to the value of the
-<a class="reference internal" href="../function/cfdm.LOG_LEVEL.html#cfdm.LOG_LEVEL" title="cfdm.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.LOG_LEVEL</span></code></a> setting.</p>
-<p>Overall, the higher a non-negative integer that is set (up to
-a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code>) the more description that is printed to
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
+equal ignoring case to one of:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'WARNING'</span></code> (<code class="docutils literal notranslate"><span class="pre">1</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'INFO'</span></code> (<code class="docutils literal notranslate"><span class="pre">2</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code> (<code class="docutils literal notranslate"><span class="pre">3</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code> (<code class="docutils literal notranslate"><span class="pre">-1</span></code>)</p></li>
+</ul>
+<p>set for the duration of the method call only as the minimum
+cut-off for the verboseness level of displayed output (log)
+messages, regardless of the globally-configured <a class="reference internal" href="../function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a>.
+Note that increasing numerical value corresponds to increasing
+verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case of
+maximal and extreme verbosity.</p>
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output messages will
+be shown according to the value of the <a class="reference internal" href="../function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a> setting.</p>
+<p>Overall, the higher a non-negative integer or equivalent string
+that is set (up to a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code>/<code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code>) for
+increasing verbosity, the more description that is printed to
 convey information about differences that lead to inequality.</p>
 </dd>
 <dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore the data types in all numerical
@@ -194,15 +198,12 @@ is possible for any object with a compatible API.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
-      |
-      <a href="../_sources/method/cfdm.Datum.equals.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

@@ -10,18 +10,19 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Performance" href="performance.html" />
-    <link rel="prev" title="Subclassing" href="subclassing.html" />
+    <link rel="prev" title="cfdm.core.abstract.ParametersDomainAncillaries.__deepcopy__" href="method/cfdm.core.abstract.ParametersDomainAncillaries.__deepcopy__.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -36,11 +37,11 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.5</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.6.0</a></h1>
 
 
 
-<p class="blurb">A complete Python implementation of the CF data model</p>
+<p class="blurb">A Python reference implementation of the CF data model</p>
 
 
 
@@ -64,36 +65,29 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Philosophy</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="versioning.html"><strong>Versioning</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="subclassing.html" title="previous chapter"><strong>Subclassing</strong></a></li>
+      <li>Previous: <a href="method/cfdm.core.abstract.ParametersDomainAncillaries.__deepcopy__.html" title="previous chapter">cfdm.core.abstract.ParametersDomainAncillaries.__deepcopy__</a></li>
       <li>Next: <a href="performance.html" title="next chapter"><strong>Performance</strong></a></li>
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/philosophy.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
         </div>
       </div>
       <div class="documentwrapper">
@@ -105,17 +99,17 @@
   <div class="section" id="philosophy">
 <span id="id1"></span><h1><strong>Philosophy</strong><a class="headerlink" href="#philosophy" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.8.5 for version 1.8 of the CF conventions.</p>
+<p>Version 1.8.6.0 for version 1.8 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#core-and-extended-implementations" id="id3"><strong>Core and extended implementations</strong></a></p></li>
+<li><p><a class="reference internal" href="#two-levels-of-implementation" id="id3"><strong>Two levels of implementation</strong></a></p></li>
 <li><p><a class="reference internal" href="#cf-conventions" id="id4"><strong>CF conventions</strong></a></p></li>
 <li><p><a class="reference internal" href="#functionality" id="id5"><strong>Functionality</strong></a></p></li>
 <li><p><a class="reference internal" href="#api" id="id6"><strong>API</strong></a></p></li>
 </ul>
 </div>
-<div class="section" id="core-and-extended-implementations">
-<h2><a class="toc-backref" href="#id3"><strong>Core and extended implementations</strong></a><a class="headerlink" href="#core-and-extended-implementations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="two-levels-of-implementation">
+<h2><a class="toc-backref" href="#id3"><strong>Two levels of implementation</strong></a><a class="headerlink" href="#two-levels-of-implementation" title="Permalink to this headline">¶</a></h2>
 <p>The basic requirement of the reference implementation is to represent
 the logical <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a> in memory with a
 package of Python classes, with no further features. However, in order
@@ -126,10 +120,11 @@ data model constructs</span></a>.</p>
 implementation, the <a class="reference internal" href="class_core.html#class-core"><span class="std std-ref">cfdm.core</span></a> package, that
 includes no functionality beyond that mandated by the CF data model
 (and therefore excludes any information about the netCDF encoding of
-field constructs). This core implementation provides the basis for an
-extended implementation, the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package,
-that allows the reading and writing of netCDF datasets, as well as
-having comprehensive inspection capabilities.</p>
+field constructs). The core implementation provides the basis (via
+inheritance) for the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package that allows,
+in addition, the reading and writing of netCDF datasets, as well as
+comprehensive inspection capabilities and extra field construct
+modification capabilities.</p>
 <hr class="docutils" />
 </div>
 <div class="section" id="cf-conventions">
@@ -155,7 +150,7 @@ field constructs in memory.</p>
 package. Therefore it can’t, for example, regrid field constructs to
 new domains, perform statistical collapses, combine field constructs
 arithmetically, etc. It has, however, been designed to be
-<a class="reference internal" href="subclassing.html#subclassing"><span class="std std-ref">subclassable</span></a> to facilitate the creation of other
+<a class="reference internal" href="extensions.html#extensions"><span class="std std-ref">extensible</span></a> to facilitate the creation of other
 packages that build on this cfdm implementation whilst also adding
 extra, higher level functionality.</p>
 <p>The <a class="reference external" href="https://ncas-cms.github.io/cf-python">cf-python</a> and <a class="reference external" href="http://ajheaps.github.io/cf-plot/">cf-plot</a> packages, that are built on top
@@ -180,9 +175,9 @@ function.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">axis</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">NumpyArray</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">115.</span><span class="p">])))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
 <span class="go">[ 115.]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="go">&lt;cfdm.core.field.Field object at 0x7faf6ac23510&gt;</span>
 </pre></div>
 </div>
@@ -191,9 +186,9 @@ function.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;altitude&#39;</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">axis</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">115.</span><span class="p">]),</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
 <span class="go">[ 115.]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="go">Field: altitude</span>
 <span class="go">---------------</span>
 <span class="go">Data            : altitude(key%domainaxis0(1))</span>
@@ -210,15 +205,12 @@ function.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-06-10.
+      &copy;2020, NCAS | Page built on 2020-07-24.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
-      |
-      <a href="_sources/philosophy.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
     

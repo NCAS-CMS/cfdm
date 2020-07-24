@@ -1,0 +1,7 @@
+cfdm.NumpyArray.ndim
+====================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.NumpyArray.ndim

@@ -1,0 +1,7 @@
+cfdm.CoordinateReference.del_coordinate
+=======================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CoordinateReference.del_coordinate
