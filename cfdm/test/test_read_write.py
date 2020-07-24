@@ -59,7 +59,7 @@ class read_writeTest(unittest.TestCase):
 
         self.test_only = []
         # self.test_only = ['NOTHING!!!!!']
-        # self.test_only = ['test_read_CDL']
+        #self.test_only = ['test_read_write_duplicate_names']
         # self.test_only = ['test_write_filename']
         # self.test_only = ['test_read_write_unlimited']
         # self.test_only = ['test_read_field']
@@ -410,6 +410,26 @@ class read_writeTest(unittest.TestCase):
                 g.get_property('Conventions'), ' '.join([version, other]),
                 "{!r}, {!r}".format(
                     g.get_property('Conventions'), Conventions))
+
+    def test_read_write_duplicate_names(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        a = []
+        for filename in (
+                'geometry_1.nc',
+                'geometry_2.nc',
+                'geometry_3.nc',
+                'geometry_4.nc',
+                'geometry_interior_ring_2.nc',
+                'geometry_interior_ring.nc',
+        ):
+            a.extend(cfdm.read(filename))
+
+        tmpfile = 'delme.nc'
+        cfdm.write(a, tmpfile)
+
+#        f = cfdm.read(tmpfile, verbose=-1)
 
 # --- End: class
 

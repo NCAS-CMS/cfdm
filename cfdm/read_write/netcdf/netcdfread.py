@@ -2139,6 +2139,7 @@ class NetCDFRead(IORead):
             total_number_of_parts = self.implementation.get_data_size(parts)
 
             parts_data = self.implementation.get_data(parts)
+#            print ('PARTS_DATA=',repr(parts_data), parts_data.array)
             nodes_per_geometry_data = self.implementation.get_data(
                 nodes_per_geometry)
 
@@ -2155,6 +2156,7 @@ class NetCDFRead(IORead):
                 # of how many nodes there are in this geometry
                 n_nodes = 0
 
+#                print ('cell_no=', cell_no)
                 for k in range(i, total_number_of_parts):
                     index.data[k] = instance_index
                     n_nodes += int(parts_data[k])
@@ -4045,10 +4047,10 @@ class NetCDFRead(IORead):
                 self._set_default_FillValue(bounds, bounds_ncvar)
 
             bounds_dimensions = g['variable_dimensions'][bounds_ncvar]
-
+#            print ('______ 0')
             bounds_data = self._create_data(bounds_ncvar, bounds,
                                             parent_ncvar=ncvar)
-
+#            print ('______ 1')
             self.implementation.set_data(bounds, bounds_data, copy=False)
 
             # Store the netCDF variable name
@@ -4070,7 +4072,8 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             if (geometry is not None
                     and bounds_ncvar in geometry['node_coordinates']):
-
+#                print (geometry)
+#                print (bounds.dump(), c.dump())
                 # Record the netCDF node dimension name
                 count = self.implementation.get_count(bounds)
                 node_ncdim = self.implementation.nc_get_sample_dimension(count)
@@ -4238,6 +4241,7 @@ class NetCDFRead(IORead):
                                              self._ncdim_abspath(ncdim))
 
         data = self._create_data(ncvar, variable, uncompress_override=True)
+#        print ('data=', ncvar, repr(data))
         self.implementation.set_data(variable, data, copy=False)
 
         return variable
@@ -4608,7 +4612,6 @@ class NetCDFRead(IORead):
 
         array = self._create_netcdfarray(ncvar,
                                          unpacked_dtype=unpacked_dtype)
-
         if array is None:
             return None
 
@@ -4623,8 +4626,9 @@ class NetCDFRead(IORead):
         compression = g['compression']
 
         dimensions = g['variable_dimensions'][ncvar]
-
-        if ((uncompress_override is not None and not uncompress_override) or
+#        print (uncompress_override , uncompress_override is not None and not uncompress_override)
+        
+        if ((uncompress_override is not None and uncompress_override) or
                 not compression or
                 not set(compression).intersection(dimensions)):
             # --------------------------------------------------------
@@ -4633,6 +4637,7 @@ class NetCDFRead(IORead):
             pass
 
         else:
+#            print ('COMPRESSED', ncvar, dimensions, compression.keys())
             # --------------------------------------------------------
             # The array is compressed
             # --------------------------------------------------------
@@ -4643,13 +4648,14 @@ class NetCDFRead(IORead):
                     # This dimension represents two or more compressed
                     # dimensions
                     c = compression[ncdim]
-
+#                    print (c)
                     if ncvar not in c.get('netCDF_variables', (ncvar,)):
                         # This variable is not compressed, even though
                         # it spans a dimension that is compressed for
                         # some other variables For example, this sort
                         # of situation may arise with simple
                         # geometries.
+#                        print (888)
                         continue
 
                     if 'gathered' in c:
@@ -4703,6 +4709,7 @@ class NetCDFRead(IORead):
                         # --------------------------------------------
                         # Contiguous ragged array
                         # --------------------------------------------
+#                        print (999999)
                         c = c['ragged_contiguous']
 
                         i = dimensions.index(ncdim)

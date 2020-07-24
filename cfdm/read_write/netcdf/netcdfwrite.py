@@ -603,6 +603,8 @@ class NetCDFWrite(IOWrite):
                         size, ncdim, g['netcdf'].file_format, error))
         # --- End: if
 
+        g['dimensions'].add(ncdim)
+
     def _write_dimension_coordinate(self, f, key, coord, ncdim):
         '''Write a coordinate variable and its bounds variable to the file.
 
@@ -658,6 +660,10 @@ class NetCDFWrite(IOWrite):
                 # A netCDF dimension name has NOT been specified, so
                 # put the dimension in the root group with the same
                 # name as the coordinate variable.
+                ncdim = self._remove_group_structure(ncvar)
+            elif ncdim in g['dimensions']:
+                # A netCDF dimension name has been specified, but
+                # matches one already in the file
                 ncdim = self._remove_group_structure(ncvar)
             else:
                 # A netCDF dimension name HAS been specified, so make
@@ -2869,6 +2875,7 @@ class NetCDFWrite(IOWrite):
         for axis, domain_axis in sorted(domain_axes.items()):
             ncdim = self.implementation.nc_get_dimension(domain_axis,
                                                          default=None)
+
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
                 if (self.implementation.get_construct_data_axes(f, key)
@@ -4108,6 +4115,7 @@ class NetCDFWrite(IOWrite):
             'geometry_encoding': {},
 
             'dimensions_with_role': {},
+            'dimensions': set(),
 
             'latest_version': LooseVersion(
                 self.implementation.get_cf_version()),
