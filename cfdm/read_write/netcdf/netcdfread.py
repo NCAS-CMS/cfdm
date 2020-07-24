@@ -5434,7 +5434,7 @@ class NetCDFRead(IORead):
         ok = True
 
         if node_ncvar not in geometry.get('node_coordinates', ()):
-            self._add_message(field_ncvar, bounds_ncvar,
+            self._add_message(field_ncvar, node_ncvar,
                               message=('Node coordinate variable',
                                        'not in node_coordinates'),
                               attribute=attribute,
