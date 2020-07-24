@@ -418,7 +418,7 @@ def _disable_logging(at_level=None):
         logging.disable(getattr(logging, at_level))
     else:
         # *level* kwarg is required for Python v<=3.6, but defaults to
-        # CRITICAL in 3.7 so in future when support only >3.7, can remove
+        # CRITICAL in 3.7 so in future when support only v>=3.7, can remove
         logging.disable(level=logging.CRITICAL)
 
 
