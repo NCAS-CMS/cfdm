@@ -1,0 +1,7 @@
+cfdm.Bounds.dump
+================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Bounds.dump

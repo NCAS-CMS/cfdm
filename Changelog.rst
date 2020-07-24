@@ -2,7 +2,7 @@ version 1.8.6.0
 ---------------
 ----
 
-**2020-07-??**
+**2020-07-24**
 
 * Removed Python 2.7 support
   (https://github.com/NCAS-CMS/cfdm/issues/55)
