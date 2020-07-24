@@ -51,7 +51,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         channels: anaconda
 
-    # Ensure shell is configured with conda activated:
+    # Ensure shell is configured with conda activated and pip up-to-date:
     - name: Check conda config
       shell: bash -l {0}
       run: |
@@ -59,22 +59,22 @@ jobs:
         conda list
         conda config --show-sources
         conda config --show
+        pip install --upgrade pip
+
     # Install cfdm dependencies pre-testing
     # We do so with conda which was setup in a previous step.
     - name: Install cfdm with its dependencies
       shell: bash -l {0}
       run: |
-        conda install libnetcdf
-        # Ensure pip is up-to-date:
-        pip install --upgrade pip
-        pip install pycodestyle
-
         # HDF5 libraries for the OS if Linux (Ubuntu):
         if [[ "${{ matrix.os }}" == ubuntu-* ]]; then
             # (GH Actions VMs run with password-less sudo so this works fine)
             sudo apt-get install libhdf5-serial-dev netcdf-bin libnetcdf-dev
             export HDF5_DIR=/usr/include/hdf5
         fi
+
+        # Install dependencies required for the tests only:
+        pip install pycodestyle
 
         # Install Python-based deps and our dev version of cfdm to test:
         pip install -e .
