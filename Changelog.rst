@@ -25,6 +25,7 @@ version 1.8.6.0
 * New method: `cfdm.DomainAxis.nc_dimension_groups`
 * New method: `cfdm.DomainAxis.nc_set_dimension_groups`
 * New method: `cfdm.DomainAxis.nc_clear_dimension_groups`
+* New method: `cfdm.AuxiliaryCoordinate.del_interior_ring`
 * New keyword parameter to `cfdm.write`: ``group``
 * Added test to check that cell bounds have more dimensions than the
   data.

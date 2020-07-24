@@ -107,6 +107,34 @@ Bounds
 
    ~cfdm.AuxiliaryCoordinate.bounds
 
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.del_geometry
+   ~cfdm.AuxiliaryCoordinate.get_geometry
+   ~cfdm.AuxiliaryCoordinate.has_geometry
+   ~cfdm.AuxiliaryCoordinate.set_geometry
+   ~cfdm.AuxiliaryCoordinate.del_interior_ring
+   ~cfdm.AuxiliaryCoordinate.get_interior_ring
+   ~cfdm.AuxiliaryCoordinate.has_interior_ring
+   ~cfdm.AuxiliaryCoordinate.set_interior_ring
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.AuxiliaryCoordinate.interior_ring
+
 Miscellaneous
 -------------
 

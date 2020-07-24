@@ -126,6 +126,18 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertEqual(x.shape, (1, 9, 10))
         self.assertEqual(x.bounds.shape, (1, 9, 10, 4), x.bounds.shape)
 
+    def test_AuxiliaryCoordinate_interior_ring(self):
+        c = cfdm.AuxiliaryCoordinate()
+
+        i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+
+        c.set_interior_ring(i)
+        self.assertTrue(c.has_interior_ring())
+        self.assertIsInstance(c.get_interior_ring(), cfdm.InteriorRing)
+        self.assertIsInstance(c.del_interior_ring(None), cfdm.InteriorRing)
+        self.assertFalse(c.has_interior_ring())
+        self.assertIsNone(c.del_interior_ring(None))
+
 # --- End: class
 
 

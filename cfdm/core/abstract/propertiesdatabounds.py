@@ -251,20 +251,20 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    f = cfdm.read('file.nc')[0]
-    c = f.construct('axis=X')
-    c.has_geometry()
+    >>> f = cfdm.read('file.nc')[0]
+    >>> c = f.construct('axis=X')
+    >>> c.has_geometry()
     True
-    c.get_geometry()
+    >>> c.get_geometry()
     'line'
-    b = c.del_geometry()
-    c.has_geometry()
+    >>> b = c.del_geometry()
+    >>> c.has_geometry()
     False
-    print(c.get_geometry(None))
+    >>> print(c.get_geometry(None))
     None
 
-    c.set_geometry(b)
-    c.has_geometry()
+    >>> c.set_geometry(b)
+    >>> c.has_geometry()
     True
 
         '''
@@ -273,6 +273,57 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
         except ValueError:
             return self._default(
                 default, "{!r} has no geometry type".format(
+                    self.__class__.__name__)
+            )
+
+    def del_interior_ring(self, default=ValueError()):
+        '''Remove the geometry type.
+
+    .. versionadded:: 1.8.6.0
+
+    .. seealso:: `data`, `del_interior_ring`, `has_interior_ring`,
+                 `interior_ring`, `set_interior_ring`
+
+    :Parameters:
+
+        default: optional
+            Return the value of the *default* parameter if the
+            geometry type has not been set. If set to an `Exception`
+            instance then it will be raised instead.
+
+    :Returns:
+
+        `ÌnteriorRing`
+            The removed interior ring variable.
+
+    **Examples:**
+
+    >>> import numpy
+    >>> c = cfdm.AuxiliaryCoordinate()
+    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c.set_interior_ring(i)
+    >>> c.has_interior_ring()
+    True
+    >>> i = c.get_interior_ring()
+    >>> i
+    <InteriorRing: (5, 2) >
+    >>> i.data
+    <Data(5, 2): [[0, ..., 9]]>
+    >>> i.data.shape
+    (5, 2)
+    >>> c.del_interior_ring()
+    <InteriorRing: (5, 2) >
+    >>> c.has_interior_ring()
+    False
+    >>> print(c.del_interior_ring(None))
+    None
+
+        '''
+        try:
+            return self._del_component('interior_ring')
+        except ValueError:
+            return self._default(
+                default, "{!r} has no interior ring variable".format(
                     self.__class__.__name__)
             )
 
@@ -342,20 +393,20 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    f = cfdm.read('file.nc')[0]
-    c = f.construct('axis=X')
-    c.has_geometry()
+    >>> f = cfdm.read('file.nc')[0]
+    >>> c = f.construct('axis=X')
+    >>> c.has_geometry()
     True
-    c.get_geometry()
+    >>> c.get_geometry()
     'line'
-    b = c.del_geometry()
-    c.has_geometry()
+    >>> b = c.del_geometry()
+    >>> c.has_geometry()
     False
-    print(c.get_geometry(None))
+    >>> print(c.get_geometry(None))
     None
 
-    c.set_geometry(b)
-    c.has_geometry()
+    >>> c.set_geometry(b)
+    >>> c.has_geometry()
     True
 
         '''
@@ -386,11 +437,13 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     :Returns:
 
+        `ÌnteriorRing`
             The interior ring variable.
 
     **Examples:**
 
     >>> import numpy
+    >>> c = cfdm.AuxiliaryCoordinate()
     >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
@@ -402,6 +455,12 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     <Data(5, 2): [[0, ..., 9]]>
     >>> i.data.shape
     (5, 2)
+    >>> c.del_interior_ring()
+    <InteriorRing: (5, 2) >
+    >>> c.has_interior_ring()
+    False
+    >>> print(c.del_interior_ring(None))
+    None
 
         '''
         try:
@@ -460,20 +519,20 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    f = cfdm.read('file.nc')[0]
-    c = f.construct('axis=X')
-    c.has_geometry()
+    >>> f = cfdm.read('file.nc')[0]
+    >>> c = f.construct('axis=X')
+    >>> c.has_geometry()
     True
-    c.get_geometry()
+    >>> c.get_geometry()
     'line'
-    b = c.del_geometry()
-    c.has_geometry()
+    >>> b = c.del_geometry()
+    >>> c.has_geometry()
     False
-    print(c.get_geometry(None))
+    >>> print(c.get_geometry(None))
     None
 
-    c.set_geometry(b)
-    c.has_geometry()
+    >>> c.set_geometry(b)
+    >>> c.has_geometry()
     True
 
             '''
@@ -495,8 +554,25 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> if c.has_interior_ring():
-    ...     print 'Has interior ring'
+    >>> import numpy
+    >>> c = cfdm.AuxiliaryCoordinate()
+    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c.set_interior_ring(i)
+    >>> c.has_interior_ring()
+    True
+    >>> i = c.get_interior_ring()
+    >>> i
+    <InteriorRing: (5, 2) >
+    >>> i.data
+    <Data(5, 2): [[0, ..., 9]]>
+    >>> i.data.shape
+    (5, 2)
+    >>> c.del_interior_ring()
+    <InteriorRing: (5, 2) >
+    >>> c.has_interior_ring()
+    False
+    >>> print(c.del_interior_ring(None))
+    None
 
         '''
         return self._has_component('interior_ring')
@@ -574,20 +650,20 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    f = cfdm.read('file.nc')[0]
-    c = f.construct('axis=X')
-    c.has_geometry()
+    >>> f = cfdm.read('file.nc')[0]
+    >>> c = f.construct('axis=X')
+    >>> c.has_geometry()
     True
-    c.get_geometry()
+    >>> c.get_geometry()
     'line'
-    b = c.del_geometry()
-    c.has_geometry()
+    >>> b = c.del_geometry()
+    >>> c.has_geometry()
     False
-    print(c.get_geometry(None))
+    >>> print(c.get_geometry(None))
     None
 
-    c.set_geometry(b)
-    c.has_geometry()
+    >>> c.set_geometry(b)
+    >>> c.has_geometry()
     True
 
         '''
@@ -616,7 +692,25 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> import numpy
+    >>> c = cfdm.AuxiliaryCoordinate()
+    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
+    >>> c.has_interior_ring()
+    True
+    >>> i = c.get_interior_ring()
+    >>> i
+    <InteriorRing: (5, 2) >
+    >>> i.data
+    <Data(5, 2): [[0, ..., 9]]>
+    >>> i.data.shape
+    (5, 2)
+    >>> c.del_interior_ring()
+    <InteriorRing: (5, 2) >
+    >>> c.has_interior_ring()
+    False
+    >>> print(c.del_interior_ring(None))
+    None
 
         '''
         if copy:
