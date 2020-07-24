@@ -68,8 +68,15 @@ jobs:
         # Ensure pip is up-to-date:
         pip install --upgrade pip
         pip install pycodestyle
-        # (The other, Python-based, deps are installed during the below command)
-        # Important! Must install our development version of cfdm to test:
+
+        # HDF5 libraries for the OS if Linux (Ubuntu):
+        if [[ "${{ matrix.os }}" == ubuntu-* ]]; then
+            # (GH Actions VMs run with password-less sudo so this works fine)
+            sudo apt-get install libhdf5-serial-dev netcdf-bin libnetcdf-dev
+            export HDF5_DIR=/usr/include/hdf5
+        fi
+
+        # Install Python-based deps and our dev version of cfdm to test:
         pip install -e .
 
     # Install the coverage library
