@@ -181,8 +181,7 @@ class Constructs(core.Constructs):
     def _equals_cell_method(self, other, rtol=None, atol=None,
                             verbose=None, ignore_type=False,
                             axis1_to_axis0=None, key1_to_key0=None):
-        '''TODO
-
+        '''Whether two cell method constructs are the same.
         '''
         cell_methods0 = self.filter_by_type('cell_method')
         cell_methods1 = other.filter_by_type('cell_method')
@@ -290,7 +289,7 @@ class Constructs(core.Constructs):
                                      ignore_type=False,
                                      axis1_to_axis0=None,
                                      key1_to_key0=None):
-        '''TODO
+        '''Whether two coordinate reference constructs are the same.
         '''
         refs0 = dict(self.filter_by_type('coordinate_reference'))
         refs1 = dict(other.filter_by_type('coordinate_reference'))

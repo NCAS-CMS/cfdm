@@ -1047,7 +1047,7 @@ class CFDMImplementation(Implementation):
         return field._equals(property_value0, property_value1)
 
     def equal_datums(self, coordinate_reference0, coordinate_reference1):
-        '''hether or not two coordinate reference datums are equal.
+        '''Whether or not two coordinate reference datums are equal.
 
     :Parameters:
 
