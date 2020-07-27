@@ -59,7 +59,7 @@ class read_writeTest(unittest.TestCase):
 
         self.test_only = []
         # self.test_only = ['NOTHING!!!!!']
-        #self.test_only = ['test_read_write_duplicate_names']
+        self.test_only = ['test_read_write_duplicate_names']
         # self.test_only = ['test_write_filename']
         # self.test_only = ['test_read_write_unlimited']
         # self.test_only = ['test_read_field']
@@ -429,8 +429,8 @@ class read_writeTest(unittest.TestCase):
         tmpfile = 'delme.nc'
         cfdm.write(a, tmpfile)
 
-#        f = cfdm.read(tmpfile, verbose=-1)
-
+        f = cfdm.read(tmpfile, verbose=-1)
+        print ('WWWWWWWW')
 # --- End: class
 
 

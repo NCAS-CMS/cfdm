@@ -3090,12 +3090,13 @@ class NetCDFRead(IORead):
                 if node_ncvar in g['auxiliary_coordinate']:
                     coord = g['auxiliary_coordinate'][node_ncvar].copy()
                 else:
+                    print (999999999999999999)
                     coord = self._create_auxiliary_coordinate(
                         field_ncvar=field_ncvar,
                         ncvar=None,
                         f=f,
                         bounds_ncvar=node_ncvar)
-
+                    print (999999999999999999777)
                     geometry_type = geometry['geometry_type']
                     if geometry_type is not None:
                         self.implementation.set_geometry(coord, geometry_type)
@@ -4072,8 +4073,13 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             if (geometry is not None
                     and bounds_ncvar in geometry['node_coordinates']):
-#                print (geometry)
-#                print (bounds.dump(), c.dump())
+                print (g['geometries'].keys())
+                print (g['variable_geometry'])
+                print (g['geometries'])
+                print (geometry)
+                print (bounds.dump(), c.dump())
+                print (f.dump())
+                print (f.constructs)
                 # Record the netCDF node dimension name
                 count = self.implementation.get_count(bounds)
                 node_ncdim = self.implementation.nc_get_sample_dimension(count)
@@ -4626,7 +4632,7 @@ class NetCDFRead(IORead):
         compression = g['compression']
 
         dimensions = g['variable_dimensions'][ncvar]
-#        print (uncompress_override , uncompress_override is not None and not uncompress_override)
+        print (uncompress_override , uncompress_override is not None and not uncompress_override)
         
         if ((uncompress_override is not None and uncompress_override) or
                 not compression or
@@ -4634,28 +4640,30 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # The array is not compressed (or not to be uncompressed)
             # --------------------------------------------------------
+            print ('WANK')
             pass
 
         else:
-#            print ('COMPRESSED', ncvar, dimensions, compression.keys())
+            print ('COMPRESSED', ncvar, dimensions, compression.keys())
             # --------------------------------------------------------
             # The array is compressed
             # --------------------------------------------------------
             # Loop round the dimensions of data variable, as they
             # appear in the netCDF file
             for ncdim in dimensions:
+                print (ncdim)
                 if ncdim in compression:
                     # This dimension represents two or more compressed
                     # dimensions
                     c = compression[ncdim]
-#                    print (c)
+                    print ('c=',c)
                     if ncvar not in c.get('netCDF_variables', (ncvar,)):
                         # This variable is not compressed, even though
                         # it spans a dimension that is compressed for
                         # some other variables For example, this sort
                         # of situation may arise with simple
                         # geometries.
-#                        print (888)
+                        print (888)
                         continue
 
                     if 'gathered' in c:
@@ -4709,7 +4717,7 @@ class NetCDFRead(IORead):
                         # --------------------------------------------
                         # Contiguous ragged array
                         # --------------------------------------------
-#                        print (999999)
+                        print ('NOB')
                         c = c['ragged_contiguous']
 
                         i = dimensions.index(ncdim)
