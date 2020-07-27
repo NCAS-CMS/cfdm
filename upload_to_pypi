@@ -25,6 +25,6 @@ if [[ ! -f $tarball ]] ; then
   exit 2
 fi
 
-twine upload $tarball
+twine upload $tarball --verbose
 
 set +x

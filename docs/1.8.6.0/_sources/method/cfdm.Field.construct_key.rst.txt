@@ -1,0 +1,7 @@
+cfdm.Field.construct_key
+========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Field.construct_key

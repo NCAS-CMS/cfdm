@@ -1,0 +1,7 @@
+cfdm.RaggedIndexedContiguousArray.ndim
+======================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.RaggedIndexedContiguousArray.ndim

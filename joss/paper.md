@@ -45,7 +45,7 @@ The cfdm library has been designed as a stand-alone application,
 e.g. as used in the pre-publication checks for the CMIP6 data request
 [@Juckes:2020; @Eyring:2016]; and also to provide a CF data model
 implementation to other software libraries, e.g. as used in the
-cf-python library [@Hassell2:2020]).
+cf-python library [@Hassell2:2020].
 
 # Statement of need
 
@@ -73,8 +73,8 @@ The latest version of the CF conventions (CF-1.8) is fully represented
 by cfdm, including the recent additions of simple geometries
 [@iso19125:2004] and netCDF group hierarchies.
 
-The cdfm library can create field constructs ab initio, or read them
-from netCDF files, inspect, subspace and modify in memory, and write
+The cfdm library can create field constructs ab initio, or read them
+from netCDF files; inspect, subspace and modify in memory; and write
 them to CF-netCDF dataset files. As long as it can interpret the data,
 cfdm does not enforce CF-compliance, allowing non-compliant datasets
 to be read, processed, corrected and rewritten.
@@ -135,7 +135,7 @@ The CF data model will evolve in line with the CF conventions, and the
 cfdm library will need to respond to such changes. To facilitate this,
 there is a core implementation (cfdm.core) that defines an in-memory
 representation of a field construct, but with no further features. The
-implementation of an extension to the CF data model then proceeds as
+implementation of an enhancement to the CF data model then proceeds as
 follows: the core implementation is first updated independently, and
 then the functionality for dataset interaction and further field
 construct modification is updated outside of the inherited core

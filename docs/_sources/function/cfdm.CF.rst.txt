@@ -1,0 +1,7 @@
+cfdm.CF
+=======
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autofunction:: cfdm.CF

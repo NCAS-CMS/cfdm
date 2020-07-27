@@ -1,0 +1,7 @@
+cfdm.Field.nc_del_component_dimension
+=====================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Field.nc_del_component_dimension

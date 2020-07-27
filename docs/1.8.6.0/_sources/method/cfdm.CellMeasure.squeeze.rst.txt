@@ -1,0 +1,7 @@
+cfdm.CellMeasure.squeeze
+========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CellMeasure.squeeze

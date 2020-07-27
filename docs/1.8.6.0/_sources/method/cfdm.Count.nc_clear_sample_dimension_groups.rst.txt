@@ -1,0 +1,7 @@
+cfdm.Count.nc_clear_sample_dimension_groups
+===========================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Count.nc_clear_sample_dimension_groups

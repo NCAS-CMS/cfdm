@@ -1,0 +1,7 @@
+cfdm.Field.nc_clear_component_variable_groups
+=============================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Field.nc_clear_component_variable_groups
