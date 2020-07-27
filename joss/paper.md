@@ -135,7 +135,7 @@ The CF data model will evolve in line with the CF conventions, and the
 cfdm library will need to respond to such changes. To facilitate this,
 there is a core implementation (cfdm.core) that defines an in-memory
 representation of a field construct, but with no further features. The
-implementation of an extension to the CF data model then proceeds as
+implementation of an enhancement to the CF data model then proceeds as
 follows: the core implementation is first updated independently, and
 then the functionality for dataset interaction and further field
 construct modification is updated outside of the inherited core
