@@ -94,9 +94,9 @@ reasons:
   making it harder to update the library as the CF data model evolves.
 
 * The expectation is that other libraries will build on `cfdm`,
-  inheriting its comprehensive knowledge of the CF conventions, to
-  extend the API and add more sophisticated functions that are
-  appropriate to their users (as is done by the `cf-python` library).
+  inheriting its knowledge of the CF conventions and extending the API
+  to add more sophisticated functions that are appropriate to their
+  users (e.g. `cf-python`).
 
 # Example usage
 
