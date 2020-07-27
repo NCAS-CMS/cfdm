@@ -1,0 +1,7 @@
+cfdm.DomainAncillary.copy
+=========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.DomainAncillary.copy

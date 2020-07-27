@@ -2,7 +2,7 @@ version 1.8.6.0
 ---------------
 ----
 
-**2020-07-??**
+**2020-07-24**
 
 * Removed Python 2.7 support
   (https://github.com/NCAS-CMS/cfdm/issues/55)
@@ -27,6 +27,9 @@ version 1.8.6.0
 * New method: `cfdm.DomainAxis.nc_clear_dimension_groups`
 * New method: `cfdm.AuxiliaryCoordinate.del_interior_ring`
 * New keyword parameter to `cfdm.write`: ``group``
+* Keyword parameter ``verbose`` to multiple methods now accepts named
+  strings, not just the equivalent integer levels, to set verbosity.
+* Fixed bug in `cfdm.CompressedArray.to_memory`.
 * Added test to check that cell bounds have more dimensions than the
   data.
 * Added test to check that dimension coordinate construct data is

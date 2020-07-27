@@ -1,0 +1,7 @@
+cfdm.FieldAncillary.__str__
+===========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.FieldAncillary.__str__
