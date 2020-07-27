@@ -45,7 +45,7 @@ The cfdm library has been designed as a stand-alone application,
 e.g. as used in the pre-publication checks for the CMIP6 data request
 [@Juckes:2020; @Eyring:2016]; and also to provide a CF data model
 implementation to other software libraries, e.g. as used in the
-cf-python library [@Hassell2:2020]).
+cf-python library [@Hassell2:2020].
 
 # Statement of need
 
