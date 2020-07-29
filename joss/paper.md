@@ -25,10 +25,10 @@ bibliography: paper.bib
 
 # Summary
 
-The cfdm open source Python library [@Hassell:2020] implements the
+The `cfdm` open source Python library [@Hassell:2020] implements the
 data model [@Hassell:2017] of the CF (Climate and Forecast) metadata
-conventions [@Eaton:2020], and can therefore represent and manipulate
-all existing and conceivable CF-compliant datasets.
+conventions [@Eaton:2020], and so should be able to represent and
+manipulate all existing and conceivable CF-compliant datasets.
 
 The CF conventions are designed to promote the creation, processing,
 and sharing of climate and forecasting data using Network Common Data
@@ -41,43 +41,43 @@ dimensional properties. The CF data model is an abstract
 interpretation of the CF conventions that is independent of the netCDF
 encoding.
 
-The cfdm library has been designed as a stand-alone application,
+The `cfdm` library has been designed as a stand-alone application,
 e.g. as used in the pre-publication checks for the CMIP6 data request
 [@Juckes:2020; @Eyring:2016]; and also to provide a CF data model
 implementation to other software libraries, e.g. as used in the
-cf-python library [@Hassell2:2020].
+`cf-python` library [@Hassell2:2020].
 
 # Statement of need
 
 The complexity of scientific datasets tends to increase with
 improvements in scientific capabilities, and it is essential that
 software interfaces are able to understand new research outputs. To
-the authors' knowledge, cfdm and software built on it are currently
+the authors' knowledge, `cfdm` and software built on it are currently
 the only libraries that are guaranteed to be able to handle every
 possible type of CF-compliant dataset. All others omit facets that are
 not currently of interest to their particular user communities.
 
 # Functionality
 
-The central element of the CF data model is the "field construct",
-that encapsulates all of the data and metadata for a single variable.
 NetCDF variables can be stored in a variety of representations
 (including the use of compression techniques) but the CF data model,
-and therefore cfdm, transcends the netCDF encoding to retain only the
-logical structure. A key feature of cfdm is that the in-memory
+and therefore `cfdm`, transcends the netCDF encoding to retain only the
+logical structure. A key feature of `cfdm` is that the in-memory
 representation and user-facing API are unaffected by the particular
 choices made during dataset creation, which are often outside of the
 user's control.
 
 The latest version of the CF conventions (CF-1.8) is fully represented
-by cfdm, including the recent additions of simple geometries
+by `cfdm`, including the recent additions of simple geometries
 [@iso19125:2004] and netCDF group hierarchies.
 
-The cfdm library can create field constructs ab initio, or read them
-from netCDF files; inspect, subspace and modify in memory; and write
-them to CF-netCDF dataset files. As long as it can interpret the data,
-cfdm does not enforce CF-compliance, allowing non-compliant datasets
-to be read, processed, corrected and rewritten.
+The central element of the CF data model is the "field construct",
+that encapsulates all of the data and metadata for a single
+variable. The `cfdm` library can create field constructs ab initio, or
+read them from netCDF files; inspect, subspace and modify in memory;
+and write them to CF-netCDF dataset files. As long as it can interpret
+the data, `cfdm` does not enforce CF-compliance, allowing non-compliant
+datasets to be read, processed, corrected and rewritten.
 
 This represents a limited functionality in comparison to other
 software libraries used for analysis, which often include higher-level
@@ -93,10 +93,10 @@ reasons:
 * An extended functionality could complicate the implementation,
   making it harder to update the library as the CF data model evolves.
 
-* The expectation is that other libraries will build on cfdm,
-  inheriting its comprehensive knowledge of the CF conventions, to
-  extend the API and add more sophisticated functions that are
-  appropriate to their users.
+* The expectation is that other libraries will build on `cfdm`,
+  inheriting its knowledge of the CF conventions and extending the API
+  to add more sophisticated functions that are appropriate to their
+  users (e.g. `cf-python`).
 
 # Example usage
 
@@ -132,8 +132,8 @@ Dimension coords: latitude(1) = [-75.0] degrees_north
 # Evolution
 
 The CF data model will evolve in line with the CF conventions, and the
-cfdm library will need to respond to such changes. To facilitate this,
-there is a core implementation (cfdm.core) that defines an in-memory
+`cfdm` library will need to respond to such changes. To facilitate this,
+there is a core implementation (`cfdm.core`) that defines an in-memory
 representation of a field construct, but with no further features. The
 implementation of an enhancement to the CF data model then proceeds as
 follows: the core implementation is first updated independently, and
@@ -143,25 +143,25 @@ implementation.
 
 # Extensibility
 
-To encourage other libraries to build on cfdm, it has been designed to
-be subclassable so that the CF data model representation is easily
+To encourage other libraries to build on `cfdm`, it has been designed
+to be subclassable so that the CF data model representation is easily
 importable into third-party software. An important part of this
 framework is the ability to inherit the mapping of CF data model
 constructs to, and from, netCDF datasets. This is made possible by the
 use of the bridge design pattern [@Gamma:1995], that decouples the
 implementation of the CF data model from the netCDF encoding so that
 the two can vary independently. Such an inheritance is employed by the
-cf-python library, which adds many metadata-aware analytical
+`cf-python` library, which adds many metadata-aware analytical
 capabilities, and employs a more sophisticated data class. By
-preserving the API of the cfdm data class, the cf-python data class
-can be used within the inherited cfdm code base with almost no
+preserving the API of the `cfdm` data class, the `cf-python` data
+class can be used within the inherited `cfdm` code base with almost no
 modifications.
 
 # Acknowledgements
 
 We acknowledge Bryan Lawrence and Jonathan Gregory for advice on the
 API and comments that greatly improved this manuscript; Allyn
-Treshansky for suggesting improvements on the use of cfdm in other
+Treshansky for suggesting improvements on the use of `cfdm` in other
 libraries; and the CF community for their work on the CF conventions.
 
 This work has received funding from the core budget of the UK National

@@ -98,16 +98,19 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h[0], verbose=2))
 
         # ------------------------------------------------------------
-        # Move constructs one by one to the /forecast group
+        # Move constructs one by one to the /forecast group. The order
+        # in which we do this matters!
         # ------------------------------------------------------------
         for name in (
-            'time',  # Dimension coordinate
-            'grid_latitude',  # Dimension coordinate
-            'longitude',  # Auxiliary coordinate
-            'measure:area',  # Cell measure
-            'surface_altitude',  # Domain ancillary
-            'air_temperature standard_error',  # Field ancillary
-            'grid_mapping_name:rotated_latitude_longitude',
+                'longitude',  # Auxiliary coordinate
+                'latitude',  # Auxiliary coordinate
+                'long_name=Grid latitude name',  # Auxiliary coordinate
+                'measure:area',  # Cell measure
+                'surface_altitude',  # Domain ancillary
+                'air_temperature standard_error',  # Field ancillary
+                'grid_mapping_name:rotated_latitude_longitude',
+                'time',  # Dimension coordinate
+                'grid_latitude',  # Dimension coordinate
         ):
             g.construct(name).nc_set_variable_groups(['forecast'])
             cfdm.write(g, grouped_file, verbose=1)

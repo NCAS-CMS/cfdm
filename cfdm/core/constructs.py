@@ -390,7 +390,7 @@ class Constructs(object):
         self._constructs.update(other._constructs)
 
     def construct_type(self, key):
-        '''TODO
+        '''Return the type of a metadata construct for a given key.
         '''
         x = self._construct_type.get(key)
         if x in self._ignore:
@@ -402,7 +402,7 @@ class Constructs(object):
     # Private methods
     # ----------------------------------------------------------------
     def _check_construct_type(self, construct_type, default=ValueError()):
-        '''<TODO>
+        '''Check the type of a metadata construct is valid.
 
     .. versionadded:: 1.7.0
 
@@ -435,7 +435,10 @@ class Constructs(object):
         return construct_type
 
     def _construct_type_description(self, construct_type):
-        '''TODO
+        '''Format the description of the type of a metadata construct.
+
+        Type name components are formatted to be whitespace-delimited to
+        effective words for the purposes of printing to the user.
         '''
         return construct_type.replace('_', ' ')
 
@@ -640,7 +643,7 @@ class Constructs(object):
         return key
 
     def _set_construct_data_axes(self, key, axes, construct=None):
-        '''TODO
+        '''Set domain axis constructs for construct identifiers.
 
     .. versionadded:: 1.7.0
 
@@ -767,7 +770,7 @@ class Constructs(object):
         return self._construct_type.keys()
 
     def values(self):
-        '''Returns all of the metadata constructs, in arbitrary order.
+        '''Return all of the metadata constructs, in arbitrary order.
 
     .. versionadded:: 1.7.0
 
@@ -777,7 +780,7 @@ class Constructs(object):
         return self._dictionary().values()
 
     def construct_types(self):
-        '''TODO
+        '''Return all of the construct types for all keys.
 
         '''
         out = self._construct_type.copy()
@@ -991,9 +994,9 @@ class Constructs(object):
         return key
 
     def replace(self, key, construct, axes=None, copy=True):
-        '''TODO
+        '''Replace one metadata construct with another.
 
-    .. note:: No checks on the axes are done!!!!!
+    .. note:: No checks on the axes are done.
 
         '''
         construct_type = self.construct_types().get(key)
@@ -1122,7 +1125,7 @@ class Constructs(object):
                           _view=False)
 
     def _view(self, ignore=()):
-        '''Return a new view the container with the same metadata constructs.
+        '''Return a new container view with the same metadata constructs.
 
     :Parameters:
 

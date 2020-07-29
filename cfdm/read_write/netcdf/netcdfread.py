@@ -2072,7 +2072,7 @@ class NetCDFRead(IORead):
 
             # --------------------------------------------------------
             # Cell dimension can not be taken from the node_count
-            # variable (becuase it doesn't exist), so it has to be
+            # variable (because it doesn't exist), so it has to be
             # taken from one of the node_coordinate variables,
             # instead.
             # --------------------------------------------------------
@@ -2115,8 +2115,10 @@ class NetCDFRead(IORead):
                 element_dimension='node',
                 instance_dimension=geometry_dimension)
 
-            g['compression'][node_dimension]['netCDF_variables'] = (
-                parsed_node_coordinates[:])
+#            g['compression'][node_dimension]['netCDF_variables'] = (
+#                parsed_node_coordinates[:])
+            g['compression'][node_dimension].setdefault(
+                'netCDF_variables', set()).update(parsed_node_coordinates)
         else:
             # --------------------------------------------------------
             # There is a part_count variable.
@@ -2139,6 +2141,7 @@ class NetCDFRead(IORead):
             total_number_of_parts = self.implementation.get_data_size(parts)
 
             parts_data = self.implementation.get_data(parts)
+
             nodes_per_geometry_data = self.implementation.get_data(
                 nodes_per_geometry)
 
@@ -2151,8 +2154,8 @@ class NetCDFRead(IORead):
                     nodes_per_geometry)):
                 n_nodes_in_this_cell = int(nodes_per_geometry_data[cell_no])
 
-                # Initiailize partial_node_count, a running count
-                # of how many nodes there are in this geometry
+                # Initialise partial_node_count, a running count of
+                # how many nodes there are in this geometry
                 n_nodes = 0
 
                 for k in range(i, total_number_of_parts):
@@ -3109,9 +3112,10 @@ class NetCDFRead(IORead):
                 # the data variable
                 geometry_dimension = geometry['geometry_dimension']
                 if geometry_dimension not in g['ncdim_to_axis']:
-                    logger.warning(
-                        "geometry['geometry_dimension'] is not in "
-                        "g['ncdim_to_axis']"
+                    raise ValueError(
+                        "Geometry dimension {!r} is not in "
+                        "read_vars['ncdim_to_axis']: {}".format(
+                            geometry_dimension, g['ncdim_to_axis'])
                     )
 
                 aux = self.implementation.set_auxiliary_coordinate(
@@ -3659,7 +3663,7 @@ class NetCDFRead(IORead):
         datatype = self.read_vars['variables'][ncvar].dtype
         return datatype != str and datatype.kind in 'SU'
 
-    def _get_geometry(self, field_ncvar):
+    def _get_geometry(self, field_ncvar, return_ncvar=False):
         '''Return a geometry container for this field construct.
 
     .. versionadded:: 1.8.0
@@ -3669,18 +3673,28 @@ class NetCDFRead(IORead):
         field_ncvar: `str`
             The netCDF varibale name for the field construct.
 
+        return_ncvar: `bool`
+            If True then return the netCDF variable name of the
+            geometry instead.
+
     :Returns:
 
-        `dict` or `None`
-            A `dict` containing geometry container information. If
-            there is no geometry container for this data variable, or
-            if the dataset version is CF<=1.7, then `None` is
-            returned.
+        `dict` or `str` or None`
+            A `dict` containing geometry container information, or the
+            netCDF geometry container name. If there is no geometry
+            container for this data variable, or if the dataset
+            version is CF<=1.7, then `None` is returned.
 
         '''
         g = self.read_vars
         if g['CF>=1.8']:
             geometry_ncvar = g['variable_geometry'].get(field_ncvar)
+            if return_ncvar:
+                if geometry_ncvar in g['geometries']:
+                    return geometry_ncvar
+
+                return
+
             return g['geometries'].get(geometry_ncvar)
 
     def _add_message(self, field_ncvar, ncvar, message=None,
@@ -3999,6 +4013,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             self._set_default_FillValue(c, ncvar)
 
+        data = None
         if has_coordinates and ncvar is not None:
             data = self._create_data(ncvar, c)
             self.implementation.set_data(c, data, copy=False)
@@ -4070,7 +4085,6 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             if (geometry is not None
                     and bounds_ncvar in geometry['node_coordinates']):
-
                 # Record the netCDF node dimension name
                 count = self.implementation.get_count(bounds)
                 node_ncdim = self.implementation.nc_get_sample_dimension(count)
@@ -4238,6 +4252,7 @@ class NetCDFRead(IORead):
                                              self._ncdim_abspath(ncdim))
 
         data = self._create_data(ncvar, variable, uncompress_override=True)
+
         self.implementation.set_data(variable, data, copy=False)
 
         return variable
@@ -4608,7 +4623,6 @@ class NetCDFRead(IORead):
 
         array = self._create_netcdfarray(ncvar,
                                          unpacked_dtype=unpacked_dtype)
-
         if array is None:
             return None
 
@@ -4624,7 +4638,7 @@ class NetCDFRead(IORead):
 
         dimensions = g['variable_dimensions'][ncvar]
 
-        if ((uncompress_override is not None and not uncompress_override) or
+        if ((uncompress_override is not None and uncompress_override) or
                 not compression or
                 not set(compression).intersection(dimensions)):
             # --------------------------------------------------------
@@ -4643,7 +4657,6 @@ class NetCDFRead(IORead):
                     # This dimension represents two or more compressed
                     # dimensions
                     c = compression[ncdim]
-
                     if ncvar not in c.get('netCDF_variables', (ncvar,)):
                         # This variable is not compressed, even though
                         # it spans a dimension that is compressed for

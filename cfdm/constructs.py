@@ -376,7 +376,7 @@ class Constructs(core.Constructs):
     def _equals_domain_axis(self, other, rtol=None, atol=None,
                             verbose=None, ignore_type=False,
                             axis1_to_axis0=None, key1_to_key0=None):
-        '''TODO
+        '''Whether two domain axes constructs are the same.
 
         '''
         self_sizes = [d.get_size()
