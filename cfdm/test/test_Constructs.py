@@ -47,7 +47,7 @@ class ConstructsTest(unittest.TestCase):
 
         for key, value in f.constructs.items():
             x = f.constructs.filter_by_key(key)
-            self.assertEquals(x.key(), key)
+            self.assertEqual(x.key(), key)
             self.assertTrue(x.value().equals(value))
 
     def test_Constructs_copy_shallow_copy(self):
@@ -99,7 +99,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(c.filter_by_method('mean')), 1)
         self.assertEqual(len(c.filter_by_measure('area')), 1)
         self.assertEqual(len(c.filter_by_ncvar('areacella')), 1)
-        self.assertEqual(len(c.filter_by_ncdim('grid_longitude')), 1)
+        self.assertEqual(len(c.filter_by_ncdim('grid_latitude')), 1)
         self.assertEqual(len(c.filter_by_size(9)), 1)
 
         constructs = c.filter_by_type('auxiliary_coordinate',

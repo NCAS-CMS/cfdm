@@ -623,8 +623,9 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
             if (bounds_data is not None
                     and numpy.ndim(bounds_data) <= numpy.ndim(data)):
                 raise ValueError(
-                    "Bounds data must have more dimensions than "
-                    "the coordinate data.")
+                    "{!r} must have more dimensions than "
+                    "its parent {!r}".format(bounds, self)
+                )
         # -- End: if
 
         if copy:
