@@ -475,14 +475,11 @@ def _make_external_files():
         nc.close()
     # --- End: def
 
-    parent_file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'parent.nc')
-    external_file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'external.nc')
-    combined_file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'combined.nc')
-    external_missing_file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'external_missing.nc')
+    dataset_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_file = os.path.join(dataset_dir, 'parent.nc')
+    external_file = os.path.join(dataset_dir, 'external.nc')
+    combined_file = os.path.join(dataset_dir, 'combined.nc')
+    external_missing_file = os.path.join(dataset_dir, 'external_missing.nc')
 
     _pp(parent_file, parent=True)
     _pp(external_file, external=True)

@@ -47,11 +47,14 @@ class ExternalVariableTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
+        dir_with_data_files = os.path.dirname(os.path.realpath(__file__))
 
-        self.parent_file = 'parent.nc'
-        self.external_file = 'external.nc'
-        self.combined_file = 'combined.nc'
-        self.external_missing_file = 'external_missing.nc'
+        dataset_dir = os.path.dirname(os.path.abspath(__file__))
+        self.parent_file = os.path.join(dataset_dir, 'parent.nc')
+        self.external_file = os.path.join(dataset_dir, 'external.nc')
+        self.combined_file = os.path.join(dataset_dir, 'combined.nc')
+        self.external_missing_file = os.path.join(
+            dataset_dir, 'external_missing.nc')
 
         self.test_only = []
 
