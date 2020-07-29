@@ -97,26 +97,7 @@ Command line utility
 
 During installation the `cfdump` command line tool is also installed,
 which generates text descriptions of the field constructs contained
-in a netCDF dataset:
-
-    $ cfdump file.nc
-    Field: air_temperature (ncvar%tas)
-    ----------------------------------
-    Data            : air_temperature(time(12), latitude(64), longitude(128)) K
-    Cell methods    : time(12): mean (interval: 1.0 month)
-    Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap
-                    : latitude(64) = [-87.8638, ..., 87.8638] degrees_north
-                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
-                    : height(1) = [2.0] m
-
-Hierarchical groups
-===================
-
-Hierarchical groups provide a powerful mechanism to structure
-variables within datasets. A future 1.8.x release of cfdm will include
-support for netCDF4 files containing data organised in hierarchical
-groups, but this is not available in version 1.8.0 (even though it is
-allowed in CF-1.8).
+in a netCDF dataset.
 
 Source code
 ===========
@@ -166,5 +147,6 @@ setup(name = "cfdm",
                       'cfdm.read_write.netcdf',
                       'cfdm.test',],
       scripts      = ['scripts/cfdump'],
+      python_requires = '>=3.5',
       install_requires = install_requires,
 )

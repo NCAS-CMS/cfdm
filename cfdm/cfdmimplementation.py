@@ -233,7 +233,7 @@ class CFDMImplementation(Implementation):
         '''Convert a metadata construct into a field construct.
 
     :Parameters:
-        
+
         field: field construct
 
         construct_id: `str`
@@ -249,7 +249,7 @@ class CFDMImplementation(Implementation):
         ''''Remove a property from a construct.
 
     :Parameters:
-        
+
         construct: construct
 
         prop: `str`
@@ -286,7 +286,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         data: data instance
-        
+
     :Returns:
 
         `numpy.ndarray`
@@ -327,7 +327,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         parent: construct with bounds
-        
+
         default: optional
 
     :Returns:
@@ -343,7 +343,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         parent: construct with bounds
-        
+
         default: optional
 
     :Returns:
@@ -363,7 +363,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         field: field construct
-        
+
     :Returns:
 
         '''
@@ -375,9 +375,9 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         field: field construct
-        
+
     :Returns:
-        
+
         '''
         return field.cell_methods.ordered()
 
@@ -472,13 +472,13 @@ class CFDMImplementation(Implementation):
     a metadata construct.
 
     :Parameters:
-        
+
         field: field construct
 
         key: `str`
 
     :Returns:
-        
+
         `tuple`
 
         '''
@@ -493,13 +493,13 @@ class CFDMImplementation(Implementation):
     a metadata construct.
 
     :Parameters:
-        
+
         field: field construct
 
         key: `str`
 
     :Returns:
-        
+
         `tuple`
 
         '''
@@ -565,7 +565,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         field: field construct
-        
+
     :Returns:
 
         '''
@@ -577,7 +577,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         field: field construct
-        
+
     :Returns:
 
         '''
@@ -714,7 +714,7 @@ class CFDMImplementation(Implementation):
 
     def get_datum(self, coordinate_reference):
         '''Return the datum of a coordiante reference construct.
-        
+
     :Parameters:
 
           coordinate_reference: coordinate reference construct
@@ -746,7 +746,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         field: field construct
-        
+
     :Returns:
 
         '''
@@ -758,7 +758,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         field: field construct
-        
+
     :Returns:
 
         '''
@@ -770,7 +770,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         field: field construct
-        
+
     :Returns:
 
         '''
@@ -782,7 +782,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         field: field construct
-        
+
         axis: `str`
 
     :Returns:
@@ -791,7 +791,7 @@ class CFDMImplementation(Implementation):
         return field.domain_axes[axis].get_size()
 
     def get_sample_dimension_position(self, construct):
-        '''Return the postion of the sample dimension of dompressed data.
+        '''Return the position of the sample dimension of compressed data.
 
     :Parameters:
 
@@ -805,7 +805,7 @@ class CFDMImplementation(Implementation):
         return construct.get_data().get_compressed_dimension()
 
     def nc_get_geometry_variable(self, field, default=None):
-        '''Return the netCDF variable name of the geometry containier.
+        '''Return the netCDF variable name of the geometry container.
 
     .. versionadded:: 1.8.0
 
@@ -929,7 +929,7 @@ class CFDMImplementation(Implementation):
 
     def nc_get_global_attributes(self, field):
         '''Return the netCDF global attributes.
-        
+
     :Parameters:
 
         field: field construct
@@ -953,7 +953,7 @@ class CFDMImplementation(Implementation):
         attributes: `dict`
 
     :Returns:
-        
+
         `None`
 
         '''
@@ -972,7 +972,7 @@ class CFDMImplementation(Implementation):
         attributes: `dict`
 
     :Returns:
-        
+
         `None`
 
         '''
@@ -982,10 +982,10 @@ class CFDMImplementation(Implementation):
     def equal_components(self, construct0, construct1,
                          ignore_type=False):
         '''Whether or not two field construct components are equal.
-        
+
     A "component" is either a metadata construct or a metadata
     construct component (such as a bounds component).
-        
+
     .. versionadded::: 1.8.6
 
     :Parameter:
@@ -1007,10 +1007,10 @@ class CFDMImplementation(Implementation):
     def equal_constructs(self, construct0, construct1,
                          ignore_type=False):
         '''Whether or not two field construct components are equal.
-        
+
     A "component" is either a metadata construct or a metadata
     construct component (such as a bounds component).
-        
+
     .. versionadded::: 1.7.0
 
     :Parameter:
@@ -1047,7 +1047,7 @@ class CFDMImplementation(Implementation):
         return field._equals(property_value0, property_value1)
 
     def equal_datums(self, coordinate_reference0, coordinate_reference1):
-        '''hether or not two coordinate reference datums are equal.
+        '''Whether or not two coordinate reference datums are equal.
 
     :Parameters:
 
@@ -1070,7 +1070,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         construct: construct
-        
+
     :Returns:
 
         `int`
@@ -1230,7 +1230,7 @@ class CFDMImplementation(Implementation):
         return parent.inherited_properties()
 
     def get_interior_ring(self, construct):
-        '''Return the interior ring variable of geometry coordiantes.
+        '''Return the interior ring variable of geometry coordinates.
 
     :Parameters:
 
@@ -1389,7 +1389,7 @@ class CFDMImplementation(Implementation):
         return construct.get_property(prop, default=default)
 
     def get_geometry(self, construct, default=None):
-        '''Return a the geometry type of coordinates.
+        '''Return the geometry type of coordinates.
 
     :Parameters:
 
@@ -1400,7 +1400,7 @@ class CFDMImplementation(Implementation):
     :Returns:
 
         `str` or `None`
-            The geomtry type.
+            The geometry type.
 
         '''
         return construct.get_geometry(default=default)
@@ -1565,7 +1565,7 @@ class CFDMImplementation(Implementation):
     :Returns:
 
         Datum component
- 
+
         '''
         cls = self.get_class('Datum')
         return cls(parameters=parameters)
@@ -1582,7 +1582,7 @@ class CFDMImplementation(Implementation):
         data: optional
 
         bounds: optional
-        
+
         interior_ring: optional
 
         copy: `bool`, optional
@@ -1676,13 +1676,13 @@ class CFDMImplementation(Implementation):
         shape: sequence of `int`, optional
 
         size: `int, optional
-        
+
         compressed_dimension: `int`, optional
-        
+
         list_variable: optional
 
     :Returns:
-        
+
         Gathered array
 
         '''
@@ -1795,13 +1795,13 @@ class CFDMImplementation(Implementation):
         shape: sequence of `int`, optional
 
         size: `int, optional
-        
+
         compressed_dimension: `int`, optional
-        
+
         count_variable: optional
 
     :Returns:
-        
+
         Ragged contigous array
 
         '''
@@ -1824,13 +1824,13 @@ class CFDMImplementation(Implementation):
         shape: sequence of `int`, optional
 
         size: `int, optional
-        
+
         compressed_dimension: `int`, optional
-        
+
         index_variable: optional
 
     :Returns:
-        
+
         Ragged indexed array
 
         '''
@@ -1856,15 +1856,15 @@ class CFDMImplementation(Implementation):
         shape: sequence of `int`, optional
 
         size: `int, optional
-        
+
         compressed_dimension: `int`, optional
-        
+
         count_variable: optional
 
         index_variable: optional
 
     :Returns:
-        
+
          Ragged indexed contiguous array
 
         '''
@@ -2003,7 +2003,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         construct: construct
-        
+
         bounds: bounds component
 
         copy: `bool`, optional
@@ -2272,7 +2272,7 @@ class CFDMImplementation(Implementation):
 
     :Parameters:
 
-        construct: 
+        construct:
 
     :Returns:
 
@@ -2302,18 +2302,18 @@ class CFDMImplementation(Implementation):
         return field.set_construct(construct, axes=axes, copy=copy)
 
     def set_geometry(self, coordinate, value):
-        '''Set the geometry type of a coordiante construct.
+        '''Set the geometry type of a coordinate construct.
 
     .. versionadded:: 1.8.0
 
     :Parameters:
 
         coordinate: coordinate construct
-        
+
         value: `str`
 
     :Returns:
-        
+
         `None`
 
         '''
@@ -2349,13 +2349,13 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         parent:
-        
+
         node_count: Node count properties variable
 
         copy: `bool`, optional
 
     :Returns:
-        
+
         `None`
         '''
         parent.set_node_count(node_count, copy=copy)
@@ -2368,13 +2368,13 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         parent:
-        
+
         part_node_count: part node count properties variable
 
         copy: `bool`, optional
 
     :Returns:
-        
+
         `None`
 
         '''
@@ -2388,7 +2388,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         parent:
-        
+
         interior_ring: interiot ring variable
 
         copy: `bool`, optional
@@ -2447,7 +2447,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         field: field construct
-                
+
         ncvar: `str` or `None`
             The netCDF variable name. If `None` then the name is not
             set.
@@ -2466,7 +2466,7 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         parent:
-                
+
         ncvar: `str` or `None`
             The netCDF variable name. If `None` then the name is not
             set.

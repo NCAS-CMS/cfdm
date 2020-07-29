@@ -278,7 +278,7 @@ def _log_level(constants_dict, log_level):
                 "where either the string or the corrsponding integer is "
                 "accepted. Value remains as it was, at '{}'.".format(
                     level, ", '".join([val.name + "' = " + str(val.value)
-                                        for val in ValidLogLevels]), old
+                                       for val in ValidLogLevels]), old
                 )
             )
         # Safe to reset now as guaranteed to be valid:
@@ -417,7 +417,9 @@ def _disable_logging(at_level=None):
     if at_level:
         logging.disable(getattr(logging, at_level))
     else:
-        logging.disable()
+        # *level* kwarg is required for Python v<=3.6, but defaults to
+        # CRITICAL in 3.7 so in future when support only v>=3.7, can remove
+        logging.disable(level=logging.CRITICAL)
 
 
 def environment(display=True, paths=True):
@@ -449,9 +451,9 @@ def environment(display=True, paths=True):
     netcdf library: 4.6.1
     python: 3.7.3 /home/user/anaconda3/bin/python
     netCDF4: 1.5.3 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
-    cftime: 1.1.0 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
+    cftime: 1.2.1 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
     numpy: 1.16.2 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    cfdm: 1.8.0
+    cfdm: 1.8.6.0
 
     >>> environment(paths=False)
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
@@ -459,9 +461,9 @@ def environment(display=True, paths=True):
     netcdf library: 4.6.1
     python: 3.7.3
     netCDF4: 1.5.3
-    cftime: 1.1.0
+    cftime: 1.2.1
     numpy: 1.16.2
-    cfdm: 1.8.0
+    cfdm: 1.8.6.0
 
     '''
     out = []
@@ -489,10 +491,10 @@ def environment(display=True, paths=True):
     try:
         out.append('netcdf_flattener: ' + str(netcdf_flattener.__version__))
     except AttributeError:
-        out.append('netcdf_flattener: unknown version')        
+        out.append('netcdf_flattener: unknown version')
     if paths:
         out[-1] += ' ' + str(os.path.abspath(netcdf_flattener.__file__))
-        
+
     out.append('cfdm: ' + str(__version__))
     if paths:
         out[-1] += ' ' + str(os.path.abspath(__file__))

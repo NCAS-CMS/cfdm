@@ -80,7 +80,7 @@ class CompressedArray(Array): #, metaclass=abc.ABCMeta):
         raise NotImplementedError()  # pragma: no cover
 
     def _get_compressed_Array(self, default=ValueError()):
-        '''TODO
+        '''Return the compressed array.
 
     :Parameters:
 
@@ -95,7 +95,7 @@ class CompressedArray(Array): #, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> a = d.get_data(None)
+    >>> c = d._get_compressed_Array()
 
         '''
         return self._get_component('compressed_Array', default)
@@ -332,19 +332,25 @@ class CompressedArray(Array): #, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def to_memory(self):
-        '''TODO
+        '''Bring an array on disk into memory and retain it there.
+
+    There is no change to an array that is already in memory.
 
     :Returns:
-            TODO
+
+        `CompressedArray`
+            The array that is stored in memory.
 
     **Examples:**
-         TODO
+
+    >>> b = a.to_memory()
+
         '''
-        self._set_compressed_Array(self._get_compressed_Array().to_memory())
+        self._get_compressed_Array(self._get_compressed_Array().to_memory())
         return self
 
     def source(self, default=ValueError()):
-        '''TODO Return the underlying array object.
+        '''Return the underlying array object.
 
     :Parameters:
 
@@ -356,7 +362,7 @@ class CompressedArray(Array): #, metaclass=abc.ABCMeta):
     :Returns:
 
         subclass of `Array`
-            TODO The underlying array object.
+            The underlying array object.
 
     **Examples:**
 

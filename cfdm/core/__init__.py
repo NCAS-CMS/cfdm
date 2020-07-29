@@ -3,15 +3,16 @@
 '''
 
 __author__ = 'David Hassell'
-__date__ = '2020-06-10'
+__date__ = '2020-07-24'
 __cf_version__ = '1.8'
-__version__ = '1.8.6'
+__version__ = '1.8.6.0'
 
 from distutils.version import LooseVersion
 import platform
 
-_requires = ('numpy',
-             'netCDF4',
+_requires = (
+    'numpy',
+    'netCDF4',
 )
 
 _error0 = 'cfdm.core requires the modules {}. '.format(', '.join(_requires))

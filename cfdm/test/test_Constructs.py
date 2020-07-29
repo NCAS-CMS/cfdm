@@ -26,7 +26,7 @@ class ConstructsTest(unittest.TestCase):
         f = cfdm.read(self.filename)
         self.assertEqual(len(f), 1, 'f={!r}'.format(f))
         self.f = f[0]
-        
+
         self.test_only = []
 
     def test_Constructs__repr__str__dump(self):
@@ -86,7 +86,7 @@ class ConstructsTest(unittest.TestCase):
 
         self.assertEqual(len(c.filter_by_identity('qwerty')), 0)
         self.assertEqual(len(c.filter_by_key('qwerty')), 0)
-        self.assertEqual(len(c.filter_by_type('qwerty')) , 0)
+        self.assertEqual(len(c.filter_by_type('qwerty')), 0)
         self.assertEqual(len(c.filter_by_method('qwerty')), 0)
         self.assertEqual(len(c.filter_by_measure('qwerty')), 0)
         self.assertEqual(len(c.filter_by_ncvar('qwerty')), 0)
@@ -98,7 +98,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(c.filter_by_type('cell_measure')), 1)
         self.assertEqual(len(c.filter_by_method('mean')), 1)
         self.assertEqual(len(c.filter_by_measure('area')), 1)
-        self.assertEqual(len(c.filter_by_ncvar('areacella')), 1) 
+        self.assertEqual(len(c.filter_by_ncvar('areacella')), 1)
         self.assertEqual(len(c.filter_by_ncdim('grid_longitude')), 1)
         self.assertEqual(len(c.filter_by_size(9)), 1)
 
@@ -165,8 +165,10 @@ class ConstructsTest(unittest.TestCase):
 
         constructs = c.filter_by_type('domain_ancillary')
         n = 3
-        self.assertEqual(len(constructs), n,
-                        'Got {} constructs, expected {}'.format(len(constructs), n))
+        self.assertEqual(
+            len(constructs), n,
+            'Got {} constructs, expected {}'.format(len(constructs), n)
+        )
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
@@ -195,7 +197,7 @@ class ConstructsTest(unittest.TestCase):
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
         constructs = c.filter_by_type(*['domain_axis'])
-        n =  3
+        n = 3
         self.assertEqual(
             len(constructs), n,
             'Got {} constructs, expected {}'.format(len(constructs), n))
@@ -230,7 +232,7 @@ class ConstructsTest(unittest.TestCase):
                 d = c.filter_by_axis(mode, *args)
                 e = d.inverse_filter()
                 self.assertEqual(len(e), len(c) - len(d))
-        #--- End: for
+        # --- End: for
 
         # Inverse filter, filters applied
         self.assertEqual(len(c.filters_applied()), 0)
@@ -263,7 +265,8 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(d.unfilter(1).equals(c, verbose=3))
         self.assertTrue(c.unfilter(1).equals(c, verbose=3))
 
-#--- End: class
+# --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

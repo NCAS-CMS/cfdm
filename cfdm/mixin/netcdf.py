@@ -48,8 +48,9 @@ class NetCDF: #(abstract.ZeroContainer):
 
 # --- End: class
 
+
 class _NetCDFGroupsMixin():
-    '''TODO
+    '''Mixin class for accessing netCDF(4) hierarchical groups.
 
     .. versionadded:: 1.8.6
     '''
@@ -61,11 +62,11 @@ class _NetCDFGroupsMixin():
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-    
+
     .. versionadded:: 1.8.6
 
     .. seealso:: `_nc_clear_groups`, `_nc_set_groups`
-    
+
     :Parameters:
 
         nc_get: function
@@ -92,16 +93,16 @@ class _NetCDFGroupsMixin():
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-    
+
     .. versionadded:: 1.8.6
 
     .. seealso:: `_nc_clear_groups`, `_nc_groups`
-    
+
     :Parameters:
-                
+
         groups: sequence of `str`
             The new group structure.
-        
+
         nc_get: function
             The method which gets the netCDF name.
 
@@ -117,7 +118,7 @@ class _NetCDFGroupsMixin():
             The group structure prior to being reset.
 
     **Examples:**
-        
+
     See the examples in classes which inherit this method.
 
         '''
@@ -136,13 +137,13 @@ class _NetCDFGroupsMixin():
                         "Can't have '/' character in group name: "
                         "{!r}".format(group))
             # --- End: for
-            
+
             name = '/'.join(('',) + tuple(groups) + (name,))
 
         if name:
             nc_set(name)
-        
-        return old    
+
+        return old
 
     def _nc_clear_groups(self, nc_get, nc_set, nc_groups):
         '''Remove the netCDF group hierarchy.
@@ -156,7 +157,7 @@ class _NetCDFGroupsMixin():
     .. versionadded:: 1.8.6
 
     .. seealso:: `_nc_groups`, `_nc_set_groups`
-    
+
     :Parameters:
 
         nc_get: function
@@ -178,13 +179,13 @@ class _NetCDFGroupsMixin():
     See the examples in classes which inherit this method.
 
         '''
-        old =  nc_groups()
-        
+        old = nc_groups()
+
         name = nc_get(default='')
         name = name.split('/')[-1]
         if name:
             nc_set(name)
-        
+
         return old
 
 
@@ -278,7 +279,7 @@ class NetCDFDimension(NetCDF,
 
         '''
         try:
-            return self._get_component('netcdf')['dimension']   
+            return self._get_component('netcdf')['dimension']
         except KeyError:
             return self._default(
                 default,
@@ -325,7 +326,7 @@ class NetCDFDimension(NetCDF,
     these act as delimiters for a group hierarchy. By default, or if
     the name starts with a ``/`` character and contains no others, the
     name is assumed to be in the root group.
-    
+
     .. versionadded:: 1.7.0
 
     .. seealso:: `nc_del_dimension`, `nc_get_dimension`,
@@ -367,14 +368,14 @@ class NetCDFDimension(NetCDF,
                     "A netCDF dimension name with a group structure "
                     "must start with a '/'. Got {!r}".format(value)
                 )
-            
+
             if value.count('/') == 1:
                 value = value[1:]
             elif value.endswith('/'):
                 raise ValueError(
                     "A netCDF dimension name with a group structure "
                     "can't end with a '/'. Got {!r}".format(value)
-                )         
+                )
         # --- End: if
 
         self._get_component('netcdf')['dimension'] = value
@@ -387,12 +388,12 @@ class NetCDFDimension(NetCDF,
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-    
+
     .. versionadded:: 1.8.6
 
     .. seealso:: `nc_clear_dimension_groups`,
                  `nc_set_dimension_groups`
-    
+
     :Returns:
 
         `tuple` of `str`
@@ -433,7 +434,7 @@ class NetCDFDimension(NetCDF,
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-        
+
     An alternative technique for setting the group structure is to set
     the netCDF dimension name, with `nc_set_dimension`, with the group
     structure delimited by ``/`` characters.
@@ -441,9 +442,9 @@ class NetCDFDimension(NetCDF,
     .. versionadded:: 1.8.6
 
     .. seealso:: `nc_clear_dimension_groups`, `nc_dimension_groups`
-    
+
     :Parameters:
-                
+
         groups: sequence of `str`
             The new group structure.
 
@@ -490,7 +491,7 @@ class NetCDFDimension(NetCDF,
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-    
+
     An alternative technique for removing the group structure is to
     set the netCDF dimension name, with `nc_set_dimension`, with no
     ``/`` characters.
@@ -498,7 +499,7 @@ class NetCDFDimension(NetCDF,
     .. versionadded:: 1.8.6
 
     .. seealso:: `nc_dimension_groups`, `nc_set_dimension_groups`
-    
+
     :Returns:
 
         `tuple` of `str`
@@ -533,7 +534,7 @@ class NetCDFDimension(NetCDF,
             nc_get=self.nc_get_dimension,
             nc_set=self.nc_set_dimension,
             nc_groups=self.nc_dimension_groups)
-    
+
 # --- End: class
 
 
@@ -675,7 +676,7 @@ class NetCDFVariable(NetCDF,
     these act as delimiters for a group hierarchy. By default, or if
     the name starts with a ``/`` character and contains no others, the
     name is assumed to be in the root group.
-    
+
     .. versionadded:: 1.7.0
 
     .. seealso:: `nc_del_variable`, `nc_get_variable`,
@@ -706,7 +707,7 @@ class NetCDFVariable(NetCDF,
     >>> print(f.nc_del_variable(None))
     None
 
-        '''        
+        '''
         if not value or value == '/':
             raise ValueError(
                 "Invalid netCDF variable name: {!r}".format(value))
@@ -717,16 +718,16 @@ class NetCDFVariable(NetCDF,
                     "A netCDF variable name with a group structure "
                     "must start with a '/'. Got {!r}".format(value)
                 )
-            
+
             if value.count('/') == 1:
                 value = value[1:]
             elif value.endswith('/'):
                 raise ValueError(
                     "A netCDF variable name with a group structure "
                     "can't end with a '/'. Got {!r}".format(value)
-                )         
+                )
         # --- End: if
-        
+
         self._get_component('netcdf')['variable'] = value
 
     def nc_variable_groups(self):
@@ -737,12 +738,12 @@ class NetCDFVariable(NetCDF,
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-    
+
     .. versionadded:: 1.8.6
 
     .. seealso:: `nc_clear_variable_groups`,
                  `nc_set_variable_groups`
-    
+
     :Returns:
 
         `tuple` of `str`
@@ -783,7 +784,7 @@ class NetCDFVariable(NetCDF,
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-    
+
     An alternative technique for setting the group structure is to set
     the netCDF variable name, with `nc_set_variable`, with the group
     structure delimited by ``/`` characters.
@@ -791,9 +792,9 @@ class NetCDFVariable(NetCDF,
     .. versionadded:: 1.8.6
 
     .. seealso:: `nc_clear_variable_groups`, `nc_variable_groups`
-    
+
     :Parameters:
-                
+
         groups: sequence of `str`
             The new group structure.
 
@@ -803,7 +804,7 @@ class NetCDFVariable(NetCDF,
             The group structure prior to being reset.
 
     **Examples:**
-        
+
     >>> f.nc_set_variable('time')
     >>> f.nc_variable_groups()
     ()
@@ -848,7 +849,7 @@ class NetCDFVariable(NetCDF,
     .. versionadded:: 1.8.6
 
     .. seealso:: `nc_variable_groups`, `nc_set_variable_groups`
-    
+
     :Returns:
 
         `tuple` of `str`
@@ -883,7 +884,7 @@ class NetCDFVariable(NetCDF,
             nc_get=self.nc_get_variable,
             nc_set=self.nc_set_variable,
             nc_groups=self.nc_variable_groups)
-    
+
 # --- End: class
 
 
@@ -1024,7 +1025,7 @@ class NetCDFSampleDimension(NetCDF,
     these act as delimiters for a group hierarchy. By default, or if
     the name starts with a ``/`` character and contains no others, the
     name is assumed to be in the root group.
-    
+
     .. versionadded:: 1.7.0
 
     .. seealso:: `nc_del_sample_dimension`, `nc_get_sample_dimension`,
@@ -1059,25 +1060,25 @@ class NetCDFSampleDimension(NetCDF,
         if not value or value == '/':
             raise ValueError(
                 "Invalid netCDF sample dimension name: {!r}".format(value))
-        
+
         if '/' in value:
             if not value.startswith('/'):
                 raise ValueError(
                     "A netCDF sample dimension name with a group structure "
                     "must start with a '/'. Got {!r}".format(value)
                 )
-            
+
             if value.count('/') == 1:
                 value = value[1:]
             elif value.endswith('/'):
                 raise ValueError(
                     "A netCDF sample dimension name with a group structure "
                     "can't end with a '/'. Got {!r}".format(value)
-                )         
+                )
         # --- End: if
-        
+
         self._get_component('netcdf')['sample_dimension'] = value
-        
+
     def nc_sample_dimension_groups(self):
         '''Return the netCDF dimension group hierarchy.
 
@@ -1086,12 +1087,12 @@ class NetCDFSampleDimension(NetCDF,
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-    
+
     .. versionadded:: 1.8.6
 
     .. seealso:: `nc_clear_sample_dimension_groups`,
                  `nc_set_sample_dimension_groups`
-    
+
     :Returns:
 
         `tuple` of `str`
@@ -1123,7 +1124,7 @@ class NetCDFSampleDimension(NetCDF,
 
         '''
         return self._nc_groups(nc_get=self.nc_get_sample_dimension)
-    
+
     def nc_set_sample_dimension_groups(self, groups):
         '''Set the netCDF dimension group hierarchy.
 
@@ -1132,7 +1133,7 @@ class NetCDFSampleDimension(NetCDF,
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-        
+
     An alternative technique for setting the group structure is to set
     the netCDF dimension name, with `nc_set_sample_dimension`, with
     the group structure delimited by ``/`` characters.
@@ -1141,9 +1142,9 @@ class NetCDFSampleDimension(NetCDF,
 
     .. seealso:: `nc_clear_sample_dimension_groups`,
                  `nc_sample_dimension_groups`
-    
+
     :Parameters:
-                
+
         groups: sequence of `str`
             The new group structure.
 
@@ -1190,7 +1191,7 @@ class NetCDFSampleDimension(NetCDF,
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-    
+
     An alternative technique for removing the group structure is to
     set the netCDF dimension name, with `nc_set_sample_dimension`,
     with no ``/`` characters.
@@ -1199,7 +1200,7 @@ class NetCDFSampleDimension(NetCDF,
 
     .. seealso:: `nc_sample_dimension_groups`,
                  `nc_set_sample_dimension_groups`
-    
+
     :Returns:
 
         `tuple` of `str`
@@ -1234,7 +1235,7 @@ class NetCDFSampleDimension(NetCDF,
             nc_get=self.nc_get_sample_dimension,
             nc_set=self.nc_set_sample_dimension,
             nc_groups=self.nc_sample_dimension_groups)
-    
+
 
 # --- End: class
 
@@ -1512,10 +1513,10 @@ class NetCDFGlobalAttributes(NetCDF):
 
 # --- End: class
 
-    
+
 class NetCDFGroupAttributes(NetCDF):
     '''Mixin class for accessing netCDF group attributes.
-    
+
     .. versionadded:: 1.8.6
 
     '''
@@ -2076,7 +2077,7 @@ class NetCDFGeometry(NetCDF,
     these act as delimiters for a group hierarchy. By default, or if
     the name starts with a ``/`` character and contains no others, the
     name is assumed to be in the root group.
-    
+
     .. versionadded:: 1.8.0
 
     .. seealso:: `nc_del_geometry_variable`,
@@ -2111,21 +2112,21 @@ class NetCDFGeometry(NetCDF,
         if not value or value == '/':
             raise ValueError(
                 "Invalid netCDF geometry variable name: {!r}".format(value))
-        
+
         if '/' in value:
             if not value.startswith('/'):
                 raise ValueError(
                     "A netCDF geometry variable name with a group structure "
                     "must start with a '/'. Got {!r}".format(value)
                 )
-            
+
             if value.count('/') == 1:
-                value = value[1:]                
+                value = value[1:]
             elif value.endswith('/'):
                 raise ValueError(
                     "A netCDF geometry variable name with a group structure "
                     "can't end with a '/'. Got {!r}".format(value)
-                )         
+                )
         # --- End: if
 
         self._get_component('netcdf')['geometry_variable'] = value
@@ -2138,12 +2139,12 @@ class NetCDFGeometry(NetCDF,
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-    
+
     .. versionadded:: 1.8.6
 
     .. seealso:: `nc_clear_geometry_variable_groups`,
     `nc_set_geometry_variable_groups`
-    
+
     :Returns:
 
         `tuple` of `str`
@@ -2184,7 +2185,7 @@ class NetCDFGeometry(NetCDF,
     groups are returned, in hierarchical order, as a sequence of
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
-    
+
     An alternative technique for setting the group structure is to set
     the netCDF variable name, with `nc_set_geometry_variable`, with
     the group structure delimited by ``/`` characters.
@@ -2193,9 +2194,9 @@ class NetCDFGeometry(NetCDF,
 
     .. seealso:: `nc_clear_geometry_variable_groups`,
                  `nc_geometry_variable_groups`
-    
+
     :Parameters:
-                
+
         groups: sequence of `str`
             The new group structure.
 
@@ -2251,7 +2252,7 @@ class NetCDFGeometry(NetCDF,
 
     .. seealso:: `nc_geometry_variable_groups`,
                  `nc_set_geometry_variable_groups`
-    
+
     :Returns:
 
         `tuple` of `str`
@@ -2286,7 +2287,7 @@ class NetCDFGeometry(NetCDF,
             nc_get=self.nc_get_geometry_variable,
             nc_set=self.nc_set_geometry_variable,
             nc_groups=self.nc_geometry_variable_groups)
-    
+
 # --- End: class
 
 

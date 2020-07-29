@@ -20,23 +20,24 @@ class DomainAncillaryTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-        
+
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-        
+
     def test_DomainAncillary__repr__str__dump(self):
         f = cfdm.read(self.filename)[0]
         x = f.domain_ancillaries('ncvar%a').value()
 
         _ = repr(x)
         _ = str(x)
-        _ = x.dump(display=False)
+        self.assertIsInstance(x.dump(display=False), str)
 
-        _ = x.dump(display=False, _key=f.domain_ancillaries('ncvar%a').key())
+        self.assertIsInstance(
+            x.dump(display=False, _key=f.domain_ancillaries('ncvar%a').key()),
+            str)
 
         x.nc_del_variable()
-        _ = x.dump(display=False)
-        
+        self.assertIsInstance(x.dump(display=False), str)
 
     def test_DomainAncillary_bounds(self):
         f = cfdm.read(self.filename)[0]
@@ -49,8 +50,8 @@ class DomainAncillaryTest(unittest.TestCase):
         x = f.domain_ancillaries('ncvar%a').value()
 
         x.set_property('long_name', 'qwerty')
-        
-        self.assertEqual(x.get_property('long_name'), 'qwerty')    
+
+        self.assertEqual(x.get_property('long_name'), 'qwerty')
         self.assertEqual(x.del_property('long_name'), 'qwerty')
         self.assertIsNone(x.get_property('long_name', None))
         self.assertIsNone(x.del_property('long_name', None))
@@ -112,7 +113,8 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertEqual(x.shape, (1, 9, 10))
         self.assertEqual(x.bounds.shape, (1, 9, 10, 4), x.bounds.shape)
 
-#--- End: class
+# --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

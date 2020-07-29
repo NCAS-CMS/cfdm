@@ -1,0 +1,7 @@
+cfdm.CompressedArray.array
+==========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. autoattribute:: cfdm.CompressedArray.array

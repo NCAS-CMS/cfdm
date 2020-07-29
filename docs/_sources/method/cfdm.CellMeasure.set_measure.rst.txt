@@ -1,0 +1,7 @@
+cfdm.CellMeasure.set_measure
+============================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.CellMeasure.set_measure

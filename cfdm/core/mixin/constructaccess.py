@@ -229,7 +229,13 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
         try:
             return self.constructs.data_axes()[key]
         except KeyError:
-            return self._default(default, message='2736492783 e28037 TODO')
+            return self._default(
+                default,
+                message=(
+                    '{!r} has no data axes for the metadata construct '
+                    '{!r}'.format(self.__class__.__name__, key)
+                )
+            )
 
     def del_data_axes(self, key, default=ValueError()):
         '''Remove the keys of the domain axis constructs spanned by the data
@@ -272,7 +278,13 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
         try:
             data_axes = self.constructs.data_axes()[key]
         except KeyError:
-            return self._default(default, message='asd aosg8qwg dlb TODO')
+            return self._default(
+                default,
+                message=(
+                    '{!r} has no data axes for the metadata construct '
+                    '{!r}'.format(self.__class__.__name__, key)
+                )
+            )
         else:
             self.constructs._del_data_axes(key)
 

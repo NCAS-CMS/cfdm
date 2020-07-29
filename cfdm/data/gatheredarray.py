@@ -152,15 +152,18 @@ class GatheredArray(abstract.CompressedArray):
         return self._get_component('list_variable', default=default)
 
     def to_memory(self):
-        '''TODO
+        '''Bring an array on disk into memory and retain it there.
+
+    There is no change to an array that is already in memory.
 
     :Returns:
 
         `GatheredArray`
+            The array that is stored in memory.
 
     **Examples:**
 
-    TODO
+    >>> b = a.to_memory()
 
         '''
         super().to_memory()

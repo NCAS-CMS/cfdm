@@ -20,17 +20,17 @@ class FieldAncillaryTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-        
+
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-        
+
     def test_FieldAncillary__repr__str__dump(self):
         f = cfdm.read(self.filename)[0]
         x = f.field_ancillaries('ancillaryA').value()
 
         _ = repr(x)
         _ = str(x)
-        _ = x.dump(display=False)
+        self.assertIsInstance(x.dump(display=False), str)
 
     def test_FieldAncillary_source(self):
         f = cfdm.read(self.filename)[0]
@@ -43,8 +43,8 @@ class FieldAncillaryTest(unittest.TestCase):
         x = f.domain_ancillaries('ncvar%a').value()
 
         x.set_property('long_name', 'qwerty')
-        
-        self.assertEqual(x.get_property('long_name'), 'qwerty')    
+
+        self.assertEqual(x.get_property('long_name'), 'qwerty')
         self.assertEqual(x.del_property('long_name'), 'qwerty')
         self.assertIsNone(x.get_property('long_name', None))
         self.assertIsNone(x.del_property('long_name', None))
@@ -91,7 +91,8 @@ class FieldAncillaryTest(unittest.TestCase):
         x.squeeze(2, inplace=True)
         self.assertEqual(x.shape, (1, 9, 10))
 
-#--- End: class
+# --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

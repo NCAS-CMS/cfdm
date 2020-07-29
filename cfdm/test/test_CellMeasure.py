@@ -29,7 +29,6 @@ class CellMeasureTest(unittest.TestCase):
 
         self.test_only = []
 
-
     def test_CellMeasure__repr__str__dump_construct_type(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -39,9 +38,8 @@ class CellMeasureTest(unittest.TestCase):
         for cm in f.cell_measures.values():
             _ = repr(cm)
             _ = str(cm)
-            _ = cm.dump(display=False)
+            self.assertIsInstance(cm.dump(display=False), str)
             self.assertEqual(cm.construct_type, 'cell_measure')
-
 
     def test_CellMeasure(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -53,16 +51,18 @@ class CellMeasureTest(unittest.TestCase):
 
         self.assertTrue(cm.has_measure())
         self.assertTrue(cm.get_measure(), 'area')
-        _ = cm.del_measure()
+
+        measure = cm.del_measure()
         self.assertFalse(cm.has_measure())
         self.assertIsNone(cm.get_measure(None))
         self.assertIsNone(cm.del_measure(None))
-        cm.set_measure(_)
+
+        cm.set_measure(measure)
         self.assertTrue(cm.has_measure())
         self.assertEqual(cm.get_measure(), 'area')
 
+# --- End: class
 
-#--- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

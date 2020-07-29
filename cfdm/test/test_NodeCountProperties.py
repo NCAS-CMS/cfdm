@@ -26,7 +26,7 @@ class NodeCountPropertiesTest(unittest.TestCase):
 
     def test_NodeCountProperties__repr__str__dump(self):
         f = cfdm.read(self.geometry_interior_ring_file)[0]
-        
+
         coord = f.construct('axis=X')
         self.assertTrue(coord.has_node_count())
 
@@ -34,9 +34,9 @@ class NodeCountPropertiesTest(unittest.TestCase):
 
         _ = repr(n)
         _ = str(n)
-        _ = n.dump(display=False)
-            
-#--- End: class
+        self.assertIsInstance(n.dump(display=False), str)
+
+# --- End: class
 
 
 if __name__ == '__main__':
@@ -44,4 +44,3 @@ if __name__ == '__main__':
     cfdm.environment()
     print()
     unittest.main(verbosity=2)
-

@@ -1,8 +1,8 @@
-version 1.8.6
--------------
+version 1.8.6.0
+---------------
 ----
 
-**2020-07-??**
+**2020-07-24**
 
 * Removed Python 2.7 support
   (https://github.com/NCAS-CMS/cfdm/issues/55)
@@ -11,6 +11,7 @@ version 1.8.6
 * Renamed to lower-case (but otherwise identical) names all functions which
   get and set global constants: `cfdm.atol`, `cfdm.rtol`, `cfdm.log_level`.
   The old names e.g. `cfdm.ATOL` remain functional as aliases.
+* New function: `cfdm.configuration`
 * New method: `cfdm.Field.nc_variable_groups`
 * New method: `cfdm.Field.nc_set_variable_groups`
 * New method: `cfdm.Field.nc_clear_variable_groups`
@@ -24,13 +25,18 @@ version 1.8.6
 * New method: `cfdm.DomainAxis.nc_dimension_groups`
 * New method: `cfdm.DomainAxis.nc_set_dimension_groups`
 * New method: `cfdm.DomainAxis.nc_clear_dimension_groups`
+* New method: `cfdm.AuxiliaryCoordinate.del_interior_ring`
 * New keyword parameter to `cfdm.write`: ``group``
+* Keyword parameter ``verbose`` to multiple methods now accepts named
+  strings, not just the equivalent integer levels, to set verbosity.
+* Fixed bug in `cfdm.CompressedArray.to_memory`.
 * Added test to check that cell bounds have more dimensions than the
   data.
 * Added test to check that dimension coordinate construct data is
   1-dimensional.
 * New dependency: ``netcdf_flattener>=1.1.0``
-* New function: `cfdm.configuration`
+* Changed dependency: ``cftime>=1.2.1``
+* Removed dependency: ``future``
 
 version 1.8.5
 -------------

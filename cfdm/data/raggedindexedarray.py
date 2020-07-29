@@ -98,7 +98,18 @@ class RaggedIndexedArray(mixin.RaggedIndexed,
         return self.get_subspace(uarray, indices, copy=True)
 
     def to_memory(self):
-        '''TODO
+        '''Bring an array on disk into memory and retain it there.
+
+    There is no change to an array that is already in memory.
+
+    :Returns:
+
+        `RaggedIndexedArray`
+            The array that is stored in memory.
+
+    **Examples:**
+
+    >>> b = a.to_memory()
 
         '''
         super().to_memory()

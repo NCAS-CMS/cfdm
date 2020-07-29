@@ -7,6 +7,7 @@ import numpy
 
 import cfdm
 
+
 class AuxiliaryCoordinateTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
@@ -22,10 +23,13 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-        
+
         aux1 = cfdm.AuxiliaryCoordinate()
         aux1.standard_name = 'latitude'
-        a = numpy.array([-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7, 11.30003, 17.8678678, 23.5, 30])
+        a = numpy.array(
+            [-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7,
+             11.30003, 17.8678678, 23.5, 30]
+        )
         aux1.set_data(cfdm.Data(a, 'degrees_north'))
         bounds = cfdm.Bounds()
         b = numpy.empty(a.shape + (2,))
@@ -41,8 +45,8 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
         _ = repr(x)
         _ = str(x)
-        _ = x.dump(display=False)
-        _ = x.dump(display=False, _title=None)
+        self.assertIsInstance(x.dump(display=False), str)
+        self.assertIsInstance(x.dump(display=False, _title=None), str)
 
     def test_AuxiliaryCoordinate_bounds(self):
         f = cfdm.read(self.filename)[0]
@@ -55,12 +59,12 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         x = f.auxiliary_coordinates('latitude').value()
 
         x.set_property('long_name', 'qwerty')
-        
-        self.assertEqual(x.get_property('long_name'), 'qwerty')    
+
+        self.assertEqual(x.get_property('long_name'), 'qwerty')
         self.assertEqual(x.del_property('long_name'), 'qwerty')
         self.assertIsNone(x.get_property('long_name', None))
         self.assertIsNone(x.del_property('long_name', None))
-        
+
     def test_AuxiliaryCoordinate_source(self):
         f = cfdm.read(self.filename)[0]
         d = f.dimension_coordinates('grid_longitude').value()
@@ -122,7 +126,20 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertEqual(x.shape, (1, 9, 10))
         self.assertEqual(x.bounds.shape, (1, 9, 10, 4), x.bounds.shape)
 
-#--- End: class
+    def test_AuxiliaryCoordinate_interior_ring(self):
+        c = cfdm.AuxiliaryCoordinate()
+
+        i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+
+        c.set_interior_ring(i)
+        self.assertTrue(c.has_interior_ring())
+        self.assertIsInstance(c.get_interior_ring(), cfdm.InteriorRing)
+        self.assertIsInstance(c.del_interior_ring(None), cfdm.InteriorRing)
+        self.assertFalse(c.has_interior_ring())
+        self.assertIsNone(c.del_interior_ring(None))
+
+# --- End: class
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

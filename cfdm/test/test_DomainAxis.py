@@ -16,7 +16,7 @@ class DomainTest(unittest.TestCase):
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
         # internally) as follows:
-        # 
+        #
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
@@ -47,10 +47,10 @@ class DomainTest(unittest.TestCase):
         f = self.f
 
         d = f.construct('key%domainaxis0')
-        _ = cfdm.DomainAxis(source=d)
+        self.assertIsInstance(cfdm.DomainAxis(source=d), cfdm.DomainAxis)
 
-        _ = cfdm.DomainAxis(source=f)
-            
+        self.assertIsInstance(cfdm.DomainAxis(source=f), cfdm.DomainAxis)
+
     def test_DomainAxis_source(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -96,7 +96,8 @@ class DomainTest(unittest.TestCase):
             d.nc_set_unlimited(False)
             self.assertFalse(d.nc_is_unlimited())
 
-#--- End: class
+# --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

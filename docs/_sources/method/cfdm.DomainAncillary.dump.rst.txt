@@ -1,0 +1,7 @@
+cfdm.DomainAncillary.dump
+=========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.DomainAncillary.dump

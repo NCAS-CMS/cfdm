@@ -426,7 +426,7 @@ toggleprompt_offset_right = 25  # stops toggle and copy buttons overlapping
 import inspect
 from os.path import relpath, dirname
 
-link_release = re.search('(\d+\.\d+\.\d+)', release).groups()[0]
+link_release = re.search('(\d+\.\d+\.\d+\.\d+)', release).groups()[0]
 
 def linkcode_resolve(domain, info):
     

@@ -13,8 +13,10 @@ import cfdm
 n_tmpfiles = 1
 tmpfiles = [tempfile.mktemp('_test_functions.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
-(temp_file,
+(
+    temp_file,
 ) = tmpfiles
+
 
 def _remove_tmpfiles():
     '''Remove temporary files created during tests.
@@ -25,6 +27,7 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
+
 
 atexit.register(_remove_tmpfiles)
 
@@ -57,7 +60,7 @@ class FunctionsTest(unittest.TestCase):
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
-        # internally) as follows:        
+        # internally) as follows:
         # cfdm.log_level('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
@@ -115,7 +118,7 @@ class FunctionsTest(unittest.TestCase):
 
             # Some conversions to equivalent, standardised return value:
             if (isinstance(value, int) and
-                cfdm._is_valid_log_level_int(value)):  # LOG_LEVEL returns str
+                    cfdm._is_valid_log_level_int(value)):  # str from LOG_LEVEL
                 value = cfdm.constants.ValidLogLevels(value).name  # convert
             if isinstance(value, str):  # LOG_LEVEL returns all caps string
                 value = value.upper()
@@ -136,7 +139,7 @@ class FunctionsTest(unittest.TestCase):
             # getLevelName() converts to string. Otherwise gives
             # Python logging int equivalent, which is not the scale we use:
             if (isinstance(value, int) and
-                cfdm._is_valid_log_level_int(value)):
+                    cfdm._is_valid_log_level_int(value)):
                 value = cfdm.constants.ValidLogLevels(value).name
 
             self.assertTrue(
@@ -192,9 +195,9 @@ class FunctionsTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        _ = cfdm.environment(display=False)
-        _ = cfdm.environment(display=False, paths=False)
-        _ = cfdm.environment(display=False)
+        self.assertIsInstance(cfdm.environment(display=False), list)
+        self.assertIsInstance(cfdm.environment(display=False, paths=False), list)
+        self.assertIsInstance(cfdm.environment(display=False), list)
 
     def test_example_field(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -205,14 +208,14 @@ class FunctionsTest(unittest.TestCase):
         for n in range(top + 1):
             f = cfdm.example_field(n)
             _ = f.data.array
-            _ = f.dump(display=False)
+            self.assertIsInstance(f.dump(display=False), str)
 
             cfdm.write(f, temp_file)
             g = cfdm.read(temp_file)
 
             self.assertEqual(len(g), 1)
             self.assertTrue(f.equals(g[0], verbose=3), 'n={}'.format(n))
-            
+
         with self.assertRaises(Exception):
             _ = cfdm.example_field(top + 1)
 
@@ -320,13 +323,8 @@ class FunctionsTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             cfdm.configuration(bad_kwarg=1e-15)
 
-#    def test_default_netCDF_fill_values(self):
-#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#            return
-#        
-#        self.assertIsInstance(cfdm.default_netCDF_fill_values(), dict)
+# --- End: class
 
-#--- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

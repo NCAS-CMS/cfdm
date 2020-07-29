@@ -23,13 +23,13 @@ class ListTest(unittest.TestCase):
     def test_List__repr__str__dump(self):
         f = cfdm.read(self.gathered)[0]
 
-        l = f.data.get_list()
+        list_ = f.data.get_list()
 
-        _ = repr(l)
-        _ = str(l)
-        _ = l.dump(display=False)
-            
-#--- End: class
+        _ = repr(list_)
+        _ = str(list_)
+        self.assertIsInstance(list_.dump(display=False), str)
+
+# --- End: class
 
 
 if __name__ == '__main__':
@@ -37,4 +37,3 @@ if __name__ == '__main__':
     cfdm.environment()
     print()
     unittest.main(verbosity=2)
-

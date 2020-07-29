@@ -39,13 +39,19 @@ class Container:
 
     @property
     def _atol(self):
-        '''TODO
+        '''Internal alias for `cfdm.atol`.
+
+    An alias is necessary to avoid a name clash with the keyword argument
+    of identical name (`atol`) in calling functions.
         '''
         return atol()
 
     @property
     def _rtol(self):
-        '''TODO
+        '''Internal alias for `cfdm.rtol`.
+
+    An alias is necessary to avoid a name clash with the keyword argument
+    of identical name (`rtol`) in calling functions.
         '''
         return rtol()
 

@@ -6,6 +6,7 @@ from random import choice, shuffle
 
 import cfdm
 
+
 def randomise_test_order(*_args):
     '''Return a random choice from 1 and -1.
 
@@ -47,20 +48,21 @@ all_test_cases = test_loader().discover('.', pattern='test_*.py')
 shuffle(all_test_cases._tests)
 testsuite.addTests(all_test_cases)
 
-# Run the test suite's first set-up stage.
+
 def run_test_suite_setup_0(verbosity=2):
+    '''Run the test suite's first set-up stage.'''
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite_setup_0)
 
 
-# Run the test suite's second set-up stage.
 def run_test_suite_setup_1(verbosity=2):
+    '''Run the test suite's second set-up stage.'''
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite_setup_1)
 
 
-# Run the test suite.
 def run_test_suite(verbosity=2):
+    '''Run the test suite.'''
     runner = unittest.TextTestRunner(verbosity=verbosity)
     outcome = runner.run(testsuite)
     # Note unittest.TextTestRunner().run() does not set an exit code,

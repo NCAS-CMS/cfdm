@@ -16,18 +16,16 @@ from pprint            import (pformat, pprint)
 import numpy
 import netCDF4
 
+import netcdf_flattener
+
 from ...decorators import _manage_log_level_via_verbosity
+
+from ...functions import log_level
 
 from .. import IORead
 
 from . import constants
 
-try:
-    import netcdf_flattener
-except ModuleNotFoundError:
-    _found_flattener = False
-else:
-    _found_flattener = True
 
 _cached_temporary_files = {}
 
@@ -70,7 +68,7 @@ class NetCDFRead(IORead):
         'geometry attribute': 181,
 
         'Node coordinate variable': 190,
-        
+
         # Purely structural
         'Compressed dimension': 300,
         'compress attribute': 301,
@@ -210,7 +208,7 @@ class NetCDFRead(IORead):
     netCDF variable.
 
     .. versionadded:: 1.7.0
-        
+
     .. seealso:: `_reference`
 
     :Parameters:
@@ -258,14 +256,14 @@ class NetCDFRead(IORead):
 
         '''
         g = self.read_vars
-        
+
         count = g['references'].setdefault(ncvar, 0)
         count += 1
         g['references'][ncvar] = count
 
         # Keep a note of which variables are doing the referencing
         g['referencers'].setdefault(ncvar, set()).add(referencing_ncvar)
-        
+
         return count
 
     def file_close(self):
@@ -290,7 +288,7 @@ class NetCDFRead(IORead):
         for flat_file in self.read_vars['flat_files']:
             flat_file.close()
 
-    def file_open(self, filename, flatten=True):
+    def file_open(self, filename, flatten=True, verbose=None):
         '''Open the netCDf file for reading.
 
     If the file has hierarchical groups then a flattened version of it
@@ -331,15 +329,8 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         if flatten and nc.groups:
-            if not _found_flattener:
-                raise ModuleNotFoundError(
-                    "File {} contains hierarchical groups and "
-                    "can't be read without the netcdf_flattener package. "
-                    "See https://ncas-cms.github.io/cfdm/installation.html "
-                    "for details.".format(filename)
-                )
-
-            # Create a diskless container for the flattened file
+            # Create a diskless, non-persistent container for the
+            # flattened file
             flat_file = tempfile.NamedTemporaryFile(
                 mode='wb',
                 dir=tempfile.gettempdir(),
@@ -760,7 +751,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Open the netCDF file to be read
         # ------------------------------------------------------------
-        nc = self.file_open(filename)
+        nc = self.file_open(filename, flatten=True, verbose=None)
         logger.info(
             "Reading netCDF file: {}".format(filename)
         )  # pragma: no cover
@@ -997,7 +988,7 @@ class NetCDFRead(IORead):
                 except UnicodeDecodeError:
                     pass
             # --- End: for
-            
+
             variable_dimensions[ncvar] = tuple(variable.dimensions)
             variable_dataset[ncvar] = nc
             variable_filename[ncvar] = g['filename']
@@ -1044,8 +1035,8 @@ class NetCDFRead(IORead):
             variable_dimensions = {
                 name: tuple([flattener_dimensions[ncdim] for ncdim in value])
                 for name, value in variable_dimensions.items()
-            }            
-            
+            }
+
         logger.debug("    General read variables:")  # pragma: no cover
         logger.debug(
             "        read_vars['variable_dimensions'] =\n" +
@@ -1088,7 +1079,7 @@ class NetCDFRead(IORead):
             internal_dimension_sizes = {
                 flattener_dimensions[name]: value
                 for name, value in internal_dimension_sizes.items()}
-            
+
         g['internal_dimension_sizes'] = internal_dimension_sizes
 
         # The group structure for each variable. Variables in the root
@@ -1123,7 +1114,7 @@ class NetCDFRead(IORead):
         # E.g. {'/forecast/lat': False, 'bounds2': False, 'lon':
         #       False}
         g['dimension_isunlimited'] = dimension_isunlimited
-        
+
         # The group structure for each dimension. Dimensions in the
         # root group have a group structure of ().
         #
@@ -1139,7 +1130,7 @@ class NetCDFRead(IORead):
         #       '/forecasts/lon': 'lon',
         #       '/forecasts/model/t': 't'}
         g['dimension_basename'] = dimension_basename
-        
+
         logger.debug(
             "        read_vars['dimension_isunlimited'] =\n" +
             pformat(g['dimension_isunlimited'], indent=12)
@@ -1148,7 +1139,7 @@ class NetCDFRead(IORead):
             "        read_vars['internal_dimension_sizes'] =\n" +
             pformat(g['internal_dimension_sizes'], indent=12)
         )  # pragma: no cover
-        
+
         logger.debug("    Groups read vars:")  # pragma: no cover
         logger.debug(
             "        read_vars['variable_groups'] =\n" +
@@ -1228,10 +1219,10 @@ class NetCDFRead(IORead):
                     # ------------------------------------------------
                     sample_dimension = attributes['sample_dimension']
 
-                    if has_groups:                        
-                        sample_dimension  = g['flattener_dimensions'].get(
+                    if has_groups:
+                        sample_dimension = g['flattener_dimensions'].get(
                             sample_dimension, sample_dimension)
-                            
+
                     cf_compliant = self._check_sample_dimension(
                         ncvar,
                         sample_dimension)
@@ -1258,10 +1249,10 @@ class NetCDFRead(IORead):
                     # ------------------------------------------------
                     instance_dimension = attributes['instance_dimension']
 
-                    if has_groups:                        
+                    if has_groups:
                         instance_dimension = g['flattener_dimensions'].get(
                             instance_dimension, instance_dimension)
-                            
+
                     cf_compliant = self._check_instance_dimension(
                         ncvar,
                         instance_dimension)
@@ -1316,7 +1307,7 @@ class NetCDFRead(IORead):
             "        read_vars['compression'] =\n" +
             pformat(g['compression'], indent=12)
         )  # pragma: no cover
-        
+
         # ------------------------------------------------------------
         # Parse external variables (CF>=1.7)
         # ------------------------------------------------------------
@@ -1389,7 +1380,7 @@ class NetCDFRead(IORead):
             "        read_vars['referencers'] =\n" +
             pformat(g['referencers'], indent=12)
         )  # pragma: no cover
-        
+
         # ------------------------------------------------------------
         # Discard fields created from netCDF variables that are
         # referenced by other netCDF variables
@@ -1401,10 +1392,10 @@ class NetCDFRead(IORead):
         # --- End: for
 
         referenced_variables = [ncvar for ncvar in sorted(all_fields)
-                               if not self._is_unreferenced(ncvar)]
+                                if not self._is_unreferenced(ncvar)]
         unreferenced_variables = [ncvar for ncvar in sorted(all_fields)
                                   if self._is_unreferenced(ncvar)]
-        
+
         xx = []
         for ncvar in referenced_variables[:]:
             if all(referencer in referenced_variables
@@ -1413,7 +1404,7 @@ class NetCDFRead(IORead):
                 unreferenced_variables.append(ncvar)
                 fields[ncvar] = all_fields[ncvar]
         # --- End: for
-        
+
         logger.info(
             "    Referenced netCDF variables:\n        "
             + "\n        ".join(referenced_variables)
@@ -1854,7 +1845,7 @@ class NetCDFRead(IORead):
             indexed_sample_dimension=g['variable_dimensions'][ncvar][0],
             element_dimension=element_dimension,
             instance_dimension=instance_dimension)
-        
+
         return element_dimension
 
     def _parse_indexed_contiguous_compression(self, sample_dimension,
@@ -2923,7 +2914,7 @@ class NetCDFRead(IORead):
 
                 # Set unlimited status of axis
                 try:
-#                    if nc.dimensions[ncdim].isunlimited():
+                    # if nc.dimensions[ncdim].isunlimited():
                     if g['dimension_isunlimited'][ncdim]:
                         self.implementation.nc_set_unlimited_axis(f, axis)
                 except KeyError:
@@ -3235,8 +3226,8 @@ class NetCDFRead(IORead):
 
             logger.detail(
                 "        [l] Inserting {!r}".format(coordinate_reference)
-            )  # pragma: no cover     
-            
+            )  # pragma: no cover
+
             g['vertical_crs'][key] = coordinate_reference
         # --- End: for
 
@@ -3376,7 +3367,7 @@ class NetCDFRead(IORead):
                 for x in parsed_cell_measures:
                     measure, ncvars = list(x.items())[0]
                     ncvar = ncvars[0]
-                    
+
                     # Set the domain axes for the cell measure
                     axes = self._get_domain_axes(ncvar, allow_external=True)
 
@@ -3968,7 +3959,7 @@ class NetCDFRead(IORead):
         geometry = self._get_geometry(field_ncvar)
 
         has_bounds = False
-        attribute = 'bounds' # TODO Bad default? consider if bounds != None
+        attribute = 'bounds'  # TODO Bad default? consider if bounds != None
 
         # If there are bounds then find the name of the attribute that
         # names them, and the netCDF variable name of the bounds.
@@ -4033,7 +4024,7 @@ class NetCDFRead(IORead):
                     field_ncvar,
                     bounds_ncvar,
                     geometry)
-                
+
             if not cf_compliant:
                 bounds_ncvar = None
 
@@ -5437,18 +5428,17 @@ class NetCDFRead(IORead):
             self._add_message(field_ncvar, node_ncvar,
                               message=message,
                               attribute=attribute,
-                              variable=parent_ncvar)
+                              variable=field_ncvar)
             return False
 
         ok = True
 
-        
         if node_ncvar not in geometry.get('node_coordinates', ()):
-            self._add_message(field_ncvar, bounds_ncvar,
+            self._add_message(field_ncvar, node_ncvar,
                               message=('Node coordinate variable',
                                        'not in node_coordinates'),
                               attribute=attribute,
-                              variable=parent_ncvar)
+                              variable=field_ncvar)
             ok = False
 
         return ok

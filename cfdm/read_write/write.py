@@ -61,10 +61,10 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     `~cfdm.DomainAxis.nc_is_unlimited` and
     `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
-    
+
 
     **NetCDF hierarchical groups**
-    
+
     Hierarchical groups in CF provide a mechanism to structure
     variables within netCDF4 datasets with well defined rules for
     resolving references to out-of-group netCDF variables and
@@ -346,30 +346,40 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             <http://unidata.github.io/netcdf4-python>`_ for more
             details.
 
-       string: `bool`, optional
-           By default string-valued construct data are written as
-           netCDF arrays of type string if the output file format is
-           ``'NETCDF4'``, or of type char with an extra dimension
-           denoting the maximum string length for any other output
-           file format (see the *fmt* parameter). If *string* is False
-           then string-valued construct data are written as netCDF
-           arrays of type char with an extra dimension denoting the
-           maximum string length, regardless of the selected output
-           file format.
+        string: `bool`, optional
+            By default string-valued construct data are written as
+            netCDF arrays of type string if the output file format is
+            ``'NETCDF4'``, or of type char with an extra dimension
+            denoting the maximum string length for any other output
+            file format (see the *fmt* parameter). If *string* is False
+            then string-valued construct data are written as netCDF
+            arrays of type char with an extra dimension denoting the
+            maximum string length, regardless of the selected output
+            file format.
 
-        verbose: `int` or `None`, optional
-            If an integer from ``0`` to ``3``, corresponding to increasing
-            verbosity (else ``-1`` as a special case of maximal and extreme
-            verbosity), set for the duration of the method call (only) as
-            the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cfdm.log_level`.
+        verbose: `int` or `str` or `None`, optional
+            If an integer from ``-1`` to ``3``, or an equivalent string
+            equal ignoring case to one of:
 
-            Else, if `None` (the default value), log messages will be
-            filtered out, or otherwise, according to the value of the
-            `cfdm.log_level` setting.
+            * ``'DISABLE'`` (``0``)
+            * ``'WARNING'`` (``1``)
+            * ``'INFO'`` (``2``)
+            * ``'DETAIL'`` (``3``)
+            * ``'DEBUG'`` (``-1``)
 
-            Overall, the higher a non-negative integer that is set (up to
-            a maximum of ``3``) the more description that is printed to
+            set for the duration of the method call only as the minimum
+            cut-off for the verboseness level of displayed output (log)
+            messages, regardless of the globally-configured `cfdm.log_level`.
+            Note that increasing numerical value corresponds to increasing
+            verbosity, with the exception of ``-1`` as a special case of
+            maximal and extreme verbosity.
+
+            Otherwise, if `None` (the default value), output messages will
+            be shown according to the value of the `cfdm.log_level` setting.
+
+            Overall, the higher a non-negative integer or equivalent string
+            that is set (up to a maximum of ``3``/``'DETAIL'``) for
+            increasing verbosity, the more description that is printed to
             convey how constructs map to output netCDF dimensions, variables
             and attributes.
 

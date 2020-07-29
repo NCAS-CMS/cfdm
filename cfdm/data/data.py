@@ -540,7 +540,7 @@ class Data(mixin.Container,
         return numpy.ma.masked
 
     def _parse_axes(self, axes):
-        '''TODO
+        '''Parse data axes and return valid non-duplicate axes as a tuple.
 
     :Parameters:
 
@@ -557,7 +557,11 @@ class Data(mixin.Container,
 
     **Examples:**
 
-    TODO
+    >>> d._parse_axes(1)
+    (1,)
+
+    >>> e._parse_axes([0, 2])
+    (0, 2)
 
         '''
         if axes is None:
@@ -638,7 +642,7 @@ class Data(mixin.Container,
 
     @classmethod
     def _set_subspace(cls, array, indices, value):
-        '''TODO
+        '''Set a subspace of the data array defined by indices.
         '''
         axes_with_list_indices = [i for i, x in enumerate(indices)
                                   if not isinstance(x, slice)]
@@ -784,6 +788,11 @@ class Data(mixin.Container,
                 mask = None
                 array = array.view(numpy.ndarray)
         # --- End: if
+
+        if mask is not None and not array.ndim:
+            # Fix until num2date copes with scalar aarrays containing
+            # missing data
+            return array
 
         array = netCDF4.num2date(array, units=self.get_units(None),
                                  calendar=self.get_calendar('standard'),
@@ -1330,7 +1339,7 @@ class Data(mixin.Container,
                                      self.__class__.__name__))
 
     def _parse_indices(self, indices):
-        '''TODO
+        '''Parse indices of the data and return valid indices in a list.
 
     :Parameters:
 
@@ -1341,6 +1350,13 @@ class Data(mixin.Container,
         `list`
 
     **Examples:**
+
+    >>> import numpy
+    >>> d = cfdm.Data(numpy.arange(100, 190).reshape(1, 10, 9))
+    >>> d._parse_indices((slice(None, None, None), 1, 2))
+    [slice(None, None, None), slice(1, 2, 1), slice(2, 3, 1)]
+    >>> d._parse_indices((1,))
+    [slice(1, 2, 1), slice(None, None, None), slice(None, None, None)]
 
         '''
         shape = self.shape
@@ -1875,19 +1891,29 @@ class Data(mixin.Container,
             If True then the fill value is omitted from the
             comparison.
 
-        verbose: `int` or `None`, optional
-            If an integer from ``0`` to ``3``, corresponding to increasing
-            verbosity (else ``-1`` as a special case of maximal and extreme
-            verbosity), set for the duration of the method call (only) as
-            the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cfdm.log_level`.
+        verbose: `int` or `str` or `None`, optional
+            If an integer from ``-1`` to ``3``, or an equivalent string
+            equal ignoring case to one of:
 
-            Else, if `None` (the default value), log messages will be
-            filtered out, or otherwise, according to the value of the
-            `cfdm.log_level` setting.
+            * ``'DISABLE'`` (``0``)
+            * ``'WARNING'`` (``1``)
+            * ``'INFO'`` (``2``)
+            * ``'DETAIL'`` (``3``)
+            * ``'DEBUG'`` (``-1``)
 
-            Overall, the higher a non-negative integer that is set (up to
-            a maximum of ``3``) the more description that is printed to
+            set for the duration of the method call only as the minimum
+            cut-off for the verboseness level of displayed output (log)
+            messages, regardless of the globally-configured `cfdm.log_level`.
+            Note that increasing numerical value corresponds to increasing
+            verbosity, with the exception of ``-1`` as a special case of
+            maximal and extreme verbosity.
+
+            Otherwise, if `None` (the default value), output messages will
+            be shown according to the value of the `cfdm.log_level` setting.
+
+            Overall, the higher a non-negative integer or equivalent string
+            that is set (up to a maximum of ``3``/``'DETAIL'``) for
+            increasing verbosity, the more description that is printed to
             convey information about differences that lead to inequality.
 
         ignore_data_type: `bool`, optional
@@ -2289,7 +2315,21 @@ class Data(mixin.Container,
         return self._item((slice(0, 1),)*(self.ndim-1) + (slice(1, 2),))
 
     def to_memory(self):
-        '''
+        '''Bring data on disk into memory and retain it there.
+
+    There is no change to data that is already in memory.
+
+    :Returns:
+
+        `None`
+
+    **Examples:**
+
+    >>> f = cfdm.example_field(4)
+    >>> f.data
+    <Data(3, 26, 4): [[[290.0, ..., --]]] K>
+    >>> f.data.to_memory()
+
         '''
         self._set_Array(self.source().to_memory())
 

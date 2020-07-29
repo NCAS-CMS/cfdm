@@ -99,7 +99,7 @@ class DimensionCoordinate(abstract.Coordinate):
             raise ValueError(
                 "Dimension coordinate construct must have 1-dimensional data. "
                 "Got {!r}".format(data))
-        
+
         return super().set_data(data, copy=copy)
 
 # --- End: class

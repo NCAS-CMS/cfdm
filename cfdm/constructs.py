@@ -181,8 +181,7 @@ class Constructs(core.Constructs):
     def _equals_cell_method(self, other, rtol=None, atol=None,
                             verbose=None, ignore_type=False,
                             axis1_to_axis0=None, key1_to_key0=None):
-        '''TODO
-
+        '''Whether two cell method constructs are the same.
         '''
         cell_methods0 = self.filter_by_type('cell_method')
         cell_methods1 = other.filter_by_type('cell_method')
@@ -290,7 +289,7 @@ class Constructs(core.Constructs):
                                      ignore_type=False,
                                      axis1_to_axis0=None,
                                      key1_to_key0=None):
-        '''TODO
+        '''Whether two coordinate reference constructs are the same.
         '''
         refs0 = dict(self.filter_by_type('coordinate_reference'))
         refs1 = dict(other.filter_by_type('coordinate_reference'))
@@ -575,19 +574,29 @@ class Constructs(core.Constructs):
             properties are omitted from the comparison for the
             metadata constructs.
 
-        verbose: `int` or `None`, optional
-            If an integer from ``0`` to ``3``, corresponding to increasing
-            verbosity (else ``-1`` as a special case of maximal and extreme
-            verbosity), set for the duration of the method call (only) as
-            the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cfdm.log_level`.
+        verbose: `int` or `str` or `None`, optional
+            If an integer from ``-1`` to ``3``, or an equivalent string
+            equal ignoring case to one of:
 
-            Else, if `None` (the default value), log messages will be
-            filtered out, or otherwise, according to the value of the
-            `cfdm.log_level` setting.
+            * ``'DISABLE'`` (``0``)
+            * ``'WARNING'`` (``1``)
+            * ``'INFO'`` (``2``)
+            * ``'DETAIL'`` (``3``)
+            * ``'DEBUG'`` (``-1``)
 
-            Overall, the higher a non-negative integer that is set (up to
-            a maximum of ``3``) the more description that is printed to
+            set for the duration of the method call only as the minimum
+            cut-off for the verboseness level of displayed output (log)
+            messages, regardless of the globally-configured `cfdm.log_level`.
+            Note that increasing numerical value corresponds to increasing
+            verbosity, with the exception of ``-1`` as a special case of
+            maximal and extreme verbosity.
+
+            Otherwise, if `None` (the default value), output messages will
+            be shown according to the value of the `cfdm.log_level` setting.
+
+            Overall, the higher a non-negative integer or equivalent string
+            that is set (up to a maximum of ``3``/``'DETAIL'``) for
+            increasing verbosity, the more description that is printed to
             convey information about differences that lead to inequality.
 
         ignore_data_type: `bool`, optional
@@ -657,7 +666,7 @@ class Constructs(core.Constructs):
         log = []
         axes_to_constructs0 = self._axes_to_constructs()
         axes_to_constructs1 = other._axes_to_constructs()
-        
+
         for axes0, constructs0 in axes_to_constructs0.items():
             matched_all_constructs_with_these_axes = False
 
@@ -665,7 +674,7 @@ class Constructs(core.Constructs):
             for axes1, constructs1 in tuple(axes_to_constructs1.items()):
 
                 constructs1 = constructs1.copy()
-           
+
                 if len_axes0 != len(axes1):
                     # axes1 and axes0 contain different number of
                     # domain axes.

@@ -749,19 +749,29 @@ class PropertiesDataBounds(PropertiesData):
             If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison.
 
-        verbose: `int` or `None`, optional
-            If an integer from ``0`` to ``3``, corresponding to increasing
-            verbosity (else ``-1`` as a special case of maximal and extreme
-            verbosity), set for the duration of the method call (only) as
-            the minimum severity level cut-off of displayed log messages,
-            regardless of the global configured `cfdm.log_level`.
+        verbose: `int` or `str` or `None`, optional
+            If an integer from ``-1`` to ``3``, or an equivalent string
+            equal ignoring case to one of:
 
-            Else, if `None` (the default value), log messages will be
-            filtered out, or otherwise, according to the value of the
-            `cfdm.log_level` setting.
+            * ``'DISABLE'`` (``0``)
+            * ``'WARNING'`` (``1``)
+            * ``'INFO'`` (``2``)
+            * ``'DETAIL'`` (``3``)
+            * ``'DEBUG'`` (``-1``)
 
-            Overall, the higher a non-negative integer that is set (up to
-            a maximum of ``3``) the more description that is printed to
+            set for the duration of the method call only as the minimum
+            cut-off for the verboseness level of displayed output (log)
+            messages, regardless of the globally-configured `cfdm.log_level`.
+            Note that increasing numerical value corresponds to increasing
+            verbosity, with the exception of ``-1`` as a special case of
+            maximal and extreme verbosity.
+
+            Otherwise, if `None` (the default value), output messages will
+            be shown according to the value of the `cfdm.log_level` setting.
+
+            Overall, the higher a non-negative integer or equivalent string
+            that is set (up to a maximum of ``3``/``'DETAIL'``) for
+            increasing verbosity, the more description that is printed to
             convey information about differences that lead to inequality.
 
         ignore_properties: sequence of `str`, optional
@@ -1342,7 +1352,16 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    TODO
+    >>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+    >>> c.set_node_count(n)
+    >>> c.has_node_count()
+    True
+    >>> c.get_node_count()
+    <NodeCount: long_name=node counts>
+    >>> c.del_node_count()
+    <NodeCount: long_name=node counts>
+    >>> c.has_node_count()
+    False
 
         '''
         if copy:
@@ -1373,7 +1392,16 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    TODO
+    >>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+    >>> c.set_part_node_count(p)
+    >>> c.has_part_node_count()
+    True
+    >>> c.get_part_node_count()
+    <PartNodeCount: long_name=part node counts>
+    >>> c.del_part_node_count()
+    <PartNodeCount: long_name=part node counts>
+    >>> c.has_part_node_count()
+    False
 
         '''
         if copy:

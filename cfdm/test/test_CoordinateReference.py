@@ -13,8 +13,10 @@ import cfdm
 n_tmpfiles = 1
 tmpfiles = [tempfile.mktemp('_test_CoordinateReference.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
-(tempfile1,
+(
+    tempfile1,
 ) = tmpfiles
+
 
 def _remove_tmpfiles():
     '''Remove temporary files created during tests.
@@ -26,7 +28,9 @@ def _remove_tmpfiles():
         except OSError:
             pass
 
+
 atexit.register(_remove_tmpfiles)
+
 
 class CoordinateReferenceTest(unittest.TestCase):
     def setUp(self):
@@ -36,7 +40,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
         # internally) as follows:
-        # 
+        #
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
@@ -58,7 +62,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         for cr in f.coordinate_references.values():
             _ = repr(cr)
             _ = str(cr)
-            _ = cr.dump(display=False)
+            self.assertIsInstance(cr.dump(display=False), str)
             self.assertEqual(cr.construct_type, 'coordinate_reference')
 
     def test_CoordinateReference_equals(self):
@@ -80,15 +84,18 @@ class CoordinateReferenceTest(unittest.TestCase):
         # Create a horizontal grid mapping coordinate reference
         t = cfdm.CoordinateReference(
             coordinates=['coord1', 'fred', 'coord3'],
-             coordinate_conversion=cfdm.CoordinateConversion(
-                 parameters={'grid_mapping_name': 'rotated_latitude_longitude',
-                             'grid_north_pole_latitude': 38.0,
-                             'grid_north_pole_longitude': 190.0})
+            coordinate_conversion=cfdm.CoordinateConversion(
+                parameters={
+                    'grid_mapping_name': 'rotated_latitude_longitude',
+                    'grid_north_pole_latitude': 38.0,
+                    'grid_north_pole_longitude': 190.0
+                }
+            )
         )
         self.assertTrue(t.equals(t.copy(), verbose=3))
 
-        datum=cfdm.Datum(parameters={'earth_radius': 6371007})
-        conversion=cfdm.CoordinateConversion(
+        datum = cfdm.Datum(parameters={'earth_radius': 6371007})
+        conversion = cfdm.CoordinateConversion(
             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                         'grid_north_pole_latitude': 38.0,
                         'grid_north_pole_longitude': 190.0})
@@ -174,7 +181,6 @@ class CoordinateReferenceTest(unittest.TestCase):
         _ = cr.del_coordinate_conversion()
         self.assertTrue(_.equals(cc))
 
-
     def test_Datum(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -210,7 +216,8 @@ class CoordinateReferenceTest(unittest.TestCase):
         cr.datum.nc_set_variable('my_name')
         cfdm.write(f, tempfile1)
 
-#--- End: class
+# --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

@@ -770,7 +770,7 @@ class NetCDFWrite(IOWrite):
                                                       default='index')
 
             if create_ncdim:
-                ncdiml = self._netcdf_name(ncdim)
+                ncdim = self._netcdf_name(ncdim)
                 self._write_dimension(
                     ncdim, f, None,
                     size=self.implementation.get_data_size(index_variable))
@@ -2869,6 +2869,9 @@ class NetCDFWrite(IOWrite):
         for axis, domain_axis in sorted(domain_axes.items()):
             ncdim = self.implementation.nc_get_dimension(domain_axis,
                                                          default=None)
+#            if ncdim is not None:
+#                ncdim = self._netcdf_name(ncdim)
+
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
                 if (self.implementation.get_construct_data_axes(f, key)

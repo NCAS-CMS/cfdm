@@ -126,6 +126,22 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
         # crucial to usage.
         verbose = kwargs.get('verbose')
 
+        invalid_arg_msg = (
+            "Invalid value '{}' for the 'verbose' keyword argument. "
+            "Accepted values are integers corresponding in positive "
+            "cases to increasing verbosity (namely {}), or None, "
+            "to configure the verbosity according to the global "
+            "log_level setting.".format(verbose, ", ".join(
+                [val.name + " = " + str(val.value) for val in ValidLogLevels]))
+        )
+        # First convert valid string inputs to the enum-mapped int constant:
+        if isinstance(verbose, str):
+            uppercase_arg = verbose.upper()
+            if hasattr(ValidLogLevels, uppercase_arg):
+                verbose = getattr(ValidLogLevels, uppercase_arg).value
+            else:
+                raise ValueError(invalid_arg_msg)
+
         # Convert Boolean cases for backwards compatibility. Need 'is'
         # identity rather than '==' (value) equivalency test, since 1
         # == True, etc.
@@ -140,16 +156,7 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
             if _is_valid_log_level_int(verbose):
                 _reset_log_emergence_level(verbose)
             else:
-                raise ValueError(
-                    "Invalid value for the 'verbose' keyword argument. "
-                    "Accepted values are integers corresponding in positive"
-                    "cases to increasing verbosity (namely {}), or None, "
-                    "to configure the verbosity according to the global "
-                    "log_level setting.".format(
-                        ", ".join([val.name + " = " + str(val.value)
-                                   for val in ValidLogLevels])
-                    )
-                )
+                raise ValueError(invalid_arg_msg)
 
         # First need to (temporarily) re-enable global logging if
         # disabled in the cases where you do not want to disable it

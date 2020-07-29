@@ -136,9 +136,9 @@ class NetCDFArray(abstract.Array):
         if group:
             for g in group[:-1]:
                 netcdf = netcdf.groups[g]
-            
+
             netcdf = netcdf.groups[group[-1]]
-            
+
         ncvar = self.get_ncvar()
         mask = self.get_mask()
 
@@ -349,19 +349,19 @@ class NetCDFArray(abstract.Array):
 
     **Examples:**
 
-    TODO
+    >>> b = a.get_group()
 
         '''
         return self._get_component('group')
 
     def get_mask(self):
-        '''TODO
+        '''The mask of the data array.
 
     .. versionadded:: 1.8.2
 
     **Examples:**
 
-        TODO
+    >>> b = a.get_mask()
 
         '''
         return self._get_component('mask')
@@ -469,7 +469,18 @@ class NetCDFArray(abstract.Array):
         return netcdf
 
     def to_memory(self):
-        '''TODO
+        '''Bring an array on disk into memory and retain it there.
+
+    There is no change to an array that is already in memory.
+
+    :Returns:
+
+        `NetCDFArray`
+            The array that is stored in memory.
+
+    **Examples:**
+
+    >>> b = a.to_memory()
 
         '''
         return NumpyArray(self[...])

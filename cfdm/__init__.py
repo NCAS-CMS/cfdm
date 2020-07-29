@@ -16,19 +16,19 @@ written to new datasets.
 
 The cfdm package can
 
-    * read field constructs from netCDF datasets,
+    * read field constructs from netCDF and CDL datasets,
     * create new field constructs in memory,
+    * write field constructs to netCDF datasets on disk,
+    * read, write, and create datasets containing hierarchical groups,
+    * read, write, and create coordinates defined by geometry cells,
     * inspect field constructs,
     * test whether two field constructs are the same,
     * modify field construct metadata and data,
     * create subspaces of field constructs,
-    * write field constructs to netCDF datasets on disk,
-    * incorporate, and create, metadata stored in external files,
+    * incorporate, and create, metadata stored in external files, and
     * read, write, and create data that have been compressed by
       convention (i.e. ragged or gathered arrays), whilst presenting a
-      view of the data in its uncompressed form, and
-    * read, write, and create coordinates defined by geometry cells
-      (new in version 1.8.0).
+      view of the data in its uncompressed form.
 
 Note that cfdm enables the creation of CF field constructs, but it's
 up to the user to use them in a CF-compliant way.
@@ -47,7 +47,8 @@ __date__ = core.__date__
 __cf_version__ = core.__cf_version__
 __version__ = core.__version__
 
-_requires = ('cftime',)
+_requires = ('cftime',
+             'netcdf_flattener')
 
 _error0 = 'cfdm requires the modules {}. '.format(', '.join(_requires))
 
@@ -57,12 +58,26 @@ except ImportError as error1:
     raise ImportError(_error0+str(error1))
 
 # Check the version of cftime
-_minimum_vn = '1.1.3'
+_minimum_vn = '1.2.1'
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad cftime version: cfdm requires cftime>={}. "
         "Got {} at {}".format(
             _minimum_vn, cftime.__version__, cftime.__file__))
+
+try:
+    import netcdf_flattener
+except ImportError as error1:
+    raise ImportError(_error0+str(error1))
+
+# Check the version of cftime
+_minimum_vn = '1.2.0'
+if LooseVersion(netcdf_flattener.__version__) < LooseVersion(_minimum_vn):
+    raise ValueError(
+        "Bad netcdf_flattener version: cfdm requires netcdf_flattener>={}. "
+        "Got {} at {}".format(
+            _minimum_vn,
+            netcdf_flattener.__version__, netcdf_flattener.__file__))
 
 from .constants import masked
 

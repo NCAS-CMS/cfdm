@@ -16,6 +16,7 @@ tmpfiles = [tempfile.mktemp('_test_Field.nc', dir=os.getcwd())
             for i in range(n_tmpfiles)]
 (tmpfile,) = tmpfiles
 
+
 def _remove_tmpfiles():
     '''Remove temporary files created during tests.
 
@@ -25,6 +26,7 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
+
 
 atexit.register(_remove_tmpfiles)
 
@@ -75,7 +77,7 @@ class FieldTest(unittest.TestCase):
 
         _ = repr(f)
         _ = str(f)
-        _ = f.dump(display=False)
+        self.assertIsInstance(f.dump(display=False), str)
         self.assertEqual(f.construct_type, 'field')
 
     def test_Field___getitem__(self):
@@ -109,18 +111,18 @@ class FieldTest(unittest.TestCase):
         self.assertTrue((g.data.array == d).all())
 
         for indices, shape, multiple_list_indices in (
-                [(slice(0, None, 1), slice(0, None)) , (10, 9), False],
-                [(slice(3, 7)      , slice(2, 5))    , ( 4, 3), False],
-                [(slice(6, 2, -1)  , slice(4, 1, -1)), ( 4, 3), False],
-#               [(1                , 3)              , ( 1, 1), False],
-#               [(-2               , -4)             , ( 1, 1), False],
-#               [(-2               , slice(1, 5))    , ( 1, 4), False],
-#               [(slice(5, 1, -2)  , 7)              , ( 2, 1), False],
-                [([1, 4, 7]        , slice(1, 5))    , ( 3, 4), False],
-                [([1, 4, 7]        , slice(6, 8))    , ( 3, 2), False],
-                [(slice(6, 8)      , [1, 4, 7])      , ( 2, 3), False],
-                [([0, 3, 8]        , [1, 7, 8])      , ( 3, 3), True],
-                [([8, 3, 0]        , [8, 7, 1])      , ( 3, 3), True]
+                [(slice(0, None, 1), slice(0, None)), (10, 9), False],
+                [(slice(3, 7), slice(2, 5)), (4, 3), False],
+                [(slice(6, 2, -1), slice(4, 1, -1)), (4, 3), False],
+                # [(1, 3), ( 1, 1), False],
+                # [(-2, -4), ( 1, 1), False],
+                # [(-2, slice(1, 5)), ( 1, 4), False],
+                # [(slice(5, 1, -2), 7), ( 2, 1), False],
+                [([1, 4, 7], slice(1, 5)), (3, 4), False],
+                [([1, 4, 7], slice(6, 8)), (3, 2), False],
+                [(slice(6, 8), [1, 4, 7]), (2, 3), False],
+                [([0, 3, 8], [1, 7, 8]), (3, 3), True],
+                [([8, 3, 0], [8, 7, 1]), (3, 3), True]
         ):
             g = f[indices]
 
@@ -137,15 +139,18 @@ class FieldTest(unittest.TestCase):
                 e = e[tuple(indices)]
             # --- End: if
 
-            self.assertEqual(g.data.shape, e.data.shape,
-                            'Bad shape for {}: {} != {}'.format(
-                                indices,
-                                g.data.shape,
-                                e.data.shape))
-            self.assertTrue((g.data.array == e).all(),
-                            'Bad values for {}: {} != {}'.format(indices,
-                                                                 g.data.array,
-                                                                 e))
+            self.assertEqual(
+                g.data.shape, e.data.shape,
+                'Bad shape for {}: {} != {}'.format(
+                    indices,
+                    g.data.shape,
+                    e.data.shape
+                )
+            )
+            self.assertTrue(
+                (g.data.array == e).all(),
+                'Bad values for {}: {} != {}'.format(indices, g.data.array, e)
+            )
         # --- End: for
 
         # Check slicing of bounds
@@ -214,7 +219,7 @@ class FieldTest(unittest.TestCase):
         # --- End: for
 
         self.assertEqual(g.get_filenames(), set())
-        
+
         os.remove(tmpfile)
 
     def test_Field_apply_masking(self):
@@ -281,9 +286,11 @@ class FieldTest(unittest.TestCase):
             self.assertFalse(f.has_property(name))
             f.set_property(name, value)
 
-        _ = f.clear_properties()
-        f.set_properties(_)
-        f.set_properties(_, copy=False)
+        d = f.clear_properties()
+        self.assertIsInstance(d, dict)
+
+        f.set_properties(d)
+        f.set_properties(d, copy=False)
 
     def test_Field_DATA(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -293,24 +300,24 @@ class FieldTest(unittest.TestCase):
 
         self.assertTrue(f.has_data())
         data = f.get_data()
-        _ = f.del_data()
-        _ = f.get_data(default=None)
-        _ = f.del_data(default=None)
+        self.assertIsInstance(f.del_data(), cfdm.Data)
+        self.assertIsNone(f.get_data(default=None))
+        self.assertIsNone(f.del_data(default=None))
         self.assertFalse(f.has_data())
-        _ = f.set_data(data, axes=None)
-        _ = f.set_data(data, axes=None, copy=False)
+        self.assertIsNone(f.set_data(data, axes=None))
+        self.assertIsNone(f.set_data(data, axes=None, copy=False))
         self.assertTrue(f.has_data())
 
         f = self.f.copy()
-        _ = f.del_data_axes()
+        self.assertIsInstance(f.del_data_axes(), tuple)
         self.assertFalse(f.has_data_axes())
         self.assertIsNone(f.del_data_axes(default=None))
 
         f = self.f.copy()
         for key in f.constructs.filter_by_data():
             self.assertTrue(f.has_data_axes(key))
-            _ = f.get_data_axes(key)
-            _ = f.del_data_axes(key)
+            self.assertIsInstance(f.get_data_axes(key), tuple)
+            self.assertIsInstance(f.del_data_axes(key), tuple)
             self.assertIsNone(f.del_data_axes(key, default=None))
             self.assertIsNone(f.get_data_axes(key, default=None))
             self.assertFalse(f.has_data_axes(key))
@@ -596,6 +603,7 @@ class FieldTest(unittest.TestCase):
         # --- End: for
 
 # --- End: class
+
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

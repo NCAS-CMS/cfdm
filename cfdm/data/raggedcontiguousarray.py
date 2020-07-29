@@ -105,7 +105,19 @@ class RaggedContiguousArray(abstract.CompressedArray,
         return self.get_subspace(uarray, indices, copy=True)
 
     def to_memory(self):
-        '''
+        '''Bring an array on disk into memory and retain it there.
+
+    There is no change to an array that is already in memory.
+
+    :Returns:
+
+        `RaggedContiguousArray`
+            The array that is stored in memory.
+
+    **Examples:**
+
+    >>> b = a.to_memory()
+
         '''
         super().to_memory()
         self.get_count().data.to_memory()
