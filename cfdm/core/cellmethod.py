@@ -142,23 +142,24 @@ class CellMethod(abstract.Container):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def copy(self):
-        '''Return a deep copy.
-
-    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-    .. versionadded:: 1.7.0
-
-    :Returns:
-
-            The deep copy.
-
-    **Examples:**
-
-    >>> g = f.copy()
-
-        '''
-        return type(self)(source=self, copy=True)
+#    def copy(self):
+#        '''Return a deep copy.
+#
+#    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+#
+#    .. versionadded:: 1.7.0
+#
+#    :Returns:
+#
+#        `{{class}}`
+#            The deep copy.
+#
+#    **Examples:**
+#
+#    >>> g = f.copy()
+#
+#        '''
+#        return type(self)(source=self, copy=True)
 
     def del_axes(self, default=ValueError()):
         '''Remove the axes of the cell method.
@@ -524,7 +525,7 @@ class CellMethod(abstract.Container):
     **Examples:**
 
     >>> c.qualifiers()
-    {'interval': [<Data(): 0.1 degrees>],
+    {'interval': [<{{repr}}{{+Data}}(): 0.1 degrees>],
      'where': 'land'}
 
     >>> f.qualifiers()

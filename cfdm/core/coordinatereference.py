@@ -266,6 +266,7 @@ class CoordinateReference(abstract.Container):
 
     :Returns:
 
+        `{{class}}`
             The deep copy.
 
     **Examples:**

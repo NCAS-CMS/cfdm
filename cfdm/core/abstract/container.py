@@ -179,8 +179,7 @@ class Container(metaclass=RewriteDocstringMeta):
         component:
             The name of the component to be removed.
 
-        default: optional
-            Return *default* if the component has not been set.
+        {{default: optional}}
 
     :Returns:
 
@@ -189,7 +188,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class}}()
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -217,7 +216,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class}}()
     >>> f._custom
     {}
     >>> f._custom['feature'] = ['f']
@@ -248,8 +247,7 @@ class Container(metaclass=RewriteDocstringMeta):
         component:
             The name of the component to be returned.
 
-        default: optional
-            Return *default* if the component has not been set.
+        {{default: optional}}
 
     :Returns:
 
@@ -258,7 +256,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class]}()
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -296,7 +294,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class}}()
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -331,7 +329,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
     **Examples:**
 
-    >>> f = {+package}.{+class}()
+    >>> f = {{package}}.{{class}}()
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -360,7 +358,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
     :Returns:
 
-        `{+class}`        
+        `{{class}}`        
             The deep copy.
 
     **Examples:**

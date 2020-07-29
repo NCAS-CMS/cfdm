@@ -272,7 +272,7 @@ class Data(abstract.Container):
 
     :Returns:
 
-        `Data`
+        `{{class}}`
             The deep copy.
 
     **Examples:**

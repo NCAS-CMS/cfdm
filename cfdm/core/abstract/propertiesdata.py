@@ -5,7 +5,7 @@ from . import Properties, RewriteDocstringMeta
 
 # --------------------------------------------------------------------
 # See cfdm.core.mixin.container.__docstring_substitution__ for
-# {{...}}  docstring substitutions
+# {{...}} docstring substitutions
 # --------------------------------------------------------------------
 
 

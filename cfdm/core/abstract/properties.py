@@ -14,7 +14,7 @@ from . import Container
 class Properties(Container): #, metaclass=abc.ABCMeta):
     '''Abstract base class for an object with descriptive properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, source=None, copy=True):
@@ -61,7 +61,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
     def clear_properties(self):
         '''Remove all properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_property` `properties`, `set_properties`
 
@@ -101,7 +101,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
     def del_property(self, prop, default=ValueError()):
         '''Remove a property.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_properties`, `get_property`, `has_property`,
                  `properties`, `set_property`
@@ -149,7 +149,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
     def get_property(self, prop, default=ValueError()):
         '''Return a property.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_property`, `has_property`, `properties`,
                  `set_property`
@@ -196,7 +196,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
     def has_property(self, prop):
         '''Whether a property has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_property`, `get_property`, `properties`,
                  `set_property`
@@ -237,7 +237,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
     def properties(self):
         '''Return all properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_properties`, `get_property`, `has_property`
                  `set_properties`
@@ -276,7 +276,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
     def set_properties(self, properties, copy=True):
         '''Set properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_properties`, `properties`, `set_property`
 
@@ -332,7 +332,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
     def set_property(self, prop, value, copy=True):
         '''Set a property.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_property`, `get_property`, `has_property`,
                  `properties`, `set_properties`

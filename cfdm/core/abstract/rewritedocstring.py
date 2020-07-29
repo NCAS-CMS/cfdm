@@ -1,70 +1,6 @@
 import inspect
 import re
 
-
-#def _replacement_class(match):
-#    '''Return the first of the match groups.
-#
-#    '''
-#    return match.group(1)
-#
-#def _replacement_core_class(match):
-#    '''Return the first of the match groups prefixed by 'core.'
-#
-#    '''
-#    return 'core.' + match.group(1)
-
-#def _docstring_update(class_name, f, method_name, module, config):
-#    '''
-#    
-#    '''
-#    doc = f.__doc__
-#    if doc is None:
-#        return
-#
-#    # ----------------------------------------------------------------
-#    # Find the package name, class name, and whether or we are in the
-#    # cfdm.core package.
-#    # ----------------------------------------------------------------
-#    core = False
-#    module = module.split('.')
-#    if len(module) >= 2:
-#        package_name, package2 = module[:2]
-#        if package_name == 'cfdm' and package2 == 'core':
-#            class_name = 'core.' + class_name
-#            core = True
-#    else:
-#        package_name = module[0]
-#
-#    # ----------------------------------------------------------------
-#    # Do general substitutions first
-#    # ----------------------------------------------------------------
-#    for key, value in config.items():
-#        try:
-#            doc = key.sub(value, doc)
-#        except AttributeError:
-#            doc = doc.replace(key, value)
-#    # --- End: for
-#
-#    # ----------------------------------------------------------------
-#    # Now do special substitutions
-#    # ----------------------------------------------------------------
-#    doc = doc.replace('{{package}}', package_name)
-#    doc = doc.replace('{{class}}', class_name)
-#
-#    if '{{+' in doc:
-#        if core:
-#            func = _replacement_core_class
-#        else:
-#            func = _replacement_class
-#            
-#        doc = _plus_class_regex.sub(func, doc)
-#    
-#    # ----------------------------------------------------------------
-#    # Add the rewritten docstring to the method
-#    # ----------------------------------------------------------------
-#    f.__doc__ = doc 
-
     
 class RewriteDocstringMeta(type):
     '''Modify docstrings.
@@ -84,21 +20,12 @@ class RewriteDocstringMeta(type):
     Based on
     http://www.jesshamrick.com/2013/04/17/rewriting-python-docstrings-with-a-metaclass/
 
-    .. versionadded:: 1.8.7
+    .. versionadded:: (cfdm) 1.8.7
 
     '''
     _plus_class_regex = re.compile('{{\+(\w.*?)}}')
 
     def __new__(cls, name, parents, attrs):
-        
-#        docstring_rewrite = attrs.get('__docstring_substitution__', None)
-#        if docstring_rewrite is not None:
-#            docstring_rewrite = docstring_rewrite(None)
-#            print  ('      XXX', name, parents)
-#        else:
-#            print ('      {}', name, parents)
-#            docstring_rewrite = {}
-
         docstring_rewrite = {}
         for parent in parents[::-1]:
             parent_docstring_rewrite = getattr(
@@ -112,8 +39,8 @@ class RewriteDocstringMeta(type):
              docstring_rewrite.update(class_docstring_rewrite(None))
 
         for attr_name in attrs:
-            # Skip special and private methods
-            if attr_name.startswith('_'):
+            # Skip special # and private methods
+            if attr_name.startswith('__'):
                 continue
     
             # Skip non-functions
@@ -151,28 +78,13 @@ class RewriteDocstringMeta(type):
         # --- End: for
  
         for parent in parents:
-#            if name == 'Field':
-#                print (parent)
-#            docstring_rewrite_2 = getattr(
-#                parent, '__docstring_substitution__', None)
-#            if docstring_rewrite_2 is not None:
-##                docstring_rewrite = docstring_rewrite(parent)
-#                docstring_rewrite.update(docstring_rewrite_2(None))
-#                print ('update', parent)
-##            else:
-#                docstring_rewrite = {}
-#
-#            if not docstring_rewrite:
-#                # Docstring rewriting has been disabled for this class
-#                continue
-            
             for attr_name in dir(parent):
                 # We already have this method
                 if attr_name in attrs:
                     continue
  
-                # Skip special and private methods
-                if attr_name.startswith('_'):
+                # Skip special #and private methods
+                if attr_name.startswith('__'):
                     continue
 
                 # ----------------------------------------------------
