@@ -1495,7 +1495,7 @@ class Field(mixin.NetCDFVariable,
                 return True
 
         return False
-            
+
     @_inplace_enabled
     def insert_dimension(self, axis, position=0, inplace=False):
         '''Expand the shape of the data array.

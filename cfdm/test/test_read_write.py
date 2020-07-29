@@ -411,28 +411,28 @@ class read_writeTest(unittest.TestCase):
                 "{!r}, {!r}".format(
                     g.get_property('Conventions'), Conventions))
 
-    def test_read_write_duplicate_names(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        a = []
-        for filename in (
-                'geometry_1.nc',
-                'geometry_2.nc',
-                'geometry_3.nc',
-                'geometry_4.nc',
-                'geometry_interior_ring_2.nc',
-                'geometry_interior_ring.nc',
-        ):
-            a.extend(cfdm.read(filename))
-        print (a)
-        print (a[0].dump())
-        print ('THE WRITE')
-        tmpfile = 'delme.nc'
-        cfdm.write(a, tmpfile, verbose=-1)
-        print ('\n\n\n\n FINAL READ \n\n\n\n\n')
-        f = cfdm.read(tmpfile, verbose=-1)
-        print ('WWWWWWWW')
+#    def test_read_write_duplicate_names(self):
+#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+#            return
+#
+#        a = []
+#        for filename in (
+#                'geometry_1.nc',
+#                'geometry_2.nc',
+#                'geometry_3.nc',
+#                'geometry_4.nc',
+#                'geometry_interior_ring_2.nc',
+#                'geometry_interior_ring.nc',
+#        ):
+#            a.extend(cfdm.read(filename))
+#        print (a)
+#        print (a[0].dump())
+#        print ('THE WRITE')
+#        tmpfile = 'delme.nc'
+#        cfdm.write(a, tmpfile, verbose=-1)
+#        print ('\n\n\n\n FINAL READ \n\n\n\n\n')
+#        f = cfdm.read(tmpfile, verbose=-1)
+#        print ('WWWWWWWW')
 # --- End: class
 
 

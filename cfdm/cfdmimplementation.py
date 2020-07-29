@@ -247,7 +247,7 @@ class CFDMImplementation(Implementation):
 
     def data_insert_dimension(self, data, position):
         '''Insert a new dimension into a data array.
-        
+
     :Parameters:
 
         bounds: data
@@ -686,9 +686,9 @@ class CFDMImplementation(Implementation):
     (180, 2)
 
         '''
-        if isdata:            
+        if isdata:
             return parent.shape
-        
+
         return parent.data.shape
 
     def get_data_size(self, parent):

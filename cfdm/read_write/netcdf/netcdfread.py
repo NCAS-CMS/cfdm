@@ -2102,8 +2102,6 @@ class NetCDFRead(IORead):
         self.implementation.nc_set_sample_dimension(
             nodes_per_geometry, self._ncdim_abspath(node_dimension))
 
-        
-        print ( 'part_node_count=', part_node_count)
         if part_node_count is None:
             # --------------------------------------------------------
             # There is no part_count variable, i.e. cell has exactly
@@ -2111,18 +2109,16 @@ class NetCDFRead(IORead):
             #
             # => we can treat the nodes as a contiguous ragged array
             # --------------------------------------------------------
-            print ('111 self._set_ragged_contiguous_parameters')
             element_dimension = self._set_ragged_contiguous_parameters(
                 elements_per_instance=nodes_per_geometry,
                 sample_dimension=node_dimension,
                 element_dimension='node',
                 instance_dimension=geometry_dimension)
-             
+
 #            g['compression'][node_dimension]['netCDF_variables'] = (
 #                parsed_node_coordinates[:])
             g['compression'][node_dimension].setdefault(
                 'netCDF_variables', set()).update(parsed_node_coordinates)
-            print ("g['compression']", g['compression'])
         else:
             # --------------------------------------------------------
             # There is a part_count variable.
@@ -2849,7 +2845,7 @@ class NetCDFRead(IORead):
         field_ncdimensions = self._ncdimensions(field_ncvar)
 
         field_groups = g['variable_groups'][field_ncvar]
-        print ('\n\n\n\n', field_ncvar, 'field_ncdimensions=',field_ncdimensions)
+
         for ncdim in field_ncdimensions:
             ncvar, method = self._find_coordinate_variable(field_ncvar,
                                                            field_groups,
@@ -3095,13 +3091,12 @@ class NetCDFRead(IORead):
                 if node_ncvar in g['auxiliary_coordinate']:
                     coord = g['auxiliary_coordinate'][node_ncvar].copy()
                 else:
-                    print (999999999999999999)
                     coord = self._create_auxiliary_coordinate(
                         field_ncvar=field_ncvar,
                         ncvar=None,
                         f=f,
                         bounds_ncvar=node_ncvar)
-                    print (999999999999999999777)
+
                     geometry_type = geometry['geometry_type']
                     if geometry_type is not None:
                         self.implementation.set_geometry(coord, geometry_type)
@@ -3117,11 +3112,6 @@ class NetCDFRead(IORead):
                 # the data variable
                 geometry_dimension = geometry['geometry_dimension']
                 if geometry_dimension not in g['ncdim_to_axis']:
-                    ooo = self._get_geometry(field_ncvar, return_ncvar=1)
-                    print (field_ncvar, ooo, geometry)
-                    print ('ooo=', ooo)
-                    print ('ppp', g['geometries'])
-                    print (g['variable_geometry'][field_ncvar])
                     raise ValueError(
                         "Geometry dimension {!r} is not in "
                         "read_vars['ncdim_to_axis']: {}".format(
@@ -3686,7 +3676,7 @@ class NetCDFRead(IORead):
         return_ncvar: `bool`
             If True then return the netCDF variable name of the
             geometry instead.
-        
+
     :Returns:
 
         `dict` or `str` or None`
@@ -3704,7 +3694,7 @@ class NetCDFRead(IORead):
                     return geometry_ncvar
 
                 return
-            
+
             return g['geometries'].get(geometry_ncvar)
 
     def _add_message(self, field_ncvar, ncvar, message=None,
@@ -3996,7 +3986,6 @@ class NetCDFRead(IORead):
                 elif geometry:
                     bounds_ncvar = properties.pop('nodes', None)
                     if bounds_ncvar is not None:
-                        print (12345667, ncvar, bounds_ncvar)
                         attribute = 'nodes'
         # --- End: if
 
@@ -4071,21 +4060,10 @@ class NetCDFRead(IORead):
                 self._set_default_FillValue(bounds, bounds_ncvar)
 
             bounds_dimensions = g['variable_dimensions'][bounds_ncvar]
-            print ('______ 0')
+
             bounds_data = self._create_data(bounds_ncvar, bounds,
                                             parent_ncvar=ncvar)
-#            if attribute == 'nodes' and data is not None:
-#                bounds_shape = self.implementation.get_data_shape(
-#                    bounds_data, isdata=True)
-#                coord_shape = self.implementation.get_data_shape(
-#                    data, isdata=True)
-#                if bounds_shape != coord_shape:
-#                    print ('CHEYW', ncvar, bounds_ncvar)
-#                    bounds_data = self.implementation.data_insert_dimension(
-#                        bounds_data, position=1)
-#            # --- End: if
-            
-            print ('______ 1')
+
             self.implementation.set_data(bounds, bounds_data, copy=False)
 
             # Store the netCDF variable name
@@ -4096,11 +4074,6 @@ class NetCDFRead(IORead):
                 g['variable_dimensions'][bounds_ncvar][-1]
             )
 
-            print ('GGGGGG', self._get_geometry(field_ncvar, return_ncvar=True), geometry)
-            print ('coord_ncvar=', ncvar)
-            print ('bounds_ncvar=', bounds_ncvar)
-            print (c.dump())
-            print (bounds.dump())
             self.implementation.nc_set_dimension(bounds, bounds_ncdim)
             self.implementation.set_bounds(c, bounds, copy=False)
 
@@ -4112,10 +4085,6 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             if (geometry is not None
                     and bounds_ncvar in geometry['node_coordinates']):
-                print (g['geometries'].keys())
-                print (g['variable_geometry'])
-                print (g['geometries'])
-                print (geometry)
                 # Record the netCDF node dimension name
                 count = self.implementation.get_count(bounds)
                 node_ncdim = self.implementation.nc_get_sample_dimension(count)
@@ -4668,38 +4637,32 @@ class NetCDFRead(IORead):
         compression = g['compression']
 
         dimensions = g['variable_dimensions'][ncvar]
-        print (uncompress_override , uncompress_override is not None and not uncompress_override)
-        
+
         if ((uncompress_override is not None and uncompress_override) or
                 not compression or
                 not set(compression).intersection(dimensions)):
             # --------------------------------------------------------
             # The array is not compressed (or not to be uncompressed)
             # --------------------------------------------------------
-            print ('PASS compression', set(compression), dimensions)
             pass
 
         else:
-            print ('COMPRESSED', ncvar, dimensions, compression.keys())
             # --------------------------------------------------------
             # The array is compressed
             # --------------------------------------------------------
             # Loop round the dimensions of data variable, as they
             # appear in the netCDF file
             for ncdim in dimensions:
-                print (ncdim)
                 if ncdim in compression:
                     # This dimension represents two or more compressed
                     # dimensions
                     c = compression[ncdim]
-                    print ('c=',c)
                     if ncvar not in c.get('netCDF_variables', (ncvar,)):
                         # This variable is not compressed, even though
                         # it spans a dimension that is compressed for
                         # some other variables For example, this sort
                         # of situation may arise with simple
                         # geometries.
-                        print (888)
                         continue
 
                     if 'gathered' in c:
