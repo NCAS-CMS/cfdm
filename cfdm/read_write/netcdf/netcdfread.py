@@ -2072,7 +2072,7 @@ class NetCDFRead(IORead):
 
             # --------------------------------------------------------
             # Cell dimension can not be taken from the node_count
-            # variable (becuase it doesn't exist), so it has to be
+            # variable (because it doesn't exist), so it has to be
             # taken from one of the node_coordinate variables,
             # instead.
             # --------------------------------------------------------
@@ -2102,6 +2102,8 @@ class NetCDFRead(IORead):
         self.implementation.nc_set_sample_dimension(
             nodes_per_geometry, self._ncdim_abspath(node_dimension))
 
+        
+        print ( 'part_node_count=', part_node_count)
         if part_node_count is None:
             # --------------------------------------------------------
             # There is no part_count variable, i.e. cell has exactly
@@ -2109,14 +2111,18 @@ class NetCDFRead(IORead):
             #
             # => we can treat the nodes as a contiguous ragged array
             # --------------------------------------------------------
+            print ('111 self._set_ragged_contiguous_parameters')
             element_dimension = self._set_ragged_contiguous_parameters(
                 elements_per_instance=nodes_per_geometry,
                 sample_dimension=node_dimension,
                 element_dimension='node',
                 instance_dimension=geometry_dimension)
-
-            g['compression'][node_dimension]['netCDF_variables'] = (
-                parsed_node_coordinates[:])
+             
+#            g['compression'][node_dimension]['netCDF_variables'] = (
+#                parsed_node_coordinates[:])
+            g['compression'][node_dimension].setdefault(
+                'netCDF_variables', set()).update(parsed_node_coordinates)
+            print ("g['compression']", g['compression'])
         else:
             # --------------------------------------------------------
             # There is a part_count variable.
@@ -2139,7 +2145,7 @@ class NetCDFRead(IORead):
             total_number_of_parts = self.implementation.get_data_size(parts)
 
             parts_data = self.implementation.get_data(parts)
-#            print ('PARTS_DATA=',repr(parts_data), parts_data.array)
+
             nodes_per_geometry_data = self.implementation.get_data(
                 nodes_per_geometry)
 
@@ -2152,11 +2158,10 @@ class NetCDFRead(IORead):
                     nodes_per_geometry)):
                 n_nodes_in_this_cell = int(nodes_per_geometry_data[cell_no])
 
-                # Initiailize partial_node_count, a running count
-                # of how many nodes there are in this geometry
+                # Initialise partial_node_count, a running count of
+                # how many nodes there are in this geometry
                 n_nodes = 0
 
-#                print ('cell_no=', cell_no)
                 for k in range(i, total_number_of_parts):
                     index.data[k] = instance_index
                     n_nodes += int(parts_data[k])
@@ -2844,7 +2849,7 @@ class NetCDFRead(IORead):
         field_ncdimensions = self._ncdimensions(field_ncvar)
 
         field_groups = g['variable_groups'][field_ncvar]
-
+        print ('\n\n\n\n', field_ncvar, 'field_ncdimensions=',field_ncdimensions)
         for ncdim in field_ncdimensions:
             ncvar, method = self._find_coordinate_variable(field_ncvar,
                                                            field_groups,
@@ -3112,9 +3117,15 @@ class NetCDFRead(IORead):
                 # the data variable
                 geometry_dimension = geometry['geometry_dimension']
                 if geometry_dimension not in g['ncdim_to_axis']:
-                    logger.warning(
-                        "geometry['geometry_dimension'] is not in "
-                        "g['ncdim_to_axis']"
+                    ooo = self._get_geometry(field_ncvar, return_ncvar=1)
+                    print (field_ncvar, ooo, geometry)
+                    print ('ooo=', ooo)
+                    print ('ppp', g['geometries'])
+                    print (g['variable_geometry'][field_ncvar])
+                    raise ValueError(
+                        "Geometry dimension {!r} is not in "
+                        "read_vars['ncdim_to_axis']: {}".format(
+                            geometry_dimension, g['ncdim_to_axis'])
                     )
 
                 aux = self.implementation.set_auxiliary_coordinate(
@@ -3662,7 +3673,7 @@ class NetCDFRead(IORead):
         datatype = self.read_vars['variables'][ncvar].dtype
         return datatype != str and datatype.kind in 'SU'
 
-    def _get_geometry(self, field_ncvar):
+    def _get_geometry(self, field_ncvar, return_ncvar=False):
         '''Return a geometry container for this field construct.
 
     .. versionadded:: 1.8.0
@@ -3672,18 +3683,28 @@ class NetCDFRead(IORead):
         field_ncvar: `str`
             The netCDF varibale name for the field construct.
 
+        return_ncvar: `bool`
+            If True then return the netCDF variable name of the
+            geometry instead.
+        
     :Returns:
 
-        `dict` or `None`
-            A `dict` containing geometry container information. If
-            there is no geometry container for this data variable, or
-            if the dataset version is CF<=1.7, then `None` is
-            returned.
+        `dict` or `str` or None`
+            A `dict` containing geometry container information, or the
+            netCDF geometry container name. If there is no geometry
+            container for this data variable, or if the dataset
+            version is CF<=1.7, then `None` is returned.
 
         '''
         g = self.read_vars
         if g['CF>=1.8']:
             geometry_ncvar = g['variable_geometry'].get(field_ncvar)
+            if return_ncvar:
+                if geometry_ncvar in g['geometries']:
+                    return geometry_ncvar
+
+                return
+            
             return g['geometries'].get(geometry_ncvar)
 
     def _add_message(self, field_ncvar, ncvar, message=None,
@@ -3975,6 +3996,7 @@ class NetCDFRead(IORead):
                 elif geometry:
                     bounds_ncvar = properties.pop('nodes', None)
                     if bounds_ncvar is not None:
+                        print (12345667, ncvar, bounds_ncvar)
                         attribute = 'nodes'
         # --- End: if
 
@@ -4002,6 +4024,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             self._set_default_FillValue(c, ncvar)
 
+        data = None
         if has_coordinates and ncvar is not None:
             data = self._create_data(ncvar, c)
             self.implementation.set_data(c, data, copy=False)
@@ -4048,10 +4071,21 @@ class NetCDFRead(IORead):
                 self._set_default_FillValue(bounds, bounds_ncvar)
 
             bounds_dimensions = g['variable_dimensions'][bounds_ncvar]
-#            print ('______ 0')
+            print ('______ 0')
             bounds_data = self._create_data(bounds_ncvar, bounds,
                                             parent_ncvar=ncvar)
-#            print ('______ 1')
+#            if attribute == 'nodes' and data is not None:
+#                bounds_shape = self.implementation.get_data_shape(
+#                    bounds_data, isdata=True)
+#                coord_shape = self.implementation.get_data_shape(
+#                    data, isdata=True)
+#                if bounds_shape != coord_shape:
+#                    print ('CHEYW', ncvar, bounds_ncvar)
+#                    bounds_data = self.implementation.data_insert_dimension(
+#                        bounds_data, position=1)
+#            # --- End: if
+            
+            print ('______ 1')
             self.implementation.set_data(bounds, bounds_data, copy=False)
 
             # Store the netCDF variable name
@@ -4062,6 +4096,11 @@ class NetCDFRead(IORead):
                 g['variable_dimensions'][bounds_ncvar][-1]
             )
 
+            print ('GGGGGG', self._get_geometry(field_ncvar, return_ncvar=True), geometry)
+            print ('coord_ncvar=', ncvar)
+            print ('bounds_ncvar=', bounds_ncvar)
+            print (c.dump())
+            print (bounds.dump())
             self.implementation.nc_set_dimension(bounds, bounds_ncdim)
             self.implementation.set_bounds(c, bounds, copy=False)
 
@@ -4077,9 +4116,6 @@ class NetCDFRead(IORead):
                 print (g['variable_geometry'])
                 print (g['geometries'])
                 print (geometry)
-                print (bounds.dump(), c.dump())
-                print (f.dump())
-                print (f.constructs)
                 # Record the netCDF node dimension name
                 count = self.implementation.get_count(bounds)
                 node_ncdim = self.implementation.nc_get_sample_dimension(count)
@@ -4247,7 +4283,7 @@ class NetCDFRead(IORead):
                                              self._ncdim_abspath(ncdim))
 
         data = self._create_data(ncvar, variable, uncompress_override=True)
-#        print ('data=', ncvar, repr(data))
+
         self.implementation.set_data(variable, data, copy=False)
 
         return variable
@@ -4640,7 +4676,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # The array is not compressed (or not to be uncompressed)
             # --------------------------------------------------------
-            print ('WANK')
+            print ('PASS compression', set(compression), dimensions)
             pass
 
         else:
@@ -4717,7 +4753,6 @@ class NetCDFRead(IORead):
                         # --------------------------------------------
                         # Contiguous ragged array
                         # --------------------------------------------
-                        print ('NOB')
                         c = c['ragged_contiguous']
 
                         i = dimensions.index(ncdim)

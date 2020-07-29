@@ -425,10 +425,12 @@ class read_writeTest(unittest.TestCase):
                 'geometry_interior_ring.nc',
         ):
             a.extend(cfdm.read(filename))
-
+        print (a)
+        print (a[0].dump())
+        print ('THE WRITE')
         tmpfile = 'delme.nc'
-        cfdm.write(a, tmpfile)
-
+        cfdm.write(a, tmpfile, verbose=-1)
+        print ('\n\n\n\n FINAL READ \n\n\n\n\n')
         f = cfdm.read(tmpfile, verbose=-1)
         print ('WWWWWWWW')
 # --- End: class

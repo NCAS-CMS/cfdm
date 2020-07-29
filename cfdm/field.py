@@ -1488,6 +1488,14 @@ class Field(mixin.NetCDFVariable,
 
         return out
 
+    def has_geometry(self):
+        '''TODO'''
+        for c in self.coordinates.values():
+            if c.has_geometry():
+                return True
+
+        return False
+            
     @_inplace_enabled
     def insert_dimension(self, axis, position=0, inplace=False):
         '''Expand the shape of the data array.

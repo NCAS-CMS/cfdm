@@ -153,14 +153,20 @@ class NetCDFWrite(IOWrite):
             if not role:
                 raise ValueError("Must supply role when providing dimsize")
 
-            if base in g['dimensions_with_role'].get(role, ()):
-                if base in ncdim_names and dimsize == g['ncdim_to_size'][base]:
+#            if base in g['dimensions_with_role'].get(role, ()):
+#                if base in ncdim_names and dimsize == g['ncdim_to_size'][base]:
+#                    # Return the name of an existing netCDF dimension
+#                    # with this name, this size, and matching the
+#                    # given role.
+#                    return base
+            for ncdim in g['dimensions_with_role'].get(role, ()):
+                if g['ncdim_to_size'][ncdim] == dimsize:
                     # Return the name of an existing netCDF dimension
                     # with this name, this size, and matching the
                     # given role.
-                    return base
+                    return ncdim
         # --- End: if
-
+#ppp
         if base in existing_names:
             counter = g.setdefault('count_' + base, 1)
 
@@ -177,7 +183,7 @@ class NetCDFWrite(IOWrite):
 
         if role and dimsize is not None:
             g['dimensions_with_role'].setdefault(role, []).append(ncvar)
-
+            
         return ncvar
 
     def _numpy_compressed(self, array):
@@ -923,12 +929,13 @@ class NetCDFWrite(IOWrite):
 
             # assuming 1-d coord ...
             geometry_dimension = g['key_to_ncdims'][key][0]
-
+            
             geometry_id = (geometry_dimension, geometry_type)
             gc.setdefault(
                 geometry_id,
                 {'geometry_type': geometry_type,
-                 'geometry_dimension': geometry_dimension}
+#                 'geometry_dimension': geometry_dimension,
+                }
             )
 
             # Nodes
@@ -1045,6 +1052,8 @@ class NetCDFWrite(IOWrite):
 
         _, geometry_container = gc.popitem()
 
+        g['geometry_dimensions'].add(geometry_dimension)
+        
         return geometry_container
 
     def _already_in_file(self, variable, ncdims=None, ignore_type=False):
@@ -2974,6 +2983,7 @@ class NetCDFWrite(IOWrite):
         for axis, domain_axis in sorted(domain_axes.items()):
             ncdim = self.implementation.nc_get_dimension(domain_axis,
                                                          default=None)
+            print ('ncdim =', ncdim)
 #            if ncdim is not None:
 #                ncdim = self._netcdf_name(ncdim)
 
@@ -3125,7 +3135,11 @@ class NetCDFWrite(IOWrite):
                         # --- End: for
                     # --- End: if
 
+                    if not use_existing_dimension and ncdim in g['geometry_dimensions']:
+                        use_existing_dimension = True
+                    
                     if use_existing_dimension:
+                        print ('ncdim1=', ncdim1)
                         g['axis_to_ncdim'][axis] = ncdim1
                     elif (g['compression_type'] == 'ragged contiguous'
                           and len(data_axes) == 2
@@ -3155,18 +3169,21 @@ class NetCDFWrite(IOWrite):
                         # element dimension
                         g['axis_to_ncdim'][axis] = 'ragged_{}'.format(
                             'indexed_contiguous_element2')
-                    else:
+                    else: #if ncdim not in g['geometry_dimensions']:
+                        print ('aaaaa', ncdim,f.has_geometry(), g['geometry_dimensions'])
                         domain_axis = (
                             self.implementation.get_domain_axes(f)[axis]
                         )
                         ncdim = self.implementation.nc_get_dimension(
                             domain_axis, 'dim')
+                        print ('      ', ncdim)
                         if not g['group']:
                             # A flat file has been requested, so strip
                             # off any group structure from the name.
                             ncdim = self._remove_group_structure(ncdim)
 
                         ncdim = self._netcdf_name(ncdim)
+                        print ('      ', ncdim)
                         unlimited = self.implementation.nc_is_unlimited_axis(
                             f, axis)
                         self._write_dimension(
@@ -3572,7 +3589,7 @@ class NetCDFWrite(IOWrite):
                 omit = tuple(omit)
                 omit += tuple(groups)
         # --- End: if
-
+        print ('... field_ncvar = ', ncvar)
         self._write_netcdf_variable(ncvar, ncdimensions, f, omit=omit,
                                     extra=extra, data_variable=True)
 
@@ -4214,7 +4231,8 @@ class NetCDFWrite(IOWrite):
 
             'geometry_containers': {},
             'geometry_encoding': {},
-
+            'geometry_dimensions': set(),
+        
             'dimensions_with_role': {},
             'dimensions': set(),
 
@@ -4394,6 +4412,7 @@ class NetCDFWrite(IOWrite):
         # Write each field construct
         # ------------------------------------------------------------
         for f in fields:
+            print ('write', repr(f))
             self._write_field(f)
 
         # ------------------------------------------------------------

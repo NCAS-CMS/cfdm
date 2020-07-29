@@ -245,6 +245,22 @@ class CFDMImplementation(Implementation):
         '''
         return field.convert(construct_id, full_domain=False)
 
+    def data_insert_dimension(self, data, position):
+        '''Insert a new dimension into a data array.
+        
+    :Parameters:
+
+        bounds: data
+
+        position: `int`
+
+    :Returns:
+
+            The new data array
+
+        '''
+        return data.insert_dimension(position=position)
+
     def del_property(self, construct, prop, default):
         ''''Remove a property from a construct.
 
@@ -641,13 +657,16 @@ class CFDMImplementation(Implementation):
         '''
         return parent.data.ndim
 
-    def get_data_shape(self, parent):
+    def get_data_shape(self, parent, isdata=False):
         '''Return the shape of the data array.
 
     :Parameters:
 
         parent:
             The object containing the data array.
+
+        isdata: `bool`
+            If True then the prent is already a data object
 
     :Returns:
 
@@ -667,6 +686,9 @@ class CFDMImplementation(Implementation):
     (180, 2)
 
         '''
+        if isdata:            
+            return parent.shape
+        
         return parent.data.shape
 
     def get_data_size(self, parent):
