@@ -7,7 +7,7 @@ import cfdm
 
 
 class styleTest(unittest.TestCase):
-    """Test PEP8 compliance on all Python '.py' files in the 'cf' directory."""
+    """Test PEP8 compliance on all '.py' files in the 'cfdm' directory."""
     def setUp(self):
         self.cfdm_dir = os.path.dirname(os.path.abspath(__file__))
         os.chdir(self.cfdm_dir)
@@ -30,10 +30,10 @@ class styleTest(unittest.TestCase):
             'E722',  # ...lots of "bare except" cases need to be addressed
         )
 
-        # Find all Python source code ('.py') files in the 'cf' directory,
+        # Find all Python source code ('.py') files in the 'cfdm' directory,
         # including all unskipped sub-directories within e.g. test directory:
         python_files = []
-        for root_dir, dirs, filelist in os.walk('..'):  # '..' to test/ == cfdm/
+        for root_dir, dirs, filelist in os.walk('..'):  # '..' == 'cfdm/'
             if os.path.basename(root_dir) in skip_dirs:
                 continue
             python_files += [

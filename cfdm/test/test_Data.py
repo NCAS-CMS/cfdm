@@ -58,7 +58,7 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.any())
 
     def test_Data__repr__str(self):
-        '''Check cf.Data.__repr__, cf.Data.__str__'''
+        '''Check cfdm.Data.__repr__, cfdm.Data.__str__'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -83,7 +83,7 @@ class DataTest(unittest.TestCase):
 #            return
 
     def test_Data__setitem__(self):
-        '''Check cf.Data.__setitem__'''
+        '''Check cfdm.Data.__setitem__'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -143,7 +143,7 @@ class DataTest(unittest.TestCase):
         self.assertIs(a[()], numpy.ma.masked)
 
     def test_Data_apply_masking(self):
-        '''Check cf.Data.apply_masking'''
+        '''Check cfdm.Data.apply_masking'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -221,7 +221,7 @@ class DataTest(unittest.TestCase):
 #            pass
 
     def test_Data_array(self):
-        '''Check cf.Data.array'''
+        '''Check cfdm.Data.array'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -266,7 +266,7 @@ class DataTest(unittest.TestCase):
         self.assertFalse((a2 == a).all())
 
     def test_Data_datetime_array(self):
-        '''Check cf.Data.datetime_array'''
+        '''Check cfdm.Data.datetime_array'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -289,7 +289,7 @@ class DataTest(unittest.TestCase):
         self.assertIs(dt[()], numpy.ma.masked)
 
     def test_Data_flatten(self):
-        '''Check cf.Data.flatten'''
+        '''Check cfdm.Data.flatten'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -327,7 +327,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(e.size, d.size)
 
     def test_Data_transpose(self):
-        '''Check cf.Data.transpose'''
+        '''Check cfdm.Data.transpose'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -345,7 +345,7 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
     def test_Data_unique(self):
-        '''Check cf.Data.unique'''
+        '''Check cfdm.Data.unique'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -362,7 +362,7 @@ class DataTest(unittest.TestCase):
             (u.array == cfdm.Data([1, 2, 4], 'metre').array).all())
 
     def test_Data_equals(self):
-        '''Check cf.Data.equals'''
+        '''Check cfdm.Data.equals'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -377,8 +377,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(d, verbose=3))
 
     def test_Data_max_min_sum_squeeze(self):
-        '''Check cf.Data.maximum, cf.Data.minumum, cf.Data.sum,
-    cf.Data.squeeze'''
+        '''Check cfdm.Data.maximum, cfdm.Data.minumum, cfdm.Data.sum,
+    cfdm.Data.squeeze'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -424,7 +424,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((x.array == b).all(), (x.shape, b.shape))
 
     def test_Data_dtype_mask(self):
-        '''Check cf.Data.dtype, cf.Data.mask'''
+        '''Check cfdm.Data.dtype, cfdm.Data.mask'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 

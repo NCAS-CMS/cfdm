@@ -4020,7 +4020,7 @@ class NetCDFWrite(IOWrite):
 
     :Parameters:
 
-        fields : (arbitrarily nested sequence of) `cf.Field`
+        fields : (arbitrarily nested sequence of) `cfdm.Field`
             The field or fields to write to the file.
 
         filename : str
@@ -4154,8 +4154,8 @@ class NetCDFWrite(IOWrite):
     >>> write(f, 'file')
 
     >>> type(f)
-    <class 'cf.field.FieldList'>
-    >>> cf.write([f, g], 'file.nc', verbose=3)
+    <class 'cfdm.field.FieldList'>
+    >>> cfdm.write([f, g], 'file.nc', verbose=3)
     [<CF Field: air_pressure(30, 24)>,
      <CF Field: u_compnt_of_wind(19, 29, 24)>,
      <CF Field: v_compnt_of_wind(19, 29, 24)>,
