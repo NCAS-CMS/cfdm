@@ -4,7 +4,7 @@ import re
 
 from copy import copy, deepcopy
 
-from . import RewriteDocstringMeta
+from ..meta import RewriteDocstringMeta
 
 
 class Container(metaclass=RewriteDocstringMeta):

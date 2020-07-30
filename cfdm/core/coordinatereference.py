@@ -1,10 +1,10 @@
-from . import abstract
+from . import mixin
 
 from . import CoordinateConversion
 from . import Datum
 
 
-class CoordinateReference(abstract.Container):
+class CoordinateReference(mixin.Container):
     '''A coordinate reference construct of the CF data model.
 
     A coordinate reference construct relates the coordinate values of

@@ -23,9 +23,23 @@ class RewriteDocstringMeta(type):
     .. versionadded:: (cfdm) 1.8.7
 
     '''
+    # Define the "plus class" regular expression
     _plus_class_regex = re.compile('{{\+(\w.*?)}}')
 
     def __new__(cls, name, parents, attrs):
+        '''TODO
+
+        '''
+#        print (name, attrs['__module__'], type(name))
+#        if name == 'NumpyArray':
+#            print ('TOP', attrs.keys())
+        # ------------------------------------------------------------
+        # Combine the docstring substitutions from all classes in the
+        # inheritance tree.
+        #
+        # The value for a key that occurs in multiple classes will be
+        # taken from the class closest to the child class.
+        # ------------------------------------------------------------
         docstring_rewrite = {}
         for parent in parents[::-1]:
             parent_docstring_rewrite = getattr(
@@ -38,16 +52,35 @@ class RewriteDocstringMeta(type):
         if class_docstring_rewrite is not None:
              docstring_rewrite.update(class_docstring_rewrite(None))
 
-        for attr_name in attrs:
-            # Skip special # and private methods
+        for attr_name, attr in attrs.items():
+            # Skip special methods
             if attr_name.startswith('__'):
                 continue
     
-            # Skip non-functions
-            attr = attrs[attr_name]
-                
+#            # Skip non-functions
+#            attr = attrs[attr_name]
+
+            # Skip methods without docstrings
             if not hasattr(attr, '__doc__'):
                 continue
+
+#            # @property
+#            if hasattr(attr, 'fget'):
+#                if name == 'NumpyArray':
+#                    print ('  ', attr_name, name, type(attr))
+#                    
+##                # Copy the method
+##                attr = type(attr)(attr.fget, attr.fset, attr.fdel,
+##                                  doc=attr.__doc__)
+#                
+#                # Update docstring
+#                RewriteDocstringMeta._docstring_update(name, attr,
+#                                                       attr_name,
+#                                                       attrs['__module__'],
+#                                                       docstring_rewrite)
+#                
+##                attrs[attr_name] = attr
+#                continue
 
             # @property or normal method
             if hasattr(attr, '__call__') or hasattr(attr, 'fget'):
@@ -56,7 +89,6 @@ class RewriteDocstringMeta(type):
                                                        attr_name,
                                                        attrs['__module__'],
                                                        docstring_rewrite)
-
                 continue
 
             # classmethod
@@ -76,14 +108,20 @@ class RewriteDocstringMeta(type):
 
                 attrs[attr_name] = classmethod(attr)
         # --- End: for
- 
+#        if name == 'NumpyArray':
+#            print ('MIDDLE', attrs.keys())
         for parent in parents:
+#            if name == 'NumpyArray':
+#                print (parent, dir(parent))
             for attr_name in dir(parent):
+            
                 # We already have this method
                 if attr_name in attrs:
+#                    if name == 'NumpyArray':
+##                        print ('    ', attr_name, parent.__name__)
                     continue
  
-                # Skip special #and private methods
+                # Skip special methods
                 if attr_name.startswith('__'):
                     continue
 

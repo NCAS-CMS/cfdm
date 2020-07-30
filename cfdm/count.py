@@ -6,7 +6,7 @@ class Count(mixin.NetCDFVariable,
             mixin.NetCDFDimension,
             mixin.NetCDFSampleDimension,
             mixin.PropertiesData,
-            core.abstract.PropertiesData):
+            core.mixin.PropertiesData):
     '''A count variable required to uncompress a ragged array.
 
     A collection of features stored using a contiguous ragged array

@@ -4,7 +4,7 @@ from . import core
 
 class List(mixin.NetCDFVariable,
            mixin.PropertiesData,
-           core.abstract.PropertiesData):
+           core.mixin.PropertiesData):
     '''A list variable required to uncompress a gathered array.
 
     Compression by gathering combines axes of a multidimensional array

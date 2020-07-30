@@ -1,7 +1,7 @@
-from . import abstract
+from . import mixin
 
 
-class AuxiliaryCoordinate(abstract.Coordinate):
+class AuxiliaryCoordinate(mixin.Coordinate):
     '''An auxiliary coordinate construct of the CF data model.
 
     An auxiliary coordinate construct provides information which

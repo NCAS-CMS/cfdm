@@ -1,7 +1,7 @@
-from . import abstract
+from . import mixin
 
 
-class DomainAncillary(abstract.PropertiesDataBounds):
+class DomainAncillary(mixin.PropertiesDataBounds):
     '''A domain ancillary construct of the CF data model.
 
     A domain ancillary construct provides information which is needed

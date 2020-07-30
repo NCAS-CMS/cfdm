@@ -6,7 +6,7 @@ class Index(mixin.NetCDFVariable,
             mixin.NetCDFDimension,
             mixin.NetCDFSampleDimension,
             mixin.PropertiesData,
-            core.abstract.PropertiesData):
+            core.mixin.PropertiesData):
     '''An index variable required to uncompress a ragged array.
 
     A collection of features stored using an indexed ragged array

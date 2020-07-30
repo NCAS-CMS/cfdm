@@ -1,6 +1,6 @@
 import abc
 
-from . import Properties, RewriteDocstringMeta
+from . import Properties #, RewriteDocstringMeta
 
 
 # --------------------------------------------------------------------

@@ -1,4 +1,4 @@
-from ..abstract import RewriteDocstringMeta
+from ..meta import RewriteDocstringMeta
 
 
 class ConstructAccess(metaclass=RewriteDocstringMeta):
@@ -64,10 +64,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
             *Parameter example:*
               ``key='domainaxis1'``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            construct does not exist. If set to an `Exception`
-            instance then it will be raised instead.
+        {[default: optional}}
 
     :Returns:
 
@@ -203,10 +200,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
             *Parameter example:*
               ``key='auxiliarycoordinate0'``
 
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set. If set to an `Exception` instance
-            then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 

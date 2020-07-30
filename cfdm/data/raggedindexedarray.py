@@ -1,11 +1,14 @@
 import numpy
 
+from ..core.data import Array as core_Array
+
 from . import abstract
 from . import mixin
 
 
 class RaggedIndexedArray(mixin.RaggedIndexed,
-                         abstract.CompressedArray):
+                         abstract.CompressedArray,
+                         core_Array):
     '''An underlying indexed ragged array.
 
     A collection of features stored using an indexed ragged array
@@ -17,7 +20,7 @@ class RaggedIndexedArray(mixin.RaggedIndexed,
     "index variable" that specifies the feature that each element of
     the sample dimension belongs to.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
@@ -69,6 +72,8 @@ class RaggedIndexedArray(mixin.RaggedIndexed,
         then these indices work independently along each dimension
         (similar to the way vector subscripts work in Fortran).
 
+    .. versionadded:: (cfdm) 1.7.0
+
         '''
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
@@ -102,9 +107,11 @@ class RaggedIndexedArray(mixin.RaggedIndexed,
 
     There is no change to an array that is already in memory.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Returns:
 
-        `RaggedIndexedArray`
+        `{{class}}`
             The array that is stored in memory.
 
     **Examples:**

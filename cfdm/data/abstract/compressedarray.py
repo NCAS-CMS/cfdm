@@ -338,7 +338,7 @@ class CompressedArray(Array): #, metaclass=abc.ABCMeta):
 
     :Returns:
 
-        `CompressedArray`
+        `{{class}}`
             The array that is stored in memory.
 
     **Examples:**
@@ -361,7 +361,7 @@ class CompressedArray(Array): #, metaclass=abc.ABCMeta):
 
     :Returns:
 
-        subclass of `Array`
+        subclass of `{{+Array}}`
             The underlying array object.
 
     **Examples:**

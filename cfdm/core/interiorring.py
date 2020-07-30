@@ -1,7 +1,7 @@
-from . import abstract
+from . import mixin
 
 
-class InteriorRing(abstract.PropertiesData):
+class InteriorRing(mixin.PropertiesData):
     '''An interior ring array with properties.
 
     If a cell is composed of multiple polygon parts, an individual

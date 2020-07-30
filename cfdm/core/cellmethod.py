@@ -1,9 +1,9 @@
 from copy import deepcopy
 
-from . import abstract
+from . import mixin
 
 
-class CellMethod(abstract.Container):
+class CellMethod(mixin.Container):
     '''A cell method construct of the CF data model.
 
     One or more cell method constructs describe how the cell values of

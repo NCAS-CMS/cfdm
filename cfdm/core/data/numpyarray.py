@@ -6,7 +6,7 @@ from . import abstract
 class NumpyArray(abstract.Array):
     '''A container for a numpy array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, array=None):
@@ -24,7 +24,7 @@ class NumpyArray(abstract.Array):
     def dtype(self):
         '''Data-type of the data elements.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -38,9 +38,9 @@ class NumpyArray(abstract.Array):
 
     @property
     def ndim(self):
-        '''Number of array dimensions
+        '''NUMPYARRAY Number of array dimensions
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -72,7 +72,7 @@ class NumpyArray(abstract.Array):
     def shape(self):
         '''Tuple of array dimension sizes.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -104,7 +104,7 @@ class NumpyArray(abstract.Array):
     def size(self):
         '''Number of elements in the array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -135,7 +135,7 @@ class NumpyArray(abstract.Array):
     def array(self):
         '''Return an independent numpy array containing the data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 

@@ -1,9 +1,9 @@
 import numpy
 
-from . import abstract
+from . import mixin
 
 
-class DimensionCoordinate(abstract.Coordinate):
+class DimensionCoordinate(mixin.Coordinate):
     '''A dimension coordinate construct of the CF data model.
 
     A dimension coordinate construct provides information which locate

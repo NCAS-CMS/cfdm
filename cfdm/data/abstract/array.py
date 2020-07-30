@@ -1,11 +1,9 @@
-import abc
-
 import numpy
 
 from ...core.data import Array as core_Array
 
 
-class Array(core_Array): #, metaclass=abc.ABCMeta):
+class Array: #(core_Array):
     '''Abstract base class for a container of an underlying array.
 
     The form of the array is defined by the initialization parameters
@@ -13,13 +11,13 @@ class Array(core_Array): #, metaclass=abc.ABCMeta):
 
     See `cfdm.NumpyArray` for an example implementation.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __array__(self, *dtype):
         '''The numpy array interface.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -41,7 +39,6 @@ class Array(core_Array): #, metaclass=abc.ABCMeta):
         else:
             return array.astype(dtype[0], copy=False)
 
-    @abc.abstractmethod
     def __getitem__(self, indices):
         '''Return a subspace as an independent numpy array.
 
@@ -61,17 +58,20 @@ class Array(core_Array): #, metaclass=abc.ABCMeta):
       the same behaviour as indexing on a Variable object of the
       netCDF4 package.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
-        raise NotImplementedError()  # pragma: no cover
+        raise NotImplementedError(
+            "Subclasses of cfdm.data.abstract.Array "
+            "must implement '__getitem__'"
+        )  # pragma: no cover
 
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
     x.__repr__() <==> repr(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return "<{0}{1}: >".format(self.__class__.__name__, self.shape)
@@ -81,7 +81,7 @@ class Array(core_Array): #, metaclass=abc.ABCMeta):
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return "shape={0}, dtype={1}".format(self.shape, self.dtype)
@@ -90,7 +90,7 @@ class Array(core_Array): #, metaclass=abc.ABCMeta):
         '''The type of compression that has been applied to the underlying
     array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -127,7 +127,7 @@ class Array(core_Array): #, metaclass=abc.ABCMeta):
         then these indices work independently along each dimension
         (similar to the way vector subscripts work in Fortran).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 

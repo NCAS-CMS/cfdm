@@ -2,7 +2,7 @@ from collections import OrderedDict
 from copy import copy
 
 
-class Constructs(object):
+class Constructs:
     '''A container for metadata constucts.
 
     .. versionadded:: 1.7.0

@@ -1,9 +1,9 @@
 import numpy
 
-from .. import abstract
+from .. import mixin
 
 
-class Data(abstract.Container):
+class Data(mixin.Container):
     '''An orthogonal multidimensional array with masked values and units.
 
     .. versionadded:: 1.7.0
@@ -470,12 +470,11 @@ class Data(abstract.Container):
     def _get_Array(self, default=ValueError()):
         '''Return the array object.
 
+    .. versionadded:: 1.7.0
+
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the array
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -496,14 +495,13 @@ class Data(abstract.Container):
     def get_fill_value(self, default=ValueError()):
         '''Return the missing data value.
 
+    .. versionadded:: 1.7.0
+
     .. seealso:: `del_fill_value`, `has_fill_value`, `set_fill_value`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the fill
-            value has not been set. If set to an `Exception` instance
-            then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
