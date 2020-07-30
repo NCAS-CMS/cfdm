@@ -3,8 +3,8 @@ import numpy
 from ...core.data import Array as core_Array
 
 
-class Array: #(core_Array):
-    '''Abstract base class for a container of an underlying array.
+class Array:
+    '''Mixin class for a container of an underlying array.
 
     The form of the array is defined by the initialization parameters
     of a subclass.

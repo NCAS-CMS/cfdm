@@ -98,6 +98,7 @@ class Container:
             except AttributeError:
                 # Python 2
                 pass
+
             return eq(y, **kwargs)
 
         eq = getattr(y, 'equals', None)

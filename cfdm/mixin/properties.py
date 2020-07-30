@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class Properties(Container):
     '''Mixin class for descriptive properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __str__(self):
@@ -22,7 +22,7 @@ class Properties(Container):
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return '{0}'.format(self.identity(''))
@@ -31,7 +31,7 @@ class Properties(Container):
                          _omit_properties=None):
         '''Dump the properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -72,7 +72,7 @@ class Properties(Container):
              _prefix='', _title=None, _create_title=True, _level=0):
         '''A full description.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -82,6 +82,7 @@ class Properties(Container):
 
     :Returns:
 
+        `str` or `None`
             The description. If *display* is True then the description
             is printed and `None` is returned. Otherwise the
             description is returned as a string.
@@ -149,7 +150,7 @@ class Properties(Container):
     possible with another object of the same type, or a subclass of
     one. See the *ignore_type* parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -298,7 +299,7 @@ class Properties(Container):
     * The netCDF variable name, preceeded by ``'ncvar%'``.
     * The value of the *default* parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -313,8 +314,8 @@ class Properties(Container):
             The identity.
 
     **Examples:**
-        
-    >>> f = {+package}.{+class}()
+
+    >>> f = {{package}}.{{class}}()
     >>> f.set_properties({'foo': 'bar',
     ...                   'long_name': 'Air Temperature',
     ...                   'standard_name': 'air_temperature'}
@@ -366,7 +367,7 @@ class Properties(Container):
       e.g. ``'long_name:Air temperature'``.
     * The netCDF variable name, preceeded by ``'ncvar%'``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 

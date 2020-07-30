@@ -4,15 +4,14 @@ from copy import deepcopy
 
 from . import Container
 
-
 # --------------------------------------------------------------------
 # See cfdm.core.mixin.container.__docstring_substitution__ for
 # {{...}}  docstring substitutions
 # --------------------------------------------------------------------
 
 
-class Parameters(Container): #, metaclass=abc.ABCMeta):
-    '''Abstract base class for a collection of named parameters.
+class Parameters(Container):
+    '''Mixin class for a collection of named parameters.
 
     .. versionadded:: 1.7.0
 

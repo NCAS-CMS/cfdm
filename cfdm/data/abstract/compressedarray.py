@@ -5,9 +5,8 @@ import numpy
 from .array import Array
 
 
-class CompressedArray(Array): #, metaclass=abc.ABCMeta):
-    '''Abstract base class for a container of an underlying compressed
-    array.
+class CompressedArray(Array):
+    '''Mixin class for a container of an underlying compressed array.
 
     See `cfdm.GatheredArray` for an example implementation.
 

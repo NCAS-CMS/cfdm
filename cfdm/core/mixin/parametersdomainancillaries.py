@@ -4,16 +4,15 @@ from copy import deepcopy
 
 from . import Parameters
 
-
 # --------------------------------------------------------------------
 # See cfdm.core.mixin.container.__docstring_substitution__ for
 # {{...}}  docstring substitutions
 # --------------------------------------------------------------------
 
 
-class ParametersDomainAncillaries(Parameters): #, metaclass=abc.ABCMeta):
-    '''Abstract base class for a collection of named parameters and named
-    domain ancillary constructs.
+class ParametersDomainAncillaries(Parameters):
+    '''Mixin class for a collection of named parameters and named domain
+    ancillary constructs.
 
     .. versionadded:: 1.7.0
 

@@ -1,6 +1,11 @@
 import inspect
 import re
 
+# --------------------------------------------------------------------
+# See cfdm.core.mixin.container.__docstring_substitution__ for
+# {{...}}  docstring substitutions
+# --------------------------------------------------------------------
+
 
 from copy import copy, deepcopy
 
@@ -8,7 +13,7 @@ from ..meta import RewriteDocstringMeta
 
 
 class Container(metaclass=RewriteDocstringMeta):
-    '''Base class for storing components.
+    '''Mixin class for storing components.
 
     .. versionadded:: 1.7.0
 
@@ -18,7 +23,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
         '''
         self._components = {}
-                
+
         if source is not None:
             try:
                 custom = source._get_component('custom', {})
@@ -71,7 +76,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
            out = super().__docstring_substitution__()
 
-           # Simple substitutions 
+           # Simple substitutions
            out['{{repr}}'] = 'CF: '
            out['{{foo}}'] = 'bar'
 
@@ -80,7 +85,7 @@ class Container(metaclass=RewriteDocstringMeta):
                instances. It has no default value.""",
 
            # Regular expression subsititions
-           # 
+           #
            # Convert text to upper case
            out[re.compile('{{<upper (.*?)>}}')] = _upper
 
@@ -97,7 +102,7 @@ class Container(metaclass=RewriteDocstringMeta):
             # value prior to replacement in the docstring.
             # --------------------------------------------------------
             '{{repr}}': '',
-            
+
             '{{default: optional}}': '''default: optional
             Return the value of the *default* parameter if data have
             not been set. If set to an `Exception` instance then it
@@ -119,7 +124,7 @@ class Container(metaclass=RewriteDocstringMeta):
             # the docstring.
             # --------------------------------------------------------
         }
-    
+
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -358,7 +363,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
     :Returns:
 
-        `{{class}}`        
+        `{{class}}`
             The deep copy.
 
     **Examples:**

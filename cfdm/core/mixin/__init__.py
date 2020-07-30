@@ -1,5 +1,3 @@
-#from .rewritedocstring import RewriteDocstringMeta
-
 from .constructaccess import ConstructAccess
 
 from .container                   import Container

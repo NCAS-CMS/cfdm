@@ -1,7 +1,6 @@
 import abc
 
-from . import Properties #, RewriteDocstringMeta
-
+from . import Properties
 
 # --------------------------------------------------------------------
 # See cfdm.core.mixin.container.__docstring_substitution__ for
@@ -9,8 +8,8 @@ from . import Properties #, RewriteDocstringMeta
 # --------------------------------------------------------------------
 
 
-class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
-    '''Abstract base class for a data array with descriptive properties.
+class PropertiesData(Properties):
+    '''Mixin class for a data array with descriptive properties.
 
     .. versionadded:: 1.7.0
 
@@ -198,7 +197,7 @@ class PropertiesData(Properties): #, metaclass=abc.ABCMeta):
         {{default: optional}}
 
     :Returns:
-        
+
         `{{+Data}}`
             The data.
 

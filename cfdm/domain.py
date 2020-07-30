@@ -303,7 +303,7 @@ class Domain(mixin.ConstructAccess,
     :Returns:
 
         `bool`
-        
+
     **Examples:**
 
     >>> d.equals(d)

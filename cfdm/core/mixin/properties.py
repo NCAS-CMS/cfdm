@@ -4,15 +4,14 @@ from copy import deepcopy
 
 from . import Container
 
-
 # --------------------------------------------------------------------
 # See cfdm.core.mixin.container.__docstring_substitution__ for
 # {{...}}  docstring substitutions
 # --------------------------------------------------------------------
 
 
-class Properties(Container): #, metaclass=abc.ABCMeta):
-    '''Abstract base class for an object with descriptive properties.
+class Properties(Container):
+    '''Mixin class for an object with descriptive properties.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -71,7 +70,7 @@ class Properties(Container): #, metaclass=abc.ABCMeta):
             The properties that have been removed.
 
     **Examples:**
-        
+
     >>> f = {{package}}.{{class}}()
     >>> f.properties()
     {}

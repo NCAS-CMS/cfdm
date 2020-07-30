@@ -11,8 +11,8 @@ from . import PropertiesData
 # --------------------------------------------------------------------
 
 
-class PropertiesDataBounds(PropertiesData): #, metaclass=abc.ABCMeta):
-    '''Abstract base class for a data array with bounds and descriptive
+class PropertiesDataBounds(PropertiesData):
+    '''Mixin class for a data array with bounds and descriptive
     properties.
 
     .. versionadded:: 1.7.0

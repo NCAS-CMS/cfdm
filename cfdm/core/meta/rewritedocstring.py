@@ -1,13 +1,13 @@
 import inspect
 import re
 
-    
+
 class RewriteDocstringMeta(type):
     '''Modify docstrings.
 
     To do this, we intercede before the class is created and modify
     the docstrings of its attributes.
-    
+
     This will not affect inherited methods, however, so we also need
     to loop through the parent classes. We cannot simply modify the
     docstrings, because then the parent classes' methods will have the
@@ -30,9 +30,6 @@ class RewriteDocstringMeta(type):
         '''TODO
 
         '''
-#        print (name, attrs['__module__'], type(name))
-#        if name == 'NumpyArray':
-#            print ('TOP', attrs.keys())
         # ------------------------------------------------------------
         # Combine the docstring substitutions from all classes in the
         # inheritance tree.
@@ -47,40 +44,19 @@ class RewriteDocstringMeta(type):
             if parent_docstring_rewrite is not None:
                 docstring_rewrite.update(parent_docstring_rewrite(None))
         # --- End: for
-        
+
         class_docstring_rewrite = attrs.get('__docstring_substitution__', None)
         if class_docstring_rewrite is not None:
-             docstring_rewrite.update(class_docstring_rewrite(None))
+            docstring_rewrite.update(class_docstring_rewrite(None))
 
         for attr_name, attr in attrs.items():
             # Skip special methods
             if attr_name.startswith('__'):
                 continue
-    
-#            # Skip non-functions
-#            attr = attrs[attr_name]
 
             # Skip methods without docstrings
             if not hasattr(attr, '__doc__'):
                 continue
-
-#            # @property
-#            if hasattr(attr, 'fget'):
-#                if name == 'NumpyArray':
-#                    print ('  ', attr_name, name, type(attr))
-#                    
-##                # Copy the method
-##                attr = type(attr)(attr.fget, attr.fset, attr.fdel,
-##                                  doc=attr.__doc__)
-#                
-#                # Update docstring
-#                RewriteDocstringMeta._docstring_update(name, attr,
-#                                                       attr_name,
-#                                                       attrs['__module__'],
-#                                                       docstring_rewrite)
-#                
-##                attrs[attr_name] = attr
-#                continue
 
             # @property or normal method
             if hasattr(attr, '__call__') or hasattr(attr, 'fget'):
@@ -94,12 +70,12 @@ class RewriteDocstringMeta(type):
             # classmethod
             if isinstance(attr, classmethod):
                 f = getattr(attr, '__func__')
-                
+
                 # Copy the method
                 attr = type(f)(f.__code__, f.__globals__,
                                f.__name__, f.__defaults__,
                                f.__closure__)
-                
+
                 # Update docstring
                 RewriteDocstringMeta._docstring_update(name, attr,
                                                        attr_name,
@@ -108,19 +84,13 @@ class RewriteDocstringMeta(type):
 
                 attrs[attr_name] = classmethod(attr)
         # --- End: for
-#        if name == 'NumpyArray':
-#            print ('MIDDLE', attrs.keys())
+
         for parent in parents:
-#            if name == 'NumpyArray':
-#                print (parent, dir(parent))
             for attr_name in dir(parent):
-            
                 # We already have this method
                 if attr_name in attrs:
-#                    if name == 'NumpyArray':
-##                        print ('    ', attr_name, parent.__name__)
                     continue
- 
+
                 # Skip special methods
                 if attr_name.startswith('__'):
                     continue
@@ -135,7 +105,7 @@ class RewriteDocstringMeta(type):
                 class_method = False
 
                 try:
-                    if hasattr(original_f , 'fget'):
+                    if hasattr(original_f, 'fget'):
                         # The original function is a property, i.e. it has
                         # been decorated with @property. Copy it.
                         attr = type(original_f)(original_f.fget,
@@ -149,9 +119,9 @@ class RewriteDocstringMeta(type):
                         # Note if the method is a classmethod
                         if inspect.ismethod(original_f):
                             class_method = True
-                            
+
                         f = getattr(original_f, '__func__', original_f)
-    
+
                         # Copy the method
                         attr = type(f)(f.__code__, f.__globals__,
                                        f.__name__, f.__defaults__,
@@ -162,31 +132,31 @@ class RewriteDocstringMeta(type):
                                                            attr_name,
                                                            attrs['__module__'],
                                                            docstring_rewrite)
-                    
+
                     # Register a classmethod
                     if class_method:
                         attr = classmethod(attr)
-                        
+
                     # Put the modified method back into the parent
                     # class
                     attrs[attr_name] = attr
-                    
+
                 except Exception as error:
                     raise Exception(error)
         # --- End: for
-        
+
         # Create the class
         return super().__new__(cls, name, parents, attrs)
 
     @staticmethod
     def _docstring_update(class_name, f, method_name, module, config):
         '''TODO
-        
+
         '''
         doc = f.__doc__
         if doc is None:
             return
-    
+
         # ------------------------------------------------------------
         # Find the package name, class name, and whether or we are in
         # the cfdm.core package.
@@ -210,38 +180,38 @@ class RewriteDocstringMeta(type):
             except AttributeError:
                 doc = doc.replace(key, value)
         # --- End: for
-    
+
         # ------------------------------------------------------------
         # Now do special substitutions
         # ------------------------------------------------------------
         doc = doc.replace('{{package}}', package_name)
         doc = doc.replace('{{class}}', class_name)
-    
+
         if '{{+' in doc:
             if core:
                 func = RewriteDocstringMeta._docstring_replacement_core_class
             else:
                 func = RewriteDocstringMeta._docstring_replacement_class
-                
+
             doc = RewriteDocstringMeta._plus_class_regex.sub(func, doc)
-        
+
         # ----------------------------------------------------------------
         # Set the rewritten docstring on the method
         # ----------------------------------------------------------------
-        f.__doc__ = doc 
-    
+        f.__doc__ = doc
+
     @staticmethod
     def _docstring_replacement_class(match):
         '''Return the first of the match groups.
-        
+
         '''
         return match.group(1)
 
     @staticmethod
     def _docstring_replacement_core_class(match):
         '''Return the first of the match groups prefixed by 'core.'
-        
+
         '''
         return 'core.' + match.group(1)
 
-#--- End: class
+    # --- End: class
