@@ -54,6 +54,8 @@ class RewriteDocstringMeta(type):
             if attr_name.startswith('__'):
                 continue
 
+            if name == 'Field':
+                print ('  ', attr_name)
             # Skip methods without docstrings
             if not hasattr(attr, '__doc__'):
                 continue
@@ -86,7 +88,13 @@ class RewriteDocstringMeta(type):
         # --- End: for
 
         for parent in parents:
+            if name == 'Field':
+                print (parent.__name__)
+
             for attr_name in dir(parent):
+                
+                if name == 'Field' and  parent.__name__ == 'PropertiesData':
+                    print (attr_name)
                 # We already have this method
                 if attr_name in attrs:
                     continue
@@ -104,6 +112,17 @@ class RewriteDocstringMeta(type):
 
                 class_method = False
 
+                if name == 'Field' and  parent.__name__ == 'PropertiesData' and attr_name == '_equals_preprocess':
+                    print ('    name', original_f.__name__, original_f)
+                    print ('    dir', dir(original_f))
+                    print ('    __wrapped__', original_f.__wrapped__.__name__, original_f.__wrapped__)
+
+                if name == 'Field' and  parent.__name__ == 'PropertiesData' and attr_name == '_parse_axes':
+                    print ('    dir', dir(original_f))
+
+
+                xxx = None
+                
                 try:
                     if hasattr(original_f, 'fget'):
                         # The original function is a property, i.e. it has
@@ -115,24 +134,50 @@ class RewriteDocstringMeta(type):
                         # Skip non-callables
                         if not hasattr(original_f, '__call__'):
                             continue
-
+                        if name == 'Field' and  parent.__name__ == 'PropertiesData':
+                            print ('    DOING', attr_name)
                         # Note if the method is a classmethod
                         if inspect.ismethod(original_f):
                             class_method = True
+                            print ('IS CLASS METHOD')
+                            
+                        if name == 'Field' and  parent.__name__ == 'PropertiesData':
+                            print ('    namne', original_f.__name__)
 
+                        
+                            
                         f = getattr(original_f, '__func__', original_f)
+                        if name == 'Field' and  parent.__name__ == 'PropertiesData':
+                            print ('    namne', f.__name__)
+                            print (f is original_f)
 
                         # Copy the method
                         attr = type(f)(f.__code__, f.__globals__,
                                        f.__name__, f.__defaults__,
                                        f.__closure__)
+                        
+                        if name == 'Field' and  parent.__name__ == 'PropertiesData':
+                            print ('    namne', attr.__name__)
 
+                        
+                        if name == 'Field' and  parent.__name__ == 'PropertiesData' and attr_name == '_equals_preprocess':
+                            print ('    dir 2', dir(f))
+                            print ('    dir 3', dir(attr))
+
+                        if hasattr(f, '__wrapped__'):
+#                            xxx = attr
+#                            attr = f.__wrapped__
+                            if name == 'Field' and  parent.__name__ == 'PropertiesData':
+                                print ('WRAPPED: ', attr_name)
+                            
                     # Update the docstring
                     RewriteDocstringMeta._docstring_update(name, attr,
                                                            attr_name,
                                                            attrs['__module__'],
                                                            docstring_rewrite)
 
+#                    if 
+                    
                     # Register a classmethod
                     if class_method:
                         attr = classmethod(attr)
