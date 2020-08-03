@@ -11,8 +11,10 @@ import cfdm
 
 
 n_tmpfiles = 1
-tmpfiles = [tempfile.mktemp('_test_CoordinateReference.nc', dir=os.getcwd())
-            for i in range(n_tmpfiles)]
+tmpfiles = [
+    tempfile.mkstemp('_test_CoordinateReference.nc', dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
 (
     tempfile1,
 ) = tmpfiles
