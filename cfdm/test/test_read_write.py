@@ -59,7 +59,7 @@ class read_writeTest(unittest.TestCase):
 
         self.test_only = []
         # self.test_only = ['NOTHING!!!!!']
-        self.test_only = ['test_read_write_duplicate_names']
+        # self.test_only = ['test_read_write_duplicate_names']
         # self.test_only = ['test_write_filename']
         # self.test_only = ['test_read_write_unlimited']
         # self.test_only = ['test_read_field']
