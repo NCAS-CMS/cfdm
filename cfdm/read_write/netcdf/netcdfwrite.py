@@ -5,6 +5,8 @@ import re
 
 from distutils.version import LooseVersion
 
+from pprint import (pformat, pprint)
+
 import numpy
 import netCDF4
 
@@ -1364,16 +1366,19 @@ class NetCDFWrite(IOWrite):
         `dict`
 
         '''
+        print ('      coord_ncdimensions=', coord_ncdimensions)
         out = {}
 
         g = self.write_vars
 
         bounds = self.implementation.get_bounds(coord, None)
         if bounds is None:
+            # This coordinate construct has no bounds
             return {}
 
         data = self.implementation.get_data(bounds, None)
         if data is None:
+            # The bounds have no data
             return {}
 
         # Still here? Then this coordinate has a nodes attribute
@@ -1403,6 +1408,8 @@ class NetCDFWrite(IOWrite):
         # Find the base of the netCDF part dimension name
         size = self.implementation.get_data_size(nodes)
         ncdim = self._get_node_ncdimension(nodes, default='node')
+        print ('   node ncdim =', ncdim, repr(bounds),
+               bounds.nc_get_variable() , bounds.nc_get_dimension())
         ncdim = self._netcdf_name(ncdim, dimsize=size, role='node')
 
         if self._already_in_file(nodes, (ncdim,)):
@@ -1715,14 +1722,20 @@ class NetCDFWrite(IOWrite):
         return groups
 
     def _get_node_ncdimension(self, bounds, default=None):
-
         '''TODO
 
     .. versionadded:: 1.8.0
 
+    :Parameters:
+
+        bounds: Bounds component
+
+        default: optional
+
     :Returns:
 
-        TODO
+        The netCDF dimension name, or else the value of the *default*
+        parameter.
 
         '''
         ncdim = self.implementation.nc_get_dimension(bounds, default=None)
@@ -1735,7 +1748,7 @@ class NetCDFWrite(IOWrite):
 
             return ncdim
 
-        # Retrun the default
+        # Return the default
         return default
 
     def _write_part_node_count(self, coord, bounds, encodings):
@@ -2010,19 +2023,15 @@ class NetCDFWrite(IOWrite):
 
         key: `str`
 
-        coord: `Coordinate`
+        coord: Coordinate construct
 
         coordinates: `list`
 
     :Returns:
 
-        coordinates: `list`
+        `list`
             The list of netCDF auxiliary coordinate names updated in
             place.
-
-    **Examples:**
-
-    >>> coordinates = _write_auxiliary_coordinate(f, 'aux2', coordinates)
 
         '''
         g = self.write_vars
@@ -2821,9 +2830,9 @@ class NetCDFWrite(IOWrite):
 
     :Parameters:
 
-        f : Field construct
+        f: Field construct
 
-        add_to_seen : bool, optional
+        add_to_seen: bool, optional
 
         allow_data_insert_dimension: `bool`, optional
 
@@ -2985,6 +2994,8 @@ class NetCDFWrite(IOWrite):
 #            if ncdim is not None:
 #                ncdim = self._netcdf_name(ncdim)
 
+            print ('\n\nncdim = ', ncdim)
+
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
                 if (self.implementation.get_construct_data_axes(f, key)
@@ -3039,7 +3050,7 @@ class NetCDFWrite(IOWrite):
                 found_dimension_coordinate = True
                 break
             # --- End: for
-
+            print (  '  comment =', f.get_property('comment', None))  
             if not found_dimension_coordinate:
                 # ----------------------------------------------------
                 # There is NO dimension coordinate for this axis
@@ -3047,7 +3058,7 @@ class NetCDFWrite(IOWrite):
                 spanning_constructs = (
                     self.implementation.get_constructs(f, axes=[axis])
                 )
-
+                print ('   spanning_constructs = ',  spanning_constructs)
                 spanning_auxiliary_coordinates = (
                     self.implementation.get_auxiliary_coordinates(
                         f, axes=[axis], exact=True)
@@ -3058,10 +3069,9 @@ class NetCDFWrite(IOWrite):
                         and spanning_constructs !=
                         spanning_auxiliary_coordinates):
                     # The data array doesn't span the domain axis but
-                    # a cell measure, domain ancillary or field
-                    # ancillary does, or an N-d (N>1) auxiliary
-                    # coordinate does, so expand the data array to
-                    # include it.
+                    # a cell measure, domain ancillary, field
+                    # ancillary, or an N-d (N>1) auxiliary coordinate
+                    # does => expand the data array to include it.
                     f = self.implementation.field_insert_dimension(
                             f, position=0, axis=axis)
                     data_axes.append(axis)
@@ -3078,8 +3088,13 @@ class NetCDFWrite(IOWrite):
 #                            f, position=0, axis=axis)
 #                    data_axes.append(axis)
 
-                # If the data array (now) spans this domain axis then create a
-                # netCDF dimension for it
+                logger.debug(
+                    "        1 g['xxx'] =\n" +
+                    pformat(g['xxx'], indent=12)
+                )  # pragma: no cover
+                
+                # If the data array (now) spans this domain axis then
+                # create a netCDF dimension for it
                 if axis in data_axes:
                     axis_size0 = (
                         self.implementation.get_domain_axis_size(f, axis)
@@ -3096,7 +3111,8 @@ class NetCDFWrite(IOWrite):
                             )
                             spanning_constructs[key] = (construct,
                                                         axes.index(axis))
-
+                        print ('   g xxx =' ,g['xxx'])
+                       
                         for b1 in g['xxx']:
                             (ncdim1,  axis_size1),  constructs1 = (
                                 list(b1.items())[0]
@@ -3106,18 +3122,20 @@ class NetCDFWrite(IOWrite):
                                 continue
 
                             constructs1 = constructs1.copy()
-
+                            print ('  contructs1 = ', constructs1)
                             matched_construct = False
 
                             for key0, (construct0, index0) in (
                                     spanning_constructs.items()):
-                                # matched_construct = False
+                                print ('    c0, index- =', repr(construct0), index0)
                                 for key1, (construct1, index1) in (
                                         constructs1.items()):
+                                    print ('      c1, index- =', repr(construct1), index1)
                                     if (index0 == index1 and
                                         self.implementation.equal_components(
                                             construct0, construct1)):
                                         del constructs1[key1]
+                                        print (True)
                                         matched_construct = True
                                         break
                                 # --- End: for
@@ -3125,8 +3143,7 @@ class NetCDFWrite(IOWrite):
                                 if matched_construct:
                                     break
                             # --- End: for
-
-#                            if not constructs1:
+                            print ('  mc = ', matched_construct)
                             if matched_construct:
                                 use_existing_dimension = True
                                 break
@@ -3164,9 +3181,19 @@ class NetCDFWrite(IOWrite):
                         g['axis_to_ncdim'][axis] = 'ragged_{}'.format(
                             'indexed_contiguous_element2')
                     else:
+                        print ('  L 5')
+                        print ('  spanning_constructs = ',  spanning_constructs)
+                        #                        print (g)
+#                        logger.debug("    Compression read vars:")  # pragma: #no cover
+#                        logger.debug(
+#                            "        write_vars['compression'] =\n" +
+#                            pformat(g, indent=12)
+#q                        )  # pragma: no cover
+
                         domain_axis = (
                             self.implementation.get_domain_axes(f)[axis]
                         )
+                        print (repr(domain_axis), repr(domain_axis.nc_get_dimension(None)))
                         ncdim = self.implementation.nc_get_dimension(
                             domain_axis, 'dim')
 
@@ -3176,7 +3203,7 @@ class NetCDFWrite(IOWrite):
                             ncdim = self._remove_group_structure(ncdim)
 
                         ncdim = self._netcdf_name(ncdim)
-
+                        print ('  L 5 ncdim =', ncdim)
                         unlimited = self.implementation.nc_is_unlimited_axis(
                             f, axis)
                         self._write_dimension(
@@ -3190,7 +3217,18 @@ class NetCDFWrite(IOWrite):
         field_data_axes = tuple(self.implementation.get_field_data_axes(f))
         data_ncdimensions = [g['axis_to_ncdim'][axis]
                              for axis in field_data_axes]
-
+        
+        logger.debug(
+            "        2 g['xxx'] =\n" +
+            pformat(g['xxx'], indent=12)
+        )  # pragma: no cover
+                
+        logger.debug(
+            "        2  data_ncdimensions =\n" +
+            pformat( data_ncdimensions, indent=12)
+        )  # pragma: no cover
+                
+        print ('   data_ncdimensions =', data_ncdimensions)
         # ------------------------------------------------------------
         # Now that we've dealt with all of the axes, deal with
         # compression
@@ -3482,6 +3520,7 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         ncvar = self._create_netcdf_variable_name(f, default='data')
 
+        print ('    field ncvar =', ncvar, f.get_property('test_id'))
         ncdimensions = data_ncdimensions
 
         extra = {}
@@ -4208,8 +4247,8 @@ class NetCDFWrite(IOWrite):
             # files (as opposed to car data-types).
             'string': string,
 
-            # Print statements
-            'verbose': False,
+#            # Print statements
+#            'verbose': False,
 
             # Conventions
             'Conventions': Conventions,

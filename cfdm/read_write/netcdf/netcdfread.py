@@ -1865,9 +1865,9 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         logger.debug(
-            "    Pre-processing indexed and contiguous compression"
+            "    Pre-processing indexed and contiguous compression "
+            "for instance dimension: {}".format(instance_dimension)
         )  # pragma: no cover
-        logger.debug(g['compression'])  # pragma: no cover
 
         profile_dimension = g['compression'][sample_dimension][
             'ragged_contiguous']['profile_dimension']
@@ -1911,7 +1911,7 @@ class NetCDFRead(IORead):
         }
 
         logger.debug(
-            "    Created g['compression'][{!r}]"
+            "    Created read_vars['compression'][{!r}]"
             "['ragged_indexed_contiguous']".format(
                   sample_dimension)
         )  # pragma: no cover
@@ -1923,12 +1923,13 @@ class NetCDFRead(IORead):
                     'ragged_indexed_contiguous']['implied_ncdimensions']
             )
         )  # pragma: no cover
-        logger.debug(
-            "    Removing "
-            "read_vars['compression'][{!r}]['ragged_contiguous']".format(
-                sample_dimension))  # pragma: no cover
 
         del g['compression'][sample_dimension]['ragged_contiguous']
+
+        logger.debug(
+            "    Removed "
+            "read_vars['compression'][{!r}]['ragged_contiguous']".format(
+                sample_dimension))  # pragma: no cover
 
     def _parse_geometry(self, parent_ncvar, attributes):
         '''TODO
@@ -1967,14 +1968,6 @@ class NetCDFRead(IORead):
 
         geometry_ncvar = parsed_geometry[0]
 
-        logger.info(
-            "    Geometry container = {!r}".format(geometry_ncvar)
-        )  # pragma: no cover
-        logger.debug(
-            "        netCDF attributes: {}".format(
-                attributes[geometry_ncvar])
-        )  # pragma: no cover
-
         if geometry_ncvar in g['geometries']:
             # We've already parsed this geometry container, so record
             # the fact that this parent netCDF variable has this
@@ -1982,6 +1975,22 @@ class NetCDFRead(IORead):
             g['variable_geometry'][parent_ncvar] = geometry_ncvar
             return
 
+        logger.info(
+            "    Geometry container = {!r}".format(geometry_ncvar)
+        )  # pragma: no cover
+        logger.debug(
+            "        netCDF attributes: {}".format(
+                 pformat(attributes[geometry_ncvar], indent=12)
+            )
+        )  # pragma: no cover
+        
+#        logger.debug("    0 +++++++++++ Compression read vars:")  # pragma: no# cover
+#        logger.debug(
+#            "        read_vars['compression'] =\n" +
+#            pformat(g['compression'], indent=12)
+#        )  # pragma: no cover
+
+        
         geometry_type = attributes[geometry_ncvar].get('geometry_type')
 
         g['geometries'][geometry_ncvar] = {'geometry_type': geometry_type}
@@ -2114,14 +2123,9 @@ class NetCDFRead(IORead):
                 sample_dimension=node_dimension,
                 element_dimension='node',
                 instance_dimension=geometry_dimension)
-
-#            g['compression'][node_dimension]['netCDF_variables'] = (
-#                parsed_node_coordinates[:])
-            g['compression'][node_dimension].setdefault(
-                'netCDF_variables', set()).update(parsed_node_coordinates)
         else:
             # --------------------------------------------------------
-            # There is a part_count variable.
+            # There is a part node count variable.
             #
             # => we must treat the nodes as an indexed contiguous
             # ragged array
@@ -2173,13 +2177,17 @@ class NetCDFRead(IORead):
                 element_dimension='node',
                 instance_dimension=part_dimension)
 
+            indexed_sample_dimension = g['variable_dimensions'][
+                part_node_count][0]
+            
             element_dimension_2 = self._set_ragged_indexed_parameters(
                 index=index,
-                indexed_sample_dimension=g['variable_dimensions'][
-                    part_node_count][0],
+                indexed_sample_dimension=indexed_sample_dimension,
                 element_dimension='part',
                 instance_dimension=geometry_dimension)
 
+            print ( 'indexed_sample_dimension', indexed_sample_dimension)
+            
             self._parse_indexed_contiguous_compression(
                 sample_dimension=node_dimension,
                 instance_dimension=geometry_dimension)
@@ -2203,14 +2211,25 @@ class NetCDFRead(IORead):
             if parsed_interior_ring:
                 interior_ring = parsed_interior_ring[0]
                 part_dimension = g['variable_dimensions'][interior_ring][0]
-                ir = self._create_InteriorRing(ncvar=interior_ring,
-                                               ncdim=part_dimension)
-                g['geometries'][geometry_ncvar]['interior_ring'] = ir
+                i_r = self._create_InteriorRing(ncvar=interior_ring,
+                                                ncdim=part_dimension)
+                g['geometries'][geometry_ncvar]['interior_ring'] = i_r
 
+                # Record that this netCDF interor ring variable spans
+                # a compressed dimension
+                g['compression'][indexed_sample_dimension].setdefault(
+                    'netCDF_variables', set()).update(parsed_interior_ring)
+                
                 # Do not attempt to create a field from an
                 # interior ring variable
                 g['do_not_create_field'].add(interior_ring)
+                
         # --- End: if
+
+        # Record which the netCDF node variables span the compressed
+        # dimension
+        g['compression'][node_dimension].setdefault(
+            'netCDF_variables', set()).update(parsed_node_coordinates)
 
         # Do not attempt to create field constructs from netCDF node
         # coordinate variables
@@ -2226,6 +2245,13 @@ class NetCDFRead(IORead):
         # geometry variable
         g['variable_geometry'][parent_ncvar] = geometry_ncvar
 
+#        logger.debug("    1 +++++++++++ Compression read vars:")  # pragma: no# cover
+#        logger.debug(
+#            "        read_vars['compression'] =\n" +
+#            pformat(g['compression'], indent=12)
+#        )  # pragma: no cover
+
+        
         return geometry_ncvar
 
     def _set_ragged_contiguous_parameters(self,
@@ -4074,7 +4100,13 @@ class NetCDFRead(IORead):
                 g['variable_dimensions'][bounds_ncvar][-1]
             )
 
-            self.implementation.nc_set_dimension(bounds, bounds_ncdim)
+            # Set the netCDF trailing bounds dimension name. (But not
+            # if it is a dimension of its parent coordinate
+            # variable. This can sometimes happen if the bounds are
+            # node coordinates.)
+            if bounds_ncdim not in g['variable_dimensions'].get(ncvar, ()):
+                self.implementation.nc_set_dimension(bounds, bounds_ncdim)
+            
             self.implementation.set_bounds(c, bounds, copy=False)
 
             if not domain_ancillary:
