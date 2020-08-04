@@ -2936,7 +2936,7 @@ def example_field(n, _implementation=_implementation):
         c.set_geometry('polygon')
         b = Bounds()
         b.set_properties(
-            {'units=': 'm',
+            {'units': 'm',
              'standard_name': 'altitude',
              'axis': 'Z'})
         d = Data(

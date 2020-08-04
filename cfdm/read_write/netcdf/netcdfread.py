@@ -3104,7 +3104,8 @@ class NetCDFRead(IORead):
                         field_ncvar=field_ncvar,
                         ncvar=None,
                         f=f,
-                        bounds_ncvar=node_ncvar)
+                        bounds_ncvar=node_ncvar,
+                        nodes=True)
 
                     geometry_type = geometry['geometry_type']
                     if geometry_type is not None:
@@ -3781,7 +3782,7 @@ class NetCDFRead(IORead):
             dimensions = '(' + ', '.join(dimensions) + ')'  # pragma: no cover
 
         logger.info(
-            "    1 Error processing netCDF variable {}{}: {}".format(
+            "    Error processing netCDF variable {}{}: {}".format(
                 ncvar, dimensions, d['reason'])
         )  # pragma: no cover
 
@@ -3857,7 +3858,7 @@ class NetCDFRead(IORead):
         return g['flattener_dimensions'].get(ncdim, ncdim)
 
     def _create_auxiliary_coordinate(self, field_ncvar, ncvar, f,
-                                     bounds_ncvar=None):
+                                     bounds_ncvar=None, nodes=False):
         '''Create an auxiliary coordinate constuct.
 
     .. versionadded:: 1.7.0
@@ -3867,14 +3868,21 @@ class NetCDFRead(IORead):
         field_ncvar: `str`
             The netCDF variable name of the parent field construct.
 
-        ncvar: `str`
-            The netCDF name of the variable.
+        ncvar: `str` or `None`
+            The netCDF name of the variable. See the *nodes*
+            parameter.
 
         field: field construct
             The parent field construct.
 
         bounds_ncvar: `str`, optional
             The netCDF variable name of the coordinate bounds.
+
+        nodes: `bool`
+            Set to True only if and only if the coordinate construct
+            is to be created with only bounds from a node coordinates
+            variable, whose netCDF name is given by *bounds_ncvar*. In
+            this case *ncvar* must be `None`.
 
     :Returns:
 
@@ -3884,7 +3892,8 @@ class NetCDFRead(IORead):
         return self._create_bounded_construct(field_ncvar=field_ncvar,
                                               ncvar=ncvar, f=f,
                                               auxiliary=True,
-                                              bounds_ncvar=bounds_ncvar)
+                                              bounds_ncvar=bounds_ncvar,
+                                              nodes=nodes)
 
     def _create_dimension_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
@@ -3936,15 +3945,16 @@ class NetCDFRead(IORead):
                                   dimension=False, auxiliary=False,
                                   domain_ancillary=False,
                                   bounds_ncvar=None,
-                                  has_coordinates=True):
+                                  has_coordinates=True, nodes=False):
         '''Create a variable which might have bounds.
 
     .. versionadded:: 1.7.0
 
     :Parameters:
 
-        ncvar: `str`
-            The netCDF name of the variable.
+        ncvar: `str` or `None`
+            The netCDF name of the variable. See the *nodes*
+            parameter.
 
         f: `Field`
             The parent field construct.
@@ -3957,6 +3967,12 @@ class NetCDFRead(IORead):
 
         domain_ancillary: `bool`, optional
             If True then a domain ancillary construct is created.
+
+        nodes: `bool`
+            Set to True only if and only if the coordinate construct
+            is to be created with only bounds from a node coordinates
+            variable, whose netCDF name is given by *bounds_ncvar*. In
+            this case *ncvar* must be `None`.
 
     :Returns:
 
@@ -3996,7 +4012,8 @@ class NetCDFRead(IORead):
                     bounds_ncvar = properties.pop('nodes', None)
                     if bounds_ncvar is not None:
                         attribute = 'nodes'
-        # --- End: if
+        elif nodes:
+            attribute = 'nodes'
 
         if dimension:
             properties.pop('compress', None)
@@ -4036,18 +4053,18 @@ class NetCDFRead(IORead):
                 bounds_ncvar = g['flattener_variables'].get(
                     bounds_ncvar, bounds_ncvar)
 
-            if geometry is None:
-                # Check "normal" boounds
-                cf_compliant = self._check_bounds(
-                    field_ncvar, ncvar,
-                    attribute,
-                    bounds_ncvar)
-            else:
+            if attribute == 'nodes':
                 # Check geomerty node coordinate boounds
                 cf_compliant = self._check_geometry_node_coordinates(
                     field_ncvar,
                     bounds_ncvar,
                     geometry)
+            else:
+                # Check "normal" boounds
+                cf_compliant = self._check_bounds(
+                    field_ncvar, ncvar,
+                    attribute,
+                    bounds_ncvar)
 
             if not cf_compliant:
                 bounds_ncvar = None
