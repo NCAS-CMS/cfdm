@@ -5710,7 +5710,7 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         if coord_ncvar not in g['internal_variables']:
-            coord_ncvar, message - self._check_missing_variable(
+            coord_ncvar, message = self._check_missing_variable(
                 coord_ncvar, 'Auxiliary/scalar coordinate variable'
             )
             self._add_message(field_ncvar, coord_ncvar,

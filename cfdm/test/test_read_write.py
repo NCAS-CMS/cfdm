@@ -14,7 +14,7 @@ import cfdm
 warnings = False
 
 n_tmpfiles = 6
-tmpfiles = [tempfile.mktemp('_test_read_write.nc', dir=os.getcwd())
+tmpfiles = [tempfile.mkstemp('_test_read_write.nc', dir=os.getcwd())[1]
             for i in range(n_tmpfiles)]
 (
     tmpfile,
