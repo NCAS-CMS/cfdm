@@ -59,13 +59,13 @@ class read_writeTest(unittest.TestCase):
 
         self.test_only = []
         # self.test_only = ['NOTHING!!!!!']
-        self.test_only = ['test_read_write_duplicate_names']
         # self.test_only = ['test_write_filename']
         # self.test_only = ['test_read_write_unlimited']
         # self.test_only = ['test_read_field']
         # self.test_only = ['test_read_mask']
         # self.test_only = ['test_read_write_format']
         # self.test_only = ['test_read_write_Conventions']
+        # self.test_only = ['test_read_write_multiple_geometries']
 
     def test_write_filename(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -411,7 +411,7 @@ class read_writeTest(unittest.TestCase):
                 "{!r}, {!r}".format(
                     g.get_property('Conventions'), Conventions))
 
-    def test_read_write_duplicate_names(self):
+    def test_read_write_multiple_geometries(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -424,26 +424,26 @@ class read_writeTest(unittest.TestCase):
                 'geometry_interior_ring_2.nc',
                 'geometry_interior_ring.nc',
         ):
-            
             a.extend(cfdm.read(filename))
-            print ('ppp', len(a))
-            
-        print (a)
-        print (a[0].dump())
+
         for n, f in enumerate(a):
             f.set_property('test_id', str(n))
-            if n == 4:
-                f.dump()
-                print (f.construct('latitude').nc_get_variable())
-                print (f.construct('latitude').bounds.nc_get_variable())
-                print (f.construct('latitude').bounds.nc_get_dimension())
-                
-        print ('THE WRITE')
-        tmpfile = 'delme.nc'
+
         cfdm.write(a, tmpfile, verbose=1)
-        print ('\n\n\n\n FINAL READ \n\n\n\n\n')
-        f = cfdm.read(tmpfile, verbose=-1)
-        print ('WWWWWWWW')
+
+        f = cfdm.read(tmpfile, verbose=1)
+
+        self.assertEqual(len(a), len(f))
+
+        for x in a:
+            for n, y in enumerate(f[:]):
+                if x.equals(y):
+                    f.pop(n)
+                    break
+        # --- End: for
+
+        self.assertFalse(f)
+
 # --- End: class
 
 

@@ -735,7 +735,7 @@ class NetCDFWrite(IOWrite):
         g['key_to_ncvar'][key] = ncvar
         g['key_to_ncdims'][key] = ncdimensions
 
-        g['axis_to_ncdim'][axis] = ncdim
+        g['axis_to_ncdim'][axis] = seen[id(coord)]['ncdims'][0]
 
         return ncvar
 
@@ -1366,7 +1366,6 @@ class NetCDFWrite(IOWrite):
         `dict`
 
         '''
-        print ('      coord_ncdimensions=', coord_ncdimensions)
         out = {}
 
         g = self.write_vars
@@ -1408,22 +1407,39 @@ class NetCDFWrite(IOWrite):
         # Find the base of the netCDF part dimension name
         size = self.implementation.get_data_size(nodes)
         ncdim = self._get_node_ncdimension(nodes, default='node')
-        print ('   node ncdim =', ncdim, repr(bounds),
-               bounds.nc_get_variable() , bounds.nc_get_dimension())
         ncdim = self._netcdf_name(ncdim, dimsize=size, role='node')
 
+        create = True
         if self._already_in_file(nodes, (ncdim,)):
             # This node coordinates variable has been previously
             # created, so no need to do so again.
             ncvar = g['seen'][id(nodes)]['ncvar']
 
-            # We need to log the original Bounds variable as being in
-            # the file, too. This is so that the geometry container
-            # variable can be created later on.
-            g['seen'][id(bounds)] = {'ncvar': ncvar,
-                                     'variable': bounds,
-                                     'ncdims': None}
-        else:
+            geometry_dimension = (
+                g['geometry_encoding'][ncvar]['geometry_dimension']
+            )
+
+            if geometry_dimension == coord_ncdimensions[0]:
+                # The node coordiante variable already exists, and the
+                # corresponding encoding variables span the correct
+                # dimension.
+                create = False
+
+                # We need to log the original Bounds variable as being
+                # in the file, too. This is so that the geometry
+                # container variable can be created later on.
+                g['seen'][id(bounds)] = {'ncvar': ncvar,
+                                         'variable': bounds,
+                                         'ncdims': None}
+            else:
+                # The node coordiante variable already exists, but the
+                # corresponding encoding variables span the wrong
+                # dimension => we have to create a new node
+                # coordinates variable.
+                create = True
+        # --- End: if
+
+        if create:
             # This node coordinates variable has not been previously
             # created, so create it now.
             ncdim_to_size = g['ncdim_to_size']
@@ -1469,15 +1485,18 @@ class NetCDFWrite(IOWrite):
 
             encodings = {}
 
-            _ = self._write_node_count(coord, bounds,
-                                       coord_ncdimensions, encodings)
-            encodings.update(_)
+            nc_encodings = self._write_node_count(coord, bounds,
+                                                  coord_ncdimensions,
+                                                  encodings)
+            encodings.update(nc_encodings)
 
-            _ = self._write_part_node_count(coord, bounds, encodings)
-            encodings.update(_)
+            pnc_encodings = self._write_part_node_count(coord, bounds,
+                                                        encodings)
+            encodings.update(pnc_encodings)
 
-            _ = self._write_interior_ring(coord, bounds, encodings)
-            encodings.update(_)
+            ir_encodings = self._write_interior_ring(coord, bounds,
+                                                     encodings)
+            encodings.update(ir_encodings)
 
             g['geometry_encoding'][ncvar] = encodings
 
@@ -1509,6 +1528,7 @@ class NetCDFWrite(IOWrite):
         bounds:
 
         coord_ncdimensions: sequence of `str`
+            The netCDF instance dimension
 
         encodings: `dict`
             Ignored.
@@ -1518,6 +1538,7 @@ class NetCDFWrite(IOWrite):
         `dict`
 
         '''
+#        print ('   coord_ncdimensions=',    coord_ncdimensions)
         g = self.write_vars
 
         # Create the node count flattened data
@@ -1539,6 +1560,7 @@ class NetCDFWrite(IOWrite):
 
         # Find the base of the netCDF node count variable name
         nc = self.implementation.get_node_count(coord)
+
         if nc is not None:
             ncvar = self.implementation.nc_get_variable(nc,
                                                         default='node_count')
@@ -1861,6 +1883,7 @@ class NetCDFWrite(IOWrite):
 
         g['part_ncdim'] = ncdim
 
+        # Return encodings
         return {'part_node_count': ncvar,
                 'part_ncdim': ncdim}
 
@@ -1948,6 +1971,7 @@ class NetCDFWrite(IOWrite):
 
         g['part_ncdim'] = ncdim
 
+        # Return encodings
         return {'interior_ring': ncvar,
                 'part_ncdim': ncdim}
 
@@ -2994,7 +3018,7 @@ class NetCDFWrite(IOWrite):
 #            if ncdim is not None:
 #                ncdim = self._netcdf_name(ncdim)
 
-            print ('\n\nncdim = ', ncdim)
+#            print ('\n\n F ncdim=', ncdim)
 
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
@@ -3050,7 +3074,7 @@ class NetCDFWrite(IOWrite):
                 found_dimension_coordinate = True
                 break
             # --- End: for
-            print (  '  comment =', f.get_property('comment', None))  
+
             if not found_dimension_coordinate:
                 # ----------------------------------------------------
                 # There is NO dimension coordinate for this axis
@@ -3058,7 +3082,7 @@ class NetCDFWrite(IOWrite):
                 spanning_constructs = (
                     self.implementation.get_constructs(f, axes=[axis])
                 )
-                print ('   spanning_constructs = ',  spanning_constructs)
+
                 spanning_auxiliary_coordinates = (
                     self.implementation.get_auxiliary_coordinates(
                         f, axes=[axis], exact=True)
@@ -3088,11 +3112,6 @@ class NetCDFWrite(IOWrite):
 #                            f, position=0, axis=axis)
 #                    data_axes.append(axis)
 
-                logger.debug(
-                    "        1 g['xxx'] =\n" +
-                    pformat(g['xxx'], indent=12)
-                )  # pragma: no cover
-                
                 # If the data array (now) spans this domain axis then
                 # create a netCDF dimension for it
                 if axis in data_axes:
@@ -3111,8 +3130,7 @@ class NetCDFWrite(IOWrite):
                             )
                             spanning_constructs[key] = (construct,
                                                         axes.index(axis))
-                        print ('   g xxx =' ,g['xxx'])
-                       
+
                         for b1 in g['xxx']:
                             (ncdim1,  axis_size1),  constructs1 = (
                                 list(b1.items())[0]
@@ -3122,20 +3140,17 @@ class NetCDFWrite(IOWrite):
                                 continue
 
                             constructs1 = constructs1.copy()
-                            print ('  contructs1 = ', constructs1)
+
                             matched_construct = False
 
                             for key0, (construct0, index0) in (
                                     spanning_constructs.items()):
-                                print ('    c0, index- =', repr(construct0), index0)
                                 for key1, (construct1, index1) in (
                                         constructs1.items()):
-                                    print ('      c1, index- =', repr(construct1), index1)
                                     if (index0 == index1 and
                                         self.implementation.equal_components(
                                             construct0, construct1)):
                                         del constructs1[key1]
-                                        print (True)
                                         matched_construct = True
                                         break
                                 # --- End: for
@@ -3143,7 +3158,7 @@ class NetCDFWrite(IOWrite):
                                 if matched_construct:
                                     break
                             # --- End: for
-                            print ('  mc = ', matched_construct)
+
                             if matched_construct:
                                 use_existing_dimension = True
                                 break
@@ -3181,19 +3196,9 @@ class NetCDFWrite(IOWrite):
                         g['axis_to_ncdim'][axis] = 'ragged_{}'.format(
                             'indexed_contiguous_element2')
                     else:
-                        print ('  L 5')
-                        print ('  spanning_constructs = ',  spanning_constructs)
-                        #                        print (g)
-#                        logger.debug("    Compression read vars:")  # pragma: #no cover
-#                        logger.debug(
-#                            "        write_vars['compression'] =\n" +
-#                            pformat(g, indent=12)
-#q                        )  # pragma: no cover
-
                         domain_axis = (
                             self.implementation.get_domain_axes(f)[axis]
                         )
-                        print (repr(domain_axis), repr(domain_axis.nc_get_dimension(None)))
                         ncdim = self.implementation.nc_get_dimension(
                             domain_axis, 'dim')
 
@@ -3203,7 +3208,7 @@ class NetCDFWrite(IOWrite):
                             ncdim = self._remove_group_structure(ncdim)
 
                         ncdim = self._netcdf_name(ncdim)
-                        print ('  L 5 ncdim =', ncdim)
+
                         unlimited = self.implementation.nc_is_unlimited_axis(
                             f, axis)
                         self._write_dimension(
@@ -3217,18 +3222,7 @@ class NetCDFWrite(IOWrite):
         field_data_axes = tuple(self.implementation.get_field_data_axes(f))
         data_ncdimensions = [g['axis_to_ncdim'][axis]
                              for axis in field_data_axes]
-        
-        logger.debug(
-            "        2 g['xxx'] =\n" +
-            pformat(g['xxx'], indent=12)
-        )  # pragma: no cover
-                
-        logger.debug(
-            "        2  data_ncdimensions =\n" +
-            pformat( data_ncdimensions, indent=12)
-        )  # pragma: no cover
-                
-        print ('   data_ncdimensions =', data_ncdimensions)
+
         # ------------------------------------------------------------
         # Now that we've dealt with all of the axes, deal with
         # compression
@@ -3520,7 +3514,7 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         ncvar = self._create_netcdf_variable_name(f, default='data')
 
-        print ('    field ncvar =', ncvar, f.get_property('test_id'))
+#        print ('    field ncvar =', ncvar, f.get_property('test_id', None))
         ncdimensions = data_ncdimensions
 
         extra = {}
@@ -4246,9 +4240,6 @@ class NetCDFWrite(IOWrite):
             # Whether or not to write string data-types to netCDF4
             # files (as opposed to car data-types).
             'string': string,
-
-#            # Print statements
-#            'verbose': False,
 
             # Conventions
             'Conventions': Conventions,

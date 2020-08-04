@@ -1525,12 +1525,6 @@ class Data(mixin.Container,
 
         return out
 
-    def pack(self, add_offset=None, scale_factor=None):
-        '''TODO
-
-        '''
-        pass
-    
     @_inplace_enabled
     def squeeze(self, axes=None, inplace=False):
         '''Remove size 1 axes from the data.
