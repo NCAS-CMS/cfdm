@@ -177,6 +177,16 @@ def example_field(n, _implementation=_implementation):
             "integer argument between 0 and 7 inclusive. Got {!r}".format(n)
         )
 
+    # For safety given the private second argument which we might not
+    # document, otherwise a user gets an obscure error if they tried, say:
+    # >>> cfdm.example_field(2, 3)
+    # AttributeError: 'int' object has no attribute 'get_class'
+    if isinstance(_implementation, int):
+        raise ValueError(
+            "Only one example field construct can be returned at a time. "
+            "Provide a single integer argument only."
+        )
+
     AuxiliaryCoordinate = _implementation.get_class('AuxiliaryCoordinate')
     CellMeasure = _implementation.get_class('CellMeasure')
     CellMethod = _implementation.get_class('CellMethod')

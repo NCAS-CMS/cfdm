@@ -221,6 +221,9 @@ class FunctionsTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = cfdm.example_field(top + 1)
 
+        with self.assertRaises(ValueError):
+            cfdm.example_field(1, 2)
+
     def test_abspath(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
