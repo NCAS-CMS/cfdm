@@ -469,6 +469,53 @@ class Field(mixin.NetCDFVariable,
         '''
         self._set_component('dataset_compliance', value, copy=True)
 
+    @property
+    def _test_docstring_substitution_property_Field(self):
+        '''Test docstring substitution on {{class}} with @property.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        print('_test_docstring_substitution_property_Field')
+
+    @_manage_log_level_via_verbosity
+    @property
+    def _test_docstring_substitution_decorator_property(self):
+        '''Test docstring substitution on {{class}} with @property and a
+    decorator.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        print('_test_docstring_substitution_decorator_property_Field')
+    
+    @staticmethod
+    def _test_docstring_substitution_staticmethod_Field():
+        '''Test docstring substitution on {{class}} with @staticmethod.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        print('_test_docstring_substitution_staticmethod_Field')
+    
+    @_manage_log_level_via_verbosity
+    @_inplace_enabled
+    def _test_docstring_substitution_Field(self, inplace=False, verbose=None):
+        '''Test docstring substitution on {{class}} with two decorators.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        print('_test_docstring_substitution_Field')
+    
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------

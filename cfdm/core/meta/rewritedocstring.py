@@ -1,5 +1,8 @@
 import inspect
 import re
+import types
+
+#from functools import partial
 
 
 class RewriteDocstringMeta(type):
@@ -26,7 +29,7 @@ class RewriteDocstringMeta(type):
     # Define the "plus class" regular expression
     _plus_class_regex = re.compile('{{\+(\w.*?)}}')
 
-    def __new__(cls, name, parents, attrs):
+    def __new__(cls, class_name, parents, attrs):
         '''TODO
 
         '''
@@ -49,56 +52,95 @@ class RewriteDocstringMeta(type):
         if class_docstring_rewrite is not None:
             docstring_rewrite.update(class_docstring_rewrite(None))
 
+        for key in docstring_rewrite:
+            if key in ('{{class}}', '{{package}}') or key.startswith('{{+'):
+                raise ValueError(
+                    "Can't use {0!r} as a user-defined docstring substitution."
+                    "\nRemove the {0!r} key from the dictionary "
+                    "returned by the appropriate __docstring_substitution__ "
+                    "method.".format(key)
+                )
+        # --- End: for
+        
         for attr_name, attr in attrs.items():
             # Skip special methods
             if attr_name.startswith('__'):
                 continue
 
-            if name == 'Field':
-                print ('  ', attr_name)
             # Skip methods without docstrings
             if not hasattr(attr, '__doc__'):
                 continue
 
             # @property or normal method
-            if hasattr(attr, '__call__') or hasattr(attr, 'fget'):
-                # Update docstring
-                RewriteDocstringMeta._docstring_update(name, attr,
+            if hasattr(attr, 'fget'):
+                # Note that here inspect.isroutine(attr) is False for
+                # @property methods (but this is not the case for
+                # properties in the parent classes).
+
+                RewriteDocstringMeta._docstring_update(class_name, attr,
                                                        attr_name,
                                                        attrs['__module__'],
                                                        docstring_rewrite)
                 continue
 
-            # classmethod
-            if isinstance(attr, classmethod):
-                f = getattr(attr, '__func__')
+            if not inspect.isroutine(attr):
+                continue
 
+            is_classmethod = False
+            is_staticmethod = False
+            
+            # Find out if the method is a classmethod (the
+            # inspect.ismethod technique doesn't work for this class)
+            if isinstance(attr, classmethod):
+                is_classmethod = True
+            elif isinstance(attr, staticmethod):
+                is_staticmethod = True
+                
+            # Skip non-callables
+#            if not (is_classmethod or is_staticmethod) and not hasattr(attr, '#__call__'):
+#                continue
+
+            is_wrapped = hasattr(attr, '__wrapped__')
+            if is_wrapped:
+                wrapper = attr
+                attr = attr.__wrapped__
+
+            if is_classmethod or is_staticmethod:
+                f = getattr(attr, '__func__', attr)
+                
                 # Copy the method
                 attr = type(f)(f.__code__, f.__globals__,
                                f.__name__, f.__defaults__,
                                f.__closure__)
+            
+            # Update docstring
+            RewriteDocstringMeta._docstring_update(class_name, attr,
+                                                   attr_name,
+                                                   attrs['__module__'],
+                                                   docstring_rewrite)
 
-                # Update docstring
-                RewriteDocstringMeta._docstring_update(name, attr,
-                                                       attr_name,
-                                                       attrs['__module__'],
-                                                       docstring_rewrite)
-
+            # Redecorate
+            if is_classmethod:
                 attrs[attr_name] = classmethod(attr)
+
+            if is_staticmethod:
+                attrs[attr_name] = staticmethod(attr)
+                
+            if is_wrapped:
+                wrapper.__doc__ = attr.__doc__
+                wrapper.__wrapped__ = attr
+                attrs[attr_name] = wrapper
         # --- End: for
 
         for parent in parents:
-            if name == 'Field':
-                print (parent.__name__)
-
             for attr_name in dir(parent):
                 
-                if name == 'Field' and  parent.__name__ == 'PropertiesData':
-                    print (attr_name)
-                # We already have this method
                 if attr_name in attrs:
+                    # We already have this method from higher up in
+                    # the method resolution order, so do not overwrite
+                    # it and move on to to the next method.
                     continue
-
+                
                 # Skip special methods
                 if attr_name.startswith('__'):
                     continue
@@ -110,88 +152,80 @@ class RewriteDocstringMeta(type):
                 # ----------------------------------------------------
                 original_f = getattr(parent, attr_name)
 
-                class_method = False
-
-                if name == 'Field' and  parent.__name__ == 'PropertiesData' and attr_name == '_equals_preprocess':
-                    print ('    name', original_f.__name__, original_f)
-                    print ('    dir', dir(original_f))
-                    print ('    __wrapped__', original_f.__wrapped__.__name__, original_f.__wrapped__)
-
-                if name == 'Field' and  parent.__name__ == 'PropertiesData' and attr_name == '_parse_axes':
-                    print ('    dir', dir(original_f))
-
-
-                xxx = None
+                is_classmethod = False
+                is_staticmethod = False
+                is_wrapped = False
                 
                 try:
-                    if hasattr(original_f, 'fget'):
-                        # The original function is a property, i.e. it has
-                        # been decorated with @property. Copy it.
+                    if hasattr(original_f, 'fget'): 
+                        # The original function is decorated with #
+                        # @property
                         attr = type(original_f)(original_f.fget,
                                                 original_f.fset,
                                                 original_f.fdel)
                     else:
-                        # Skip non-callables
-                        if not hasattr(original_f, '__call__'):
+                        if not inspect.isroutine(original_f):
                             continue
-                        if name == 'Field' and  parent.__name__ == 'PropertiesData':
-                            print ('    DOING', attr_name)
-                        # Note if the method is a classmethod
-                        if inspect.ismethod(original_f):
-                            class_method = True
-                            print ('IS CLASS METHOD')
-                            
-                        if name == 'Field' and  parent.__name__ == 'PropertiesData':
-                            print ('    namne', original_f.__name__)
 
-                        
+                        if inspect.ismethod(original_f):
+                            is_classmethod = True
+                        elif isinstance(parent.__dict__.get(attr_name),
+                                        staticmethod):                    
+                            is_staticmethod = True
+                                    
+                        is_wrapped = hasattr(original_f, '__wrapped__')
                             
                         f = getattr(original_f, '__func__', original_f)
-                        if name == 'Field' and  parent.__name__ == 'PropertiesData':
-                            print ('    namne', f.__name__)
-                            print (f is original_f)
 
                         # Copy the method
                         attr = type(f)(f.__code__, f.__globals__,
                                        f.__name__, f.__defaults__,
                                        f.__closure__)
-                        
-                        if name == 'Field' and  parent.__name__ == 'PropertiesData':
-                            print ('    namne', attr.__name__)
 
-                        
-                        if name == 'Field' and  parent.__name__ == 'PropertiesData' and attr_name == '_equals_preprocess':
-                            print ('    dir 2', dir(f))
-                            print ('    dir 3', dir(attr))
-
-                        if hasattr(f, '__wrapped__'):
-#                            xxx = attr
-#                            attr = f.__wrapped__
-                            if name == 'Field' and  parent.__name__ == 'PropertiesData':
-                                print ('WRAPPED: ', attr_name)
-                            
+                        if is_wrapped:
+                            # Need to assign the original docstring
+                            # when wrapped
+                            attr.__doc__ = f.__doc__
+                    # --- End: if
+                    
                     # Update the docstring
-                    RewriteDocstringMeta._docstring_update(name, attr,
+                    RewriteDocstringMeta._docstring_update(class_name, attr,
                                                            attr_name,
                                                            attrs['__module__'],
                                                            docstring_rewrite)
 
-#                    if 
-                    
                     # Register a classmethod
-                    if class_method:
+                    if is_classmethod:
                         attr = classmethod(attr)
+
+                    # Register a classmethod
+                    if is_staticmethod:
+                        attr = staticmethod(attr)
+
+                    if is_wrapped:
+                        # Copy the wrapper and update its wrapped
+                        # function
+                        wrapper = type(original_f)(
+                            original_f.__code__,
+                            original_f.__globals__,
+                            original_f.__name__,
+                            original_f.__defaults__,
+                            original_f.__closure__)
+                        
+                        wrapper.__wrapped__ = attr
+                        wrapper.__doc__ = attr.__doc__
+                        attr = wrapper
 
                     # Put the modified method back into the parent
                     # class
                     attrs[attr_name] = attr
 
                 except Exception as error:
-                    raise Exception(error)
+                    print("WARNING: {}".format(error))
         # --- End: for
 
         # Create the class
-        return super().__new__(cls, name, parents, attrs)
+        return super().__new__(cls, class_name, parents, attrs)
 
     @staticmethod
     def _docstring_update(class_name, f, method_name, module, config):
@@ -216,23 +250,40 @@ class RewriteDocstringMeta(type):
         else:
             package_name = module[0]
 
+
+#        module = module.split('.')
+#        package_name = module[0]
+#        sub_package_name = '.'.join(module[1:])
+
+#        if sub_package_name:
+#            class_name = '.'.join((sub_package_name, class_name))
+            
         # ------------------------------------------------------------
         # Do general substitutions first
         # ------------------------------------------------------------
         for key, value in config.items():
             try:
+                # Compiled regular expression substitution
                 doc = key.sub(value, doc)
             except AttributeError:
+                # String substitution
                 doc = doc.replace(key, value)
         # --- End: for
 
         # ------------------------------------------------------------
         # Now do special substitutions
         # ------------------------------------------------------------
+        # Insert the name of the package
         doc = doc.replace('{{package}}', package_name)
+
+        # Insert the name of the class containing this method
         doc = doc.replace('{{class}}', class_name)
 
+        # Insert the name of a different class
         if '{{+' in doc:
+#            func = partial(RewriteDocstringMeta._docstring_replacement_plus_class,
+#                           sub_package_name=sub_package_name)
+
             if core:
                 func = RewriteDocstringMeta._docstring_replacement_core_class
             else:
@@ -251,6 +302,16 @@ class RewriteDocstringMeta(type):
 
         '''
         return match.group(1)
+
+#    @staticmethod
+#    def _docstring_replacement_plus_class(match, sub_package_name=''):
+#        '''Return the first of the match groups.
+#
+#        '''
+#        if sub_package_name:
+#            return '.'.join((sub_package_name, match.group(1)))
+#        
+#        return match.group(1)
 
     @staticmethod
     def _docstring_replacement_core_class(match):

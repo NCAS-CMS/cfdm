@@ -120,6 +120,29 @@ class PropertiesData(Properties):
 
         return [(i + ndim if i < 0 else i) for i in axes]
 
+    @staticmethod
+    def _test_docstring_substitution_staticmethod():
+        '''Test docstring substitution on with @staticmethod.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        print('In _test_docstring_substitution_staticmethod')
+    
+    @_manage_log_level_via_verbosity
+    @_inplace_enabled
+    def _test_docstring_substitution(self, inplace=False, verbose=None):
+        '''Test docstring substitution with two decorators.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        print('In _test_docstring_substitution')
+    
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -318,8 +341,7 @@ class PropertiesData(Properties):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -541,6 +563,12 @@ class PropertiesData(Properties):
             a subclass of one. If *ignore_type* is True then equality
             is possible for any object with a compatible API.
 
+            Any type of object may be tested but, in general, equality
+            is only possible with another {{class}} instance, or a
+            subclass of one. If *ignore_type* is True then
+            ``{{class}}(source=other)`` is tested, rather than the
+            ``other`` defined by the *other* parameter.
+
     :Returns:
 
         `bool`
@@ -739,16 +767,20 @@ class PropertiesData(Properties):
             *Parameter example:*
               ``axes=[2, 0]``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
-            A new instance with removed data axes. If the operation
-            was in-place then `None` is returned.
+        `{{class}}`
+            A new instance with removed size 1 one data axes. If the
+            operation was in-place then `None` is returned.
 
     **Examples:**
 
+    >>> import numpy
+    >>> f = {{package}}.{{class}}()
+    >>> d = {{package}}.{{+Data}}(numpy.arange(7008).reshape((1, 73, 1, 96)))
+    >>> f.set_data(d)
     >>> f.shape
     (1, 73, 1, 96)
     >>> f.squeeze().shape

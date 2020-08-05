@@ -34,6 +34,12 @@ class DocstringTest(unittest.TestCase):
             cfdm.RaggedContiguousArray,
             cfdm.RaggedIndexedArray,
             cfdm.RaggedIndexedContiguousArray,
+
+            cfdm.core.mixin.Properties,
+            cfdm.core.mixin.PropertiesData,
+            cfdm.core.mixin.PropertiesDataBounds,
+            cfdm.core.mixin.Coordinate,
+            
         )
         self.subclasses_of_Properties = (
             cfdm.Field,
@@ -77,15 +83,16 @@ class DocstringTest(unittest.TestCase):
                     if name.startswith('__'):
                         continue
                     
-                    f = getattr(klass, name)
-                    if not hasattr(f, '__doc__'):
+                    f = getattr(klass, name, None)
+                    if f is None or not hasattr(f, '__doc__'):
                         continue
                     
                     self.assertIsNotNone(f.__doc__,
-                                         '{}, {}, {}, {}, {}'.format(klass, name, f, dir(f), f.__doc__))
+                                         '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}\n__doc__: {}'.format(
+                                             klass, name, f, f.__doc__))
                     
                     self.assertNotIn('{{', f.__doc__,
-                                     '{}, {}, {}'.format(klass, name, f))
+                                     '\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(klass, name, f))
 
     def test_docstring_package(self):
         string = '>>> f = {}.'.format(self.package)
@@ -132,6 +139,6 @@ class DocstringTest(unittest.TestCase):
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
-    cfdm.environment(display=False)
+    cfdm.environment()
     print('')
     unittest.main(verbosity=2)

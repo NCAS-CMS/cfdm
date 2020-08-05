@@ -2,8 +2,8 @@ import inspect
 import re
 
 # --------------------------------------------------------------------
-# See cfdm.core.mixin.container.__docstring_substitution__ for
-# {{...}}  docstring substitutions
+# See cfdm.core.mixin.container.__docstring_substitution__ for {{...}}
+# docstring substitutions
 # --------------------------------------------------------------------
 
 
@@ -61,12 +61,12 @@ class Container(metaclass=RewriteDocstringMeta):
     that class and all of its subclases.
 
     If the key is a string then the special subtitutions will be
-    applied to the dictionary values prior to replacement in the
+    applied to the dictionary values *after* its replacement in the
     docstring.
 
     If the key is a compiled regular expession then the special
     subtitutions will be applied to the match of the regular
-    expression prior to replacement in the docstring.
+    expression *after* its replacement in the docstring.
 
     For example:
 
@@ -99,7 +99,7 @@ class Container(metaclass=RewriteDocstringMeta):
             # All occurences of the key are replaced with the value.
             #
             # Note that special subtitutions will be applied to the
-            # value prior to replacement in the docstring.
+            # value *after* its replacement in the docstring.
             # --------------------------------------------------------
             '{{repr}}': '',
 
@@ -107,6 +107,9 @@ class Container(metaclass=RewriteDocstringMeta):
             Return the value of the *default* parameter if data have
             not been set. If set to an `Exception` instance then it
             will be raised instead.''',
+
+            '{{inplace: `bool`, optional}}': '''inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.'''
 
             # --------------------------------------------------------
             # Regular expression substitutions.
@@ -120,8 +123,8 @@ class Container(metaclass=RewriteDocstringMeta):
             # string to be used.
             #
             # Note that special subtitutions will be applied to the
-            # match of the regular expression prior to replacement in
-            # the docstring.
+            # match of the regular expression *after* its replacement
+            # in the docstring.
             # --------------------------------------------------------
         }
 
@@ -261,7 +264,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
     **Examples:**
 
-    >>> f = {{package}}.{{class]}()
+    >>> f = {{package}}.{{class}}()
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
