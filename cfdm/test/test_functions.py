@@ -11,7 +11,7 @@ import cfdm
 
 
 n_tmpfiles = 1
-tmpfiles = [tempfile.mktemp('_test_functions.nc', dir=os.getcwd())
+tmpfiles = [tempfile.mkstemp('_test_functions.nc', dir=os.getcwd())[1]
             for i in range(n_tmpfiles)]
 (
     temp_file,
@@ -207,13 +207,15 @@ class FunctionsTest(unittest.TestCase):
 
         for n in range(top + 1):
             f = cfdm.example_field(n)
+
             _ = f.data.array
+
             self.assertIsInstance(f.dump(display=False), str)
 
             cfdm.write(f, temp_file)
-            g = cfdm.read(temp_file)
+            g = cfdm.read(temp_file, verbose=1)
 
-            self.assertEqual(len(g), 1)
+            self.assertEqual(len(g), 1, g)
             self.assertTrue(f.equals(g[0], verbose=3), 'n={}'.format(n))
 
         with self.assertRaises(Exception):
@@ -328,6 +330,6 @@ class FunctionsTest(unittest.TestCase):
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
-    cfdm.environment(display=False)
+    cfdm.environment()
     print('')
     unittest.main(verbosity=2)

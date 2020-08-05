@@ -41,8 +41,8 @@ def read(filename, external=None, extra=None, verbose=None,
 
     Domain axis constructs that correspond to NetCDF unlimited
     dimensions may be accessed with the
-    `~cf.DomainAxis.nc_is_unlimited` and
-    `~cf.DomainAxis.nc_set_unlimited` methods of a domain axis
+    `~cfdm.DomainAxis.nc_is_unlimited` and
+    `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
 
 

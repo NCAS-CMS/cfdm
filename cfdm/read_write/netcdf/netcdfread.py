@@ -1865,9 +1865,9 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         logger.debug(
-            "    Pre-processing indexed and contiguous compression"
+            "    Pre-processing indexed and contiguous compression "
+            "for instance dimension: {}".format(instance_dimension)
         )  # pragma: no cover
-        logger.debug(g['compression'])  # pragma: no cover
 
         profile_dimension = g['compression'][sample_dimension][
             'ragged_contiguous']['profile_dimension']
@@ -1911,7 +1911,7 @@ class NetCDFRead(IORead):
         }
 
         logger.debug(
-            "    Created g['compression'][{!r}]"
+            "    Created read_vars['compression'][{!r}]"
             "['ragged_indexed_contiguous']".format(
                   sample_dimension)
         )  # pragma: no cover
@@ -1923,12 +1923,13 @@ class NetCDFRead(IORead):
                     'ragged_indexed_contiguous']['implied_ncdimensions']
             )
         )  # pragma: no cover
-        logger.debug(
-            "    Removing "
-            "read_vars['compression'][{!r}]['ragged_contiguous']".format(
-                sample_dimension))  # pragma: no cover
 
         del g['compression'][sample_dimension]['ragged_contiguous']
+
+        logger.debug(
+            "    Removed "
+            "read_vars['compression'][{!r}]['ragged_contiguous']".format(
+                sample_dimension))  # pragma: no cover
 
     def _parse_geometry(self, parent_ncvar, attributes):
         '''TODO
@@ -1967,20 +1968,21 @@ class NetCDFRead(IORead):
 
         geometry_ncvar = parsed_geometry[0]
 
-        logger.info(
-            "    Geometry container = {!r}".format(geometry_ncvar)
-        )  # pragma: no cover
-        logger.debug(
-            "        netCDF attributes: {}".format(
-                attributes[geometry_ncvar])
-        )  # pragma: no cover
-
         if geometry_ncvar in g['geometries']:
             # We've already parsed this geometry container, so record
             # the fact that this parent netCDF variable has this
             # geometry variable and return.
             g['variable_geometry'][parent_ncvar] = geometry_ncvar
             return
+
+        logger.info(
+            "    Geometry container = {!r}".format(geometry_ncvar)
+        )  # pragma: no cover
+        logger.debug(
+            "        netCDF attributes: {}".format(
+                 pformat(attributes[geometry_ncvar], indent=12)
+            )
+        )  # pragma: no cover
 
         geometry_type = attributes[geometry_ncvar].get('geometry_type')
 
@@ -2114,14 +2116,9 @@ class NetCDFRead(IORead):
                 sample_dimension=node_dimension,
                 element_dimension='node',
                 instance_dimension=geometry_dimension)
-
-#            g['compression'][node_dimension]['netCDF_variables'] = (
-#                parsed_node_coordinates[:])
-            g['compression'][node_dimension].setdefault(
-                'netCDF_variables', set()).update(parsed_node_coordinates)
         else:
             # --------------------------------------------------------
-            # There is a part_count variable.
+            # There is a part node count variable.
             #
             # => we must treat the nodes as an indexed contiguous
             # ragged array
@@ -2173,10 +2170,12 @@ class NetCDFRead(IORead):
                 element_dimension='node',
                 instance_dimension=part_dimension)
 
+            indexed_sample_dimension = g['variable_dimensions'][
+                part_node_count][0]
+
             element_dimension_2 = self._set_ragged_indexed_parameters(
                 index=index,
-                indexed_sample_dimension=g['variable_dimensions'][
-                    part_node_count][0],
+                indexed_sample_dimension=indexed_sample_dimension,
                 element_dimension='part',
                 instance_dimension=geometry_dimension)
 
@@ -2203,14 +2202,24 @@ class NetCDFRead(IORead):
             if parsed_interior_ring:
                 interior_ring = parsed_interior_ring[0]
                 part_dimension = g['variable_dimensions'][interior_ring][0]
-                ir = self._create_InteriorRing(ncvar=interior_ring,
-                                               ncdim=part_dimension)
-                g['geometries'][geometry_ncvar]['interior_ring'] = ir
+                i_r = self._create_InteriorRing(ncvar=interior_ring,
+                                                ncdim=part_dimension)
+                g['geometries'][geometry_ncvar]['interior_ring'] = i_r
+
+                # Record that this netCDF interor ring variable spans
+                # a compressed dimension
+                g['compression'][indexed_sample_dimension].setdefault(
+                    'netCDF_variables', set()).update(parsed_interior_ring)
 
                 # Do not attempt to create a field from an
                 # interior ring variable
                 g['do_not_create_field'].add(interior_ring)
         # --- End: if
+
+        # Record which the netCDF node variables span the compressed
+        # dimension
+        g['compression'][node_dimension].setdefault(
+            'netCDF_variables', set()).update(parsed_node_coordinates)
 
         # Do not attempt to create field constructs from netCDF node
         # coordinate variables
@@ -3095,7 +3104,8 @@ class NetCDFRead(IORead):
                         field_ncvar=field_ncvar,
                         ncvar=None,
                         f=f,
-                        bounds_ncvar=node_ncvar)
+                        bounds_ncvar=node_ncvar,
+                        nodes=True)
 
                     geometry_type = geometry['geometry_type']
                     if geometry_type is not None:
@@ -3772,7 +3782,7 @@ class NetCDFRead(IORead):
             dimensions = '(' + ', '.join(dimensions) + ')'  # pragma: no cover
 
         logger.info(
-            "    1 Error processing netCDF variable {}{}: {}".format(
+            "    Error processing netCDF variable {}{}: {}".format(
                 ncvar, dimensions, d['reason'])
         )  # pragma: no cover
 
@@ -3848,7 +3858,7 @@ class NetCDFRead(IORead):
         return g['flattener_dimensions'].get(ncdim, ncdim)
 
     def _create_auxiliary_coordinate(self, field_ncvar, ncvar, f,
-                                     bounds_ncvar=None):
+                                     bounds_ncvar=None, nodes=False):
         '''Create an auxiliary coordinate constuct.
 
     .. versionadded:: 1.7.0
@@ -3858,14 +3868,21 @@ class NetCDFRead(IORead):
         field_ncvar: `str`
             The netCDF variable name of the parent field construct.
 
-        ncvar: `str`
-            The netCDF name of the variable.
+        ncvar: `str` or `None`
+            The netCDF name of the variable. See the *nodes*
+            parameter.
 
         field: field construct
             The parent field construct.
 
         bounds_ncvar: `str`, optional
             The netCDF variable name of the coordinate bounds.
+
+        nodes: `bool`
+            Set to True only if and only if the coordinate construct
+            is to be created with only bounds from a node coordinates
+            variable, whose netCDF name is given by *bounds_ncvar*. In
+            this case *ncvar* must be `None`.
 
     :Returns:
 
@@ -3875,7 +3892,8 @@ class NetCDFRead(IORead):
         return self._create_bounded_construct(field_ncvar=field_ncvar,
                                               ncvar=ncvar, f=f,
                                               auxiliary=True,
-                                              bounds_ncvar=bounds_ncvar)
+                                              bounds_ncvar=bounds_ncvar,
+                                              nodes=nodes)
 
     def _create_dimension_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
@@ -3927,15 +3945,16 @@ class NetCDFRead(IORead):
                                   dimension=False, auxiliary=False,
                                   domain_ancillary=False,
                                   bounds_ncvar=None,
-                                  has_coordinates=True):
+                                  has_coordinates=True, nodes=False):
         '''Create a variable which might have bounds.
 
     .. versionadded:: 1.7.0
 
     :Parameters:
 
-        ncvar: `str`
-            The netCDF name of the variable.
+        ncvar: `str` or `None`
+            The netCDF name of the variable. See the *nodes*
+            parameter.
 
         f: `Field`
             The parent field construct.
@@ -3948,6 +3967,12 @@ class NetCDFRead(IORead):
 
         domain_ancillary: `bool`, optional
             If True then a domain ancillary construct is created.
+
+        nodes: `bool`
+            Set to True only if and only if the coordinate construct
+            is to be created with only bounds from a node coordinates
+            variable, whose netCDF name is given by *bounds_ncvar*. In
+            this case *ncvar* must be `None`.
 
     :Returns:
 
@@ -3987,7 +4012,8 @@ class NetCDFRead(IORead):
                     bounds_ncvar = properties.pop('nodes', None)
                     if bounds_ncvar is not None:
                         attribute = 'nodes'
-        # --- End: if
+        elif nodes:
+            attribute = 'nodes'
 
         if dimension:
             properties.pop('compress', None)
@@ -4027,18 +4053,18 @@ class NetCDFRead(IORead):
                 bounds_ncvar = g['flattener_variables'].get(
                     bounds_ncvar, bounds_ncvar)
 
-            if geometry is None:
-                # Check "normal" boounds
-                cf_compliant = self._check_bounds(
-                    field_ncvar, ncvar,
-                    attribute,
-                    bounds_ncvar)
-            else:
+            if attribute == 'nodes':
                 # Check geomerty node coordinate boounds
                 cf_compliant = self._check_geometry_node_coordinates(
                     field_ncvar,
                     bounds_ncvar,
                     geometry)
+            else:
+                # Check "normal" boounds
+                cf_compliant = self._check_bounds(
+                    field_ncvar, ncvar,
+                    attribute,
+                    bounds_ncvar)
 
             if not cf_compliant:
                 bounds_ncvar = None
@@ -4074,7 +4100,13 @@ class NetCDFRead(IORead):
                 g['variable_dimensions'][bounds_ncvar][-1]
             )
 
-            self.implementation.nc_set_dimension(bounds, bounds_ncdim)
+            # Set the netCDF trailing bounds dimension name. (But not
+            # if it is a dimension of its parent coordinate
+            # variable. This can sometimes happen if the bounds are
+            # node coordinates.)
+            if bounds_ncdim not in g['variable_dimensions'].get(ncvar, ()):
+                self.implementation.nc_set_dimension(bounds, bounds_ncdim)
+
             self.implementation.set_bounds(c, bounds, copy=False)
 
             if not domain_ancillary:
@@ -5695,7 +5727,7 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         if coord_ncvar not in g['internal_variables']:
-            coord_ncvar, message - self._check_missing_variable(
+            coord_ncvar, message = self._check_missing_variable(
                 coord_ncvar, 'Auxiliary/scalar coordinate variable'
             )
             self._add_message(field_ncvar, coord_ncvar,

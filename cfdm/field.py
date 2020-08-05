@@ -1137,7 +1137,6 @@ class Field(mixin.NetCDFVariable,
                                f.get_data_axes()[:-1],
                                _RaggedIndexedArray,
                                index_variable=index_variable)
-        # --- End: if
 
         elif method == 'gathered':
             # --------------------------------------------------------
