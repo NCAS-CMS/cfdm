@@ -45,7 +45,7 @@ version 1.8.6.0
   data.
 * Added test to check that dimension coordinate construct data is
   1-dimensional.
-* New dependency: ``netcdf_flattener>=1.1.0``
+* New dependency: ``netcdf_flattener>=1.2.0``
 * Changed dependency: ``cftime>=1.2.1``
 * Removed dependency: ``future``
 
