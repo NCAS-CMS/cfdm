@@ -1,3 +1,13 @@
+version 1.8.?.?
+---------------
+----
+
+**2020-??-??**
+
+* Fixed bug that occasionally caused the incorrect and writing of, and
+  failures when reading, a netCDF dataset that contains multiple
+  geometry containers (https://github.com/NCAS-CMS/cfdm/issues/65)
+
 version 1.8.6.0
 ---------------
 ----
@@ -8,9 +18,10 @@ version 1.8.6.0
   (https://github.com/NCAS-CMS/cfdm/issues/55)
 * Implemented the reading and writing of netCDF4 group hierarchies for
   CF-1.8 (https://github.com/NCAS-CMS/cfdm/issues/13)
-* Renamed to lower-case (but otherwise identical) names all functions which
-  get and set global constants: `cfdm.atol`, `cfdm.rtol`, `cfdm.log_level`.
-  The old names e.g. `cfdm.ATOL` remain functional as aliases.
+* Renamed to lower-case (but otherwise identical) names all functions
+  which get and set global constants: `cfdm.atol`, `cfdm.rtol`,
+  `cfdm.log_level`.  The old names e.g. `cfdm.ATOL` remain functional
+  as aliases.
 * New function: `cfdm.configuration`
 * New method: `cfdm.Field.nc_variable_groups`
 * New method: `cfdm.Field.nc_set_variable_groups`
@@ -44,8 +55,8 @@ version 1.8.5
 
 **2020-06-10**
 
-* Fixed bug that prevented the reading of certain netCDF files, such as
-  those with at least one external variable.
+* Fixed bug that prevented the reading of certain netCDF files, such
+  as those with at least one external variable.
 
 version 1.8.4
 -------------
