@@ -1,12 +1,6 @@
 import inspect
 import re
 
-# --------------------------------------------------------------------
-# See cfdm.core.mixin.container.__docstring_substitution__ for {{...}}
-# docstring substitutions
-# --------------------------------------------------------------------
-
-
 from copy import copy, deepcopy
 
 from ..meta import RewriteDocstringMeta
@@ -353,6 +347,30 @@ class Container(metaclass=RewriteDocstringMeta):
             value = deepcopy(value)
 
         self._components[component] = value
+
+    @classmethod
+    def _docstring_substitutions(cls):
+        '''Return the docstring substitutions that apply to methods of this
+    class.
+
+    :Returns:
+
+        `dict`
+            The docstring substitutions. A dictionary key matches text
+            in the docstrings, with a corresponding value its
+            replacement.
+
+        '''
+        d = {}
+        for klass in cls.__bases__[::-1] + (cls,):
+            print (klass)
+            d_s = getattr(klass, '__docstring_substitution__', None)
+            if d_s is None:
+                continue
+
+            d.update(d_s(None))
+
+        return d
 
     # ----------------------------------------------------------------
     # Methods

@@ -1,9 +1,9 @@
 import numpy
 
-from .. import mixin
+from .. import abstract
 
 
-class Data(mixin.Container):
+class Data(abstract.Container):
     '''An orthogonal multidimensional array with masked values and units.
 
     .. versionadded:: 1.7.0

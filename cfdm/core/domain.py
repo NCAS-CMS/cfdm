@@ -1,9 +1,11 @@
+from . import abstract
 from . import mixin
 
 from . import Constructs
 
 
-class Domain(mixin.ConstructAccess, mixin.Container):
+class Domain(mixin.ConstructAccess,
+             abstract.Container):
     '''A domain of the CF data model.
 
     The domain represents a set of discrete "locations" in what

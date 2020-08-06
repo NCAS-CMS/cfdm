@@ -6,8 +6,8 @@ from . import PropertiesData
 
 
 # --------------------------------------------------------------------
-# See cfdm.core.mixin.container.__docstring_substitution__ for
-# {{...}}  docstring substitutions
+# See cfdm.core.mixin.container.__docstring_substitution__ for {{...}}
+# docstring substitutions
 # --------------------------------------------------------------------
 
 

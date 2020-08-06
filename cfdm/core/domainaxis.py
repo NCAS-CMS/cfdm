@@ -1,7 +1,7 @@
-from . import mixin
+from . import abstract
 
 
-class DomainAxis(mixin.Container):
+class DomainAxis(abstract.Container):
     '''A domain axis construct of the CF data model.
 
     A domain axis construct specifies the number of points along an

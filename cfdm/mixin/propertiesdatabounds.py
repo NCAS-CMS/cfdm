@@ -1277,11 +1277,11 @@ class PropertiesDataBounds(PropertiesData):
             *Parameter example:*
               ``position=-1``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}`
             The new construct with expanded data axes. If the
             operation was in-place then `None` is returned.
 

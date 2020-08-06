@@ -20,6 +20,7 @@ from .decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
+    _test_decorator_args,
 )
 
 
@@ -480,8 +481,8 @@ class Field(mixin.NetCDFVariable,
         '''
         print('_test_docstring_substitution_property_Field')
 
-    @_manage_log_level_via_verbosity
     @property
+    @_test_decorator_args('i')
     def _test_docstring_substitution_decorator_property(self):
         '''Test docstring substitution on {{class}} with @property and a
     decorator.
@@ -492,7 +493,7 @@ class Field(mixin.NetCDFVariable,
 
         '''
         print('_test_docstring_substitution_decorator_property_Field')
-    
+
     @staticmethod
     def _test_docstring_substitution_staticmethod_Field():
         '''Test docstring substitution on {{class}} with @staticmethod.
@@ -503,7 +504,8 @@ class Field(mixin.NetCDFVariable,
 
         '''
         print('_test_docstring_substitution_staticmethod_Field')
-    
+
+    @_test_decorator_args('i')
     @_manage_log_level_via_verbosity
     @_inplace_enabled
     def _test_docstring_substitution_Field(self, inplace=False, verbose=None):
@@ -515,7 +517,7 @@ class Field(mixin.NetCDFVariable,
 
         '''
         print('_test_docstring_substitution_Field')
-    
+
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------

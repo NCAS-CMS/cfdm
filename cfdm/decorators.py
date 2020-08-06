@@ -190,3 +190,33 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
                     _disable_logging()  # disable again after re-enabling
 
     return verbose_override_wrapper
+
+
+# @_test_decorator_args('i') -> example usage for decorating, using i kwarg
+def _test_decorator_args(*dec_args):
+    '''A wrapper for provision of positional arguments to the decorator.'''
+    def deprecated_kwarg_check_decorator(operation_method):
+        '''A decorator for a deprecation check on given kwargs.
+
+        To specify deprecated kwargs, supply them as string arguments, e.g:
+
+            @_test_decorator_args('i')
+            @_test_decorator_args('i', 'traceback')
+
+        For a specified list `*dec_args`, check if the decorated
+        method has been supplied with any of the elements as keyword
+        arguments and if so, call _DEPRECATION_ERROR_KWARGS on them,
+        optionally providing a custom message to raise inside it.
+
+        '''
+        @wraps(operation_method)
+        def precede_with_kwarg_deprecation_check(self, *args, **kwargs):
+            print('In precede_with_kwarg_deprecation_check. dec_args=',
+                  dec_args)
+
+            # Decorated method has same return signature as if undecorated:
+            return
+
+        return precede_with_kwarg_deprecation_check
+
+    return deprecated_kwarg_check_decorator

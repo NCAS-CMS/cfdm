@@ -1,7 +1,7 @@
-from ...mixin import Container
+from ... import abstract
 
 
-class Array(Container):
+class Array(abstract.Container):
     '''Abstract base class for a container of an array.
 
     The form of the array is defined by the initialization parameters

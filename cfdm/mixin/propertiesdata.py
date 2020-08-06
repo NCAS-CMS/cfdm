@@ -6,6 +6,7 @@ from ..decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
+    _test_decorator_args,
 )
 
 
@@ -120,8 +121,19 @@ class PropertiesData(Properties):
 
         return [(i + ndim if i < 0 else i) for i in axes]
 
+    @classmethod
+    def _test_docstring_substitution_classmethod(cls, arg1, arg2):
+        '''Test docstring substitution on with @classmethod.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        return (arg1, arg2)
+
     @staticmethod
-    def _test_docstring_substitution_staticmethod():
+    def _test_docstring_substitution_staticmethod(arg1, arg2):
         '''Test docstring substitution on with @staticmethod.
 
         {{inplace: `bool`, optional}}
@@ -129,9 +141,9 @@ class PropertiesData(Properties):
     {{package}}.{{class}}
 
         '''
-        print('In _test_docstring_substitution_staticmethod')
-    
-    @_manage_log_level_via_verbosity
+        return (arg1, arg2)
+
+    @_test_decorator_args('i')
     @_inplace_enabled
     def _test_docstring_substitution(self, inplace=False, verbose=None):
         '''Test docstring substitution with two decorators.
@@ -142,7 +154,7 @@ class PropertiesData(Properties):
 
         '''
         print('In _test_docstring_substitution')
-    
+
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -718,6 +730,7 @@ class PropertiesData(Properties):
 
     :Returns:
 
+        `{{class}}`
             A new instance with expanded data axes. If the operation
             was in-place then `None` is returned.
 
