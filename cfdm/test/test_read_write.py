@@ -79,7 +79,7 @@ class read_writeTest(unittest.TestCase):
         ]
         self.netcdf_fmts = self.netcdf3_fmts + self.netcdf4_fmts
 
-        #self.test_only = []
+        ### self.test_only = []  # TODO reinstate this one at PR end
         # self.test_only = ['NOTHING!!!!!']
         # self.test_only = ['test_write_filename']
         # self.test_only = ['test_read_write_unlimited']

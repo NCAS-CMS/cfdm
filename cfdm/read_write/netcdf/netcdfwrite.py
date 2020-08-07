@@ -5,6 +5,8 @@ import re
 
 from distutils.version import LooseVersion
 
+from pprint import pformat, pprint
+
 import numpy
 import netCDF4
 
@@ -4323,7 +4325,9 @@ class NetCDFWrite(IOWrite):
                     )
         # --- End: if
 
-        if self.write_vars["overwrite"]:
+        # mode == 'w' is safer than != 'a' in case of a typo (the letters
+        # are neighbours on a QWERTY keyboard) since 'w' is destructive
+        if mode == "w" and self.write_vars["overwrite"]:
             os.remove(filename)
 
         try:
@@ -4545,6 +4549,7 @@ class NetCDFWrite(IOWrite):
         # Initialise netCDF write parameters
         # ------------------------------------------------------------
         self.write_vars = {
+            'filename': os.path.expanduser(os.path.expandvars(filename)),
             # Format of output file
             "fmt": None,
             # netCDF4.Dataset instance
@@ -4553,10 +4558,6 @@ class NetCDFWrite(IOWrite):
             "nc": {},
             # Map netCDF dimension names to netCDF dimension sizes
             "ncdim_to_size": {},
-            # Dictionary of netCDF variable names and netCDF
-            # dimensions keyed by items of the field (such as a
-            # coordinate or a coordinate reference)
-            "seen": {},
             # Set of all netCDF dimension and netCDF variable names.
             "ncvar_names": set(()),
             # Set of global or non-standard CF properties which have
@@ -4611,7 +4612,119 @@ class NetCDFWrite(IOWrite):
             # Whether or not to name dimension corodinates in the
             # 'coordinates' attribute
             "coordinates": bool(coordinates),
+
+            # Dictionary of netCDF variable names and netCDF
+            # dimensions keyed by items of the field (such as a
+            # coordinate or a coordinate reference)
+            "seen": {},
         }
+
+        effective_mode = 'w'
+        if mode == 'a':
+            # First open the file in read-only mode to ensure we don't mess
+            # with the contents whilst analysing the contents. This initial
+            # iteration will just update the 'seen' dictionary.
+            effective_mode = 'r'
+            overwrite = False
+        first_io_iteration = self._file_io_iteration(
+            mode=effective_mode,
+            overwrite=overwrite,
+            fields=fields,
+            filename=filename,
+            fmt=fmt,
+            global_attributes=global_attributes,
+            variable_attributes=variable_attributes,
+            file_descriptors=file_descriptors,
+            external=external,
+            Conventions=Conventions,
+            datatype=datatype,
+            least_significant_digit=least_significant_digit,
+            endian=endian,
+            compress=compress,
+            fletcher32=fletcher32,
+            shuffle=shuffle,
+            scalar=scalar,
+            string=string,
+            extra_write_vars=extra_write_vars,
+            warn_valid=warn_valid,
+            group=group,
+        )
+
+        if mode == 'w':  # only one iteration required in this simple case
+            return first_io_iteration
+        elif mode == 'a':  # need another iteration to append after reading
+            return self._file_io_iteration(
+                mode=mode,
+                overwrite=False,
+                fields=fields,
+                filename=filename,
+                fmt=fmt,
+                global_attributes=global_attributes,
+                variable_attributes=variable_attributes,
+                file_descriptors=file_descriptors,
+                external=external,
+                Conventions=Conventions,
+                datatype=datatype,
+                least_significant_digit=least_significant_digit,
+                endian=endian,
+                compress=compress,
+                fletcher32=fletcher32,
+                shuffle=shuffle,
+                scalar=scalar,
+                string=string,
+                extra_write_vars=extra_write_vars,
+                warn_valid=warn_valid,
+                group=group,
+            )
+
+        # Dictionary of netCDF variable names and netCDF
+        # dimensions keyed by items of the field (such as a
+        # coordinate or a coordinate reference)
+        ### self.seen = {}
+
+    def _file_io_iteration(
+        self,
+        mode,
+        overwrite,
+        fields,
+        filename,
+        fmt,
+        global_attributes,
+        variable_attributes,
+        file_descriptors,
+        external,
+        Conventions,
+        datatype,
+        least_significant_digit,
+        endian,
+        compress,
+        fletcher32,
+        shuffle,
+        scalar,
+        string,
+        extra_write_vars,
+        warn_valid,
+        group,
+    ):
+        ''' TODO
+
+        ...
+
+        Note that a verbose keyword as in cfdm.write is not necessary, since
+        verbosity is managed and effectively passed through by the
+        @_manage_log_level_via_verbosity decorator.
+        '''
+        # ------------------------------------------------------------
+        # Initiate file IO with given write variables
+        # ------------------------------------------------------------
+        if mode == 'w':
+            desc = 'Writing to'
+        elif mode == 'a':
+            desc = 'Appending to'
+        else:
+            desc = 'Reading from'
+        logger.info('{} {}'.format(desc, fmt))  # pragma: no cover
+
         g = self.write_vars
 
         # ------------------------------------------------------------
@@ -4731,9 +4844,8 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Open the output netCDF file
         # ------------------------------------------------------------
-        filename = os.path.expanduser(os.path.expandvars(filename))
-        if os.path.isfile(filename):
-            if not overwrite:
+        if mode != 'r':  # i.e. (mode == 'w' or mode == 'a')
+            if os.path.isfile(filename) and not overwrite:
                 raise IOError(
                     "Can't write to an existing file unless "
                     "overwrite=True: {}".format(os.path.abspath(filename))
@@ -4744,10 +4856,11 @@ class NetCDFWrite(IOWrite):
                     "Can't overwrite an existing file without "
                     "permission: {}".format(os.path.abspath(filename))
                 )
-        else:
-            g["overwrite"] = False
+        elif not os.access(filename, os.R_OK):
+            raise IOError(
+                "Can't overwrite an existing file without "
+                "permission: {}".format(os.path.abspath(filename)))
 
-        mode = "w"
         g["filename"] = filename
         g["netcdf"] = self.file_open(filename, mode, fmt, fields)
 
