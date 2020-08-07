@@ -4326,7 +4326,8 @@ class NetCDFWrite(IOWrite):
         # --- End: if
 
         # mode == 'w' is safer than != 'a' in case of a typo (the letters
-        # are neighbours on a QWERTY keyboard) since 'w' is destructive
+        # are neighbours on a QWERTY keyboard) since 'w' is destructive.
+        # Note that for append ('a') mode the original file is never wiped.
         if mode == "w" and self.write_vars["overwrite"]:
             os.remove(filename)
 
@@ -4617,6 +4618,15 @@ class NetCDFWrite(IOWrite):
             # dimensions keyed by items of the field (such as a
             # coordinate or a coordinate reference)
             "seen": {},
+            # Dry run: populate 'seen' dict without actually writing to file.
+            "dry_run": False,
+            # To indicate if the previous iteration was a dry run:
+            "post_dry_run": False,
+            # Note: need write_vars keys to specify dry runs (iterations)
+            # and subsequent runs despite them being implied by the mode ('r'
+            # and 'a' for dry_run and post_dry_run respectively) so that the
+            # mode does not need to be passed to various methods, where a
+            # pair of such keys seem clearer than one "effective mode" key.
         }
 
         effective_mode = 'w'
@@ -4626,6 +4636,7 @@ class NetCDFWrite(IOWrite):
             # iteration will just update the 'seen' dictionary.
             effective_mode = 'r'
             overwrite = False
+            self.write_vars['dry_run'] = True
         first_io_iteration = self._file_io_iteration(
             mode=effective_mode,
             overwrite=overwrite,
@@ -4653,9 +4664,13 @@ class NetCDFWrite(IOWrite):
         if mode == 'w':  # only one iteration required in this simple case
             return first_io_iteration
         elif mode == 'a':  # need another iteration to append after reading
+            self.write_vars['dry_run'] = False
+            self.write_vars['post_dry_run'] = True  # i.e. follows a dry run
             return self._file_io_iteration(
                 mode=mode,
-                overwrite=False,
+                # Intended and applied for append ('a') in the sense of
+                # writing to file, not of wiping the original contents:
+                overwrite=True,
                 fields=fields,
                 filename=filename,
                 fmt=fmt,
