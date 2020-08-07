@@ -218,7 +218,7 @@ class NetCDFWrite(IOWrite):
 
         return array.flatten()
 
-    def _write_attributes(self, parent, ncvar, extra={}, omit=()):
+    def _write_attributes(self, parent, ncvar, extra=None, omit=()):
         '''TODO
 
     :Parameters:
@@ -236,6 +236,9 @@ class NetCDFWrite(IOWrite):
         `dict`
 
         '''
+        # To avoid mutable default argument (an anti-pattern) of extra={}
+        if extra is None:
+            extra = {}
         g = self.write_vars
 
         if parent is None:
@@ -1976,7 +1979,7 @@ class NetCDFWrite(IOWrite):
                 'part_ncdim': ncdim}
 
     def _write_scalar_coordinate(self, f, key, coord_1d, axis, coordinates,
-                                 extra={}):
+                                 extra=None):
         '''Write a scalar coordinate and its bounds to the netCDF file.
 
     It is assumed that the input coordinate is has size 1, but this is not
@@ -2004,6 +2007,10 @@ class NetCDFWrite(IOWrite):
             The updated list of netCDF auxiliary coordinate names.
 
         '''
+        # To avoid mutable default argument (an anti-pattern) of extra={}
+        if extra is None:
+            extra = {}
+
         g = self.write_vars
 
         scalar_coord = self.implementation.squeeze(coord_1d, axes=0)
@@ -2432,7 +2439,7 @@ class NetCDFWrite(IOWrite):
             return ncvar
 
     def _write_netcdf_variable(self, ncvar, ncdimensions, cfvar,
-                               omit=(), extra={}, fill=False,
+                               omit=(), extra=None, fill=False,
                                data_variable=False):
         '''Create a netCDF variable from *cfvar* with name *ncvar* and
     dimensions *ncdimensions*. The new netCDF variable's properties
@@ -2461,6 +2468,10 @@ class NetCDFWrite(IOWrite):
         `None`
 
         '''
+        # To avoid mutable default argument (an anti-pattern) of extra={}
+        if extra is None:
+            extra = {}
+
         g = self.write_vars
 
         logger.info('    Writing {!r}'.format(cfvar))  # pragma: no cover
@@ -2681,7 +2692,7 @@ class NetCDFWrite(IOWrite):
         return data, ncdimensions
 
     def _write_data(self, data, cfvar, ncvar, ncdimensions,
-                    unset_values=(), compressed=False, attributes={}):
+                    unset_values=(), compressed=False, attributes=None):
         '''TODO
 
     :Parameters:
@@ -2701,6 +2712,10 @@ class NetCDFWrite(IOWrite):
             written to the file.
 
         '''
+        # To avoid mutable default argument (an anti-pattern) of attributes={}
+        if attributes is None:
+            attributes = {}
+
         g = self.write_vars
 
         if compressed:

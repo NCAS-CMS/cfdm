@@ -56,7 +56,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         instance._Constructs = Constructs
         return instance
 
-    def __init__(self, properties={}, source=None, copy=True,
+    def __init__(self, properties=None, source=None, copy=True,
                  _use_data=True):
         '''**Initialization**
 
@@ -82,6 +82,10 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             initialization. By default arguments are deep copied.
 
         '''
+        # To avoid mutable default argument (an anti-pattern) of properties={}
+        if properties is None:
+            properties = {}
+
         super().__init__(properties=properties, source=source,
                          copy=copy, _use_data=False)
 

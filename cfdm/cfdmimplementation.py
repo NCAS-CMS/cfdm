@@ -310,7 +310,7 @@ class CFDMImplementation(Implementation):
         '''
         return data.array
 
-    def get_auxiliary_coordinates(self, field, axes=[], exact=False):
+    def get_auxiliary_coordinates(self, field, axes=None, exact=False):
         '''Return auxiliary coordinate constructs that span particular axes.
 
     If no axes are specified then all auxiliary coordinate constructs
@@ -329,6 +329,10 @@ class CFDMImplementation(Implementation):
         `dict`
 
         '''
+        # To avoid mutable default argument (an anti-pattern) of axes=[]
+        if axes is None:
+            axes = []
+
         if exact:
             arg = 'exact'
         else:
@@ -521,7 +525,7 @@ class CFDMImplementation(Implementation):
         '''
         return field.constructs.data_axes()[key]
 
-    def get_constructs(self, field, axes=[], data=False):
+    def get_constructs(self, field, axes=None, data=False):
         '''Return constructs that span particular axes.
 
     If no axes are specified then all constructs are returned.
@@ -541,6 +545,10 @@ class CFDMImplementation(Implementation):
         `dict`
 
         '''
+        # To avoid mutable default argument (an anti-pattern) of axes=[]
+        if axes is None:
+            axes = []
+
         if data:
             return dict(field.constructs.filter_by_data())
 
