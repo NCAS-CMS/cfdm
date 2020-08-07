@@ -67,6 +67,18 @@ class read_writeTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), "string_char.nc"
         )
 
+        self.netcdf3_fmts = [
+            'NETCDF3_CLASSIC',
+            'NETCDF3_64BIT',
+            'NETCDF3_64BIT_OFFSET',
+            'NETCDF3_64BIT_DATA',
+        ]
+        self.netcdf4_fmts = [
+            'NETCDF4',
+            'NETCDF4_CLASSIC',
+        ]
+        self.netcdf_fmts = self.netcdf3_fmts + self.netcdf4_fmts
+
         self.test_only = []
         # self.test_only = ['NOTHING!!!!!']
         # self.test_only = ['test_write_filename']
@@ -174,14 +186,7 @@ class read_writeTest(unittest.TestCase):
             return
 
         f = cfdm.read(self.filename)[0]
-        for fmt in (
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-            "NETCDF4",
-            "NETCDF4_CLASSIC",
-        ):
+        for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)
             self.assertEqual(len(g), 1, "g = " + repr(g))
@@ -197,7 +202,7 @@ class read_writeTest(unittest.TestCase):
             return
 
         f = cfdm.read(self.filename)[0]
-        for fmt in ("NETCDF4", "NETCDF4_CLASSIC"):
+        for fmt in self.netcdf4_fmts:
             for shuffle in (True,):
                 for compress in (4,):  # range(10):
                     cfdm.write(
@@ -217,14 +222,7 @@ class read_writeTest(unittest.TestCase):
             return
 
         f = cfdm.read(self.filename)[0]
-        for fmt in (
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-            "NETCDF4",
-            "NETCDF4_CLASSIC",
-        ):
+        for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)[0]
             self.assertTrue(
@@ -300,14 +298,7 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for fmt in (
-            "NETCDF4",
-            "NETCDF4_CLASSIC",
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        ):
+        for fmt in self.netcdf_fmts:
             f = cfdm.read(self.filename)[0]
 
             f.domain_axes["domainaxis0"].nc_set_unlimited(True)
@@ -316,11 +307,10 @@ class read_writeTest(unittest.TestCase):
             f = cfdm.read(tmpfile)[0]
             self.assertTrue(f.domain_axes["domainaxis0"].nc_is_unlimited())
 
-        fmt = "NETCDF4"
         f = cfdm.read(self.filename)[0]
-        f.domain_axes["domainaxis0"].nc_set_unlimited(True)
-        f.domain_axes["domainaxis2"].nc_set_unlimited(True)
-        cfdm.write(f, tmpfile, fmt=fmt)
+        f.domain_axes['domainaxis0'].nc_set_unlimited(True)
+        f.domain_axes['domainaxis2'].nc_set_unlimited(True)
+        cfdm.write(f, tmpfile, fmt='NETCDF4')
 
         f = cfdm.read(tmpfile)[0]
         self.assertTrue(f.domain_axes["domainaxis0"].nc_is_unlimited())
@@ -428,11 +418,11 @@ class read_writeTest(unittest.TestCase):
 
         f0 = cfdm.read(self.string_filename)
         for string0 in (True, False):
-            for fmt0 in ("NETCDF4", "NETCDF3_CLASSIC"):
+            for fmt0 in self.netcdf_fmts:
                 cfdm.write(f0, tmpfile0, fmt=fmt0, string=string0)
 
                 for string1 in (True, False):
-                    for fmt1 in ("NETCDF4", "NETCDF3_CLASSIC"):
+                    for fmt1 in self.netcdf_fmts:
                         cfdm.write(f0, tmpfile1, fmt=fmt1, string=string1)
 
                         for i, j in zip(
