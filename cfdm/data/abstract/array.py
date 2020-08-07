@@ -1,9 +1,10 @@
 import numpy
 
-from ...core.data import Array as core_Array
+from ... import core
+from .. import mixin
 
-
-class Array:
+class Array(mixin.ArrayMixin,
+            core.Array):
     '''Mixin class for a container of an underlying array.
 
     The form of the array is defined by the initialization parameters

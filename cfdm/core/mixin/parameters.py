@@ -13,7 +13,7 @@ from ..abstract import Container
 class Parameters(Container):
     '''Mixin class for a collection of named parameters.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, parameters=None, source=None, copy=True):
@@ -60,7 +60,7 @@ class Parameters(Container):
     def clear_parameters(self):
         '''Remove all parameters.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_parameter`, `parameters`, `set_parameters`
 
@@ -92,7 +92,7 @@ class Parameters(Container):
     def del_parameter(self, parameter, default=ValueError()):
         '''Delete a parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_parameter`, `has_parameter`, `parameters`,
                  `set_parameter`
@@ -137,7 +137,7 @@ class Parameters(Container):
     def get_parameter(self, parameter, default=ValueError()):
         '''Get a parameter value.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -178,7 +178,7 @@ class Parameters(Container):
     def has_parameter(self, parameter):
         '''Whether a parameter has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_parameter`, `get_parameter`, `parameters`,
                  `set_parameter`
@@ -219,7 +219,7 @@ class Parameters(Container):
     def parameters(self):
         '''Return all parameters.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_parameters`, `get_parameter`, `has_parameter`
                  `set_parameters`
@@ -250,7 +250,7 @@ class Parameters(Container):
     def set_parameters(self, parameters, copy=True):
         '''Set parameters.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_parameters`, `parameters`, `set_parameter`
 
@@ -297,7 +297,7 @@ class Parameters(Container):
     def set_parameter(self, term, value, copy=True):
         '''Set a parameter-valued term.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `parameters`
 

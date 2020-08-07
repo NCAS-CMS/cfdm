@@ -9,7 +9,7 @@ from ..meta import RewriteDocstringMeta
 class ConstructAccess(metaclass=RewriteDocstringMeta):
     '''Mixin class for accessing an embedded `Constructs` object.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def del_construct(self, key, default=ValueError()):
@@ -23,7 +23,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
     referenced by coordinate reference construct. In this case the
     reference is replace with `None`.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `get_construct`, `has_construct`,
                  `set_construct`
@@ -56,7 +56,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
     def get_construct(self, key, default=ValueError()):
         '''Return a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `del_construct`, `has_construct`,
                  `set_construct`
@@ -95,7 +95,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
     def has_construct(self, key):
         '''Whether a metadata construct exists.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `del_construct`, `get_construct`,
                  `set_construct`
@@ -134,7 +134,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
                       copy=True):
         '''Set a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `del_construct`, `get_construct`,
                  `set_data_axes`
@@ -193,7 +193,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
         '''Return the keys of the domain axis constructs spanned by the data
     of a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data_axes`, `has_data_axes`, `set_data_axes`
 
@@ -240,7 +240,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
         '''Remove the keys of the domain axis constructs spanned by the data
     of a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_data_axes`, `has_data_axes`, `set_data_axes`
 
@@ -293,7 +293,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
         '''Whether the domain axis constructs spanned by the data of a
     metadata construct have been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data_axes`, `get_data_axes`, `set_data_axes`
 
@@ -334,7 +334,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
         '''Set the domain axis constructs spanned by the data of a metadata
     construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data_axes`, `get_data`, `get_data_axes`,
                  `has_data_axes`

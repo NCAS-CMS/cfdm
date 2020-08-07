@@ -1,14 +1,11 @@
 import numpy
 
-from ..core.data import Array as core_Array
-
 from . import abstract
 from . import mixin
 
 
 class RaggedIndexedArray(mixin.RaggedIndexed,
-                         abstract.CompressedArray,
-                         core_Array):
+                         abstract.Array):
     '''An underlying indexed ragged array.
 
     A collection of features stored using an indexed ragged array

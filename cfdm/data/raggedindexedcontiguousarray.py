@@ -1,15 +1,12 @@
 import numpy
 
-from ..core.data import Array as core_Array
-
 from . import abstract
 from . import mixin
 
 
 class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
                                    mixin.RaggedIndexed,
-                                   abstract.CompressedArray,
-                                   core_Array):
+                                   abstract.Array):
     '''An underlying indexed contiguous ragged array.
 
     A collection of features, each of which is sequence of (vertical)

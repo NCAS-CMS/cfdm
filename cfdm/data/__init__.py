@@ -1,5 +1,5 @@
 from .abstract import (Array,
-                       CompressedArray)
+                       CompressedArray,)
 
 from .gatheredarray                import GatheredArray
 from .netcdfarray                  import NetCDFArray

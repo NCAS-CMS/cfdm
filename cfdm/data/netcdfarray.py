@@ -4,13 +4,12 @@ import urllib.parse
 import numpy
 import netCDF4
 
-from ..core.data import Array as core_Array
-
 from . import abstract
+
 from .numpyarray import NumpyArray
 
 
-class NetCDFArray(abstract.Array, core_Array):
+class NetCDFArray(abstract.Array):
     '''An underlying array stored in a netCDF file.
 
     .. versionadded:: (cfdm) 1.7.0

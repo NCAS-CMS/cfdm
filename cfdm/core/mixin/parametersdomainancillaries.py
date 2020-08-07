@@ -14,7 +14,7 @@ class ParametersDomainAncillaries(Parameters):
     '''Mixin class for a collection of named parameters and named domain
     ancillary constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, parameters=None, domain_ancillaries=None,
@@ -81,7 +81,7 @@ class ParametersDomainAncillaries(Parameters):
     def clear_domain_ancillaries(self):
         '''Remove all domain_ancillaries.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
                  `set_domain_ancillaries`
@@ -113,7 +113,7 @@ class ParametersDomainAncillaries(Parameters):
                              default=ValueError()):
         '''Delete a domain ancillary.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `domain_ancillaries`, `get_domain_ancillary`,
                  `set_domain_ancillary`
@@ -161,7 +161,7 @@ class ParametersDomainAncillaries(Parameters):
     def domain_ancillaries(self):
         '''Return all domain_ancillaries.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_domain_ancillaries`, `get_domain_ancillary`,
                  `has_domain_ancillaryr` `set_domain_ancillaries`
@@ -191,7 +191,7 @@ class ParametersDomainAncillaries(Parameters):
                              default=ValueError()):
         '''Return a domain ancillary term.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
                  `set_domain_ancillary`
@@ -235,7 +235,7 @@ class ParametersDomainAncillaries(Parameters):
     def has_domain_ancillary(self, domain_ancillary):
         '''Whether a domain ancillary has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
                  `has_domain_ancillary`, `set_domain_ancillary`
@@ -273,7 +273,7 @@ class ParametersDomainAncillaries(Parameters):
     def set_domain_ancillaries(self, domain_ancillaries, copy=True):
         '''Set domain_ancillaries.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_domain_ancillaries`, `domain_ancillaries`,
                  `set_domain_ancillary`
@@ -319,7 +319,7 @@ class ParametersDomainAncillaries(Parameters):
     def set_domain_ancillary(self, term, value, copy=True):
         '''Set an domain ancillary-valued term.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
                  `get_domain_ancillary`

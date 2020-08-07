@@ -28,14 +28,14 @@ class AuxiliaryCoordinate(mixin.Coordinate):
     interpreted in a special way indicated by the cell method
     constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     @property
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 

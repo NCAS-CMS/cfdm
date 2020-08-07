@@ -9,7 +9,7 @@ from ..meta import RewriteDocstringMeta
 class Container(metaclass=RewriteDocstringMeta):
     '''Mixin class for storing components.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, source=None, copy=True):
@@ -35,7 +35,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
     x.__deepcopy__() <==> copy.deepcopy(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -128,7 +128,7 @@ class Container(metaclass=RewriteDocstringMeta):
     def _default(self, default, message=None):
         '''Return a value or raise an Exception for a default case.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -172,7 +172,7 @@ class Container(metaclass=RewriteDocstringMeta):
     def _del_component(self, component, default=ValueError()):
         '''Remove a component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_get_component`, `_has_component`, `_set_component`
 
@@ -214,7 +214,7 @@ class Container(metaclass=RewriteDocstringMeta):
     def _custom(self):
         '''Customisable storage for additional attributes.
 
-    .. versionadded:: 1.7.4
+    .. versionadded:: (cfdm) 1.7.4
 
     **Examples:**
 
@@ -240,7 +240,7 @@ class Container(metaclass=RewriteDocstringMeta):
     def _get_component(self, component, default=ValueError()):
         '''Return a component
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_del_component`, `_has_component`, `_set_component`
 
@@ -280,7 +280,7 @@ class Container(metaclass=RewriteDocstringMeta):
     def _has_component(self, component):
         '''Whether a component has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_del_component`, `_get_component`, `_set_component`
 
@@ -313,7 +313,7 @@ class Container(metaclass=RewriteDocstringMeta):
     def _set_component(self, component, value, copy=True):
         '''Set a component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_del_component`, `_get_component`, `_has_component`
 
@@ -380,7 +380,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 

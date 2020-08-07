@@ -1,10 +1,13 @@
-from . import abstract
+from .mixin import ArrayMixin
 
-from ..core.data import NumpyArray as core_NumpyArray
+from . import mixin
+from .. import core
 
 
-class NumpyArray(abstract.Array, core_NumpyArray):
+class NumpyArray(mixin.ArrayMixin, core.NumpyArray):
     '''An underlying numpy array.
+
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __getitem__(self, indices):

@@ -5,7 +5,7 @@ from copy import copy
 class Constructs:
     '''A container for metadata constucts.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self,
@@ -231,7 +231,7 @@ class Constructs:
 
     x.__contains__(y) <==> y in x
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return key in self._construct_type
@@ -239,7 +239,7 @@ class Constructs:
     def __copy__(self):
         '''Called by the `copy.copy` standard library function.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return self.shallow_copy()
@@ -247,7 +247,7 @@ class Constructs:
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` standard library function.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return self.copy()
@@ -257,7 +257,7 @@ class Constructs:
 
     x.__getitem__(y) <==> x[y]
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         construct_type = self.construct_type(key)  # ignore??
@@ -275,7 +275,7 @@ class Constructs:
 
     x.__iter__() <==> iter(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return iter(self._dictionary().keys())
@@ -285,7 +285,7 @@ class Constructs:
 
     x.__len__() <==> len(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return len(self._dictionary())
@@ -296,7 +296,7 @@ class Constructs:
     def _default(self, default, message=None):
         '''Return a value or raise an Exception for a default case.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -404,7 +404,7 @@ class Constructs:
     def _check_construct_type(self, construct_type, default=ValueError()):
         '''Check the type of a metadata construct is valid.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -470,7 +470,7 @@ class Constructs:
     referenced by coordinate reference construct. In this case the
     reference is replace with `None`.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_get_construct`, `_set_construct`
 
@@ -552,7 +552,7 @@ class Constructs:
                        copy=True):
         '''Set a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_del_construct`, `_get_construct`,
                  `_set_construct_data_axes`
@@ -645,7 +645,7 @@ class Constructs:
     def _set_construct_data_axes(self, key, axes, construct=None):
         '''Set domain axis constructs for construct identifiers.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -742,7 +742,7 @@ class Constructs:
     def get(self, key, *default):
         '''Return the construct for construct key, if it exists, else default.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `items`, `keys`, `values`
 
@@ -752,7 +752,7 @@ class Constructs:
     def items(self):
         '''Return the items as (construct key, construct) pairs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `keys`, `values`
 
@@ -762,7 +762,7 @@ class Constructs:
     def keys(self):
         '''Return all of the construct keys, in arbitrary order.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `items`, `values`
 
@@ -772,7 +772,7 @@ class Constructs:
     def values(self):
         '''Return all of the metadata constructs, in arbitrary order.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `items`, `keys`
 
@@ -794,7 +794,7 @@ class Constructs:
     def value(self, default=ValueError()):
         '''Return the sole metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `key`, `values`
 
@@ -834,7 +834,7 @@ class Constructs:
     def key(self, default=ValueError()):
         '''Return the construct key of the sole metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `keys`, `value`
 
@@ -876,7 +876,7 @@ class Constructs:
         '''Return the domain axis constructs spanned by metadata construct
     data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -922,7 +922,7 @@ class Constructs:
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -946,7 +946,7 @@ class Constructs:
     def new_identifier(self, construct_type):
         '''Return a new, unsed construct key.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -1018,7 +1018,7 @@ class Constructs:
     For cell method constructs, the predetermined order is that in
     which they where added.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -1050,7 +1050,7 @@ class Constructs:
     def filter_by_type(self, *types):
         '''Select metadata constructs by type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -1107,7 +1107,7 @@ class Constructs:
 
     ``f.shallow_copy()`` is equivalent to ``copy.copy(f)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 

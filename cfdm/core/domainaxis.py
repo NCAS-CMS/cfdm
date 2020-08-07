@@ -13,7 +13,7 @@ class DomainAxis(abstract.Container):
     domain, with the optional exception of size one axes, because
     their presence makes no difference to the order of the elements.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, size=None, source=None, copy=True):
@@ -54,7 +54,7 @@ class DomainAxis(abstract.Container):
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -72,7 +72,7 @@ class DomainAxis(abstract.Container):
     def del_size(self, default=ValueError()):
         '''Remove the size.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_size`, `has_size`, `set_size`
 
@@ -113,7 +113,7 @@ class DomainAxis(abstract.Container):
     def has_size(self):
         '''Whether the size has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_size`, `get_size`, `set_size`
 
@@ -144,7 +144,7 @@ class DomainAxis(abstract.Container):
     def get_size(self, default=ValueError()):
         '''Return the size.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_size`, `has_size`, `set_size`
 
@@ -185,7 +185,7 @@ class DomainAxis(abstract.Container):
     def set_size(self, size, copy=True):
         '''Set the size.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_size`, `get_size`, `has_size`
 

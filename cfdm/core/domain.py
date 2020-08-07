@@ -18,7 +18,7 @@ class Domain(mixin.ConstructAccess,
     coordinate, cell measure, coordinate reference and domain
     ancillary constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     # Define the base of the identity keys for each construct type
@@ -84,7 +84,7 @@ class Domain(mixin.ConstructAccess,
     def constructs(self):
         '''Return the metdata constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -113,7 +113,7 @@ class Domain(mixin.ConstructAccess,
 
     ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `fromconstructs`
 
@@ -143,7 +143,7 @@ class Domain(mixin.ConstructAccess,
     to the domain, such as the addition or removal of a construct,
     will also affect the input `Constructs` instance.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 

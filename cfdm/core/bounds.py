@@ -13,7 +13,7 @@ class Bounds(mixin.PropertiesData):
     for climatological time axes, the bounds are interpreted in a
     special way indicated by the cell method constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, source=None,

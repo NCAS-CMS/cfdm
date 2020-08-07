@@ -18,8 +18,29 @@ class NumpyArray(abstract.Array):
             The numpy array.
 
         '''
-        super().__init__(array=array)
+        super().__init__()
 
+        self._set_component('array', array, copy=False)
+
+    def __deepcopy__(self, memo):
+        '''Called by the `copy.deepcopy` function.
+
+    x.__deepcopy__() <==> copy.deepcopy(x)
+
+    Copy-on-write is employed. Therefore, after copying, care must be
+    taken when making in-place modifications to attributes of either
+    the original or the new copy.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    **Examples:**
+
+    >>> import copy
+    >>> y = copy.deepcopy(x)
+
+        '''
+        return self.copy()
+    
     @property
     def dtype(self):
         '''Data-type of the data elements.
@@ -38,7 +59,7 @@ class NumpyArray(abstract.Array):
 
     @property
     def ndim(self):
-        '''NUMPYARRAY Number of array dimensions
+        '''Number of array dimensions
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -162,4 +183,30 @@ class NumpyArray(abstract.Array):
 
         return array
 
+    def copy(self):
+        '''Return a deep copy of the array.
+
+    ``a.copy() is equivalent to ``copy.deepcopy(a)``.
+
+    Copy-on-write is employed. Therefore, after copying, care must be
+    taken when making in-place modifications to attributes of either
+    the original or the new copy.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    :Returns:
+
+        `{{class}}`
+            The deep copy.
+
+    **Examples:**
+
+    >>> b = a.copy()
+
+        '''
+        klass = self.__class__
+        new = klass.__new__(klass)
+        new.__dict__ = self.__dict__.copy()
+        return new
+    
 # --- End: class

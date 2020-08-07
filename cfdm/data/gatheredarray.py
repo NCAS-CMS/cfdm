@@ -1,15 +1,14 @@
 from functools import reduce
-
 from operator import mul
 
 import numpy
 
-from ..core.data import Array as core_Array
-
 from . import abstract
+from . import mixin
 
 
-class GatheredArray(abstract.CompressedArray, core_Array):
+class GatheredArray(mixin.CompressedArray,
+                    abstract.Array):
     '''An underlying gathered array.
 
     Compression by gathering combines axes of a multidimensional array

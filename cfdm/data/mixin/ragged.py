@@ -1,4 +1,7 @@
-class RaggedContiguous():
+from .compressedarray import CompressedArray
+
+
+class RaggedContiguous(CompressedArray):
     '''Mixin class for an underlying compressed ragged array.
 
     .. versionadded:: 1.7.0
@@ -35,7 +38,7 @@ class RaggedContiguous():
 # --- End: class
 
 
-class RaggedIndexed():
+class RaggedIndexed(CompressedArray):
     '''Mixin class for an underlying indexed ragged array.
 
     '''

@@ -21,7 +21,7 @@ class RewriteDocstringMeta(type):
     Based on
     http://www.jesshamrick.com/2013/04/17/rewriting-python-docstrings-with-a-metaclass/
 
-    .. versionadded:: (cfdm) 1.8.7
+    .. versionadded:: (cfdm) 1.8.7.0
 
     '''
     # Define the "plus class" regular expression.
@@ -31,6 +31,8 @@ class RewriteDocstringMeta(type):
 
     def __new__(cls, class_name, parents, attrs):
         '''TODO
+
+    .. versionadded:: (cfdm) 1.8.7.0
 
         '''
         # ------------------------------------------------------------
@@ -129,11 +131,11 @@ class RewriteDocstringMeta(type):
                 wrapper.__wrapped__ = attr
                 attrs[attr_name] = wrapper
         # --- End: for
-        ok = False
-        if class_name == 'DimensionCoordinate' and module.startswith('cf.'):
-            ok = True
-            print (module)
-            print (parents)
+#        ok = False
+#        if class_name == 'DimensionCoordinate' and module.startswith('cf.'):
+#            ok = True
+#            print (module)
+#            print (parents)
         for parent in parents:
             for attr_name in dir(parent):
                  
@@ -146,8 +148,8 @@ class RewriteDocstringMeta(type):
                 # Skip special methods
                 if attr_name.startswith('__'):
                     continue
-                if ok:
-                    print (0, class_name, parent.__name__, attr_name)
+#                if ok:
+#                    print (0, class_name, parent.__name__, attr_name)
                     
                 # ----------------------------------------------------
                 # Get the original method, copy it, update the
@@ -155,8 +157,8 @@ class RewriteDocstringMeta(type):
                 # parent class.
                 # ----------------------------------------------------
                 original_f = getattr(parent, attr_name)
-                if ok and attr_name == 'swapaxes':
-                    print (original_f.__doc__)
+#                if ok and attr_name == 'swapaxes':
+#                    print (original_f.__doc__)
                     
                 is_classmethod = False
                 is_staticmethod = False
@@ -183,10 +185,10 @@ class RewriteDocstringMeta(type):
                            
                         f = getattr(original_f, '__func__', original_f)
                     
-                        if is_wrapped:
-                            #                            f = f.__wrapped__
-                            if ok and  attr_name == 'swapaxes':
-                                print (dir(f), f.__doc__)
+#                        if is_wrapped:
+#                            #                            f = f.__wrapped__
+#                            if ok and  attr_name == 'swapaxes':
+#                                print (dir(f), f.__doc__)
                             
                         # Copy the method
                         attr = type(f)(f.__code__, f.__globals__,
@@ -194,16 +196,16 @@ class RewriteDocstringMeta(type):
                                        f.__closure__)
 
                         if is_wrapped:
-                            if ok :
-                                print ('is_wrapped')
+#                            if ok :
+#                                print ('is_wrapped')
                             # Need to assign the original docstring
                             # when wrapped
                             attr.__doc__ = original_f.__doc__
                     # --- End: if
 
                     # Update the docstring
-                    if ok and attr_name == 'swapaxes':
-                        print ('@ARASE@', class_name, attr, attr_name, attr.__doc__)
+#                    if ok and attr_name == 'swapaxes':
+#                        print ('@ARASE@', class_name, attr, attr_name, attr.__doc__)
                     RewriteDocstringMeta._docstring_update(class_name,
                                                            attr,
                                                            attr_name,
@@ -247,6 +249,7 @@ class RewriteDocstringMeta(type):
     def _docstring_update(class_name, f, method_name, module, config):
         '''TODO
 
+    .. versionadded:: (cfdm) 1.8.7.0
         '''
         doc = f.__doc__
         if doc is None:
@@ -305,12 +308,16 @@ class RewriteDocstringMeta(type):
     def _docstring_replacement_class(match):
         '''Return the first of the match groups.
 
+    .. versionadded:: (cfdm) 1.8.7.0
+
         '''
         return match.group(1)
 
     @staticmethod
     def _docstring_replacement_core_class(match):
         '''Return the first of the match groups prefixed by 'core.'
+
+    .. versionadded:: (cfdm) 1.8.7.0
 
         '''
         return 'core.' + match.group(1)

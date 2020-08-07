@@ -31,14 +31,14 @@ class DimensionCoordinate(mixin.Coordinate):
     interpreted in a special way indicated by the cell method
     constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     @property
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -59,7 +59,7 @@ class DimensionCoordinate(mixin.Coordinate):
     The units, calendar and fill value of the incoming `Data` instance
     are removed prior to insertion.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data`, `get_data`, `has_data`
 

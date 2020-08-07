@@ -2,15 +2,15 @@ import abc
 
 import numpy
 
-from .array import Array
+#from . import Array
 
 
-class CompressedArray(Array):
+class CompressedArray: #(Array):
     '''Mixin class for a container of an underlying compressed array.
 
     See `cfdm.GatheredArray` for an example implementation.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
@@ -73,7 +73,7 @@ class CompressedArray(Array):
       the same behaviour as indexing on a Variable object of the
       netCDF4 package.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         raise NotImplementedError()  # pragma: no cover
@@ -102,7 +102,7 @@ class CompressedArray(Array):
     def _set_compressed_Array(self, array, copy=True):
         '''Set the compressed array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -304,7 +304,7 @@ class CompressedArray(Array):
         '''Return the position of the compressed dimension in the compressed
     array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_compressed_axearray`, `get_compressed_axes`,
                  `get_compressed_type`

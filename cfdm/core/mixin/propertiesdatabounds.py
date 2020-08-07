@@ -15,7 +15,7 @@ class PropertiesDataBounds(PropertiesData):
     '''Mixin class for a data array with bounds and descriptive
     properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, bounds=None,
@@ -126,7 +126,7 @@ class PropertiesDataBounds(PropertiesData):
 
     ``f.bounds`` is equivalent to ``f.get_bounds()``
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_bounds`, `get_bounds`, `has_bounds`,
                  `set_bounds`
@@ -161,7 +161,7 @@ class PropertiesDataBounds(PropertiesData):
 
     ``f.interior_ring`` is equivalent to ``f.get_interior_ring()``
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `data`, `del_interior_ring`, `get_interior_ring`,
                  `has_interior_ring`, `set_interior_ring`
@@ -195,7 +195,7 @@ class PropertiesDataBounds(PropertiesData):
     def del_bounds(self, default=ValueError()):
         '''Remove the bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data`, `get_bounds`, `has_bounds`, `set_bounds`
 
@@ -238,7 +238,7 @@ class PropertiesDataBounds(PropertiesData):
     def del_geometry(self, default=ValueError()):
         '''Remove the geometry type.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `get_geometry`, `has_geometry`, `set_geometry`
 
@@ -281,7 +281,7 @@ class PropertiesDataBounds(PropertiesData):
     def del_interior_ring(self, default=ValueError()):
         '''Remove the geometry type.
 
-    .. versionadded:: 1.8.6.0
+    .. versionadded:: (cfdm) 1.8.6.0
 
     .. seealso:: `data`, `del_interior_ring`, `has_interior_ring`,
                  `interior_ring`, `set_interior_ring`
@@ -332,7 +332,7 @@ class PropertiesDataBounds(PropertiesData):
     def get_bounds(self, default=ValueError()):
         '''Return the bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `bounds`, `get_data`, `del_bounds`, `has_bounds`,
                  `set_bounds`
@@ -376,7 +376,7 @@ class PropertiesDataBounds(PropertiesData):
     def get_geometry(self, default=ValueError()):
         '''Return the geometry type.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `has_geometry`, `set_geometry`, `del_geometry`
 
@@ -420,7 +420,7 @@ class PropertiesDataBounds(PropertiesData):
 
     ``f.get_interior_ring()`` is equivalent to ``f.interior_ring``
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `data`, `del_interior_ring`, `has_interior_ring`,
                  `interior_ring`, `set_interior_ring`
@@ -468,7 +468,7 @@ class PropertiesDataBounds(PropertiesData):
     def has_bounds(self):
         '''Whether or not there are bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
@@ -503,7 +503,7 @@ class PropertiesDataBounds(PropertiesData):
     def has_geometry(self):
         '''True if there is a geometry type.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `get_geometry`, `set_geometry`, `del_geometry`
 
@@ -536,7 +536,7 @@ class PropertiesDataBounds(PropertiesData):
     def has_interior_ring(self):
         '''Whether or not there is an interior ring variable.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_interior_ring`, `get_interior_ring`,
                  `interior_ring`, `set_interior_ring`
@@ -575,7 +575,7 @@ class PropertiesDataBounds(PropertiesData):
     def set_bounds(self, bounds, copy=True):
         '''Set the bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
 
@@ -632,7 +632,7 @@ class PropertiesDataBounds(PropertiesData):
     def set_geometry(self, value, copy=True):
         '''Set the geometry type.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `get_geometry`, `set_geometry`, `del_geometry`
 
@@ -669,7 +669,7 @@ class PropertiesDataBounds(PropertiesData):
     def set_interior_ring(self, interior_ring, copy=True):
         '''Set the interior_ring.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_interior_ring`, `get_interior_ring`,
                  `interior_ring`, `has_interior_ring`

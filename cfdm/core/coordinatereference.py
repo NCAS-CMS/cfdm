@@ -51,7 +51,7 @@ class CoordinateReference(abstract.Container):
       coordinate reference construct relates the coordinate values of
       the field to locations in a planetary reference frame.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __new__(cls, *args, **kwargs):
@@ -145,7 +145,7 @@ class CoordinateReference(abstract.Container):
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -164,7 +164,7 @@ class CoordinateReference(abstract.Container):
     def coordinate_conversion(self):
         '''Return the coordinate conversion component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `datum`, `get_coordinate_conversion`
 
@@ -185,7 +185,7 @@ class CoordinateReference(abstract.Container):
     def datum(self):
         '''Return the datum component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `coordinate_conversion`, `get_datum`
 
@@ -208,7 +208,7 @@ class CoordinateReference(abstract.Container):
     def clear_coordinates(self):
         '''Remove all references to coordinate constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_coordinate`, `coordinates`, `set_coordinates`
 
@@ -235,7 +235,7 @@ class CoordinateReference(abstract.Container):
     def coordinates(self):
         '''Return all references to coordinate constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_coordinates`, `set_coordinates`
 
@@ -262,7 +262,7 @@ class CoordinateReference(abstract.Container):
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -279,7 +279,7 @@ class CoordinateReference(abstract.Container):
     def del_coordinate(self, key, default=ValueError()):
         '''Remove a reference to a coordinate construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `coordinates`, `has_coordinate`, `set_coordinate`
 
@@ -329,7 +329,7 @@ class CoordinateReference(abstract.Container):
     def del_coordinate_conversion(self):
         '''Remove the coordinate conversion component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `coordinate_conversion`, `get_coordinate_conversion`,
                  `set_coordinate_conversion`
@@ -355,7 +355,7 @@ class CoordinateReference(abstract.Container):
     def del_datum(self):
         '''Remove the datum component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `datum`, `get_datum`, `set_datum`
 
@@ -380,7 +380,7 @@ class CoordinateReference(abstract.Container):
     def get_coordinate_conversion(self):
         '''Get the coordinate conversion component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `coordinate_conversion`, `del_coordinate_conversion`,
                  `set_coordinate_conversion`
@@ -406,7 +406,7 @@ class CoordinateReference(abstract.Container):
     def get_datum(self):
         '''Return the datum component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `datum`, `get_coordinate_conversion`
 
@@ -431,7 +431,7 @@ class CoordinateReference(abstract.Container):
     def has_coordinate(self, key):
         '''Whether a reference to a coordinate construct has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `coordinates`, `del_coordinate`, `set_coordinate`
 
@@ -468,7 +468,7 @@ class CoordinateReference(abstract.Container):
     def set_coordinate(self, key):
         '''Set a reference to a coordinate construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `coordinates`, `del_coordinate`, `has_coordinate`
 
@@ -505,7 +505,7 @@ class CoordinateReference(abstract.Container):
     def set_coordinates(self, coordinates):
         '''Set references to coordinate constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `coordinates`, `clear_coordinates`, `set_coordinate`
 
@@ -550,7 +550,7 @@ class CoordinateReference(abstract.Container):
     def set_coordinate_conversion(self, coordinate_conversion, copy=True):
         '''Set the coordinate conversion component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `coordinate_conversion`, `del_coordinate_conversion`,
                  `get_coordinate_conversion`
@@ -585,7 +585,7 @@ class CoordinateReference(abstract.Container):
     def set_datum(self, datum, copy=True):
         '''Set the datum component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `datum`, `del_datum`, `get_datum`
 

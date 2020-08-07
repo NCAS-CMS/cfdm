@@ -31,7 +31,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
     long_name and standard_name), and some netCDF global file
     attributes (e.g. history and institution).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     # ----------------------------------------------------------------
@@ -51,7 +51,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
     def __new__(cls, *args, **kwargs):
         '''This must be overridden in subclasses.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         instance = super().__new__(cls)
@@ -130,7 +130,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -149,7 +149,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
     def constructs(self):
         '''Return the metdata constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -177,7 +177,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
 
     ``f.domain`` is equivalent to ``f.get_domain()``
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_domain`
 
@@ -203,7 +203,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
         '''Remove the keys of the domain axis constructs spanned by the data
     of the field or of a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_data_axes`, `has_data_axes`, `set_data_axes`
 
@@ -252,7 +252,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
     def get_domain(self):
         '''Return the domain.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `domain`
 
@@ -272,7 +272,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
         '''Return the keys of the domain axis constructs spanned by the data
     of the field or of a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data_axes`, `get_data`, `set_data_axes`
 
@@ -322,7 +322,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
         '''Whether the domain axis constructs spanned by the data of the field
     or of a metadata construct have been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data_axes`, `get_data_axes`, `set_data_axes`
 
@@ -365,7 +365,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
     constructs. However, a domain ancillary construct may be removed
     even if it is referenced by coordinate reference construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_construct`, `constructs`, `has_construct`,
                  `set_construct`
@@ -410,7 +410,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
     The units, calendar and fill value properties of the data object
     are removed prior to insertion.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data`, `get_data`, `has_data`, `set_data_axes`
 
@@ -470,7 +470,7 @@ class Field(mixin.ConstructAccess, mixin.PropertiesData):
         '''Set the domain axis constructs spanned by the data of the field or
     of a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data_axes`, `get_data`, `get_data_axes`,
                  `has_data_axes`

@@ -143,6 +143,26 @@ class PropertiesData(Properties):
         '''
         return (arg1, arg2)
 
+    def _test_docstring_substitution_3(self, arg1, arg2):
+        '''Test docstring substitution 3.
+        
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        return self.__class__._test_docstring_substitution_staticmethod(arg1, arg2)
+    
+    def _test_docstring_substitution_4(self, arg1, arg2):
+        '''Test docstring substitution 4.
+        
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        return self._test_docstring_substitution_classmethod(arg1, arg2)
+    
     @_test_decorator_args('i')
     @_inplace_enabled
     def _test_docstring_substitution(self, inplace=False, verbose=None):

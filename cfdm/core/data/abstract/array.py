@@ -95,7 +95,7 @@ class Array(abstract.Container):
 
         '''
         raise NotImplementedError(
-            "Subclasses of cfdm.core.abstract.Array must implement 'ndim'"
+            "Subclasses of cfdm.core.AbstractArray must implement 'ndim'"
         )  # pragma: no cover
 
     @property
@@ -128,7 +128,9 @@ class Array(abstract.Container):
     1
 
         '''
-        raise NotImplementedError()  # pragma: no cover
+        raise NotImplementedError(
+            "Subclasses of cfdm.core.AbstractArray must implement 'shape'"
+        )  # pragma: no cover
 
     @property
     def size(self):

@@ -11,7 +11,7 @@ from . import Properties
 class PropertiesData(Properties):
     '''Mixin class for a data array with descriptive properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, source=None,
@@ -76,7 +76,7 @@ class PropertiesData(Properties):
     The units, calendar and fill value properties are, if set,
     inserted into the data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `Data.array`, `del_data`, `get_data`, `has_data`,
                  `set_data`
@@ -115,7 +115,7 @@ class PropertiesData(Properties):
     little extra memory, even when the original contains very large
     data arrays, and the copy operation is fast.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -141,7 +141,7 @@ class PropertiesData(Properties):
     def del_data(self, default=ValueError()):
         '''Remove the data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `get_data`, `has_data`, `set_data`
 
@@ -187,7 +187,7 @@ class PropertiesData(Properties):
     The units, calendar and fill value properties are, if set,
     inserted into the data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `{{+Data}}.array`, `data`, `del_data`, `has_data`,
                  `set_data`
@@ -260,7 +260,7 @@ class PropertiesData(Properties):
 
     This is always False.
 
-    .. versionadded:: 1.7.4
+    .. versionadded:: (cfdm) 1.7.4
 
     .. seealso:: `has_data`
 
@@ -281,7 +281,7 @@ class PropertiesData(Properties):
     def has_data(self):
         '''Whether a data has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data`, `get_data`, `set_data`
 
@@ -317,7 +317,7 @@ class PropertiesData(Properties):
     The units, calendar and fill value of the incoming `{{+Data}}`
     instance are removed prior to insertion.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data`, `get_data`, `has_data`
 

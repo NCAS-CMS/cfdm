@@ -19,14 +19,14 @@ class DomainAncillary(mixin.PropertiesDataBounds):
     array, with the addition of an extra dimension whose size is that
     of the number of vertices of each cell.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     @property
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
