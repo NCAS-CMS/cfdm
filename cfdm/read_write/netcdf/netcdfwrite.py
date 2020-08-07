@@ -1671,7 +1671,7 @@ class NetCDFWrite(IOWrite):
 
             ncvar = self._netcdf_name(ncvar)
 
-            # Create the netCDF node cuont variable
+            # Create the netCDF node count variable
             self._write_netcdf_variable(ncvar, (geometry_dimension,), count)
         # --- End: if
 
@@ -3125,7 +3125,7 @@ class NetCDFWrite(IOWrite):
                 raise ValueError(
                     "Can't write {!r}: node count, part node count, "
                     "or interior ring variables have "
-                    "inconistent properties".format(f)
+                    "inconsistent properties".format(f)
                 )
         # --- End: if
 
