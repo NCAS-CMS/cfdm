@@ -79,7 +79,7 @@ class read_writeTest(unittest.TestCase):
         ]
         self.netcdf_fmts = self.netcdf3_fmts + self.netcdf4_fmts
 
-        self.test_only = []
+        #self.test_only = []
         # self.test_only = ['NOTHING!!!!!']
         # self.test_only = ['test_write_filename']
         # self.test_only = ['test_read_write_unlimited']
@@ -88,6 +88,7 @@ class read_writeTest(unittest.TestCase):
         # self.test_only = ['test_read_write_format']
         # self.test_only = ['test_read_write_Conventions']
         # self.test_only = ['test_read_write_multiple_geometries']
+        self.test_only = ['test_write_netcdf_mode']
 
     def test_write_filename(self):
         """TODO DOCS."""
@@ -195,6 +196,52 @@ class read_writeTest(unittest.TestCase):
                 f.equals(g, verbose=3),
                 "Bad read/write of format: {}".format(fmt),
             )
+
+    def test_write_netcdf_mode(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        g = cfdm.read(self.filename)
+        g_copy = g.copy()
+        g_orig_length = len(g)
+
+        for fmt in self.netcdf_fmts:
+            # Other tests cover write as default mode (i.e. test with no mode
+            # argument); here test explicit provision of 'w' as argument:
+            cfdm.write(g, tmpfile, fmt=fmt, mode='w')
+            f = cfdm.read(tmpfile)
+            self.assertEqual(len(f), g_orig_length)
+            self.assertTrue(f[0].equals(g[0]))
+
+            # Main aspect of this test: testing the append mode ('a')
+            h = cfdm.example_field(0)
+            cfdm.write(h, tmpfile, fmt=fmt, mode='a')  # now includes h with g
+            f = cfdm.read(tmpfile)
+            # After append, file should emerge with a number of fields
+            # equal to the sum of all fields appended to them.
+            self.assertEqual(len(f), g_orig_length + 1)
+            self.assertTrue(f[0].equals(g[0]))  # should remain True...
+            self.assertTrue(f[1].equals(h))  # ...but also has the new field
+
+            # Now append all other example fields, to check a diverse variety:
+            new_length = 2
+            for field_id in range(1, 7):
+                new_length += 1
+                ex_field = cfdm.example_field(field_id)
+                cfdm.write(ex_field, tmpfile, fmt=fmt, mode='a')
+                f = cfdm.read(tmpfile)
+                self.assertEqual(len(f), new_length)
+                self.assertTrue(f[-1].equals(ex_field))
+
+            # Check behaviour when append identical fields, as an edge case:
+            cfdm.write(g, tmpfile, fmt=fmt, mode='w', overwrite=True)
+            cfdm.write(g_copy, tmpfile, fmt=fmt, mode='a')
+            f = cfdm.read(tmpfile)
+            self.assertEqual(len(f), 2*len(g))
+            position = 1
+            for g_field in g_copy:
+                self.assertTrue(f[len(g) + 1].equals(g_field))
+                position += 1
 
     def test_read_write_netCDF4_compress_shuffle(self):
         """TODO DOCS."""
