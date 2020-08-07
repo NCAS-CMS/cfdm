@@ -4626,32 +4626,24 @@ class NetCDFWrite(IOWrite):
         compress = int(compress)
         zlib = bool(compress)
 
-        if fmt not in (
+        netcdf3_fmts = (
             "NETCDF3_CLASSIC",
             "NETCDF3_64BIT",
+            "NETCDF3_64BIT_OFFSET",
+            "NETCDF3_64BIT_DATA",
+        )
+        netcdf4_fmts = (
             "NETCDF4",
             "NETCDF4_CLASSIC",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        ):
+        )
+        if fmt not in netcdf3_fmts + netcdf4_fmts:
             raise ValueError("Unknown output file format: {}".format(fmt))
-
-        if compress and fmt in (
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        ):
-            raise ValueError("Can't compress {} format file".format(fmt))
-
-        if group and fmt in (
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        ):
-            # Can't write groups to a netCDF3 file
-            g["group"] = False
+        elif fmt in netcdf3_fmts:
+            if compress in netcdf3_fmts:
+                raise ValueError("Can't compress {} format file".format(fmt))
+            if group in netcdf3_fmts:
+                # Can't write groups to a netCDF3 file
+                g["group"] = False
 
         # ------------------------------------------------------------
         # Set up global/non-global attributes
