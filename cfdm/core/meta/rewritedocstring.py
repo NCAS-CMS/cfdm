@@ -131,11 +131,7 @@ class RewriteDocstringMeta(type):
                 wrapper.__wrapped__ = attr
                 attrs[attr_name] = wrapper
         # --- End: for
-#        ok = False
-#        if class_name == 'DimensionCoordinate' and module.startswith('cf.'):
-#            ok = True
-#            print (module)
-#            print (parents)
+
         for parent in parents:
             for attr_name in dir(parent):
 
@@ -148,8 +144,6 @@ class RewriteDocstringMeta(type):
                 # Skip special methods
                 if attr_name.startswith('__'):
                     continue
-#                if ok:
-#                    print (0, class_name, parent.__name__, attr_name)
 
                 # ----------------------------------------------------
                 # Get the original method, copy it, update the
@@ -157,8 +151,6 @@ class RewriteDocstringMeta(type):
                 # parent class.
                 # ----------------------------------------------------
                 original_f = getattr(parent, attr_name)
-#                if ok and attr_name == 'swapaxes':
-#                    print (original_f.__doc__)
 
                 is_classmethod = False
                 is_staticmethod = False
@@ -185,27 +177,16 @@ class RewriteDocstringMeta(type):
 
                         f = getattr(original_f, '__func__', original_f)
 
-#                        if is_wrapped:
-#                            #                            f = f.__wrapped__
-#                            if ok and  attr_name == 'swapaxes':
-#                                print (dir(f), f.__doc__)
-
                         # Copy the method
                         attr = type(f)(f.__code__, f.__globals__,
                                        f.__name__, f.__defaults__,
                                        f.__closure__)
 
                         if is_wrapped:
-                            # if ok :
-                            #      print ('is_wrapped')
-                            # Need to assign the original docstring
-                            # when wrapped
                             attr.__doc__ = original_f.__doc__
                     # --- End: if
 
                     # Update the docstring
-#                    if ok and attr_name == 'swapaxes':
-#                        print ('@ARASE@', class_name, attr, attr_name, attr.__doc__)
                     RewriteDocstringMeta._docstring_update(class_name,
                                                            attr,
                                                            attr_name,
@@ -239,7 +220,7 @@ class RewriteDocstringMeta(type):
                     attrs[attr_name] = attr
 
                 except Exception as error:
-                    print("WARNING: {}".format(error))
+                    raise RuntimeError(error)
         # --- End: for
 
         # Create the class
