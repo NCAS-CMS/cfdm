@@ -2,12 +2,7 @@ import abc
 
 from copy import deepcopy
 
-from ..abstract import Container
-
-# --------------------------------------------------------------------
-# See cfdm.core.mixin.container.__docstring_substitution__ for
-# {{...}}  docstring substitutions
-# --------------------------------------------------------------------
+from .container import Container
 
 
 class Properties(Container):
@@ -27,7 +22,7 @@ class Properties(Container):
             *source* parameter is set.
 
             Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+            `set_properties` and `set_property` methods.""",
 
             *Parameter example:*
                ``properties={'standard_name': 'altitude'}``

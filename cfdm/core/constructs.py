@@ -1,8 +1,9 @@
 from collections import OrderedDict
 from copy import copy
 
+from . import abstract
 
-class Constructs:
+class Constructs(abstract.Container):
     '''A container for metadata constucts.
 
     .. versionadded:: (cfdm) 1.7.0

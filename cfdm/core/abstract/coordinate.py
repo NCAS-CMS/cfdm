@@ -1,11 +1,6 @@
 import abc
 
-from . import PropertiesDataBounds
-
-# --------------------------------------------------------------------
-# See cfdm.core.mixin.container.__docstring_substitution__ for {{...}}
-# docstring substitutions
-# --------------------------------------------------------------------
+from .propertiesdatabounds import PropertiesDataBounds
 
 
 class Coordinate(PropertiesDataBounds):

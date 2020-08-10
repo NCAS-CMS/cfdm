@@ -7,7 +7,7 @@ from ..meta import RewriteDocstringMeta
 
 
 class Container(metaclass=RewriteDocstringMeta):
-    '''Mixin class for storing components.
+    '''Abstract base class for storing components.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -91,19 +91,16 @@ class Container(metaclass=RewriteDocstringMeta):
             # Simple substitutions.
             #
             # All occurences of the key are replaced with the value.
-            #
             # Note that special subtitutions will be applied to the
             # value *after* its replacement in the docstring.
-            # --------------------------------------------------------
-            '{{repr}}': '',
+            # -------------------------------------------------------
+            '{{repr}}':
+            '',
 
             '{{default: optional}}': '''default: optional
             Return the value of the *default* parameter if data have
             not been set. If set to an `Exception` instance then it
             will be raised instead.''',
-
-            '{{inplace: `bool`, optional}}': '''inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.'''
 
             # --------------------------------------------------------
             # Regular expression substitutions.
@@ -120,7 +117,7 @@ class Container(metaclass=RewriteDocstringMeta):
             # match of the regular expression *after* its replacement
             # in the docstring.
             # --------------------------------------------------------
-        }
+            }
 
     # ----------------------------------------------------------------
     # Private methods
@@ -362,13 +359,20 @@ class Container(metaclass=RewriteDocstringMeta):
 
         '''
         d = {}
-        for klass in cls.__bases__[::-1] + (cls,):
-            d_s = getattr(klass, '__docstring_substitution__', None)
-            if d_s is None:
-                continue
-
+        for klass in cls.__bases__[::-1]:
+            d_s = getattr(klass, '_docstring_substitutions', None)
+            if d_s is not None:
+                d.update(d_s())
+            else:
+                d_s = getattr(klass, '__docstring_substitution__', None)
+                if d_s is not None:
+                    d.update(d_s(None))
+        # --- End: for
+        
+        d_s = getattr(cls, '__docstring_substitution__', None)
+        if d_s is not None:
             d.update(d_s(None))
-
+           
         return d
 
     # ----------------------------------------------------------------

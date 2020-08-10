@@ -34,8 +34,83 @@ class Container:
     .. versionadded:: (cfdm) 1.7.0
 
         '''
-        out = sorted(self._components)
+        out = sorted(self._components)    
         return ', '.join(out)
+
+    def __docstring_substitution__(self):
+        '''TODO
+    Substitutions may be easily modified by overriding the
+    __docstring_substitution__ method.
+    Modifications can be applied to any class, and will only apply to
+    that class and all of its subclases.
+    If the key is a string then the special subtitutions will be
+    applied to the dictionary values after replacement in the
+    docstring.
+    If the key is a compiled regular expession then the special
+    subtitutions will be applied to the match of the regular
+    expression after replacement in the docstring.
+    For example::
+       def __docstring_substitution__(self):
+           def _upper(match):
+               return match.group(1).upper()
+           out = {
+                  # Simple substitutions 
+                  '{{repr}}': 'CF '
+                  '{{foo}}': 'bar'
+                  '{{parameter: `int`}}': """parameter: `int`
+               This parameter does something to `{{class}}`
+               instances. It has no default value.""",
+                   # Regular expression subsititions
+                   # 
+                   # Convert text to upper case
+                   re.compile('{{<upper (.*?)>}}'): _upper
+            }
+           return out
+        '''
+        return {
+            # Parameter descriptions
+            '{{inplace: `bool`, optional}}':
+            """inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.""",
+
+            # verbose
+            '{{verbose: `int` or `str` or `None`, optional}}':
+            """verbose: `int` or `str` or `None`, optional
+            If an integer from ``-1`` to ``3``, or an equivalent
+            string equal ignoring case to one of:
+
+            * ``'DISABLE'`` (``0``)
+            * ``'WARNING'`` (``1``)
+            * ``'INFO'`` (``2``)
+            * ``'DETAIL'`` (``3``)
+            * ``'DEBUG'`` (``-1``)
+
+            set for the duration of the method call only as the
+            minimum cut-off for the verboseness level of displayed
+            output (log) messages, regardless of the
+            globally-configured `cf.log_level`.  Note that increasing
+            numerical value corresponds to increasing verbosity, with
+            the exception of ``-1`` as a special case of maximal and
+            extreme verbosity.
+
+            Otherwise, if `None` (the default value), output messages
+            will be shown according to the value of the `cf.log_level`
+            setting.
+
+            Overall, the higher a non-negative integer or equivalent
+            string that is set (up to a maximum of ``3``/``'DETAIL'``)
+            for increasing verbosity, the more description that is
+            printed to convey information about the operation.""",
+
+            # ignore_type
+            '{{ignore_type: `bool`, optional}}':
+            """ignore_type: `bool`, optional
+            Any type of object may be tested but, in general, equality
+            is only possible with another `{{class}}` instance, or a
+            subclass of one. If *ignore_type* is True then
+            ``{{package}}.{{class}}(source=other)`` is tested, rather
+            than the ``other`` defined by the *other* parameter.""",
+        }
 
     @property
     def _atol(self):

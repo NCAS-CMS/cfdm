@@ -2,12 +2,7 @@ import abc
 
 from copy import deepcopy
 
-from ..abstract import Container
-
-# --------------------------------------------------------------------
-# See cfdm.core.mixin.container.__docstring_substitution__ for
-# {{...}}  docstring substitutions
-# --------------------------------------------------------------------
+from .container import Container
 
 
 class Parameters(Container):

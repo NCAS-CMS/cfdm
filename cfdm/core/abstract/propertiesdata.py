@@ -1,11 +1,6 @@
 import abc
 
-from . import Properties
-
-# --------------------------------------------------------------------
-# See cfdm.core.mixin.container.__docstring_substitution__ for
-# {{...}} docstring substitutions
-# --------------------------------------------------------------------
+from .properties import Properties
 
 
 class PropertiesData(Properties):
@@ -26,7 +21,7 @@ class PropertiesData(Properties):
             *source* parameter is set.
 
             Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+            `set_properties` and `set_property` methods.""",
 
             *Parameter example:*
               ``properties={'standard_name': 'altitude'}``

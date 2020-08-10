@@ -28,7 +28,7 @@ class Bounds(abstract.PropertiesData):
             *source* parameter is set.
 
             Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+            `set_properties` and `set_property` methods.""",
 
             *Parameter example:*
                ``properties={'standard_name': 'altitude'}``

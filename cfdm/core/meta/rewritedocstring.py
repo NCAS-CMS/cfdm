@@ -45,9 +45,14 @@ class RewriteDocstringMeta(type):
         docstring_rewrite = {}
         for parent in parents[::-1]:
             parent_docstring_rewrite = getattr(
-                parent, '__docstring_substitution__', None)
+                parent, '_docstring_substitutions', None)
             if parent_docstring_rewrite is not None:
-                docstring_rewrite.update(parent_docstring_rewrite(None))
+                docstring_rewrite.update(parent_docstring_rewrite())
+            else:
+                parent_docstring_rewrite = getattr(
+                    parent, '__docstring_substitution__', None)
+                if parent_docstring_rewrite is not None:
+                    docstring_rewrite.update(parent_docstring_rewrite(None))
         # --- End: for
 
         class_docstring_rewrite = attrs.get('__docstring_substitution__', None)
@@ -75,7 +80,7 @@ class RewriteDocstringMeta(type):
             if not hasattr(attr, '__doc__'):
                 continue
 
-            # @property or normal method
+            # @property
             if hasattr(attr, 'fget'):
                 # Note that here inspect.isroutine(attr) is False for
                 # @property methods (but this is not the case for
@@ -220,7 +225,10 @@ class RewriteDocstringMeta(type):
                     attrs[attr_name] = attr
 
                 except Exception as error:
-                    raise RuntimeError(error)
+                    raise RuntimeError(str(error) +
+                                       ' '.join([':',
+                                                 parent.__name__,
+                                                 attr_name]))
         # --- End: for
 
         # Create the class
