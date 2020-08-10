@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class Container:
     '''Mixin class for storing object components.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __repr__(self):
@@ -21,7 +21,7 @@ class Container:
 
     x.__repr__() <==> repr(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
@@ -31,7 +31,7 @@ class Container:
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         out = sorted(self._components)
@@ -63,7 +63,7 @@ class Container:
     methods, or casts them as numpy arrays and carried aout numericlly
     tolerant equality checks.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -174,7 +174,7 @@ class Container:
       or a sublcass of, the RHS operand then instantiate a new
       instance based on the the RHS class and return it.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         # Check for object identity

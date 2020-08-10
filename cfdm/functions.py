@@ -38,7 +38,7 @@ def configuration(atol=None, rtol=None, log_level=None):
     it by means of a specific function of the same name, e.g. via `cfdm.atol`,
     but in this case multiple constants can be set at once.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `atol`, `rtol`, `log_level`
 
@@ -149,7 +149,7 @@ def atol(*atol):
     1 and the least value greater than 1 that is representable as a
     float).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `rtol`
 
@@ -203,7 +203,7 @@ def rtol(*rtol):
     1 and the least value greater than 1 that is representable as a
     float).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `atol`
 
@@ -306,7 +306,7 @@ def log_level(*log_level):
 
     The default level is ``'WARNING'`` (``1``).
 
-    .. versionadded:: 1.8.4
+    .. versionadded:: (cfdm) 1.8.4
 
     :Parameters:
 
@@ -425,7 +425,7 @@ def _disable_logging(at_level=None):
 def environment(display=True, paths=True):
     '''Return the names, versions and paths of all dependencies.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -512,7 +512,7 @@ def CF():
     by this release of the cfdm package, and therefore the version can
     not be changed.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 

@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class PropertiesData(Properties):
     '''Mixin class for a data array with descriptive properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __getitem__(self, indices):
@@ -36,7 +36,7 @@ class PropertiesData(Properties):
       the same behaviour as indexing on a Variable object of the
       netCDF4 package.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -71,7 +71,7 @@ class PropertiesData(Properties):
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         name = self.identity('')
@@ -145,24 +145,24 @@ class PropertiesData(Properties):
 
     def _test_docstring_substitution_3(self, arg1, arg2):
         '''Test docstring substitution 3.
-        
+
         {{inplace: `bool`, optional}}
 
     {{package}}.{{class}}
 
         '''
         return self.__class__._test_docstring_substitution_staticmethod(arg1, arg2)
-    
+
     def _test_docstring_substitution_4(self, arg1, arg2):
         '''Test docstring substitution 4.
-        
+
         {{inplace: `bool`, optional}}
 
     {{package}}.{{class}}
 
         '''
         return self._test_docstring_substitution_classmethod(arg1, arg2)
-    
+
     @_test_decorator_args('i')
     @_inplace_enabled
     def _test_docstring_substitution(self, inplace=False, verbose=None):
@@ -367,7 +367,7 @@ class PropertiesData(Properties):
               ``valid_max``, and ``valid_range`` properties have not
               been updated.
 
-    .. versionadded:: 1.8.2
+    .. versionadded:: (cfdm) 1.8.2
 
     .. seealso:: `Data.apply_masking`, `read`, `write`
 
@@ -433,7 +433,7 @@ class PropertiesData(Properties):
              _axes=None, _axis_names=None):
         '''A full description.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -528,7 +528,7 @@ class PropertiesData(Properties):
     NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -704,7 +704,7 @@ class PropertiesData(Properties):
     def inherited_properties(self):
         '''Return the properties inherited from a parent construct.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `properties`
 
@@ -727,7 +727,7 @@ class PropertiesData(Properties):
 
     Inserts a new size 1 axis into the data array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `squeeze`, `transpose`
 
@@ -779,7 +779,7 @@ class PropertiesData(Properties):
     By default all size one axes are removed, but particular size one
     axes may be selected for removal.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `insert_dimension`, `transpose`
 
@@ -836,7 +836,7 @@ class PropertiesData(Properties):
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `insert_dimension`, `squeeze`
 
@@ -904,7 +904,7 @@ class PropertiesData(Properties):
 
         * Compression by gathering.
 
-    .. versionadded:: 1.7.11
+    .. versionadded:: (cfdm) 1.7.11
 
     :Parameters:
 

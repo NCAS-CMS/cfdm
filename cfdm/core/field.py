@@ -1,10 +1,12 @@
+from . import abstract
 from . import mixin
 
 from . import Constructs
 from . import Domain
 
 
-class Field(mixin.ConstructAccess, mixin.PropertiesData):
+class Field(mixin.ConstructAccess,
+            abstract.PropertiesData):
     '''A field construct of the CF data model.
 
     The field construct is central to the CF data model, and includes

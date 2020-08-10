@@ -29,7 +29,7 @@ class CellMethod(mixin.Container,
     spacing of the original data, or the fact that the method was
     applied only over El Nino years).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __str__(self):
@@ -43,7 +43,7 @@ class CellMethod(mixin.Container,
     cell_methods attribute then, unless they are standard names, the
     axes names will need to be modified to be netCDF dimension names.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         string = ['{0}:'.format(axis) for axis in self.get_axes(())]
@@ -83,7 +83,7 @@ class CellMethod(mixin.Container,
     Returns a description the method, all qualifiers and the axes to
     which it applies.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -136,7 +136,7 @@ class CellMethod(mixin.Container,
     NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -315,7 +315,7 @@ class CellMethod(mixin.Container,
     1. The method, preceeded by 'method:'
     2. The value of the *default* parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -358,7 +358,7 @@ class CellMethod(mixin.Container,
 
     * The method, preceeded by 'method:'.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 
@@ -393,7 +393,7 @@ class CellMethod(mixin.Container,
     The axes are sorted by domain axis construct identifier or
     standard name, and any intervals are sorted accordingly.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 

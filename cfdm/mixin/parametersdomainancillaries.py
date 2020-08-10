@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class ParametersDomainAncillaries(Parameters):
     '''Mixin class for parameter- and ancillary-valued terms.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __bool__(self):
@@ -19,7 +19,7 @@ class ParametersDomainAncillaries(Parameters):
 
     x.__bool__() <==> bool(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return (super().__bool__() or bool(self.domain_ancillaries()))
@@ -29,7 +29,7 @@ class ParametersDomainAncillaries(Parameters):
 
     x.__nonzero__() <==> bool(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return self.__bool__()

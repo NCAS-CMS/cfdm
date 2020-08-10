@@ -5,7 +5,7 @@ from . import mixin
 
 
 class RaggedIndexedArray(mixin.RaggedIndexed,
-                         abstract.Array):
+                         abstract.CompressedArray):
     '''An underlying indexed ragged array.
 
     A collection of features stored using an indexed ragged array

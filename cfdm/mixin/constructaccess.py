@@ -5,7 +5,7 @@ class ConstructAccess():
     '''Mixin class for manipulating constructs stored in a `Constructs`
     object.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     # ----------------------------------------------------------------
@@ -14,7 +14,7 @@ class ConstructAccess():
     def _unique_construct_names(self):
         '''Return unique metadata construct names.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -54,7 +54,7 @@ class ConstructAccess():
     def _unique_domain_axis_identities(self):
         '''Return unique domain axis construct names.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -93,7 +93,7 @@ class ConstructAccess():
     def coordinate_references(self):
         '''Return coordinate reference constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -121,7 +121,7 @@ class ConstructAccess():
     def domain_axes(self):
         '''Return domain axis constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -150,7 +150,7 @@ class ConstructAccess():
     def auxiliary_coordinates(self):
         '''Return auxiliary coordinate constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -179,7 +179,7 @@ class ConstructAccess():
     def dimension_coordinates(self):
         '''Return dimension coordinate constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -209,7 +209,7 @@ class ConstructAccess():
     def coordinates(self):
         '''Return dimension and auxiliary coordinate constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `auxiliary_coordinates`, `constructs`,
                  `dimension_coordinates`
@@ -245,7 +245,7 @@ class ConstructAccess():
     def domain_ancillaries(self):
         '''Return domain ancillary constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -273,7 +273,7 @@ class ConstructAccess():
     def cell_measures(self):
         '''Return cell measure constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -301,7 +301,7 @@ class ConstructAccess():
     def construct(self, identity, default=ValueError()):
         '''Select a metadata construct by its identity.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `construct_key`, `constructs`,
                  `Constructs.filter_by_identity`, `Constructs.value`
@@ -392,7 +392,7 @@ class ConstructAccess():
     def construct_key(self, identity, default=ValueError()):
         '''Select the key of a metadata construct by its identity.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `construct`, `constructs`,
                  `Constructs.filter_by_identity`, `Constructs.key`

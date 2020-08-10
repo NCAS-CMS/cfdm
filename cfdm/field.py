@@ -102,7 +102,7 @@ class Field(mixin.NetCDFVariable,
     CF-compliance issues for field constructs read from a netCDF
     dataset may be accessed with the `dataset_compliance` method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __new__(cls, *args, **kwargs):
@@ -160,7 +160,7 @@ class Field(mixin.NetCDFVariable,
 
     x.__repr__() <==> repr(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__,
@@ -171,7 +171,7 @@ class Field(mixin.NetCDFVariable,
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         title = "Field: {0}".format(self.identity(''))
@@ -275,7 +275,7 @@ class Field(mixin.NetCDFVariable,
       the same behaviour as indexing on a Variable object of the
       netCDF4 package.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -452,7 +452,7 @@ class Field(mixin.NetCDFVariable,
         '''Set the report of problems encountered whilst reading the field
     construct from a dataset.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `dataset_compliance`
 
@@ -525,7 +525,7 @@ class Field(mixin.NetCDFVariable,
     def field_ancillaries(self):
         '''Return field ancillary constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `get_construct`
 
@@ -565,7 +565,7 @@ class Field(mixin.NetCDFVariable,
     applied. To achieve this use the `~Constructs.ordered` of the
     returned `Constructs` instance.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `get_construct`, `set_construct`
 
@@ -638,7 +638,7 @@ class Field(mixin.NetCDFVariable,
               ``valid_max``, and ``valid_range`` properties have not
               been updated.
 
-    .. versionadded:: 1.8.3
+    .. versionadded:: (cfdm) 1.8.3
 
     .. seealso:: `Data.apply_masking`, `read`, `write`
 
@@ -691,7 +691,7 @@ class Field(mixin.NetCDFVariable,
     def climatological_time_axes(self):
         '''Return all axes which are climatological time axes.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -774,7 +774,7 @@ class Field(mixin.NetCDFVariable,
 
         * Compression by gathering.
 
-    .. versionadded:: 1.7.11
+    .. versionadded:: (cfdm) 1.7.11
 
     .. seealso:: `uncompress`
 
@@ -1212,7 +1212,7 @@ class Field(mixin.NetCDFVariable,
     little extra memory, even when the original contains very large
     data arrays, and the copy operation is fast.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -1247,7 +1247,7 @@ class Field(mixin.NetCDFVariable,
     metadata constructs and their components, and provides selected
     values of all data arrays.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -1379,7 +1379,7 @@ class Field(mixin.NetCDFVariable,
     not constitute part of the CF data model and so are not checked on
     any construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -1552,7 +1552,7 @@ class Field(mixin.NetCDFVariable,
     Inserts a new size 1 axis, corresponding to an existing domain
     axis construct, into the data array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `squeeze`, `transpose`
 
@@ -1649,7 +1649,7 @@ class Field(mixin.NetCDFVariable,
     different field construct to that created with the
     `~{{class}}.convert` method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `{{package}}.read`
 
@@ -1811,7 +1811,7 @@ class Field(mixin.NetCDFVariable,
     Other types of non-compliance are not checked, such whether or not
     controlled vocabularies have been adhered to.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `{{package}}.read`
 
@@ -1875,7 +1875,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_variable`,
                  `nc_set_component_variable_groups`,
@@ -1942,7 +1942,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_set_component_variable`,
                  `nc_set_component_variable_groups`,
@@ -2006,7 +2006,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_variable`,
                  `nc_set_component_variable`,
@@ -2072,7 +2072,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_variable`,
                  `nc_set_component_variable`,
@@ -2134,7 +2134,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_dimension`,
                  `nc_set_component_dimension_groups`,
@@ -2194,7 +2194,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_set_component_dimension`,
                  `nc_set_component_dimension_groups`,
@@ -2251,7 +2251,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_dimension`,
                  `nc_set_component_dimension`,
@@ -2311,7 +2311,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_dimension`,
                  `nc_set_component_dimension`,
@@ -2368,7 +2368,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_sample_dimension`,
                  `nc_set_component_sample_dimension_groups`,
@@ -2421,7 +2421,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_set_component_sample_dimension`,
                  `nc_set_component_sample_dimension_groups`,
@@ -2470,7 +2470,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_sample_dimension`,
                  `nc_set_component_sample_dimension`,
@@ -2522,7 +2522,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_sample_dimension`,
                  `nc_set_component_sample_dimension`,
@@ -2567,7 +2567,7 @@ class Field(mixin.NetCDFVariable,
     By default all size one axes are removed, but particular size one
     axes may be selected for removal.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `insert_dimension`, `transpose`
 
@@ -2637,7 +2637,7 @@ class Field(mixin.NetCDFVariable,
     def transpose(self, axes=None, constructs=False, inplace=False):
         '''Permute the axes of the data array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `insert_dimension`, `squeeze`
 
@@ -2771,7 +2771,7 @@ class Field(mixin.NetCDFVariable,
       * Compression type ``'gathered'``: Compression by gathering over
         any subset of the field construct data dimensions.
 
-    .. versionadded:: 1.7.11
+    .. versionadded:: (cfdm) 1.7.11
 
     .. seealso:: `compress`
 

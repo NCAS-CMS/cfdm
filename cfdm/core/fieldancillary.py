@@ -1,7 +1,7 @@
-from . import mixin
+from . import abstract
 
 
-class FieldAncillary(mixin.PropertiesData):
+class FieldAncillary(abstract.PropertiesData):
     '''A field ancillary construct of the CF data model.
 
     The field ancillary construct provides metadata which are

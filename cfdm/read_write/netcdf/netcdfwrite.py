@@ -41,7 +41,7 @@ class NetCDFWrite(IOWrite):
     def cf_geometry_types(self):
         '''Geometry types
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
         '''
         return set((
@@ -65,7 +65,7 @@ class NetCDFWrite(IOWrite):
     def _create_netcdf_group(self, nc, group_name):
         '''TODO
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     :Parameters:
 
@@ -86,7 +86,7 @@ class NetCDFWrite(IOWrite):
         #                            force_use_existing=False):
         '''TODO
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -125,7 +125,7 @@ class NetCDFWrite(IOWrite):
     def _netcdf_name(self, base, dimsize=None, role=None):
         '''Return a new netCDF variable or dimension name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -191,7 +191,7 @@ class NetCDFWrite(IOWrite):
     def _numpy_compressed(self, array):
         '''Return all the non-masked data as a 1-d array.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -900,7 +900,7 @@ class NetCDFWrite(IOWrite):
     def _create_geometry_container(self, field):
         '''TODO
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -1072,7 +1072,7 @@ class NetCDFWrite(IOWrite):
     When `True` is returned, the input variable is added to the
     g['seen'] dictionary.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -1116,7 +1116,7 @@ class NetCDFWrite(IOWrite):
     def _write_geometry_container(self, field, geometry_container):
         '''Write a netCDF geometry container variable.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Returns:
 
@@ -1165,7 +1165,7 @@ class NetCDFWrite(IOWrite):
     dimension if required. Return the bounds variable's netCDF
     variable name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -1351,7 +1351,7 @@ class NetCDFWrite(IOWrite):
     * A netCDF part node count variable, if required.
     * A netCDF interior ring variable, if required.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -1519,7 +1519,7 @@ class NetCDFWrite(IOWrite):
                           encodings):
         '''Create a netCDF node count variable.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -1604,7 +1604,7 @@ class NetCDFWrite(IOWrite):
         '''Get the base of the netCDF dimension for part node count and
     interior ring variables.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Returns:
 
@@ -1644,7 +1644,7 @@ class NetCDFWrite(IOWrite):
         '''Return the parent group in which a dimension or variable is to be
     created.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     :Parameters:
 
@@ -1746,7 +1746,7 @@ class NetCDFWrite(IOWrite):
     def _get_node_ncdimension(self, bounds, default=None):
         '''TODO
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -1778,7 +1778,7 @@ class NetCDFWrite(IOWrite):
     dimension if required. Return the bounds variable's netCDF
     variable name.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -1890,7 +1890,7 @@ class NetCDFWrite(IOWrite):
     def _write_interior_ring(self, coord, bounds, encodings):
         '''TODO
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -2121,7 +2121,7 @@ class NetCDFWrite(IOWrite):
     If an equal domain ancillary has already been written to the file
     athen it is not re-written.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -2308,7 +2308,7 @@ class NetCDFWrite(IOWrite):
                          ncvar=None, ncdimensions=None):
         '''Create a new field to flag it for being written the external file.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         g = self.write_vars
@@ -2338,7 +2338,7 @@ class NetCDFWrite(IOWrite):
     def _createVariable(self, **kwargs):
         '''TODO
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         g = self.write_vars
@@ -2350,7 +2350,7 @@ class NetCDFWrite(IOWrite):
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
         '''Write a grid mapping georeference to the netCDF file.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -2626,7 +2626,7 @@ class NetCDFWrite(IOWrite):
     def _customize_createVariable(self, cfvar, kwargs):
         '''TODO
 
-    .. versionadded:: 1.7.6
+    .. versionadded:: (cfdm) 1.7.6
 
     :Parameters:
 
@@ -2640,7 +2640,7 @@ class NetCDFWrite(IOWrite):
     def _transform_strings(self, construct, data, ncdimensions):
         '''TODO
 
-    .. versionadded:: 1.7.3
+    .. versionadded:: (cfdm) 1.7.3
 
     :Parameters:
 
@@ -2749,7 +2749,7 @@ class NetCDFWrite(IOWrite):
         '''Check array for out-of-range values, as defined by the
     valid_[min|max|range] attributes.
 
-    .. versionadded:: 1.8.3
+    .. versionadded:: (cfdm) 1.8.3
 
     :Parameters:
 
@@ -2823,7 +2823,7 @@ class NetCDFWrite(IOWrite):
     The return Data instance object will have data type 'S1' and will
     have an extra trailing dimension.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -2850,7 +2850,7 @@ class NetCDFWrite(IOWrite):
                      allow_data_insert_dimension=True):
         '''TODO
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -3700,7 +3700,7 @@ class NetCDFWrite(IOWrite):
     def _unlimited(self, field, axis):
         '''Whether an axis is unlimited.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -3719,7 +3719,7 @@ class NetCDFWrite(IOWrite):
         '''Find the netCDF global properties from all of the input fields and
     write them to the netCDF4.Dataset.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     :Parameters:
 
@@ -4049,7 +4049,7 @@ class NetCDFWrite(IOWrite):
     once, apart from when they need to fulfil both dimension coordinate
     and auxiliary coordinate roles for different data variables.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -4166,12 +4166,12 @@ class NetCDFWrite(IOWrite):
               value ``100`` and data with maximum value ``999``, then
               a warning will be printed if ``warn_valid=True``.
 
-            .. versionadded:: 1.8.3
+            .. versionadded:: (cfdm) 1.8.3
 
         group: `bool`, optional
             TODO
 
-            .. versionadded:: 1.8.6
+            .. versionadded:: (cfdm) 1.8.6
 
     :Returns:
 

@@ -1,7 +1,7 @@
-from . import mixin
+from . import abstract
 
 
-class CellMeasure(mixin.PropertiesData):
+class CellMeasure(abstract.PropertiesData):
     '''A cell measure construct of the CF data model.
 
     A cell measure construct provides information that is needed about

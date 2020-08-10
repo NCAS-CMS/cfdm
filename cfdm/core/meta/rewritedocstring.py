@@ -138,7 +138,7 @@ class RewriteDocstringMeta(type):
 #            print (parents)
         for parent in parents:
             for attr_name in dir(parent):
-                 
+
                 if attr_name in attrs:
                     # We already have this method from higher up in
                     # the method resolution order, so do not overwrite
@@ -150,7 +150,7 @@ class RewriteDocstringMeta(type):
                     continue
 #                if ok:
 #                    print (0, class_name, parent.__name__, attr_name)
-                    
+
                 # ----------------------------------------------------
                 # Get the original method, copy it, update the
                 # docstring, and put the mosfied copy back into the
@@ -159,11 +159,11 @@ class RewriteDocstringMeta(type):
                 original_f = getattr(parent, attr_name)
 #                if ok and attr_name == 'swapaxes':
 #                    print (original_f.__doc__)
-                    
+
                 is_classmethod = False
                 is_staticmethod = False
                 is_wrapped = False
-        
+
                 try:
                     if hasattr(original_f, 'fget'):
                         # The original function is decorated with #
@@ -182,22 +182,22 @@ class RewriteDocstringMeta(type):
                             is_staticmethod = True
 
                         is_wrapped = hasattr(original_f, '__wrapped__')
-                           
+
                         f = getattr(original_f, '__func__', original_f)
-                    
+
 #                        if is_wrapped:
 #                            #                            f = f.__wrapped__
 #                            if ok and  attr_name == 'swapaxes':
 #                                print (dir(f), f.__doc__)
-                            
+
                         # Copy the method
                         attr = type(f)(f.__code__, f.__globals__,
                                        f.__name__, f.__defaults__,
                                        f.__closure__)
 
                         if is_wrapped:
-#                            if ok :
-#                                print ('is_wrapped')
+                            # if ok :
+                            #      print ('is_wrapped')
                             # Need to assign the original docstring
                             # when wrapped
                             attr.__doc__ = original_f.__doc__

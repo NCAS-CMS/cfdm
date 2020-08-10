@@ -363,7 +363,6 @@ class Container(metaclass=RewriteDocstringMeta):
         '''
         d = {}
         for klass in cls.__bases__[::-1] + (cls,):
-            print (klass)
             d_s = getattr(klass, '__docstring_substitution__', None)
             if d_s is None:
                 continue

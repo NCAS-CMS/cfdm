@@ -72,7 +72,7 @@ class CoordinateReference(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __new__(cls, *args, **kwargs):
@@ -144,7 +144,7 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return self.identity(default=self.nc_get_variable(''))
@@ -157,7 +157,7 @@ class CoordinateReference(mixin.NetCDFVariable,
     Returns a description of all properties, including those of
     components.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -266,7 +266,7 @@ class CoordinateReference(mixin.NetCDFVariable,
     NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -388,7 +388,7 @@ class CoordinateReference(mixin.NetCDFVariable,
       variable), preceeded by ``'ncvar%'``.
     * The value of the *default* parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -443,7 +443,7 @@ class CoordinateReference(mixin.NetCDFVariable,
     * The netCDF variable name (corresponding to a netCDF grid mapping
       variable), preceeded by ``'ncvar%'``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 

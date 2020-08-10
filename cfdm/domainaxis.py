@@ -37,7 +37,7 @@ class DomainAxis(mixin.NetCDFDimension,
     `nc_set_dimension`, `nc_get_dimension`, `nc_dimension_groups`,
     `nc_clear_dimension_groups` and `nc_set_dimension_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, size=None, source=None, copy=True):
@@ -71,7 +71,7 @@ class DomainAxis(mixin.NetCDFDimension,
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return 'size({0})'.format(self.get_size(''))
@@ -91,7 +91,7 @@ class DomainAxis(mixin.NetCDFDimension,
     NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -178,7 +178,7 @@ class DomainAxis(mixin.NetCDFDimension,
     1. The netCDF dimension name, preceeded by 'ncdim%'.
     2. The value of the default parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -221,7 +221,7 @@ class DomainAxis(mixin.NetCDFDimension,
 
     * The netCDF dimension name, preceeded by 'ncdim%'.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 

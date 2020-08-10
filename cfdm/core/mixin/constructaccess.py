@@ -69,7 +69,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
             *Parameter example:*
               ``key='domainaxis1'``
 
-        {[default: optional}}
+        {{default: optional}}
 
     :Returns:
 

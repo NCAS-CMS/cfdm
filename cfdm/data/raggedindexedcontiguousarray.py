@@ -6,7 +6,7 @@ from . import mixin
 
 class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
                                    mixin.RaggedIndexed,
-                                   abstract.Array):
+                                   abstract.CompressedArray):
     '''An underlying indexed contiguous ragged array.
 
     A collection of features, each of which is sequence of (vertical)

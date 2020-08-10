@@ -26,13 +26,13 @@ class Domain(mixin.ConstructAccess,
     coordinate, cell measure, coordinate reference and domain
     ancillary constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __new__(cls, *args, **kwargs):
         '''This must be overridden in subclasses.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         instance = super().__new__(cls)
@@ -195,7 +195,7 @@ class Domain(mixin.ConstructAccess,
     exception of data arrays, which are abbreviated to their first and
     last values.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -298,7 +298,7 @@ class Domain(mixin.ConstructAccess,
                ignore_compression=True, ignore_type=False):
         '''Whether two domains are the same.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 

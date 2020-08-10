@@ -1,7 +1,7 @@
-from . import mixin
+from . import abstract
 
 
-class Bounds(mixin.PropertiesData):
+class Bounds(abstract.PropertiesData):
     '''A cell bounds component of a coordinate or domain ancillary
     construct of the CF data model.
 

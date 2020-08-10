@@ -4,11 +4,9 @@ from operator import mul
 import numpy
 
 from . import abstract
-from . import mixin
 
 
-class GatheredArray(mixin.CompressedArray,
-                    abstract.Array):
+class GatheredArray(abstract.CompressedArray):
     '''An underlying gathered array.
 
     Compression by gathering combines axes of a multidimensional array

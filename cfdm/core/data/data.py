@@ -6,7 +6,7 @@ from .. import abstract
 class Data(abstract.Container):
     '''An orthogonal multidimensional array with masked values and units.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, array=None, units=None, calendar=None,
@@ -470,7 +470,7 @@ class Data(abstract.Container):
     def _get_Array(self, default=ValueError()):
         '''Return the array object.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -495,7 +495,7 @@ class Data(abstract.Container):
     def get_fill_value(self, default=ValueError()):
         '''Return the missing data value.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_fill_value`, `has_fill_value`, `set_fill_value`
 

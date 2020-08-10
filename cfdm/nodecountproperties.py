@@ -4,7 +4,7 @@ from . import core
 
 class NodeCountProperties(mixin.NetCDFVariable,
                           mixin.Properties,
-                          core.mixin.Properties):
+                          core.abstract.Properties):
     '''Properties for a netCDF node count variable.
 
     **NetCDF interface**
@@ -17,7 +17,7 @@ class NodeCountProperties(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     '''
     def __init__(self, properties=None, source=None, copy=True):
@@ -57,7 +57,7 @@ class NodeCountProperties(mixin.NetCDFVariable,
 
     Returns a description of all properties.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 

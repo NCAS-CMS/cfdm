@@ -40,7 +40,7 @@ class Bounds(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, source=None,
@@ -101,7 +101,7 @@ class Bounds(mixin.NetCDFVariable,
     Returns a description of all properties and provides selected
     values of all data arrays.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -135,7 +135,7 @@ class Bounds(mixin.NetCDFVariable,
     `array` attribute of the `Data` instance to return the data as an
     independent `numpy` array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data`, `has_data`, `set_data`
 
@@ -199,7 +199,7 @@ class Bounds(mixin.NetCDFVariable,
     def inherited_properties(self):
         '''Return the properties inherited from a coordinate construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `properties`
 
@@ -232,7 +232,7 @@ class Bounds(mixin.NetCDFVariable,
 
     Properties include any inherited properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 

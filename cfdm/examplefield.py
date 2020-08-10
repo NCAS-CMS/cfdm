@@ -9,7 +9,7 @@ _implementation = implementation()
 def example_field(n, _implementation=_implementation):
     '''Return an example field construct.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 

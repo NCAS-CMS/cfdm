@@ -32,7 +32,7 @@ from . import CF
 class CFDMImplementation(Implementation):
     ''''A container for the CF data model implementation.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(
@@ -164,7 +164,7 @@ class CFDMImplementation(Implementation):
     def conform_geometry_variables(self, field):
         '''Collate geometry variable properties.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -829,7 +829,7 @@ class CFDMImplementation(Implementation):
     def nc_get_geometry_variable(self, field, default=None):
         '''Return the netCDF variable name of the geometry container.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -843,7 +843,7 @@ class CFDMImplementation(Implementation):
     def nc_get_group_attributes(self, field):
         '''Return the netCDF sub-group attribtues for the field construct.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     :Parameters:
 
@@ -859,7 +859,7 @@ class CFDMImplementation(Implementation):
     def nc_get_variable_groups(self, field):
         '''Return the netCDF groups for the field construct.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     :Parameters:
 
@@ -875,7 +875,7 @@ class CFDMImplementation(Implementation):
     def nc_get_hdf5_chunksizes(self, data):
         '''Return the HDF5 chunksizes for the data.
 
-    ..versionadded:: 1.7.2
+    ..versionadded:: (cfdm) 1.7.2
 
     :Parameters:
 
@@ -907,7 +907,7 @@ class CFDMImplementation(Implementation):
     def nc_is_unlimited_axis(self, field, axis):
         '''Whether a domain axis corresponds to a netCDF unlimited dimension.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -929,7 +929,7 @@ class CFDMImplementation(Implementation):
     def nc_set_unlimited_axis(self, field, axis):
         '''Set a domain axis to correspond to a netCDF unlimited dimension.
 
-    .. versionadded:: 1.7.4
+    .. versionadded:: (cfdm) 1.7.4
 
     :Parameters:
 
@@ -966,7 +966,7 @@ class CFDMImplementation(Implementation):
     def nc_set_global_attributes(self, field, attributes):
         '''Set netCDF global attributes.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -985,7 +985,7 @@ class CFDMImplementation(Implementation):
     def nc_set_group_attributes(self, field, attributes):
         '''Set netCDF group attributes.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     :Parameters:
 
@@ -1236,7 +1236,7 @@ class CFDMImplementation(Implementation):
     def get_inherited_properties(self, parent):
         '''Return all inherited properties.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     :Parameters:
 
@@ -1339,7 +1339,7 @@ class CFDMImplementation(Implementation):
     def get_node_count(self, construct):
         '''Return the node count variable of geometry coordinates.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -1355,7 +1355,7 @@ class CFDMImplementation(Implementation):
     def get_part_node_count(self, construct):
         '''Return the part node count variable of geometry coordinates.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -1927,7 +1927,7 @@ class CFDMImplementation(Implementation):
     def is_geometry(self, coordinate):
         '''Return True if the coordinate bounds are geometries.
 
-    ..versionadded:: 1.8.0
+    ..versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -1947,7 +1947,7 @@ class CFDMImplementation(Implementation):
     def is_masked(self, data):
         '''Whether or not the data has any masked values.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -2040,7 +2040,7 @@ class CFDMImplementation(Implementation):
     def set_cell_measure(self, field, construct, axes, copy=True):
         '''Insert a cell_measure object into a field.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -2062,7 +2062,7 @@ class CFDMImplementation(Implementation):
     def set_cell_method(self, field, construct, copy=True):
         '''Insert a cell_method object into a field.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -2098,7 +2098,7 @@ class CFDMImplementation(Implementation):
     def set_cell_method_method(self, cell_method, method):
         '''Set the method of a cell method construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -2117,7 +2117,7 @@ class CFDMImplementation(Implementation):
                                   coordinate_conversion):
         '''Set the method of a cell method construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -2135,7 +2135,7 @@ class CFDMImplementation(Implementation):
     def set_coordinate_reference(self, field, construct, copy=True):
         '''Insert a coordinate reference object into a field.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -2157,7 +2157,7 @@ class CFDMImplementation(Implementation):
                                              coordinates):
         '''Set the coordinates of a coordinate reference construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -2326,7 +2326,7 @@ class CFDMImplementation(Implementation):
     def set_geometry(self, coordinate, value):
         '''Set the geometry type of a coordinate construct.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -2345,7 +2345,7 @@ class CFDMImplementation(Implementation):
                                  copy=True):
         '''Set any inherited properties.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     :Parameters:
 
@@ -2366,7 +2366,7 @@ class CFDMImplementation(Implementation):
     def set_node_count(self, parent, node_count, copy=True):
         '''Set a node count properties variable.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -2385,7 +2385,7 @@ class CFDMImplementation(Implementation):
     def set_part_node_count(self, parent, part_node_count, copy=True):
         '''Set a part node count properties variable.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -2405,7 +2405,7 @@ class CFDMImplementation(Implementation):
     def set_interior_ring(self, parent, interior_ring, copy=True):
         '''Insert an interior ring array into a coordiante.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -2429,7 +2429,7 @@ class CFDMImplementation(Implementation):
     def set_dataset_compliance(self, field, report):
         '''Set the dataset compliance report on a field construct.
 
-    ..versionadded:: 1.7
+    ..versionadded:: (cfdm) 1.7
 
     :Parameters:
 
@@ -2504,7 +2504,7 @@ class CFDMImplementation(Implementation):
     def nc_get_datum_variable(self, ref):
         '''Get the netCDF grid mapping variable name for a datum.
 
-    .. versionadded:: 1.7.5
+    .. versionadded:: (cfdm) 1.7.5
 
     :Parameters:
 
@@ -2520,7 +2520,7 @@ class CFDMImplementation(Implementation):
     def nc_set_datum_variable(self, ref, ncvar):
         '''Set the netCDF grid mapping variable name for a datum.
 
-    .. versionadded:: 1.7.5
+    .. versionadded:: (cfdm) 1.7.5
 
     :Parameters:
 
@@ -2674,7 +2674,7 @@ _implementation = CFDMImplementation(
 def implementation():
     '''Return a container for the CF data model implementation.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `cfdm.example_field`, `cfdm.read`, `cfdm.write`
 

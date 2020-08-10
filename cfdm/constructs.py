@@ -22,7 +22,7 @@ class Constructs(core.Constructs):
 
     >>> d = c('foo')
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __call__(self, *identities):
@@ -31,7 +31,7 @@ class Constructs(core.Constructs):
     Calling a `Constructs` instance selects metadata constructs by
     identity and is an alias for the `filter_by_identity` method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_identity`
 
@@ -64,7 +64,7 @@ class Constructs(core.Constructs):
 
     x.__repr__() <==> repr(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         construct_types = ['{0}({1})'.format(c, len(v))
@@ -79,7 +79,7 @@ class Constructs(core.Constructs):
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         out = ['Constructs:']
@@ -116,7 +116,7 @@ class Constructs(core.Constructs):
     This is useful for ascertaining whether or not two `Constructs`
     instances are equal.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -404,7 +404,7 @@ class Constructs(core.Constructs):
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -552,7 +552,7 @@ class Constructs(core.Constructs):
     not constitute part of the CF data model and so are not checked on
     any construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -827,7 +827,7 @@ class Constructs(core.Constructs):
     def filter_by_axis(self, mode=None, *axes):
         '''Select metadata constructs by axes spanned by their data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_data`, `filter_by_key`, `filter_by_measure`,
                  `filter_by_method`, `filter_by_identity`,
@@ -983,7 +983,7 @@ class Constructs(core.Constructs):
     data. For example, constructs selected by this method will all
     have a `!get_data` method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
                  `filter_by_method`, `filter_by_identity`,
@@ -1023,7 +1023,7 @@ class Constructs(core.Constructs):
     Calling a `Constructs` instance selects metadata constructs by
     identity and is an alias for the `filter_by_identity` method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1121,7 +1121,7 @@ class Constructs(core.Constructs):
     def filter_by_key(self, *keys):
         '''Select metadata constructs by key.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1177,7 +1177,7 @@ class Constructs(core.Constructs):
     def filter_by_measure(self, *measures):
         '''Select cell measure constructs by measure.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_method`, `filter_by_identity`,
@@ -1277,7 +1277,7 @@ class Constructs(core.Constructs):
     def filter_by_method(self, *methods):
         '''Select cell method constructs by method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_identity`,
@@ -1378,7 +1378,7 @@ class Constructs(core.Constructs):
         '''Select metadata constructs by the number of domain axis constructs
     spanned by their data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1454,7 +1454,7 @@ class Constructs(core.Constructs):
     def filter_by_ncdim(self, *ncdims):
         '''Select domain axis constructs by netCDF dimension name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1534,7 +1534,7 @@ class Constructs(core.Constructs):
     def filter_by_ncvar(self, *ncvars):
         '''Select domain axis constructs by netCDF variable name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1625,7 +1625,7 @@ class Constructs(core.Constructs):
     def filter_by_property(self, *mode, **properties):
         '''Select metadata constructs by property.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1746,7 +1746,7 @@ class Constructs(core.Constructs):
     def filter_by_size(self, *sizes):
         '''Select domain axis constructs by size.
 
-    .. versionadded:: 1.7.3
+    .. versionadded:: (cfdm) 1.7.3
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1818,7 +1818,7 @@ class Constructs(core.Constructs):
     def filter_by_type(self, *types):
         '''Select metadata constructs by type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1882,7 +1882,7 @@ class Constructs(core.Constructs):
     the call of that method. If no filters have been applied then the
     tuple is empty.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1944,7 +1944,7 @@ class Constructs(core.Constructs):
     passed to the call of that method. If no filters have been applied
     then the tuple is empty.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1995,7 +1995,7 @@ class Constructs(core.Constructs):
     tuple describes the last filter applied. If no filters have been
     applied then the tuple is empty.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -2107,7 +2107,7 @@ class Constructs(core.Constructs):
 
     ``f.shallow_copy()`` is equivalent to ``copy.copy(f)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -2142,7 +2142,7 @@ class Constructs(core.Constructs):
     tuple describes the last filter applied. If no filters have been
     applied then the tuple is empty.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,

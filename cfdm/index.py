@@ -6,7 +6,7 @@ class Index(mixin.NetCDFVariable,
             mixin.NetCDFDimension,
             mixin.NetCDFSampleDimension,
             mixin.PropertiesData,
-            core.mixin.PropertiesData):
+            core.abstract.PropertiesData):
     '''An index variable required to uncompress a ragged array.
 
     A collection of features stored using an indexed ragged array
@@ -49,7 +49,7 @@ class Index(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, source=None,
@@ -98,7 +98,7 @@ class Index(mixin.NetCDFVariable,
     Returns a description of all properties, including those of
     components, and provides selected values of all data arrays.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 

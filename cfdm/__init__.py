@@ -114,7 +114,7 @@ from .constructs import Constructs
 
 from .data import (Data,
                    Array,
-#                   CompressedArray,
+                   CompressedArray,
                    NumpyArray,
                    NetCDFArray,
                    GatheredArray,

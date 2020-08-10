@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class Parameters(Container):
     '''Mixin class for parameters.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __bool__(self):
@@ -19,7 +19,7 @@ class Parameters(Container):
 
     x.__bool__() <==> bool(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return bool(self.parameters())
@@ -29,7 +29,7 @@ class Parameters(Container):
 
     x.__nonzero__() <==> bool(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return bool(self.parameters())
@@ -39,7 +39,7 @@ class Parameters(Container):
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return 'Parameters: {0}'.format(', '.join(sorted(self.parameters())))

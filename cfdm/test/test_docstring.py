@@ -36,10 +36,10 @@ class DocstringTest(unittest.TestCase):
             cfdm.RaggedIndexedArray,
             cfdm.RaggedIndexedContiguousArray,
 
-            cfdm.core.mixin.Properties,
-            cfdm.core.mixin.PropertiesData,
-            cfdm.core.mixin.PropertiesDataBounds,
-            cfdm.core.mixin.Coordinate,
+            cfdm.core.abstract.Properties,
+            cfdm.core.abstract.PropertiesData,
+            cfdm.core.abstract.PropertiesDataBounds,
+            cfdm.core.abstract.Coordinate,
         )
         self.subclasses_of_Properties = (
             cfdm.Field,
@@ -76,7 +76,7 @@ class DocstringTest(unittest.TestCase):
         )
 
     def test_docstring(self):
-        # Test that all {{ occurences have been substituted
+        # Test that all {{ and }} occurences have been substituted
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
                 for name in dir(x):
@@ -94,6 +94,11 @@ class DocstringTest(unittest.TestCase):
 
                     self.assertNotIn(
                         '{{', f.__doc__,
+                        '\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
+                            klass, name, f))
+
+                    self.assertNotIn(
+                        '}}', f.__doc__,
                         '\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
                             klass, name, f))
 
@@ -164,7 +169,6 @@ class DocstringTest(unittest.TestCase):
                 )
 
     def test_docstring_docstring_substitutions(self):
-        string = 'Return the value of the *default* parameter'
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
                 d = x._docstring_substitutions()

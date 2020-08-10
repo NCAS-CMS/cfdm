@@ -1,7 +1,7 @@
-from . import mixin
+from . import abstract
 
 
-class CoordinateConversion(mixin.ParametersDomainAncillaries):
+class CoordinateConversion(abstract.ParametersDomainAncillaries):
     '''A coordinate conversion component of a coordinate reference
     construct of the CF data model.
 

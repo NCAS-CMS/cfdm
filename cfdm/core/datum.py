@@ -1,7 +1,7 @@
-from . import mixin
+from . import abstract
 
 
-class Datum(mixin.Parameters):
+class Datum(abstract.Parameters):
     '''A datum component of a coordinate reference construct of the CF
     data model.
 

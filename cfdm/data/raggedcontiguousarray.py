@@ -5,7 +5,7 @@ from . import mixin
 
 
 class RaggedContiguousArray(mixin.RaggedContiguous,
-                            abstract.Array):
+                            abstract.CompressedArray):
     '''An underlying contiguous ragged array.
 
     A collection of features stored using a contiguous ragged array

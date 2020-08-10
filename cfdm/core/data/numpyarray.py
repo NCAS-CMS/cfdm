@@ -40,7 +40,7 @@ class NumpyArray(abstract.Array):
 
         '''
         return self.copy()
-    
+
     @property
     def dtype(self):
         '''Data-type of the data elements.
@@ -208,5 +208,5 @@ class NumpyArray(abstract.Array):
         new = klass.__new__(klass)
         new.__dict__ = self.__dict__.copy()
         return new
-    
+
 # --- End: class

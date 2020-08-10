@@ -21,7 +21,7 @@ class PropertiesDataBounds(PropertiesData):
     '''Mixin class for a data array with descriptive properties and cell
     bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, bounds=None,
@@ -214,7 +214,7 @@ class PropertiesDataBounds(PropertiesData):
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         name = self.identity('')
@@ -474,7 +474,7 @@ class PropertiesDataBounds(PropertiesData):
               ``valid_max``, and ``valid_range`` properties have not
               been updated.
 
-    .. versionadded:: 1.8.2
+    .. versionadded:: (cfdm) 1.8.2
 
     .. seealso:: `Data.apply_masking`, `read`, `write`
 
@@ -535,7 +535,7 @@ class PropertiesDataBounds(PropertiesData):
     def del_node_count(self, default=ValueError()):
         '''Remove the node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `get_node_count`, `has_node_count`, `set_node_count`
 
@@ -575,7 +575,7 @@ class PropertiesDataBounds(PropertiesData):
     def del_part_node_count(self, default=ValueError()):
         '''Remove the part node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `get_part_node_count`, `has_part_node_count`,
                  `set_part_node_count`
@@ -727,7 +727,7 @@ class PropertiesDataBounds(PropertiesData):
     NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -908,7 +908,7 @@ class PropertiesDataBounds(PropertiesData):
     def get_node_count(self, default=ValueError()):
         '''Return the node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: del_node_count`, `has_node_count`, `set_node_count`
 
@@ -948,7 +948,7 @@ class PropertiesDataBounds(PropertiesData):
     def get_part_node_count(self, default=ValueError()):
         '''Return the part node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_part_node_count`, `get_node_count`,
                  `has_part_node_count`, `set_part_node_count`
@@ -989,7 +989,7 @@ class PropertiesDataBounds(PropertiesData):
     def has_node_count(self):
         '''Whether or not there is a node count variable for geometry bounds..
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_node_count`, `get_node_count`, `set_node_count`
 
@@ -1019,7 +1019,7 @@ class PropertiesDataBounds(PropertiesData):
         '''Whether or not there is a part node count variable for geometry
     bounds..
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_part_node_count`, `get_part_node_count`,
                  `set_part_node_count`
@@ -1057,7 +1057,7 @@ class PropertiesDataBounds(PropertiesData):
     * The netCDF variable name, preceeded by ``'ncvar%'``.
     * The identities of the bounds, if any.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 
@@ -1112,7 +1112,7 @@ class PropertiesDataBounds(PropertiesData):
     6. The identity of the bounds, if any.
     7. The value of the *default* parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -1176,7 +1176,7 @@ class PropertiesDataBounds(PropertiesData):
     def get_bounds(self, default=ValueError()):
         '''Return the bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `bounds`, `get_data`, `del_bounds`, `has_bounds`,
                  `set_bounds`
@@ -1225,7 +1225,7 @@ class PropertiesDataBounds(PropertiesData):
     def get_bounds_data(self, default=ValueError()):
         '''Return the bounds data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `bounds`, `get_bounds`, `get_data`
 
@@ -1259,7 +1259,7 @@ class PropertiesDataBounds(PropertiesData):
     Inserts a new size 1 axis into the data array. A corresponding
     axis is also inserted into the bounds data array, if present.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `squeeze`, `transpose`
 
@@ -1333,7 +1333,7 @@ class PropertiesDataBounds(PropertiesData):
     def set_node_count(self, node_count, copy=True):
         '''Set the node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_node_count`, `get_node_count`, `has_node_count`
 
@@ -1372,7 +1372,7 @@ class PropertiesDataBounds(PropertiesData):
     def set_part_node_count(self, part_node_count, copy=True):
         '''Set the part node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_part_node_count`, `get_part_node_count`,
                  `has_part_node_count`
@@ -1417,7 +1417,7 @@ class PropertiesDataBounds(PropertiesData):
     axes may be selected for removal. Corresponding axes are also
     removed from the bounds data array, if present.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `insert_dimension`, `transpose`
 
@@ -1605,7 +1605,7 @@ class PropertiesDataBounds(PropertiesData):
 
         * Compression by gathering.
 
-    .. versionadded:: 1.7.11
+    .. versionadded:: (cfdm) 1.7.11
 
     :Parameters:
 

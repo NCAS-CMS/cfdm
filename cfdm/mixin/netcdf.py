@@ -8,7 +8,7 @@ class DeprecationError(Exception):
 class NetCDF:
     '''Mixin class for storing simple netCDF elements.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def _initialise_netcdf(self, source=None):
@@ -51,7 +51,7 @@ class NetCDF:
 class _NetCDFGroupsMixin():
     '''Mixin class for accessing netCDF(4) hierarchical groups.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
     '''
     def _nc_groups(self, nc_get):
         '''Return the netCDF group hierarchy.
@@ -62,7 +62,7 @@ class _NetCDFGroupsMixin():
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `_nc_clear_groups`, `_nc_set_groups`
 
@@ -93,7 +93,7 @@ class _NetCDFGroupsMixin():
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `_nc_clear_groups`, `_nc_groups`
 
@@ -153,7 +153,7 @@ class _NetCDFGroupsMixin():
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `_nc_groups`, `_nc_set_groups`
 
@@ -192,13 +192,13 @@ class NetCDFDimension(NetCDF,
                       _NetCDFGroupsMixin):
     '''Mixin class for accessing the netCDF dimension name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def nc_del_dimension(self, default=ValueError()):
         '''Remove the netCDF dimension name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_get_dimension`, `nc_has_dimension`,
                  `nc_set_dimension`
@@ -243,7 +243,7 @@ class NetCDFDimension(NetCDF,
     def nc_get_dimension(self, default=ValueError()):
         '''Return the netCDF dimension name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_del_dimension`, `nc_has_dimension`,
                  `nc_set_dimension`
@@ -288,7 +288,7 @@ class NetCDFDimension(NetCDF,
     def nc_has_dimension(self):
         '''Whether the netCDF dimension name has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_del_dimension`, `nc_get_dimension`,
                  `nc_set_dimension`
@@ -326,7 +326,7 @@ class NetCDFDimension(NetCDF,
     the name starts with a ``/`` character and contains no others, the
     name is assumed to be in the root group.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_del_dimension`, `nc_get_dimension`,
                  `nc_has_dimension`
@@ -388,7 +388,7 @@ class NetCDFDimension(NetCDF,
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_clear_dimension_groups`,
                  `nc_set_dimension_groups`
@@ -438,7 +438,7 @@ class NetCDFDimension(NetCDF,
     the netCDF dimension name, with `nc_set_dimension`, with the group
     structure delimited by ``/`` characters.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_clear_dimension_groups`, `nc_dimension_groups`
 
@@ -495,7 +495,7 @@ class NetCDFDimension(NetCDF,
     set the netCDF dimension name, with `nc_set_dimension`, with no
     ``/`` characters.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_dimension_groups`, `nc_set_dimension_groups`
 
@@ -541,13 +541,13 @@ class NetCDFVariable(NetCDF,
                      _NetCDFGroupsMixin):
     '''Mixin class for accessing the netCDF variable name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def nc_del_variable(self, default=ValueError()):
         '''Remove the netCDF variable name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_get_variable`, `nc_has_variable`,
                  `nc_set_variable`
@@ -592,7 +592,7 @@ class NetCDFVariable(NetCDF,
     def nc_get_variable(self, default=ValueError()):
         '''Return the netCDF variable name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_del_variable`, `nc_has_variable`,
                  `nc_set_variable`
@@ -638,7 +638,7 @@ class NetCDFVariable(NetCDF,
     def nc_has_variable(self):
         '''Whether the netCDF variable name has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_del_variable`, `nc_get_variable`,
                  `nc_set_variable`
@@ -676,7 +676,7 @@ class NetCDFVariable(NetCDF,
     the name starts with a ``/`` character and contains no others, the
     name is assumed to be in the root group.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_del_variable`, `nc_get_variable`,
                  `nc_has_variable`
@@ -738,7 +738,7 @@ class NetCDFVariable(NetCDF,
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_clear_variable_groups`,
                  `nc_set_variable_groups`
@@ -788,7 +788,7 @@ class NetCDFVariable(NetCDF,
     the netCDF variable name, with `nc_set_variable`, with the group
     structure delimited by ``/`` characters.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_clear_variable_groups`, `nc_variable_groups`
 
@@ -845,7 +845,7 @@ class NetCDFVariable(NetCDF,
     set the netCDF variable name, with `nc_set_variable`, with no
     ``/`` characters.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_variable_groups`, `nc_set_variable_groups`
 
@@ -891,13 +891,13 @@ class NetCDFSampleDimension(NetCDF,
                             _NetCDFGroupsMixin):
     '''Mixin class for accessing the netCDF sample dimension name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def nc_del_sample_dimension(self, default=ValueError()):
         '''Remove the netCDF sample dimension name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_get_sample_dimension`, `nc_has_sample_dimension`,
                  `nc_set_sample_dimension`
@@ -942,7 +942,7 @@ class NetCDFSampleDimension(NetCDF,
     def nc_get_sample_dimension(self, default=ValueError()):
         '''Return the netCDF sample dimension name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_del_sample_dimension`, `nc_has_sample_dimension`,
                  `nc_set_sample_dimension`
@@ -987,7 +987,7 @@ class NetCDFSampleDimension(NetCDF,
     def nc_has_sample_dimension(self):
         '''Whether the netCDF sample dimension name has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_del_sample_dimension`, `nc_get_sample_dimension`,
                  `nc_set_sample_dimension`
@@ -1025,7 +1025,7 @@ class NetCDFSampleDimension(NetCDF,
     the name starts with a ``/`` character and contains no others, the
     name is assumed to be in the root group.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_del_sample_dimension`, `nc_get_sample_dimension`,
                  `nc_has_sample_dimension`
@@ -1087,7 +1087,7 @@ class NetCDFSampleDimension(NetCDF,
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_clear_sample_dimension_groups`,
                  `nc_set_sample_dimension_groups`
@@ -1137,7 +1137,7 @@ class NetCDFSampleDimension(NetCDF,
     the netCDF dimension name, with `nc_set_sample_dimension`, with
     the group structure delimited by ``/`` characters.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_clear_sample_dimension_groups`,
                  `nc_sample_dimension_groups`
@@ -1195,7 +1195,7 @@ class NetCDFSampleDimension(NetCDF,
     set the netCDF dimension name, with `nc_set_sample_dimension`,
     with no ``/`` characters.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_sample_dimension_groups`,
                  `nc_set_sample_dimension_groups`
@@ -1242,7 +1242,7 @@ class NetCDFSampleDimension(NetCDF,
 class NetCDFGlobalAttributes(NetCDF):
     '''Mixin class for accessing netCDF global attributes.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def nc_global_attributes(self, values=False):
@@ -1262,7 +1262,7 @@ class NetCDFGlobalAttributes(NetCDF):
     written as netCDF global attributes, if possible, so selecting
     them is optional.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `write`, `nc_clear_global_attributes`,
                  `nc_set_global_attribute`, `nc_set_global_attributes`
@@ -1274,7 +1274,7 @@ class NetCDFGlobalAttributes(NetCDF):
             attribute that has, by definition, the same value as a
             construct property.
 
-            .. versionadded:: 1.8.2
+            .. versionadded:: (cfdm) 1.8.2
 
     :Returns:
 
@@ -1336,7 +1336,7 @@ class NetCDFGlobalAttributes(NetCDF):
     written as netCDF global attributes, if possible, so selecting
     them is optional.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `write`, `nc_global_attributes`,
                  `nc_set_global_attribute`, `nc_set_global_attributes`
@@ -1388,7 +1388,7 @@ class NetCDFGlobalAttributes(NetCDF):
     written as netCDF global attributes, if possible, so selecting
     them is optional.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `write`, `nc_global_attributes`,
                  `nc_clear_global_attributes`,
@@ -1453,7 +1453,7 @@ class NetCDFGlobalAttributes(NetCDF):
     written as netCDF global attributes, if possible, so selecting
     them is optional.
 
-    .. versionadded:: 1.7.10
+    .. versionadded:: (cfdm) 1.7.10
 
     .. seealso:: `write`, `nc_clear_global_attributes`,
                  `nc_global_attributes`, `nc_set_global_attribute`
@@ -1516,14 +1516,14 @@ class NetCDFGlobalAttributes(NetCDF):
 class NetCDFGroupAttributes(NetCDF):
     '''Mixin class for accessing netCDF group attributes.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     '''
     def nc_group_attributes(self, values=False):
         '''Return the selection of properties to be written as netCDF group
     attributes.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `write`, `nc_clear_group_attributes`,
                  `nc_set_group_attribute`, `nc_set_group_attributes`
@@ -1582,7 +1582,7 @@ class NetCDFGroupAttributes(NetCDF):
         '''Remove the selection of properties to be written as netCDF group
     attributes.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `write`, `nc_group_attributes`,
                  `nc_set_group_attribute`, `nc_set_group_attributes`
@@ -1623,7 +1623,7 @@ class NetCDFGroupAttributes(NetCDF):
     def nc_set_group_attribute(self, prop, value=None):
         '''Select a property to be written as a netCDF group attribute.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `write`, `nc_group_attributes`,
                  `nc_clear_group_attributes`,
@@ -1677,7 +1677,7 @@ class NetCDFGroupAttributes(NetCDF):
     def nc_set_group_attributes(self, properties, copy=True):
         '''Set properties to be written as netCDF group attributes.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `write`, `nc_clear_group_attributes`,
                  `nc_group_attributes`, `nc_set_group_attribute`
@@ -1742,7 +1742,7 @@ class NetCDFGroupAttributes(NetCDF):
 class NetCDFUnlimitedDimensions(NetCDF):
     '''Mixin class for accessing netCDF unlimited dimensions.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     Deprecated at version 1.7.4
 
@@ -1753,7 +1753,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
     By default output netCDF dimensions are not unlimited.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     Deprecated at version 1.7.4
 
@@ -1791,7 +1791,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
     By default output netCDF dimensions are not unlimited.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     Deprecated at version 1.7.4
 
@@ -1840,7 +1840,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
     By default output netCDF dimensions are not unlimited.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     Deprecated at version 1.7.4
 
@@ -1877,13 +1877,13 @@ class NetCDFUnlimitedDimensions(NetCDF):
 class NetCDFExternal(NetCDF):
     '''Mixin class for accessing the netCDF external variable status.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def nc_get_external(self):
         '''Whether the construct corresponds to an external netCDF variable.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_set_external`
 
@@ -1906,7 +1906,7 @@ class NetCDFExternal(NetCDF):
     def nc_set_external(self, external):
         '''Set external status of a netCDF variable.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `nc_get_external`
 
@@ -1941,13 +1941,13 @@ class NetCDFGeometry(NetCDF,
     '''Mixin class for accessing the netCDF geometry container variable
     name.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     '''
     def nc_del_geometry_variable(self, default=ValueError()):
         '''Remove the netCDF geometry container variable name.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `nc_get_geometry_variable`,
                  `nc_has_geometry_variable`,
@@ -1993,7 +1993,7 @@ class NetCDFGeometry(NetCDF,
     def nc_get_geometry_variable(self, default=ValueError()):
         '''Return the netCDF geometry container variable name.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `nc_del_geometry_variable`,
                  `nc_has_geometry_variable`,
@@ -2039,7 +2039,7 @@ class NetCDFGeometry(NetCDF,
     def nc_has_geometry_variable(self):
         '''Whether the netCDF geometry container variable name has been set.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `nc_del_geometry_variable`,
                  `nc_get_geometry_variable`,
@@ -2077,7 +2077,7 @@ class NetCDFGeometry(NetCDF,
     the name starts with a ``/`` character and contains no others, the
     name is assumed to be in the root group.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `nc_del_geometry_variable`,
                  `nc_get_geometry_variable`,
@@ -2139,7 +2139,7 @@ class NetCDFGeometry(NetCDF,
     strings. If the name is not set, or contains no ``/`` characters
     then an empty sequence is returned, signifying the root group.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_clear_geometry_variable_groups`,
     `nc_set_geometry_variable_groups`
@@ -2189,7 +2189,7 @@ class NetCDFGeometry(NetCDF,
     the netCDF variable name, with `nc_set_geometry_variable`, with
     the group structure delimited by ``/`` characters.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_clear_geometry_variable_groups`,
                  `nc_geometry_variable_groups`
@@ -2247,7 +2247,7 @@ class NetCDFGeometry(NetCDF,
     set the netCDF variable name, with `nc_set_geometry_variable`,
     with no ``/`` characters.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_geometry_variable_groups`,
                  `nc_set_geometry_variable_groups`
@@ -2293,7 +2293,7 @@ class NetCDFGeometry(NetCDF,
 class NetCDFHDF5(NetCDF):
     '''Mixin class for accessing the netCDF HDF5 chunksizes.
 
-    .. versionadded:: 1.7.2
+    .. versionadded:: (cfdm) 1.7.2
 
     '''
     def nc_hdf5_chunksizes(self):
@@ -2305,7 +2305,7 @@ class NetCDFHDF5(NetCDF):
     .. note:: Chunksizes are ignored for netCDF3 files that do not use
               HDF5.
 
-    .. versionadded:: 1.7.2
+    .. versionadded:: (cfdm) 1.7.2
 
     .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`
 
@@ -2338,7 +2338,7 @@ class NetCDFHDF5(NetCDF):
     .. note:: Chunksizes are ignored for netCDF3 files that do not use
               HDF5.
 
-    .. versionadded:: 1.7.2
+    .. versionadded:: (cfdm) 1.7.2
 
     .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`
 
@@ -2371,7 +2371,7 @@ class NetCDFHDF5(NetCDF):
     .. note:: Chunksizes are ignored for netCDF3 files that do not use
               HDF5.
 
-    .. versionadded:: 1.7.2
+    .. versionadded:: (cfdm) 1.7.2
 
     .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`
 
@@ -2424,7 +2424,7 @@ class NetCDFHDF5(NetCDF):
 class NetCDFUnlimitedDimension(NetCDF):
     '''Mixin class for accessing a netCDF unlimited dimension.
 
-    .. versionadded:: 1.7.4
+    .. versionadded:: (cfdm) 1.7.4
 
     '''
     def nc_is_unlimited(self):
@@ -2433,7 +2433,7 @@ class NetCDFUnlimitedDimension(NetCDF):
     By default output netCDF dimensions are not unlimited. The status
     is used by the `write` function.
 
-    .. versionadded:: 1.7.4
+    .. versionadded:: (cfdm) 1.7.4
 
     .. seealso:: `nc_set_unlimited`
 
@@ -2465,7 +2465,7 @@ class NetCDFUnlimitedDimension(NetCDF):
     By default output netCDF dimensions are not unlimited. The status
     is used by the `write` function.
 
-    .. versionadded:: 1.7.4
+    .. versionadded:: (cfdm) 1.7.4
 
     .. seealso:: `nc_is_unlimited`
 

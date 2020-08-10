@@ -41,7 +41,7 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, bounds=None,
@@ -99,7 +99,7 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
     Returns a description of all properties, including those of
     components, and provides selected values of all data arrays.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -166,7 +166,7 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
     NetCDF elements, such as netCDF variable and dimension names, do not
     constitute part of the CF data model and so are not checked.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
