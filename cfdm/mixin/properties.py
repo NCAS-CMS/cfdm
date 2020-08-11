@@ -140,15 +140,13 @@ class Properties(Container):
       same the size and be element-wise equal (see the *ignore_properties*
       and *ignore_data_type* parameters).
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences) are
-    positive, typically very small numbers. See the *atol* and *rtol*
-    parameters.
+    {{equals tolerance}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another object of the same type, or a subclass of
     one. See the *ignore_type* parameter.
+
+    {{equals netCDF}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -157,15 +155,9 @@ class Properties(Container):
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {[atol: float, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: float, optional}}
 
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
@@ -176,17 +168,9 @@ class Properties(Container):
         ignore_properties: sequence of `str`, optional
             The names of properties to omit from the comparison.
 
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
+        {{ignore_data_type: `bool`, optional}}
 
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another object of the same type, or
-            a subclass of one. If *ignore_type* is True then equality
-            is possible for any object with a compatible API.
+        {{ignore_type: `bool`, optional}}
 
     :Returns:
 

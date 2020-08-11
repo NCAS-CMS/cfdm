@@ -709,23 +709,11 @@ class PropertiesDataBounds(PropertiesData):
       data type, the same missing data mask, and be element-wise equal
       (see the *ignore_properties* and *ignore_data_type* parameters).
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
-    If data arrays are compressed then the compression type and the
-    underlying compressed arrays must be the same, as well as the
-    arrays in their uncompressed forms. See the *ignore_compression*
-    parameter.
+    {{equals compression}}
 
-    Any compression is ignored by default, with only the arrays in
-    their uncompressed forms being compared. See the
-    *ignore_compression* parameter.
-
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked.
+    {{equals netCDF}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -735,15 +723,9 @@ class PropertiesDataBounds(PropertiesData):
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: float, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: float, optional}}
 
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``

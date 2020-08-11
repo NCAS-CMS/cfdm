@@ -3,6 +3,7 @@ from copy import copy
 
 from . import abstract
 
+
 class Constructs(abstract.Container):
     '''A container for metadata constucts.
 

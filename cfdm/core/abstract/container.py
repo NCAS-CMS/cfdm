@@ -5,6 +5,8 @@ from copy import copy, deepcopy
 
 from ..meta import RewriteDocstringMeta
 
+from ..docstring import _docstring_substitution_definitions
+
 
 class Container(metaclass=RewriteDocstringMeta):
     '''Abstract base class for storing components.
@@ -46,78 +48,40 @@ class Container(metaclass=RewriteDocstringMeta):
         return self.copy()
 
     def __docstring_substitution__(self):
-        '''TODO
+        '''Define docstring substitutions that apply to this class and all of
+    its subclasses.
 
-    Substitutions may be easily modified by overriding the
-    __docstring_substitution__ method.
+    These are in addtion to, and take precendence over, docstring
+    substitutions defined by the base classes of this class.
 
-    Modifications can be applied to any class, and will only apply to
-    that class and all of its subclases.
+    Text to be replaced is specified as a key in the returned
+    dictionary, with the replacement text defined by the corresponding
+    value.
 
-    If the key is a string then the special subtitutions will be
-    applied to the dictionary values *after* its replacement in the
-    docstring.
+    Keys must be `str` or `re.Pattern` objects.
 
-    If the key is a compiled regular expession then the special
-    subtitutions will be applied to the match of the regular
-    expression *after* its replacement in the docstring.
+    If a key is a `str` then the corresponding value must be a string.
+        
+    If a key is a `re.Pattern` object then the corresponding value
+    must be a string or a callable, as accepted by the
+    `re.Pattern.sub` method.
 
-    For example:
+    Special docstring subtitutions, as defined by
+    `_special_docstring_substitutions`, may be used in the replacement
+    text, and will be substituted as ususal.
 
-       def __docstring_substitution__(self):
-           def _upper(match):
-               return match.group(1).upper()
+    .. versionaddedd:: (cfdm) 1.8.7.0
 
-           out = super().__docstring_substitution__()
+    .. seealso:: `_docstring_substitution`,
+                 `_special_docstring_substitutions`
 
-           # Simple substitutions
-           out['{{repr}}'] = 'CF: '
-           out['{{foo}}'] = 'bar'
+    :Returns:
 
-           out['{{parameter: `int`}}'] = """parameter: `int`
-               This parameter does something to `{{class}}`
-               instances. It has no default value.""",
-
-           # Regular expression subsititions
-           #
-           # Convert text to upper case
-           out[re.compile('{{<upper (.*?)>}}')] = _upper
-
-           return out
+        `dict`
+            The doctring substitutions that have been applied.
 
         '''
-        return {
-            # --------------------------------------------------------
-            # Simple substitutions.
-            #
-            # All occurences of the key are replaced with the value.
-            # Note that special subtitutions will be applied to the
-            # value *after* its replacement in the docstring.
-            # -------------------------------------------------------
-            '{{repr}}':
-            '',
-
-            '{{default: optional}}': '''default: optional
-            Return the value of the *default* parameter if data have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.''',
-
-            # --------------------------------------------------------
-            # Regular expression substitutions.
-            #
-            # The key must be an `re.Pattern` object, i.e. a compiled
-            # regular expression, e.g as created by `re.compile`.
-            #
-            # The value must be a callable that, when passed the Match
-            # object created by evaulating the regular expression
-            # against the docstring, must return the replacement
-            # string to be used.
-            #
-            # Note that special subtitutions will be applied to the
-            # match of the regular expression *after* its replacement
-            # in the docstring.
-            # --------------------------------------------------------
-            }
+        return _docstring_substitution_definitions
 
     # ----------------------------------------------------------------
     # Private methods
@@ -346,10 +310,15 @@ class Container(metaclass=RewriteDocstringMeta):
         self._components[component] = value
 
     @classmethod
-    def _docstring_substitutions(cls):
+    def _docstring_substitution(cls):
         '''Return the docstring substitutions that apply to methods of this
     class.
 
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `_special_docstring_substitutions`,
+                 `__docstring_substitution__`
+                 
     :Returns:
 
         `dict`
@@ -360,7 +329,7 @@ class Container(metaclass=RewriteDocstringMeta):
         '''
         d = {}
         for klass in cls.__bases__[::-1]:
-            d_s = getattr(klass, '_docstring_substitutions', None)
+            d_s = getattr(klass, '_docstring_substitution', None)
             if d_s is not None:
                 d.update(d_s())
             else:
@@ -368,11 +337,11 @@ class Container(metaclass=RewriteDocstringMeta):
                 if d_s is not None:
                     d.update(d_s(None))
         # --- End: for
-        
+
         d_s = getattr(cls, '__docstring_substitution__', None)
         if d_s is not None:
             d.update(d_s(None))
-           
+
         return d
 
     # ----------------------------------------------------------------
