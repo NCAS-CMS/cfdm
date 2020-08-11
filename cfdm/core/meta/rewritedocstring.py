@@ -308,12 +308,12 @@ class RewriteDocstringMeta(type):
     @classmethod
     def _special_docstring_substitutions(cls):
         '''Return the special docstring subtitutions.
-        
+
     ``{{class}}`` is replaced by the name of the class.
 
     ``{{package}}`` is replaced by the name of the module, i.e.
     ``'.'.split({{class}}.__module__)[0]``
-  
+
     ``re.compile('{{\+(\w.*?)}}')`` is replaced the name of the class
     named by the pattern's group.
 
@@ -328,5 +328,5 @@ class RewriteDocstringMeta(type):
             '{{package}}',
             _plus_class_regex,
         )
-    
-    # --- End: class
+
+# --- End: class

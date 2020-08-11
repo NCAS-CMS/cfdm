@@ -6,7 +6,7 @@ with the replacement text defined by the corresponding value.
 Keys must be `str` or `re.Pattern` objects.
 
 If a key is a `str` then the corresponding value must be a string.
-    
+
 If a key is a `re.Pattern` object then the corresponding value must be
 a string or a callable, as accepted by the `re.Pattern.sub` method.
 
@@ -43,21 +43,21 @@ _docstring_substitution_definitions = {
 
     # atol
     '{{atol: float, optional}}':
-            '''atol: float, optional
+    '''atol: float, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `{{package}}.atol`
             function.''',
 
     # rtol
     '{{rtol: float, optional}}':
-            '''rtol: float, optional
+    '''rtol: float, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `{{package}}.rtol`
             function.''',
 
     # ignore_compression
     '{{ignore_compression: `bool`, optional}}':
-            '''ignore_compression: `bool`, optional
+    '''ignore_compression: `bool`, optional
             If False then the compression type and, if applicable, the
             underlying compressed arrays must be the same, as well as
             the arrays in their uncompressed forms. By default only
@@ -66,29 +66,29 @@ _docstring_substitution_definitions = {
 
     # ignore_data_type
     '{{ignore_data_type: `bool`, optional}}':
-            '''ignore_data_type: `bool`, optional
+    '''ignore_data_type: `bool`, optional
             If True then ignore the data types in all numerical
             comparisons. By default different numerical data types
             imply inequality, regardless of whether the elements are
             within the tolerance for equality.''',
-           
+
     # ignore_type
     '{{ignore_type: `bool`, optional}}':
-            '''ignore_type: `bool`, optional
+    '''ignore_type: `bool`, optional
             Any type of object may be tested but, in general, equality
             is only possible with another `{{class}}` instance, or a
             subclass of one. If *ignore_type* is True then
             ``{{package}}.{{class}}(source=other)`` is tested, rather
             than the ``other`` defined by the *other* parameter.''',
-            
+
     # inplace
     '{{inplace: `bool`, optional}}':
-            '''inplace: `bool`, optional
+    '''inplace: `bool`, optional
             If True then do the operation in-place and return `None`.''',
 
     # verbose
     '{{verbose: `int` or `str` or `None`, optional}}':
-            """verbose: `int` or `str` or `None`, optional
+    """verbose: `int` or `str` or `None`, optional
             If an integer from ``-1`` to ``3``, or an equivalent
             string equal ignoring case to one of:
 
@@ -114,5 +114,5 @@ _docstring_substitution_definitions = {
             string that is set (up to a maximum of ``3``/``'DETAIL'``)
             for increasing verbosity, the more description that is
             printed to convey information about the operation.""",
-    
+
 }

@@ -54,7 +54,7 @@ class Container:
     Keys must be `str` or `re.Pattern` objects.
 
     If a key is a `str` then the corresponding value must be a string.
-        
+
     If a key is a `re.Pattern` object then the corresponding value
     must be a string or a callable, as accepted by the
     `re.Pattern.sub` method.

@@ -61,7 +61,7 @@ class Container(metaclass=RewriteDocstringMeta):
     Keys must be `str` or `re.Pattern` objects.
 
     If a key is a `str` then the corresponding value must be a string.
-        
+
     If a key is a `re.Pattern` object then the corresponding value
     must be a string or a callable, as accepted by the
     `re.Pattern.sub` method.
@@ -318,7 +318,7 @@ class Container(metaclass=RewriteDocstringMeta):
 
     .. seealso:: `_special_docstring_substitutions`,
                  `__docstring_substitution__`
-                 
+
     :Returns:
 
         `dict`
@@ -335,6 +335,7 @@ class Container(metaclass=RewriteDocstringMeta):
             else:
                 d_s = getattr(klass, '__docstring_substitution__', None)
                 if d_s is not None:
+
                     d.update(d_s(None))
         # --- End: for
 
