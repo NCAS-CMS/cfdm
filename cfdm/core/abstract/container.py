@@ -78,7 +78,7 @@ class Container(metaclass=RewriteDocstringMeta):
     :Returns:
 
         `dict`
-            The doctring substitutions that have been applied.
+            The docstring substitutions that have been applied.
 
         '''
         return _docstring_substitution_definitions
