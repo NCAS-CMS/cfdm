@@ -3,6 +3,7 @@ import textwrap
 from copy import deepcopy
 
 from . import core
+from . import mixin
 
 from .decorators import _manage_log_level_via_verbosity
 
@@ -10,7 +11,8 @@ from .decorators import _manage_log_level_via_verbosity
 logger = logging.getLogger(__name__)
 
 
-class Constructs(core.Constructs):
+class Constructs(mixin.Container,
+                 core.Constructs):
     '''A container for metadata constructs.
 
     Calling a `Constructs` instance selects metadata constructs by
@@ -49,10 +51,10 @@ class Constructs(core.Constructs):
 
     >>> print(c('latitude'))
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
     >>> print(c.filter_by_identity('latitude'))
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
 
     See `filter_by_identity` for more examples.
 
@@ -414,6 +416,7 @@ class Constructs(core.Constructs):
 
     :Returns:
 
+        `{{class}}`
             The deep copy.
 
     **Examples:**
@@ -535,22 +538,14 @@ class Constructs(core.Constructs):
                _return_axis_map=False):
         '''Whether two `Constructs` instances are the same.
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
-    Any compression is ignored by default, with only the arrays in
-    their uncompressed forms being compared. See the
-    *ignore_compression* parameter.
+    {{equals compression}}
 
     Any type of object may be tested but equality is only possible
     with another `Constructs` construct, or a subclass of one.
 
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked on
-    any construct.
+    {{equals netCDF}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -576,17 +571,9 @@ class Constructs(core.Constructs):
 
         {{verbose: `int` or `str` or `None`, optional}}
 
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
+        {{ignore_data_type: `bool`, optional}}
 
-        ignore_compression: `bool`, optional
-            If False then the compression type and, if applicable, the
-            underlying compressed arrays must be the same, as well as
-            the arrays in their uncompressed forms. By default only
-            the arrays in their uncompressed forms are compared.
+        {{ignore_compression: `bool`, optional}}
 
     :Returns:
 
@@ -846,7 +833,7 @@ class Constructs(core.Constructs):
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -970,7 +957,7 @@ class Constructs(core.Constructs):
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1041,7 +1028,7 @@ class Constructs(core.Constructs):
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1120,7 +1107,7 @@ class Constructs(core.Constructs):
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1178,7 +1165,7 @@ class Constructs(core.Constructs):
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected cell measure constructs and their construct
             keys.
 
@@ -1186,37 +1173,37 @@ class Constructs(core.Constructs):
 
     >>> print(t.constructs.filter_by_type('measure'))
     Constructs:
-    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
-     'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
+    {'cellmeasure0': <{{repr}}CellMeasure: measure:area(9, 10) km2>,
+     'cellmeasure1': <{{repr}}CellMeasure: measure:volume(3, 9, 10) m3>}
 
     Select cell measure constructs that have a measure of 'area':
 
     >>> print(c.filter_by_measure('area'))
     Constructs:
-    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
+    {'cellmeasure0': <{{repr}}CellMeasure: measure:area(9, 10) km2>}
 
     Select cell measure constructs that have a measure of 'area' or
     'volume':
 
     >>> print(c.filter_by_measure('area', 'volume'))
     Constructs:
-    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
-     'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
+    {'cellmeasure0': <{{repr}}CellMeasure: measure:area(9, 10) km2>,
+     'cellmeasure1': <{{repr}}CellMeasure: measure:volume(3, 9, 10) m3>}
 
     Select cell measure constructs that have a measure of start with
     the letter "a" or "v":
 
     >>> print(c.filter_by_measure(re.compile('^a|v')))
     Constructs:
-    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
-     'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
+    {'cellmeasure0': <{{repr}}CellMeasure: measure:area(9, 10) km2>,
+     'cellmeasure1': <{{repr}}CellMeasure: measure:volume(3, 9, 10) m3>}
 
     Select cell measure constructs that have a measure of any value:
 
     >>> print(c.filer_by_measure())
     Constructs:
-    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
-     'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
+    {'cellmeasure0': <{{repr}}CellMeasure: measure:area(9, 10) km2>,
+     'cellmeasure1': <{{repr}}CellMeasure: measure:volume(3, 9, 10) m3>}
 
         '''
         out = self.shallow_copy()
@@ -1278,7 +1265,7 @@ class Constructs(core.Constructs):
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected cell method constructs and their construct
             keys.
 
@@ -1286,22 +1273,22 @@ class Constructs(core.Constructs):
 
     >>> print(c.constructs.filter_by_type('cell_method'))
     Constructs:
-    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-     'cellmethod1': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
 
     Select cell method constructs that have a method of 'mean':
 
     >>> print(c.filter_by_method('mean'))
     Constructs:
-    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>}
 
     Select cell method constructs that have a method of 'mean' or
     'maximum':
 
     >>> print(c.filter_by_method('mean', 'maximum'))
     Constructs:
-    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-     'cellmethod1': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
 
     Select cell method constructs that have a method that contain the
     letter 'x':
@@ -1309,14 +1296,14 @@ class Constructs(core.Constructs):
     >>> import re
     >>> print(c.filter_by_method(re.compile('x')))
     Constructs:
-    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
 
     Select cell method constructs that have a method of any value:
 
     >>> print(c.filter_by_method())
     Constructs:
-    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-     'cellmethod1': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
 
         '''
         out = self.shallow_copy()
@@ -1378,7 +1365,7 @@ class Constructs(core.Constructs):
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected domain axis constructs and their construct
             keys.
 
@@ -1587,6 +1574,8 @@ class Constructs(core.Constructs):
         return out
 
     def _matching_values(self, value0, construct, value1):
+        '''TODO
+        '''
         if value1 is not None:
             try:
                 result = value0.search(value1)
@@ -1879,13 +1868,13 @@ class Constructs(core.Constructs):
     **Examples:**
 
     >>> print(c)
-    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-     'coordinatereference1': <CoordinateReference: grid_mapping_name:rotated_latitude_longitude>,
-     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-     'domainaxis1': <DomainAxis: size(10)>,
-     'domainaxis2': <DomainAxis: size(9)>}
+    {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+     'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+     'coordinatereference1': <{{repr}}CoordinateReference: grid_mapping_name:rotated_latitude_longitude>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+     'domainaxis1': <{{repr}}DomainAxis: size(10)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(9)>}
     >>> c.filters_applied()
     ()
     >>> c = c.filter_by_type('dimension_coordinate', 'auxiliary_coordinate')
@@ -1902,7 +1891,7 @@ class Constructs(core.Constructs):
      {'filter_by_property': (('or',), {'axis': 'Y', 'standard_name': 'grid_latitude'})})
     >>> print(c)
     Constructs:
-    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
+    {'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>}
 
         '''
         filters = getattr(self, '_filters_applied', None)
@@ -2003,51 +1992,51 @@ class Constructs(core.Constructs):
 
     >>> print(c)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
     >>> print(c.inverse_filter())
     Constructs:
     {}
     >>> d = c.filter_by_type('dimension_coordinate', 'cell_method')
     >>> print(d)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
     >>> print(d.inverse_filter())
     Constructs:
-    {'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
     >>> e = d.filter_by_method('mean')
     >>> print(e)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>}
     >>> print(e.inverse_filter(1))
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
     >>> print(e.inverse_filter())
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
     >>> print(e.inverse_filter(1).inverse_filter())
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
         '''
         out = self.unfilter(depth=depth)
@@ -2148,26 +2137,26 @@ class Constructs(core.Constructs):
 
     >>> print(c)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
     >>> d = c.filter_by_type('dimension_coordinate', 'cell_method')
     >>> print(d)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
     >>> d.unfilter().equals(c)
     True
     >>> e = d.filter_by_method('mean')
     >>> print(e)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>}
     >>> c.unfilter().equals(c)
     True
     >>> c.unfilter(0).equals(c)
