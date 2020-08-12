@@ -548,11 +548,11 @@ class Field(mixin.NetCDFVariable,
 
     >>> print(f.field_ancillaries)
     Constructs:
-    {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+    {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
 
     >>> print(f.field_ancillaries('specific_humuidity standard_error'))
     Constructs:
-    {'fieldancillary0': <FieldAncillary: specific_humidity standard_error(10, 9) K>}
+    {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
 
         '''
         return self.constructs.filter_by_type('field_ancillary')
@@ -588,12 +588,12 @@ class Field(mixin.NetCDFVariable,
 
     >>> f.cell_methods
     Constructs:
-    {'cellmethod1': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-     'cellmethod0': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod1': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+     'cellmethod0': <{{repr}}CellMethod: domainaxis3: maximum>}
 
     >>> f.cell_methods.ordered()
-    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+    OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+                 ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         '''
         return self.constructs.filter_by_type('cell_method')
@@ -644,8 +644,7 @@ class Field(mixin.NetCDFVariable,
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -702,11 +701,11 @@ class Field(mixin.NetCDFVariable,
     **Examples:**
 
     >>> f
-    <Field: air_temperature(time(12), latitude(145), longitude(192)) K>
+    <{{repr}}Field: air_temperature(time(12), latitude(145), longitude(192)) K>
     >>> print(f.cell_methods())
     Constructs:
-    {'cellmethod0': <CellMethod: domainaxis0: minimum within days>,
-     'cellmethod1': <CellMethod: domainaxis0: mean over days>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis0: minimum within days>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis0: mean over days>}
     >>> f.climatological_time_axes()
     [('domainaxis0',), ('domainaxis0',)]
 
@@ -714,7 +713,7 @@ class Field(mixin.NetCDFVariable,
     <Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
     >>> print(g.cell_methods())
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>}
     >>> g.climatological_time_axes()
     []
         '''
@@ -850,8 +849,7 @@ class Field(mixin.NetCDFVariable,
             *Parameter example:*
               ``list_properties={'long_name': 'uncompression indices'}``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -880,12 +878,12 @@ class Field(mixin.NetCDFVariable,
     >>> g.data.get_compression_type()
     'ragged contiguous'
     >>> g.data.get_count()
-    <CF Count: (4) >
+    <{{repr}}Count: (4) >
     >>> print(g.data.get_count().array)
     [3 7 5 9]
     >>> g.compress('indexed', inplace=True)
     >>> g.data.get_index()
-     <CF Index: (24) >
+     <{{repr}}Index: (24) >
     >>> print(g.data.get_index().array)
     [0 0 0 1 1 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 3 3]
     >>> {{package}}.write(g, 'compressed_file_indexed.nc')
@@ -1257,10 +1255,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         indent = '    '
@@ -1361,23 +1356,15 @@ class Field(mixin.NetCDFVariable,
       type, the same missing data mask, and be element-wise equal (see
       the *ignore_data_type* parameter).
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
-    Any compression is ignored by default, with only the the arrays in
-    their uncompressed forms being compared. See the
-    *ignore_compression* parameter.
+    {{equals compression}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another field construct, or a subclass of one. See
     the *ignore_type* parameter.
 
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked on
-    any construct.
+    {{equals netCDF}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -1386,15 +1373,9 @@ class Field(mixin.NetCDFVariable,
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: float, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: float, optional}}
 
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
@@ -1409,17 +1390,9 @@ class Field(mixin.NetCDFVariable,
             that the ``Conventions`` property is always omitted by
             default.
 
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
+        {{ignore_data_type: `bool`, optional}}
 
-        ignore_compression: `bool`, optional
-            If False then the compression type and, if applicable, the
-            underlying compressed arrays must be the same, as well as
-            the arrays in their uncompressed forms. By default only
-            the arrays in their uncompressed forms are compared.
+        {{ignore_compression: `bool`, optional}}
 
         {{ignore_type: `bool`, optional}}
 
@@ -1549,8 +1522,7 @@ class Field(mixin.NetCDFVariable,
             *Parameter example:*
               ``position=-1``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -2560,8 +2532,7 @@ class Field(mixin.NetCDFVariable,
             *Parameter example:*
               ``axes=[2, 0]``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -2633,8 +2604,7 @@ class Field(mixin.NetCDFVariable,
             field construct. By default, metadata constructs are not
             changed.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -2749,8 +2719,7 @@ class Field(mixin.NetCDFVariable,
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 

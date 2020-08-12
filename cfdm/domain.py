@@ -209,7 +209,7 @@ class Domain(mixin.ConstructAccess,
 
     :Returns:
 
-        `None` or `str`
+        `str` or `None`
             If *display* is True then the description is printed and
             `None` is returned. Otherwise the description is returned
             as a string.

@@ -111,10 +111,7 @@ class Bounds(mixin.NetCDFVariable,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         if _create_title and _title is None:
@@ -141,25 +138,23 @@ class Bounds(mixin.NetCDFVariable,
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if data have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `Data`
             The data.
 
     **Examples:**
 
-    >>> d = cfdm.Data(range(10))
+    >>> d = {{package}}.Data(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))

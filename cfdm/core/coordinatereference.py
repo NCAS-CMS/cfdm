@@ -176,7 +176,7 @@ class CoordinateReference(abstract.Container):
     **Examples:**
 
     >>> c.coordinate_conversion
-    <CoordinateConversion: Parameters: standard_name; Ancillaries: a, b, orog>
+    <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: a, b, orog>
 
         '''
         return self.get_coordinate_conversion()
@@ -197,7 +197,7 @@ class CoordinateReference(abstract.Container):
     **Examples:**
 
     >>> c.datum
-    <Datum: Parameters: earth_radius>
+    <{[repr}}Datum: Parameters: earth_radius>
 
         '''
         return self.get_datum()
@@ -342,9 +342,9 @@ class CoordinateReference(abstract.Container):
     **Examples:**
 
     >>> c.del_coordinate_conversion()
-    <CoordinateConversion: Parameters(grid_mapping_name, grid_north_pole_latitude, grid_north_pole_longitude)>
+    <{{repr}}CoordinateConversion: Parameters(grid_mapping_name, grid_north_pole_latitude, grid_north_pole_longitude)>
     >>> c.get_coordinate_conversion()
-    <CF CoordinateConversion: Parameters: ; Ancillaries: >
+    <{{repr}}CoordinateConversion: Parameters: ; Ancillaries: >
 
         '''
         new = self._CoordinateConversion()
@@ -367,9 +367,9 @@ class CoordinateReference(abstract.Container):
     **Examples:**
 
     >>> c.del_datum()
-    <Datum: Parameters: earth_radius>
+    <{{repr}}Datum: Parameters: earth_radius>
     >>> c.get_datum()
-    <Datum: Parameters: >
+    <{{repr}}Datum: Parameters: >
 
         '''
         new = self._Datum()
@@ -393,7 +393,7 @@ class CoordinateReference(abstract.Container):
     **Examples:**
 
     >>> c.get_coordinate_conversion()
-    <CF CoordinateConversion: Parameters: standard_name; Ancillaries: a, b, orog>
+    <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: a, b, orog>
 
         '''
         out = self._get_component('coordinate_conversion', None)
@@ -418,7 +418,7 @@ class CoordinateReference(abstract.Container):
     **Examples:**
 
     >>> c.get_datum()
-    <Datum: Parameters: earth_radius>
+    <{{repr}}Datum: Parameters: earth_radius>
 
         '''
         out = self._get_component('datum', None)

@@ -48,7 +48,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
     **Examples:**
 
     >>> f.del_construct('dimensioncoordinate1')
-    <DimensionCoordinate: grid_latitude(111) degrees>
+    <{{repr}}{{+DimensionCoordinate}}: grid_latitude(111) degrees>
 
         '''
         return self.constructs._del_construct(key, default=default)
@@ -78,16 +78,16 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
     **Examples:**
 
     >>> f.constructs()
-    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>,
-     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>,
-     'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:greek_letters(10) >,
-     'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
-     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-     'domainaxis1': <DomainAxis: 10>,
-     'domainaxis2': <DomainAxis: 9>}
+    {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degree_N>,
+     'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degreeE>,
+     'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:greek_letters(10) >,
+     'coordinatereference1': <{{repr}}CoordinateReference: rotated_latitude_longitude>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+     'domainaxis1': <{{repr}}DomainAxis: 10>,
+     'domainaxis2': <{{repr}}DomainAxis: 9>}
     >>> f.get_construct('dimensioncoordinate1')
-    <DimensionCoordinate: grid_latitude(10) degrees>
+    <{[repr}}DimensionCoordinate: grid_latitude(10) degrees>
 
         '''
         return self.constructs.filter_by_key(key).value(default=default)

@@ -82,10 +82,7 @@ class Properties(Container):
 
     :Returns:
 
-        `str` or `None`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         indent0 = '    ' * _level

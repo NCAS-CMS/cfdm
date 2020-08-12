@@ -149,6 +149,7 @@ class PropertiesDataBounds(PropertiesData):
 
     :Returns:
 
+        `{{class}}`
             The subspace of the construct.
 
     **Examples:**
@@ -480,11 +481,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             A new instance with masked values, or `None` if the
             operation was in-place.
 
@@ -541,25 +542,23 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the node
-            count variable has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `NodeCount`
             The removed node count variable.
 
     **Examples:**
 
-    >>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+    >>> n = {{package}}.NodeCount(properties={'long_name': 'node counts'})
     >>> c.set_node_count(n)
     >>> c.has_node_count()
     True
     >>> c.get_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.del_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.has_node_count()
     False
 
@@ -582,25 +581,23 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the part
-            node count variable has not been set. If set to an
-            `Exception` instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
-            The removed part_node count variable.
+        `PartNodeCount`
+            The removed part node count variable.
 
     **Examples:**
 
-    >>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+    >>> p = {{package}}.PartNodeCount(properties={'long_name': 'part node counts'})
     >>> c.set_part_node_count(p)
     >>> c.has_part_node_count()
     True
     >>> c.get_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.del_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.has_part_node_count()
     False
 
@@ -626,9 +623,7 @@ class PropertiesDataBounds(PropertiesData):
 
     :Returns:
 
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         # ------------------------------------------------------------
@@ -869,25 +864,23 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if a node
-            count variable has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `NodeCount`
             The node count variable.
 
     **Examples:**
 
-    >>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+    >>> n = {{package}}.NodeCount(properties={'long_name': 'node counts'})
     >>> c.set_node_count(n)
     >>> c.has_node_count()
     True
     >>> c.get_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.del_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.has_node_count()
     False
 
@@ -910,25 +903,23 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the part
-            node count variable has not been set. If set to an
-            `Exception` instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `PartNodeCount`
             The part node count variable.
 
     **Examples:**
 
-    >>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+    >>> p = {{package}}.PartNodeCount(properties={'long_name': 'part node counts'})
     >>> c.set_part_node_count(p)
     >>> c.has_part_node_count()
     True
     >>> c.get_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.del_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.has_part_node_count()
     False
 
@@ -956,14 +947,14 @@ class PropertiesDataBounds(PropertiesData):
     **Examples:**
 
 
-    >>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+    >>> n = {{package}}.NodeCount(properties={'long_name': 'node counts'})
     >>> c.set_node_count(n)
     >>> c.has_node_count()
     True
     >>> c.get_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.del_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.has_node_count()
     False
 
@@ -987,14 +978,14 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    >>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+    >>> p = {{package}}.PartNodeCount(properties={'long_name': 'part node counts'})
     >>> c.set_part_node_count(p)
     >>> c.has_part_node_count()
     True
     >>> c.get_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.del_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.has_part_node_count()
     False
 
@@ -1138,26 +1129,24 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if bounds have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `Bounds`
             The bounds.
 
     **Examples:**
 
-    >>> b = cfdm.Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
+    >>> b = {{package}}.Bounds(data={{package}}.Data(range(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -1186,19 +1175,17 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if there are
-            no bounds data. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `Data`
             The bounds data.
 
     **Examples:**
 
     >>> c.get_bounds_data()
-    <Data(96, 2): [[0, ..., 360.0]] degrees_east>
+    <{{repr}}Data(96, 2): [[0, ..., 360.0]] degrees_east>
 
         '''
         bounds = self.get_bounds(default=None)
@@ -1236,7 +1223,7 @@ class PropertiesDataBounds(PropertiesData):
 
     :Returns:
 
-        `{{class}}`
+        `{{class}}` or `None`
             The new construct with expanded data axes. If the
             operation was in-place then `None` is returned.
 
@@ -1312,9 +1299,9 @@ class PropertiesDataBounds(PropertiesData):
     >>> c.has_node_count()
     True
     >>> c.get_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.del_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.has_node_count()
     False
 
@@ -1352,9 +1339,9 @@ class PropertiesDataBounds(PropertiesData):
     >>> c.has_part_node_count()
     True
     >>> c.get_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.del_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.has_part_node_count()
     False
 
@@ -1393,11 +1380,11 @@ class PropertiesDataBounds(PropertiesData):
             *Parameter example:*
               ``axes=[2, 0]``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The new construct with removed data axes. If the operation
             was in-place then `None` is returned.
 
@@ -1469,11 +1456,11 @@ class PropertiesDataBounds(PropertiesData):
             *Parameter example:*
               ``axes=[-1, 0, 1]``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The new construct with permuted data axes. If the
             operation was in-place then `None` is returned.
 
@@ -1564,11 +1551,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The uncompressed construct, or `None` if the operation was
             in-place.
 

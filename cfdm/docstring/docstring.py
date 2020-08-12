@@ -115,4 +115,13 @@ _docstring_substitution_definitions = {
             for increasing verbosity, the more description that is
             printed to convey information about the operation.""",
 
+    # ----------------------------------------------------------------
+    # Returns descriptions
+    # ----------------------------------------------------------------
+    '{{returns dump}}':
+    '''`str` or `None`
+            The description. If *display* is True then the description
+            is printed and `None` is returned. Otherwise the
+            description is returned as a string.''',
+
 }

@@ -319,7 +319,7 @@ class Constructs(abstract.Container):
     >>> f = cfdm.example_field(0)
     >>> c = f.get_construct('cellmethod0')
     >>> c
-    <CellMethod: area: mean>
+    <{{repr}}CellMethod: area: mean>
 
     >>> c._default(AttributeError())  # Raises Exception
     AttributeError
@@ -815,11 +815,11 @@ class Constructs(abstract.Container):
 
     >>> print(c)
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
     >>> c.key(
     'dimensioncoordinate0'
     >>> c.value()
-    <DimensionCoordinate: latitude(5) degrees_north>
+    <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
 
         '''
         if not self:
@@ -856,11 +856,11 @@ class Constructs(abstract.Container):
 
     >>> print(c)
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
     >>> c.key(
     'dimensioncoordinate0'
     >>> c.value()
-    <DimensionCoordinate: latitude(5) degrees_north>
+    <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
 
         '''
         if not self:
@@ -891,13 +891,13 @@ class Constructs(abstract.Container):
 
     >>> print(c)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
     >>> c.data_axes()
     {'dimensioncoordinate0': ('domainaxis0',),
      'dimensioncoordinate1': ('domainaxis1',),
@@ -934,6 +934,7 @@ class Constructs(abstract.Container):
 
     :Returns:
 
+        `{{class}}`
             The deep copy.
 
     **Examples:**
@@ -1032,11 +1033,11 @@ class Constructs(abstract.Container):
 
     >>> print(c)
     onstructs:
-    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean>,
-     'cellmethod1': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
     >>> c.ordered()
-    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean>),
-                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+    OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean>),
+                 ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         '''
         if len(self._constructs) > 1:
@@ -1137,11 +1138,11 @@ class Constructs(abstract.Container):
     :Returns:
 
         `Constructs`
-            <TODO>
+            TODO
 
     **Examples:**
 
-    <TODO>
+    TODO
 
         '''
         return type(self)(source=self, _view=True, _ignore=ignore)

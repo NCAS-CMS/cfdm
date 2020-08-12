@@ -443,9 +443,7 @@ class PropertiesData(Properties):
 
     :Returns:
 
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         # ------------------------------------------------------------
@@ -691,12 +689,11 @@ class PropertiesData(Properties):
             *Parameter example:*
               ``position=-1``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
-        `{{class}}`
+        `{{class}}` or `None`
             A new instance with expanded data axes. If the operation
             was in-place then `None` is returned.
 
@@ -750,7 +747,7 @@ class PropertiesData(Properties):
 
     :Returns:
 
-        `{{class}}`
+        `{{class}}` or `None`
             A new instance with removed size 1 one data axes. If the
             operation was in-place then `None` is returned.
 
@@ -800,11 +797,11 @@ class PropertiesData(Properties):
             *Parameter example:*
               ``axes=[-1, 0, 1]``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             A new instance with permuted data axes. If the operation
             was in-place then `None` is returned.
 
@@ -854,11 +851,11 @@ class PropertiesData(Properties):
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The uncompressed construct, or `None` if the operation was
             in-place.
 

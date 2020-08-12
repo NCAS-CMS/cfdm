@@ -90,7 +90,7 @@ class PropertiesData(Properties):
     True
     >>> d = f.data
     >>> d
-    <{{repr}}Data(10): [0.0, ..., 9.0]>
+    <{{repr}}{{+Data}}(10): [0.0, ..., 9.0]>
     >>> f.data.shape
     (10,)
 
@@ -157,9 +157,9 @@ class PropertiesData(Properties):
     >>> f.has_data()
     True
     >>> f.get_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}{{+Data}}(10): [0, ..., 9]>
     >>> f.del_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}{{+Data}}(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -204,9 +204,9 @@ class PropertiesData(Properties):
     >>> f.has_data()
     True
     >>> f.get_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}{{+Data}}(10): [0, ..., 9]>
     >>> f.del_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}{{+Data}}(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -293,9 +293,9 @@ class PropertiesData(Properties):
     >>> f.has_data()
     True
     >>> f.get_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}{{+Data}}(10): [0, ..., 9]>
     >>> f.del_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}{{+Data}}(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -337,9 +337,9 @@ class PropertiesData(Properties):
     >>> f.has_data()
     True
     >>> f.get_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}{{+Data}}(10): [0, ..., 9]>
     >>> f.del_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}{{+Data}}(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))

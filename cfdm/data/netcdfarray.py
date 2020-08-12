@@ -500,7 +500,7 @@ class NetCDFArray(abstract.Array):
 
     :Returns:
 
-        `{{+NumpyArray}}`
+        `NumpyArray`
             The array that is stored in memory.
 
     **Examples:**

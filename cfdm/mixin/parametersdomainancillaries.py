@@ -64,11 +64,7 @@ class ParametersDomainAncillaries(Parameters):
 
     * the names of domain ancillary constructs are the same.
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another object of the same type, or a subclass of

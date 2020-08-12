@@ -167,10 +167,7 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         indent0 = '    ' * _level
@@ -252,19 +249,13 @@ class CoordinateReference(mixin.NetCDFVariable,
     constructs in question. They are, however, taken into account when
     two fields constructs are tested for equality.
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. The data type of the
-    numbers is not taken into consideration. See the *atol* and *rtol*
-    parameters.
+    {{equals tolerance}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another coordinate reference construct, or a
     subclass of one. See the *ignore_type* parameter.
 
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked.
+    {{equals netCDF}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -273,15 +264,9 @@ class CoordinateReference(mixin.NetCDFVariable,
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: float, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: float, optional}}
 
         {{verbose: `int` or `str` or `None`, optional}}
 

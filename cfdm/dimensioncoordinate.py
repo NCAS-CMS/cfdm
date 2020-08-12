@@ -110,10 +110,7 @@ class DimensionCoordinate(mixin.NetCDFVariable,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         if _title is None:

@@ -135,7 +135,7 @@ class GatheredArray(abstract.CompressedArray):
 
     :Returns:
 
-        `{{+List}}`
+        `List`
             The list variable.
 
     **Examples:**

@@ -51,10 +51,10 @@ class Constructs(mixin.Container,
 
     >>> print(c('latitude'))
     Constructs:
-    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
+    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
     >>> print(c.filter_by_identity('latitude'))
     Constructs:
-    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
+    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
 
     See `filter_by_identity` for more examples.
 
@@ -554,15 +554,9 @@ class Constructs(mixin.Container,
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: float, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: float, optional}}
 
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
@@ -1444,7 +1438,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected domain axis constructs and their construct
             keys.
 
@@ -1525,7 +1519,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1632,7 +1626,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1734,7 +1728,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected domain axis constructs and their construct
             keys.
 
@@ -1816,7 +1810,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1982,7 +1976,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The constructs, and their construct keys, that were not
             selected by the last filter applied. If no filtering has
             been applied, or the last filter was an inverse filter,
@@ -2077,6 +2071,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
+        `{{class}}`
             The shallow copy.
 
     **Examples:**
@@ -2128,7 +2123,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The constructs, and their construct keys, that existed
             before the last filter was applied. If no filters have
             been applied then all of the constructs are returned.

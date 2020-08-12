@@ -418,7 +418,7 @@ class Field(mixin.ConstructAccess,
 
     :Parameters:
 
-        data: `Data`
+        data: `{{+Data}}`
             The data to be inserted.
 
         axes: (sequence of) `str`, or `None`
@@ -454,7 +454,7 @@ class Field(mixin.ConstructAccess,
     construct:
 
     >>> d
-    <{{repr}}Data(10, 9): [[23.6, ..., 76.8]]>
+    <{{repr}}{{+Data}}(10, 9): [[23.6, ..., 76.8]]>
     >>> f.set_data(d, axes=['domainaxis0', 'domainaxis1'])
     >>> f.set_data(d)
 

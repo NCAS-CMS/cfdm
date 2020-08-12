@@ -88,19 +88,19 @@ class Domain(mixin.ConstructAccess,
 
     :Returns:
 
-        `Constructs`
+        `{{+Constructs}}`
             The constructs.
 
     **Examples:**
 
     >>> print(d.constructs)
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
         '''
         return self._get_component('constructs')
@@ -125,7 +125,7 @@ class Domain(mixin.ConstructAccess,
 
     :Returns:
 
-        `Domain`
+        `{{class}}`
             The deep copy.
 
     **Examples:**
@@ -141,29 +141,29 @@ class Domain(mixin.ConstructAccess,
 
     The new domain act as a view to the given constructs, i.e. changes
     to the domain, such as the addition or removal of a construct,
-    will also affect the input `Constructs` instance.
+    will also affect the input `{{+Constructs}}` instance.
 
     .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
-        constructs: `Constructs`
+        constructs: `{{+Constructs}}`
             The constructs from which to create the new domain. Cell
             method and field ancillary constucts are ignored.
 
-        copy: bool, optional
+        copy: `bool`, optional
             If True then deep copy the metadata constructs prior to
             initialization. By default the metadata constructs are not
             copied.
 
     :Returns:
 
-        `{+class}`
+        `{{class}}`
             The domain created from a view of the constructs.
 
     **Examples:**
 
-    >>> d = Domain.fromconstructs(f.constructs)
+    >>> d = {{package}}.{{class}}.fromconstructs(f.constructs)
 
         '''
         domain = cls()

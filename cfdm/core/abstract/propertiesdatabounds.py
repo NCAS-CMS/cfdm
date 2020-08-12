@@ -140,15 +140,15 @@ class PropertiesDataBounds(PropertiesData):
 
     >>> import numpy
     >>> c = {{package}}.{{class}}()
-    >>> b = {{package}}.Bounds(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
+    >>> b = {{package}}.{{+Bounds}}(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> b = c.bounds
     >>> b
-    <{{repr}}Bounds: (5, 2) >
+    <{{repr}}{{+Bounds}}: (5, 2) >
     >>> b.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}{{+Data}}(5, 2): [[0, ..., 9]]>
     >>> b.data.shape
     (5, 2)
 
@@ -180,9 +180,9 @@ class PropertiesDataBounds(PropertiesData):
     True
     >>> i = c.interior_ring
     >>> i
-    <InteriorRing: (5, 2) >
+    <{{repr}}{{+InteriorRing}}: (5, 2) >
     >>> i.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}{{+Data}}(5, 2): [[0, ..., 9]]>
     >>> i.data.shape
     (5, 2)
 
@@ -217,10 +217,10 @@ class PropertiesDataBounds(PropertiesData):
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <{{repr}}Bounds: (5, 2) >
+    <{{repr}}{{+Bounds}}: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <{{repr}}Bounds: (5, 2) >
+    <{{repr}}{{+Bounds}}: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -288,33 +288,30 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the
-            geometry type has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
-        `ÌnteriorRing`
+        `{{+ÌnteriorRing}}`
             The removed interior ring variable.
 
     **Examples:**
 
     >>> import numpy
-    >>> c = cfdm.AuxiliaryCoordinate()
-    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> i = {{package}}.{{+InteriorRing}}(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
     True
     >>> i = c.get_interior_ring()
     >>> i
-    <InteriorRing: (5, 2) >
+    <{{repr}}{{+InteriorRing}}: (5, 2) >
     >>> i.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}{{+Data}}(5, 2): [[0, ..., 9]]>
     >>> i.data.shape
     (5, 2)
     >>> c.del_interior_ring()
-    <InteriorRing: (5, 2) >
+    <{{repr}}{{+InteriorRing}}: (5, 2) >
     >>> c.has_interior_ring()
     False
     >>> print(c.del_interior_ring(None))
@@ -350,15 +347,15 @@ class PropertiesDataBounds(PropertiesData):
 
     >>> import numpy
     >>> c = {{package}}.{{class}}()
-    >>> b = {{package}}.Bounds(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
+    >>> b = {{package}}.{{+Bounds}}(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <{{repr}}Bounds: (5, 2) >
+    <{{repr}}{{+Bounds}}: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <{{repr}}Bounds: (5, 2) >
+    <{{repr}}{{+Bounds}}: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -444,13 +441,13 @@ class PropertiesDataBounds(PropertiesData):
     True
     >>> i = c.get_interior_ring()
     >>> i
-    <InteriorRing: (5, 2) >
+    <{{repr}}{{+InteriorRing}}: (5, 2) >
     >>> i.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}{{+Data}}(5, 2): [[0, ..., 9]]>
     >>> i.data.shape
     (5, 2)
     >>> c.del_interior_ring()
-    <InteriorRing: (5, 2) >
+    <{{repr}}{{+InteriorRing}}: (5, 2) >
     >>> c.has_interior_ring()
     False
     >>> print(c.del_interior_ring(None))
@@ -481,15 +478,15 @@ class PropertiesDataBounds(PropertiesData):
 
     >>> import numpy
     >>> c = {{package}}.{{class}}()
-    >>> b = {{package}}.Bounds(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
+    >>> b = {{package}}.{{+Bounds}}(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <{{repr}}Bounds: (5, 2) >
+    <{{repr}}{{+Bounds}}: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <{{repr}}Bounds: (5, 2) >
+    <{{repr}}{{+Bounds}}: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -557,13 +554,13 @@ class PropertiesDataBounds(PropertiesData):
     True
     >>> i = c.get_interior_ring()
     >>> i
-    <InteriorRing: (5, 2) >
+    <{{repr}}{{+InteriorRing}}: (5, 2) >
     >>> i.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}{{+Data}}(5, 2): [[0, ..., 9]]>
     >>> i.data.shape
     (5, 2)
     >>> c.del_interior_ring()
-    <InteriorRing: (5, 2) >
+    <{{repr}}{{+InteriorRing}}: (5, 2) >
     >>> c.has_interior_ring()
     False
     >>> print(c.del_interior_ring(None))
@@ -690,20 +687,20 @@ class PropertiesDataBounds(PropertiesData):
     **Examples:**
 
     >>> import numpy
-    >>> c = cfdm.AuxiliaryCoordinate()
-    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}})(
+    >>> i = {{package}}.{{+InteriorRing}}(data={{package}}.{{+Data}}(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
     True
     >>> i = c.get_interior_ring()
     >>> i
-    <InteriorRing: (5, 2) >
+    <{{repr}}{{+InteriorRing}}: (5, 2) >
     >>> i.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}{{+Data}}(5, 2): [[0, ..., 9]]>
     >>> i.data.shape
     (5, 2)
     >>> c.del_interior_ring()
-    <InteriorRing: (5, 2) >
+    <{{repr}}{{+InteriorRing}}: (5, 2) >
     >>> c.has_interior_ring()
     False
     >>> print(c.del_interior_ring(None))

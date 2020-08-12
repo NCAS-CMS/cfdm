@@ -36,10 +36,15 @@ class DocstringTest(unittest.TestCase):
             cfdm.RaggedIndexedArray,
             cfdm.RaggedIndexedContiguousArray,
 
+            cfdm.Constructs,
+
+            cfdm.core.Constructs,
+
             cfdm.core.abstract.Properties,
             cfdm.core.abstract.PropertiesData,
             cfdm.core.abstract.PropertiesDataBounds,
             cfdm.core.abstract.Coordinate,
+
         )
         self.subclasses_of_Properties = (
             cfdm.Field,

@@ -57,11 +57,7 @@ class Parameters(Container):
       size and be element-wise equal (see the *ignore_data_type*
       parameter).
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another object of the same type, or a subclass of

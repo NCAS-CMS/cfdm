@@ -79,14 +79,14 @@ class DimensionCoordinate(abstract.Coordinate):
 
     **Examples:**
 
-    >>> d = Data(range(10))
+    >>> d = {{package}}.{{+Data}}(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}{{+Data}}(10): [0, ..., 9]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}{{+Data}}(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
