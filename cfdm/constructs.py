@@ -1,5 +1,4 @@
 import logging
-import textwrap
 from copy import deepcopy
 
 from . import core

@@ -3,11 +3,8 @@ import datetime
 import inspect
 import itertools
 import os
-import sys
-import time
 import unittest
 
-from operator import mul
 
 import numpy
 

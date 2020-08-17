@@ -1,5 +1,3 @@
-import os
-import urllib.parse
 
 import numpy
 import netCDF4

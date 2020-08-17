@@ -1,6 +1,5 @@
 import copy
 import datetime
-import logging
 import unittest
 
 import cfdm

@@ -36,7 +36,6 @@ up to the user to use them in a CF-compliant way.
 '''
 import logging
 import sys
-import platform
 
 from distutils.version import LooseVersion
 
