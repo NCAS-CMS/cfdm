@@ -271,7 +271,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}`
+        `Field`
             The subspace of the field construct.
 
     **Examples:**

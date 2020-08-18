@@ -147,9 +147,14 @@ class RewriteDocstringMeta(type):
                 )
         # --- End: for
 
+        # List of methods that will be ignored
+        method_exclusions = attrs.get(
+            '_docstring_substitution_exclusions', ())
+
         module = attrs['__module__']
 
         for attr_name, attr in attrs.items():
+
             # Skip special methods that aren't functions
             if (
                     attr_name.startswith('__') and
@@ -159,6 +164,9 @@ class RewriteDocstringMeta(type):
 
             # Skip methods without docstrings
             if not hasattr(attr, '__doc__'):
+                continue
+
+            if attr_name in method_exclusions:
                 continue
 
             # @property
@@ -215,7 +223,11 @@ class RewriteDocstringMeta(type):
                 attrs[attr_name] = wrapper
         # --- End: for
 
+        # ------------------------------------------------------------
+        #
+        # ------------------------------------------------------------
         for parent in parents:
+
             for attr_name in dir(parent):
 
                 if attr_name in attrs:
@@ -236,6 +248,9 @@ class RewriteDocstringMeta(type):
                         attr_name.startswith('__') and
                         not inspect.isfunction(original_f)
                 ):
+                    continue
+
+                if attr_name in method_exclusions:
                     continue
 
                 is_classmethod = False
