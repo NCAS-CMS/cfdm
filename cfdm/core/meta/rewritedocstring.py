@@ -2,9 +2,10 @@ import inspect
 import re
 
 
-# Define the "plus class" regular expression.
-#
-# E.g. matches: {{+Data}} with Data as the grouped match
+# --------------------------------------------------------------------
+# Define the "plus class" regular expression that matches, e.g.
+# {{+Data}}, with Data as the grouped match.
+# --------------------------------------------------------------------
 _plus_class_regex = re.compile('{{\+(\w.*?)}}')
 
 
@@ -149,8 +150,11 @@ class RewriteDocstringMeta(type):
         module = attrs['__module__']
 
         for attr_name, attr in attrs.items():
-            # Skip special methods
-            if attr_name.startswith('__'):
+            # Skip special methods that aren't functions
+            if (
+                    attr_name.startswith('__') and
+                    not inspect.isfunction(attr)
+            ):
                 continue
 
             # Skip methods without docstrings
@@ -220,16 +224,19 @@ class RewriteDocstringMeta(type):
                     # it and move on to to the next method.
                     continue
 
-                # Skip special methods
-                if attr_name.startswith('__'):
-                    continue
-
                 # ----------------------------------------------------
                 # Get the original method, copy it, update the
                 # docstring, and put the mosfied copy back into the
                 # parent class.
                 # ----------------------------------------------------
                 original_f = getattr(parent, attr_name)
+
+                # Skip special methods that aren't functions
+                if (
+                        attr_name.startswith('__') and
+                        not inspect.isfunction(original_f)
+                ):
+                    continue
 
                 is_classmethod = False
                 is_staticmethod = False
@@ -296,9 +303,8 @@ class RewriteDocstringMeta(type):
                     attrs[attr_name] = attr
 
                 except Exception as error:
-                    raise RuntimeError(str(error) +
-                                       ' '.join([':',
-                                                 parent.__name__,
+                    raise RuntimeError(str(error) + ': ' +
+                                       '.'.join([parent.__name__,
                                                  attr_name]))
         # --- End: for
 

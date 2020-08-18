@@ -37,23 +37,39 @@ _docstring_substitution_definitions = {
     '''NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.''',
 
+    # properties: `dict`, optional
+    '{{init properties: `dict`, optional}}':
+    '''properties: `dict`, optional
+            Set descriptive properties. The dictionary keys are
+            property names, with corresponding values. Ignored if the
+            *source* parameter is set.
+
+            Properties may also be set after initialisation with the
+            `set_properties` and `set_property` methods.''',
+
     # ----------------------------------------------------------------
     # Parameter description substitutions
     # ----------------------------------------------------------------
 
     # atol
-    '{{atol: float, optional}}':
-    '''atol: float, optional
+    '{{atol: number, optional}}':
+    '''atol: number, optional
             The tolerance on absolute differences between real
-            numbers. The default value is set by the `{{package}}.atol`
-            function.''',
+            numbers. The default value is set by the
+            `{{package}}.atol` function.''',
 
     # rtol
-    '{{rtol: float, optional}}':
-    '''rtol: float, optional
+    '{{rtol: number, optional}}':
+    '''rtol: number, optional
             The tolerance on relative differences between real
-            numbers. The default value is set by the `{{package}}.rtol`
-            function.''',
+            numbers. The default value is set by the
+            `{{package}}.rtol` function.''',
+
+    # ignore_fill_value
+    '{{ignore_fill_value: `bool`, optional}}':
+    '''ignore_fill_value: `bool`, optional
+             If True then the ``_FillValue`` and ``missing_value``
+            properties are omitted from the comparison.''',
 
     # ignore_compression
     '{{ignore_compression: `bool`, optional}}':
@@ -81,6 +97,11 @@ _docstring_substitution_definitions = {
             ``{{package}}.{{class}}(source=other)`` is tested, rather
             than the ``other`` defined by the *other* parameter.''',
 
+    # ignore_properties
+    '{{ignore_properties: sequence of `str`, optional}}':
+    '''ignore_properties: sequence of `str`, optional
+            The names of properties to omit from the comparison.''',
+
     # inplace
     '{{inplace: `bool`, optional}}':
     '''inplace: `bool`, optional
@@ -88,7 +109,7 @@ _docstring_substitution_definitions = {
 
     # verbose
     '{{verbose: `int` or `str` or `None`, optional}}':
-    """verbose: `int` or `str` or `None`, optional
+    '''verbose: `int` or `str` or `None`, optional
             If an integer from ``-1`` to ``3``, or an equivalent
             string equal ignoring case to one of:
 
@@ -113,7 +134,7 @@ _docstring_substitution_definitions = {
             Overall, the higher a non-negative integer or equivalent
             string that is set (up to a maximum of ``3``/``'DETAIL'``)
             for increasing verbosity, the more description that is
-            printed to convey information about the operation.""",
+            printed to convey information about the operation.''',
 
     # ----------------------------------------------------------------
     # Returns descriptions

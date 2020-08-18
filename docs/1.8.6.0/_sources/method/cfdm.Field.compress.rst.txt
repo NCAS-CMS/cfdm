@@ -1,7 +1,0 @@
-cfdm.Field.compress
-===================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.compress

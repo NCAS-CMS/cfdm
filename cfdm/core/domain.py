@@ -50,9 +50,7 @@ class Domain(mixin.ConstructAccess,
             A new domain may also be instantiated with the
             `fromconstructs` class method.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__()

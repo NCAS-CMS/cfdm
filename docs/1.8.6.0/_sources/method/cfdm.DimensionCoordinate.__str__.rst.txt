@@ -1,7 +1,0 @@
-cfdm.DimensionCoordinate.__str__
-================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DimensionCoordinate.__str__

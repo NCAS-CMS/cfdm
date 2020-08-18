@@ -67,13 +67,7 @@ class Field(mixin.ConstructAccess,
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.""",
+        {{init properties: `dict`, optional}}
 
             *Parameter example:*
                ``properties={'standard_name': 'air_temperature'}``
@@ -82,9 +76,7 @@ class Field(mixin.ConstructAccess,
             Initialize the properties, data and metadata constructs
             from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(properties=properties, source=source,

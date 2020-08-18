@@ -1,7 +1,0 @@
-cfdm.AuxiliaryCoordinate.copy
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.AuxiliaryCoordinate.copy

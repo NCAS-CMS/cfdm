@@ -1,7 +1,0 @@
-cfdm.RaggedContiguousArray.__getitem__
-======================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.RaggedContiguousArray.__getitem__

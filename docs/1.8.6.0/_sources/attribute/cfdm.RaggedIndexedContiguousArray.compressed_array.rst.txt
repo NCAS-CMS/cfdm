@@ -1,7 +1,0 @@
-cfdm.RaggedIndexedContiguousArray.compressed_array
-==================================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.RaggedIndexedContiguousArray.compressed_array

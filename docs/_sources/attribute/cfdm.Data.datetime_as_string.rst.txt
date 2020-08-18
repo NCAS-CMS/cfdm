@@ -1,7 +1,0 @@
-cfdm.Data.datetime_as_string
-============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.Data.datetime_as_string

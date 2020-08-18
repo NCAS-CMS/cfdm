@@ -78,7 +78,7 @@ class Container:
 
     @property
     def _atol(self):
-        '''Internal alias for `cfdm.atol`.
+        '''Internal alias for `{{package}}.atol`.
 
     An alias is necessary to avoid a name clash with the keyword argument
     of identical name (`atol`) in calling functions.
@@ -87,7 +87,7 @@ class Container:
 
     @property
     def _rtol(self):
-        '''Internal alias for `cfdm.rtol`.
+        '''Internal alias for `{{package}}.rtol`.
 
     An alias is necessary to avoid a name clash with the keyword argument
     of identical name (`rtol`) in calling functions.
@@ -106,13 +106,9 @@ class Container:
 
     :Parameters:
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `atol` function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `rtol` function.
+        {{rtol: number, optional}}
 
         '''
         if rtol is None:

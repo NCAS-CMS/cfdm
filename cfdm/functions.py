@@ -44,11 +44,11 @@ def configuration(atol=None, rtol=None, log_level=None):
 
     :Parameters:
 
-        atol: `float`, optional
+        atol: number, optional
             The new value of absolute tolerance. The default is to not
             change the current value.
 
-        rtol: `float`, optional
+        rtol: number, optional
             The new value of relative tolerance. The default is to not
             change the current value.
 
@@ -67,9 +67,9 @@ def configuration(atol=None, rtol=None, log_level=None):
     :Returns:
 
         `dict`
-            The names and values of the project-wide constants prior to the
-            change, or the current names and values if no new values are
-            specified.
+            The names and values of the project-wide constants prior
+            to the change, or the current names and values if no new
+            values are specified.
 
     **Examples:**
 
@@ -100,6 +100,7 @@ def configuration(atol=None, rtol=None, log_level=None):
     {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
     >>> cfdm.configuration()
     {'atol': 5e-14, 'rtol': 1e-17, 'log_level': 'INFO'}
+
     '''
     return _configuration(
         new_atol=atol, new_rtol=rtol, new_log_level=log_level)

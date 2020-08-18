@@ -46,9 +46,7 @@ class ParametersDomainAncillaries(Parameters):
             Initialize the parameters and domain ancillary terms from
             those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(parameters=parameters, source=source,

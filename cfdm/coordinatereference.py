@@ -125,9 +125,7 @@ class CoordinateReference(mixin.NetCDFVariable,
             Initialize the coordinates, datum and coordinate
             conversion from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy arguments prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(
@@ -264,9 +262,9 @@ class CoordinateReference(mixin.NetCDFVariable,
         other:
             The object to compare for equality.
 
-        {{atol: float, optional}}
+        {{atol: number, optional}}
 
-        {{rtol: float, optional}}
+        {{rtol: number, optional}}
 
         {{verbose: `int` or `str` or `None`, optional}}
 

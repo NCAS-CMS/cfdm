@@ -554,20 +554,20 @@ class Constructs(mixin.Container,
         other:
             The object to compare for equality.
 
-        {{atol: float, optional}}
+        {{atol: number, optional}}
 
-        {{rtol: float, optional}}
+        {{rtol: number, optional}}
 
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison for the
             metadata constructs.
 
-        {{verbose: `int` or `str` or `None`, optional}}
-
         {{ignore_data_type: `bool`, optional}}
 
         {{ignore_compression: `bool`, optional}}
+
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 

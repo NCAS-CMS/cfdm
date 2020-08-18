@@ -134,9 +134,9 @@ class CellMethod(mixin.Container,
         other:
             The object to compare for equality.
 
-        {{atol: float, optional}}
+        {{atol: number, optional}}
 
-        {{rtol: float, optional}}
+        {{rtol: number, optional}}
 
         {{verbose: `int` or `str` or `None`, optional}}
 

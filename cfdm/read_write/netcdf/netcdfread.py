@@ -4661,10 +4661,15 @@ class NetCDFRead(IORead):
         units = g['variable_attributes'][ncvar].get('units', None)
         calendar = g['variable_attributes'][ncvar].get('calendar', None)
 
-        if parent_ncvar is not None and units is None:
-            units = g['variable_attributes'][parent_ncvar].get('units', None)
-            calendar = g['variable_attributes'][parent_ncvar].get(
-                'calendar', None)
+        if parent_ncvar is not None:
+            if units is None:
+                units = g['variable_attributes'][parent_ncvar].get(
+                    'units', None)
+
+            if calendar is None:
+                calendar = g['variable_attributes'][parent_ncvar].get(
+                    'calendar', None)
+        # --- End: if
 
         compression = g['compression']
 

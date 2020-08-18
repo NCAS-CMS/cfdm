@@ -1,7 +1,0 @@
-cfdm.core.Field.domain
-======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.core.Field.domain

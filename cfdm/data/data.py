@@ -1859,11 +1859,7 @@ class Data(mixin.Container,
       data mask, and be element-wise equal (see the *ignore_data_type*
       parameter).
 
-    Two numerical elements ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
     Any compression is ignored by default, with only the arrays in
     their uncompressed forms being compared. See the
@@ -1880,61 +1876,21 @@ class Data(mixin.Container,
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `atol` function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `rtol` function.
+        {{rtol: number, optional}}
 
         ignore_fill_value: `bool`, optional
             If True then the fill value is omitted from the
             comparison.
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+        {{ignore_data_type: `bool`, optional}}
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
+        {{ignore_compression: `bool`, optional}}
 
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
+        {{ignore_type: `bool`, optional}}
 
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical data
-            array comparisons. By default different numerical data
-            types imply inequality, regardless of whether the elements
-            are within the tolerance for equality.
-
-        ignore_compression: `bool`, optional
-            If False then the compression type and, if applicable, the
-            underlying compressed arrays must be the same, as well as
-            the arrays in their uncompressed forms. By default only
-            the the arrays in their uncompressed forms are compared.
-
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another data array, or a subclass of
-            one. If *ignore_type* is True then then
-            ``Data(source=other)`` is tested, rather than the
-            ``other`` defined by the *other* parameter.
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 

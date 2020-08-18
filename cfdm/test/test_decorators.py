@@ -190,6 +190,6 @@ class DecoratorsTest(unittest.TestCase):
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
-    cfdm.environment(display=False)
+    cfdm.environment()
     print('')
     unittest.main(verbosity=2)

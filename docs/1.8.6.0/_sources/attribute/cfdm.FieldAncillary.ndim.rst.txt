@@ -1,7 +1,0 @@
-cfdm.FieldAncillary.ndim
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.FieldAncillary.ndim

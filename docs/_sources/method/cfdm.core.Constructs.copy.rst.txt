@@ -1,7 +1,0 @@
-cfdm.core.Constructs.copy
-=========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Constructs.copy

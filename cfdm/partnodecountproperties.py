@@ -31,13 +31,7 @@ class PartNodeCountProperties(mixin.NetCDFVariable,
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
             *Parameter example:*
               ``properties={'long_name': 'number of obs for this
@@ -46,9 +40,7 @@ class PartNodeCountProperties(mixin.NetCDFVariable,
         source: optional
             Initialize the properties from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(properties=properties, source=source,

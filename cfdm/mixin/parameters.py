@@ -68,25 +68,15 @@ class Parameters(Container):
         other:
             The object to compare for equality.
 
-        atol: `float`, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: number, optional}}
 
-        rtol: `float`, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: number, optional}}
 
-        {{verbose: `int` or `str` or `None`, optional}}
-
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
+        {{ignore_data_type: `bool`, optional}}
 
         {{ignore_type: `bool`, optional}}
+
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 

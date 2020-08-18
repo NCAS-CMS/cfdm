@@ -1,7 +1,0 @@
-cfdm.AuxiliaryCoordinate.set_geometry
-=====================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.AuxiliaryCoordinate.set_geometry

@@ -1,7 +1,0 @@
-cfdm.AuxiliaryCoordinate.interior_ring
-======================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.AuxiliaryCoordinate.interior_ring

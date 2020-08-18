@@ -25,55 +25,24 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.""",
+        {{init properties: `dict`, optional}}
 
             *Parameter example:*
                ``properties={'standard_name': 'longitude'}``
 
-        data: `Data`, optional
-            Set the data array. Ignored if the *source* parameter is
-            set.
+        {{init data: `{{+Data}}`, optional}}
 
-            The data array may also be set after initialisation with
-            the `set_data` method.
+        {{init bounds: `{{+Bounds}}`, optional}}
 
-        bounds: `Bounds`, optional
-            Set the bounds array. Ignored if the *source* parameter is
-            set.
+        {{init geometry: `str`, optional}}
 
-            The bounds array may also be set after initialisation with
-            the `set_bounds` method.
-
-        geometry: `str`, optional
-            Set the geometry type. Ignored if the *source* parameter
-            is set.
-
-            The geometry type may also be set after initialisation
-            with the `set_geometry` method.
-
-            *Parameter example:*
-               ``geometry='polygon'``
-
-        interior_ring: `InteriorRing`, optional
-            Set the interior ring variable. Ignored if the *source*
-            parameter is set.
-
-            The interior ring variable may also be set after
-            initialisation with the `set_interior_ring` method.
+        {{init interior_ring: `{{+InteriorRing}}`, optional}}
 
         source: optional
             Initialize the properties, geometry type, data, bounds and
             interior ring from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         # Initialise properties and data

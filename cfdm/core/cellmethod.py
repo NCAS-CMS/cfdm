@@ -82,9 +82,7 @@ class CellMethod(abstract.Container):
             Initialize the axes, method and qualifiers from those of
             *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization By default parameters are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__()

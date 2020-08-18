@@ -26,4 +26,59 @@ _docstring_substitution_definitions = {
             Return the value of the *default* parameter if data have
             not been set. If set to an `Exception` instance then it
             will be raised instead.''',
+
+    # properties: `dict`, optional
+    '{{init properties: `dict`, optional}}':
+    '''properties: `dict`, optional
+            Set descriptive properties. The dictionary keys are
+            property names, with corresponding values. Ignored if the
+            *source* parameter is set.
+
+            Properties may also be set after initialisation with the
+            `set_properties` and `set_property` methods.''',
+
+    # data: `{{+Data}}`, optional
+    '{{init data: `{{+Data}}`, optional}}':
+    '''data: `{{+Data}}`, optional
+            Set the data. Ignored if the *source* parameter is set.
+
+            The data also may be set after initialisation with the
+            `set_data` method.''',
+
+    #        bounds: `Bounds`, optional
+    '{{init bounds: `{{+Bounds}}`, optional}}':
+    '''bounds: `{{+Bounds}}`, optional
+            Set the bounds array. Ignored if the *source* parameter is
+            set.
+
+            The bounds array may also be set after initialisation with
+            the `set_bounds` method.''',
+
+    # geometry
+    '{{init geometry: `str`, optional}}':
+    '''geometry: `str`, optional
+            Set the geometry type. Ignored if the *source* parameter
+            is set.
+
+            The geometry type may also be set after initialisation
+            with the `set_geometry` method.
+
+            *Parameter example:*
+               ``geometry='polygon'``''',
+
+    #        interior_ring: `{{+InteriorRing}}`, optional
+    '{{init interior_ring: `{{+InteriorRing}}`, optional}}':
+    '''interior_ring: `{{+InteriorRing}}`, optional
+            Set the interior ring variable. Ignored if the *source*
+            parameter is set.
+
+            The interior ring variable may also be set after
+            initialisation with the `set_interior_ring` method.''',
+
+    # copy: `bool`, optional}}
+    '{{init copy: `bool`, optional}}':
+    '''copy: `bool`, optional
+            If False then do not deep copy input parameters prior to
+            initialization. By default arguments are deep copied.''',
+
 }

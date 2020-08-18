@@ -1,4 +1,5 @@
 import datetime
+import inspect
 import unittest
 
 import cfdm
@@ -19,6 +20,16 @@ class DocstringTest(unittest.TestCase):
             cfdm.DomainAxis,
             cfdm.CoordinateReference,
             cfdm.CellMethod,
+
+            cfdm.core.Field,
+            cfdm.core.AuxiliaryCoordinate,
+            cfdm.core.DimensionCoordinate,
+            cfdm.core.DomainAncillary,
+            cfdm.core.FieldAncillary,
+            cfdm.core.CellMeasure,
+            cfdm.core.DomainAxis,
+            cfdm.core.CoordinateReference,
+            cfdm.core.CellMethod,
 
             cfdm.NodeCountProperties,
             cfdm.PartNodeCountProperties,
@@ -85,21 +96,26 @@ class DocstringTest(unittest.TestCase):
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
                 for name in dir(x):
-                    if name.startswith('__'):
+                    f = getattr(klass, name, None)
+
+                    if f is None or not hasattr(f, '__doc__'):
                         continue
 
-                    f = getattr(klass, name, None)
-                    if f is None or not hasattr(f, '__doc__'):
+                    if name.startswith('__') and not inspect.isfunction(f):
                         continue
 
                     self.assertIsNotNone(
                         f.__doc__,
-                        '\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}\n__doc__: {}'.format(
+                        "\n\nCLASS: {}\n"
+                        "METHOD NAME: {}\n"
+                        "METHOD: {}\n__doc__: {}".format(
                             klass, name, f, f.__doc__))
 
                     self.assertNotIn(
                         '{{', f.__doc__,
-                        '\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
+                        "\n\nCLASS: {}\n"
+                        "METHOD NAME: {}\n"
+                        "METHOD: {}".format(
                             klass, name, f))
 
     def test_docstring_package(self):
@@ -129,7 +145,9 @@ class DocstringTest(unittest.TestCase):
             for x in (klass, klass()):
                 self.assertIn(
                     string, x.insert_dimension.__doc__,
-                    '\n\nCLASS: {}\nMETHOD NAME: {}\nMETHOD: {}'.format(
+                    "\n\nCLASS: {}\n"
+                    "METHOD NAME: {}\n"
+                    "METHOD: {}".format(
                         klass, klass.__name__, 'insert_dimension'))
 
     def test_docstring_plus_class(self):

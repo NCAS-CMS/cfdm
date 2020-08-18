@@ -128,13 +128,7 @@ class Field(mixin.NetCDFVariable,
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
             *Parameter example:*
               ``properties={'standard_name': 'air_temperature'}``
@@ -143,9 +137,7 @@ class Field(mixin.NetCDFVariable,
             Initialize the properties, data and metadata constructs
             from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         # Initialize the new field with attributes and CF properties
@@ -406,7 +398,7 @@ class Field(mixin.NetCDFVariable,
 
     :Parameters:
 
-        component:  `str`
+        component: `str`
 
     :Returns:
 
@@ -459,7 +451,7 @@ class Field(mixin.NetCDFVariable,
     :Parameters:
 
         value:
-            The value of the data_compliance component
+           The value of the ``dataset_compliance`` component.
 
     :Returns:
 
@@ -1205,10 +1197,10 @@ class Field(mixin.NetCDFVariable,
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    Arrays within `{{+Data}}` instances are copied with a
-    copy-on-write technique. This means that a copy takes up very
-    little extra memory, even when the original contains very large
-    data arrays, and the copy operation is fast.
+    Arrays within `Data` instances are copied with a copy-on-write
+    technique. This means that a copy takes up very little extra
+    memory, even when the original contains very large data arrays,
+    and the copy operation is fast.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -1373,28 +1365,27 @@ class Field(mixin.NetCDFVariable,
         other:
             The object to compare for equality.
 
-        {{atol: float, optional}}
+        {{atol: number, optional}}
 
-        {{rtol: float, optional}}
+        {{rtol: number, optional}}
 
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison, for the field
             construct and metadata constructs.
 
-        {{verbose: `int` or `str` or `None`, optional}}
-
         ignore_properties: sequence of `str`, optional
             The names of properties of the field construct (not the
             metadata constructs) to omit from the comparison. Note
-            that the ``Conventions`` property is always omitted by
-            default.
+            that the ``Conventions`` property is always omitted.
 
         {{ignore_data_type: `bool`, optional}}
 
         {{ignore_compression: `bool`, optional}}
 
         {{ignore_type: `bool`, optional}}
+
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
@@ -1504,8 +1495,8 @@ class Field(mixin.NetCDFVariable,
     :Parameters:
 
         axis: `str`
-            The construct identifier of the domain axis construct
-            corresponding to the inserted axis.
+            The identifier of the domain axis construct corresponding
+            to the inserted axis.
 
             *Parameter example:*
               ``axis='domainaxis2'``

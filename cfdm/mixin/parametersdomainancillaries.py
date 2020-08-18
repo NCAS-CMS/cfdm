@@ -75,19 +75,13 @@ class ParametersDomainAncillaries(Parameters):
         other:
             The object to compare for equality.
 
-        atol: `float`, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: number, optional}}
 
-        rtol: `float`, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
-
-        {{verbose: `int` or `str` or `None`, optional}}
+        {{rtol: number, optional}}
 
         {{ignore_type: `bool`, optional}}
+
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 

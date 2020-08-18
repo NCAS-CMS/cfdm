@@ -1,7 +1,0 @@
-cfdm.core.CoordinateReference.copy
-==================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.CoordinateReference.copy

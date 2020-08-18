@@ -718,30 +718,19 @@ class PropertiesDataBounds(PropertiesData):
         other:
             The object to compare for equality.
 
-        {{atol: float, optional}}
+        {{atol: number, optional}}
 
-        {{rtol: float, optional}}
+        {{rtol: number, optional}}
 
-        ignore_fill_value: `bool`, optional
-            If True then the ``_FillValue`` and ``missing_value``
-            properties are omitted from the comparison.
+        {{ignore_fill_value: `bool`, optional}}
 
         {{verbose: `int` or `str` or `None`, optional}}
 
-        ignore_properties: sequence of `str`, optional
-            The names of properties to omit from the comparison.
+        {{ignore_properties: sequence of `str`, optional}}
 
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
+        {{ignore_data_type: `bool`, optional}}
 
-        ignore_compression: `bool`, optional
-            If False then the compression type and, if applicable, the
-            underlying compressed arrays must be the same, as well as
-            the arrays in their uncompressed forms. By default only
-            the the arrays in their uncompressed forms are compared.
+        {{ignore_compression: `bool`, optional}}
 
         {{ignore_type: `bool`, optional}}
 

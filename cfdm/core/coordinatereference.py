@@ -103,9 +103,7 @@ class CoordinateReference(abstract.Container):
             Initialize the coordinates, datum and coordinate
             conversion from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy arguments prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(source=source, copy=copy)
