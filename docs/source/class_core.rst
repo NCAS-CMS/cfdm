@@ -55,6 +55,7 @@ Version |release| for version |version| of the CF conventions.
    cfdm.core.Bounds
    cfdm.core.CoordinateConversion
    cfdm.core.Datum
+   cfdm.core.InteriorRing
 
 **Domain class**
 ----------------
