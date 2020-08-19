@@ -19,9 +19,6 @@ class Container:
     .. versionadded:: (cfdm) 1.7.0
 
     '''
-#    # Set the package depth for {{package}} docstring substitutions
-#    _docstring_package_depth = 0
-
     def __repr__(self):
         '''Called by the `repr` built-in function.
 

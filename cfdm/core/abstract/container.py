@@ -14,9 +14,6 @@ class Container(metaclass=RewriteDocstringMeta):
     .. versionadded:: (cfdm) 1.7.0
 
     '''
-#    # Set the package depth for {{package}} docstring substitutions
-#    _docstring_package_depth = 1
-
     def __init__(self, source=None, copy=True):
         '''**Initialisation**
 
