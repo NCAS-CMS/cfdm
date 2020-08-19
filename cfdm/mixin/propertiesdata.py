@@ -752,7 +752,7 @@ class PropertiesData(Properties):
 
     >>> import numpy
     >>> f = {{package}}.{{class}}()
-    >>> d = {{package}}.{{+Data}}(numpy.arange(7008).reshape((1, 73, 1, 96)))
+    >>> d = {{package}}.Data(numpy.arange(7008).reshape((1, 73, 1, 96)))
     >>> f.set_data(d)
     >>> f.shape
     (1, 73, 1, 96)

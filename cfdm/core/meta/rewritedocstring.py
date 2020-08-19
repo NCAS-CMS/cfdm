@@ -2,91 +2,6 @@ import inspect
 import re
 
 
-# --------------------------------------------------------------------
-# Define the "plus class" regular expression that matches, e.g.
-# {{+Data}}, with Data as the grouped match.
-# --------------------------------------------------------------------
-_plus_class_regex = re.compile('{{\+(\w.*?)}}')
-
-
-def _docstring_replacement_class(match):
-    '''Return the first of the match groups.
-
-    .. versionadded:: (cfdm) 1.8.7.0
-
-        '''
-    return match.group(1)
-
-
-def _docstring_replacement_core_class(match):
-    '''Return the first of the match groups prefixed by 'core.'
-
-    .. versionadded:: (cfdm) 1.8.7.0
-
-        '''
-    return 'core.' + match.group(1)
-
-
-def _docstring_update(class_name, f, method_name, module, config):
-    '''TODO
-
-    .. versionadded:: (cfdm) 1.8.7.0
-
-    '''
-    doc = f.__doc__
-    if doc is None:
-        return
-
-    # ------------------------------------------------------------
-    # Find the package name, class name, and whether or we are in
-    # the cfdm.core package.
-    # ------------------------------------------------------------
-    core = False
-    module = module.split('.')
-    if len(module) >= 2:
-        package_name, package2 = module[:2]
-        if package_name == 'cfdm' and package2 == 'core':
-            class_name = 'core.' + class_name
-            core = True
-    else:
-        package_name = module[0]
-
-    # ------------------------------------------------------------
-    # Do general substitutions first
-    # ------------------------------------------------------------
-    for key, value in config.items():
-        try:
-            # Compiled regular expression substitution
-            doc = key.sub(value, doc)
-        except AttributeError:
-            # String substitution
-            doc = doc.replace(key, value)
-    # --- End: for
-
-    # ------------------------------------------------------------
-    # Now do special substitutions
-    # ------------------------------------------------------------
-    # Insert the name of the package
-    doc = doc.replace('{{package}}', package_name)
-
-    # Insert the name of the class containing this method
-    doc = doc.replace('{{class}}', class_name)
-
-    # Insert the name of a different class
-    if '{{+' in doc:
-        if core:
-            func = _docstring_replacement_core_class
-        else:
-            func = _docstring_replacement_class
-
-        doc = _plus_class_regex.sub(func, doc)
-
-    # ----------------------------------------------------------------
-    # Set the rewritten docstring on the method
-    # ----------------------------------------------------------------
-    f.__doc__ = doc
-
-
 class RewriteDocstringMeta(type):
     '''Modify docstrings.
 
@@ -117,41 +32,84 @@ class RewriteDocstringMeta(type):
         '''
         # ------------------------------------------------------------
         # Combine the docstring substitutions from all classes in the
-        # inheritance tree.
-        #
-        # The value for a key that occurs in multiple classes will be
-        # taken from the class closest to the child class.
+        # inheritance tree. The value for a key that occurs in
+        # multiple classes will be taken from the class closest to the
+        # child class.
         # ------------------------------------------------------------
         docstring_rewrite = {}
+
         for parent in parents[::-1]:
             parent_docstring_rewrite = getattr(
-                parent, '_docstring_substitution', None)
+                parent, '_docstring_substitutions', None)
             if parent_docstring_rewrite is not None:
-                docstring_rewrite.update(parent_docstring_rewrite())
+                docstring_rewrite.update(parent_docstring_rewrite(parent))
             else:
                 parent_docstring_rewrite = getattr(
-                    parent, '__docstring_substitution__', None)
+                    parent, '__docstring_substitutions__', None)
                 if parent_docstring_rewrite is not None:
                     docstring_rewrite.update(parent_docstring_rewrite(None))
         # --- End: for
 
-        class_docstring_rewrite = attrs.get('__docstring_substitution__', None)
+        class_docstring_rewrite = attrs.get(
+            '__docstring_substitutions__', None)
         if class_docstring_rewrite is not None:
             docstring_rewrite.update(class_docstring_rewrite(None))
 
-        for key in docstring_rewrite:
-            if key in ('{{class}}', '{{package}}') or key.startswith('{{+'):
+        special = RewriteDocstringMeta._docstring_special_substitutions()
+        for key in special:
+            if key in docstring_rewrite:
                 raise ValueError(
                     "Can't use {!r} as a user-defined "
                     "docstring substitution.".format(key)
                 )
         # --- End: for
 
-        # List of methods that will be ignored
-        method_exclusions = attrs.get(
-            '_docstring_substitution_exclusions', ())
+        # ------------------------------------------------------------
+        # Find the package depth
+        # ------------------------------------------------------------
+        package_depth = 0
+        for parent in parents[::-1]:
+            parent_depth = getattr(
+                parent, '_docstring_package_depth', None)
+            if parent_depth is not None:
+                package_depth = parent_depth(parent)
+            else:
+                parent_depth = getattr(
+                    parent, '__docstring_package_depth__', None)
+                if parent_depth is not None:
+                    package_depth = parent_depth(None)
+        # --- End: for
 
-        module = attrs['__module__']
+        class_depth = attrs.get('__docstring_package_depth__', None)
+        if class_depth is not None:
+            package_depth = class_depth(None)
+
+        package_depth += 1
+
+        module = attrs['__module__'].split('.')
+        package_name = '.'.join(module[:package_depth])
+
+        # ------------------------------------------------------------
+        # Find which methods to exclude
+        # ------------------------------------------------------------
+        method_exclusions = []
+        for parent in parents[::-1]:
+            parent_exclusions = getattr(
+                parent, '_docstring_method_exclusions', None)
+            if parent_exclusions is not None:
+                method_exclusions.extend(parent_exclusions(parent))
+            else:
+                parent_exclusions = getattr(
+                    parent, '__docstring_method_exclusions__', None)
+                if parent_exclusions is not None:
+                    method_exclusions.extend(parent_exclusions(None))
+        # --- End: for
+
+        class_exclusions = attrs.get('__docstring_method_exclusions__', None)
+        if class_exclusions is not None:
+            method_exclusions.extend(class_exclusions(None))
+
+        method_exclusions = set(method_exclusions)
 
         for attr_name, attr in attrs.items():
 
@@ -174,8 +132,11 @@ class RewriteDocstringMeta(type):
                 # Note that here inspect.isroutine(attr) is False for
                 # @property methods (but this is not the case for
                 # properties in the parent classes).
-                _docstring_update(class_name, attr, attr_name, module,
-                                  docstring_rewrite)
+                RewriteDocstringMeta._docstring_update(package_name,
+                                                       class_name,
+                                                       attr,
+                                                       attr_name,
+                                                       docstring_rewrite)
                 continue
 
             # Still here?
@@ -207,8 +168,11 @@ class RewriteDocstringMeta(type):
                                f.__closure__)
 
             # Update docstring
-            _docstring_update(class_name, attr, attr_name, module,
-                              docstring_rewrite)
+            RewriteDocstringMeta._docstring_update(package_name,
+                                                   class_name,
+                                                   attr,
+                                                   attr_name,
+                                                   docstring_rewrite)
 
             # Redecorate
             if is_classmethod:
@@ -288,8 +252,11 @@ class RewriteDocstringMeta(type):
                     # --- End: if
 
                     # Update the docstring
-                    _docstring_update(class_name, attr, attr_name,
-                                      module, docstring_rewrite)
+                    RewriteDocstringMeta._docstring_update(package_name,
+                                                           class_name,
+                                                           attr,
+                                                           attr_name,
+                                                           docstring_rewrite)
 
                     # Register a classmethod
                     if is_classmethod:
@@ -326,17 +293,28 @@ class RewriteDocstringMeta(type):
         # Create the class
         return super().__new__(cls, class_name, parents, attrs)
 
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
     @classmethod
-    def _special_docstring_substitutions(cls):
+    def _docstring_special_substitutions(cls):
         '''Return the special docstring subtitutions.
 
     ``{{class}}`` is replaced by the name of the class.
 
-    ``{{package}}`` is replaced by the name of the module, i.e.
-    ``'.'.split({{class}}.__module__)[0]``
+    ``{{package}}`` is replaced by the name of the package, as defined
+    by the first N ``.`` separated fields of the class's
+    ``__module__`` attribute, where is N determined by
+    `_docstring_package_depth`.
 
-    ``re.compile('{{\+(\w.*?)}}')`` is replaced the name of the class
-    named by the pattern's group.
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `_docstring_package_depth`,
+                 `_docstring_method_exclusions`,
+                 `_docstring_substitutions`,
+                 `__docstring_substitutions__`,
+                 `__docstring_package_depth__`
+                 `__docstring_method_exclusions__`
 
     :Returns:
 
@@ -347,7 +325,207 @@ class RewriteDocstringMeta(type):
         return (
             '{{class}}',
             '{{package}}',
-            _plus_class_regex,
         )
+
+    @staticmethod
+    def _docstring_substitutions(cls):
+        '''Return the docstring substitutions that apply to methods of the
+    given class.
+
+    Text to be replaced is specified as a key in the returned
+    dictionary, with the replacement text defined by the corresponding
+    value.
+
+    Keys must be `str` or `re.Pattern` objects.
+
+    If a key is a `str` then the corresponding value must be a string.
+
+    If a key is a `re.Pattern` object then the corresponding value
+    must be a string or a callable, as accepted by the
+    `re.Pattern.sub` method.
+
+    Special docstring subtitutions, as defined by
+    `_docstring_special_substitutions`, are applied to replacement
+    text.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `_docstring_special_substitutions`,
+                 `_docstring_package_depth`,
+                 `_docstring_method_exclusions`,
+                 `__docstring_substitutions__`,
+                 `__docstring_package_depth__`
+                 `__docstring_method_exclusions__`
+
+    :Parameters:
+
+        cls: class
+            The class.
+
+    :Returns:
+
+        `dict`
+            The docstring substitutions. A dictionary key matches text
+            in the docstrings, with a corresponding value its
+            replacement.
+
+        '''
+        out = {}
+
+        for klass in cls.__bases__[::-1]:
+            d_s = getattr(klass, '_docstring_substitutions', None)
+            if d_s is not None:
+                out.update(d_s(klass))
+            else:
+                d_s = getattr(klass, '__docstring_substitutions__', None)
+                if d_s is not None:
+                    out.update(d_s(None))
+        # --- End: for
+
+        d_s = getattr(cls, '__docstring_substitutions__', None)
+        if d_s is not None:
+            out.update(d_s(None))
+
+        return out
+
+    @staticmethod
+    def _docstring_package_depth(cls):
+        '''Return the package depth, N, for {{package}} docstring
+    substitutions for the given class.
+
+    In docstrings, ``{{package}}`` is replaced by the name of the
+    package, as defined by the first N+1 ``.`` separated fields of the
+    class's ``__module__`` attribute.
+
+    N defaults to 0, but may be set to any non-negative integer, M, by
+    creating a ``__docstring_package_depth__`` method that returns M.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `_docstring_special_substitutions`,
+                 `_docstring_substitutions`,
+                 `_docstring_method_exclusions`,
+                 `__docstring_substitutions__`,
+                 `__docstring_package_depth__`,
+                 `__docstring_method_exclusions__`
+
+    :Parameters:
+
+        cls: class
+            The class.
+
+    :Returns:
+
+        `int`
+            The package depth.
+
+        '''
+        out = 0
+
+        for klass in cls.__bases__[::-1]:
+            d_s = getattr(klass, '_docstring_package_depth', None)
+            if d_s is not None:
+                out = d_s(klass)
+            else:
+                d_s = getattr(klass, '__docstring_package_depth__', None)
+                if d_s is not None:
+                    out = d_s(None)
+        # --- End: for
+
+        d_s = getattr(cls, '__docstring_package_depth__', None)
+        if d_s is not None:
+            out = d_s(None)
+
+        return out
+
+    @staticmethod
+    def _docstring_method_exclusions(cls):
+        '''Return the names of methods to exclude from docstring substitutions
+    for the given class.
+
+    Exclusions for a class may be defined by creating a
+    ``__docstring_method_exclusions__`` method that returns the
+    sequence of names of methods to be excluded. These exclusions will
+    also apply to any child classes.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `_docstring_special_substitutions`,
+                 `_docstring_substitutions`,
+                 `_docstring_package_depth`,
+                 `__docstring_substitutions__`,
+                 `__docstring_package_depth__`,
+                 `__docstring_method_exclusions__`
+
+    :Parameters:
+
+        cls: class
+            The class.
+
+    :Returns:
+
+        `set` of `str`
+            The methods to exclude from the docstring substutition
+            process.
+
+        '''
+        out = [
+            '_docstring_special_substitutions',
+            '_docstring_package_depth',
+        ]
+
+        for klass in cls.__bases__[::-1]:
+            d_s = getattr(klass, '_docstring_method_exclusions', None)
+            if d_s is not None:
+                out.extend(d_s(klass))
+            else:
+                d_s = getattr(klass, '__docstring_method_exclusions__', None)
+                if d_s is not None:
+                    out.extend(d_s(None))
+        # --- End: for
+
+        d_s = getattr(cls, '__docstring_method_exclusions__', None)
+        if d_s is not None:
+            out.extend(d_s(None))
+
+        return set(out)
+
+    @classmethod
+    def _docstring_update(cls, package_name, class_name, f,
+                          method_name, config):
+        '''Perform docstring substitutions on a method at time of import.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+        '''
+        doc = f.__doc__
+        if doc is None:
+            return
+
+        # ------------------------------------------------------------
+        # Do general substitutions first
+        # ------------------------------------------------------------
+        for key, value in config.items():
+            try:
+                # Compiled regular expression substitution
+                doc = key.sub(value, doc)
+            except AttributeError:
+                # String substitution
+                doc = doc.replace(key, value)
+        # --- End: for
+
+        # ------------------------------------------------------------
+        # Now do special substitutions
+        # ------------------------------------------------------------
+        # Insert the name of the package
+        doc = doc.replace('{{package}}', package_name)
+
+        # Insert the name of the class containing this method
+        doc = doc.replace('{{class}}', class_name)
+
+        # ----------------------------------------------------------------
+        # Set the rewritten docstring on the method
+        # ----------------------------------------------------------------
+        f.__doc__ = doc
 
 # --- End: class

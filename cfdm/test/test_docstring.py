@@ -133,7 +133,12 @@ class DocstringTest(unittest.TestCase):
         for klass in self.subclasses_of_Properties:
             string = '>>> f = {}.{}'.format(self.package, klass.__name__)
             for x in (klass, klass()):
-                self.assertIn(string, x.clear_properties.__doc__, klass)
+                self.assertIn(
+                    string, x.clear_properties.__doc__,
+                    "\n\nCLASS: {}\n"
+                    "METHOD NAME: {}\n"
+                    "METHOD: {}".format(
+                        klass, 'clear_properties', x.clear_properties))
 
         for klass in self.subclasses_of_Container:
             string = klass.__name__
@@ -149,12 +154,6 @@ class DocstringTest(unittest.TestCase):
                     "METHOD NAME: {}\n"
                     "METHOD: {}".format(
                         klass, klass.__name__, 'insert_dimension'))
-
-    def test_docstring_plus_class(self):
-        string = '>>> d = {}.{}'.format(self.package, 'Data')
-        for klass in self.subclasses_of_PropertiesData:
-            for x in (klass, klass()):
-                self.assertIn(string, x.has_data.__doc__, klass)
 
     def test_docstring_repr(self):
         string = '<{}Data'.format(self.repr)
@@ -186,10 +185,10 @@ class DocstringTest(unittest.TestCase):
                     (1, 2)
                 )
 
-    def test_docstring_docstring_substitution(self):
+    def test_docstring_docstring_substitutions(self):
         for klass in self.subclasses_of_Container:
-            for x in (klass, klass()):
-                d = x._docstring_substitution()
+            for x in (klass,):
+                d = x._docstring_substitutions(klass)
                 self.assertIsInstance(d, dict)
                 self.assertIn('{{repr}}', d)
 

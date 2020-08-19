@@ -174,7 +174,7 @@ class Data(mixin.Container,
     <type 'numpy.ndarray'>
     >>> a[0] = -99
     >>> d
-    <{{repr}}Data(3): [1, 2, 3]>
+    <{{repr}}{{class}}(3): [1, 2, 3]>
     >>> b = numpy.array(d, float)
     >>> print(b)
     [ 1.  2.  3.]

@@ -46,7 +46,7 @@ class CellMeasure(abstract.PropertiesData):
             *Parameter example:*
               ``properties={'units': 'metres 2'}``
 
-        {{init data: `{{+Data}}`, optional}}
+        {{init data: `Data`, optional}}
 
         source: optional
             Initialise the *measure*, *properties* and *data*

@@ -38,7 +38,7 @@ class List(mixin.NetCDFVariable,
             *Parameter example:*
               ``properties={'long_name': 'uncompression indices'}``
 
-        {{init data: `{{+Data}}`, optional}}
+        {{init data: `Data`, optional}}
 
         source: optional
             Initialize the properties and data from those of *source*.

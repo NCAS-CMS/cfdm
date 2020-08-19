@@ -12,6 +12,14 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
     .. versionadded:: (cfdm) 1.7.0
 
     '''
+    def __docstring_package_depth__(self):
+        '''Return the package depth for {{package}} docstring substitutions.
+
+    See `_docstring_package_depth` for details.
+
+        '''
+        return 1
+
     def del_construct(self, key, default=ValueError()):
         '''Remove a metadata construct.
 

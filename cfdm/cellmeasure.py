@@ -67,7 +67,7 @@ class CellMeasure(mixin.NetCDFVariable,
            *Parameter example:*
              ``properties={'standard_name': 'cell_area'}``
 
-        {{init data: `{{+Data}}`, optional}}
+        {{init data: `Data`, optional}}
 
         source: optional
             Initialize the measure, properties and data from those of

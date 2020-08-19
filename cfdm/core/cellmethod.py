@@ -523,7 +523,7 @@ class CellMethod(abstract.Container):
     **Examples:**
 
     >>> c.qualifiers()
-    {'interval': [<{{repr}}{{+Data}}(): 0.1 degrees>],
+    {'interval': [<{{repr}}Data(): 0.1 degrees>],
      'where': 'land'}
 
     >>> f.qualifiers()

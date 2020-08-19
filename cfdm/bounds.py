@@ -54,7 +54,7 @@ class Bounds(mixin.NetCDFVariable,
               *Parameter example:*
                  ``properties={'standard_name': 'grid_latitude'}``
 
-        {{init data: `{{+Data}}`, optional}}
+        {{init data: `Data`, optional}}
 
         source: optional
             Initialize the properties and data from those of *source*.

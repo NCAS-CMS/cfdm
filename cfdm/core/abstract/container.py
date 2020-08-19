@@ -14,6 +14,9 @@ class Container(metaclass=RewriteDocstringMeta):
     .. versionadded:: (cfdm) 1.7.0
 
     '''
+#    # Set the package depth for {{package}} docstring substitutions
+#    _docstring_package_depth = 1
+
     def __init__(self, source=None, copy=True):
         '''**Initialisation**
 
@@ -47,33 +50,16 @@ class Container(metaclass=RewriteDocstringMeta):
         '''
         return self.copy()
 
-    def __docstring_substitution__(self):
+    def __docstring_substitutions__(self):
         '''Define docstring substitutions that apply to this class and all of
     its subclasses.
 
     These are in addtion to, and take precendence over, docstring
     substitutions defined by the base classes of this class.
 
-    Text to be replaced is specified as a key in the returned
-    dictionary, with the replacement text defined by the corresponding
-    value.
-
-    Keys must be `str` or `re.Pattern` objects.
-
-    If a key is a `str` then the corresponding value must be a string.
-
-    If a key is a `re.Pattern` object then the corresponding value
-    must be a string or a callable, as accepted by the
-    `re.Pattern.sub` method.
-
-    Special docstring subtitutions, as defined by
-    `_special_docstring_substitutions`, may be used in the replacement
-    text, and will be substituted as ususal.
+    See `_docstring_substitutions` for details.
 
     .. versionaddedd:: (cfdm) 1.8.7.0
-
-    .. seealso:: `_docstring_substitution`,
-                 `_special_docstring_substitutions`
 
     :Returns:
 
@@ -82,6 +68,14 @@ class Container(metaclass=RewriteDocstringMeta):
 
         '''
         return _docstring_substitution_definitions
+
+    def __docstring_package_depth__(self):
+        '''Return the package depth for {{package}} docstring substitutions.
+
+    See `_docstring_package_depth` for details.
+
+        '''
+        return 1
 
     # ----------------------------------------------------------------
     # Private methods
@@ -308,42 +302,6 @@ class Container(metaclass=RewriteDocstringMeta):
             value = deepcopy(value)
 
         self._components[component] = value
-
-    @classmethod
-    def _docstring_substitution(cls):
-        '''Return the docstring substitutions that apply to methods of this
-    class.
-
-    .. versionadded:: (cfdm) 1.8.7.0
-
-    .. seealso:: `_special_docstring_substitutions`,
-                 `__docstring_substitution__`
-
-    :Returns:
-
-        `dict`
-            The docstring substitutions. A dictionary key matches text
-            in the docstrings, with a corresponding value its
-            replacement.
-
-        '''
-        d = {}
-        for klass in cls.__bases__[::-1]:
-            d_s = getattr(klass, '_docstring_substitution', None)
-            if d_s is not None:
-                d.update(d_s())
-            else:
-                d_s = getattr(klass, '__docstring_substitution__', None)
-                if d_s is not None:
-
-                    d.update(d_s(None))
-        # --- End: for
-
-        d_s = getattr(cls, '__docstring_substitution__', None)
-        if d_s is not None:
-            d.update(d_s(None))
-
-        return d
 
     # ----------------------------------------------------------------
     # Methods

@@ -86,7 +86,7 @@ class Domain(mixin.ConstructAccess,
 
     :Returns:
 
-        `{{+Constructs}}`
+        `Constructs`
             The constructs.
 
     **Examples:**
@@ -139,13 +139,13 @@ class Domain(mixin.ConstructAccess,
 
     The new domain act as a view to the given constructs, i.e. changes
     to the domain, such as the addition or removal of a construct,
-    will also affect the input `{{+Constructs}}` instance.
+    will also affect the input `Constructs` instance.
 
     .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
-        constructs: `{{+Constructs}}`
+        constructs: `Constructs`
             The constructs from which to create the new domain. Cell
             method and field ancillary constucts are ignored.
 

@@ -358,7 +358,7 @@ class CompressedArray(Array):
 
     :Returns:
 
-        subclass of `{{+Array}}`
+        subclass of `Array`
             The underlying array object.
 
     **Examples:**

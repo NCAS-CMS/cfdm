@@ -57,13 +57,13 @@ class DimensionCoordinate(mixin.NetCDFVariable,
            *Parameter example:*
               ``properties={'standard_name': 'time'}``
 
-        {{init data: `{{+Data}}`, optional}}
+        {{init data: `Data`, optional}}
 
-        {{init bounds: `{{+Bounds}}`, optional}}
+        {{init bounds: `Bounds`, optional}}
 
         {{init geometry: `str`, optional}}
 
-        {{init interior_ring: `{{+InteriorRing}}`, optional}}
+        {{init interior_ring: `InteriorRing`, optional}}
 
         source: optional
             Initialize the properties, data and bounds from those of

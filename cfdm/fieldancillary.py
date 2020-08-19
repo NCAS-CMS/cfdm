@@ -51,7 +51,7 @@ class FieldAncillary(mixin.NetCDFVariable,
            *Parameter example:*
               ``properties={'standard_name': 'altitude'}``
 
-        {{init data: `{{+Data}}`, optional}}
+        {{init data: `Data`, optional}}
 
         source: optional
             Initialize the properties and data from those of *source*.

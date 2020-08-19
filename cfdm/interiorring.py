@@ -53,7 +53,7 @@ class InteriorRing(mixin.NetCDFDimension,
               ``properties={'long_name': 'which station this obs is
               for'}``
 
-        {{init data: `{{+Data}}`, optional}}
+        {{init data: `Data`, optional}}
 
         source: optional
             Initialize the properties and data from those of *source*.

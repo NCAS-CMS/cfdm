@@ -2,6 +2,9 @@ import numpy
 
 from .. import abstract
 
+from .abstract import Array
+from .numpyarray import NumpyArray
+
 
 class Data(abstract.Container):
     '''An orthogonal multidimensional array with masked values and units.
@@ -129,7 +132,7 @@ class Data(abstract.Container):
     >>> print(n)
     [ 1.,   2.,   3.]
     >>> n[0] = 88
-    >>> print(repr(d))
+    >>> d
     <{{repr}}{{class}}: [1.0, 2.0, 3.0] km>
 
         '''
@@ -699,7 +702,7 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        array: subclass of `Array`
+        array: numpy array-like or subclass of `Array`, optional
             The array to be inserted.
 
     :Returns:
@@ -711,6 +714,12 @@ class Data(abstract.Container):
     >>> d._set_Array(a)
 
         '''
+        if not isinstance(array, Array):
+            if not isinstance(array, numpy.ndarray):
+                array = numpy.asanyarray(array)
+
+            array = NumpyArray(array)
+
         if copy:
             array = array.copy()
 
@@ -808,7 +817,7 @@ class Data(abstract.Container):
     >>> f = {{package}}.read('file.nc')[0]
     >>> d = f.data
     >>> d.source()
-    <{{repr}}{{+NetCDFArray}}(149, 182): file=file.nc variable=latitude>
+    <{{repr}}NetCDFArray(149, 182): file=file.nc variable=latitude>
 
         '''
         return self._get_component('array', default=default)
