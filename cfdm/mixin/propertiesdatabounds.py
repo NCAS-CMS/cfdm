@@ -305,7 +305,7 @@ class PropertiesDataBounds(PropertiesData):
     >>> f.size
     7008
 
-    >>>  f.shape
+    >>> f.shape
     (73,)
     >>> f.ndim
     1
