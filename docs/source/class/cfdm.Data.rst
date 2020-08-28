@@ -231,6 +231,8 @@ Order statistics
 
    ~cfdm.Data.maximum
    ~cfdm.Data.minimum
+   ~cfdm.Data.max
+   ~cfdm.Data.min
 
 Sums
 ^^^^
