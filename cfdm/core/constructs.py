@@ -1,11 +1,13 @@
 from collections import OrderedDict
 from copy import copy
 
+from . import abstract
 
-class Constructs(object):
+
+class Constructs(abstract.Container):
     '''A container for metadata constucts.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self,
@@ -231,7 +233,7 @@ class Constructs(object):
 
     x.__contains__(y) <==> y in x
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return key in self._construct_type
@@ -239,7 +241,7 @@ class Constructs(object):
     def __copy__(self):
         '''Called by the `copy.copy` standard library function.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return self.shallow_copy()
@@ -247,7 +249,7 @@ class Constructs(object):
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` standard library function.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return self.copy()
@@ -257,7 +259,7 @@ class Constructs(object):
 
     x.__getitem__(y) <==> x[y]
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         construct_type = self.construct_type(key)  # ignore??
@@ -275,7 +277,7 @@ class Constructs(object):
 
     x.__iter__() <==> iter(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return iter(self._dictionary().keys())
@@ -285,7 +287,7 @@ class Constructs(object):
 
     x.__len__() <==> len(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return len(self._dictionary())
@@ -296,7 +298,7 @@ class Constructs(object):
     def _default(self, default, message=None):
         '''Return a value or raise an Exception for a default case.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -317,7 +319,7 @@ class Constructs(object):
     >>> f = cfdm.example_field(0)
     >>> c = f.get_construct('cellmethod0')
     >>> c
-    <CellMethod: area: mean>
+    <{{repr}}CellMethod: area: mean>
 
     >>> c._default(AttributeError())  # Raises Exception
     AttributeError
@@ -404,7 +406,7 @@ class Constructs(object):
     def _check_construct_type(self, construct_type, default=ValueError()):
         '''Check the type of a metadata construct is valid.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -470,7 +472,7 @@ class Constructs(object):
     referenced by coordinate reference construct. In this case the
     reference is replace with `None`.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_get_construct`, `_set_construct`
 
@@ -552,7 +554,7 @@ class Constructs(object):
                        copy=True):
         '''Set a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_del_construct`, `_get_construct`,
                  `_set_construct_data_axes`
@@ -645,7 +647,7 @@ class Constructs(object):
     def _set_construct_data_axes(self, key, axes, construct=None):
         '''Set domain axis constructs for construct identifiers.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -742,7 +744,7 @@ class Constructs(object):
     def get(self, key, *default):
         '''Return the construct for construct key, if it exists, else default.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `items`, `keys`, `values`
 
@@ -752,7 +754,7 @@ class Constructs(object):
     def items(self):
         '''Return the items as (construct key, construct) pairs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `keys`, `values`
 
@@ -762,7 +764,7 @@ class Constructs(object):
     def keys(self):
         '''Return all of the construct keys, in arbitrary order.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `items`, `values`
 
@@ -772,7 +774,7 @@ class Constructs(object):
     def values(self):
         '''Return all of the metadata constructs, in arbitrary order.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `items`, `keys`
 
@@ -794,7 +796,7 @@ class Constructs(object):
     def value(self, default=ValueError()):
         '''Return the sole metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `key`, `values`
 
@@ -813,11 +815,11 @@ class Constructs(object):
 
     >>> print(c)
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
     >>> c.key(
     'dimensioncoordinate0'
     >>> c.value()
-    <DimensionCoordinate: latitude(5) degrees_north>
+    <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
 
         '''
         if not self:
@@ -834,7 +836,7 @@ class Constructs(object):
     def key(self, default=ValueError()):
         '''Return the construct key of the sole metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `keys`, `value`
 
@@ -854,11 +856,11 @@ class Constructs(object):
 
     >>> print(c)
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
     >>> c.key(
     'dimensioncoordinate0'
     >>> c.value()
-    <DimensionCoordinate: latitude(5) degrees_north>
+    <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
 
         '''
         if not self:
@@ -876,7 +878,7 @@ class Constructs(object):
         '''Return the domain axis constructs spanned by metadata construct
     data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -889,13 +891,13 @@ class Constructs(object):
 
     >>> print(c)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
     >>> c.data_axes()
     {'dimensioncoordinate0': ('domainaxis0',),
      'dimensioncoordinate1': ('domainaxis1',),
@@ -922,7 +924,7 @@ class Constructs(object):
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -932,6 +934,7 @@ class Constructs(object):
 
     :Returns:
 
+        `{{class}}`
             The deep copy.
 
     **Examples:**
@@ -946,7 +949,7 @@ class Constructs(object):
     def new_identifier(self, construct_type):
         '''Return a new, unsed construct key.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -1018,7 +1021,7 @@ class Constructs(object):
     For cell method constructs, the predetermined order is that in
     which they where added.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -1030,11 +1033,11 @@ class Constructs(object):
 
     >>> print(c)
     onstructs:
-    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean>,
-     'cellmethod1': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
     >>> c.ordered()
-    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean>),
-                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+    OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean>),
+                 ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         '''
         if len(self._constructs) > 1:
@@ -1050,7 +1053,7 @@ class Constructs(object):
     def filter_by_type(self, *types):
         '''Select metadata constructs by type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -1107,7 +1110,7 @@ class Constructs(object):
 
     ``f.shallow_copy()`` is equivalent to ``copy.copy(f)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -1135,11 +1138,11 @@ class Constructs(object):
     :Returns:
 
         `Constructs`
-            <TODO>
+            TODO
 
     **Examples:**
 
-    <TODO>
+    TODO
 
         '''
         return type(self)(source=self, _view=True, _ignore=ignore)

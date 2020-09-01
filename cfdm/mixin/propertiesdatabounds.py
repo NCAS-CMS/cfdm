@@ -21,7 +21,7 @@ class PropertiesDataBounds(PropertiesData):
     '''Mixin class for a data array with descriptive properties and cell
     bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, bounds=None,
@@ -149,6 +149,7 @@ class PropertiesDataBounds(PropertiesData):
 
     :Returns:
 
+        `{{class}}`
             The subspace of the construct.
 
     **Examples:**
@@ -214,7 +215,7 @@ class PropertiesDataBounds(PropertiesData):
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         name = self.identity('')
@@ -474,17 +475,17 @@ class PropertiesDataBounds(PropertiesData):
               ``valid_max``, and ``valid_range`` properties have not
               been updated.
 
-    .. versionadded:: 1.8.2
+    .. versionadded:: (cfdm) 1.8.2
 
     .. seealso:: `Data.apply_masking`, `read`, `write`
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             A new instance with masked values, or `None` if the
             operation was in-place.
 
@@ -535,31 +536,29 @@ class PropertiesDataBounds(PropertiesData):
     def del_node_count(self, default=ValueError()):
         '''Remove the node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `get_node_count`, `has_node_count`, `set_node_count`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the node
-            count variable has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `NodeCount`
             The removed node count variable.
 
     **Examples:**
 
-    >>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+    >>> n = {{package}}.NodeCount(properties={'long_name': 'node counts'})
     >>> c.set_node_count(n)
     >>> c.has_node_count()
     True
     >>> c.get_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.del_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.has_node_count()
     False
 
@@ -575,32 +574,30 @@ class PropertiesDataBounds(PropertiesData):
     def del_part_node_count(self, default=ValueError()):
         '''Remove the part node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `get_part_node_count`, `has_part_node_count`,
                  `set_part_node_count`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the part
-            node count variable has not been set. If set to an
-            `Exception` instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
-            The removed part_node count variable.
+        `PartNodeCount`
+            The removed part node count variable.
 
     **Examples:**
 
-    >>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+    >>> p = {{package}}.PartNodeCount(properties={'long_name': 'part node counts'})
     >>> c.set_part_node_count(p)
     >>> c.has_part_node_count()
     True
     >>> c.get_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.del_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.has_part_node_count()
     False
 
@@ -626,9 +623,7 @@ class PropertiesDataBounds(PropertiesData):
 
     :Returns:
 
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         # ------------------------------------------------------------
@@ -709,25 +704,13 @@ class PropertiesDataBounds(PropertiesData):
       data type, the same missing data mask, and be element-wise equal
       (see the *ignore_properties* and *ignore_data_type* parameters).
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
-    If data arrays are compressed then the compression type and the
-    underlying compressed arrays must be the same, as well as the
-    arrays in their uncompressed forms. See the *ignore_compression*
-    parameter.
+    {{equals compression}}
 
-    Any compression is ignored by default, with only the arrays in
-    their uncompressed forms being compared. See the
-    *ignore_compression* parameter.
+    {{equals netCDF}}
 
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked.
-
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -735,65 +718,21 @@ class PropertiesDataBounds(PropertiesData):
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: number, optional}}
 
-        ignore_fill_value: `bool`, optional
-            If True then the ``_FillValue`` and ``missing_value``
-            properties are omitted from the comparison.
+        {{ignore_fill_value: `bool`, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+        {{verbose: `int` or `str` or `None`, optional}}
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
+        {{ignore_properties: sequence of `str`, optional}}
 
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
+        {{ignore_data_type: `bool`, optional}}
 
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
+        {{ignore_compression: `bool`, optional}}
 
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
-        ignore_properties: sequence of `str`, optional
-            The names of properties to omit from the comparison.
-
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
-
-        ignore_compression: `bool`, optional
-            If False then the compression type and, if applicable, the
-            underlying compressed arrays must be the same, as well as
-            the arrays in their uncompressed forms. By default only
-            the the arrays in their uncompressed forms are compared.
-
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another object of the same type, or
-            a subclass of one. If *ignore_type* is True then equality
-            is possible for any object with a compatible API.
+        {{ignore_type: `bool`, optional}}
 
     :Returns:
 
@@ -908,31 +847,29 @@ class PropertiesDataBounds(PropertiesData):
     def get_node_count(self, default=ValueError()):
         '''Return the node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: del_node_count`, `has_node_count`, `set_node_count`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if a node
-            count variable has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `NodeCount`
             The node count variable.
 
     **Examples:**
 
-    >>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+    >>> n = {{package}}.NodeCount(properties={'long_name': 'node counts'})
     >>> c.set_node_count(n)
     >>> c.has_node_count()
     True
     >>> c.get_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.del_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.has_node_count()
     False
 
@@ -948,32 +885,30 @@ class PropertiesDataBounds(PropertiesData):
     def get_part_node_count(self, default=ValueError()):
         '''Return the part node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_part_node_count`, `get_node_count`,
                  `has_part_node_count`, `set_part_node_count`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the part
-            node count variable has not been set. If set to an
-            `Exception` instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `PartNodeCount`
             The part node count variable.
 
     **Examples:**
 
-    >>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+    >>> p = {{package}}.PartNodeCount(properties={'long_name': 'part node counts'})
     >>> c.set_part_node_count(p)
     >>> c.has_part_node_count()
     True
     >>> c.get_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.del_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.has_part_node_count()
     False
 
@@ -989,7 +924,7 @@ class PropertiesDataBounds(PropertiesData):
     def has_node_count(self):
         '''Whether or not there is a node count variable for geometry bounds..
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_node_count`, `get_node_count`, `set_node_count`
 
@@ -1001,14 +936,14 @@ class PropertiesDataBounds(PropertiesData):
     **Examples:**
 
 
-    >>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+    >>> n = {{package}}.NodeCount(properties={'long_name': 'node counts'})
     >>> c.set_node_count(n)
     >>> c.has_node_count()
     True
     >>> c.get_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.del_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.has_node_count()
     False
 
@@ -1019,7 +954,7 @@ class PropertiesDataBounds(PropertiesData):
         '''Whether or not there is a part node count variable for geometry
     bounds..
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_part_node_count`, `get_part_node_count`,
                  `set_part_node_count`
@@ -1032,14 +967,14 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    >>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+    >>> p = {{package}}.PartNodeCount(properties={'long_name': 'part node counts'})
     >>> c.set_part_node_count(p)
     >>> c.has_part_node_count()
     True
     >>> c.get_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.del_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.has_part_node_count()
     False
 
@@ -1057,7 +992,7 @@ class PropertiesDataBounds(PropertiesData):
     * The netCDF variable name, preceeded by ``'ncvar%'``.
     * The identities of the bounds, if any.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 
@@ -1112,7 +1047,7 @@ class PropertiesDataBounds(PropertiesData):
     6. The identity of the bounds, if any.
     7. The value of the *default* parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -1176,33 +1111,31 @@ class PropertiesDataBounds(PropertiesData):
     def get_bounds(self, default=ValueError()):
         '''Return the bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `bounds`, `get_data`, `del_bounds`, `has_bounds`,
                  `set_bounds`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if bounds have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `Bounds`
             The bounds.
 
     **Examples:**
 
-    >>> b = cfdm.Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
+    >>> b = {{package}}.Bounds(data={{package}}.Data(range(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -1225,25 +1158,23 @@ class PropertiesDataBounds(PropertiesData):
     def get_bounds_data(self, default=ValueError()):
         '''Return the bounds data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `bounds`, `get_bounds`, `get_data`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if there are
-            no bounds data. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `Data`
             The bounds data.
 
     **Examples:**
 
     >>> c.get_bounds_data()
-    <Data(96, 2): [[0, ..., 360.0]] degrees_east>
+    <{{repr}}Data(96, 2): [[0, ..., 360.0]] degrees_east>
 
         '''
         bounds = self.get_bounds(default=None)
@@ -1259,7 +1190,7 @@ class PropertiesDataBounds(PropertiesData):
     Inserts a new size 1 axis into the data array. A corresponding
     axis is also inserted into the bounds data array, if present.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `squeeze`, `transpose`
 
@@ -1277,11 +1208,11 @@ class PropertiesDataBounds(PropertiesData):
             *Parameter example:*
               ``position=-1``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The new construct with expanded data axes. If the
             operation was in-place then `None` is returned.
 
@@ -1333,7 +1264,7 @@ class PropertiesDataBounds(PropertiesData):
     def set_node_count(self, node_count, copy=True):
         '''Set the node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_node_count`, `get_node_count`, `has_node_count`
 
@@ -1357,9 +1288,9 @@ class PropertiesDataBounds(PropertiesData):
     >>> c.has_node_count()
     True
     >>> c.get_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.del_node_count()
-    <NodeCount: long_name=node counts>
+    <{{repr}}NodeCount: long_name=node counts>
     >>> c.has_node_count()
     False
 
@@ -1372,7 +1303,7 @@ class PropertiesDataBounds(PropertiesData):
     def set_part_node_count(self, part_node_count, copy=True):
         '''Set the part node count variable for geometry bounds.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_part_node_count`, `get_part_node_count`,
                  `has_part_node_count`
@@ -1397,9 +1328,9 @@ class PropertiesDataBounds(PropertiesData):
     >>> c.has_part_node_count()
     True
     >>> c.get_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.del_part_node_count()
-    <PartNodeCount: long_name=part node counts>
+    <{{repr}}PartNodeCount: long_name=part node counts>
     >>> c.has_part_node_count()
     False
 
@@ -1417,7 +1348,7 @@ class PropertiesDataBounds(PropertiesData):
     axes may be selected for removal. Corresponding axes are also
     removed from the bounds data array, if present.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `insert_dimension`, `transpose`
 
@@ -1438,11 +1369,11 @@ class PropertiesDataBounds(PropertiesData):
             *Parameter example:*
               ``axes=[2, 0]``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The new construct with removed data axes. If the operation
             was in-place then `None` is returned.
 
@@ -1514,11 +1445,11 @@ class PropertiesDataBounds(PropertiesData):
             *Parameter example:*
               ``axes=[-1, 0, 1]``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The new construct with permuted data axes. If the
             operation was in-place then `None` is returned.
 
@@ -1605,15 +1536,15 @@ class PropertiesDataBounds(PropertiesData):
 
         * Compression by gathering.
 
-    .. versionadded:: 1.7.11
+    .. versionadded:: (cfdm) 1.7.11
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The uncompressed construct, or `None` if the operation was
             in-place.
 

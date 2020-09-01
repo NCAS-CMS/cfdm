@@ -31,14 +31,14 @@ class DimensionCoordinate(abstract.Coordinate):
     interpreted in a special way indicated by the cell method
     constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     @property
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -59,7 +59,7 @@ class DimensionCoordinate(abstract.Coordinate):
     The units, calendar and fill value of the incoming `Data` instance
     are removed prior to insertion.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data`, `get_data`, `has_data`
 
@@ -79,14 +79,14 @@ class DimensionCoordinate(abstract.Coordinate):
 
     **Examples:**
 
-    >>> d = Data(range(10))
+    >>> d = {{package}}.Data(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))

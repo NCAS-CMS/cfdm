@@ -43,7 +43,7 @@ class CellMeasure(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, measure=None, properties=None, data=None,
@@ -62,31 +62,18 @@ class CellMeasure(mixin.NetCDFVariable,
             *Parameter example:*
               ``measure='area'``
 
-        properties: `dict`, optional
-           Set descriptive properties. The dictionary keys are
-           property names, with corresponding values. Ignored if the
-           *source* parameter is set.
-
-           Properties may also be set after initialisation with the
-           `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
            *Parameter example:*
              ``properties={'standard_name': 'cell_area'}``
 
-        data: `Data`, optional
-            Set the data array. Ignored if the *source* parameter is
-            set.
-
-            The data array may also be set after initialisation with
-            the `set_data` method.
+        {{init data: `Data`, optional}}
 
         source: optional
             Initialize the measure, properties and data from those of
             *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(measure=measure, properties=properties,
@@ -102,7 +89,7 @@ class CellMeasure(mixin.NetCDFVariable,
     Returns a description of all properties, including those of
     components, and provides selected values of all data arrays.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -112,10 +99,7 @@ class CellMeasure(mixin.NetCDFVariable,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         if _title is None:
@@ -157,88 +141,39 @@ class CellMeasure(mixin.NetCDFVariable,
       type, the same missing data mask, and be element-wise equal (see the
       *ignore_data_type* parameter).
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences) are
-    positive, typically very small numbers. See the *atol* and *rtol*
-    parameters.
+    {{equals tolerance}}
 
-    Any compression is ignored by default, with only the arrays in
-    their uncompressed forms being compared. See the
-    *ignore_compression* parameter.
+    {{equals compression}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another cell measure construct, or a subclass of
     one. See the *ignore_type* parameter.
 
-    NetCDF elements, such as netCDF variable and dimension names, do not
-    constitute part of the CF data model and so are not checked.
+    {{equals netCDF}}
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol` function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol` function.
+        {{rtol: number, optional}}
 
-        ignore_fill_value: `bool`, optional
-            If True then the ``_FillValue`` and ``missing_value``
-            properties are omitted from the comparison.
+        {{ignore_fill_value: `bool`, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
+        {{verbose: `int` or `str` or `None`, optional}}
 
         ignore_properties: sequence of `str`, optional
             The names of properties to omit from the comparison.
 
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types imply
-            inequality, regardless of whether the elements are within the
-            tolerance for equality.
+        {{ignore_data_type: `bool`, optional}}
 
-        ignore_compression: `bool`, optional
-            If False then the compression type and, if applicable, the
-            underlying compressed arrays must be the same, as well as
-            the arrays in their uncompressed forms. By default only
-            the arrays in their uncompressed forms are compared.
+        {{ignore_compression: `bool`, optional}}
 
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality is
-            only possible with another cell measure construct, or a
-            subclass of one. If *ignore_type* is True then
-            ``CellMeasure(source=other)`` is tested, rather than the
-            ``other`` defined by the *other* parameter.
+        {{ignore_type: `bool`, optional}}
 
     :Returns:
 
@@ -295,7 +230,7 @@ class CellMeasure(mixin.NetCDFVariable,
     * The netCDF variable name, preceeded by 'ncvar%'.
     * The value of the default parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -363,38 +298,38 @@ class CellMeasure(mixin.NetCDFVariable,
     def identities(self):
         '''Return all possible identities.
 
-The identities comprise:
+    The identities comprise:
 
-* The measure property, preceeded by ``'measure:'``.
-* The ``standard_name`` property.
-* All properties, preceeded by the property name and a colon,
-  e.g. ``'long_name:Air temperature'``.
-* The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The measure property, preceeded by ``'measure:'``.
+    * The ``standard_name`` property.
+    * All properties, preceeded by the property name and a colon,
+      e.g. ``'long_name:Air temperature'``.
+    * The netCDF variable name, preceeded by ``'ncvar%'``.
 
-.. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
-.. seealso:: `identity`
+    .. seealso:: `identity`
 
-:Returns:
+    :Returns:
 
-    `list`
-        The identities.
+        `list`
+            The identities.
 
-**Examples:**
+    **Examples:**
 
->>> f.properties()
-{'foo': 'bar',
- 'long_name': 'Area of cells',
- 'standard_name': 'cell_area'}
->>> f.nc_get_variable()
-'areacello'
->>> f.identities()
-['measure:area',
- 'cell_area',
- 'long_name=Area of cells',
- 'foo=bar',
- 'standard_name=cell_area',
- 'ncvar%areacello']
+    >>> f.properties()
+    {'foo': 'bar',
+     'long_name': 'Area of cells',
+     'standard_name': 'cell_area'}
+    >>> f.nc_get_variable()
+    'areacello'
+    >>> f.identities()
+    ['measure:area',
+     'cell_area',
+     'long_name=Area of cells',
+     'foo=bar',
+     'standard_name=cell_area',
+     'ncvar%areacello']
 
         '''
         out = super().identities()

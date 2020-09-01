@@ -2,11 +2,14 @@ import numpy
 
 from .. import abstract
 
+from .abstract import Array
+from .numpyarray import NumpyArray
+
 
 class Data(abstract.Container):
     '''An orthogonal multidimensional array with masked values and units.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, array=None, units=None, calendar=None,
@@ -65,9 +68,7 @@ class Data(abstract.Container):
             Initialize the array, units, calendar and fill value from
             those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(source=source)
@@ -124,15 +125,15 @@ class Data(abstract.Container):
 
     **Examples:**
 
-    >>> d = Data([1, 2, 3.0], 'km')
+    >>> d = {{package}}.{{class}}([1, 2, 3.0], 'km')
     >>> n = d.array
     >>> isinstance(n, numpy.ndarray)
     True
     >>> print(n)
     [ 1.,   2.,   3.]
     >>> n[0] = 88
-    >>> print(repr(d))
-    <Data: [1.0, 2.0, 3.0] km>
+    >>> d
+    <{{repr}}{{class}}: [1.0, 2.0, 3.0] km>
 
         '''
         array = self._get_Array().array
@@ -272,7 +273,7 @@ class Data(abstract.Container):
 
     :Returns:
 
-        `Data`
+        `{{class}}`
             The deep copy.
 
     **Examples:**
@@ -305,13 +306,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the
-            calendar has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `str`
             The value of the deleted calendar.
 
     **Examples:**
@@ -346,10 +345,7 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the fill
-            value has not been set. If set to an `Exception` instance
-            then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -391,13 +387,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the units
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `str`
             The value of the deleted units.
 
     **Examples:**
@@ -433,13 +427,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the
-            calendar has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `str`
             The calendar.
 
     **Examples:**
@@ -470,12 +462,11 @@ class Data(abstract.Container):
     def _get_Array(self, default=ValueError()):
         '''Return the array object.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the array
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -496,14 +487,13 @@ class Data(abstract.Container):
     def get_fill_value(self, default=ValueError()):
         '''Return the missing data value.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     .. seealso:: `del_fill_value`, `has_fill_value`, `set_fill_value`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the fill
-            value has not been set. If set to an `Exception` instance
-            then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -545,13 +535,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the units
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `str`
             The units.
 
     **Examples:**
@@ -714,7 +702,7 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        array: subclass of `Array`
+        array: numpy array-like or subclass of `Array`, optional
             The array to be inserted.
 
     :Returns:
@@ -726,6 +714,12 @@ class Data(abstract.Container):
     >>> d._set_Array(a)
 
         '''
+        if not isinstance(array, Array):
+            if not isinstance(array, numpy.ndarray):
+                array = numpy.asanyarray(array)
+
+            array = NumpyArray(array)
+
         if copy:
             array = array.copy()
 
@@ -811,10 +805,7 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the array
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -823,10 +814,10 @@ class Data(abstract.Container):
 
     **Examples:**
 
-    >>> f = cfdm.read('file.nc')[0]
+    >>> f = {{package}}.read('file.nc')[0]
     >>> d = f.data
     >>> d.source()
-    <NetCDFArray(149, 182): file=file.nc variable=latitude>
+    <{{repr}}NetCDFArray(149, 182): file=file.nc variable=latitude>
 
         '''
         return self._get_component('array', default=default)

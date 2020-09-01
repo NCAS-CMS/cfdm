@@ -216,6 +216,17 @@ subclassed, and a new write-to-disk function defined, to override
 aspects of the mapping from CF data model constructs to netCDF
 elements in a dataset.
 
+Documentation
+^^^^^^^^^^^^^
+
+The cfdm package uses a "docstring rewriter" that allows commonly used
+parts of method docstrings to written in one location and then
+inserted into each class at import time. In addition, parts of a
+docstring are modofied to reflect the approriate package and class
+names. This functionality extends to subclasses of cfdm classes. New
+docstring substitutions may also be defined for the subclasses.
+
+
 A complete example
 ^^^^^^^^^^^^^^^^^^
 

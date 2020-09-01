@@ -18,7 +18,7 @@ class InteriorRing(abstract.PropertiesData):
     interior ring, is the lake boundary, defining the inner boundary
     of the land area.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     '''
 # --- End: class

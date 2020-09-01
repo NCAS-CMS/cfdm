@@ -1,7 +1,0 @@
-cfdm.CellMeasure.__deepcopy__
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMeasure.__deepcopy__

@@ -2,15 +2,20 @@ import abc
 
 import numpy
 
+from .propertiesdata import PropertiesData
 
-from . import PropertiesData
+
+# --------------------------------------------------------------------
+# See cfdm.core.mixin.container.__docstring_substitution__ for {{...}}
+# docstring substitutions
+# --------------------------------------------------------------------
 
 
-class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
-    '''Abstract base class for a data array with bounds and descriptive
+class PropertiesDataBounds(PropertiesData):
+    '''Mixin class for a data array with bounds and descriptive
     properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, bounds=None,
@@ -20,55 +25,24 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
             *Parameter example:*
                ``properties={'standard_name': 'longitude'}``
 
-        data: `Data`, optional
-            Set the data array. Ignored if the *source* parameter is
-            set.
+        {{init data: `Data`, optional}}
 
-            The data array may also be set after initialisation with
-            the `set_data` method.
+        {{init bounds: `Bounds`, optional}}
 
-        bounds: `Bounds`, optional
-            Set the bounds array. Ignored if the *source* parameter is
-            set.
+        {{init geometry: `str`, optional}}
 
-            The bounds array may also be set after initialisation with
-            the `set_bounds` method.
-
-        geometry: `str`, optional
-            Set the geometry type. Ignored if the *source* parameter
-            is set.
-
-            The geometry type may also be set after initialisation
-            with the `set_geometry` method.
-
-            *Parameter example:*
-               ``geometry='polygon'``
-
-        interior_ring: `InteriorRing`, optional
-            Set the interior ring variable. Ignored if the *source*
-            parameter is set.
-
-            The interior ring variable may also be set after
-            initialisation with the `set_interior_ring` method.
+        {{init interior_ring: `InteriorRing`, optional}}
 
         source: optional
             Initialize the properties, geometry type, data, bounds and
             interior ring from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         # Initialise properties and data
@@ -121,7 +95,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     ``f.bounds`` is equivalent to ``f.get_bounds()``
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_bounds`, `get_bounds`, `has_bounds`,
                  `set_bounds`
@@ -134,15 +108,16 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> b = {{package}}.Bounds(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> b = c.bounds
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}Data(5, 2): [[0, ..., 9]]>
     >>> b.data.shape
     (5, 2)
 
@@ -155,7 +130,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     ``f.interior_ring`` is equivalent to ``f.get_interior_ring()``
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `data`, `del_interior_ring`, `get_interior_ring`,
                  `has_interior_ring`, `set_interior_ring`
@@ -168,15 +143,15 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
     True
     >>> i = c.interior_ring
     >>> i
-    <InteriorRing: (5, 2) >
+    <{{repr}}InteriorRing: (5, 2) >
     >>> i.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}Data(5, 2): [[0, ..., 9]]>
     >>> i.data.shape
     (5, 2)
 
@@ -189,33 +164,32 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     def del_bounds(self, default=ValueError()):
         '''Remove the bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data`, `get_bounds`, `has_bounds`, `set_bounds`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if bounds have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `Bounds`
             The removed bounds.
 
     **Examples:**
 
     >>> import numpy
-    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> b = {{package}}.Bounds(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -233,16 +207,13 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     def del_geometry(self, default=ValueError()):
         '''Remove the geometry type.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `get_geometry`, `has_geometry`, `set_geometry`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the
-            geometry type has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -279,17 +250,14 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     def del_interior_ring(self, default=ValueError()):
         '''Remove the geometry type.
 
-    .. versionadded:: 1.8.6.0
+    .. versionadded:: (cfdm) 1.8.6.0
 
     .. seealso:: `data`, `del_interior_ring`, `has_interior_ring`,
                  `interior_ring`, `set_interior_ring`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the
-            geometry type has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -299,20 +267,20 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> c = cfdm.AuxiliaryCoordinate()
-    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
     True
     >>> i = c.get_interior_ring()
     >>> i
-    <InteriorRing: (5, 2) >
+    <{{repr}}InteriorRing: (5, 2) >
     >>> i.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}Data(5, 2): [[0, ..., 9]]>
     >>> i.data.shape
     (5, 2)
     >>> c.del_interior_ring()
-    <InteriorRing: (5, 2) >
+    <{{repr}}InteriorRing: (5, 2) >
     >>> c.has_interior_ring()
     False
     >>> print(c.del_interior_ring(None))
@@ -330,34 +298,33 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     def get_bounds(self, default=ValueError()):
         '''Return the bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `bounds`, `get_data`, `del_bounds`, `has_bounds`,
                  `set_bounds`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if bounds have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `Bounds`
             The bounds.
 
     **Examples:**
 
     >>> import numpy
-    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> b = {{package}}.Bounds(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -375,21 +342,17 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     def get_geometry(self, default=ValueError()):
         '''Return the geometry type.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `has_geometry`, `set_geometry`, `del_geometry`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the
-            geometry type has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
         `str`
-            The geometry type.
 
     **Examples:**
 
@@ -423,40 +386,37 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
 
     ``f.get_interior_ring()`` is equivalent to ``f.interior_ring``
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `data`, `del_interior_ring`, `has_interior_ring`,
                  `interior_ring`, `set_interior_ring`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if interior
-            ring data have not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
-        `ÌnteriorRing`
+        `InteriorRing`
             The interior ring variable.
 
     **Examples:**
 
     >>> import numpy
-    >>> c = cfdm.AuxiliaryCoordinate()
-    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
     True
     >>> i = c.get_interior_ring()
     >>> i
-    <InteriorRing: (5, 2) >
+    <{{repr}}InteriorRing: (5, 2) >
     >>> i.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}Data(5, 2): [[0, ..., 9]]>
     >>> i.data.shape
     (5, 2)
     >>> c.del_interior_ring()
-    <InteriorRing: (5, 2) >
+    <{{repr}}InteriorRing: (5, 2) >
     >>> c.has_interior_ring()
     False
     >>> print(c.del_interior_ring(None))
@@ -474,7 +434,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     def has_bounds(self):
         '''Whether or not there are bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
@@ -486,15 +446,16 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> b = {{package}}.Bounds(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -508,7 +469,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     def has_geometry(self):
         '''True if there is a geometry type.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `get_geometry`, `set_geometry`, `del_geometry`
 
@@ -541,7 +502,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     def has_interior_ring(self):
         '''Whether or not there is an interior ring variable.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_interior_ring`, `get_interior_ring`,
                  `interior_ring`, `set_interior_ring`
@@ -555,20 +516,20 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> c = cfdm.AuxiliaryCoordinate()
-    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
     True
     >>> i = c.get_interior_ring()
     >>> i
-    <InteriorRing: (5, 2) >
+    <{{repr}}InteriorRing: (5, 2) >
     >>> i.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}Data(5, 2): [[0, ..., 9]]>
     >>> i.data.shape
     (5, 2)
     >>> c.del_interior_ring()
-    <InteriorRing: (5, 2) >
+    <{{repr}}InteriorRing: (5, 2) >
     >>> c.has_interior_ring()
     False
     >>> print(c.del_interior_ring(None))
@@ -580,7 +541,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     def set_bounds(self, bounds, copy=True):
         '''Set the bounds.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
 
@@ -600,15 +561,16 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}}()
+    >>> b = {{package}}.Bounds(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
     >>> c.has_bounds()
     True
     >>> c.get_bounds()
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> b = c.del_bounds()
     >>> b
-    <Bounds: (5, 2) >
+    <{{repr}}Bounds: (5, 2) >
     >>> c.has_bounds()
     False
     >>> print(c.get_bounds(None))
@@ -636,7 +598,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     def set_geometry(self, value, copy=True):
         '''Set the geometry type.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `get_geometry`, `set_geometry`, `del_geometry`
 
@@ -673,7 +635,7 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     def set_interior_ring(self, interior_ring, copy=True):
         '''Set the interior_ring.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `del_interior_ring`, `get_interior_ring`,
                  `interior_ring`, `has_interior_ring`
@@ -694,20 +656,20 @@ class PropertiesDataBounds(PropertiesData, metaclass=abc.ABCMeta):
     **Examples:**
 
     >>> import numpy
-    >>> c = cfdm.AuxiliaryCoordinate()
-    >>> i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c = {{package}}.{{class}})(
+    >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_interior_ring(i)
     >>> c.has_interior_ring()
     True
     >>> i = c.get_interior_ring()
     >>> i
-    <InteriorRing: (5, 2) >
+    <{{repr}}InteriorRing: (5, 2) >
     >>> i.data
-    <Data(5, 2): [[0, ..., 9]]>
+    <{{repr}}Data(5, 2): [[0, ..., 9]]>
     >>> i.data.shape
     (5, 2)
     >>> c.del_interior_ring()
-    <InteriorRing: (5, 2) >
+    <{{repr}}InteriorRing (5, 2) >
     >>> c.has_interior_ring()
     False
     >>> print(c.del_interior_ring(None))

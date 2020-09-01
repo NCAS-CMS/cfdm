@@ -1,7 +1,0 @@
-cfdm.Data.unique
-================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.unique

@@ -28,7 +28,7 @@ class Data(mixin.Container,
            core.Data):
     '''An orthogonal multidimensional array with masked values and units.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, array=None, units=None, calendar=None,
@@ -107,7 +107,7 @@ class Data(mixin.Container,
             Apply this mask to the data given by the *array*
             parameter. By default, or if *mask* is `None`, no mask is
             applied. May be any scalar or array-like object (such as a
-            `numpy` array or `Data` instance) that is scalar or has
+            `numpy` array or `{{class}}` instance) that is scalar or has
             the same shape as *array*. Masking will be carried out
             where mask elements evaluate to `True`.
 
@@ -153,7 +153,7 @@ class Data(mixin.Container,
     def __array__(self, *dtype):
         '''The numpy array interface.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -168,13 +168,13 @@ class Data(mixin.Container,
     **Examples:**
 
     >>> import numpy
-    >>> d = Data([1, 2, 3])
+    >>> d = {{package}}.{{class}}([1, 2, 3])
     >>> a = numpy.array(d)
     >>> print(type(a))
     <type 'numpy.ndarray'>
     >>> a[0] = -99
     >>> d
-    <Data(3): [1, 2, 3]>
+    <{{repr}}{{class}}(3): [1, 2, 3]>
     >>> b = numpy.array(d, float)
     >>> print(b)
     [ 1.  2.  3.]
@@ -220,19 +220,19 @@ class Data(mixin.Container,
       the same behaviour as indexing on a Variable object of the
       netCDF4 package.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `__setitem__`, `_parse_indices`
 
     :Returns:
 
-        `Data`
+        `{{class}}`
             The subspace of the data.
 
     **Examples:**
 
     >>> import numpy
-    >>> d = Data(numpy.arange(100, 190).reshape(1, 10, 9))
+    >>> d = {{package}}.{{class}}(numpy.arange(100, 190).reshape(1, 10, 9))
     >>> d.shape
     (1, 10, 9)
     >>> d[:, :, 1].shape
@@ -285,25 +285,25 @@ class Data(mixin.Container,
 
     **Examples:**
 
-    >>> d = Data([1, 2, 3], 'metres')
+    >>> d = {{package}}.{{class}}([1, 2, 3], 'metres')
     >>> for e in d:
-    ...    print repr(e)
+    ...    print(repr(e))
     ...
     1
     2
     3
 
-    >>> d = Data([[1, 2], [4, 5]], 'metres')
+    >>> d = {{package}}.{{class}}([[1, 2], [4, 5]], 'metres')
     >>> for e in d:
-    ...    print repr(e)
+    ...    print(repr(e))
     ...
-    <CF Data: [1, 2] metres>
-    <CF Data: [4, 5] metres>
+    <{{repr}}Data: [1, 2] metres>
+    <{{repr}}Data: [4, 5] metres>
 
-    >>> d = Data(34, 'metres')
+    >>> d = {{package}}.{{class}}(34, 'metres')
     >>> for e in d:
-    ...     print repr(e)
-    ..
+    ...     print(repr(e))
+    ...
     TypeError: iteration over a 0-d Data
 
         '''
@@ -355,7 +355,7 @@ class Data(mixin.Container,
     to `masked`. Missing values may be unmasked by assigning them to
     any other value.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `__getitem__`, `_parse_indices`
 
@@ -366,7 +366,7 @@ class Data(mixin.Container,
     **Examples:**
 
     >>> import numpy
-    >>> d = Data(numpy.arange(100, 190).reshape(1, 10, 9))
+    >>> d = {{package}}.{{class}}(numpy.arange(100, 190).reshape(1, 10, 9))
     >>> d.shape
     (10, 9)
     >>> d[:, :, 1] = -10
@@ -516,7 +516,7 @@ class Data(mixin.Container,
     **Examples:**
 
     >>> import numpy
-    >>> d = Data([[1, 2, 3]], 'km')
+    >>> d = {{package}}.{{class}}([[1, 2, 3]], 'km')
     >>> x = d._item((0, -1))
     >>> print(x, type(x))
     3 <type 'int'>
@@ -620,7 +620,7 @@ class Data(mixin.Container,
     def _set_CompressedArray(self, array, copy=True):
         '''Set the compressed array.
 
-    .. versionadded:: 1.7.11
+    .. versionadded:: (cfdm) 1.7.11
 
     .. seealso:: `_set_Array`
 
@@ -712,7 +712,7 @@ class Data(mixin.Container,
     def compressed_array(self):
         '''Return an independent numpy array containing the compressed data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_compressed_axes`, `get_compressed_dimension`,
                  `get_compression_type`
@@ -747,7 +747,7 @@ class Data(mixin.Container,
 
     Conversions are carried out with the `netCDF4.num2date` function.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `array`, `datetime_as_string`
 
@@ -758,7 +758,7 @@ class Data(mixin.Container,
 
     **Examples:**
 
-    >>> d = Data([31, 62, 90], units='days since 2018-12-01')
+    >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01')
     >>> a = d.datetime_array
     >>> print(a)
     [cftime.DatetimeGregorian(2019-01-01 00:00:00)
@@ -767,7 +767,7 @@ class Data(mixin.Container,
     >>> print(a[1])
     2019-02-01 00:00:00
 
-    >>> d = Data([31, 62, 90], units='days since 2018-12-01',
+    >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01',
     ...          calendar='360_day')
     >>> a = d.datetime_array
     >>> print(a)
@@ -822,7 +822,7 @@ class Data(mixin.Container,
 
     Conversions are carried out with the `netCDF4.num2date` function.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `array`, `datetime_array`
 
@@ -833,11 +833,11 @@ class Data(mixin.Container,
 
     **Examples:**
 
-    >>> d = Data([31, 62, 90], units='days since 2018-12-01')
+    >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01')
     >>> print(d.datetime_as_string)
     ['2019-01-01 00:00:00' '2019-02-01 00:00:00' '2019-03-01 00:00:00']
 
-    >>> d = Data([31, 62, 90], units='days since 2018-12-01',
+    >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01',
     ...          calendar='360_day')
     >>> print(d.datetime_as_string)
     ['2019-01-02 00:00:00' '2019-02-03 00:00:00' '2019-03-01 00:00:00']
@@ -854,22 +854,22 @@ class Data(mixin.Container,
 
     :Returns:
 
-        `Data`
+        `{{class}}`
             The Boolean mask as data.
 
     **Examples:**
 
-    >>> d = Data(numpy.ma.array([[280.0,   -99,   -99,   -99],
+    >>> d = {{package}}.{{class}}(numpy.ma.array([[280.0,   -99,   -99,   -99],
                                  [281.0, 279.0, 278.0, 279.5]],
                  mask=[[0, 1, 1, 1],
                        [0, 0, 0, 0]]))
     >>> d
-    <Data(2, 4): [[280.0, ..., 279.5]]>
+    <{{repr}}Data(2, 4): [[280.0, ..., 279.5]]>
     >>> print(d.array)
     [[280.0    --    --    --]
      [281.0 279.0 278.0 279.5]]
     >>> d.mask
-    <Data(2, 4): [[False, ..., False]]>
+    <{{repr}}Data(2, 4): [[False, ..., False]]>
     >>> print(d.mask.array)
     [[False  True  True  True]
      [False False False False]]
@@ -894,7 +894,7 @@ class Data(mixin.Container,
 
     **Examples:**
 
-    >>> d = Data([[0, 0, 0]])
+    >>> d = {{package}}.{{class}}([[0, 0, 0]])
     >>> d.any()
     False
     >>> d[0, 0] = masked
@@ -930,7 +930,7 @@ class Data(mixin.Container,
 
     Elements that are already masked remain so.
 
-    .. versionadded:: 1.8.2
+    .. versionadded:: (cfdm) 1.8.2
 
     .. seealso:: `get_fill_value`, `mask`
 
@@ -988,14 +988,14 @@ class Data(mixin.Container,
 
     :Returns:
 
-        `Data` or `None`
+        `{{class}}` or `None`
             The data with masked values. If the operation was in-place
             then `None` is returned.
 
     **Examples:**
 
     >>> import numpy
-    >>> d = Data(numpy.arange(12).reshape(3, 4), 'm')
+    >>> d = {{package}}.{{class}}(numpy.arange(12).reshape(3, 4), 'm')
     >>> d[1, 1] = masked
     >>> print(d.array)
     [[0  1  2  3]
@@ -1131,6 +1131,7 @@ class Data(mixin.Container,
 
     :Returns:
 
+        `{{class}}`
             The deep copy.
 
     **Examples:**
@@ -1148,7 +1149,7 @@ class Data(mixin.Container,
     Inserts a new size 1 axis, corresponding to a given position in
     the data array shape.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `flatten`, `squeeze`, `transpose`
 
@@ -1171,7 +1172,7 @@ class Data(mixin.Container,
 
     :Returns:
 
-        `Data` or `None`
+        `{{class}}` or `None`
             The data with expanded axes. If the operation was in-place
             then `None` is returned.
 
@@ -1211,7 +1212,7 @@ class Data(mixin.Container,
     def get_count(self, default=ValueError()):
         '''Return the count variable for a compressed array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_index`, `get_list`
 
@@ -1242,7 +1243,7 @@ class Data(mixin.Container,
     def get_index(self, default=ValueError()):
         '''Return the index variable for a compressed array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_count`, `get_list`
 
@@ -1276,7 +1277,7 @@ class Data(mixin.Container,
     def get_list(self, default=ValueError()):
         '''Return the list variable for a compressed array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_count`, `get_index`
 
@@ -1307,7 +1308,7 @@ class Data(mixin.Container,
         '''Return the position of the compressed dimension in the compressed
     array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `compressed_array`, `get_compressed_axes`,
                  `get_compression_type`
@@ -1452,7 +1453,7 @@ class Data(mixin.Container,
 
     Missing data array elements are omitted from the calculation.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `minimum`
 
@@ -1462,7 +1463,7 @@ class Data(mixin.Container,
 
     :Returns:
 
-        `Data`
+        `{{class}}`
             Maximum of the data along the specified axes.
 
     **Examples:**
@@ -1491,7 +1492,7 @@ class Data(mixin.Container,
 
     Missing data array elements are omitted from the calculation.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     .. seealso:: `maximum`
 
@@ -1501,7 +1502,7 @@ class Data(mixin.Container,
 
     :Returns:
 
-        `Data`
+        `{{class}}`
             Minimum of the data along the specified axes.
 
     **Examples:**
@@ -1532,7 +1533,7 @@ class Data(mixin.Container,
     By default all size 1 axes are removed, but particular axes may be
     selected with the keyword arguments.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `flatten`, `insert_dimension`, `transpose`
 
@@ -1558,7 +1559,7 @@ class Data(mixin.Container,
 
     :Returns:
 
-        `Data` or `None`
+        `{{class}}` or `None`
             The data with removed data axes. If the operation was
             in-place then `None` is returned.
 
@@ -1632,7 +1633,7 @@ class Data(mixin.Container,
 
     :Returns:
 
-        `Data`
+        `{{class}}`
             The sum of the data along the specified axes.
 
     **Examples:**
@@ -1660,7 +1661,7 @@ class Data(mixin.Container,
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `flatten`, `insert_dimension`, `squeeze`
 
@@ -1683,7 +1684,7 @@ class Data(mixin.Container,
 
     :Returns:
 
-        `Data` or `None`
+        `{{class}}` or `None`
             The data with permuted data axes. If the operation was
             in-place then `None` is returned.
 
@@ -1734,7 +1735,7 @@ class Data(mixin.Container,
     def get_compressed_axes(self):
         '''Return the dimensions that have compressed in the underlying array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `compressed_array`, `get_compressed_dimension`,
                  `get_compression_type`
@@ -1771,7 +1772,7 @@ class Data(mixin.Container,
     def get_compression_type(self):
         '''Return the type of compression applied to the underlying array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `compressed_array`, `compression_axes`,
                  `get_compressed_dimension`
@@ -1825,11 +1826,11 @@ class Data(mixin.Container,
 
     :Returns:
 
-        `Data`
+        `{{class}}`
 
     **Examples:**
 
-    >>> d = Data.empty((96, 73))
+    >>> d = {{package}}.{{class}}.empty((96, 73))
 
         '''
         return cls(numpy.empty(shape=shape, dtype=dtype), units=units,
@@ -1858,11 +1859,7 @@ class Data(mixin.Container,
       data mask, and be element-wise equal (see the *ignore_data_type*
       parameter).
 
-    Two numerical elements ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
     Any compression is ignored by default, with only the arrays in
     their uncompressed forms being compared. See the
@@ -1872,68 +1869,28 @@ class Data(mixin.Container,
     possible with another cell measure construct, or a subclass of
     one. See the *ignore_type* parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `atol` function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `rtol` function.
+        {{rtol: number, optional}}
 
         ignore_fill_value: `bool`, optional
             If True then the fill value is omitted from the
             comparison.
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+        {{ignore_data_type: `bool`, optional}}
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
+        {{ignore_compression: `bool`, optional}}
 
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
+        {{ignore_type: `bool`, optional}}
 
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical data
-            array comparisons. By default different numerical data
-            types imply inequality, regardless of whether the elements
-            are within the tolerance for equality.
-
-        ignore_compression: `bool`, optional
-            If False then the compression type and, if applicable, the
-            underlying compressed arrays must be the same, as well as
-            the arrays in their uncompressed forms. By default only
-            the the arrays in their uncompressed forms are compared.
-
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another data array, or a subclass of
-            one. If *ignore_type* is True then then
-            ``Data(source=other)`` is tested, rather than the
-            ``other`` defined by the *other* parameter.
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
@@ -2084,7 +2041,7 @@ class Data(mixin.Container,
     def first_element(self):
         '''Return the first element of the data as a scalar.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `last_element`, `second_element`
 
@@ -2094,12 +2051,12 @@ class Data(mixin.Container,
 
     **Examples:**
 
-    >>> d = Data(9.0)
+    >>> d = {{package}}.{{class}}(9.0)
     >>> x = d.first_element()
     >>> print(x, type(x))
     (9.0, <type 'float'>)
 
-    >>> d = Data([[1, 2], [3, 4]])
+    >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
     >>> x = d.first_element()
     >>> print(x, type(x))
     (1, <type 'int'>)
@@ -2108,7 +2065,7 @@ class Data(mixin.Container,
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
 
-    >>> d = Data(['foo', 'bar'])
+    >>> d = {{package}}.{{class}}(['foo', 'bar'])
     >>> x = d.first_element()
     >>> print(x, type(x))
     ('foo', <type 'str'>)
@@ -2128,7 +2085,7 @@ class Data(mixin.Container,
     example, the array ``[[1, 2], [3, 4]]`` would be flattened across
     both dimensions to ``[1 2 3 4]``.
 
-    .. versionadded:: 1.7.11
+    .. versionadded:: (cfdm) 1.7.11
 
     .. seealso:: `insert_dimension`, `squeeze`, `transpose`
 
@@ -2152,15 +2109,15 @@ class Data(mixin.Container,
 
     :Returns:
 
-        `Data` or `None`
+        `{{class}}` or `None`
             The flattened data, or `None` if the operation was
             in-place.
 
     **Examples**
 
-    >>> d = Data(numpy.arange(24).reshape(1, 2, 3, 4))
+    >>> d = {{package}}.{{class}}(numpy.arange(24).reshape(1, 2, 3, 4))
     >>> d
-    <Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+    <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
     >>> print(d.array)
     [[[[ 0  1  2  3]
        [ 4  5  6  7]
@@ -2171,17 +2128,17 @@ class Data(mixin.Container,
 
     >>> e = d.flatten()
     >>> e
-    <Data(24): [0, ..., 23]>
+    <{{repr}}Data(24): [0, ..., 23]>
     >>> print(e.array)
     [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23]
 
     >>> e = d.flatten([])
     >>> e
-    <Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+    <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
 
     >>> e = d.flatten([1, 3])
     >>> e
-    <Data(1, 8, 3): [[[0, ..., 23]]]>
+    <{{repr}}Data(1, 8, 3): [[[0, ..., 23]]]>
     >>> print(e.array)
     [[[ 0  4  8]
       [ 1  5  9]
@@ -2194,7 +2151,7 @@ class Data(mixin.Container,
 
     >>> d.flatten([0, -1], inplace=True)
     >>> d
-    <Data(4, 2, 3): [[[0, ..., 23]]]>
+    <{{repr}}Data(4, 2, 3): [[[0, ..., 23]]]>
     >>> print(d.array)
     [[[ 0  4  8]
       [12 16 20]]
@@ -2252,7 +2209,7 @@ class Data(mixin.Container,
     def last_element(self):
         '''Return the last element of the data as a scalar.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `first_element`, `second_element`
 
@@ -2262,12 +2219,12 @@ class Data(mixin.Container,
 
     **Examples:**
 
-    >>> d = Data(9.0)
+    >>> d = {{package}}.{{class}}(9.0)
     >>> x = d.last_element()
     >>> print(x, type(x))
     (9.0, <type 'float'>)
 
-    >>> d = Data([[1, 2], [3, 4]])
+    >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
     >>> x = d.last_element()
     >>> print(x, type(x))
     (4, <type 'int'>)
@@ -2276,7 +2233,7 @@ class Data(mixin.Container,
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
 
-    >>> d = Data(['foo', 'bar'])
+    >>> d = {{package}}.{{class}}(['foo', 'bar'])
     >>> x = d.last_element()
     >>> print(x, type(x))
     ('bar', <type 'str'>)
@@ -2287,7 +2244,7 @@ class Data(mixin.Container,
     def second_element(self):
         '''Return the second element of the data as a scalar.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `first_element`, `last_element`
 
@@ -2297,7 +2254,7 @@ class Data(mixin.Container,
 
     **Examples:**
 
-    >>> d = Data([[1, 2], [3, 4]])
+    >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
     >>> x = d.second_element()
     >>> print(x, type(x))
     (2, <type 'int'>)
@@ -2306,7 +2263,7 @@ class Data(mixin.Container,
     >>> print(y, type(y))
     (masked, <class 'numpy.ma.core.MaskedConstant'>)
 
-    >>> d = Data(['foo', 'bar'])
+    >>> d = {{package}}.{{class}}(['foo', 'bar'])
     >>> x = d.second_element()
     >>> print(x, type(x))
     ('bar', <type 'str'>)
@@ -2325,9 +2282,9 @@ class Data(mixin.Container,
 
     **Examples:**
 
-    >>> f = cfdm.example_field(4)
+    >>> f = {{package}}.example_field(4)
     >>> f.data
-    <Data(3, 26, 4): [[[290.0, ..., --]]] K>
+    <{{repr}}Data(3, 26, 4): [[[290.0, ..., --]]] K>
     >>> f.data.to_memory()
 
         '''
@@ -2337,7 +2294,7 @@ class Data(mixin.Container,
     def uncompress(self, inplace=False):
         '''Uncompress the underlying array.
 
-    .. versionadded:: 1.7.3
+    .. versionadded:: (cfdm) 1.7.3
 
     .. seealso:: `array`, `compressed_array`, `source`
 
@@ -2348,7 +2305,7 @@ class Data(mixin.Container,
 
     :Returns:
 
-        `Data` or `None`
+        `{{class}}` or `None`
             The uncompressed data, or `None` if the operation was
             in-place.
 
@@ -2378,21 +2335,21 @@ class Data(mixin.Container,
     The unique elements are sorted into a one dimensional array. with
     no missing values.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
-        `Data`
+        `{{class}}`
             The unique elements.
 
     **Examples:**
 
-    >>> d = Data([[4, 2, 1], [1, 2, 3]], 'metre')
+    >>> d = {{package}}.{{class}}([[4, 2, 1], [1, 2, 3]], 'metre')
     >>> d.unique()
-    <Data(4): [1, 2, 3, 4] metre>
+    <{{repr}}Data(4): [1, 2, 3, 4] metre>
     >>> d[1, -1] = masked
     >>> d.unique()
-    <Data(3): [1, 2, 4] metre>
+    <{{repr}}Data(3): [1, 2, 4] metre>
 
         '''
         array = self.array
@@ -2433,4 +2390,4 @@ class Data(mixin.Container,
 #
 # https://docs.python.org/3/library/abc.html
 # --------------------------------------------------------------------
-abstract.Array.register(Data)
+# abstract.Array.register(Data)

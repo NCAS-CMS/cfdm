@@ -2,13 +2,13 @@ import abc
 
 from copy import deepcopy
 
-from . import Container
+from .container import Container
 
 
-class Parameters(Container, metaclass=abc.ABCMeta):
-    '''Abstract base class for a collection of named parameters.
+class Parameters(Container):
+    '''Mixin class for a collection of named parameters.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, parameters=None, source=None, copy=True):
@@ -30,9 +30,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
         source: optional
             Initialize the parameters from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(source=source, copy=copy)
@@ -55,7 +53,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
     def clear_parameters(self):
         '''Remove all parameters.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_parameter`, `parameters`, `set_parameters`
 
@@ -87,7 +85,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
     def del_parameter(self, parameter, default=ValueError()):
         '''Delete a parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_parameter`, `has_parameter`, `parameters`,
                  `set_parameter`
@@ -97,10 +95,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
         parameter: `str`
             The name of the parameter to be deleted.
 
-        default: optional
-            Return the value of the *default* parameter if the
-            parameter has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -109,6 +104,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_parameter('earth_radius', 6371007)
     >>> f.has_parameter('earth_radius')
     True
@@ -134,17 +130,14 @@ class Parameters(Container, metaclass=abc.ABCMeta):
     def get_parameter(self, parameter, default=ValueError()):
         '''Get a parameter value.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         parameter: `str`
             The name of the parameter.
 
-        default: optional
-            Return the value of the *default* parameter if the
-            parameter has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -152,6 +145,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_parameter('earth_radius', 6371007)
     >>> f.has_parameter('earth_radius')
     True
@@ -177,7 +171,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
     def has_parameter(self, parameter):
         '''Whether a parameter has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_parameter`, `get_parameter`, `parameters`,
                  `set_parameter`
@@ -197,6 +191,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_parameter('earth_radius', 6371007)
     >>> f.has_parameter('earth_radius')
     True
@@ -217,7 +212,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
     def parameters(self):
         '''Return all parameters.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_parameters`, `get_parameter`, `has_parameter`
                  `set_parameters`
@@ -248,7 +243,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
     def set_parameters(self, parameters, copy=True):
         '''Set parameters.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_parameters`, `parameters`, `set_parameter`
 
@@ -295,7 +290,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
     def set_parameter(self, term, value, copy=True):
         '''Set a parameter-valued term.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `parameters`
 
@@ -305,6 +300,7 @@ class Parameters(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_parameter('earth_radius', 6371007)
     >>> f.has_parameter('earth_radius')
     True

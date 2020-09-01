@@ -1,7 +1,0 @@
-cfdm.Bounds.get_filenames
-=========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Bounds.get_filenames

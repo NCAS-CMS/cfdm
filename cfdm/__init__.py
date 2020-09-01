@@ -152,6 +152,7 @@ from .read_write import (read,
 
 from .examplefield import example_field
 
+from .abstract import Container
 
 # --------------------------------------------------------------------
 # Set up basic logging for the full project with a root logger

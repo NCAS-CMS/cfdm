@@ -1,7 +1,0 @@
-cfdm.DimensionCoordinate.del_property
-=====================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DimensionCoordinate.del_property

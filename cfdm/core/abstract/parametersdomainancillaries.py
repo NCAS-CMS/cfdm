@@ -2,14 +2,14 @@ import abc
 
 from copy import deepcopy
 
-from . import Parameters
+from .parameters import Parameters
 
 
-class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
-    '''Abstract base class for a collection of named parameters and named
-    domain ancillary constructs.
+class ParametersDomainAncillaries(Parameters):
+    '''Mixin class for a collection of named parameters and named domain
+    ancillary constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, parameters=None, domain_ancillaries=None,
@@ -46,9 +46,7 @@ class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
             Initialize the parameters and domain ancillary terms from
             those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(parameters=parameters, source=source,
@@ -76,7 +74,7 @@ class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
     def clear_domain_ancillaries(self):
         '''Remove all domain_ancillaries.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
                  `set_domain_ancillaries`
@@ -108,7 +106,7 @@ class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
                              default=ValueError()):
         '''Delete a domain ancillary.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `domain_ancillaries`, `get_domain_ancillary`,
                  `set_domain_ancillary`
@@ -121,10 +119,7 @@ class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
             *Parameter example:*
                ``domain_ancillary='orog'``
 
-        default: optional
-            Return the value of the *default* parameter if the domain
-            ancillary term has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -159,7 +154,7 @@ class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
     def domain_ancillaries(self):
         '''Return all domain_ancillaries.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_domain_ancillaries`, `get_domain_ancillary`,
                  `has_domain_ancillaryr` `set_domain_ancillaries`
@@ -189,7 +184,7 @@ class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
                              default=ValueError()):
         '''Return a domain ancillary term.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
                  `set_domain_ancillary`
@@ -199,10 +194,7 @@ class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
         domain_ancillary: `str`
             The name of the term.
 
-        default: optional
-            Return the value of the *default* parameter if the domain
-            ancillary term has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -236,7 +228,7 @@ class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
     def has_domain_ancillary(self, domain_ancillary):
         '''Whether a domain ancillary has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
                  `has_domain_ancillary`, `set_domain_ancillary`
@@ -246,10 +238,7 @@ class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
         domain_ancillary: `str`
             The name of the term.
 
-        default: optional
-            Return the value of the *default* parameter if the domain
-            ancillary term has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -277,7 +266,7 @@ class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
     def set_domain_ancillaries(self, domain_ancillaries, copy=True):
         '''Set domain_ancillaries.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_domain_ancillaries`, `domain_ancillaries`,
                  `set_domain_ancillary`
@@ -323,7 +312,7 @@ class ParametersDomainAncillaries(Parameters, metaclass=abc.ABCMeta):
     def set_domain_ancillary(self, term, value, copy=True):
         '''Set an domain ancillary-valued term.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_domain_ancillary`, `domain_ancillaries`,
                  `get_domain_ancillary`

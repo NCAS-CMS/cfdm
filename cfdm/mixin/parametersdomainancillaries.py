@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class ParametersDomainAncillaries(Parameters):
     '''Mixin class for parameter- and ancillary-valued terms.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __bool__(self):
@@ -19,7 +19,7 @@ class ParametersDomainAncillaries(Parameters):
 
     x.__bool__() <==> bool(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return (super().__bool__() or bool(self.domain_ancillaries()))
@@ -29,7 +29,7 @@ class ParametersDomainAncillaries(Parameters):
 
     x.__nonzero__() <==> bool(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return self.__bool__()
@@ -64,11 +64,7 @@ class ParametersDomainAncillaries(Parameters):
 
     * the names of domain ancillary constructs are the same.
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another object of the same type, or a subclass of
@@ -79,46 +75,13 @@ class ParametersDomainAncillaries(Parameters):
         other:
             The object to compare for equality.
 
-        atol: `float`, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: number, optional}}
 
-        rtol: `float`, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: number, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+        {{ignore_type: `bool`, optional}}
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another object of the same type, or
-            a subclass of one. If *ignore_type* is True then equality
-            is possible for any object with a compatible API.
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 

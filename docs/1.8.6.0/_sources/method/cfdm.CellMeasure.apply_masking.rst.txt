@@ -1,7 +1,0 @@
-cfdm.CellMeasure.apply_masking
-==============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMeasure.apply_masking

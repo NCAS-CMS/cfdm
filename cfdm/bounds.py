@@ -40,7 +40,7 @@ class Bounds(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, source=None,
@@ -49,29 +49,17 @@ class Bounds(mixin.NetCDFVariable,
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
               *Parameter example:*
                  ``properties={'standard_name': 'grid_latitude'}``
 
-        data: `Data`, optional
-            Set the data. Ignored if the *source* parameter is set.
-
-            The data also may be set after initialisation with the
-            `set_data` method.
+        {{init data: `Data`, optional}}
 
         source: optional
             Initialize the properties and data from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(properties=properties, data=data,
@@ -101,7 +89,7 @@ class Bounds(mixin.NetCDFVariable,
     Returns a description of all properties and provides selected
     values of all data arrays.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -111,10 +99,7 @@ class Bounds(mixin.NetCDFVariable,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         if _create_title and _title is None:
@@ -135,31 +120,29 @@ class Bounds(mixin.NetCDFVariable,
     `array` attribute of the `Data` instance to return the data as an
     independent `numpy` array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data`, `has_data`, `set_data`
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if data have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
+        `Data`
             The data.
 
     **Examples:**
 
-    >>> d = cfdm.Data(range(10))
+    >>> d = {{package}}.Data(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -199,7 +182,7 @@ class Bounds(mixin.NetCDFVariable,
     def inherited_properties(self):
         '''Return the properties inherited from a coordinate construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `properties`
 
@@ -232,7 +215,7 @@ class Bounds(mixin.NetCDFVariable,
 
     Properties include any inherited properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 

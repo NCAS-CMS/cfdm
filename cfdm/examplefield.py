@@ -9,7 +9,7 @@ _implementation = implementation()
 def example_field(n, _implementation=_implementation):
     '''Return an example field construct.
 
-    .. versionadded:: 1.8.0
+    .. versionadded:: (cfdm) 1.8.0
 
     :Parameters:
 
@@ -59,7 +59,7 @@ def example_field(n, _implementation=_implementation):
 
     **Examples:**
 
-    >>> f = example_field(0)
+    >>> f = cfdm.example_field(0)
     >>> print(f)
     Field: specific_humidity(ncvar%q)
     ---------------------------------
@@ -75,7 +75,7 @@ def example_field(n, _implementation=_implementation):
      [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
      [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
 
-    >>> f = example_field(1)
+    >>> f = cfdm.example_field(1)
     >>> print(f)
     Field: air_temperature (ncvar%ta)
     ---------------------------------
@@ -96,7 +96,7 @@ def example_field(n, _implementation=_implementation):
                     : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                     : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
 
-    >>> f = example_field(2)
+    >>> f = cfdm.example_field(2)
     >>> print(f)
     Field: air_potential_temperature (ncvar%air_potential_temperature)
     ------------------------------------------------------------------
@@ -107,7 +107,7 @@ def example_field(n, _implementation=_implementation):
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : air_pressure(1) = [850.0] hPa
 
-    >>> f = example_field(3)
+    >>> f = cfdm.example_field(3)
     >>> print(f)
     Field: precipitation_flux (ncvar%p)
     -----------------------------------
@@ -119,7 +119,7 @@ def example_field(n, _implementation=_implementation):
                     : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b'station1', ..., b'station4']
                     : long_name=station information(cf_role=timeseries_id(4)) = [-10, ..., -7]
 
-    >>> f = example_field(4)
+    >>> f = cfdm.example_field(4)
     >>> print(f)
     Field: air_temperature (ncvar%ta)
     ---------------------------------
@@ -133,7 +133,7 @@ def example_field(n, _implementation=_implementation):
                     : long_name=station information(cf_role=timeseries_id(3)) = [-10, -9, -8]
                     : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]
 
-    >>> f = example_field(5)
+    >>> f = cfdm.example_field(5)
     >>> print(f)
     Field: air_potential_temperature (ncvar%air_potential_temperature)
     ------------------------------------------------------------------
@@ -144,7 +144,7 @@ def example_field(n, _implementation=_implementation):
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : air_pressure(1) = [850.0] hPa
 
-    >>> f = example_field(6)
+    >>> f = cfdm.example_field(6)
     >>> print(f)
     Field: precipitation_amount (ncvar%pr)
     ---------------------------------------

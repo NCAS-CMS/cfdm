@@ -18,7 +18,7 @@ class CoordinateConversion(mixin.ParametersDomainAncillaries,
     construct relates the coordinate values of the field to locations
     in a planetary reference frame.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
 # --- End: class

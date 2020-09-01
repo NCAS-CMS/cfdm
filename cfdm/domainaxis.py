@@ -37,7 +37,7 @@ class DomainAxis(mixin.NetCDFDimension,
     `nc_set_dimension`, `nc_get_dimension`, `nc_dimension_groups`,
     `nc_clear_dimension_groups` and `nc_set_dimension_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, size=None, source=None, copy=True):
@@ -57,9 +57,7 @@ class DomainAxis(mixin.NetCDFDimension,
         source: optional
             Initialize the size from that of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(size=size, source=source, copy=copy)
@@ -71,7 +69,7 @@ class DomainAxis(mixin.NetCDFDimension,
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return 'size({0})'.format(self.get_size(''))
@@ -91,44 +89,16 @@ class DomainAxis(mixin.NetCDFDimension,
     NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         other:
             The object to compare for equality.
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+        {{verbose: `int` or `str` or `None`, optional}}
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another domain axis construct, or a
-            subclass of one. If *ignore_type* is True then
-            ``DomainAxis(source=other)`` is tested, rather than the
-            ``other`` defined by the *other* parameter.
+        {{ignore_type: `bool`, optional}}
 
     :Returns:
 
@@ -178,7 +148,7 @@ class DomainAxis(mixin.NetCDFDimension,
     1. The netCDF dimension name, preceeded by 'ncdim%'.
     2. The value of the default parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -221,7 +191,7 @@ class DomainAxis(mixin.NetCDFDimension,
 
     * The netCDF dimension name, preceeded by 'ncdim%'.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 

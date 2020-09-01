@@ -1,9 +1,25 @@
-class ConstructAccess():
+from ..meta import RewriteDocstringMeta
+
+# --------------------------------------------------------------------
+# See cfdm.core.mixin.container.__docstring_substitution__ for
+# {{...}}  docstring substitutions
+# --------------------------------------------------------------------
+
+
+class ConstructAccess(metaclass=RewriteDocstringMeta):
     '''Mixin class for accessing an embedded `Constructs` object.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
+    def __docstring_package_depth__(self):
+        '''Return the package depth for {{package}} docstring substitutions.
+
+    See `_docstring_package_depth` for details.
+
+        '''
+        return 1
+
     def del_construct(self, key, default=ValueError()):
         '''Remove a metadata construct.
 
@@ -15,7 +31,7 @@ class ConstructAccess():
     referenced by coordinate reference construct. In this case the
     reference is replace with `None`.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `get_construct`, `has_construct`,
                  `set_construct`
@@ -40,7 +56,7 @@ class ConstructAccess():
     **Examples:**
 
     >>> f.del_construct('dimensioncoordinate1')
-    <DimensionCoordinate: grid_latitude(111) degrees>
+    <{{repr}}{{+DimensionCoordinate}}: grid_latitude(111) degrees>
 
         '''
         return self.constructs._del_construct(key, default=default)
@@ -48,7 +64,7 @@ class ConstructAccess():
     def get_construct(self, key, default=ValueError()):
         '''Return a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `del_construct`, `has_construct`,
                  `set_construct`
@@ -61,10 +77,7 @@ class ConstructAccess():
             *Parameter example:*
               ``key='domainaxis1'``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            construct does not exist. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -73,16 +86,16 @@ class ConstructAccess():
     **Examples:**
 
     >>> f.constructs()
-    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>,
-     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>,
-     'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:greek_letters(10) >,
-     'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
-     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-     'domainaxis1': <DomainAxis: 10>,
-     'domainaxis2': <DomainAxis: 9>}
+    {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degree_N>,
+     'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degreeE>,
+     'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:greek_letters(10) >,
+     'coordinatereference1': <{{repr}}CoordinateReference: rotated_latitude_longitude>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+     'domainaxis1': <{{repr}}DomainAxis: 10>,
+     'domainaxis2': <{{repr}}DomainAxis: 9>}
     >>> f.get_construct('dimensioncoordinate1')
-    <DimensionCoordinate: grid_latitude(10) degrees>
+    <{[repr}}DimensionCoordinate: grid_latitude(10) degrees>
 
         '''
         return self.constructs.filter_by_key(key).value(default=default)
@@ -90,7 +103,7 @@ class ConstructAccess():
     def has_construct(self, key):
         '''Whether a metadata construct exists.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `del_construct`, `get_construct`,
                  `set_construct`
@@ -129,7 +142,7 @@ class ConstructAccess():
                       copy=True):
         '''Set a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `del_construct`, `get_construct`,
                  `set_data_axes`
@@ -188,7 +201,7 @@ class ConstructAccess():
         '''Return the keys of the domain axis constructs spanned by the data
     of a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data_axes`, `has_data_axes`, `set_data_axes`
 
@@ -200,10 +213,7 @@ class ConstructAccess():
             *Parameter example:*
               ``key='auxiliarycoordinate0'``
 
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set. If set to an `Exception` instance
-            then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -238,7 +248,7 @@ class ConstructAccess():
         '''Remove the keys of the domain axis constructs spanned by the data
     of a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_data_axes`, `has_data_axes`, `set_data_axes`
 
@@ -291,7 +301,7 @@ class ConstructAccess():
         '''Whether the domain axis constructs spanned by the data of a
     metadata construct have been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data_axes`, `get_data_axes`, `set_data_axes`
 
@@ -332,7 +342,7 @@ class ConstructAccess():
         '''Set the domain axis constructs spanned by the data of a metadata
     construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data_axes`, `get_data`, `get_data_axes`,
                  `has_data_axes`

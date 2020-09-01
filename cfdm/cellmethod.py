@@ -29,7 +29,7 @@ class CellMethod(mixin.Container,
     spacing of the original data, or the fact that the method was
     applied only over El Nino years).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __str__(self):
@@ -43,7 +43,7 @@ class CellMethod(mixin.Container,
     cell_methods attribute then, unless they are standard names, the
     axes names will need to be modified to be netCDF dimension names.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         string = ['{0}:'.format(axis) for axis in self.get_axes(())]
@@ -83,7 +83,7 @@ class CellMethod(mixin.Container,
     Returns a description the method, all qualifiers and the axes to
     which it applies.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -93,10 +93,7 @@ class CellMethod(mixin.Container,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         indent0 = '    ' * _level
@@ -122,71 +119,31 @@ class CellMethod(mixin.Container,
     question. They are, however, taken into account when two fields
     constructs are tested for equality.
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. The data type of the
-    numbers is not taken into consideration. See the *atol* and *rtol*
-    parameters.
+    {{equals tolerance}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another cell method construct, or a subclass of
     one. See the *ignore_type* parameter.
 
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked.
+    {{equals tolerance}}
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: number, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
+        {{verbose: `int` or `str` or `None`, optional}}
 
         ignore_qualifiers: sequence of `str`, optional
             The names of qualifiers to omit from the comparison.
 
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another cell method construct, or a
-            subclass of one. If *ignore_type* is True then
-            ``CellMethod(source=other)`` is tested, rather than the
-            ``other`` defined by the *other* parameter.
+        {{ignore_type: `bool`, optional}}
 
     :Returns:
 
@@ -315,7 +272,7 @@ class CellMethod(mixin.Container,
     1. The method, preceeded by 'method:'
     2. The value of the *default* parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -358,7 +315,7 @@ class CellMethod(mixin.Container,
 
     * The method, preceeded by 'method:'.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 
@@ -393,7 +350,7 @@ class CellMethod(mixin.Container,
     The axes are sorted by domain axis construct identifier or
     standard name, and any intervals are sorted accordingly.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -409,21 +366,21 @@ class CellMethod(mixin.Container,
 
     **Examples:**
 
-    >>> cm = cfdm.CellMethod(axes=['domainaxis1', 'domainaxis0'],
+    >>> cm = {{package}}.CellMethod(axes=['domainaxis1', 'domainaxis0'],
     ...                      method='mean',
     ...                      qualifiers={'interval': [1, 2]})
     >>> cm
-    <CellMethod: domainaxis1: domainaxis0: mean (interval: 1 interval: 2)>
+    <{{repr}}CellMethod: domainaxis1: domainaxis0: mean (interval: 1 interval: 2)>
     >>> cm.sorted()
-    <CellMethod: domainaxis0: domainaxis1: mean (interval: 2 interval: 1)>
+    <{{repr}}CellMethod: domainaxis0: domainaxis1: mean (interval: 2 interval: 1)>
 
-    >>> cm = cfdm.CellMethod(axes=['domainaxis0', 'area'],
+    >>> cm = {{package}}.CellMethod(axes=['domainaxis0', 'area'],
     ...                      method='mean',
     ...                      qualifiers={'interval': [1, 2]})
     >>> cm
-    <CellMethod: domainaxis0: area: mean (interval: 1 interval: 2)>
+    <{{repr}}CellMethod: domainaxis0: area: mean (interval: 1 interval: 2)>
     >>> cm.sorted()
-    <CellMethod: area: domainaxis0: mean (interval: 2 interval: 1)>
+    <{{repr}}CellMethod: area: domainaxis0: mean (interval: 2 interval: 1)>
 
         '''
         new = self.copy()

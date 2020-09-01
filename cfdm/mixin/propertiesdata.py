@@ -6,6 +6,7 @@ from ..decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
+    _test_decorator_args,
 )
 
 
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 class PropertiesData(Properties):
     '''Mixin class for a data array with descriptive properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __getitem__(self, indices):
@@ -35,7 +36,7 @@ class PropertiesData(Properties):
       the same behaviour as indexing on a Variable object of the
       netCDF4 package.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -70,7 +71,7 @@ class PropertiesData(Properties):
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         name = self.identity('')
@@ -119,6 +120,60 @@ class PropertiesData(Properties):
         ndim = self.ndim
 
         return [(i + ndim if i < 0 else i) for i in axes]
+
+    @classmethod
+    def _test_docstring_substitution_classmethod(cls, arg1, arg2):
+        '''Test docstring substitution on with @classmethod.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        return (arg1, arg2)
+
+    @staticmethod
+    def _test_docstring_substitution_staticmethod(arg1, arg2):
+        '''Test docstring substitution on with @staticmethod.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        return (arg1, arg2)
+
+    def _test_docstring_substitution_3(self, arg1, arg2):
+        '''Test docstring substitution 3.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        return self.__class__._test_docstring_substitution_staticmethod(arg1, arg2)
+
+    def _test_docstring_substitution_4(self, arg1, arg2):
+        '''Test docstring substitution 4.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        return self._test_docstring_substitution_classmethod(arg1, arg2)
+
+    @_test_decorator_args('i')
+    @_inplace_enabled
+    def _test_docstring_substitution(self, inplace=False, verbose=None):
+        '''Test docstring substitution with two decorators.
+
+        {{inplace: `bool`, optional}}
+
+        {{package}}.{{class}}
+
+        '''
+        print('In _test_docstring_substitution')
 
     # ----------------------------------------------------------------
     # Attributes
@@ -312,14 +367,13 @@ class PropertiesData(Properties):
               ``valid_max``, and ``valid_range`` properties have not
               been updated.
 
-    .. versionadded:: 1.8.2
+    .. versionadded:: (cfdm) 1.8.2
 
     .. seealso:: `Data.apply_masking`, `read`, `write`
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -379,7 +433,7 @@ class PropertiesData(Properties):
              _axes=None, _axis_names=None):
         '''A full description.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -389,9 +443,7 @@ class PropertiesData(Properties):
 
     :Returns:
 
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         # ------------------------------------------------------------
@@ -457,89 +509,38 @@ class PropertiesData(Properties):
       type, the same missing data mask, and be element-wise equal (see
       the *ignore_data_type* parameter).
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
-
-    Any compression is ignored by default, with only the arrays in
-    their uncompressed forms being compared. See the
-    *ignore_compression* parameter.
+    {{equals tolerance}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another object of the same type, or a subclass of
     one. See the *ignore_type* parameter.
 
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked.
+    {{equals compression}}
 
-    .. versionadded:: 1.7.0
+    {{equals netCDF}}
+
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: number, optional}}
 
-        ignore_fill_value: `bool`, optional
-            If True then the ``_FillValue`` and ``missing_value``
-            properties are omitted from the comparison.
+        {{ignore_fill_value: `bool`, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+        {{verbose: `int` or `str` or `None`, optional}}
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
+        {{ignore_properties: sequence of `str`, optional}}
 
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
+        {{ignore_data_type: `bool`, optional}}
 
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
+        {{ignore_compression: `bool`, optional}}
 
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
-        ignore_properties: sequence of `str`, optional
-            The names of properties to omit from the comparison.
-
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
-
-        ignore_compression: `bool`, optional
-            If False then the compression type and, if applicable, the
-            underlying compressed arrays must be the same, as well as
-            the arrays in their uncompressed forms. By default only
-            the the arrays in their uncompressed forms are compared.
-
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another object of the same type, or
-            a subclass of one. If *ignore_type* is True then equality
-            is possible for any object with a compatible API.
+        {{ignore_type: `bool`, optional}}
 
     :Returns:
 
@@ -644,7 +645,7 @@ class PropertiesData(Properties):
     def inherited_properties(self):
         '''Return the properties inherited from a parent construct.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `properties`
 
@@ -667,7 +668,7 @@ class PropertiesData(Properties):
 
     Inserts a new size 1 axis into the data array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `squeeze`, `transpose`
 
@@ -685,11 +686,11 @@ class PropertiesData(Properties):
             *Parameter example:*
               ``position=-1``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             A new instance with expanded data axes. If the operation
             was in-place then `None` is returned.
 
@@ -718,7 +719,7 @@ class PropertiesData(Properties):
     By default all size one axes are removed, but particular size one
     axes may be selected for removal.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `insert_dimension`, `transpose`
 
@@ -739,16 +740,20 @@ class PropertiesData(Properties):
             *Parameter example:*
               ``axes=[2, 0]``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
-            A new instance with removed data axes. If the operation
-            was in-place then `None` is returned.
+        `{{class}}` or `None`
+            A new instance with removed size 1 one data axes. If the
+            operation was in-place then `None` is returned.
 
     **Examples:**
 
+    >>> import numpy
+    >>> f = {{package}}.{{class}}()
+    >>> d = {{package}}.Data(numpy.arange(7008).reshape((1, 73, 1, 96)))
+    >>> f.set_data(d)
     >>> f.shape
     (1, 73, 1, 96)
     >>> f.squeeze().shape
@@ -771,7 +776,7 @@ class PropertiesData(Properties):
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `insert_dimension`, `squeeze`
 
@@ -789,11 +794,11 @@ class PropertiesData(Properties):
             *Parameter example:*
               ``axes=[-1, 0, 1]``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             A new instance with permuted data axes. If the operation
             was in-place then `None` is returned.
 
@@ -839,15 +844,15 @@ class PropertiesData(Properties):
 
         * Compression by gathering.
 
-    .. versionadded:: 1.7.11
+    .. versionadded:: (cfdm) 1.7.11
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
+        `{{class}}` or `None`
             The uncompressed construct, or `None` if the operation was
             in-place.
 

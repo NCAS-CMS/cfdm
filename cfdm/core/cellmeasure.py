@@ -22,7 +22,7 @@ class CellMeasure(abstract.PropertiesData):
     implicitly propagated. CF-netCDF cell measure variables correspond
     to cell measure constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, measure=None, properties=None, data=None,
@@ -41,23 +41,12 @@ class CellMeasure(abstract.PropertiesData):
             *Parameter example:*
               ``measure='area'``
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
             *Parameter example:*
               ``properties={'units': 'metres 2'}``
 
-        data: `Data`, optional
-            Set the data array. Ignored if the *source* parameter is
-            set.
-
-            The data array also may be set after initialisation with
-            the `set_data` method.
+        {{init data: `Data`, optional}}
 
         source: optional
             Initialise the *measure*, *properties* and *data*
@@ -68,9 +57,7 @@ class CellMeasure(abstract.PropertiesData):
             *Parameter example:*
               >>> d = CellMeasure(source=c)
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization By default parameters are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(properties=properties, source=source,
@@ -90,7 +77,7 @@ class CellMeasure(abstract.PropertiesData):
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -108,7 +95,7 @@ class CellMeasure(abstract.PropertiesData):
     def del_measure(self, default=ValueError()):
         '''Remove the measure.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_measure`, `has_measure`, `set_measure`
 
@@ -149,7 +136,7 @@ class CellMeasure(abstract.PropertiesData):
     def has_measure(self):
         '''Whether the measure has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_measure`, `get_measure`, `set_measure`
 
@@ -179,7 +166,7 @@ class CellMeasure(abstract.PropertiesData):
     def get_measure(self, default=ValueError()):
         '''Return the measure.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_measure`, `has_measure`, `set_measure`
 
@@ -220,7 +207,7 @@ class CellMeasure(abstract.PropertiesData):
     def set_measure(self, measure, copy=True):
         '''Set the measure.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_measure`, `get_measure`, `has_measure`
 

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class Properties(Container):
     '''Mixin class for descriptive properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __str__(self):
@@ -22,7 +22,7 @@ class Properties(Container):
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return '{0}'.format(self.identity(''))
@@ -31,7 +31,7 @@ class Properties(Container):
                          _omit_properties=None):
         '''Dump the properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -72,7 +72,7 @@ class Properties(Container):
              _prefix='', _title=None, _create_title=True, _level=0):
         '''A full description.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -82,9 +82,7 @@ class Properties(Container):
 
     :Returns:
 
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         indent0 = '    ' * _level
@@ -139,76 +137,34 @@ class Properties(Container):
       same the size and be element-wise equal (see the *ignore_properties*
       and *ignore_data_type* parameters).
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences) are
-    positive, typically very small numbers. See the *atol* and *rtol*
-    parameters.
+    {{equals tolerance}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another object of the same type, or a subclass of
     one. See the *ignore_type* parameter.
 
-    .. versionadded:: 1.7.0
+    {{equals netCDF}}
+
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {[atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: number, optional}}
 
-        ignore_fill_value: `bool`, optional
-            If True then the ``_FillValue`` and ``missing_value``
-            properties are omitted from the comparison.
+        {{ignore_fill_value: `bool`, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+        {{verbose: `int` or `str` or `None`, optional}}
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
+        {{ignore_properties: sequence of `str`, optional}}
 
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
+        {{ignore_data_type: `bool`, optional}}
 
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
-        ignore_properties: sequence of `str`, optional
-            The names of properties to omit from the comparison.
-
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
-
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another object of the same type, or
-            a subclass of one. If *ignore_type* is True then equality
-            is possible for any object with a compatible API.
+        {{ignore_type: `bool`, optional}}
 
     :Returns:
 
@@ -298,7 +254,7 @@ class Properties(Container):
     * The netCDF variable name, preceeded by ``'ncvar%'``.
     * The value of the *default* parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -314,12 +270,11 @@ class Properties(Container):
 
     **Examples:**
 
-    >>> f.properties()
-    {'foo': 'bar',
-     'long_name': 'Air Temperature',
-     'standard_name': 'air_temperature'}
-    >>> f.nc_get_variable()
-    'tas'
+    >>> f = {{package}}.{{class}}()
+    >>> f.set_properties({'foo': 'bar',
+    ...                   'long_name': 'Air Temperature',
+    ...                   'standard_name': 'air_temperature'}
+    >>> f.nc_set_variable('tas')
     >>> f.identity()
     'air_temperature'
     >>> f.del_property('standard_name')
@@ -367,7 +322,7 @@ class Properties(Container):
       e.g. ``'long_name:Air temperature'``.
     * The netCDF variable name, preceeded by ``'ncvar%'``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 
