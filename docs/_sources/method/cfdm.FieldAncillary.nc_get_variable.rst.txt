@@ -1,7 +1,0 @@
-cfdm.FieldAncillary.nc_get_variable
-===================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.FieldAncillary.nc_get_variable

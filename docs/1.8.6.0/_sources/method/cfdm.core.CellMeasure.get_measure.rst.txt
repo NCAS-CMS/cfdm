@@ -1,7 +1,0 @@
-cfdm.core.CellMeasure.get_measure
-=================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.CellMeasure.get_measure

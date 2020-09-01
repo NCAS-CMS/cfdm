@@ -1,7 +1,0 @@
-cfdm.Constructs.__contains__
-============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Constructs.__contains__

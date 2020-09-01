@@ -1,7 +1,0 @@
-cfdm.GatheredArray.dtype
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.GatheredArray.dtype

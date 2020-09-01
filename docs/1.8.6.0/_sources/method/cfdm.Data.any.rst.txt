@@ -1,7 +1,0 @@
-cfdm.Data.any
-=============
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.any

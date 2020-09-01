@@ -1,7 +1,0 @@
-cfdm.Field.dtype
-================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.Field.dtype

@@ -1,7 +1,0 @@
-cfdm.DimensionCoordinate.shape
-==============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.DimensionCoordinate.shape

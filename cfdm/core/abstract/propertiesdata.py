@@ -304,13 +304,13 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
         '''
         return self._has_component('data')
 
-    def set_data(self, data, copy=True):
+    def set_data(self, data, copy=True, inplace=True):
         '''Set the data.
 
     The units, calendar and fill value of the incoming `Data` instance
     are removed prior to insertion.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data`, `get_data`, `has_data`
 
@@ -323,9 +323,19 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
             If False then do not copy the data prior to insertion. By
             default the data are copied.
 
+        inplace: `bool`, optional
+            If False then do not do the operation in-place and return
+            a new `{{class}}` instance containing the new data. By
+            default the operation is in-place and `None` is returned.
+
+            .. versionadded:: (cfdm) 1.8.7.0
+
     :Returns:
 
-        `None`
+        `None` or `{{class}}`
+            If the operation was in-place then `None` is returned,
+            otherwise return a new `{{class}}` instance containing the
+            new data.
 
     **Examples:**
 
@@ -348,6 +358,16 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
         if copy:
             data = data.copy()
 
-        self._set_component('data', data, copy=False)
+        if inplace:
+            v = self
+        else:
+            v = self.copy(data=False)
+            
+        v._set_component('data', data, copy=False)
 
+        if inplace:
+            return
+            
+        return v
+    
 # --- End: class
