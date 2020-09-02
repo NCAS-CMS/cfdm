@@ -83,7 +83,7 @@ class Constructs(abstract.Container):
         copy: `bool`, optional
             If False then do not deep copy metadata constructs from
             those of *source* prior to initialization. By default such
-            metadata constructs deep copied.
+            metadata constructs are deep copied.
 
         '''
         self._ignore = tuple(set(_ignore))
@@ -594,7 +594,7 @@ class Constructs(abstract.Container):
 
         copy: `bool`, optional
             If True then return a copy of the unique selected
-            construct. By default the construct is not copied.
+            construct. By default the construct is copied.
 
     :Returns:
 
