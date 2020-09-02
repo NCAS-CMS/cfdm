@@ -1,2 +1,3 @@
-from .ragged import (RaggedContiguous,
-                     RaggedIndexed)
+from .arraymixin import ArrayMixin
+from .raggedcontiguous import RaggedContiguous
+from .raggedindexed import RaggedIndexed

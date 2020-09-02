@@ -1,19 +1,21 @@
-import abc
+import inspect
+import re
 
 from copy import copy, deepcopy
 
+from ..meta import RewriteDocstringMeta
 
-class Container(metaclass=abc.ABCMeta):
+from ..docstring import _docstring_substitution_definitions
+
+
+class Container(metaclass=RewriteDocstringMeta):
     '''Abstract base class for storing components.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, source=None, copy=True):
         '''**Initialisation**
-
-    A container is initialised with no parameters. Components are set
-    after initialisation with the `_set_component` method.
 
         '''
         self._components = {}
@@ -35,7 +37,7 @@ class Container(metaclass=abc.ABCMeta):
 
     x.__deepcopy__() <==> copy.deepcopy(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -45,13 +47,40 @@ class Container(metaclass=abc.ABCMeta):
         '''
         return self.copy()
 
+    def __docstring_substitutions__(self):
+        '''Define docstring substitutions that apply to this class and all of
+    its subclasses.
+
+    These are in addtion to, and take precendence over, docstring
+    substitutions defined by the base classes of this class.
+
+    See `_docstring_substitutions` for details.
+
+    .. versionaddedd:: (cfdm) 1.8.7.0
+
+    :Returns:
+
+        `dict`
+            The docstring substitutions that have been applied.
+
+        '''
+        return _docstring_substitution_definitions
+
+    def __docstring_package_depth__(self):
+        '''Return the package depth for {{package}} docstring substitutions.
+
+    See `_docstring_package_depth` for details.
+
+        '''
+        return 1
+
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
     def _default(self, default, message=None):
         '''Return a value or raise an Exception for a default case.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -65,7 +94,8 @@ class Container(metaclass=abc.ABCMeta):
 
     :Returns:
 
-        The value of *default* if it is not an `Exception` instance.
+            The value of *default* if it is not an `Exception`
+            instance.
 
     **Examples:**
 
@@ -94,7 +124,7 @@ class Container(metaclass=abc.ABCMeta):
     def _del_component(self, component, default=ValueError()):
         '''Remove a component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_get_component`, `_has_component`, `_set_component`
 
@@ -103,8 +133,7 @@ class Container(metaclass=abc.ABCMeta):
         component:
             The name of the component to be removed.
 
-        default: optional
-            Return *default* if the component has not been set.
+        {{default: optional}}
 
     :Returns:
 
@@ -113,6 +142,7 @@ class Container(metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -134,12 +164,13 @@ class Container(metaclass=abc.ABCMeta):
 
     @property
     def _custom(self):
-        '''Storage for additional attributes.
+        '''Customisable storage for additional attributes.
 
-    .. versionadded:: 1.7.4
+    .. versionadded:: (cfdm) 1.7.4
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f._custom
     {}
     >>> f._custom['feature'] = ['f']
@@ -155,13 +186,13 @@ class Container(metaclass=abc.ABCMeta):
     >>> g._custom
     {}
 
-    '''
+        '''
         return self._get_component('custom')
 
     def _get_component(self, component, default=ValueError()):
         '''Return a component
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_del_component`, `_has_component`, `_set_component`
 
@@ -170,8 +201,7 @@ class Container(metaclass=abc.ABCMeta):
         component:
             The name of the component to be returned.
 
-        default: optional
-            Return *default* if the component has not been set.
+        {{default: optional}}
 
     :Returns:
 
@@ -180,6 +210,7 @@ class Container(metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -201,7 +232,7 @@ class Container(metaclass=abc.ABCMeta):
     def _has_component(self, component):
         '''Whether a component has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_del_component`, `_get_component`, `_set_component`
 
@@ -217,6 +248,7 @@ class Container(metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -233,7 +265,7 @@ class Container(metaclass=abc.ABCMeta):
     def _set_component(self, component, value, copy=True):
         '''Set a component.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_del_component`, `_get_component`, `_has_component`
 
@@ -251,6 +283,7 @@ class Container(metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f._set_component('foo', 'bar')
     >>> f._has_component('foo')
     True
@@ -275,10 +308,11 @@ class Container(metaclass=abc.ABCMeta):
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
+        `{{class}}`
             The deep copy.
 
     **Examples:**

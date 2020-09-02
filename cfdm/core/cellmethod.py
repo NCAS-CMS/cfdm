@@ -20,7 +20,7 @@ class CellMethod(abstract.Container):
     spacing of the original data, or the fact that the method was
     applied only over El Nino years).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, axes=None, method=None, qualifiers=None,
@@ -82,9 +82,7 @@ class CellMethod(abstract.Container):
             Initialize the axes, method and qualifiers from those of
             *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization By default parameters are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__()
@@ -124,7 +122,7 @@ class CellMethod(abstract.Container):
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -142,28 +140,29 @@ class CellMethod(abstract.Container):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def copy(self):
-        '''Return a deep copy.
-
-    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-    .. versionadded:: 1.7.0
-
-    :Returns:
-
-            The deep copy.
-
-    **Examples:**
-
-    >>> g = f.copy()
-
-        '''
-        return type(self)(source=self, copy=True)
+#    def copy(self):
+#        '''Return a deep copy.
+#
+#    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+#
+#    .. versionadded:: (cfdm) 1.7.0
+#
+#    :Returns:
+#
+#        `{{class}}`
+#            The deep copy.
+#
+#    **Examples:**
+#
+#    >>> g = f.copy()
+#
+#        '''
+#        return type(self)(source=self, copy=True)
 
     def del_axes(self, default=ValueError()):
         '''Remove the axes of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_axes`, `has_axes`, `set_axes`
 
@@ -206,7 +205,7 @@ class CellMethod(abstract.Container):
     def del_method(self, default=ValueError()):
         '''Remove the method of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_method`, `has_method`, `set_method`
 
@@ -248,7 +247,7 @@ class CellMethod(abstract.Container):
     def del_qualifier(self, qualifier, default=ValueError()):
         '''Remove a qualifier of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_qualifier`, `has_qualifier`, `qualifiers`,
                  `set_qualifier`
@@ -292,7 +291,7 @@ class CellMethod(abstract.Container):
     def get_axes(self, default=ValueError()):
         '''Return the axes of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_axes`, `has_axes`, `set_axes`
 
@@ -334,7 +333,7 @@ class CellMethod(abstract.Container):
     def get_method(self, default=ValueError()):
         '''Return the method of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_method`, `has_method`, `set_method`
 
@@ -376,7 +375,7 @@ class CellMethod(abstract.Container):
     def get_qualifier(self, qualifier, default=ValueError()):
         '''Return a qualifier of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_qualifier`, `has_qualifier`, `qualifiers`,
                  `set_qualifier`
@@ -420,7 +419,7 @@ class CellMethod(abstract.Container):
     def has_axes(self):
         '''Whether the axes of the cell method have been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_axes`, `get_axes`, `set_axes`
 
@@ -450,7 +449,7 @@ class CellMethod(abstract.Container):
     def has_method(self):
         '''Whether the method of the cell method has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_axes`, `get_method`, `set_method`
 
@@ -480,7 +479,7 @@ class CellMethod(abstract.Container):
     def has_qualifier(self, qualifier):
         '''Whether a qualifier of the cell method has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_qualifier`, `get_qualifier`, `qualifiers`,
                  `set_qualifier`
@@ -511,7 +510,7 @@ class CellMethod(abstract.Container):
     def qualifiers(self):
         '''Return all qualifiers of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`,
                  `set_qualifier`
@@ -524,7 +523,7 @@ class CellMethod(abstract.Container):
     **Examples:**
 
     >>> c.qualifiers()
-    {'interval': [<Data(): 0.1 degrees>],
+    {'interval': [<{{repr}}Data(): 0.1 degrees>],
      'where': 'land'}
 
     >>> f.qualifiers()
@@ -536,7 +535,7 @@ class CellMethod(abstract.Container):
     def set_axes(self, value, copy=True):
         '''Set the axes of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_axes`, `get_axes`, `has_axes`
 
@@ -604,7 +603,7 @@ class CellMethod(abstract.Container):
     def set_method(self, value, copy=True):
         '''Set the method of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_method`, `get_method`, `has_method`
 
@@ -641,7 +640,7 @@ class CellMethod(abstract.Container):
     def set_qualifier(self, qualifier, value, copy=True):
         '''Set a qualifier of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`,
                  `qualifiers`

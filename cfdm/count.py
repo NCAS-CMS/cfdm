@@ -39,7 +39,7 @@ class Count(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, source=None,
@@ -48,30 +48,17 @@ class Count(mixin.NetCDFVariable,
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
             *Parameter example:*
               ``properties={'long_name': 'number of obs for this station'}``
 
-        data: `Data`, optional
-            Set the data array. Ignored if the *source* parameter is
-            set.
-
-            The data array may also be set after initialisation with
-            the `set_data` method.
+        {{init data: `Data`, optional}}
 
         source: optional
             Initialize the properties and data from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(properties=properties, data=data,
@@ -88,7 +75,7 @@ class Count(mixin.NetCDFVariable,
     Returns a description of all properties, including those of
     components, and provides selected values of all data arrays.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -98,10 +85,7 @@ class Count(mixin.NetCDFVariable,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         if _create_title and _title is None:

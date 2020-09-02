@@ -1,4 +1,3 @@
-import inspect
 import logging
 
 import numpy
@@ -7,14 +6,16 @@ from ..functions import atol, rtol
 
 from ..decorators import _manage_log_level_via_verbosity
 
+from ..docstring import _docstring_substitution_definitions
+
 
 logger = logging.getLogger(__name__)
 
 
-class Container():
+class Container:
     '''Mixin class for storing object components.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __repr__(self):
@@ -22,7 +23,7 @@ class Container():
 
     x.__repr__() <==> repr(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
@@ -32,15 +33,42 @@ class Container():
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         out = sorted(self._components)
         return ', '.join(out)
 
+    def __docstring_substitutions__(self):
+        '''Define docstring substitutions that apply to this class and all of
+    its subclasses.
+
+    These are in addtion to, and take precendence over, docstring
+    substitutions defined by the base classes of this class.
+
+    See `_docstring_substitutions` for details.
+
+    .. versionaddedd:: (cfdm) 1.8.7.0
+
+    :Returns:
+
+        `dict`
+            The docstring substitutions that have been applied.
+
+        '''
+        return _docstring_substitution_definitions
+
+    def __docstring_package_depth__(self):
+        '''Return the package depth for {{package}} docstring substitutions.
+
+    See `_docstring_package_depth` for details.
+
+        '''
+        return 0
+
     @property
     def _atol(self):
-        '''Internal alias for `cfdm.atol`.
+        '''Internal alias for `{{package}}.atol`.
 
     An alias is necessary to avoid a name clash with the keyword argument
     of identical name (`atol`) in calling functions.
@@ -49,7 +77,7 @@ class Container():
 
     @property
     def _rtol(self):
-        '''Internal alias for `cfdm.rtol`.
+        '''Internal alias for `{{package}}.rtol`.
 
     An alias is necessary to avoid a name clash with the keyword argument
     of identical name (`rtol`) in calling functions.
@@ -64,17 +92,13 @@ class Container():
     methods, or casts them as numpy arrays and carried aout numericlly
     tolerant equality checks.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `atol` function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `rtol` function.
+        {{rtol: number, optional}}
 
         '''
         if rtol is None:
@@ -99,6 +123,7 @@ class Container():
             except AttributeError:
                 # Python 2
                 pass
+
             return eq(y, **kwargs)
 
         eq = getattr(y, 'equals', None)
@@ -174,7 +199,7 @@ class Container():
       or a sublcass of, the RHS operand then instantiate a new
       instance based on the the RHS class and return it.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         # Check for object identity

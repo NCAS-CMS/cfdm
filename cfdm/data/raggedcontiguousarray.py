@@ -2,11 +2,10 @@ import numpy
 
 from . import abstract
 from . import mixin
-from . import NumpyArray
 
 
-class RaggedContiguousArray(abstract.CompressedArray,
-                            mixin.RaggedContiguous):
+class RaggedContiguousArray(mixin.RaggedContiguous,
+                            abstract.CompressedArray):
     '''An underlying contiguous ragged array.
 
     A collection of features stored using a contiguous ragged array
@@ -20,7 +19,7 @@ class RaggedContiguousArray(abstract.CompressedArray,
     It is assumed that the compressed dimension is the left-most
     dimension in the compressed array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
@@ -72,6 +71,8 @@ class RaggedContiguousArray(abstract.CompressedArray,
       then these indices work independently along each dimension
       (similar to the way vector subscripts work in Fortran).
 
+    .. versionadded:: (cfdm) 1.7.0
+
         '''
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
@@ -109,9 +110,11 @@ class RaggedContiguousArray(abstract.CompressedArray,
 
     There is no change to an array that is already in memory.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Returns:
 
-        `RaggedContiguousArray`
+        `{{class}}`
             The array that is stored in memory.
 
     **Examples:**

@@ -1,6 +1,5 @@
 import datetime
 import os
-import sys
 import unittest
 
 import numpy
@@ -250,6 +249,6 @@ class create_fieldTest_2(unittest.TestCase):
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())
-    cfdm.environment(display=False)
+    cfdm.environment()
     print('')
     unittest.main(verbosity=2)

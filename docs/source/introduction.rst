@@ -70,14 +70,15 @@ The cfdm package can
   datasets,
 
 * create new field constructs in memory,
-  
+
 * write field constructs to netCDF datasets on disk,
 
 * read, write, and create coordinates defined by geometry cells,
-  
+
 * read and write netCDF4 string data-type variables,
-  
-* read, write, and create datasets containing hierarchical groups,
+
+* read, write, and create netCDF and CDL datasets containing
+  hierarchical groups,
 
 * inspect field constructs,
 
@@ -87,11 +88,11 @@ The cfdm package can
 
 * create subspaces of field constructs,
 
-* incorporate, and create, metadata stored in external files,
+* incorporate, and create, metadata stored in external files, and
 
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
-  data in its uncompressed form, and
+  data in its uncompressed form.
 
 Note that the cfdm package enables the representation and creation of
 CF field constructs, but it is largely :ref:`up to the user to use

@@ -2,7 +2,6 @@ import atexit
 import datetime
 import os
 import tempfile
-import time
 import unittest
 
 import netCDF4
@@ -188,7 +187,7 @@ class ExternalVariableTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    print('Run date:', datetime.datetime.utcnow())
-    cfdm.environment(display=False)
+    print('Run date:', datetime.datetime.now())
+    cfdm.environment()
     print()
     unittest.main(verbosity=2)

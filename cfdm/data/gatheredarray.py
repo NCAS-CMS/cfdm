@@ -1,5 +1,4 @@
 from functools import reduce
-
 from operator import mul
 
 import numpy
@@ -17,7 +16,7 @@ class GatheredArray(abstract.CompressedArray):
     The information needed to uncompress the data is stored in a "list
     variable" that gives the indices of the required points.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
@@ -128,14 +127,11 @@ class GatheredArray(abstract.CompressedArray):
     def get_list(self, default=ValueError()):
         '''Return the list variable for a compressed array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the list
-            variable has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 
@@ -158,7 +154,7 @@ class GatheredArray(abstract.CompressedArray):
 
     :Returns:
 
-        `GatheredArray`
+        `{{class}}`
             The array that is stored in memory.
 
     **Examples:**

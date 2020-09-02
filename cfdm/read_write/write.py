@@ -80,7 +80,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     `~cfdm.Data.nc_clear_hdf5_chunksizes` and
     `~cfdm.Data.nc_set_hdf5_chunksizes` metods of a `Data` instance.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `read`
 
@@ -402,7 +402,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
               resulting warning may be suppressed by setting
               ``warn_valid=False``.
 
-            .. versionadded:: 1.8.3
+            .. versionadded:: (cfdm) 1.8.3
 
         group: `bool`, optional
             If False then create a "flat" netCDF file, i.e. one with
@@ -411,7 +411,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             defined by the netCDF interface of the field constucts and
             its components will be created and populated.
 
-            .. versionadded:: 1.8.6
+            .. versionadded:: (cfdm) 1.8.6
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field

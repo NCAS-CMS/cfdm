@@ -36,7 +36,6 @@ up to the user to use them in a CF-compliant way.
 '''
 import logging
 import sys
-import platform
 
 from distutils.version import LooseVersion
 
@@ -153,6 +152,7 @@ from .read_write import (read,
 
 from .examplefield import example_field
 
+from .abstract import Container
 
 # --------------------------------------------------------------------
 # Set up basic logging for the full project with a root logger

@@ -4,7 +4,8 @@ from . import mixin
 from . import Constructs
 
 
-class Domain(mixin.ConstructAccess, abstract.Container):
+class Domain(mixin.ConstructAccess,
+             abstract.Container):
     '''A domain of the CF data model.
 
     The domain represents a set of discrete "locations" in what
@@ -17,7 +18,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
     coordinate, cell measure, coordinate reference and domain
     ancillary constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     # Define the base of the identity keys for each construct type
@@ -49,9 +50,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
             A new domain may also be instantiated with the
             `fromconstructs` class method.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__()
@@ -83,7 +82,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
     def constructs(self):
         '''Return the metdata constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -94,12 +93,12 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
     >>> print(d.constructs)
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
         '''
         return self._get_component('constructs')
@@ -112,7 +111,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
     ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `fromconstructs`
 
@@ -124,6 +123,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
     :Returns:
 
+        `{{class}}`
             The deep copy.
 
     **Examples:**
@@ -141,7 +141,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
     to the domain, such as the addition or removal of a construct,
     will also affect the input `Constructs` instance.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -149,19 +149,19 @@ class Domain(mixin.ConstructAccess, abstract.Container):
             The constructs from which to create the new domain. Cell
             method and field ancillary constucts are ignored.
 
-        copy: bool, optional
+        copy: `bool`, optional
             If True then deep copy the metadata constructs prior to
             initialization. By default the metadata constructs are not
             copied.
 
     :Returns:
 
-        `Domain`
+        `{{class}}`
             The domain created from a view of the constructs.
 
     **Examples:**
 
-    >>> d = Domain.fromconstructs(f.constructs)
+    >>> d = {{package}}.{{class}}.fromconstructs(f.constructs)
 
         '''
         domain = cls()

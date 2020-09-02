@@ -197,8 +197,6 @@ class FieldTest(unittest.TestCase):
 
         f = cfdm.example_field(0)
 
-        tmpfile = 'cfdm_test_Field_get_filenames.nc'
-
         cfdm.write(f, tmpfile)
         g = cfdm.read(tmpfile)[0]
 

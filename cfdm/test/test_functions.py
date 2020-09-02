@@ -196,7 +196,8 @@ class FunctionsTest(unittest.TestCase):
             return
 
         self.assertIsInstance(cfdm.environment(display=False), list)
-        self.assertIsInstance(cfdm.environment(display=False, paths=False), list)
+        self.assertIsInstance(cfdm.environment(display=False, paths=False),
+                              list)
         self.assertIsInstance(cfdm.environment(display=False), list)
 
     def test_example_field(self):

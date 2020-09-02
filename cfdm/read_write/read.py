@@ -89,7 +89,7 @@ def read(filename, external=None, extra=None, verbose=None,
     constructs that may be read within a session, and makes the read
     operation fast.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `cfdm.write`, `cfdm.Field.convert`,
                  `cfdm.Field.dataset_compliance`
@@ -214,7 +214,7 @@ def read(filename, external=None, extra=None, verbose=None,
             https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
             for details.
 
-            .. versionadded:: 1.8.3
+            .. versionadded:: (cfdm) 1.8.3
 
         mask: `bool`, optional
             If False then do not mask by convention when reading the
@@ -230,7 +230,7 @@ def read(filename, external=None, extra=None, verbose=None,
             https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
             for details.
 
-            .. versionadded:: 1.8.2
+            .. versionadded:: (cfdm) 1.8.2
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the

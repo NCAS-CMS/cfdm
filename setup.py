@@ -1,10 +1,11 @@
 from distutils.core import setup
-#from setuptools import setup
+# from setuptools import setup
 
 import os
 import fnmatch
 import sys
 import re
+
 
 def find_package_data_files(directory):
     for root, dirs, files in os.walk(directory):
@@ -13,6 +14,7 @@ def find_package_data_files(directory):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cfdm/', '', 1)
 
+                
 def _read(fname):
     """Returns content of a file.
 
@@ -22,6 +24,7 @@ def _read(fname):
     with open(fpath, 'r') as file_:
         return file_.read()
 
+    
 def _get_version():
     """Returns library version by inspecting core/__init__.py file.
 
@@ -29,6 +32,7 @@ def _get_version():
     return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                      _read("cfdm/core/__init__.py"),
                      re.MULTILINE).group(1)
+
 
 version      = _get_version()
 packages     = ['cfdm']
@@ -63,19 +67,20 @@ inspecting it:
 
 The **cfdm** package can
 
-* read field constructs from netCDF datasets,
+* read field constructs from netCDF and CDL datasets,
 * create new field constructs in memory,
 * write field constructs to netCDF datasets on disk,
-* read netCDF and CDL datasets containing hierarchical groups,
+* read, write, and create coordinates defined by geometry cells,
+* read and write netCDF4 string data-type variables,
+* read, write, and create datasets containing hierarchical groups,
 * inspect field constructs,
 * test whether two field constructs are the same,
 * modify field construct metadata and data,
 * create subspaces of field constructs,
-* incorporate, and create, metadata stored in external files,
+* incorporate, and create, metadata stored in external files, and
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
-  data in its uncompressed form, and
-* read, write, and create coordinates defined by geometry cells.
+  data in its uncompressed form.
 
 Documentation
 =============
@@ -137,7 +142,10 @@ setup(name = "cfdm",
                       'cfdm.core.abstract',
                       'cfdm.core.data',
                       'cfdm.core.data.abstract',
+                      'cfdm.core.docstring',
+                      'cfdm.core.meta',
                       'cfdm.core.mixin',
+                      'cfdm.docstring',
                       'cfdm.data',
                       'cfdm.data.abstract',
                       'cfdm.data.mixin',
