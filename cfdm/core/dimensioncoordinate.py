@@ -53,7 +53,7 @@ class DimensionCoordinate(abstract.Coordinate):
         '''
         return 'dimension_coordinate'
 
-    def set_data(self, data, copy=True):
+    def set_data(self, data, copy=True, inplace=True):
         '''Set the data.
 
     The units, calendar and fill value of the incoming `Data` instance
@@ -73,9 +73,16 @@ class DimensionCoordinate(abstract.Coordinate):
             If False then do not copy the data prior to insertion. By
             default the data are copied.
 
+        {{inplace: `bool`, optional (default True)}}
+
+            .. versionadded:: (cfdm) 1.8.7.0
+
     :Returns:
 
-        `None`
+        `None` or `{{class}}`
+            If the operation was in-place then `None` is returned,
+            otherwise return a new `{{class}}` instance containing the
+            new data.
 
     **Examples:**
 
@@ -100,6 +107,6 @@ class DimensionCoordinate(abstract.Coordinate):
                 "Dimension coordinate construct must have 1-dimensional data. "
                 "Got {!r}".format(data))
 
-        return super().set_data(data, copy=copy)
+        return super().set_data(data, copy=copy, inplace=inplace)
 
 # --- End: class

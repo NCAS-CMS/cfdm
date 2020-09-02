@@ -19,7 +19,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
@@ -47,6 +46,27 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False), str)
         self.assertIsInstance(x.dump(display=False, _key='qwerty'), str)
 
+
+    def test_DimensionCoordinate_set_data(self):
+        x = cfdm.DimensionCoordinate()
+
+        y = x.set_data(cfdm.Data([1, 2, 3]))
+        self.assertIsNone(y)
+        self.assertTrue(x.has_data())
+
+        x.del_data()
+        y = x.set_data(cfdm.Data([1, 2, 3]), inplace=False)
+        self.assertIsInstance(y, cfdm.DimensionCoordinate)
+        self.assertFalse(x.has_data())
+        self.assertTrue(y.has_data())
+
+        # Exceptions should be raised for 0-d and N-d (N>=2) data
+        with self.assertRaises(Exception):
+            y = x.set_data(cfdm.Data([[1, 2, 3]]))
+        
+        with self.assertRaises(Exception):
+            y = x.set_data(cfdm.Data(1))
+        
 # --- End: class
 
 

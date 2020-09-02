@@ -61,7 +61,7 @@ class PropertiesData(Properties):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `Data.array`, `del_data`, `get_data`,
+    .. seealso:: `{{pacakge}}.Data.array`, `del_data`, `get_data`,
                  `has_data`, `set_data`
 
     :Returns:
@@ -164,16 +164,16 @@ class PropertiesData(Properties):
                  _fill_value=True):
         '''Return the data.
 
-    Note that a `Data` instance is returned. Use its `array`
-    attribute to return the data as an independent `numpy` array.
+    Note that a `Data` instance is returned. Use its `array` attribute
+    to return the data as an independent `numpy` array.
 
     The units, calendar and fill value properties are, if set,
     inserted into the data.
 
     .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `Data.array`, `data`, `del_data`, `has_data`,
-                 `set_data`
+    .. seealso:: `{{package}}.Data.array`, `data`, `del_data`,
+                 `has_data`, `set_data`
 
     :Parameters:
 
@@ -350,15 +350,15 @@ class PropertiesData(Properties):
             data = data.copy()
 
         if inplace:
-            v = self
+            f = self
         else:
-            v = self.copy(data=False)
+            f = self.copy(data=False)
             
-        v._set_component('data', data, copy=False)
+        f._set_component('data', data, copy=False)
 
         if inplace:
             return
             
-        return v
+        return f
     
 # --- End: class

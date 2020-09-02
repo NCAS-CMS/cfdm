@@ -402,7 +402,7 @@ class Field(mixin.ConstructAccess,
 
         return super().del_construct(key, default=default)
 
-    def set_data(self, data, axes=None, copy=True):
+    def set_data(self, data, axes=None, copy=True, inplace=True):
         '''Set the data of the field construct.
 
     The units, calendar and fill value properties of the data object
@@ -440,9 +440,19 @@ class Field(mixin.ConstructAccess,
             If False then do not copy the data prior to insertion. By
             default the data are copied.
 
+        inplace: `bool`, optional
+            If False then do not do the operation in-place and return
+            a new `{{class}}` instance containing the new data. By
+            default the operation is in-place and `None` is returned.
+
+            .. versionadded:: (cfdm) 1.8.7.0
+
     :Returns:
 
-        `None`
+        `None` or `{{class}}`
+            If the operation was in-place then `None` is returned,
+            otherwise return a new `{{class}}` instance containing the
+            new data.
 
     **Examples:**
 
@@ -455,14 +465,24 @@ class Field(mixin.ConstructAccess,
     >>> f.set_data(d)
 
         '''
-        if axes is None:
-            existing_axes = self.get_data_axes(default=None)
-            if existing_axes is not None:
-                self.set_data_axes(axes=existing_axes, _shape=data.shape)
+        if inplace:
+            f = self
         else:
-            self.set_data_axes(axes=axes, _shape=data.shape)
+            f = self.copy(data=False)
+            
+        if axes is None:
+            existing_axes = f.get_data_axes(default=None)
+            if existing_axes is not None:
+                f.set_data_axes(axes=existing_axes, _shape=data.shape)
+        else:
+            f.set_data_axes(axes=axes, _shape=data.shape)
 
-        super().set_data(data, copy=copy)
+        super(Field, f).set_data(data, copy=copy, inplace=True)
+
+        if inplace:
+            return
+            
+        return f
 
     def set_data_axes(self, axes, key=None, _shape=None):
         '''Set the domain axis constructs spanned by the data of the field or
