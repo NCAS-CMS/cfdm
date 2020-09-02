@@ -56,7 +56,9 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
            *Parameter example:*
               ``properties={'standard_name': 'latitude'}``
 
-        {{init data: `Data`, optional}}
+        {{init data: data_like, optional}}
+
+            {{data_like}}
 
         {{init bounds: `Bounds`, optional}}
 

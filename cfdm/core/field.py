@@ -1,3 +1,5 @@
+import numpy
+
 from . import abstract
 from . import mixin
 
@@ -414,8 +416,10 @@ class Field(mixin.ConstructAccess,
 
     :Parameters:
 
-        data: `Data`
+        data: data_like
             The data to be inserted.
+
+            {{data_like}}
 
         axes: (sequence of) `str`, or `None`
             The identifiers of the domain axes spanned by the data
@@ -440,10 +444,7 @@ class Field(mixin.ConstructAccess,
             If False then do not copy the data prior to insertion. By
             default the data are copied.
 
-        inplace: `bool`, optional
-            If False then do not do the operation in-place and return
-            a new `{{class}}` instance containing the new data. By
-            default the operation is in-place and `None` is returned.
+        {{inplace: `bool`, optional (default True)}}
 
             .. versionadded:: (cfdm) 1.8.7.0
 
@@ -473,9 +474,9 @@ class Field(mixin.ConstructAccess,
         if axes is None:
             existing_axes = f.get_data_axes(default=None)
             if existing_axes is not None:
-                f.set_data_axes(axes=existing_axes, _shape=data.shape)
+                f.set_data_axes(axes=existing_axes, _shape=numpy.shape(data))
         else:
-            f.set_data_axes(axes=axes, _shape=data.shape)
+            f.set_data_axes(axes=axes, _shape=numpy.shape(data))
 
         super(Field, f).set_data(data, copy=copy, inplace=True)
 

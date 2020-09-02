@@ -63,7 +63,9 @@ class Index(mixin.NetCDFVariable,
             *Parameter example:*
               ``properties={'long_name': 'which station this obs is for'}``
 
-        {{init data: `Data`, optional}}
+        {{init data: data_like, optional}}
+
+            {{data_like}}
 
         source: optional
             Initialize the properties and data from those of *source*.

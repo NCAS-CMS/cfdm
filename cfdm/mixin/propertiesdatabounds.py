@@ -43,12 +43,9 @@ class PropertiesDataBounds(PropertiesData):
             *Parameter example:*
               ``properties={'standard_name': 'longitude'}``
 
-        data: `Data`, optional
-            Set the data array. Ignored if the *source* parameter is
-            set.
+        {{init data: data_like, optional}}
 
-            The data array may also be set after initialisation with
-            the `set_data` method.
+            {{data_like}}
 
         bounds: `Bounds`, optional
             Set the bounds array. Ignored if the *source* parameter is

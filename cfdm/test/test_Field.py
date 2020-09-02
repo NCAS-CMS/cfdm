@@ -326,6 +326,7 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(g, cfdm.Field)
         self.assertFalse(f.has_data())
         self.assertTrue(g.has_data())
+        self.assertTrue(g.data.equals(d))
 
     def test_Field_CONSTRUCTS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

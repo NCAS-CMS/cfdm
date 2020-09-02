@@ -57,7 +57,9 @@ class DimensionCoordinate(mixin.NetCDFVariable,
            *Parameter example:*
               ``properties={'standard_name': 'time'}``
 
-        {{init data: `Data`, optional}}
+        {{init data: data_like, optional}}
+
+            {{data_like}}
 
         {{init bounds: `Bounds`, optional}}
 

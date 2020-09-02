@@ -1,5 +1,7 @@
 import logging
 
+from ..data import Data
+
 from . import Properties
 
 from ..decorators import (
@@ -19,6 +21,9 @@ class PropertiesData(Properties):
     .. versionadded:: (cfdm) 1.7.0
 
     '''
+    # Store the Data class
+    _Data = Data
+
     def __getitem__(self, indices):
         '''Return a subspace defined by indices
 

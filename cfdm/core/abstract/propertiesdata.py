@@ -1,5 +1,7 @@
 import abc
 
+from ..data import Data
+
 from .properties import Properties
 
 
@@ -9,6 +11,9 @@ class PropertiesData(Properties):
     .. versionadded:: (cfdm) 1.7.0
 
     '''
+    # Store the Data class
+    _Data = Data
+
     def __init__(self, properties=None, data=None, source=None,
                  copy=True, _use_data=True):
         '''**Initialization**
@@ -20,7 +25,9 @@ class PropertiesData(Properties):
             *Parameter example:*
               ``properties={'standard_name': 'altitude'}``
 
-        {{init data: `Data`, optional}}
+        {{init data: data_like, optional}}
+
+            {{data_like}}
 
         source: optional
             Initialize the properties and data from those of *source*.
@@ -44,6 +51,53 @@ class PropertiesData(Properties):
         if _use_data and data is not None:
             self.set_data(data, copy=copy)
 
+    def __array__(self, *dtype):
+        '''The numpy array interface.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    :Parameters:
+
+        dtype: optional
+            Typecode or data-type to which the array is cast.
+
+    :Returns:
+
+        `numpy.ndarray`
+            An independent numpy array of the data.
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.__array__(*dtype)
+
+        raise ValueError("{} has no data".format(self.__class__.__name__))
+
+    def __data__(self):
+        '''Defines the data interface.
+
+    Returns the data, if any.
+
+    :Returns:
+
+        `Data`
+
+    **Examples:**
+
+    >>> f = {{package}}.{{class}}()
+    >>> f.set_data([1, 2, 3])
+    >>> f.set_property('units', 'K')
+    >>> d = {{package}}.Data(f)
+    >>> d
+    <{{repr}}Data(3): [1, 2, 3] K>
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data
+
+        raise ValueError("{} has no data".format(self.__class__.__name__))
+
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -61,7 +115,7 @@ class PropertiesData(Properties):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `{{pacakge}}.Data.array`, `del_data`, `get_data`,
+    .. seealso:: `{{package}}.Data.array`, `del_data`, `get_data`,
                  `has_data`, `set_data`
 
     :Returns:
@@ -73,7 +127,7 @@ class PropertiesData(Properties):
 
     >>> import numpy
     >>> f = {{package}}.{{class}}()
-    >>> f.set_data({{package}}.Data(numpy.arange(9.)))
+    >>> f.set_data({{package}}.Data(numpy.range(9.)))
     >>> f.has_data()
     True
     >>> d = f.data
@@ -306,17 +360,16 @@ class PropertiesData(Properties):
 
     :Parameters:
 
-        data: `Data`
+        data: data_like
             The data to be inserted.
+
+            {{data_like}}
 
         copy: `bool`, optional
             If False then do not copy the data prior to insertion. By
             default the data are copied.
 
-        inplace: `bool`, optional
-            If False then do not do the operation in-place and return
-            a new `{{class}}` instance containing the new data. By
-            default the operation is in-place and `None` is returned.
+        {{inplace: `bool`, optional (default True)}}
 
             .. versionadded:: (cfdm) 1.8.7.0
 
@@ -346,6 +399,8 @@ class PropertiesData(Properties):
     None
 
         '''
+        data = self._Data(data, copy=False)
+
         if copy:
             data = data.copy()
 

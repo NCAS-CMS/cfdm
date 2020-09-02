@@ -5,7 +5,9 @@ import numpy
 import netCDF4
 
 from .. import core
-from .. import mixin
+
+from ..mixin.container import Container
+from ..mixin.netcdf import NetCDFHDF5
 
 from ..constants import masked as cfdm_masked
 from ..functions import abspath
@@ -23,8 +25,8 @@ from . import NumpyArray
 logger = logging.getLogger(__name__)
 
 
-class Data(mixin.Container,
-           mixin.NetCDFHDF5,
+class Data(Container,
+           NetCDFHDF5,
            core.Data):
     '''An orthogonal multidimensional array with masked values and units.
 
@@ -38,9 +40,12 @@ class Data(mixin.Container,
 
     :Parameters:
 
-        array: numpy array-like or subclass of `Array`, optional
-            The array of values. Ignored if the *source* parameter is
-            set.
+        array: data_like, optional
+            The array of values.
+
+            {{data_like}}
+
+            Ignored if the *source* parameter is set.
 
             *Parameter example:*
               ``array=[34.6]``
@@ -103,13 +108,14 @@ class Data(mixin.Container,
             *Parameter example:*
                 ``dtype=numpy.dtype('i2')``
 
-        mask: optional
+        mask: data_like, optional
             Apply this mask to the data given by the *array*
             parameter. By default, or if *mask* is `None`, no mask is
-            applied. May be any scalar or array-like object (such as a
-            `numpy` array or `{{class}}` instance) that is scalar or has
-            the same shape as *array*. Masking will be carried out
-            where mask elements evaluate to `True`.
+            applied. May be any data_like object that broadcasts to
+            *array*. Masking will be carried out where mask elements
+            evaluate to `True`.
+
+            {{data_like}}
 
             This mask will applied in addition to any mask already
             defined by the *array* parameter.
@@ -597,7 +603,7 @@ class Data(mixin.Container,
 
     :Parameters:
 
-        array: numpy array-like or subclass of `Array`, optional
+        array: `numpy` array_like or `Array`, optional
             The array to be inserted.
 
     :Returns:

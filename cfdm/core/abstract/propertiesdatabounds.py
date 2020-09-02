@@ -30,7 +30,9 @@ class PropertiesDataBounds(PropertiesData):
             *Parameter example:*
                ``properties={'standard_name': 'longitude'}``
 
-        {{init data: `Data`, optional}}
+        {{init data: data_like, optional}}
+
+            {{data_like}}
 
         {{init bounds: `Bounds`, optional}}
 

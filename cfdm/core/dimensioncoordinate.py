@@ -65,9 +65,11 @@ class DimensionCoordinate(abstract.Coordinate):
 
     :Parameters:
 
-        data: `Data`
+        data: data_like
             The data to be inserted. Must be 1-dimensional,
             i.e. scalar or multidimensionl data is not allowed.
+
+            {{data_like}}
 
         copy: `bool`, optional
             If False then do not copy the data prior to insertion. By
