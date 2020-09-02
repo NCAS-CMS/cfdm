@@ -469,7 +469,7 @@ class Field(mixin.ConstructAccess,
             f = self
         else:
             f = self.copy(data=False)
-            
+
         if axes is None:
             existing_axes = f.get_data_axes(default=None)
             if existing_axes is not None:
@@ -481,7 +481,7 @@ class Field(mixin.ConstructAccess,
 
         if inplace:
             return
-            
+
         return f
 
     def set_data_axes(self, axes, key=None, _shape=None):

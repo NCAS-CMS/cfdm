@@ -46,7 +46,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False), str)
         self.assertIsInstance(x.dump(display=False, _key='qwerty'), str)
 
-
     def test_DimensionCoordinate_set_data(self):
         x = cfdm.DimensionCoordinate()
 
@@ -63,10 +62,10 @@ class DimensionCoordinateTest(unittest.TestCase):
         # Exceptions should be raised for 0-d and N-d (N>=2) data
         with self.assertRaises(Exception):
             y = x.set_data(cfdm.Data([[1, 2, 3]]))
-        
+
         with self.assertRaises(Exception):
             y = x.set_data(cfdm.Data(1))
-        
+
 # --- End: class
 
 

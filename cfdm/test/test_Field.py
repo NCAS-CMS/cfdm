@@ -290,7 +290,7 @@ class FieldTest(unittest.TestCase):
         f.set_properties(d)
         f.set_properties(d, copy=False)
 
-    def test_Field_DATA(self):
+    def test_Field_set_get_del_has_data(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -319,6 +319,13 @@ class FieldTest(unittest.TestCase):
             self.assertIsNone(f.del_data_axes(key, default=None))
             self.assertIsNone(f.get_data_axes(key, default=None))
             self.assertFalse(f.has_data_axes(key))
+
+        f = self.f.copy()
+        d = f.del_data()
+        g = f.set_data(d, inplace=False)
+        self.assertIsInstance(g, cfdm.Field)
+        self.assertFalse(f.has_data())
+        self.assertTrue(g.has_data())
 
     def test_Field_CONSTRUCTS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

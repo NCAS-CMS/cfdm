@@ -353,12 +353,12 @@ class PropertiesData(Properties):
             f = self
         else:
             f = self.copy(data=False)
-            
+
         f._set_component('data', data, copy=False)
 
         if inplace:
             return
-            
+
         return f
-    
+
 # --- End: class
