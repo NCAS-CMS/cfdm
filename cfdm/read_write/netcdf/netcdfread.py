@@ -3927,7 +3927,7 @@ class NetCDFRead(IORead):
 
     def _create_domain_ancillary(self, field_ncvar, ncvar, f,
                                  bounds_ncvar=None):
-        '''TODO
+        '''Create a domain ancillary construct object.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -4227,7 +4227,7 @@ class NetCDFRead(IORead):
         return cell_measure
 
     def _create_Count(self, ncvar, ncdim):
-        '''Create a
+        '''Create a count variable.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -4290,7 +4290,7 @@ class NetCDFRead(IORead):
         return variable
 
     def _create_Index(self, ncvar, ncdim):
-        '''Create a
+        '''Create an index variable.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -4353,7 +4353,7 @@ class NetCDFRead(IORead):
         return variable
 
     def _create_InteriorRing(self, ncvar, ncdim):
-        '''Create a
+        '''Create an interior ring variable.
 
     .. versionadded:: (cfdm) 1.8.0
 
@@ -4404,7 +4404,7 @@ class NetCDFRead(IORead):
         return variable
 
     def _create_List(self, ncvar):
-        '''Create a TODO
+        '''Create a netCDF list variable (List).
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -4631,7 +4631,7 @@ class NetCDFRead(IORead):
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None,
                      parent_ncvar=None):
-        '''TODO
+        '''Create a data object (Data).
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -5033,7 +5033,7 @@ class NetCDFRead(IORead):
         return out
 
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
-        '''TODO
+        '''Create a coordinate reference of a netCDF formula terms attribute.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -5306,7 +5306,7 @@ class NetCDFRead(IORead):
 
     def _create_Data(self, array=None, units=None, calendar=None,
                      ncvar=None, **kwargs):
-        '''TODO
+        '''Create a Data object.
 
     .. versionadded:: (cfdm) 1.7.0
 
