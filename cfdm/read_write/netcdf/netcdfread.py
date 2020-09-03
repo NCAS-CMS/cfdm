@@ -1712,7 +1712,7 @@ class NetCDFRead(IORead):
         # --- End: for
 
     def _parse_compression_gathered(self, ncvar, compress):
-        '''TODO
+        '''Parse a list variable for compressing arrays by gathering.
         '''
         g = self.read_vars
 
@@ -1740,7 +1740,7 @@ class NetCDFRead(IORead):
 
     def _parse_ragged_contiguous_compression(self, ncvar,
                                              sample_dimension):
-        '''TODO
+        '''Parse a count variable for DSG contiguous ragged arrays.
 
     :Parameters:
 
@@ -1794,7 +1794,7 @@ class NetCDFRead(IORead):
         return element_dimension
 
     def _parse_indexed_compression(self, ncvar, instance_dimension):
-        '''TODO
+        '''Parse an index variable for DSG indexed ragged arrays.
 
     The CF-netCDF index variable contains the zero-based index of the
     feature to which each element belongs. It is identifiable by the
@@ -1850,7 +1850,7 @@ class NetCDFRead(IORead):
 
     def _parse_indexed_contiguous_compression(self, sample_dimension,
                                               instance_dimension):
-        '''TODO
+        '''Parse an index variable for DSG indexed contiguous ragged arrays.
 
     :Parameters:
 
@@ -1932,7 +1932,7 @@ class NetCDFRead(IORead):
                 sample_dimension))  # pragma: no cover
 
     def _parse_geometry(self, parent_ncvar, attributes):
-        '''TODO
+        '''Parse a geometry container variable.
 
     .. versionadded:: (cfdm) 1.8.0
 
@@ -6135,7 +6135,7 @@ class NetCDFRead(IORead):
         out = []
 
         if g['CF>=1.7']:
-            # he grid mapping attribute may point to a single netCDF
+            # The grid mapping attribute may point to a single netCDF
             # variable OR to multiple variables with associated
             # coordinate variables (CF>=1.7)
             out = self._parse_x(parent_ncvar, string,
@@ -6153,7 +6153,7 @@ class NetCDFRead(IORead):
         return out
 
     def _parse_x(self, parent_ncvar, string, keys_are_variables=False):
-        '''TODO
+        '''Parse CF-netCDF strings.
 
     Handling of CF-compliant strings:
     ---------------------------------
