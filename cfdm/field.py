@@ -10,7 +10,6 @@ from . import List
 
 from .constants import masked as cfdm_masked
 
-from .data import Data
 from .data import RaggedContiguousArray
 from .data import RaggedIndexedArray
 from .data import RaggedIndexedContiguousArray
@@ -106,13 +105,16 @@ class Field(mixin.NetCDFVariable,
 
     '''
     def __new__(cls, *args, **kwargs):
-        '''This must be overridden in subclasses.
+        '''Store component classes.
+
+    NOTE: If a child class requires a different component classes than
+    the ones defined here, then they must be redefined in the child
+    class.
 
         '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         instance._Domain = Domain
-        instance._Data = Data
         instance._RaggedContiguousArray = RaggedContiguousArray
         instance._RaggedIndexedArray = RaggedIndexedArray
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray

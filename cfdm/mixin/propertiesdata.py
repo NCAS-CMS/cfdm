@@ -21,8 +21,17 @@ class PropertiesData(Properties):
     .. versionadded:: (cfdm) 1.7.0
 
     '''
-    # Store the Data class
-    _Data = Data
+    def __new__(cls, *args, **kwargs):
+        '''Store component classes.
+
+    NOTE: If a child class requires a different component classes than
+    the ones defined here, then they must be redefined in the child
+    class.
+
+        '''
+        instance = super().__new__(cls)
+        instance._Data = Data
+        return instance
 
     def __getitem__(self, indices):
         '''Return a subspace defined by indices

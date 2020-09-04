@@ -2,34 +2,30 @@ import inspect
 import re
 
 
-class RewriteDocstringMeta(type):
+class DocstringRewriteMeta(type):
     '''Modify docstrings.
 
-    To do this, we intercede before the class is created and modify
-    the docstrings of its attributes.
+    **Method**
 
-    This will not affect inherited methods, however, so we also need
-    to loop through the parent classes. We cannot simply modify the
-    docstrings, because then the parent classes' methods will have the
-    wrong docstring. Instead, we must actually copy the functions, and
-    then modify the docstring.
+    To do this, we intercede before the class is created and modify
+    the docstrings of the attributes defined on the class.
+
+    Inherited methods are also modified. We cannot simply modify the
+    docstrings of inherited methods, because then the parent classes'
+    methods will have the wrong docstring. Instead, we must actually
+    copy the functions, and then modify the docstring.
 
     Special treatment is given to methods decorated with @property,
     @staticmethod and @classmethod, as well as user-defined
     decorations.
 
-    Based on
-    http://www.jesshamrick.com/2013/04/17/rewriting-python-docstrings-with-a-metaclass/
-
     .. versionadded:: (cfdm) 1.8.7.0
 
     '''
+    # Based on
+    # http://www.jesshamrick.com/2013/04/17/rewriting-python-docstrings-with-a-metaclass/
+
     def __new__(cls, class_name, parents, attrs):
-        '''TODO
-
-    .. versionadded:: (cfdm) 1.8.7.0
-
-        '''
         # ------------------------------------------------------------
         # Combine the docstring substitutions from all classes in the
         # inheritance tree. The value for a key that occurs in
@@ -55,7 +51,7 @@ class RewriteDocstringMeta(type):
         if class_docstring_rewrite is not None:
             docstring_rewrite.update(class_docstring_rewrite(None))
 
-        special = RewriteDocstringMeta._docstring_special_substitutions()
+        special = DocstringRewriteMeta._docstring_special_substitutions()
         for key in special:
             if key in docstring_rewrite:
                 raise ValueError(
@@ -132,7 +128,7 @@ class RewriteDocstringMeta(type):
                 # Note that here inspect.isroutine(attr) is False for
                 # @property methods (but this is not the case for
                 # properties in the parent classes).
-                RewriteDocstringMeta._docstring_update(package_name,
+                DocstringRewriteMeta._docstring_update(package_name,
                                                        class_name,
                                                        attr,
                                                        attr_name,
@@ -174,7 +170,7 @@ class RewriteDocstringMeta(type):
                 attr.__kwdefaults__ = f.__kwdefaults__
 
             # Update docstring
-            RewriteDocstringMeta._docstring_update(package_name,
+            DocstringRewriteMeta._docstring_update(package_name,
                                                    class_name,
                                                    attr,
                                                    attr_name,
@@ -265,7 +261,7 @@ class RewriteDocstringMeta(type):
                     # --- End: if
 
                     # Update the docstring
-                    RewriteDocstringMeta._docstring_update(package_name,
+                    DocstringRewriteMeta._docstring_update(package_name,
                                                            class_name,
                                                            attr,
                                                            attr_name,
@@ -348,7 +344,7 @@ class RewriteDocstringMeta(type):
     dictionary, with the replacement text defined by the corresponding
     value.
 
-    A key must be a `str` or `re.Pattern` object.
+    A key must be either a `str` or a `re.Pattern` object.
 
     If a key is a `str` then the corresponding value must be a string.
 
@@ -460,6 +456,13 @@ class RewriteDocstringMeta(type):
     of names of methods to be excluded. These exclusions will also
     apply to any child classes.
 
+    Exclsusions may be defined for any reason, but in particular may
+    be required if a method has a non-rewriteable docstring. An
+    example of method that has a non-rewritable docstring is when the
+    method is a 'method_descriptor' object, such as `list.append`: any
+    class that inherits such such a method will need to exclude it,
+    unless it is explicitly overridden in the child class.
+
     .. versionadded:: (cfdm) 1.8.7.0
 
     .. seealso:: `_docstring_special_substitutions`,
@@ -476,9 +479,9 @@ class RewriteDocstringMeta(type):
 
     :Returns:
 
-        `set` of `str`
-            The methods to exclude from the docstring substutition
-            process.
+        `set`
+            The names of the methods to exclude from the docstring
+            substutition process.
 
         '''
         out = [

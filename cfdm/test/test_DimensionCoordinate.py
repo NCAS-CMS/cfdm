@@ -53,6 +53,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertIsNone(y)
         self.assertTrue(x.has_data())
 
+        # Test inplace
         x.del_data()
         y = x.set_data(cfdm.Data([1, 2, 3]), inplace=False)
         self.assertIsInstance(y, cfdm.DimensionCoordinate)

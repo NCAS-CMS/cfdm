@@ -1,4 +1,4 @@
-from ..meta import RewriteDocstringMeta
+from ..meta import DocstringRewriteMeta
 
 # --------------------------------------------------------------------
 # See cfdm.core.mixin.container.__docstring_substitution__ for
@@ -6,7 +6,7 @@ from ..meta import RewriteDocstringMeta
 # --------------------------------------------------------------------
 
 
-class ConstructAccess(metaclass=RewriteDocstringMeta):
+class ConstructAccess(metaclass=DocstringRewriteMeta):
     '''Mixin class for accessing an embedded `Constructs` object.
 
     .. versionadded:: (cfdm) 1.7.0

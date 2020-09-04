@@ -320,6 +320,7 @@ class FieldTest(unittest.TestCase):
             self.assertIsNone(f.get_data_axes(key, default=None))
             self.assertFalse(f.has_data_axes(key))
 
+        # Test inplace
         f = self.f.copy()
         d = f.del_data()
         g = f.set_data(d, inplace=False)
