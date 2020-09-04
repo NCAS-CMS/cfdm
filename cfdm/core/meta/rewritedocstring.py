@@ -167,6 +167,12 @@ class RewriteDocstringMeta(type):
                                f.__name__, f.__defaults__,
                                f.__closure__)
 
+                # Make sure that the keyword argument defaults are set
+                # correctly. In general they will be, but not if there
+                # is a variable number of positional arguments, such
+                # as in: def foo(self, *x, y=None)
+                attr.__kwdefaults__ = f.__kwdefaults__
+
             # Update docstring
             RewriteDocstringMeta._docstring_update(package_name,
                                                    class_name,
@@ -188,7 +194,7 @@ class RewriteDocstringMeta(type):
         # --- End: for
 
         # ------------------------------------------------------------
-        #
+        # TODO
         # ------------------------------------------------------------
         for parent in parents:
 
@@ -247,6 +253,13 @@ class RewriteDocstringMeta(type):
                                        f.__name__, f.__defaults__,
                                        f.__closure__)
 
+                        # Make sure that the keyword argument defaults
+                        # are set correctly. In general they will be,
+                        # but not if there is a variable number of
+                        # positional arguments, such as in: def
+                        # foo(self, *x, y=None)
+                        attr.__kwdefaults__ = f.__kwdefaults__
+
                         if is_wrapped:
                             attr.__doc__ = original_f.__doc__
                     # --- End: if
@@ -303,9 +316,8 @@ class RewriteDocstringMeta(type):
     ``{{class}}`` is replaced by the name of the class.
 
     ``{{package}}`` is replaced by the name of the package, as defined
-    by the first N ``.`` separated fields of the class's
-    ``__module__`` attribute, where is N determined by
-    `_docstring_package_depth`.
+    by the first N ``.`` separated fields of the class's `__module__`
+    attribute, where is N determined by `_docstring_package_depth`.
 
     .. versionadded:: (cfdm) 1.8.7.0
 
@@ -319,7 +331,7 @@ class RewriteDocstringMeta(type):
     :Returns:
 
         `tuple`
-            The special docstring substitutions.
+            The special docstring substitution identifiers.
 
         '''
         return (
@@ -336,7 +348,7 @@ class RewriteDocstringMeta(type):
     dictionary, with the replacement text defined by the corresponding
     value.
 
-    Keys must be `str` or `re.Pattern` objects.
+    A key must be a `str` or `re.Pattern` object.
 
     If a key is a `str` then the corresponding value must be a string.
 
@@ -345,7 +357,7 @@ class RewriteDocstringMeta(type):
     `re.Pattern.sub` method.
 
     Special docstring subtitutions, as defined by
-    `_docstring_special_substitutions`, are applied to replacement
+    `_docstring_special_substitutions`, are applied to the replacement
     text.
 
     .. versionadded:: (cfdm) 1.8.7.0
@@ -395,10 +407,10 @@ class RewriteDocstringMeta(type):
 
     In docstrings, ``{{package}}`` is replaced by the name of the
     package, as defined by the first N+1 ``.`` separated fields of the
-    class's ``__module__`` attribute.
+    class's `__module__` attribute.
 
     N defaults to 0, but may be set to any non-negative integer, M, by
-    creating a ``__docstring_package_depth__`` method that returns M.
+    creating a `__docstring_package_depth__` method that returns M.
 
     .. versionadded:: (cfdm) 1.8.7.0
 
@@ -444,9 +456,9 @@ class RewriteDocstringMeta(type):
     for the given class.
 
     Exclusions for a class may be defined by creating a
-    ``__docstring_method_exclusions__`` method that returns the
-    sequence of names of methods to be excluded. These exclusions will
-    also apply to any child classes.
+    `__docstring_method_exclusions__` method that returns the sequence
+    of names of methods to be excluded. These exclusions will also
+    apply to any child classes.
 
     .. versionadded:: (cfdm) 1.8.7.0
 

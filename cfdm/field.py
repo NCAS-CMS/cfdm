@@ -521,12 +521,6 @@ class Field(mixin.NetCDFVariable,
 
     .. seealso:: `constructs`, `get_construct`
 
-    :Parameters:
-
-        copy: `bool`, optional
-            If True then return copies of the constructs. By default
-            the constructs are not copied.
-
     :Returns:
 
         `Constructs`
@@ -560,12 +554,6 @@ class Field(mixin.NetCDFVariable,
     .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `get_construct`, `set_construct`
-
-    :Parameters:
-
-        copy: `bool`, optional
-            If True then return copies of the constructs. By default
-            the constructs are not copied.
 
     :Returns:
 

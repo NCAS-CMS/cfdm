@@ -179,7 +179,7 @@ class ConstructAccess(metaclass=RewriteDocstringMeta):
 
         copy: `bool`, optional
             If True then set a copy of the construct. By default the
-            construct is not copied.
+            construct is copied.
 
     :Returns:
 
