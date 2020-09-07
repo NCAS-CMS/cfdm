@@ -203,14 +203,18 @@ class PropertiesData(Properties):
     **Examples:**
 
     >>> f = {{package}}.{{class}}()
-    >>> d = {{package}}.Data(range(10))
-    >>> f.set_data(d)
+    >>> f.set_data([1, 2, 3]) 
     >>> f.has_data()
     True
     >>> f.get_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.data
+    <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}} Data(10): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <{{repr}}Data(3): [4, 5, 6]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -250,14 +254,18 @@ class PropertiesData(Properties):
     **Examples:**
 
     >>> f = {{package}}.{{class}}()
-    >>> d = {{package}}.Data(range(10))
-    >>> f.set_data(d)
+    >>> f.set_data([1, 2, 3]) 
     >>> f.has_data()
     True
     >>> f.get_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.data
+    <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}} Data(10): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <{{repr}}Data(3): [4, 5, 6]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -339,14 +347,18 @@ class PropertiesData(Properties):
     **Examples:**
 
     >>> f = {{package}}.{{class}}()
-    >>> d = {{package}}.Data(range(10))
-    >>> f.set_data(d)
+    >>> f.set_data([1, 2, 3]) 
     >>> f.has_data()
     True
     >>> f.get_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.data
+    <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}} Data(10): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <{{repr}}Data(3): [4, 5, 6]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -392,14 +404,18 @@ class PropertiesData(Properties):
     **Examples:**
 
     >>> f = {{package}}.{{class}}()
-    >>> d = {{package}}.Data(range(10))
-    >>> f.set_data(d)
+    >>> f.set_data([1, 2, 3]) 
     >>> f.has_data()
     True
     >>> f.get_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.data
+    <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <{{repr}}Data(10): [0, ..., 9]>
+    <{{repr}} Data(10): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <{{repr}}Data(3): [4, 5, 6]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
