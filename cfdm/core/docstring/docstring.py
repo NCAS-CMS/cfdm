@@ -35,7 +35,7 @@ _docstring_substitution_definitions = {
 
     # inplace: `bool`, optional (default True)
     '{{inplace: `bool`, optional (default True)}}':
-    '''inplace: `bool`, optional':
+    '''inplace: `bool`, optional:
             If False then do not do the operation in-place and return
             a new, modified `{{class}}` instance. By default the
             operation is in-place and `None` is returned.''',
