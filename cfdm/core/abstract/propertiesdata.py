@@ -203,7 +203,7 @@ class PropertiesData(Properties):
     **Examples:**
 
     >>> f = {{package}}.{{class}}()
-    >>> f.set_data([1, 2, 3]) 
+    >>> f.set_data([1, 2, 3])
     >>> f.has_data()
     True
     >>> f.get_data()
@@ -211,7 +211,7 @@ class PropertiesData(Properties):
     >>> f.data
     <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <{{repr}} Data(10): [1, 2, 3]>
+    <{{repr}} Data(3): [1, 2, 3]>
     >>> g = f.set_data([4, 5, 6], inplace=False)
     >>> g.data
     <{{repr}}Data(3): [4, 5, 6]>
@@ -254,7 +254,7 @@ class PropertiesData(Properties):
     **Examples:**
 
     >>> f = {{package}}.{{class}}()
-    >>> f.set_data([1, 2, 3]) 
+    >>> f.set_data([1, 2, 3])
     >>> f.has_data()
     True
     >>> f.get_data()
@@ -262,7 +262,7 @@ class PropertiesData(Properties):
     >>> f.data
     <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <{{repr}} Data(10): [1, 2, 3]>
+    <{{repr}} Data(3): [1, 2, 3]>
     >>> g = f.set_data([4, 5, 6], inplace=False)
     >>> g.data
     <{{repr}}Data(3): [4, 5, 6]>
@@ -347,7 +347,7 @@ class PropertiesData(Properties):
     **Examples:**
 
     >>> f = {{package}}.{{class}}()
-    >>> f.set_data([1, 2, 3]) 
+    >>> f.set_data([1, 2, 3])
     >>> f.has_data()
     True
     >>> f.get_data()
@@ -355,7 +355,7 @@ class PropertiesData(Properties):
     >>> f.data
     <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <{{repr}} Data(10): [1, 2, 3]>
+    <{{repr}} Data(3): [1, 2, 3]>
     >>> g = f.set_data([4, 5, 6], inplace=False)
     >>> g.data
     <{{repr}}Data(3): [4, 5, 6]>
@@ -404,7 +404,7 @@ class PropertiesData(Properties):
     **Examples:**
 
     >>> f = {{package}}.{{class}}()
-    >>> f.set_data([1, 2, 3]) 
+    >>> f.set_data([1, 2, 3])
     >>> f.has_data()
     True
     >>> f.get_data()
@@ -412,7 +412,7 @@ class PropertiesData(Properties):
     >>> f.data
     <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <{{repr}} Data(10): [1, 2, 3]>
+    <{{repr}} Data(3): [1, 2, 3]>
     >>> g = f.set_data([4, 5, 6], inplace=False)
     >>> g.data
     <{{repr}}Data(3): [4, 5, 6]>
