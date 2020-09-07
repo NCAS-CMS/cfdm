@@ -10,7 +10,6 @@ from . import List
 
 from .constants import masked as cfdm_masked
 
-from .data import Data
 from .data import RaggedContiguousArray
 from .data import RaggedIndexedArray
 from .data import RaggedIndexedContiguousArray
@@ -106,13 +105,16 @@ class Field(mixin.NetCDFVariable,
 
     '''
     def __new__(cls, *args, **kwargs):
-        '''This must be overridden in subclasses.
+        '''Store component classes.
+
+    NOTE: If a child class requires a different component classes than
+    the ones defined here, then they must be redefined in the child
+    class.
 
         '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         instance._Domain = Domain
-        instance._Data = Data
         instance._RaggedContiguousArray = RaggedContiguousArray
         instance._RaggedIndexedArray = RaggedIndexedArray
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray
@@ -499,7 +501,7 @@ class Field(mixin.NetCDFVariable,
 
     @_test_decorator_args('i')
     @_manage_log_level_via_verbosity
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def _test_docstring_substitution_Field(self, inplace=False, verbose=None):
         '''Test docstring substitution on {{class}} with two decorators.
 
@@ -719,7 +721,7 @@ class Field(mixin.NetCDFVariable,
 
         return out
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def compress(self, method, axes=None, count_properties=None,
                  index_properties=None, list_properties=None,
                  inplace=False):
@@ -1469,7 +1471,7 @@ class Field(mixin.NetCDFVariable,
 
         return False
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def insert_dimension(self, axis, position=0, inplace=False):
         '''Expand the shape of the data array.
 
@@ -2483,7 +2485,7 @@ class Field(mixin.NetCDFVariable,
         for v in variables:
             v.nc_clear_sample_dimension_groups()
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
@@ -2555,7 +2557,7 @@ class Field(mixin.NetCDFVariable,
 
         return f
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def transpose(self, axes=None, constructs=False, inplace=False):
         '''Permute the axes of the data array.
 
@@ -2655,7 +2657,7 @@ class Field(mixin.NetCDFVariable,
 
         return f
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         '''Uncompress the field construct.
 

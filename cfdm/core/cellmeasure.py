@@ -46,7 +46,9 @@ class CellMeasure(abstract.PropertiesData):
             *Parameter example:*
               ``properties={'units': 'metres 2'}``
 
-        {{init data: `Data`, optional}}
+        {{init data: data_like, optional}}
+
+            {{data_like}}
 
         source: optional
             Initialise the *measure*, *properties* and *data*
@@ -101,10 +103,7 @@ class CellMeasure(abstract.PropertiesData):
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the measure
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+        {{default: optional}}
 
     :Returns:
 

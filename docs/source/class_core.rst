@@ -94,3 +94,13 @@ construct components.
    cfdm.core.abstract.Coordinate
    cfdm.core.abstract.Parameters
    cfdm.core.abstract.ParametersDomainAncillaries
+
+**Miscallaneous**
+-----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.core.meta.DocstringRewriteMeta
+   

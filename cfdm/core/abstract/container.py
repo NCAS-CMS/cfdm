@@ -3,12 +3,12 @@ import re
 
 from copy import copy, deepcopy
 
-from ..meta import RewriteDocstringMeta
+from ..meta import DocstringRewriteMeta
 
 from ..docstring import _docstring_substitution_definitions
 
 
-class Container(metaclass=RewriteDocstringMeta):
+class Container(metaclass=DocstringRewriteMeta):
     '''Abstract base class for storing components.
 
     .. versionadded:: (cfdm) 1.7.0

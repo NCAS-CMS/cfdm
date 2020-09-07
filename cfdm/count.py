@@ -53,7 +53,9 @@ class Count(mixin.NetCDFVariable,
             *Parameter example:*
               ``properties={'long_name': 'number of obs for this station'}``
 
-        {{init data: `Data`, optional}}
+        {{init data: data_like, optional}}
+
+            {{data_like}}
 
         source: optional
             Initialize the properties and data from those of *source*.

@@ -19,9 +19,26 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        array: subclass of `Array`
-            The array of values. Ignored if the *source* parameter is
-            set.
+        array: data_like, optional
+            The array of values.
+
+            {{data_like}}
+
+            Note that for {{class}}` objects and {{package}} objects
+            that contain `{{class}}` objects,
+            ``{{package}}.{{class}}(array)`` is equivalent to
+            ``{{package}}.{{class}}(source=array.__data__())``.
+
+            Ignored if the *source* parameter is set.
+
+        array: `numpy` array_like, optional
+            The array of values.
+
+            Note that if *array* is another `{{class}}` instance then
+            ``{{package}}.{{class}}(array)`` is equivalent to
+            ``{{package}}.{{class}}(source=array)``.
+
+            Ignored if the *source* parameter is set.
 
         units: `str`, optional
             The physical units of the data. Ignored if the *source*
@@ -63,14 +80,16 @@ class Data(abstract.Container):
             Initialize the data, units, calendar and fill value from
             those of *source*.
 
-        source: optional
-
-            Initialize the array, units, calendar and fill value from
-            those of *source*.
-
         {{init copy: `bool`, optional}}
 
         '''
+        if source is None:
+            try:
+                source = array.__data__()
+            except (AttributeError, ValueError, TypeError):
+                pass
+        # --- End: if
+
         super().__init__(source=source)
 
         if source is not None:
@@ -106,6 +125,18 @@ class Data(abstract.Container):
 
         if _use_array and array is not None:
             self._set_Array(array, copy=copy)
+
+    def __data__(self):
+        '''Defines the data interface.
+
+    Returns a new reference to the data.
+
+    :Returns:
+
+        `{{class}}`
+
+        '''
+        return self
 
     # ----------------------------------------------------------------
     # Attributes
@@ -702,7 +733,7 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        array: numpy array-like or subclass of `Array`, optional
+        array: `numpy` array_like or `Array`, optional
             The array to be inserted.
 
     :Returns:

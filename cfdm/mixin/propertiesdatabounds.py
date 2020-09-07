@@ -43,12 +43,9 @@ class PropertiesDataBounds(PropertiesData):
             *Parameter example:*
               ``properties={'standard_name': 'longitude'}``
 
-        data: `Data`, optional
-            Set the data array. Ignored if the *source* parameter is
-            set.
+        {{init data: data_like, optional}}
 
-            The data array may also be set after initialisation with
-            the `set_data` method.
+            {{data_like}}
 
         bounds: `Bounds`, optional
             Set the bounds array. Ignored if the *source* parameter is
@@ -434,7 +431,7 @@ class PropertiesDataBounds(PropertiesData):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def apply_masking(self, bounds=True, inplace=False):
         '''Apply masking as defined by the CF conventions.
 
@@ -1183,7 +1180,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return bounds.get_data(default=default)
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def insert_dimension(self, position, inplace=False):
         '''Expand the shape of the data array.
 
@@ -1340,7 +1337,7 @@ class PropertiesDataBounds(PropertiesData):
 
         self._set_component('part_node_count', part_node_count, copy=False)
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
@@ -1416,7 +1413,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return c
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
@@ -1512,7 +1509,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return c
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         '''Uncompress the construct.
 

@@ -26,12 +26,19 @@ _docstring_substitution_definitions = {
     # Keyword parameter descriptions
     # ----------------------------------------------------------------
 
-    # default
+    # default: optional
     '{{default: optional}}':
     '''default: optional
             Return the value of the *default* parameter if data have
             not been set. If set to an `Exception` instance then it
             will be raised instead.''',
+
+    # inplace: `bool`, optional (default True)
+    '{{inplace: `bool`, optional (default True)}}':
+    '''inplace: `bool`, optional:
+            If False then do not do the operation in-place and return
+            a new, modified `{{class}}` instance. By default the
+            operation is in-place and `None` is returned.''',
 
     # init properties
     '{{init properties: `dict`, optional}}':
@@ -44,8 +51,8 @@ _docstring_substitution_definitions = {
             `set_properties` and `set_property` methods.''',
 
     # init data
-    '{{init data: `Data`, optional}}':
-    '''data: `Data`, optional
+    '{{init data: data_like, optional}}':
+    '''data: data_like, optional
             Set the data. Ignored if the *source* parameter is set.
 
             The data also may be set after initialisation with the
@@ -86,5 +93,11 @@ _docstring_substitution_definitions = {
     '''copy: `bool`, optional
             If False then do not deep copy input parameters prior to
             initialization. By default arguments are deep copied.''',
+
+    # data_like
+    '{{data_like}}':
+    '''A data_like object is any object that can be converted to
+            a `Data` object, i.e. `numpy` array_like objects, `Data`
+            objects, and {{package}} objects that contain `Data` objects.''',
 
 }

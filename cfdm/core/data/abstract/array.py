@@ -26,6 +26,28 @@ class Array(abstract.Container):
         for key, value in kwargs.items():
             self._set_component(key, value, copy=False)
 
+    def __array__(self, *dtype):
+        '''The numpy array interface.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    :Parameters:
+
+        dtype: optional
+            Typecode or data-type to which the array is cast.
+
+    :Returns:
+
+        `numpy.ndarray`
+            An independent numpy array of the data.
+
+        '''
+        array = self.array
+        if not dtype:
+            return array
+        else:
+            return array.astype(dtype[0], copy=False)
+
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` function.
 

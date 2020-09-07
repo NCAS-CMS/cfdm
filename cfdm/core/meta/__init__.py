@@ -1,1 +1,1 @@
-from .rewritedocstring import RewriteDocstringMeta
+from .docstringrewrite import DocstringRewriteMeta

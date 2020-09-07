@@ -1,5 +1,7 @@
 import logging
 
+from ..data import Data
+
 from . import Properties
 
 from ..decorators import (
@@ -19,6 +21,18 @@ class PropertiesData(Properties):
     .. versionadded:: (cfdm) 1.7.0
 
     '''
+    def __new__(cls, *args, **kwargs):
+        '''Store component classes.
+
+    NOTE: If a child class requires a different component classes than
+    the ones defined here, then they must be redefined in the child
+    class.
+
+        '''
+        instance = super().__new__(cls)
+        instance._Data = Data
+        return instance
+
     def __getitem__(self, indices):
         '''Return a subspace defined by indices
 
@@ -164,7 +178,7 @@ class PropertiesData(Properties):
         return self._test_docstring_substitution_classmethod(arg1, arg2)
 
     @_test_decorator_args('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def _test_docstring_substitution(self, inplace=False, verbose=None):
         '''Test docstring substitution with two decorators.
 
@@ -332,7 +346,7 @@ class PropertiesData(Properties):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def apply_masking(self, inplace=False):
         '''Apply masking as defined by the CF conventions.
 
@@ -662,7 +676,7 @@ class PropertiesData(Properties):
         '''
         return {}
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
 
@@ -712,7 +726,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
@@ -772,7 +786,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
@@ -820,7 +834,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         '''Uncompress the construct.
 

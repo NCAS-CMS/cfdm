@@ -5,7 +5,9 @@ import numpy
 import netCDF4
 
 from .. import core
-from .. import mixin
+
+from ..mixin.container import Container
+from ..mixin.netcdf import NetCDFHDF5
 
 from ..constants import masked as cfdm_masked
 from ..functions import abspath
@@ -23,8 +25,8 @@ from . import NumpyArray
 logger = logging.getLogger(__name__)
 
 
-class Data(mixin.Container,
-           mixin.NetCDFHDF5,
+class Data(Container,
+           NetCDFHDF5,
            core.Data):
     '''An orthogonal multidimensional array with masked values and units.
 
@@ -38,9 +40,12 @@ class Data(mixin.Container,
 
     :Parameters:
 
-        array: numpy array-like or subclass of `Array`, optional
-            The array of values. Ignored if the *source* parameter is
-            set.
+        array: data_like, optional
+            The array of values.
+
+            {{data_like}}
+
+            Ignored if the *source* parameter is set.
 
             *Parameter example:*
               ``array=[34.6]``
@@ -103,13 +108,14 @@ class Data(mixin.Container,
             *Parameter example:*
                 ``dtype=numpy.dtype('i2')``
 
-        mask: optional
+        mask: data_like, optional
             Apply this mask to the data given by the *array*
             parameter. By default, or if *mask* is `None`, no mask is
-            applied. May be any scalar or array-like object (such as a
-            `numpy` array or `{{class}}` instance) that is scalar or has
-            the same shape as *array*. Masking will be carried out
-            where mask elements evaluate to `True`.
+            applied. May be any data_like object that broadcasts to
+            *array*. Masking will be carried out where mask elements
+            evaluate to `True`.
+
+            {{data_like}}
 
             This mask will applied in addition to any mask already
             defined by the *array* parameter.
@@ -597,7 +603,7 @@ class Data(mixin.Container,
 
     :Parameters:
 
-        array: numpy array-like or subclass of `Array`, optional
+        array: `numpy` array_like or `Array`, optional
             The array to be inserted.
 
     :Returns:
@@ -920,7 +926,7 @@ class Data(mixin.Container,
 
         return masked
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def apply_masking(self, fill_values=None, valid_min=None,
                       valid_max=None, valid_range=None, inplace=False):
         '''Apply masking.
@@ -1142,7 +1148,7 @@ class Data(mixin.Container,
         '''
         return super().copy(array=array)
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
 
@@ -1526,7 +1532,7 @@ class Data(mixin.Container,
 
         return out
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         '''Remove size 1 axes from the data.
 
@@ -1657,7 +1663,7 @@ class Data(mixin.Container,
 
         return d
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
@@ -2073,7 +2079,7 @@ class Data(mixin.Container,
         '''
         return self._item((slice(0, 1),)*self.ndim)
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
 
@@ -2290,7 +2296,7 @@ class Data(mixin.Container,
         '''
         self._set_Array(self.source().to_memory())
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         '''Uncompress the underlying array.
 

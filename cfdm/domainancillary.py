@@ -47,12 +47,9 @@ class DomainAncillary(mixin.NetCDFVariable,
            *Parameter example:*
               ``properties={'standard_name': 'altitude'}``
 
-        {{init data: `Data`, optional}}
-            Set the data array. Ignored if the *source* parameter is
-            set.
+        {{init data: data_like, optional}}
 
-            The data array may also be set after initialisation with
-            the `set_data` method.
+            {{data_like}}
 
         {{init bounds: `Bounds`, optional}}
 
