@@ -42,7 +42,7 @@ class dummyClass:
             d = None
         return d
 
-    @cfdm.decorators._inplace_enabled
+    @cfdm.decorators._inplace_enabled(False)
     def decorated_func(self, inplace):
         '''Dummy function equivalent to 'func' but a decorator manages the
            logic to specify and conduct in-place operation.

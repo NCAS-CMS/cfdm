@@ -926,7 +926,7 @@ class Data(Container,
 
         return masked
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def apply_masking(self, fill_values=None, valid_min=None,
                       valid_max=None, valid_range=None, inplace=False):
         '''Apply masking.
@@ -1148,7 +1148,7 @@ class Data(Container,
         '''
         return super().copy(array=array)
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
 
@@ -1532,7 +1532,7 @@ class Data(Container,
 
         return out
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         '''Remove size 1 axes from the data.
 
@@ -1663,7 +1663,7 @@ class Data(Container,
 
         return d
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
@@ -2079,7 +2079,7 @@ class Data(Container,
         '''
         return self._item((slice(0, 1),)*self.ndim)
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
 
@@ -2296,7 +2296,7 @@ class Data(Container,
         '''
         self._set_Array(self.source().to_memory())
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         '''Uncompress the underlying array.
 

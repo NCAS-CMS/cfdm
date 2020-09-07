@@ -1,4 +1,7 @@
-from functools import wraps
+from functools import (
+    wraps,
+    partial,
+)
 
 from .functions import (
     log_level,
@@ -16,46 +19,59 @@ from .constants import ValidLogLevels
 INPLACE_ENABLED_PLACEHOLDER = '_to_assign'
 
 
-def _inplace_enabled(operation_method):
+def _inplace_enabled(operation_method=None, *, default=False):
     '''A decorator enabling operations to be applied in-place.
 
-    If the decorated method has keyword argument `inplace` being equal to
-    True, the function will be performed on `self` and return None, otherwise
-    it will operate on a copy of `self` & return the processed copy.
+    If the decorated method has keyword argument *inplace* being equal
+    to True, the function will be performed on `self` and return None,
+    otherwise it will operate on a copy of ``self`` and return the
+    processed copy.
 
-    Note that methods decorated with this should assign the core variable
-    storing the relevant instance for use throughout the method to
-    `_inplace_enabled_define_and_cleanup(self)`.
+    Note that methods decorated with this should assign the core
+    variable storing the relevant instance for use throughout the
+    method to ``_inplace_enabled_define_and_cleanup(self)``.
+
+    :Parmaeters:
+
+        operation_method: method
+
+        default: `bool`
 
     '''
-    @wraps(operation_method)
-    def inplace_wrapper(self, *args, **kwargs):
-        is_inplace = kwargs.get('inplace')
-        try:
+    def decorator(operation_method, default=False):
+        @wraps(operation_method)
+        def inplace_wrapper(self, *args, **kwargs):
+            is_inplace = kwargs.get('inplace', default)
+            try:
+                if is_inplace:
+                    # create an attribute equal to 'self'
+                    self._custom[INPLACE_ENABLED_PLACEHOLDER] = self
+                else:
+                    # create an attribute equal to a (shallow) copy of
+                    # 'self'
+                    self._custom[INPLACE_ENABLED_PLACEHOLDER] = self.copy()
+            # '_custom' not available for object so have to use a direct
+            # attribute for the storage, which is not as desirable since
+            # it is more exposed:
+            except AttributeError:
+                if is_inplace:
+                    self.INPLACE_ENABLED_PLACEHOLDER = self
+                else:
+                    self.INPLACE_ENABLED_PLACEHOLDER = self.copy()
+
+            processed_copy = operation_method(self, *args, **kwargs)
+
             if is_inplace:
-                # create an attribute equal to 'self'
-                self._custom[INPLACE_ENABLED_PLACEHOLDER] = self
+                return  # decorated function returns None in this case
             else:
-                # create an attribute equal to a (shallow) copy of
-                # 'self'
-                self._custom[INPLACE_ENABLED_PLACEHOLDER] = self.copy()
-        # '_custom' not available for object so have to use a direct
-        # attribute for the storage, which is not as desirable since
-        # it is more exposed:
-        except AttributeError:
-            if is_inplace:
-                self.INPLACE_ENABLED_PLACEHOLDER = self
-            else:
-                self.INPLACE_ENABLED_PLACEHOLDER = self.copy()
+                return processed_copy
 
-        processed_copy = operation_method(self, *args, **kwargs)
+        return inplace_wrapper
 
-        if is_inplace:
-            return  # decorated function returns None in this case
-        else:
-            return processed_copy
+    if operation_method is None:
+        return partial(decorator, default=default)
 
-    return inplace_wrapper
+    return decorator
 
 
 def _inplace_enabled_define_and_cleanup(instance):

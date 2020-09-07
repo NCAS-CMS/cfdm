@@ -178,7 +178,7 @@ class PropertiesData(Properties):
         return self._test_docstring_substitution_classmethod(arg1, arg2)
 
     @_test_decorator_args('i')
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def _test_docstring_substitution(self, inplace=False, verbose=None):
         '''Test docstring substitution with two decorators.
 
@@ -346,7 +346,7 @@ class PropertiesData(Properties):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def apply_masking(self, inplace=False):
         '''Apply masking as defined by the CF conventions.
 
@@ -676,7 +676,7 @@ class PropertiesData(Properties):
         '''
         return {}
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.
 
@@ -726,7 +726,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         '''Remove size one axes from the data array.
 
@@ -786,7 +786,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False):
         '''Permute the axes of the data array.
 
@@ -834,7 +834,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         '''Uncompress the construct.
 
