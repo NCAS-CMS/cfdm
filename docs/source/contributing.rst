@@ -37,7 +37,7 @@ request** issue template.
 **Questions**
 -------------
 
-Question, such as "how can I do this?", "why does it behave like
+Questions, such as "how can I do this?", "why does it behave like
 that?", "how can I make it faster?", etc., can be raised via a new
 issue in issue tracker (https://github.com/NCAS-CMS/cfdm/issues),
 using the **Question** issue template.
