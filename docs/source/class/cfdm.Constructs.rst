@@ -113,3 +113,17 @@ Special
    ~cfdm.Constructs.__repr__
    ~cfdm.Constructs.__str__
 
+Docstring substitutions                   
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.Constructs._docstring_special_substitutions
+   ~cfdm.Constructs._docstring_substitutions        
+   ~cfdm.Constructs._docstring_package_depth        
+   ~cfdm.Constructs._docstring_method_exclusions    

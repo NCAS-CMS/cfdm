@@ -457,13 +457,25 @@ class Field(mixin.ConstructAccess,
 
     **Examples:**
 
-    Set the domain axis constructs spanned by the data of the field
-    construct:
-
-    >>> d
-    <{{repr}}Data(10, 9): [[23.6, ..., 76.8]]>
-    >>> f.set_data(d, axes=['domainaxis0', 'domainaxis1'])
-    >>> f.set_data(d)
+    >>> f = {{package}}.Field()
+    >>> f.set_data([1, 2, 3])
+    >>> f.has_data()
+    True
+    >>> f.get_data()
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.data
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.del_data()
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <{{repr}}Data(3): [4, 5, 6]>
+    >>> f.has_data()
+    False
+    >>> print(f.get_data(None))
+    None
+    >>> print(f.del_data(None))
+    None
 
         '''
         if inplace:

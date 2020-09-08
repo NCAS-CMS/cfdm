@@ -76,4 +76,17 @@ Special
 
    ~cfdm.core.Bounds.__deepcopy__
 
-   
+Docstring substitutions                           
+-----------------------                        
+                                               
+.. rubric:: Methods                            
+                                               
+.. autosummary::                               
+   :nosignatures:                              
+   :toctree: ../method/                        
+   :template: method.rst                       
+                                               
+   ~cfdm.core.Bounds_special_substitutions
+   ~cfdm.core.Bounds_substitutions        
+   ~cfdm.core.Bounds_package_depth        
+   ~cfdm.core.Bounds_method_exclusions    

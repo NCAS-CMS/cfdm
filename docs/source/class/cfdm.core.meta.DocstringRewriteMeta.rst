@@ -13,6 +13,8 @@ cfdm.core.meta.DocstringRewriteMeta
 Inspection
 ----------
 
+.. rubric:: Methods
+
 .. autosummary::
    :nosignatures:
    :toctree: ../method/

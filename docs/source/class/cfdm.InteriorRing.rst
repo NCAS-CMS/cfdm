@@ -133,4 +133,17 @@ Special
    ~cfdm.InteriorRing.__repr__
    ~cfdm.InteriorRing.__str__
 
-   
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.InteriorRing._docstring_special_substitutions
+   ~cfdm.InteriorRing._docstring_substitutions        
+   ~cfdm.InteriorRing._docstring_package_depth        
+   ~cfdm.InteriorRing._docstring_method_exclusions    

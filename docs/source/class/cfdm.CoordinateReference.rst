@@ -150,5 +150,17 @@ Special
    ~cfdm.CoordinateReference.__repr__
    ~cfdm.CoordinateReference.__str__
 
-   
-   
+Docstring substitutions                      
+-----------------------                      
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.CoordinateReference._docstring_special_substitutions
+   ~cfdm.CoordinateReference._docstring_substitutions        
+   ~cfdm.CoordinateReference._docstring_package_depth        
+   ~cfdm.CoordinateReference._docstring_method_exclusions    

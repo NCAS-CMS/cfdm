@@ -312,8 +312,9 @@ class DocstringRewriteMeta(type):
     ``{{class}}`` is replaced by the name of the class.
 
     ``{{package}}`` is replaced by the name of the package, as defined
-    by the first N ``.`` separated fields of the class's `__module__`
-    attribute, where is N determined by `_docstring_package_depth`.
+    by the first N ``.`` (dot) separated fields of the class's
+    `__module__` attribute, where is N determined by
+    `_docstring_package_depth`.
 
     .. versionadded:: (cfdm) 1.8.7.0
 

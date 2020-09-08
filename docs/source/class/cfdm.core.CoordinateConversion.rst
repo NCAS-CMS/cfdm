@@ -70,4 +70,17 @@ Special
 
    ~cfdm.core.CoordinateConversion.__deepcopy__
 
-   
+Docstring substitutions                           
+-----------------------                        
+                                               
+.. rubric:: Methods                            
+                                               
+.. autosummary::                               
+   :nosignatures:                              
+   :toctree: ../method/                        
+   :template: method.rst                       
+                                               
+   ~cfdm.core.CoordinateConversion._docstring_special_substitutions
+   ~cfdm.core.CoordinateConversion._docstring_substitutions        
+   ~cfdm.core.CoordinateConversion._docstring_package_depth        
+   ~cfdm.core.CoordinateConversion._docstring_method_exclusions    

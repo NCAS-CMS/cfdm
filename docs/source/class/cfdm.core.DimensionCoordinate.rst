@@ -112,4 +112,17 @@ Special
 
    ~cfdm.core.DimensionCoordinate.__deepcopy__
 
-   
+Docstring substitutions                           
+-----------------------                        
+                                               
+.. rubric:: Methods                            
+                                               
+.. autosummary::                               
+   :nosignatures:                              
+   :toctree: ../method/                        
+   :template: method.rst                       
+                                               
+   ~cfdm.core.DimensionCoordinate._docstring_special_substitutions
+   ~cfdm.core.DimensionCoordinate._docstring_substitutions        
+   ~cfdm.core.DimensionCoordinate._docstring_package_depth        
+   ~cfdm.core.DimensionCoordinate._docstring_method_exclusions    

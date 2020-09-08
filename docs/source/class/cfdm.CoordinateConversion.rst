@@ -75,4 +75,17 @@ Special
    ~cfdm.CoordinateConversion.__repr__
    ~cfdm.CoordinateConversion.__str__
 
-   
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.CoordinateConversion._docstring_special_substitutions
+   ~cfdm.CoordinateConversion._docstring_substitutions        
+   ~cfdm.CoordinateConversion._docstring_package_depth        
+   ~cfdm.CoordinateConversion._docstring_method_exclusions    
