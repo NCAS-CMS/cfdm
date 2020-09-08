@@ -76,4 +76,3 @@ Special
 
    ~cfdm.core.InteriorRing.__deepcopy__
 
-   

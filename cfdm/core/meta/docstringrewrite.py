@@ -5,7 +5,7 @@ import re
 class DocstringRewriteMeta(type):
     '''Modify docstrings.
 
-    **Method**
+    **Methodology**
 
     To do this, we intercede before the class is created and modify
     the docstrings of the attributes defined on the class.
@@ -15,9 +15,9 @@ class DocstringRewriteMeta(type):
     methods will have the wrong docstring. Instead, we must actually
     copy the functions, and then modify the docstring.
 
-    Special treatment is given to methods decorated with @property,
-    @staticmethod and @classmethod, as well as user-defined
-    decorations.
+    Special treatment is given to methods decorated with
+    ``@property``, ``@staticmethod`` and ``@classmethod``, as well as
+    user-defined decorations.
 
     .. versionadded:: (cfdm) 1.8.7.0
 
@@ -402,8 +402,8 @@ class DocstringRewriteMeta(type):
     substitutions for the given class.
 
     In docstrings, ``{{package}}`` is replaced by the name of the
-    package, as defined by the first N+1 ``.`` separated fields of the
-    class's `__module__` attribute.
+    package, as defined by the first N+1 ``.`` (dot) separated fields
+    of the class's `__module__` attribute.
 
     N defaults to 0, but may be set to any non-negative integer, M, by
     creating a `__docstring_package_depth__` method that returns M.

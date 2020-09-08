@@ -18,7 +18,7 @@ Inspection
    :toctree: ../method/
    :template: method.rst
    
-    ~cfdm.core.meta.DocstringRewriteMeta._docstring_special_substitutions
-    ~cfdm.core.meta.DocstringRewriteMeta._docstring_substitutions
-    ~cfdm.core.meta.DocstringRewriteMeta._docstring_package_depth
-    ~cfdm.core.meta.DocstringRewriteMeta._docstring_method_exclusions
+   ~cfdm.core.meta.DocstringRewriteMeta._docstring_special_substitutions
+   ~cfdm.core.meta.DocstringRewriteMeta._docstring_substitutions
+   ~cfdm.core.meta.DocstringRewriteMeta._docstring_package_depth
+   ~cfdm.core.meta.DocstringRewriteMeta._docstring_method_exclusions
