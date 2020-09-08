@@ -52,14 +52,12 @@ Pull requests should follow on from a discussion in the issue tracker
 
 Fork the cfdm GitHub repository (https://github.com/NCAS-CMS/cfdm).
 
-Clone your fork locally connect your repository to the upstream (main
-project), and create a branch:
+Clone your fork locally and create a branch:
 
 .. code-block:: console
 	  
     $ git clone git@github.com:<YOUR GITHUB USERNAME>/cfdm.git
     $ cd cfdm
-    $ git remote add upstream https://github.com/NCAS-CMS/cf-python
     $ git checkout -b <your-bugfix-feature-branch-name master>
 
 Break your edits up into reasonably sized commits.
