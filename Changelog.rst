@@ -1,3 +1,14 @@
+version 1.8.7.0
+---------------
+----
+
+**2020-09-??**
+
+* New keyword parameter to `cfdm.Field.set_data`: ``inplace``
+* Fixed bug that caused failures when reading or writing a dataset
+  that contains multiple geometry containers
+  (https://github.com/NCAS-CMS/cfdm/issues/65)
+
 version 1.8.6.0
 ---------------
 ----
@@ -8,9 +19,10 @@ version 1.8.6.0
   (https://github.com/NCAS-CMS/cfdm/issues/55)
 * Implemented the reading and writing of netCDF4 group hierarchies for
   CF-1.8 (https://github.com/NCAS-CMS/cfdm/issues/13)
-* Renamed to lower-case (but otherwise identical) names all functions which
-  get and set global constants: `cfdm.atol`, `cfdm.rtol`, `cfdm.log_level`.
-  The old names e.g. `cfdm.ATOL` remain functional as aliases.
+* Renamed to lower-case (but otherwise identical) names all functions
+  which get and set global constants: `cfdm.atol`, `cfdm.rtol`,
+  `cfdm.log_level`. The old names e.g. `cfdm.ATOL` remain functional
+  as aliases.
 * New function: `cfdm.configuration`
 * New method: `cfdm.Field.nc_variable_groups`
 * New method: `cfdm.Field.nc_set_variable_groups`
@@ -29,12 +41,14 @@ version 1.8.6.0
 * New keyword parameter to `cfdm.write`: ``group``
 * Keyword parameter ``verbose`` to multiple methods now accepts named
   strings, not just the equivalent integer levels, to set verbosity.
-* Fixed bug in `cfdm.CompressedArray.to_memory`.
 * Added test to check that cell bounds have more dimensions than the
   data.
 * Added test to check that dimension coordinate construct data is
   1-dimensional.
-* New dependency: ``netcdf_flattener>=1.1.0``
+* Fixed bug in `cfdm.CompressedArray.to_memory`.
+* Fixed bug that caused an error when a coordinate bounds variable is
+  missing from a dataset (https://github.com/NCAS-CMS/cfdm/issues/63)
+* New dependency: ``netcdf_flattener>=1.2.0``
 * Changed dependency: ``cftime>=1.2.1``
 * Removed dependency: ``future``
 
