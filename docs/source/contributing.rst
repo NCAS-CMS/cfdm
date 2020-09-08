@@ -98,7 +98,7 @@ this, as it will automatically update as you add more commits.
 ----------------
 
 We would like to acknowledge and thank all those who have contributed
-ideas, code and documentation to the cfdm library:
+ideas, code, and documentation to the cfdm library:
 
 * Allyn Treshansky
 * Bryan Lawrence
