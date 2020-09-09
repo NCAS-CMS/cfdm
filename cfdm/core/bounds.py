@@ -27,7 +27,7 @@ class Bounds(abstract.PropertiesData):
             *Parameter example:*
                ``properties={'standard_name': 'longitude'}``
 
-        {{init data: `{{+Data}}`, optional}}
+        {{init data: data_like, optional}}
 
         source: optional
             Override the *properties* and *data* parameters with

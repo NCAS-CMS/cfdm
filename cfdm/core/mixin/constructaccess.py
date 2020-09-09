@@ -56,7 +56,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
     **Examples:**
 
     >>> f.del_construct('dimensioncoordinate1')
-    <{{repr}}{{+DimensionCoordinate}}: grid_latitude(111) degrees>
+    <{{repr}}DimensionCoordinate: grid_latitude(111) degrees>
 
         '''
         return self.constructs._del_construct(key, default=default)
