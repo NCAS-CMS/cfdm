@@ -5,91 +5,53 @@ import unittest
 import cfdm
 
 
+def _recurse_on_subclasses(klass):
+    """Return as a set all subclasses in a classes' subclass hierarchy."""
+    return set(klass.__subclasses__()).union(
+        [sub for cls in klass.__subclasses__() for sub in
+         _recurse_on_subclasses(cls)]
+    )
+
+
+def _get_all_abbrev_subclasses(klass):
+    """Return set of all subclasses in class hierarchy, filtering some out.
+
+    Filter out cf.mixin.properties*.Properties* (by means of there not being
+    any abbreviated cf.Properties* classes) plus any cfdm classes, since
+    this function needs to take cf subclasses from cfdm classes as well.
+    """
+    return tuple([
+        sub for sub in _recurse_on_subclasses(klass) if
+        hasattr(cfdm, sub.__name__)
+    ])
+
+
 class DocstringTest(unittest.TestCase):
     def setUp(self):
         self.package = 'cfdm'
         self.repr = ''
 
-        self.subclasses_of_Container = (
-            cfdm.Field,
-            cfdm.AuxiliaryCoordinate,
-            cfdm.DimensionCoordinate,
-            cfdm.DomainAncillary,
-            cfdm.FieldAncillary,
-            cfdm.CellMeasure,
-            cfdm.DomainAxis,
-            cfdm.CoordinateReference,
-            cfdm.CellMethod,
-
-            cfdm.core.Field,
-            cfdm.core.AuxiliaryCoordinate,
-            cfdm.core.DimensionCoordinate,
-            cfdm.core.DomainAncillary,
-            cfdm.core.FieldAncillary,
-            cfdm.core.CellMeasure,
-            cfdm.core.DomainAxis,
-            cfdm.core.CoordinateReference,
-            cfdm.core.CellMethod,
-
-            cfdm.NodeCountProperties,
-            cfdm.PartNodeCountProperties,
-            cfdm.Bounds,
-            cfdm.InteriorRing,
-            cfdm.List,
-            cfdm.Index,
-            cfdm.Count,
-
-            cfdm.Data,
-            cfdm.NetCDFArray,
-            cfdm.NumpyArray,
-            cfdm.GatheredArray,
-            cfdm.RaggedContiguousArray,
-            cfdm.RaggedIndexedArray,
-            cfdm.RaggedIndexedContiguousArray,
-
-            cfdm.Constructs,
-
-            cfdm.core.Constructs,
-
-            cfdm.core.abstract.Properties,
-            cfdm.core.abstract.PropertiesData,
-            cfdm.core.abstract.PropertiesDataBounds,
-            cfdm.core.abstract.Coordinate,
-
+        self.subclasses_of_Container = tuple(
+            set(_get_all_abbrev_subclasses(
+                cfdm.mixin.container.Container)).union(
+                set(_get_all_abbrev_subclasses(
+                    cfdm.core.abstract.container.Container)),
+                set(_get_all_abbrev_subclasses(
+                    cfdm.data.abstract.array.Array)),
+                [   # other key classes not in subclass heirarchy above
+                    cfdm.data.NumpyArray
+                ]
+            )
         )
-        self.subclasses_of_Properties = (
-            cfdm.Field,
-            cfdm.AuxiliaryCoordinate,
-            cfdm.DimensionCoordinate,
-            cfdm.DomainAncillary,
-            cfdm.FieldAncillary,
-            cfdm.CellMeasure,
-            cfdm.NodeCountProperties,
-            cfdm.PartNodeCountProperties,
-            cfdm.Bounds,
-            cfdm.InteriorRing,
-            cfdm.List,
-            cfdm.Index,
-            cfdm.Count,
-        )
-        self.subclasses_of_PropertiesData = (
-            cfdm.Field,
-            cfdm.AuxiliaryCoordinate,
-            cfdm.DimensionCoordinate,
-            cfdm.DomainAncillary,
-            cfdm.FieldAncillary,
-            cfdm.CellMeasure,
-            cfdm.Bounds,
-            cfdm.InteriorRing,
-            cfdm.List,
-            cfdm.Index,
-            cfdm.Count,
-        )
-        self.subclasses_of_PropertiesDataBounds = (
-            cfdm.AuxiliaryCoordinate,
-            cfdm.DimensionCoordinate,
-            cfdm.DomainAncillary,
-        )
+
+        self.subclasses_of_Properties = _get_all_abbrev_subclasses(
+            cfdm.mixin.properties.Properties)
+
+        self.subclasses_of_PropertiesData = _get_all_abbrev_subclasses(
+            cfdm.mixin.propertiesdata.PropertiesData)
+
+        self.subclasses_of_PropertiesDataBounds = _get_all_abbrev_subclasses(
+            cfdm.mixin.propertiesdatabounds.PropertiesDataBounds)
 
     def test_docstring(self):
         # Test that all {{ occurences have been substituted
