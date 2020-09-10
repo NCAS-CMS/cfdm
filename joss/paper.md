@@ -74,10 +74,10 @@ by `cfdm`, including the recent additions of simple geometries
 The central element of the CF data model is the "field construct"
 that encapsulates all of the data and metadata for a single
 variable. The `cfdm` library can create field constructs ab initio, or
-read them from netCDF files; inspect, subspace and modify in memory;
+read them from netCDF files; inspect, subspace, and modify in memory;
 and write them to CF-netCDF dataset files. As long as it can interpret
 the data, `cfdm` does not enforce CF-compliance, allowing non-compliant
-datasets to be read, processed, corrected and rewritten.
+datasets to be read, processed, corrected, and rewritten.
 
 This represents a limited functionality in comparison to other
 software libraries used for analysis, which often include higher-level
