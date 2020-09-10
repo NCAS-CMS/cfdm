@@ -114,3 +114,18 @@ Special
    :template: method.rst
 
    ~cfdm.core.abstract.Coordinate.__deepcopy__
+
+Docstring substitutions                                    
+-----------------------                                 
+                                                        
+.. rubric:: Methods                                     
+                                                        
+.. autosummary::                                        
+   :nosignatures:                                       
+   :toctree: ../method/                                 
+   :template: method.rst                                
+                                                        
+   ~cfdm.core.abstract.Coordinate._docstring_special_substitutions
+   ~cfdm.core.abstract.Coordinate._docstring_substitutions        
+   ~cfdm.core.abstract.Coordinate._docstring_package_depth        
+   ~cfdm.core.abstract.Coordinate._docstring_method_exclusions    

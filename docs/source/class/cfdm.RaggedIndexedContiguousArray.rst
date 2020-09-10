@@ -67,3 +67,18 @@ Special
    ~cfdm.RaggedIndexedContiguousArray.__getitem__
    ~cfdm.RaggedIndexedContiguousArray.__repr__
    ~cfdm.RaggedIndexedContiguousArray.__str__
+
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.RaggedIndexedContiguousArray._docstring_special_substitutions
+   ~cfdm.RaggedIndexedContiguousArray._docstring_substitutions        
+   ~cfdm.RaggedIndexedContiguousArray._docstring_package_depth        
+   ~cfdm.RaggedIndexedContiguousArray._docstring_method_exclusions    

@@ -287,3 +287,18 @@ Special
    ~cfdm.Field.__getitem__
    ~cfdm.Field.__repr__
    ~cfdm.Field.__str__
+
+Docstring substitutions
+-----------------------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~cfdm.Field._docstring_special_substitutions
+   ~cfdm.Field._docstring_substitutions
+   ~cfdm.Field._docstring_package_depth
+   ~cfdm.Field._docstring_method_exclusions

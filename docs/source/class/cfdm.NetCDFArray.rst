@@ -71,3 +71,18 @@ Special
    :template: method.rst
    
    ~cfdm.NetCDFArray.__getitem__
+
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.NetCDFArray._docstring_special_substitutions
+   ~cfdm.NetCDFArray._docstring_substitutions        
+   ~cfdm.NetCDFArray._docstring_package_depth        
+   ~cfdm.NetCDFArray._docstring_method_exclusions    

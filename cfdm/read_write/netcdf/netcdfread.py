@@ -418,12 +418,12 @@ class NetCDFRead(IORead):
         try:
             fh = open(filename, 'rb')
             magic_number = struct.unpack('=L', fh.read(4))[0]
-        except:
+        except Exception:
             magic_number = None
 
         try:
             fh.close()
-        except:
+        except Exception:
             pass
 
         if magic_number in (21382211, 1128547841, 1178880137,
@@ -465,7 +465,7 @@ class NetCDFRead(IORead):
             fh = open(filename, 'rt')
         except UnicodeDecodeError:
             pass
-        except:
+        except Exception:
             pass
         else:
             try:
@@ -483,7 +483,7 @@ class NetCDFRead(IORead):
 
         try:
             fh.close()
-        except:
+        except Exception:
             pass
 
         return cdl
@@ -4983,7 +4983,7 @@ class NetCDFRead(IORead):
                                 array=parsed_interval,
                                 units=units,
                                 copy=False)
-                        except:
+                        except Exception:
                             if not field_ncvar:
                                 raise ValueError(incorrect_interval)
 

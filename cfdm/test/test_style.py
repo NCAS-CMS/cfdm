@@ -40,7 +40,6 @@ class styleTest(unittest.TestCase):
             'E272',  # ...>1 spaces to align keywords in long import listings
             'E402',  # ...justified lower module imports in {.., core}/__init__
             'E501',  # ...docstring examples include output lines >79 chars
-            'E722',  # ...lots of "bare except" cases need to be addressed
         )
 
         # First add Python files which lie outside of the cfdm directory:

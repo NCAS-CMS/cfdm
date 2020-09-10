@@ -70,4 +70,17 @@ Special
 
    ~cfdm.core.CellMethod.__deepcopy__
 
-   
+Docstring substitutions                           
+-----------------------                        
+                                               
+.. rubric:: Methods                            
+                                               
+.. autosummary::                               
+   :nosignatures:                              
+   :toctree: ../method/                        
+   :template: method.rst                       
+                                               
+   ~cfdm.core.CellMethod._docstring_special_substitutions
+   ~cfdm.core.CellMethod._docstring_substitutions        
+   ~cfdm.core.CellMethod._docstring_package_depth        
+   ~cfdm.core.CellMethod._docstring_method_exclusions    

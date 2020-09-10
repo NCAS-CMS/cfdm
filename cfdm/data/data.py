@@ -412,7 +412,7 @@ class Data(Container,
 
         try:
             first = self.first_element()
-        except:
+        except Exception:
             out = ''
             if units:
                 out += ' {0}'.format(units)

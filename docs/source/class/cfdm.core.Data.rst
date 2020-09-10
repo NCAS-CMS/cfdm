@@ -101,3 +101,18 @@ Special
    ~cfdm.core.Data.__deepcopy__
    ~cfdm.core.Data.__repr__
    ~cfdm.core.Data.__str__
+
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.core.Data._docstring_special_substitutions
+   ~cfdm.core.Data._docstring_substitutions        
+   ~cfdm.core.Data._docstring_package_depth        
+   ~cfdm.core.Data._docstring_method_exclusions

@@ -90,5 +90,17 @@ Special
 
    ~cfdm.core.CoordinateReference.__deepcopy__
 
-   
-   
+Docstring substitutions                           
+-----------------------                           
+                                               
+.. rubric:: Methods                            
+                                               
+.. autosummary::                               
+   :nosignatures:                              
+   :toctree: ../method/                        
+   :template: method.rst                       
+                                               
+   ~cfdm.core.CoordinateReference._docstring_special_substitutions
+   ~cfdm.core.CoordinateReference._docstring_substitutions        
+   ~cfdm.core.CoordinateReference._docstring_package_depth        
+   ~cfdm.core.CoordinateReference._docstring_method_exclusions    

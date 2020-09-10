@@ -142,4 +142,17 @@ Special
    ~cfdm.FieldAncillary.__repr__
    ~cfdm.FieldAncillary.__str__
 
-   
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.FieldAncillary._docstring_special_substitutions
+   ~cfdm.FieldAncillary._docstring_substitutions        
+   ~cfdm.FieldAncillary._docstring_package_depth        
+   ~cfdm.FieldAncillary._docstring_method_exclusions    

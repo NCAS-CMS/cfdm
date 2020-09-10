@@ -40,19 +40,19 @@ class NetCDFArray(abstract.Array):
             the variable lies, with other elements naming any parent
             groups (excluding the root group).
 
-            :Parameter example:
+            *Parameter example:*
               To specify that a variable is in the root group:
-              ``group=()` or ``group=None`
+              ``group=()`` or ``group=None``
 
-            :Parameter example:
+            *Parameter example:*
               To specify that a variable is in the group '/forecasts':
               ``group=['forecasts']``
 
-            :Parameter example:
+            *Parameter example:*
               To specify that a variable is in the group
               '/forecasts/model2': ``group=['forecasts', 'model2']``
 
-            .. versionadded:: (cfdm) 1.8.6
+            .. versionadded:: (cfdm) 1.8.6.0
 
         dtype: `numpy.dtype`
             The data type of the array in the netCDF file. May be
@@ -356,7 +356,7 @@ class NetCDFArray(abstract.Array):
     def get_group(self):
         '''The netCDF4 group structure to which the netCDF variable belongs.
 
-    .. versionadded:: (cfdm) 1.8.6
+    .. versionadded:: (cfdm) 1.8.6.0
 
     **Examples:**
 

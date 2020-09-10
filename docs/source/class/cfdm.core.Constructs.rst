@@ -95,3 +95,17 @@ Special
    ~cfdm.core.Constructs.__iter__
    ~cfdm.core.Constructs.__len__
 
+Docstring substitutions                        
+-----------------------                        
+                                               
+.. rubric:: Methods                            
+                                               
+.. autosummary::                               
+   :nosignatures:                              
+   :toctree: ../method/                        
+   :template: method.rst                       
+                                               
+   ~cfdm.core.Constructs._docstring_special_substitutions
+   ~cfdm.core.Constructs._docstring_substitutions        
+   ~cfdm.core.Constructs._docstring_package_depth        
+   ~cfdm.core.Constructs._docstring_method_exclusions    

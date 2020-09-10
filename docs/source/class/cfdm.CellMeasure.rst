@@ -149,4 +149,17 @@ Special
    ~cfdm.CellMeasure.__repr__
    ~cfdm.CellMeasure.__str__
 
-   
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.CellMeasure._docstring_special_substitutions
+   ~cfdm.CellMeasure._docstring_substitutions        
+   ~cfdm.CellMeasure._docstring_package_depth        
+   ~cfdm.CellMeasure._docstring_method_exclusions    

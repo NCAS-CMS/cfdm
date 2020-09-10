@@ -309,3 +309,18 @@ Special
    ~cfdm.Data.__repr__
    ~cfdm.Data.__setitem__ 
    ~cfdm.Data.__str__
+
+Docstring substitutions                     
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.Data._docstring_special_substitutions
+   ~cfdm.Data._docstring_substitutions        
+   ~cfdm.Data._docstring_package_depth        
+   ~cfdm.Data._docstring_method_exclusions    
