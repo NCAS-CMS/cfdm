@@ -25,7 +25,7 @@ bibliography: paper.bib
 
 # Summary
 
-The `cfdm` open source Python library [@Hassell:2020] implements the
+The `cfdm` open-source Python library [@Hassell:2020] implements the
 data model [@Hassell:2017] of the CF (Climate and Forecast) metadata
 conventions [@Eaton:2020] and so should be able to represent and
 manipulate all existing and conceivable CF-compliant datasets.
@@ -42,10 +42,10 @@ interpretation of the CF conventions that is independent of the netCDF
 encoding.
 
 The `cfdm` library has been designed as a stand-alone application,
-e.g. as used in the pre-publication checks for the CMIP6 data request
+e.g. as deployed in the pre-publication checks for the CMIP6 data request
 [@Juckes:2020; @Eyring:2016], and also to provide a CF data model
-implementation to other software libraries, e.g. as used in the
-`cf-python` library [@Hassell2:2020].
+implementation to other software libraries, such as
+`cf-python` [@Hassell2:2020].
 
 # Statement of need
 
@@ -81,11 +81,11 @@ datasets to be read, processed, corrected, and rewritten.
 
 This represents a limited functionality in comparison to other
 software libraries used for analysis, which often include higher-level
-functions such as those for regridding, statistical analysis, etc. The
-decision to limit the functionality was made for the following
+functions such as those for regridding and statistical analysis, etc.
+The decision to restrict the functionality was made for the following
 reasons:
 
-* The restricted functionality is sufficient for dataset inspection
+* The controlled functionality is sufficient for dataset inspection
   and creation, as well as for modifying non-CF-compliant datasets,
   activities that are an important part of both archive curation and
   data analysis workflows.
@@ -93,17 +93,17 @@ reasons:
 * An extended functionality could complicate the implementation,
   making it harder to update the library as the CF data model evolves.
 
-* The expectation is that other libraries will build on `cfdm`,
+* The anticipation is that other libraries will build on `cfdm`,
   inheriting its knowledge of the CF conventions and extending the API
   to add more sophisticated functions that are appropriate to their
-  users (e.g. `cf-python`).
+  users (notably `cf-python`).
 
 # Example usage
 
 In this example, a netCDF dataset is read from disk and the resulting
 field construct is inspected. The field construct is then subspaced,
-its standard name property is changed, and the new field construct is
-inspected and written to a new dataset on disk:
+has its standard name property changed, and finally is
+re-inspected and written to a new dataset on disk:
 
 ```python
 >>> import cfdm
@@ -134,12 +134,12 @@ Dimension coords: latitude(1) = [-75.0] degrees_north
 The CF data model will evolve in line with the CF conventions and the
 `cfdm` library will need to respond to such changes. To facilitate this,
 there is a core implementation (`cfdm.core`) that defines an in-memory
-representation of a field construct, but with no further features. The
-implementation of an enhancement to the CF data model then proceeds as
-follows: the core implementation is first updated independently and
-then the functionality for dataset interaction and further field
-construct modification is updated outside of the inherited core
-implementation.
+representation of a field construct, with no further features. The
+implementation of an enhancement to the CF data model would proceed
+first with an independent update to the core implementation, then with
+an update, outside of the inherited core implementation, to the
+functionality for dataset interaction and further field construct
+modification.
 
 # Extensibility
 
@@ -147,7 +147,7 @@ To encourage other libraries to build on `cfdm`, it has been designed
 to be subclassable so that the CF data model representation is easily
 importable into third-party software. An important part of this
 framework is the ability to inherit the mapping of CF data model
-constructs to, and from, netCDF datasets. This is made possible by the
+constructs to, and from, netCDF datasets. This is made possible by
 use of the bridge design pattern [@Gamma:1995] that decouples the
 implementation of the CF data model from the netCDF encoding so that
 the two can vary independently. Such an inheritance is employed by the
