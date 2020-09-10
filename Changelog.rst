@@ -13,6 +13,8 @@ version 1.8.7.0
 * Fixed bug that caused failures when reading or writing a dataset
   that contains multiple geometry containers
   (https://github.com/NCAS-CMS/cfdm/issues/65)
+* Fixed bug that prevented the writing of multiple fields to netCDF when
+  at least one dimension was shared between some of the fields.
 
 version 1.8.6.0
 ---------------

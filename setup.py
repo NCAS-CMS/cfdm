@@ -14,7 +14,7 @@ def find_package_data_files(directory):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cfdm/', '', 1)
 
-                
+
 def _read(fname):
     """Returns content of a file.
 
@@ -24,7 +24,7 @@ def _read(fname):
     with open(fpath, 'r') as file_:
         return file_.read()
 
-    
+
 def _get_version():
     """Returns library version by inspecting core/__init__.py file.
 
@@ -34,8 +34,8 @@ def _get_version():
                      re.MULTILINE).group(1)
 
 
-version      = _get_version()
-packages     = ['cfdm']
+version = _get_version()
+packages = ['cfdm']
 
 long_description = """The **cfdm** Python package is a reference implementation of the `CF
 data model <https://www.geosci-model-dev.net/10/4619/2017>`_, that
@@ -113,48 +113,54 @@ up-to-date source."""
 
 # Get dependencies
 requirements = open('requirements.txt', 'r')
-install_requires = requirements.read().splitlines() 
+install_requires = requirements.read().splitlines()
 
-setup(name = "cfdm",
-      long_description = long_description,
-      version      = version,
-      description  = "A Python reference implementation of the CF data model",
-      author       = "David Hassell",
-      maintainer   = "David Hassell",
-      maintainer_email = "david.hassell@ncas.ac.uk",
-      author_email = "david.hassell@ncas.ac.uk",
-      url          = "https://ncas-cms.github.io/cfdm",
-      download_url = "https://pypi.org/project/cfdm/#files",
-      platforms    = ["Linux", "MacOS", "Windows"],
-      keywords     = ['cf', 'netcdf', 'data', 'science',
-                      'oceanography', 'meteorology', 'climate'],
-      classifiers  = ["Development Status :: 4 - Beta",
-                      "Intended Audience :: Science/Research", 
-                      "License :: OSI Approved :: MIT License", 
-                      "Topic :: Software Development",
-                      "Topic :: Scientific/Engineering",
-                      "Operating System :: OS Independent",
-                      "Programming Language :: Python :: 3",
-                      ],
-      packages     = ['cfdm',
-                      'cfdm.abstract',
-                      'cfdm.core',
-                      'cfdm.core.abstract',
-                      'cfdm.core.data',
-                      'cfdm.core.data.abstract',
-                      'cfdm.core.docstring',
-                      'cfdm.core.meta',
-                      'cfdm.core.mixin',
-                      'cfdm.docstring',
-                      'cfdm.data',
-                      'cfdm.data.abstract',
-                      'cfdm.data.mixin',
-                      'cfdm.mixin',
-                      'cfdm.read_write',
-                      'cfdm.read_write.abstract',
-                      'cfdm.read_write.netcdf',
-                      'cfdm.test',],
-      scripts      = ['scripts/cfdump'],
-      python_requires = '>=3.5',
-      install_requires = install_requires,
+setup(
+    name="cfdm",
+    long_description=long_description,
+    version=version,
+    description="A Python reference implementation of the CF data model",
+    author="David Hassell",
+    maintainer="David Hassell",
+    maintainer_email="david.hassell@ncas.ac.uk",
+    author_email="david.hassell@ncas.ac.uk",
+    url="https://ncas-cms.github.io/cfdm",
+    download_url="https://pypi.org/project/cfdm/#files",
+    platforms=["Linux", "MacOS", "Windows"],
+    keywords=[
+        'cf', 'netcdf', 'data', 'science', 'oceanography', 'meteorology',
+        'climate'
+    ],
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Topic :: Software Development",
+        "Topic :: Scientific/Engineering",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3",
+    ],
+    packages=[
+        'cfdm',
+        'cfdm.abstract',
+        'cfdm.core',
+        'cfdm.core.abstract',
+        'cfdm.core.data',
+        'cfdm.core.data.abstract',
+        'cfdm.core.docstring',
+        'cfdm.core.meta',
+        'cfdm.core.mixin',
+        'cfdm.docstring',
+        'cfdm.data',
+        'cfdm.data.abstract',
+        'cfdm.data.mixin',
+        'cfdm.mixin',
+        'cfdm.read_write',
+        'cfdm.read_write.abstract',
+        'cfdm.read_write.netcdf',
+        'cfdm.test',
+    ],
+    scripts=['scripts/cfdump'],
+    python_requires='>=3.5',
+    install_requires=install_requires,
 )

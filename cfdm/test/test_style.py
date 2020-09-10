@@ -12,6 +12,19 @@ class styleTest(unittest.TestCase):
         self.cfdm_dir = os.path.dirname(os.path.abspath(__file__))
         os.chdir(self.cfdm_dir)
 
+        # Note these must be specified relative to the roor dir of the repo:
+        non_cfdm_dir_files = [
+            'scripts/cfdump',
+            'docs/source/conf.py',
+            'setup.py',
+        ]
+        root_dir_relative_to_pwd = os.path.abspath(
+            os.path.join(os.pardir, os.pardir))
+        self.non_cfdm_dir_python_paths = [
+            os.path.join(root_dir_relative_to_pwd, *(path.split("/")))
+            for path in non_cfdm_dir_files
+        ]
+
     def test_pep8_compliance(self):
         pep8_check = pycodestyle.StyleGuide()
 
@@ -29,9 +42,10 @@ class styleTest(unittest.TestCase):
             'E501',  # ...docstring examples include output lines >79 chars
         )
 
-        # Find all Python source code ('.py') files in the 'cfdm' directory,
+        # First add Python files which lie outside of the cfdm directory:
+        python_files = self.non_cfdm_dir_python_paths
+        # Then find all Python source ('.py') files in the 'cfdm' directory,
         # including all unskipped sub-directories within e.g. test directory:
-        python_files = []
         for root_dir, dirs, filelist in os.walk('..'):  # '..' == 'cfdm/'
             if os.path.basename(root_dir) in skip_dirs:
                 continue
