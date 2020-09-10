@@ -53,9 +53,10 @@ The complexity of scientific datasets tends to increase with
 improvements in scientific capabilities and it is essential that
 software interfaces are able to understand new research outputs. To
 the authors' knowledge, `cfdm` and software built on it are currently
-the only libraries that are guaranteed to be able to handle every
-possible type of CF-compliant dataset. All others omit facets that are
-not currently of interest to their particular user communities.
+the only libraries that can understand all CF-netCDF datasets, made
+possible by the complete implementation of the CF data model. All
+others omit facets that are not currently of interest to their
+particular user communities.
 
 # Functionality
 
