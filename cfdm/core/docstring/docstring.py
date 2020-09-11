@@ -55,6 +55,8 @@ _docstring_substitution_definitions = {
     '''data: data_like, optional
             Set the data. Ignored if the *source* parameter is set.
 
+            {{data_like}}    
+
             The data also may be set after initialisation with the
             `set_data` method.''',
 
