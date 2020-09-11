@@ -49,8 +49,6 @@ class DomainAncillary(mixin.NetCDFVariable,
 
         {{init data: data_like, optional}}
 
-            {{data_like}}
-
         {{init bounds: `Bounds`, optional}}
 
         {{init geometry: `str`, optional}}
