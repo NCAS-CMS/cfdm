@@ -98,6 +98,6 @@ _docstring_substitution_definitions = {
     '{{data_like}}':
     '''A data_like object is any object that can be converted to
             a `Data` object, i.e. `numpy` array_like objects, `Data`
-            objects, and {{package}} objects that contain `Data` objects.''',
-
+            objects, and {{package}} instances that contain `Data`
+            objects.''',
 }
