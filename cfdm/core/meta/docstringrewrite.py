@@ -345,6 +345,18 @@ class DocstringRewriteMeta(type):
     dictionary, with the replacement text defined by the corresponding
     value.
 
+    Special docstring subtitutions, as defined by a class's
+    `_docstring_special_substitutions` method, may be used in the
+    replacement text, and will be substituted as ususal.
+
+    Replacement text may contain other non-special substitutions.
+
+    .. note:: The values are only checked once for embedded
+              non-special substitutions, so if the embedded
+              substitution itself contains a non-special substitution
+              then the latter will *not* be replaced. This restriction
+              is to prevent the possibility of infinite recursion.
+
     A key must be either a `str` or a `re.Pattern` object.
 
     If a key is a `str` then the corresponding value must be a string.
@@ -352,10 +364,6 @@ class DocstringRewriteMeta(type):
     If a key is a `re.Pattern` object then the corresponding value
     must be a string or a callable, as accepted by the
     `re.Pattern.sub` method.
-
-    Special docstring subtitutions, as defined by
-    `_docstring_special_substitutions`, are applied to the replacement
-    text.
 
     .. versionadded:: (cfdm) 1.8.7.0
 
@@ -522,6 +530,24 @@ class DocstringRewriteMeta(type):
         # Do general substitutions first
         # ------------------------------------------------------------
         for key, value in config.items():
+
+            # Substitute non-special substitutions embedded within
+            # this value, updating the value if any are found. Note
+            # that any non-special substitutions embedded within the
+            # embedded substituion are *not* replaced.
+            for k, v in config.items():
+                if k not in value:
+                    continue
+
+                try:
+                    # Compiled regular expression substitution
+                    value = key.sub(v, value)
+                except AttributeError:
+                    # String substitution
+                    value = value.replace(k, v)
+            # --- End: for
+
+            # Substitute the key for the value
             try:
                 # Compiled regular expression substitution
                 doc = key.sub(value, doc)

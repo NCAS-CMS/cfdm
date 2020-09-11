@@ -3,6 +3,18 @@
 Text to be replaced is specified as a key in the returned dictionary,
 with the replacement text defined by the corresponding value.
 
+Special docstring subtitutions, as defined by a class's
+`_docstring_special_substitutions` method, may be used in the
+replacement text, and will be substituted as ususal.
+
+Replacement text may contain other non-special substitutions.
+
+.. note:: The values are only checked once for embedded non-special
+          substitutions, so if the embedded substitution itself
+          contains a non-special substitution then the latter will
+          *not* be replaced. This restriction is to prevent the
+          possibility of infinite recursion.
+
 Keys must be `str` or `re.Pattern` objects:
 
 * If a key is a `str` then the corresponding value must be a string.
@@ -10,10 +22,6 @@ Keys must be `str` or `re.Pattern` objects:
 * If a key is a `re.Pattern` object then the corresponding value must
   be a string or a callable, as accepted by the `re.Pattern.sub`
   method.
-
-Special docstring subtitutions, as defined by a class's
-`_docstring_special_substitutions` method, may be used in the
-replacement text, and will be substituted as ususal.
 
 .. versionaddedd:: (cfdm) 1.8.7.0
 
@@ -54,6 +62,8 @@ _docstring_substitution_definitions = {
     '{{init data: data_like, optional}}':
     '''data: data_like, optional
             Set the data. Ignored if the *source* parameter is set.
+
+            {{data_like}}
 
             The data also may be set after initialisation with the
             `set_data` method.''',
@@ -98,6 +108,6 @@ _docstring_substitution_definitions = {
     '{{data_like}}':
     '''A data_like object is any object that can be converted to
             a `Data` object, i.e. `numpy` array_like objects, `Data`
-            objects, and {{package}} objects that contain `Data` objects.''',
-
+            objects, and {{package}} instances that contain `Data`
+            objects.''',
 }

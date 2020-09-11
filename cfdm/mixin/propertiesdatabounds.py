@@ -45,8 +45,6 @@ class PropertiesDataBounds(PropertiesData):
 
         {{init data: data_like, optional}}
 
-            {{data_like}}
-
         bounds: `Bounds`, optional
             Set the bounds array. Ignored if the *source* parameter is
             set.

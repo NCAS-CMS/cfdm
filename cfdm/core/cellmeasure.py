@@ -48,8 +48,6 @@ class CellMeasure(abstract.PropertiesData):
 
         {{init data: data_like, optional}}
 
-            {{data_like}}
-
         source: optional
             Initialise the *measure*, *properties* and *data*
             parameters (if present) from *source*, which will be a

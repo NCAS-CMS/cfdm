@@ -56,8 +56,6 @@ class Bounds(mixin.NetCDFVariable,
 
         {{init data: data_like, optional}}
 
-            {{data_like}}
-
         source: optional
             Initialize the properties and data from those of *source*.
 
