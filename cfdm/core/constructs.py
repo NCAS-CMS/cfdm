@@ -758,6 +758,37 @@ class Constructs(abstract.Container):
 
     .. seealso:: `get`, `keys`, `values`
 
+    :Returns:
+
+        `dict_items`
+            The construct key and constructs respectively as key-value pairs
+            in a Python `dict_items` iterator.
+
+    **Examples:**
+
+    >>> c = cfdm.example_field(0)
+    >>> c_items = c.constructs.items()
+    >>> print(c_items)
+    dict_items([
+         ('dimensioncoordinate0', <DimensionCoordinate: latitude(5) degrees_north>),
+         ('dimensioncoordinate1', <DimensionCoordinate: longitude(8) degrees_east>),
+         ('dimensioncoordinate2', <DimensionCoordinate: time(1) days since 2018-12-01 >),
+         ('domainaxis0', <DomainAxis: size(5)>),
+         ('domainaxis1', <DomainAxis: size(8)>),
+         ('domainaxis2', <DomainAxis: size(1)>),
+         ('cellmethod0', <CellMethod: area: mean>)
+    ])
+    >>> type(c_items)
+    <class 'dict_items'>
+    >>> dict(c_items)
+    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'cellmethod0': <CellMethod: area: mean>,
+     'domainaxis0': <DomainAxis: size(5)>,
+     'domainaxis1': <DomainAxis: size(8)>,
+     'domainaxis2': <DomainAxis: size(1)>}
+
         '''
         return self._dictionary().items()
 
@@ -767,6 +798,36 @@ class Constructs(abstract.Container):
     .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `items`, `values`
+
+    :Returns:
+
+        `dict_keys`
+            The construct keys as a Python `dict_keys` iterator.
+
+    **Examples:**
+
+    >>> c = cfdm.example_field(0)
+    >>> c_keys = c.constructs.keys()
+    >>> print(c_keys)
+    dict_keys([
+         'domainaxis0',
+         'domainaxis1',
+         'domainaxis2',
+         'dimensioncoordinate0',
+         'dimensioncoordinate1',
+         'dimensioncoordinate2',
+         'cellmethod0'
+    ])
+    >>> type(c_keys)
+    <class 'dict_keys'>
+    >>> list(c_keys)
+    ['domainaxis0',
+     'domainaxis1',
+     'domainaxis2',
+     'dimensioncoordinate0',
+     'dimensioncoordinate1',
+     'dimensioncoordinate2',
+     'cellmethod0']
 
         '''
         return self._construct_type.keys()
@@ -778,7 +839,37 @@ class Constructs(abstract.Container):
 
     .. seealso:: `get`, `items`, `keys`
 
-        '''
+    :Returns:
+
+        `dict_values`
+            The constructs as a Python `dict_values` iterator.
+
+    **Examples:**
+
+    >>> c = cfdm.example_field(0)
+    >>> c_values = c.constructs.values()
+    >>> print(c_values)
+    dict_values([
+        <DimensionCoordinate: latitude(5) degrees_north>,
+        <DimensionCoordinate: longitude(8) degrees_east>,
+        <DimensionCoordinate: time(1) days since 2018-12-01 >,
+        <CellMethod: area: mean>,
+        <DomainAxis: size(5)>,
+        <DomainAxis: size(8)>,
+        <DomainAxis: size(1)>
+    ])
+    >>> type(c_values)
+    <class 'dict_values'>
+    >>> list(c_values)
+    [<DimensionCoordinate: latitude(5) degrees_north>,
+     <DimensionCoordinate: longitude(8) degrees_east>,
+     <DimensionCoordinate: time(1) days since 2018-12-01 >,
+     <DomainAxis: size(5)>,
+     <DomainAxis: size(8)>,
+     <DomainAxis: size(1)>,
+     <CellMethod: area: mean>]
+
+    '''
         return self._dictionary().values()
 
     def construct_types(self):
