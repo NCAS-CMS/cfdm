@@ -98,17 +98,15 @@ jobs:
     - name: Upload coverage report to Codecov
       # Get coverage for the two latest distros but only one Python version to
       # treat as representative (probably overkill to get on any more jobs).
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v1.0.6
       if: |
         (matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest') &&
         matrix.python-version == 3.7
       with:
-        file: ./coverage.xml
-        directory: ./cfdm_coverage_reports
+        file: ./cfdm/test/cfdm_coverage_reports/coverage.xml
+        fail_ci_if_error: true
         flags: unittests
         name: codecov-umbrella
-        fail_ci_if_error: true
-        path_to_write_report: ./cfdm_coverage_reports/codecov_report.gz
 
     # End with a message indicating the suite has completed its run
     - name: Notify about a completed run
