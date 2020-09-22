@@ -52,6 +52,24 @@ class DomainTest(unittest.TestCase):
         self.assertTrue(d.equals(e, verbose=3))
         self.assertTrue(e.equals(d, verbose=3))
 
+    def test_Domain_properties(self):
+        d = cfdm.Domain()
+
+        d.set_property('long_name', 'qwerty')
+
+        self.assertEqual(d.properties(), {'long_name': 'qwerty'})
+        self.assertEqual(d.get_property('long_name'), 'qwerty')
+        self.assertEqual(d.del_property('long_name'), 'qwerty')
+        self.assertIsNone(d.get_property('long_name', None))
+        self.assertIsNone(d.del_property('long_name', None))
+
+        d.set_property('long_name', 'qwerty')
+        self.assertEqual(d.clear_properties(), {'long_name': 'qwerty'})
+
+        d.set_properties({'long_name': 'qwerty'})
+        d.set_properties({'foo': 'bar'})
+        self.assertEqual(d.properties(),
+                         {'long_name': 'qwerty', 'foo': 'bar'})
 # --- End: class
 
 

@@ -512,7 +512,8 @@ class NetCDFRead(IORead):
     @_manage_log_level_via_verbosity
     def read(self, filename, extra=None, default_version=None,
              external=None, extra_read_vars=None, _scan_only=False,
-             verbose=None, mask=True, warnings=True, warn_valid=False):
+             verbose=None, mask=True, warnings=True, warn_valid=False,
+             domain=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
     location.
 
@@ -602,10 +603,16 @@ class NetCDFRead(IORead):
 
             .. versionadded:: (cfdm) 1.8.3
 
+        domain: `bool`, optional
+
+            TODO (copy from read.py)
+
+            .. versionadded:: (cfdm) 1.9.0.0
+
     :Returns:
 
         `list`
-            The fields in the file.
+            The field or domain constructs in the file.
 
         '''
         # ------------------------------------------------------------
@@ -689,6 +696,11 @@ class NetCDFRead(IORead):
             'has_groups': False,
             # Keep a list of flattened file names
             'flat_files': [],
+
+            # --------------------------------------------------------
+            # Domains
+            # --------------------------------------------------------
+            'domain': bool(domain),
         }
 
         g = self.read_vars

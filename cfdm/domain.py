@@ -69,7 +69,7 @@ class Domain(mixin.NetCDFVariable,
                          _use_data=_use_data)
 
         self._initialise_netcdf(source)
-        
+
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -256,7 +256,7 @@ class Domain(mixin.NetCDFVariable,
                 # --- End: if
                 if _title is None:
                     _title = ''
-    
+
                 _title = '{0}: {1}'.format(self.__class__.__name__, _title)
 
             line = '{0}{1}'.format(indent0, ''.ljust(len(_title), '-'))
