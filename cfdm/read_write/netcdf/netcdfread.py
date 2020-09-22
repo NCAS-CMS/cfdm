@@ -2745,6 +2745,8 @@ class NetCDFRead(IORead):
 
         create_field = g['CF<=1.8'] or not g['domain']
 
+# TODO NEED TO ONLY MAKE DOMAIN VARIABELS FROM UNREFERENCED VARIBLES ???
+        
         # Reset 'domain_ancillary_key'
         g['domain_ancillary_key'] = {}
 
