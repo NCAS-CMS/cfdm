@@ -3,6 +3,7 @@ from . import (AuxiliaryCoordinate,
                CellMeasure,
                CoordinateReference,
                DimensionCoordinate,
+               Domain,
                DomainAncillary,
                DomainAxis,
                Field,
@@ -45,6 +46,7 @@ class CFDMImplementation(Implementation):
             CellMethod=None,
             CoordinateReference=None,
             DimensionCoordinate=None,
+            Domain=None,
             DomainAncillary=None,
             DomainAxis=None,
             Field=None,
@@ -87,6 +89,9 @@ class CFDMImplementation(Implementation):
         DimensionCoordinate:
             A dimension coordinate construct class.
 
+        Domain:
+            A domain construct class.
+
         DomainAncillary:
             A domain ancillary construct class.
 
@@ -113,6 +118,7 @@ class CFDMImplementation(Implementation):
             CellMethod=CellMethod,
             CoordinateReference=CoordinateReference,
             DimensionCoordinate=DimensionCoordinate,
+            Domain=Domain,
             DomainAncillary=DomainAncillary,
             DomainAxis=DomainAxis,
             Field=Field,
@@ -1647,6 +1653,17 @@ class CFDMImplementation(Implementation):
         cls = self.get_class('DimensionCoordinate')
         return cls(source=auxiliary_coordinate, copy=copy)
 
+    def initialise_Domain(self):
+        '''Return a domain construct.
+
+    :Returns:
+
+        Domain construct
+
+        '''
+        cls = self.get_class('Domain')
+        return cls()
+
     def initialise_DomainAncillary(self):
         '''Return a domain ancillary construct.
 
@@ -2653,6 +2670,7 @@ _implementation = CFDMImplementation(
     CellMethod=CellMethod,
     CoordinateReference=CoordinateReference,
     DimensionCoordinate=DimensionCoordinate,
+    Domain=Domain,
     DomainAncillary=DomainAncillary,
     DomainAxis=DomainAxis,
     Field=Field,
@@ -2707,6 +2725,7 @@ def implementation():
      'Data': cfdm.data.data.Data,
      'Datum': cfdm.datum.Datum,
      'DimensionCoordinate': cfdm.dimensioncoordinate.DimensionCoordinate,
+     'Domain': cfdm.domain.Domain,
      'DomainAncillary': cfdm.domainancillary.DomainAncillary,
      'DomainAxis': cfdm.domainaxis.DomainAxis,
      'Field': cfdm.field.Field,

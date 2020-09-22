@@ -710,6 +710,12 @@ class NetCDFRead(IORead):
             g['version'][version] = LooseVersion(version)
 
         # ------------------------------------------------------------
+        # Modify read vars if we are only reading domain variables
+        # ------------------------------------------------------------
+        if g['domain']:
+            g['mask'] = False
+
+        # ------------------------------------------------------------
         # Add custom read vars
         # ------------------------------------------------------------
         if extra_read_vars:
@@ -717,9 +723,9 @@ class NetCDFRead(IORead):
 
         compression = {}
 
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         # Parse field parameter
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         g['get_constructs'] = {
             'auxiliary_coordinate': self.implementation.get_auxiliary_coordinates,
             'cell_measure': self.implementation.get_cell_measures,
@@ -825,9 +831,11 @@ class NetCDFRead(IORead):
 
         g['file_version'] = LooseVersion(file_version)
 
-        # Set minimum versions
+        # Set minimum/maximum versions
         for vn in ('1.6', '1.7', '1.8', '1.9'):
             g['CF>='+vn] = (g['file_version'] >= g['version'][vn])
+
+        g['CF<=1.8'] = not g['CF>=1.9']
 
         # ------------------------------------------------------------
         # Create a dictionary keyed by netCDF variable names where
@@ -1357,13 +1365,15 @@ class NetCDFRead(IORead):
         # --- End: if
 
         # ------------------------------------------------------------
-        # Create a field from every netCDF variable (apart from
+        # Create a field/domain from every netCDF variable (apart from
         # special variables that have already been identified as such)
         # ------------------------------------------------------------
         all_fields = OrderedDict()
         for ncvar in g['variables']:
             if ncvar not in g['do_not_create_field']:
-                all_fields[ncvar] = self._create_field(ncvar)
+                field_or_domain = self._create_field(ncvar)
+                if field_or_domain is not None:
+                    all_fields[ncvar] = field_or_domain
         # --- End: for
 
         # ------------------------------------------------------------
@@ -1394,8 +1404,8 @@ class NetCDFRead(IORead):
         )  # pragma: no cover
 
         # ------------------------------------------------------------
-        # Discard fields created from netCDF variables that are
-        # referenced by other netCDF variables
+        # Discard fields/domains created from netCDF variables that
+        # are referenced by other netCDF variables
         # ------------------------------------------------------------
         fields = OrderedDict()
         for ncvar, f in all_fields.items():
@@ -1438,7 +1448,7 @@ class NetCDFRead(IORead):
         # that are referenced by other netCDF variables.
         # ------------------------------------------------------------
         self_referenced = {}
-        if g['extra']:
+        if g['extra'] and not g['domain']:
             fields0 = list(fields.values())
             for construct_type in g['extra']:
                 for f in fields0:
@@ -1473,7 +1483,7 @@ class NetCDFRead(IORead):
                     x.dataset_compliance(display=True)
         # --- End: if
 
-        if warn_valid:
+        if warn_valid and not g['domain']:
             # --------------------------------------------------------
             # Warn for the presence of 'valid_min', 'valid_max'or
             # 'valid_range' properties. (Introduced at v1.8.3)
@@ -1494,7 +1504,7 @@ class NetCDFRead(IORead):
         self.file_close()
 
         # ------------------------------------------------------------
-        # Return the fields
+        # Return the fields/domains
         # ------------------------------------------------------------
         return out
 
@@ -2733,6 +2743,8 @@ class NetCDFRead(IORead):
         '''
         g = self.read_vars
 
+        create_field = g['CF<=1.8'] or not g['domain']
+
         # Reset 'domain_ancillary_key'
         g['domain_ancillary_key'] = {}
 
@@ -2769,49 +2781,57 @@ class NetCDFRead(IORead):
             pformat(field_properties, indent=12)
         )  # pragma: no cover
 
-        # Take cell_methods out of the data variable's properties
-        # since it will need special processing once the domain has
-        # been defined
-        cell_methods_string = field_properties.pop('cell_methods', None)
+        if create_field:
+            # Take cell_methods out of the data variable's properties
+            # since it will need special processing once the domain
+            # has been defined
+            cell_methods_string = field_properties.pop('cell_methods', None)
 
-        # Take add_offset and scale_factor out of the data variable's
-        # properties since they will be dealt with by the variable's
-        # Data object. Makes sure we note that they were there so we
-        # can adjust the field's data type accordingly.
-        values = [field_properties.pop(k, None)
-                  for k in ('add_offset', 'scale_factor')]
-        unpacked_dtype = (values != [None, None])
-        if unpacked_dtype:
-            try:
-                values.remove(None)
-            except ValueError:
-                pass
+            # Take add_offset and scale_factor out of the data
+            # variable's properties since they will be dealt with by
+            # the variable's Data object. Makes sure we note that they
+            # were there so we can adjust the field's data type
+            # accordingly.
+            values = [field_properties.pop(k, None)
+                      for k in ('add_offset', 'scale_factor')]
+            unpacked_dtype = (values != [None, None])
+            if unpacked_dtype:
+                try:
+                    values.remove(None)
+                except ValueError:
+                    pass
 
-            unpacked_dtype = numpy.result_type(*values)
+                unpacked_dtype = numpy.result_type(*values)
+        # --- End: for
 
         # Initialise node_coordinates_as_bounds
         g['node_coordinates_as_bounds'] = set()
 
         # ------------------------------------------------------------
-        # Initialize the field with properties
+        # Initialize the field/domain with properties
         # ------------------------------------------------------------
-        f = self.implementation.initialise_Field()
+        if create_field:
+            # Create a field construct
+            f = self.implementation.initialise_Field()
+        else:
+            # Create a domain construct
+            f = self.implementation.initialise_Domain()
 
         self.implementation.set_properties(f, field_properties, copy=True)
 
-        if not g['mask']:
+        if create_field and not g['mask']:
             # --------------------------------------------------------
             # Masking has been turned off, so make sure that there is
             # a fill value recorded on the field so that masking may
             # later be applied manually, if required. (Introduced at
-            # v1.8.2.)
+            # v1.8.2)
             # --------------------------------------------------------
             self._set_default_FillValue(f, field_ncvar)
 
-        # Store the field's netCDF variable name
+        # Store the netCDF variable name of the field/domain
         self.implementation.nc_set_variable(f, field_ncvar)
 
-        # Store the field's netCDF global attributes
+        # Store the netCDF global attributes for the field/domain
         x = g['global_attributes'].copy()
         for k, v in g['global_attributes'].items():
             if (
@@ -2824,7 +2844,7 @@ class NetCDFRead(IORead):
         self.implementation.nc_set_global_attributes(f, x)
 
         # ------------------------------------------------------------
-        # Store the data variable's group-level attributes
+        # Store the data/domain variable's group-level attributes
         # ------------------------------------------------------------
         if g['has_groups']:
             x = g['variable_group_attributes'][field_ncvar].copy()
@@ -2836,8 +2856,8 @@ class NetCDFRead(IORead):
             self.implementation.nc_set_group_attributes(f, x)
 
         # ------------------------------------------------------------
-        # Remove the field construct's "geometry" property, saving its
-        # value
+        # Remove the field/domain construct's "geometry" property,
+        # saving its value
         # ------------------------------------------------------------
         if g['CF>=1.8']:
             geometry = self.implementation.del_property(f, 'geometry', None)
@@ -2863,7 +2883,37 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Add axes and non-scalar dimension coordinates to the field
         # ------------------------------------------------------------
-        field_ncdimensions = self._ncdimensions(field_ncvar)
+        ncdimensions = self.implementation.del_property(
+            f, 'dimensions', None)
+        ndim = g['variables'][field_ncvar].ndim
+        if create_field:
+            if ncdimensions is not None and ndim < 1:
+                # ----------------------------------------------------
+                # This netCDF scalar variable has a 'dimensions'
+                # attribute. Therefore it is a domain
+                # variable. CF>=1.9
+                # ----------------------------------------------------
+                return None
+
+            field_ncdimensions = None
+        else:
+            # --------------------------------------------------------
+            # Get the netCDF dimensions for the domain variable from
+            # the 'dimensions' property. CF>=1.9
+            # --------------------------------------------------------
+            if ncdimensions is None or ndim >= 1:
+                # ----------------------------------------------------
+                # This netCDF variable is not scalar, or does not have
+                # a 'dimensions' attribute. Therefore it is not a
+                # domain variable.
+                # ----------------------------------------------------
+                return None
+
+            field_ncdimensions = self._split_string_by_white_space(
+                field_ncvar, ncdimensions, variables=True)
+
+        field_ncdimensions = self._ncdimensions(field_ncvar,
+                                                ncdimensions=ncdimensions)
 
         field_groups = g['variable_groups'][field_ncvar]
 
@@ -2921,7 +2971,6 @@ class NetCDFRead(IORead):
             else:
                 # There is no dimension coordinate for this dimension,
                 # so just create a domain axis with the correct size.
-
                 if ncdim in g['new_dimensions']:
                     size = g['new_dimensions'][ncdim]
                 else:
@@ -2954,18 +3003,20 @@ class NetCDFRead(IORead):
             ncdim_to_axis[ncdim] = axis
         # --- End: for
 
-        data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)
+        if create_field:
+            data = self._create_data(field_ncvar, f,
+                                     unpacked_dtype=unpacked_dtype)
 
-        logger.detail(
-            "        [d] Inserting {!r}".format(data)
-        )  # pragma: no cover
+            logger.detail(
+                "        [d] Inserting {!r}".format(data)
+            )  # pragma: no cover
 
-        self.implementation.set_data(f, data, axes=data_axes, copy=False)
+            self.implementation.set_data(f, data, axes=data_axes, copy=False)
 
-        # ----------------------------------------------------------------
-        # Add scalar dimension coordinates and auxiliary coordinates to
-        # the field
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
+        # Add scalar dimension coordinates and auxiliary coordinates
+        # to the field/domain
+        # ------------------------------------------------------------
         coordinates = self.implementation.del_property(f, 'coordinates', None)
 
         if coordinates is not None:
@@ -2992,9 +3043,9 @@ class NetCDFRead(IORead):
                         field_ncvar, ncvar, f)
                     g['auxiliary_coordinate'][ncvar] = coord
 
-                # --------------------------------------------------------
+                # ----------------------------------------------------
                 # Turn a
-                # --------------------------------------------------------
+                # ----------------------------------------------------
                 is_scalar_dimension_coordinate = False
                 scalar = False
                 if not dimensions:
@@ -3104,7 +3155,8 @@ class NetCDFRead(IORead):
                     [(self.implementation.get_bounds_ncvar(a) == node_ncvar)
                      for a in f.auxiliary_coordinates.values()]
                 )
-
+                # TODO: remove explicit API dependency:
+                # f.auxiliary_coordinates.values()
                 if found:
                     continue
 
@@ -3428,7 +3480,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Add cell methods to the field
         # ------------------------------------------------------------
-        if cell_methods_string is not None:
+        if create_field and cell_methods_string is not None:
             name_to_axis = ncdim_to_axis.copy()
             name_to_axis.update(ncscalar_to_axis)
 
@@ -3467,41 +3519,43 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Add field ancillaries to the field
         # ------------------------------------------------------------
-        ancillary_variables = self.implementation.del_property(
-            f, 'ancillary_variables', None)
-        if ancillary_variables is not None:
-            parsed_ancillary_variables = self._split_string_by_white_space(
-                field_ncvar,
-                ancillary_variables, variables=True)
-            cf_compliant = self._check_ancillary_variables(
-                field_ncvar,
-                ancillary_variables,
-                parsed_ancillary_variables)
-            if not cf_compliant:
-                pass
-            else:
-                for ncvar in parsed_ancillary_variables:
-                    # Set dimensions
-                    axes = self._get_domain_axes(ncvar)
+        if create_field:
+            ancillary_variables = self.implementation.del_property(
+                f, 'ancillary_variables', None)
+            if ancillary_variables is not None:
+                parsed_ancillary_variables = self._split_string_by_white_space(
+                    field_ncvar,
+                    ancillary_variables, variables=True)
+                cf_compliant = self._check_ancillary_variables(
+                    field_ncvar,
+                    ancillary_variables,
+                    parsed_ancillary_variables)
+                if not cf_compliant:
+                    pass
+                else:
+                    for ncvar in parsed_ancillary_variables:
+                        # Set dimensions
+                        axes = self._get_domain_axes(ncvar)
 
-                    if ncvar in g['field_ancillary']:
-                        field_anc = g['field_ancillary'][ncvar].copy()
-                    else:
-                        field_anc = self._create_field_ancillary(ncvar)
-                        g['field_ancillary'][ncvar] = field_anc
+                        if ncvar in g['field_ancillary']:
+                            field_anc = g['field_ancillary'][ncvar].copy()
+                        else:
+                            field_anc = self._create_field_ancillary(ncvar)
+                            g['field_ancillary'][ncvar] = field_anc
 
-                    # Insert the field ancillary
-                    logger.detail(
-                        "        [j] Inserting {!r}".format(field_anc)
-                    )  # pragma: no cover
-                    key = self.implementation.set_field_ancillary(
-                        field=f, construct=field_anc, axes=axes, copy=False)
-                    self._reference(ncvar, field_ncvar)
+                        # Insert the field ancillary
+                        logger.detail(
+                            "        [j] Inserting {!r}".format(field_anc)
+                        )  # pragma: no cover
+                        key = self.implementation.set_field_ancillary(
+                            field=f, construct=field_anc, axes=axes,
+                            copy=False)
+                        self._reference(ncvar, field_ncvar)
 
-                    ncvar_to_key[ncvar] = key
+                        ncvar_to_key[ncvar] = key
         # --- End: if
 
-        # Add the structural read report to the field
+        # Add the structural read report to the field/domain
         dataset_compliance = g['dataset_compliance'][field_ncvar]
         components = dataset_compliance['non-compliance']
         if components:
@@ -3511,7 +3565,7 @@ class NetCDFRead(IORead):
 
         self.implementation.set_dataset_compliance(f, dataset_compliance)
 
-        # Return the finished field
+        # Return the finished field/domain
         return f
 
     def _find_coordinate_variable(self, field_ncvar, field_groups,
@@ -5122,7 +5176,7 @@ class NetCDFRead(IORead):
 
         return coordref
 
-    def _ncdimensions(self, ncvar):
+    def _ncdimensions(self, ncvar, ncdimensions=None):
         '''Return a list of the netCDF dimensions corresponding to a netCDF
     variable.
 
@@ -5135,6 +5189,13 @@ class NetCDFRead(IORead):
 
         ncvar: `str`
             The netCDF variable name.
+
+        ncdimensions: sequence of `str`, optional
+            Use these netCDF dimensions, rather than retrieving them
+            from the netCDF variable itself. This allows the
+            dimensions of a domain variable to be parsed.
+
+            .. versionadded:: (cfdm) 1.9.0.0
 
     :Returns:
 
@@ -5152,7 +5213,10 @@ class NetCDFRead(IORead):
 
         variable = g['variables'][ncvar]
 
-        ncdimensions = list(g['variable_dimensions'][ncvar])
+        if ncdimensions is None:
+            ncdimensions = g['variable_dimensions'][ncvar]
+
+        ncdimensions = list(ncdimensions)
 
         if self._is_char(ncvar) and variable.ndim >= 1:
             # Remove the trailing string-length dimension
