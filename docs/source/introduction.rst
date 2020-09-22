@@ -66,12 +66,12 @@ to add more sophisticated methods.
 
 The cfdm package can
 
-* read :term:`field constructs <field construct>` from netCDF and CDL
-  datasets,
+* read :term:`field constructs <field construct>` and domain
+  constructs from netCDF and CDL datasets,
 
-* create new field constructs in memory,
+* create new field and domain constructs in memory,
 
-* write field constructs to netCDF datasets on disk,
+* write field and domain constructs to netCDF datasets on disk,
 
 * read, write, and create coordinates defined by geometry cells,
 
@@ -82,7 +82,7 @@ The cfdm package can
 
 * inspect field constructs,
 
-* test whether two field constructs are the same,
+* test whether two constructs are the same,
 
 * modify field construct metadata and data,
 

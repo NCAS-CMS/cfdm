@@ -232,7 +232,7 @@ def read(filename, external=None, extra=None, verbose=None,
 
             .. versionadded:: (cfdm) 1.8.2
 
-         domain: `bool`, optional
+        domain: `bool`, optional
 
             TODO
 

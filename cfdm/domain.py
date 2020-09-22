@@ -15,17 +15,28 @@ class Domain(mixin.NetCDFVariable,
              mixin.ConstructAccess,
              mixin.Properties,
              core.Domain):
-    '''A domain of the CF data model.
+    '''A domain construct of the CF data model.
 
     The domain represents a set of discrete "locations" in what
     generally would be a multi-dimensional space, either in the real
     world or in a model's simulated world. These locations correspond
     to individual data array elements of a field construct
 
-    The domain is defined collectively by the following constructs of
-    the CF data model: domain axis, dimension coordinate, auxiliary
-    coordinate, cell measure, coordinate reference and domain
-    ancillary constructs.
+    The domain construct is defined collectively by the following
+    constructs of the CF data model: domain axis, dimension
+    coordinate, auxiliary coordinate, cell measure, coordinate
+    reference and domain ancillary constructs; as well as properties
+    to descibe the domain.
+
+    **NetCDF interface**
+
+    The netCDF variable name of the construct may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+    `nc_has_variable` methods.
+
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
     .. versionadded:: (cfdm) 1.7.0
 

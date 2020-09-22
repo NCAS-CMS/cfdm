@@ -1,7 +1,7 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-. _cfdm-Domain:
+.. _cfdm-Domain:
 
 cfdm.Domain
 ===========
@@ -64,6 +64,24 @@ Metadata constructs
    ~cfdm.Domain.domain_ancillaries
    ~cfdm.Domain.domain_axes
 
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Domain.del_property
+   ~cfdm.Domain.get_property
+   ~cfdm.Domain.has_property
+   ~cfdm.Domain.set_property
+   ~cfdm.Domain.properties
+   ~cfdm.Domain.clear_properties
+   ~cfdm.Domain.set_properties
+
 Miscellaneous
 -------------
 
@@ -77,6 +95,35 @@ Miscellaneous
    ~cfdm.Domain.copy
    ~cfdm.Domain.equals
    ~cfdm.Domain.fromconstructs
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Domain.nc_del_variable
+   ~cfdm.Domain.nc_get_variable
+   ~cfdm.Domain.nc_has_variable
+   ~cfdm.Domain.nc_set_variable
+   
+Groups
+^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Domain.nc_variable_groups
+   ~cfdm.Domain.nc_clear_variable_groups
+   ~cfdm.Domain.nc_set_variable_groups
 
 Special
 -------
@@ -92,7 +139,7 @@ Special
    ~cfdm.Domain.__repr__
    ~cfdm.Domain.__str__
 
-Docstring substitutions                   
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

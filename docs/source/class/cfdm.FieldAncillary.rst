@@ -144,7 +144,7 @@ Special
    ~cfdm.FieldAncillary.__repr__
    ~cfdm.FieldAncillary.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       
