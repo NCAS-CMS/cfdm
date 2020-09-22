@@ -137,7 +137,7 @@ class Domain(mixin.ConstructAccess,
     def fromconstructs(cls, constructs, copy=False):
         '''Create a domain from existing metadata constructs.
 
-    The new domain act as a view to the given constructs, i.e. changes
+    The new domain acts as a view to the given constructs, i.e. changes
     to the domain, such as the addition or removal of a construct,
     will also affect the input `Constructs` instance.
 
@@ -152,7 +152,8 @@ class Domain(mixin.ConstructAccess,
         copy: `bool`, optional
             If True then deep copy the metadata constructs prior to
             initialization. By default the metadata constructs are not
-            copied.
+            copied. Note that even when *copy* is True, the input
+            `Constructs` container is not copied.
 
     :Returns:
 
@@ -162,6 +163,8 @@ class Domain(mixin.ConstructAccess,
     **Examples:**
 
     >>> d = {{package}}.{{class}}.fromconstructs(f.constructs)
+
+    >>> d = {{package}}.{{class}}.fromconstructs(f.constructs.copy())
 
         '''
         domain = cls()
