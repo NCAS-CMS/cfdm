@@ -1,6 +1,8 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
+.. _cfdm-DomainAncillary:
+
 cfdm.DomainAncillary
 ====================
 

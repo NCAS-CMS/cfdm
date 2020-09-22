@@ -10,8 +10,8 @@
 
 Version |release| for version |version| of the CF conventions.
 
-**Reading and writing**
------------------------
+Reading and writing
+-------------------
 
 .. autosummary::
    :nosignatures:
@@ -21,8 +21,8 @@ Version |release| for version |version| of the CF conventions.
    cfdm.read 
    cfdm.write
 
-**Constants**
--------------
+Constants
+---------
 
 .. autosummary::
    :nosignatures:
@@ -38,8 +38,8 @@ Version |release| for version |version| of the CF conventions.
    cfdm.LOG_LEVEL
    cfdm.configuration
 
-**Miscellaneous**
------------------
+Miscellaneous
+-------------
 
 .. autosummary::
    :nosignatures:

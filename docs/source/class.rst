@@ -11,8 +11,8 @@
 Version |release| for version |version| of the CF conventions.
 
 
-**Field construct class**
--------------------------
+Field construct class
+---------------------
 
 .. autosummary::
    :nosignatures:
@@ -20,8 +20,8 @@ Version |release| for version |version| of the CF conventions.
 		 
    cfdm.Field	              
 
-**Metadata construct classes**
-------------------------------
+Metadata construct classes
+--------------------------
 
 .. autosummary::
    :nosignatures:
@@ -36,8 +36,8 @@ Version |release| for version |version| of the CF conventions.
    cfdm.DomainAxis
    cfdm.FieldAncillary
   
-**Constructs class**
---------------------
+Constructs class
+----------------
 
 .. autosummary::
    :nosignatures:
@@ -45,8 +45,8 @@ Version |release| for version |version| of the CF conventions.
 
    cfdm.Constructs
 
-**Coordinate component classes**
---------------------------------
+Coordinate component classes
+----------------------------
 
 .. autosummary::
    :nosignatures:
@@ -57,8 +57,8 @@ Version |release| for version |version| of the CF conventions.
    cfdm.Datum
    cfdm.InteriorRing
 
-**Domain class**
-----------------
+Domain class
+------------
 
 .. autosummary::
    :nosignatures:
@@ -66,8 +66,8 @@ Version |release| for version |version| of the CF conventions.
 
    cfdm.Domain
 
-**Data classes**
-----------------
+Data classes
+------------
 
 .. autosummary::
    :nosignatures:
@@ -78,8 +78,8 @@ Version |release| for version |version| of the CF conventions.
    cfdm.NumpyArray
    cfdm.Array
 
-**Data compression classses**
------------------------------
+Data compression classses
+-------------------------
 
 Classes that support the creation and storage of compressed arrays.
 
