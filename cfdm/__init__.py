@@ -93,6 +93,7 @@ from .functions import (
     environment,
     log_level,
     rtol,
+    unique_domains,
     _log_level,
     _disable_logging,
     _reset_log_emergence_level,

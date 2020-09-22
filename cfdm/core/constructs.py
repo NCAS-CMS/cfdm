@@ -85,6 +85,8 @@ class Constructs(abstract.Container):
             those of *source* prior to initialization. By default such
             metadata constructs are deep copied.
 
+        _ignore: sequence of `str`, optional
+
         '''
         self._ignore = tuple(set(_ignore))
 

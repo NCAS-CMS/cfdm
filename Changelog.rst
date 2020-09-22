@@ -10,6 +10,7 @@ version 1.8.7.0
 * New method: `cfdm.Field._docstring_substitutions`
 * New method: `cfdm.Field._docstring_package_depth`
 * New method: `cfdm.Field._docstring_method_exclusions`
+* New function: `cfdm.unique_domains`
 * Fixed bug that caused failures when reading or writing a dataset
   that contains multiple geometry containers
   (https://github.com/NCAS-CMS/cfdm/issues/65)
