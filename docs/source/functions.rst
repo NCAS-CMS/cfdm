@@ -46,7 +46,8 @@ Version |release| for version |version| of the CF conventions.
    :toctree: function/
    :template: function.rst
 
+   cfdm.abspath
    cfdm.environment
    cfdm.example_field
    cfdm.implementation
-   cfdm.abspath
+   cfdm.unique_domains
