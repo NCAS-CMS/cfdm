@@ -1307,7 +1307,8 @@ class Field(mixin.NetCDFVariable,
                                      _level=_level))
             string.append('')
 
-        string.append(self.get_domain().dump(display=False))
+        string.append(self.get_domain().dump(display=False,
+                                             _create_title=False))
 
         string = '\n'.join(string)
 

@@ -11,8 +11,9 @@ from .decorators import _manage_log_level_via_verbosity
 logger = logging.getLogger(__name__)
 
 
-class Domain(mixin.ConstructAccess,
-             mixin.Container,
+class Domain(mixin.NetCDFVariable,
+             mixin.ConstructAccess,
+             mixin.Properties,
              core.Domain):
     '''A domain of the CF data model.
 
@@ -39,6 +40,25 @@ class Domain(mixin.ConstructAccess,
         instance._Constructs = Constructs
         return instance
 
+    def __init__(self, source=None, copy=True, _use_data=True):
+        '''**Initialization**
+
+    :Parameters:
+
+        source: optional
+            Initialize the metadata constructs from those of *source*.
+
+            A new domain may also be instantiated with the
+            `fromconstructs` class method.
+
+        {{init copy: `bool`, optional}}
+
+        '''
+        super().__init__(source=source, copy=copy,
+                         _use_data=_use_data)
+
+        self._initialise_netcdf(source)
+        
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -188,12 +208,13 @@ class Domain(mixin.ConstructAccess,
         else:
             return string
 
-    def dump(self, display=True, _level=0, _title=None):
-        '''A full description of the domain.
+    def dump(self, display=True, _omit_properties=(), _prefix='',
+             _title=None, _create_title=True, _level=0):
+        '''A full description of the domain construct.
 
-    The domain components are described without abbreviation with the
-    exception of data arrays, which are abbreviated to their first and
-    last values.
+    Returns a description of all properties, including those of
+    metadata constructs and their components, and provides selected
+    values of all data arrays.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -203,29 +224,54 @@ class Domain(mixin.ConstructAccess,
             If False then return the description as a string. By
             default the description is printed.
 
-            *Parameter example:*
-              ``f.dump()`` is equivalent to ``print
-              f.dump(display=False)``.
-
     :Returns:
 
-        `str` or `None`
-            If *display* is True then the description is printed and
-            `None` is returned. Otherwise the description is returned
-            as a string.
+        {{returns dump}}
 
         '''
         indent = '    '
         indent0 = indent * _level
         indent1 = indent0 + indent
 
+        if _create_title:
+            if _title is None:
+                ncvar = self.nc_get_variable(None)
+                _title = self.identity(default=None)
+                if ncvar is not None:
+                    if _title is None:
+                        _title = "ncvar%{0}".format(ncvar)
+                    else:
+                        _title += " (ncvar%{0})".format(ncvar)
+                # --- End: if
+                if _title is None:
+                    _title = ''
+    
+                _title = '{0}: {1}'.format(self.__class__.__name__, _title)
+
+            line = '{0}{1}'.format(indent0, ''.ljust(len(_title), '-'))
+
+            # Title
+            string = [
+                line,
+                indent0 + _title,
+                line
+            ]
+
+            properties = super().dump(display=False,
+                                      _create_title=False,
+                                      _omit_properties=_omit_properties,
+                                      _prefix=_prefix, _title=_title,
+                                      _level=_level-1)
+            string.append(properties)
+            string.append('')
+        else:
+            string = []
+
         axis_to_name = self._unique_domain_axis_identities()
 
         construct_name = self._unique_construct_names()
 
         constructs_data_axes = self.constructs.data_axes()
-
-        string = []
 
         # Domain axes
         axes = self._dump_axes(axis_to_name, display=False, _level=_level)

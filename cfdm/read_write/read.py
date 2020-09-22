@@ -9,7 +9,7 @@ _implementation = implementation()
 
 
 def read(filename, external=None, extra=None, verbose=None,
-         warnings=False, warn_valid=False, mask=True,
+         warnings=False, warn_valid=False, mask=True, domain=False,
          _implementation=_implementation):
     '''Read field constructs from a dataset.
 
@@ -232,6 +232,12 @@ def read(filename, external=None, extra=None, verbose=None,
 
             .. versionadded:: (cfdm) 1.8.2
 
+         domain: `bool`, optional
+
+            TODO
+
+            .. versionadded:: (cfdm) 1.9.0.0
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
@@ -295,7 +301,7 @@ def read(filename, external=None, extra=None, verbose=None,
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
                              warn_valid=warn_valid, mask=mask,
-                             extra_read_vars=None)
+                             domain=domain, extra_read_vars=None)
     elif cdl:
         raise IOError(
             "Can't determine format of file {} "
