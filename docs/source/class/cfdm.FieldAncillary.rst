@@ -96,6 +96,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.FieldAncillary.copy
+   ~cfdm.FieldAncillary.creation_commands
    ~cfdm.FieldAncillary.equals
    ~cfdm.FieldAncillary.uncompress
    ~cfdm.FieldAncillary.get_filenames

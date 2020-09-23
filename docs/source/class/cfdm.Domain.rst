@@ -75,6 +75,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Domain.copy
+   ~cfdm.Domain.creation_commands
    ~cfdm.Domain.equals
    ~cfdm.Domain.fromconstructs
 

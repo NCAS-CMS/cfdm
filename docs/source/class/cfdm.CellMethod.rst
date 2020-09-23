@@ -70,6 +70,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.CellMethod.copy
+   ~cfdm.CellMethod.creation_commands
    ~cfdm.CellMethod.equals
    ~cfdm.CellMethod.sorted
 
