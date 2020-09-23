@@ -28,7 +28,7 @@ class Domain(mixin.NetCDFVariable,
     constructs of the CF data model: domain axis, dimension
     coordinate, auxiliary coordinate, cell measure, coordinate
     reference and domain ancillary constructs; as well as properties
-    to descibe the domain.
+    to describe the domain.
 
     **NetCDF interface**
 
@@ -83,22 +83,28 @@ class Domain(mixin.NetCDFVariable,
         instance._Constructs = Constructs
         return instance
 
-    def __init__(self, source=None, copy=True, _use_data=True):
+    def __init__(self, properties=None, source=None, copy=True,
+                 _use_data=True):
         '''**Initialization**
 
     :Parameters:
 
+        {{init properties: `dict`, optional}}
+
+            *Parameter example:*
+               ``properties={'long_name': 'Domain for model'}``
+
         source: optional
             Initialize the metadata constructs from those of *source*.
 
-            A new domain may also be instantiated with the
-            `fromconstructs` class method.
+            Metadata constructs may also be set after initialisation
+            with the `set_construct` method.
 
         {{init copy: `bool`, optional}}
 
         '''
-        super().__init__(source=source, copy=copy,
-                         _use_data=_use_data)
+        super().__init__(properties=properties, source=source,
+                         copy=copy, _use_data=_use_data)
 
         self._initialise_netcdf(source)
 

@@ -13,7 +13,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           endian='native', compress=0, fletcher32=False, shuffle=True,
           string=True, verbose=None, warn_valid=True, group=True,
           _implementation=_implementation):
-    '''Write field constructs to a netCDF file.
+    '''Write field and domain constructs to a netCDF file.
 
     **File format**
 
@@ -86,8 +86,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
     :Parameters:
 
-        fields: (sequence of) `Field`
-            The field constructs to write to the file.
+        fields: (sequence of) `Field` or `Domain`
+            The field and domain constructs to write to the file.
 
         filename: `str`
             The output netCDF file name. Various type of expansion are

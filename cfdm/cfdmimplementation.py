@@ -493,26 +493,77 @@ class CFDMImplementation(Implementation):
 
         return [data_axes[i] for i in self.get_data_compressed_axes(data)]
 
-    def get_compression_type(self, construct):
+    def get_compression_type(self, construct, domain=False):
         '''Return the construct keys of the domain axis constructs spanned by
     a metadata construct.
 
     :Parameters:
 
-        field: field construct
+        construct:
 
-        key: `str`
+        domain: `bool`, optional
+            If the construct is a domain construct then this must be
+            identifed by setting *domain* to True.
+
+            ..versionadded:: 1.9.0.0
 
     :Returns:
 
         `tuple`
 
         '''
-        data = construct.get_data(None)
-        if data is None:
-            return ''
+        # For a constructs with data, work out the compression type
+        # from the data itself.
+        if not domain:
+            data = construct.get_data(None)
+            if data is None:
+                return ''
 
-        return data.get_compression_type()
+            return data.get_compression_type()
+
+        # For a domain construct, work out the compression type from
+        # its metadata constucts.
+        constructs = self.get_constructs(construct, data=True)
+
+        compression_types = set()
+
+        for c in constructs.values():
+            data = c.get_data(None)
+            if data is None:
+                continue
+
+            try:
+                geometry = c.has_geometry()
+            except AttribbuteError:
+                continue
+            else:
+                if geometry:
+                    # This construct has geometry cells, so does not
+                    # count as being compressed for this purpose.
+                    continue
+            # --- End: try
+
+            compression_types.add(data.get_compression_type())
+
+        # The order of the following tests matters
+        if 'gathered' in compression_types:
+            return 'gathered'
+
+        elif (
+                'ragged indexed contiguous' in compression_types or
+                ('ragged indexed' in compression_types and
+                 'ragged contiguous' in compression_types)
+        ):
+            return 'ragged indexed contiguous'
+
+        elif 'ragged indexed' in compression_types:
+            return 'ragged indexed'
+
+        elif 'ragged contiguous' in compression_types:
+            return 'ragged contiguous'
+
+        else:
+            return ''
 
     def get_construct_data_axes(self, field, key):
         '''Return the construct keys of the domain axis constructs spanned by
@@ -540,6 +591,8 @@ class CFDMImplementation(Implementation):
     axes, and possibly other axes, are returned.
 
     :Parameters:
+
+        field: `Field` or `Domain`
 
         axes: sequence of `str`
 

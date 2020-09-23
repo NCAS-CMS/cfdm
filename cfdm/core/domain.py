@@ -13,10 +13,11 @@ class Domain(mixin.ConstructAccess,
     world or in a model's simulated world. These locations correspond
     to individual data array elements of a field construct
 
-    The domain is defined collectively by the following constructs of
-    the CF data model: domain axis, dimension coordinate, auxiliary
-    coordinate, cell measure, coordinate reference and domain
-    ancillary constructs.
+    The domain construct is defined collectively by the following
+    constructs of the CF data model: domain axis, dimension
+    coordinate, auxiliary coordinate, cell measure, coordinate
+    reference and domain ancillary constructs; as well as properties
+    to describe the domain.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -39,10 +40,16 @@ class Domain(mixin.ConstructAccess,
         instance._Constructs = Constructs
         return instance
 
-    def __init__(self, source=None, copy=True, _use_data=True):
+    def __init__(self, properties=None, source=None, copy=True,
+                 _use_data=True):
         '''**Initialization**
 
     :Parameters:
+
+        {{init properties: `dict`, optional}}
+
+            *Parameter example:*
+               ``properties={'long_name': 'Domain for model'}``
 
         source: optional
             Initialize the metadata constructs from those of *source*.
@@ -53,7 +60,8 @@ class Domain(mixin.ConstructAccess,
         {{init copy: `bool`, optional}}
 
         '''
-        super().__init__()
+        super().__init__(properties=properties, source=source,
+                         copy=copy)
 
         if source is not None:
             try:
@@ -135,7 +143,7 @@ class Domain(mixin.ConstructAccess,
 
     @classmethod
     def fromconstructs(cls, constructs, copy=False):
-        '''Create a domain from existing metadata constructs.
+        '''Return a new domain contining the given metadata constructs.
 
     The new domain acts as a view to the given constructs, i.e. changes
     to the domain, such as the addition or removal of a construct,

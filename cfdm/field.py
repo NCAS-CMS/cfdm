@@ -350,7 +350,7 @@ class Field(mixin.NetCDFVariable,
     # ----------------------------------------------------------------
 #    def _get_data_compression_variables(self, component):
 #        '''
-#        
+#
 #        '''
 #        out = []
 #        for construct in self.constructs.filter_by_data().values():

@@ -237,7 +237,7 @@ def read(filename, external=None, extra=None, verbose=None,
         domain: `bool`, optional
             If True then return only the domain constructs from the
             dataset. By default only field constructs are returned.
-    
+
             Domain constructs are only created from CF-netCDF domain
             variables, not from the domains implicitly defined by
             CF-netCDF data variables. CF-netCDF domain variables are

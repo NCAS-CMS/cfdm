@@ -2744,9 +2744,6 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         field = not domain
-               
-        
-# TODO NEED TO ONLY MAKE DOMAIN VARIABELS FROM UNREFERENCED VARIBLES ???
 
         # Reset 'domain_ancillary_key'
         g['domain_ancillary_key'] = {}
@@ -2764,7 +2761,7 @@ class NetCDFRead(IORead):
             construct = 'Field'
         else:
             construct = 'Domain'
-    
+
         logger.info(
             "    Converting netCDF variable {}({}) to a {}:".format(
                 field_ncvar, ', '.join(dimensions), construct)

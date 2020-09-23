@@ -125,6 +125,47 @@ Groups
    ~cfdm.Domain.nc_clear_variable_groups
    ~cfdm.Domain.nc_set_variable_groups
 
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.Domain.nc_del_geometry_variable
+   ~cfdm.Domain.nc_get_geometry_variable
+   ~cfdm.Domain.nc_has_geometry_variable
+   ~cfdm.Domain.nc_set_geometry_variable 
+   ~cfdm.Domain.nc_geometry_variable_groups
+   ~cfdm.Domain.nc_set_geometry_variable_groups
+   ~cfdm.Domain.nc_clear_geometry_variable_groups
+
+Components
+^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.Domain.nc_del_component_variable
+   ~cfdm.Domain.nc_set_component_variable
+   ~cfdm.Domain.nc_set_component_variable_groups
+   ~cfdm.Domain.nc_clear_component_variable_groups      
+   ~cfdm.Domain.nc_del_component_dimension
+   ~cfdm.Domain.nc_set_component_dimension
+   ~cfdm.Domain.nc_set_component_dimension_groups
+   ~cfdm.Domain.nc_clear_component_dimension_groups
+   ~cfdm.Domain.nc_del_component_sample_dimension
+   ~cfdm.Domain.nc_set_component_sample_dimension   
+   ~cfdm.Domain.nc_set_component_sample_dimension_groups
+   ~cfdm.Domain.nc_clear_component_sample_dimension_groups
+
 Special
 -------
 
