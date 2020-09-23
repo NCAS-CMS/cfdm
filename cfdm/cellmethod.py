@@ -96,7 +96,7 @@ class CellMethod(mixin.Container,
                           name='c'):
         '''Return the commands that would create the cell measure construct.
 
-    .. versionadded:: 3.2.0
+    .. versionadded:: (cfdm) 1.8.7.0
 
     .. seealso:: `{{package}}.Data.creation_commands`,
                  `{{package}}.Field.creation_commands`
