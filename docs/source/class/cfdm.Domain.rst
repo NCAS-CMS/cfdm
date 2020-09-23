@@ -25,6 +25,8 @@ Inspection
    :template: method.rst
 
    ~cfdm.Domain.dump
+   ~cfdm.Domain.identity  
+   ~cfdm.Domain.identities
 
 Metadata constructs
 -------------------

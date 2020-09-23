@@ -432,4 +432,113 @@ class Domain(mixin.NetCDFVariable,
 
         return True
 
+    def identity(self, default=''):
+        '''Return the canonical identity.
+
+    By default the identity is the first found of the following:
+
+    * The ``cf_role`` property, preceeded by ``'cf_role='``.
+    * The ``long_name`` property, preceeded by ``'long_name='``.
+    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The value of the *default* parameter.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    .. seealso:: `identities`
+
+    :Parameters:
+
+        default: optional
+            If no identity can be found then return the value of the
+            default parameter.
+
+    :Returns:
+
+            The identity.
+
+    **Examples:**
+
+    >>> d = {{package}}.Domain()
+    >>> d.set_properties({'foo': 'bar',
+    ...                   'long_name': 'Domain for model'})
+    >>> d.nc_set_variable('dom1')
+    >>> d.identity()
+    'long_name=Domain for model'
+    >>> d.del_property('long_name')
+    'long_name=Domain for model'
+    >>> d.identity(default='no identity')
+    'ncvar%dom1'
+    >>> d.identity()
+    'ncvar%dom1'
+    >>> d.nc_del_variable()
+    'dom1'
+    >>> d.identity()
+    ''
+    >>> d.identity(default='no identity')
+    'no identity'
+
+        '''
+        for prop in ('cf_role', 'long_name'):
+            n = self.get_property(prop, None)
+            if n is not None:
+                return '{0}={1}'.format(prop, n)
+        # --- End: for
+
+        n = self.nc_get_variable(None)
+        if n is not None:
+            return 'ncvar%{0}'.format(n)
+
+        return default
+
+    def identities(self):
+        '''Return all possible identities.
+
+    The identities comprise:
+
+    * The ``cf_role`` property, preceeded by ``'cf_role='``.
+    * The ``long_name`` property, preceeded by ``'long_name='``.
+    * All other properties, preceeded by the property name and a
+      equals e.g. ``'foo=bar'``.
+    * The netCDF variable name, preceeded by ``'ncvar%'``.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    .. seealso:: `identity`
+
+    :Returns:
+
+        `list`
+            The identities.
+
+    **Examples:**
+
+    >>> d = {{package}}.Domain()
+    >>> d.set_properties({'foo': 'bar',
+    ...                   'long_name': 'Domain for model'})
+    >>> d.nc_set_variable('dom1')
+    >>> d.identities()
+    ['long_name=Domain for model', 'foo=bar', 'ncvar%dom1']
+
+        '''
+        properties = self.properties()
+        cf_role = properties.pop('cf_role', None)
+        long_name = properties.pop('long_name', None)
+
+        out = []
+
+        if cf_role is not None:
+            out.append('cf_role={}'.format(cf_role))
+
+        if long_name is not None:
+            out.append('long_name={}'.format(long_name))
+
+        out += ['{0}={1}'.format(prop, value)
+                for prop, value in sorted(properties.items())]
+
+        n = self.nc_get_variable(None)
+        if n is not None:
+            out.append('ncvar%{0}'.format(n))
+
+        return out
+
 # --- End: class
