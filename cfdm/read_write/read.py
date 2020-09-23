@@ -91,8 +91,8 @@ def read(filename, external=None, extra=None, verbose=None,
 
     .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `cfdm.write`, `cfdm.Field.convert`,
-                 `cfdm.Field.dataset_compliance`
+    .. seealso:: `cfdm.write`, `cfdm.unique_domains`,
+                 `cfdm.Field.convert`, `cfdm.Field.dataset_compliance`
 
     :Parameters:
 
@@ -168,6 +168,8 @@ def read(filename, external=None, extra=None, verbose=None,
             `~cfdm.Field.convert` method of a returned field
             construct, instead of setting the *extra* parameter.
 
+            Ignored if *domain* is True.
+
         verbose: `int` or `str` or `None`, optional
             If an integer from ``-1`` to ``3``, or an equivalent string
             equal ignoring case to one of:
@@ -233,8 +235,21 @@ def read(filename, external=None, extra=None, verbose=None,
             .. versionadded:: (cfdm) 1.8.2
 
         domain: `bool`, optional
+            If True then return only the domain constructs from the
+            dataset. By default only field constructs are returned.
+    
+            Domain constructs are only created from CF-netCDF domain
+            variables, not from the domains implicitly defined by
+            CF-netCDF data variables. CF-netCDF domain variables are
+            only defined from CF-1.9, so older datasets automatically
+            contain no CF-netCDF domain variables.
 
-            TODO
+            The unique domains contained by a sequence of field
+            constructs are easily found with the `cfdm.unique_domains`
+            function. For example::
+
+               >>> f = cfdm.read('file.nc')
+               >>> d = cfdm.unique_domains(f)
 
             .. versionadded:: (cfdm) 1.9.0.0
 
@@ -244,9 +259,9 @@ def read(filename, external=None, extra=None, verbose=None,
 
     :Returns:
 
-        `list`
-            The field constructs found in the dataset. The list may be
-            empty.
+        `list` of `Field` or `Domain`
+            The field constructs found in the dataset, or the domain
+            constructs if *domain* is True. The list may be empty.
 
     **Examples:**
 
