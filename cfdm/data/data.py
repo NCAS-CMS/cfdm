@@ -1148,6 +1148,153 @@ class Data(Container,
         '''
         return super().copy(array=array)
 
+    def creation_commands(self, name='data', namespace=None, indent=0,
+                          string=True):
+        '''Return the commands that would create the data object.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    :Parameters:
+
+        name: `str` or `None`, optional
+            Set the variable name of `Data` object that the commands
+            create.
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+    >>> d = {{package}}.Data([[0.0, 45.0], [45.0, 90.0]],
+    ...                      units='degrees_east')
+    >>> print(d.creation_commands())
+    data = cfdm.Data([[0.0, 45.0], [45.0, 90.0]], units='degrees_east', dtype='f8')
+
+    >>> d = {{package}}.Data(['N/A', 'beta', 'gamma', 'delta'],
+    ...                      mask = [1, 0, 0, 0])
+    >>> d.creation_commands(name='d', namespace='', string=False)
+    ["d = Data(['', 'beta', 'gamma', 'delta'], dtype='U5', mask=Data([True, False, False, False], dtype='b1'))"]
+
+        '''
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._namespace() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        indent = ' ' * indent
+
+        mask = self.mask
+        if mask.any():
+            masked = True
+            array = self.filled().array.tolist()
+        else:
+            masked = False
+            array = self.array.tolist()
+
+        units = self.get_units(None)
+        if units is None:
+            units = ''
+        else:
+            units = ", units={!r}".format(units)
+
+        calendar = self.get_calendar(None)
+        if calendar is None:
+            calendar = ''
+        else:
+            calendar = ", calendar={!r}".format(calendar)
+
+        fill_value = self.get_fill_value(None)
+        if fill_value is None:
+            fill_value = ''
+        else:
+            fill_value = ", fill_value={}".format(fill_value)
+
+        dtype = self.dtype.descr[0][1][1:]
+
+        if masked:
+            mask = mask.creation_commands(name="mask",
+                                          namespace=namespace0,
+                                          string=True)
+            mask = mask.replace('mask = ', 'mask=', 1)
+            mask = ", {}".format(mask)
+        else:
+            mask = ''
+
+        if name is None:
+            name = ''
+        else:
+            name = name + " = "
+
+        out = []
+        out.append("{0}{1}{2}({3}{4}{5}, dtype={6!r}{7}{8})".format(
+            name,
+            namespace,
+            self.__class__.__name__,
+            array,
+            units,
+            calendar,
+            dtype,
+            mask,
+            fill_value))
+
+        if string:
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
+
+        return out
+
+    @_inplace_enabled(default=False)
+    def filled(self, fill_value=None, inplace=False):
+        '''TODO
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    :Parameters:
+
+        fill_value: scalar, optional
+            TODO
+
+    :Returns:
+
+        `Data` or `None`
+            TODO
+
+    **Examples:**
+
+    TODO
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if fill_value is None:
+            fill_value = d.get_fill_value(None)
+            if fill_value is None:  # still...
+                default_fillvals = netCDF4.default_fillvals
+                fill_value = default_fillvals.get(d.dtype.str[1:], None)
+                if fill_value is None and d.dtype.kind in ('SU'):
+                    fill_value = default_fillvals.get('S1', None)
+
+                if fill_value is None:  # should not be None by this stage
+                    raise ValueError("TODO {}".format(d.dtype.str))
+        # --- End: if
+
+        array = self.array
+
+        if numpy.ma.isMA:
+            array = array.filled(fill_value)
+
+        d._set_Array(array, copy=False)
+
+        return d
+
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array.

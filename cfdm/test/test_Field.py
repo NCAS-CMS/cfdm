@@ -609,6 +609,34 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(f.equals(c, verbose=3), message)
         # --- End: for
 
+    def test_Field_creation_commands(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+
+        for rd in (False, True):
+            for indent in (0, 4):
+                for s in (False, True):
+                    for ns in ('cfdm', ''):
+                        _ = f.creation_commands(representative_data=rd,
+                                                indent=indent,
+                                                namespace=ns,
+                                                string=s)
+        # --- End: for
+
+        for i in range(7):
+            f = cfdm.example_field(i)
+            for rd in (False, True):
+                for indent in (0, 4):
+                    for s in (False, True):
+                        for ns in ('cfdm', ''):
+                            _ = f.creation_commands(representative_data=rd,
+                                                    indent=indent,
+                                                    namespace=ns,
+                                                    string=s)
+        # --- End: for
+
 # --- End: class
 
 

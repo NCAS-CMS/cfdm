@@ -217,4 +217,11 @@ class Container:
 
         return other
 
+    def _namespace(self):
+        '''TODO
+
+        '''
+        depth = self.__class__._docstring_package_depth(self.__class__)
+        return '.'.join(self.__module__.split('.')[0:depth + 1])
+
 # --- End: class

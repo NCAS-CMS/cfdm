@@ -74,6 +74,71 @@ class DomainAxis(mixin.NetCDFDimension,
         '''
         return 'size({0})'.format(self.get_size(''))
 
+    def creation_commands(self, representative_data=False,
+                          namespace=None, indent=0, string=True,
+                          name='c'):
+        '''Return the commands that would create the domain axis construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        representative_data: `bool`, optional
+            Ignored.
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+        TODO
+
+        '''
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._namespace() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+#        namespace0 = namespace
+#        if namespace0:
+#            namespace = namespace+"."
+#        else:
+#            namespace = ""
+
+        indent = ' ' * indent
+
+        out = []
+        out.append("# {}: {}".format(self.construct_type, self.identity()))
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        size = self.get_size(None)
+        if size is not None:
+            out.append("{}.set_size({})".format(name, size))
+
+        nc = self.nc_get_dimension(None)
+        if nc is not None:
+            out.append("{}.nc_set_dimension({!r})".format(name, nc))
+
+        if self.nc_is_unlimited():
+            out.append("c.nc_set_unlimited({})".format(True))
+
+        if string:
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
+
+        return out
+
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, ignore_type=False):
         '''Whether two domain axis constructs are the same.
