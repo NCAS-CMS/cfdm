@@ -5,6 +5,8 @@ version 1.8.7.0
 **2020-09-??**
 
 * New keyword parameter to `cfdm.Field.set_data`: ``inplace``
+* New method: `cfdm.Field.creation_commands`
+* New method: `cfdm.Data.creation_commands`
 * New class: `cfdm.core.meta.DocstringRewriteMeta`
 * New method: `cfdm.Field._docstring_special_substitutions`
 * New method: `cfdm.Field._docstring_substitutions`
