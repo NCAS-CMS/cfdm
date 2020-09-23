@@ -513,7 +513,7 @@ class DocstringRewriteMeta(type):
             out.extend(d_s(None))
 
         return set(out)
-
+    
     @classmethod
     def _docstring_update(cls, package_name, class_name, f,
                           method_name, config):

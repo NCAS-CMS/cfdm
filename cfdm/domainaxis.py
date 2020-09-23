@@ -105,15 +105,9 @@ class DomainAxis(mixin.NetCDFDimension,
         '''
         namespace0 = namespace
         if namespace is None:
-            namespace = self._namespace() + '.'
+            namespace = self._package() + '.'
         elif namespace and not namespace.endswith('.'):
             namespace += '.'
-
-#        namespace0 = namespace
-#        if namespace0:
-#            namespace = namespace+"."
-#        else:
-#            namespace = ""
 
         indent = ' ' * indent
 

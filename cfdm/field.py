@@ -1404,7 +1404,7 @@ class Field(mixin.NetCDFVariable,
 
         namespace0 = namespace
         if namespace is None:
-            namespace = self._namespace() + '.'
+            namespace = self._package() + '.'
         elif namespace and not namespace.endswith('.'):
             namespace += '.'
 
@@ -1412,11 +1412,6 @@ class Field(mixin.NetCDFVariable,
             representative_data=representative_data, indent=indent,
             namespace=namespace, string=False, name=name,
             data_name='d')
-
-#        if namespace0:
-#            namespace = namespace + "."
-#        else:
-#            namespace = ""
 
         indent = ' ' * indent
 

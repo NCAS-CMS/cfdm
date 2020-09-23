@@ -217,8 +217,13 @@ class Container:
 
         return other
 
-    def _namespace(self):
-        '''TODO
+    def _package(self):
+        '''Return the name of the package in which this class resides.
+
+    :Returns:
+
+        `str`
+           The package name
 
         '''
         depth = self.__class__._docstring_package_depth(self.__class__)
