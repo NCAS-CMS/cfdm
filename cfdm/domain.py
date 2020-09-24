@@ -387,7 +387,7 @@ class Domain(mixin.NetCDFVariable,
         else:
             return string
 
-   def climatological_time_axes(self):
+    def climatological_time_axes(self):
         '''Return all axes which are climatological time axes.
 
     .. versionadded:: (cfdm) 1.9.0.0
@@ -404,16 +404,16 @@ class Domain(mixin.NetCDFVariable,
 
         '''
         out = []
-        
-        for ckey, c in  self.filter_by_type('dimension_coordinate',
-                                            'auxiliary_coordinate').items():
+
+        for ckey, c in self.filter_by_type('dimension_coordinate',
+                                           'auxiliary_coordinate').items():
             if not c.is_climatology():
                 continue
 
             out.extend(self.data_axes().get(ckey, ()))
 
         return set(out)
-    
+
     def creation_commands(self, representative_data=False,
                           namespace=None, indent=0, string=True,
                           name='domain', data_name='data',

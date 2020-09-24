@@ -1,3 +1,19 @@
+version 1.9.0.0
+---------------
+----
+
+**202?-??-??**
+
+* New method: `cfdm.Domain.climatological_time_axes`
+* New method: `cfdm.AuxiliaryCoordinate.del_climatology`
+* New method: `cfdm.AuxiliaryCoordinate.get_climatology`
+* New method: `cfdm.AuxiliaryCoordinate.is_climatology`
+* New method: `cfdm.AuxiliaryCoordinate.set_climatology`
+* New method: `cfdm.DimensionCoordinate.del_climatology`
+* New method: `cfdm.DimensionCoordinate.get_climatology`
+* New method: `cfdm.DimensionCoordinate.is_climatology`
+* New method: `cfdm.DimensionCoordinate.set_climatology`
+
 version 1.8.7.0
 ---------------
 ----

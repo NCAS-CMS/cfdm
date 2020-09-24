@@ -94,6 +94,7 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Domain.climatological_time_axes
    ~cfdm.Domain.copy
    ~cfdm.Domain.equals
    ~cfdm.Domain.fromconstructs

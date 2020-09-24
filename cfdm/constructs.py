@@ -206,7 +206,7 @@ class Constructs(mixin.Container,
     This method is called by `_set_constructs`.
 
     .. versionadded:: 1.9.0.0
-        
+
     :Parameters:
 
         cell_methods: `dict`, optional
@@ -214,7 +214,7 @@ class Constructs(mixin.Container,
 
         coordinates: `dict`, optional
             TODO
-        
+
     :Returns:
 
         `None`
@@ -563,7 +563,7 @@ class Constructs(mixin.Container,
             self._climatology(coordinates={key: construct})
         elif construct_type == 'cell_method':
             self._climatology(cell_methods={key: construct})
-        
+
         # Return the identifier of the construct
         return key
 

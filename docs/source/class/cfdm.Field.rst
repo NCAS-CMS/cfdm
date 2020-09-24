@@ -173,6 +173,7 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Field.climatological_time_axes
    ~cfdm.Field.compress
    ~cfdm.Field.copy
    ~cfdm.Field.equals

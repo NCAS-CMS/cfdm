@@ -2923,7 +2923,7 @@ class NetCDFWrite(IOWrite):
         if field:
             # Get the construct identifiers of the domain axes that
             # span the field's data
-           data_axes = list(self.implementation.get_field_data_axes(f))
+            data_axes = list(self.implementation.get_field_data_axes(f))
         else:
             # Get the construct identifiers of the domain axes that
             # define the domain. CF-1.9
@@ -2976,7 +2976,7 @@ class NetCDFWrite(IOWrite):
         coordinates = []
 
         if (
-                g['output_version'] >= g['CF-1.8'] and 
+                g['output_version'] >= g['CF-1.8'] and
                 not self.implementation.conform_geometry_variables(f)
         ):
             raise ValueError(
@@ -3679,7 +3679,7 @@ class NetCDFWrite(IOWrite):
             # Include the dimanions attribute on doain
             # variables. CF-1.9
             extra['dimensions'] = ' '.join(sorted(ncdimensions))
-        
+
         # Note that for domain variables the ncdimensions parameter is
         # automatically changed to () within the
         # _write_netcdf_variable method.  CF-1.9

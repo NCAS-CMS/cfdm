@@ -167,7 +167,7 @@ class CFDMImplementation(Implementation):
         '''
         return bounds.insert_dimension(position=position)
 
-    def climatological_time_axes(c):
+    def climatological_time_axes(self, construct):
         '''Return all axes which are climatological time axes.
 
     .. versionadded:: (cfdm) 1.9.0.0

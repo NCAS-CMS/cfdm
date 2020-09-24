@@ -142,7 +142,7 @@ class Coordinate(PropertiesDataBounds):
 
     Only coordinate constructs with units of reference time (or unset
     units) can be set as climatological.
-        
+
     .. versionadded:: (cfdm) 1.9.0.0
 
     .. seealso:: `del_climatology`, `get_climatology`,
@@ -152,7 +152,7 @@ class Coordinate(PropertiesDataBounds):
 
         climatology: `bool`
             Whether or not the coordinates are climatological.
-        
+
     :Returns:
 
         `None`
@@ -178,7 +178,7 @@ class Coordinate(PropertiesDataBounds):
     False
 
         '''
-        climatology =  bool(climatology)
+        climatology = bool(climatology)
 
         if climatology:
             units = self.get_property('units', None)

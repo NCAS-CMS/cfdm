@@ -699,7 +699,7 @@ class Field(mixin.NetCDFVariable,
     >>> g.climatological_time_axes()
     set()
         '''
-        return set(self.constucts._climatology())
+        return set(self.constructs._climatology())
 
     @_inplace_enabled(default=False)
     def compress(self, method, axes=None, count_properties=None,
