@@ -530,8 +530,8 @@ class PropertiesDataBounds(PropertiesData):
 
     def creation_commands(self, representative_data=False,
                           namespace=None, indent=0, string=True,
-                          name='c', data_name='d', bounds_name='b',
-                          interior_ring_name='i'):
+                          name='c', data_name='data', bounds_name='b',
+                          interior_ring_name='i', header=True):
         '''Return the commands that would create the construct.
 
     .. versionadded:: (cfdm) 1.8.7.0
@@ -549,6 +549,8 @@ class PropertiesDataBounds(PropertiesData):
 
         {{string: `bool`, optional}}
 
+        {{header: `bool`, optional}}
+
     :Returns:
 
         {{returns creation_commands}}
@@ -560,17 +562,19 @@ class PropertiesDataBounds(PropertiesData):
         '''
         if name in (data_name, bounds_name, interior_ring_name):
             raise ValueError(
-                "'name' parameter can not have the same value as "
+                "The 'name' parameter can not have the same value as "
                 "any of the 'data_name', 'bounds_name', or "
                 "'interior_ring_name' parameters: {!r}".format(
-                    name))
+                    name)
+            )
 
         if data_name in (name, bounds_name, interior_ring_name):
             raise ValueError(
-                "'data_name' parameter can not have the same value as "
-                "any of the 'name', 'bounds_name', or "
-                "'interior_ring_name'parameters: {!r}".format(
-                    data_name))
+                "The 'data_name' parameter can not have "
+                "the same value as any of the 'name', 'bounds_name', "
+                "or 'interior_ring_name' parameters: {!r}".format(
+                    data_name)
+            )
 
         namespace0 = namespace
         if namespace is None:
@@ -581,9 +585,7 @@ class PropertiesDataBounds(PropertiesData):
         out = super().creation_commands(
             representative_data=representative_data, indent=0,
             namespace=namespace, string=False, name=name,
-            data_name=data_name)
-
-        indent = ' ' * indent
+            data_name=data_name, header=header)
 
         # Geometry type
         geometry = self.get_geometry(None)
@@ -592,26 +594,30 @@ class PropertiesDataBounds(PropertiesData):
 
         bounds = self.get_bounds(None)
         if bounds is not None:
-            out.extend(bounds.creation_commands(
-                representative_data=representative_data, indent=0,
-                namespace=namespace0, string=False, name=bounds_name,
-                data_name=data_name))
-
+            out.extend(
+                bounds.creation_commands(
+                    representative_data=representative_data, indent=0,
+                    namespace=namespace0, string=False, name=bounds_name,
+                    data_name=data_name, header=False)
+            )
             out.append("{}.set_bounds({})".format(name, bounds_name))
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            out.extend(interior_ring.creation_commands(
-                representative_data=representative_data, indent=0,
-                namespace=namespace0, string=False,
-                name=interior_ring_name, data_name=data_name))
-
+            out.extend(
+                interior_ring.creation_commands(
+                    representative_data=representative_data, indent=0,
+                    namespace=namespace0, string=False,
+                    name=interior_ring_name, data_name=data_name,
+                    header=False)
+            )
             out.append("{}.set_interior_ring({})".format(name,
                                                          interior_ring_name))
 
         if string:
-            out[0] = indent+out[0]
-            out = ('\n'+indent).join(out)
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
 
         return out
 

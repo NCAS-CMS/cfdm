@@ -178,6 +178,11 @@ _docstring_substitution_definitions = {
             `list`. By default the commands are concatenated into
             a string, with a new line inserted between each command.''',
 
+        '{{header: `bool`, optional}}':
+        '''header: `bool`, optional
+            If False then do not output a comment describing the
+            components.''',
+
     # ----------------------------------------------------------------
     # Returns descriptions
     # ----------------------------------------------------------------

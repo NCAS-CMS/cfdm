@@ -444,7 +444,7 @@ class PropertiesData(Properties):
 
     def creation_commands(self, representative_data=False,
                           namespace=None, indent=0, string=True,
-                          name='c', data_name='d'):
+                          name='c', data_name='data', header=True):
         '''Return the commands that would create the construct.
 
     .. versionadded:: (cfdm) 1.8.7.0
@@ -462,6 +462,8 @@ class PropertiesData(Properties):
 
         {{string: `bool`, optional}}
 
+        {{header: `bool`, optional}}
+
     :Returns:
 
         {{returns creation_commands}}
@@ -473,8 +475,8 @@ class PropertiesData(Properties):
         '''
         if name == data_name:
             raise ValueError(
-                "'name' and 'data_name' parameters can not have the same "
-                "value: {!r}".format(name)
+                "The 'name' and 'data_name' parameters can "
+                "not have the same value: {!r}".format(name)
             )
 
         namespace0 = namespace
@@ -483,52 +485,49 @@ class PropertiesData(Properties):
         elif namespace and not namespace.endswith('.'):
             namespace += '.'
 
-#        namespace0 = namespace
-#        if namespace0:
-#            namespace = namespace+"."
-#        else:
-#            namespace = ""
+        out = super().creation_commands(namespace=namespace, indent=0,
+                                        string=False, name=name,
+                                        header=header)
 
-        indent = ' ' * indent
-
-        out = []
-
-        construct_type = getattr(self, 'construct_type', None)
-        if construct_type is not None:
-            out.append("# {}: {}".format(construct_type,
-                                         self.identity()))
-
-        out.append("{} = {}{}()".format(name, namespace,
-                                        self.__class__.__name__))
-
-        properties = self.properties()
-        if properties:
-            for prop in self.inherited_properties():
-                properties.pop(prop, None)
-
-            out.append("{}.set_properties({})".format(name,
-                                                      properties))
+#        construct_type = getattr(self, 'construct_type', None)
+#        if construct_type is not None:
+#            out.append("# {}: {}".format(construct_type,
+#                                         self.identity()))
+#
+#        out.append("{} = {}{}()".format(name, namespace,
+#                                        self.__class__.__name__))
+#
+#        properties = self.properties()
+#        if properties:
+#            for prop in self.inherited_properties():
+#                properties.pop(prop, None)
+#
+#            out.append("{}.set_properties({})".format(name,
+#                                                      properties))
+#
+#        nc = self.nc_get_variable(None)
+#        if nc is not None:
+#            out.append("{}.nc_set_variable({!r})".format(name, nc))
 
         data = self.get_data(None)
         if data is not None:
             if representative_data:
-                out.append("{} = {!r} # Representative data".format(
+                out.append("{} = {!r}  # Representative data".format(
                     data_name, data))
             else:
-                out.extend(data.creation_commands(name=data_name,
-                                                  namespace=namespace0,
-                                                  indent=0,
-                                                  string=False))
+                out.extend(
+                    data.creation_commands(name=data_name,
+                                           namespace=namespace0,
+                                           indent=0,
+                                           string=False)
+                )
 
-            out.append("{}.set_data(d)".format(name))
-
-        nc = self.nc_get_variable(None)
-        if nc is not None:
-            out.append("{}.nc_set_variable({!r})".format(name, nc))
+            out.append("{}.set_data({})".format(name, data_name))
 
         if string:
-            out[0] = indent+out[0]
-            out = ('\n'+indent).join(out)
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
 
         return out
 

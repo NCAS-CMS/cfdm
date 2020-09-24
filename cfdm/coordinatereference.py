@@ -149,9 +149,8 @@ class CoordinateReference(mixin.NetCDFVariable,
         '''
         return self.identity(default=self.nc_get_variable(''))
 
-    def creation_commands(self, representative_data=False,
-                          namespace=None, indent=0, string=True,
-                          name='c'):
+    def creation_commands(self, namespace=None, indent=0, string=True,
+                          name='c', header=True):
         '''Return the commands that would create the field construct.
 
     **Construct keys**
@@ -171,14 +170,13 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     :Parameters:
 
-        representative_data: `bool`, optional
-            Ignored.
-
         {{namespace: `str`, optional}}
 
         {{indent: `int`, optional}}
 
         {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
 
     :Returns:
 
@@ -195,10 +193,16 @@ class CoordinateReference(mixin.NetCDFVariable,
         elif namespace and not namespace.endswith('.'):
             namespace += '.'
 
-        indent = ' ' * indent
-
         out = []
-        out.append("# "+self.construct_type)
+
+        if header:
+            out.append('#')
+            out.append("# {}:".format(self.construct_type))
+            identity = self.identity()
+            if identity:
+                out[-1] += " {}".format(identity)
+        # -- End: if
+
         out.append("{} = {}{}()".format(name, namespace,
                                         self.__class__.__name__))
 
@@ -216,7 +220,8 @@ class CoordinateReference(mixin.NetCDFVariable,
                 value = value.creation_commands(name=None,
                                                 namespace=namespace0,
                                                 indent=0,
-                                                string=False)
+                                                string=False,
+                                                header=header)
             else:
                 value = repr(value)
 
@@ -228,21 +233,27 @@ class CoordinateReference(mixin.NetCDFVariable,
                 value = value.creation_commands(name=None,
                                                 namespace=namespace0,
                                                 indent=0,
-                                                string=False)
+                                                string=False,
+                                                header=header)
             else:
                 value = repr(value)
 
-            out.append("{}.coordinate_conversion.set_parameter({!r}, {})".format(
-                name, term, value))
+            out.append(
+                "{}.coordinate_conversion.set_parameter({!r}, {})".format(
+                    name, term, value)
+            )
 
         domain_ancillaries = self.coordinate_conversion.domain_ancillaries()
         if domain_ancillaries:
-            out.append("{}.coordinate_conversion.set_domain_ancillaries({})".format(
-                name, domain_ancillaries))
+            out.append(
+                "{}.coordinate_conversion.set_domain_ancillaries({})".format(
+                    name, domain_ancillaries)
+            )
 
         if string:
-            out[0] = indent+out[0]
-            out = ('\n'+indent).join(out)
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
 
         return out
 

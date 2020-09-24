@@ -74,9 +74,8 @@ class DomainAxis(mixin.NetCDFDimension,
         '''
         return 'size({0})'.format(self.get_size(''))
 
-    def creation_commands(self, representative_data=False,
-                          namespace=None, indent=0, string=True,
-                          name='c'):
+    def creation_commands(self, namespace=None, indent=0, string=True,
+                          name='c', header=True):
         '''Return the commands that would create the domain axis construct.
 
     .. versionadded:: (cfdm) 1.8.7.0
@@ -85,14 +84,13 @@ class DomainAxis(mixin.NetCDFDimension,
 
     :Parameters:
 
-        representative_data: `bool`, optional
-            Ignored.
-
         {{namespace: `str`, optional}}
 
         {{indent: `int`, optional}}
 
         {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
 
     :Returns:
 
@@ -109,10 +107,16 @@ class DomainAxis(mixin.NetCDFDimension,
         elif namespace and not namespace.endswith('.'):
             namespace += '.'
 
-        indent = ' ' * indent
-
         out = []
-        out.append("# {}: {}".format(self.construct_type, self.identity()))
+
+        if header:
+            out.append('#')
+            out.append("# {}:".format(self.construct_type))
+            identity = self.identity()
+            if identity:
+                out[-1] += " {}".format(identity)
+        # --- End: if
+
         out.append("{} = {}{}()".format(name, namespace,
                                         self.__class__.__name__))
 
@@ -128,8 +132,9 @@ class DomainAxis(mixin.NetCDFDimension,
             out.append("c.nc_set_unlimited({})".format(True))
 
         if string:
-            out[0] = indent+out[0]
-            out = ('\n'+indent).join(out)
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
 
         return out
 

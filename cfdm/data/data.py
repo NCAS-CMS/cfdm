@@ -1189,10 +1189,13 @@ class Data(Container,
         elif namespace and not namespace.endswith('.'):
             namespace += '.'
 
-        indent = ' ' * indent
-
         mask = self.mask
         if mask.any():
+            if name == 'mask':
+                raise ValueError(
+                    "When the data is masked, the 'name' parameter "
+                    "can not have the value 'mask'"
+                )
             masked = True
             array = self.filled().array.tolist()
         else:
@@ -1222,7 +1225,7 @@ class Data(Container,
         if masked:
             mask = mask.creation_commands(name="mask",
                                           namespace=namespace0,
-                                          string=True)
+                                          indent=0, string=True)
             mask = mask.replace('mask = ', 'mask=', 1)
             mask = ", {}".format(mask)
         else:
@@ -1246,8 +1249,9 @@ class Data(Container,
             fill_value))
 
         if string:
-            out[0] = indent+out[0]
-            out = ('\n'+indent).join(out)
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
 
         return out
 

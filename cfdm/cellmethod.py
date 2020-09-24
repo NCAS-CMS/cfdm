@@ -91,9 +91,8 @@ class CellMethod(mixin.Container,
 
         return ' '.join(string)
 
-    def creation_commands(self, representative_data=False,
-                          namespace=None, indent=0, string=True,
-                          name='c'):
+    def creation_commands(self, namespace=None, indent=0, string=True,
+                          name='c', header=True):
         '''Return the commands that would create the cell measure construct.
 
     .. versionadded:: (cfdm) 1.8.7.0
@@ -103,14 +102,13 @@ class CellMethod(mixin.Container,
 
     :Parameters:
 
-        representative_data: `bool`, optional
-            Ignored.
-
         {{namespace: `str`, optional}}
 
         {{indent: `int`, optional}}
 
         {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
 
     :Returns:
 
@@ -126,13 +124,20 @@ class CellMethod(mixin.Container,
         elif namespace and not namespace.endswith('.'):
             namespace += '.'
 
-        indent = ' ' * indent
-
         out = []
-        out.append("# {}".format(self.construct_type))
+
+        method = self.get_method(None)
+
+        if header:
+            out.append('#')
+            out.append("# {}:".format(self.construct_type))
+            if method is not None:
+                out[-1] += " {}".format(method)
+        # --- End: if
+
         out.append("{} = {}{}()".format(name, namespace,
                                         self.__class__.__name__))
-        method = self.get_method(None)
+
         if method is not None:
             out.append("{}.set_method({!r})".format(name, method))
 
@@ -161,8 +166,9 @@ class CellMethod(mixin.Container,
                                                            value))
 
         if string:
-            out[0] = indent+out[0]
-            out = ('\n'+indent).join(out)
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
 
         return out
 
