@@ -389,7 +389,8 @@ class Domain(mixin.NetCDFVariable,
 
     def creation_commands(self, representative_data=False,
                           namespace=None, indent=0, string=True,
-                          name='f'):
+                          name='domain', data_name='data',
+                          header=True):
         '''Return the commands that would create the domain construct.
 
     **Construct keys**
@@ -418,156 +419,29 @@ class Domain(mixin.NetCDFVariable,
 
         {{string: `bool`, optional}}
 
+        {{header: `bool`, optional}}
+
     :Returns:
 
         {{returns creation_commands}}
 
     **Examples:**
 
-    >>> q = {{package}}.example_field(0)
-    >>> print(q)
-    Field: specific_humidity (ncvar%q)
-    ----------------------------------
-    Data            : specific_humidity(latitude(5), longitude(8)) 1
-    Cell methods    : area: mean
-    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
-    >>> print(q.creation_commands())
-    # field: specific_humidity
-    f = {{package}}.Field()
-    #
-    f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
-    f.nc_set_variable('q')
-    #
-    # domain_axis
-    c = {{package}}.DomainAxis(size=5)
-    c.nc_set_dimension('lat')
-    f.set_construct(c, key='domainaxis0')
-    #
-    # domain_axis
-    c = {{package}}.DomainAxis(size=8)
-    c.nc_set_dimension('lon')
-    f.set_construct(c, key='domainaxis1')
-    #
-    # domain_axis
-    c = {{package}}.DomainAxis(size=1)
-    f.set_construct(c, key='domainaxis2')
-    #
-    # field data
-    data = {{package}}.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
-    f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
-    #
-    # dimension_coordinate
-    c = {{package}}.DimensionCoordinate()
-    c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
-    c.nc_set_variable('lat')
-    data = {{package}}.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
-    c.set_data(data)
-    b = {{package}}.Bounds()
-    b.nc_set_variable('lat_bnds')
-    data = {{package}}.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
-    b.set_data(data)
-    c.set_bounds(b)
-    f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
-    #
-    # dimension_coordinate
-    c = {{package}}.DimensionCoordinate()
-    c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
-    c.nc_set_variable('lon')
-    data = {{package}}.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
-    c.set_data(data)
-    b = {{package}}.Bounds()
-    b.nc_set_variable('lon_bnds')
-    data = {{package}}.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
-    b.set_data(data)
-    c.set_bounds(b)
-    f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
-    #
-    # dimension_coordinate
-    c = {{package}}.DimensionCoordinate()
-    c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
-    c.nc_set_variable('time')
-    data = {{package}}.Data([31.0], units='days since 2018-12-01', dtype='f8')
-    c.set_data(data)
-    f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
-    #
-    # cell_method
-    c = {{package}}.CellMethod()
-    c.set_method('mean')
-    c.set_axes(('area',))
-    f.set_construct(c)
-    >>> print(q.creation_commands(representative_data=True, namespace='',
-    ...                           indent=4))
-        # field: specific_humidity
-        f = Field()
-        #
-        f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
-        f.nc_set_variable('q')
-        #
-        # domain_axis
-        c = DomainAxis(size=5)
-        c.nc_set_dimension('lat')
-        f.set_construct(c, key='domainaxis0')
-        #
-        # domain_axis
-        c = DomainAxis(size=8)
-        c.nc_set_dimension('lon')
-        f.set_construct(c, key='domainaxis1')
-        #
-        # domain_axis
-        c = DomainAxis(size=1)
-        f.set_construct(c, key='domainaxis2')
-        #
-        # field data
-        data = <{{repr}}Data(5, 8): [[0.007, ..., 0.013]] 1> # Representative data
-        f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
-        #
-        # dimension_coordinate
-        c = DimensionCoordinate()
-        c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
-        c.nc_set_variable('lat')
-        data = <{{repr}}Data(5): [-75.0, ..., 75.0] degrees_north> # Representative data
-        c.set_data(data)
-        b = Bounds()
-        b.nc_set_variable('lat_bnds')
-        data = <{{repr}}Data(5, 2): [[-90.0, ..., 90.0]] degrees_north> # Representative data
-        b.set_data(data)
-        c.set_bounds(b)
-        f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
-        #
-        # dimension_coordinate
-        c = DimensionCoordinate()
-        c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
-        c.nc_set_variable('lon')
-        data = <{{repr}}Data(8): [22.5, ..., 337.5] degrees_east> # Representative data
-        c.set_data(data)
-        b = Bounds()
-        b.nc_set_variable('lon_bnds')
-        data = <{{repr}}Data(8, 2): [[0.0, ..., 360.0]] degrees_east> # Representative data
-        b.set_data(data)
-        c.set_bounds(b)
-        f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
-        #
-        # dimension_coordinate
-        c = DimensionCoordinate()
-        c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
-        c.nc_set_variable('time')
-        data = <{{repr}}Data(1): [2019-01-01 00:00:00]> # Representative data
-        c.set_data(data)
-        f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
-        #
-        # cell_method
-        c = CellMethod()
-        c.set_method('mean')
-        c.set_axes(('area',))
-        f.set_construct(c)
+    TODO
 
         '''
-        if name in ('b', 'c', 'd'):
+        if name in ('b', 'c', 'mask', 'i'):
             raise ValueError(
-                "'name' parameter can not have the value {!r}".format(
-                    name))
+                "The 'name' parameter can not have the value {!r}".format(
+                    name)
+            )
+
+        if name == data_name:
+            raise ValueError(
+                "The 'name' parameter can not have the same value as "
+                "the 'data_name' parameter: {!r}".format(
+                    name)
+            )
 
         namespace0 = namespace
         if namespace is None:
@@ -578,27 +452,31 @@ class Domain(mixin.NetCDFVariable,
         out = super().creation_commands(
             representative_data=representative_data, indent=indent,
             namespace=namespace, string=False, name=name,
-            data_name='d')
-
-        indent = ' ' * indent
+            header=header)
 
         nc_global_attributes = self.nc_global_attributes()
         if nc_global_attributes:
-            out.append("")
-            out.append("# netCDF global attributes")
-            out.append("{}.nc_set_global_attributes({!r})".format(
-                name, nc_global_attributes))
+            if header:
+                out.append('#')
+                out.append('# netCDF global attributes')
 
-        # Domain axes
+            out.append(
+                "{}.nc_set_global_attributes({!r})".format(
+                    name, nc_global_attributes)
+            )
+
+        # Domain axis constructs
         for key, c in self.domain_axes.items():
-            out.append("")
-            out.extend(c.creation_commands(
-                representative_data=representative_data,
-                string=False,
-                namespace=namespace0,
-                name='c'))
-            out.append("{}.set_construct(c, key={!r}, copy=False)".format(
-                name, key))
+            out.extend(
+                c.creation_commands(
+                    indent=0, string=False,
+                    namespace=namespace0, name='c',
+                    header=header)
+            )
+            out.append(
+                "{}.set_construct(c, key={!r}, copy=False)".format(
+                    name, key)
+            )
 
         # Metadata constructs with data
         for key, c in self.constructs.filter_by_type(
@@ -606,25 +484,30 @@ class Domain(mixin.NetCDFVariable,
                 'auxiliary_coordinate',
                 'cell_measure',
                 'domain_ancillary').items():
-            out.append("")
-            out.extend(c.creation_commands(
-                representative_data=representative_data,
-                string=False,
-                namespace=namespace0,
-                name='c', data_name='d'))
+            out.extend(
+                c.creation_commands(
+                    representative_data=representative_data, string=False,
+                    indent=0, namespace=namespace0, name='c',
+                    data_name=data_name,
+                    header=header)
+            )
             out.append(
                 "{}.set_construct(c, axes={}, key={!r}, copy=False)".format(
                     name, self.get_data_axes(key), key))
 
         # Coordinate reference constructs
         for key, c in self.coordinate_references.items():
-            out.append("")
-            out.extend(c.creation_commands(namespace=namespace0,
-                                           indent=0, string=False,
-                                           name='c'))
+            out.extend(
+                c.creation_commands(
+                    namespace=namespace0,
+                    indent=0, string=False,
+                    name='c',
+                    header=header)
+            )
             out.append("{}.set_construct(c)".format(name))
 
         if string:
+            indent = ' ' * indent
             out[0] = indent + out[0]
             out = ('\n' + indent).join(out)
 
