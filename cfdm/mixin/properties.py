@@ -68,6 +68,71 @@ class Properties(Container):
 
         return '\n'.join(string)
 
+    def creation_commands(self, representative_data=False,
+                         namespace=None, indent=0, string=True,
+                         name='c'):
+        '''Return the commands that would create the construct.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    .. seealso:: `{{package}}.Domain.creation_commands`,
+                 `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{representative_data: `bool`, optional}}
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+        TODO
+
+        '''
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        indent = ' ' * indent
+
+        out = []
+
+        construct_type = getattr(self, 'construct_type', None)
+        if construct_type is not None:
+            out.append("# {}: {}".format(construct_type,
+                                         self.identity()))
+
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        properties = self.properties()
+        if properties:
+            for prop in self.inherited_properties():
+                properties.pop(prop, None)
+
+            out.append("{}.set_properties({})".format(name,
+                                                      properties))
+
+        nc = self.nc_get_variable(None)
+        if nc is not None:
+            out.append("{}.nc_set_variable({!r})".format(name, nc))
+
+        if string:
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
+
+        return out
+
     def dump(self, display=True, _key=None, _omit_properties=(),
              _prefix='', _title=None, _create_title=True, _level=0):
         '''A full description.
