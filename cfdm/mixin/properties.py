@@ -68,6 +68,85 @@ class Properties(Container):
 
         return '\n'.join(string)
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
+    def creation_commands(self, namespace=None, indent=0, string=True,
+                          name='c', header=True, _properties=True,
+                          _nc=True):
+        '''Return the commands that would create the construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Domain.creation_commands`,
+                 `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+        TODO
+
+        '''
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        out = []
+
+        if header:
+            out.append('#')
+            out.append('#')
+
+            construct_type = getattr(self, 'construct_type', None)
+            if construct_type is not None:
+                out[-1] += " {}:".format(construct_type)
+
+            identity = self.identity()
+            if identity:
+                out[-1] += " {}".format(identity)
+        # --- End: if
+
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        if _properties:
+            properties = self.properties()
+            if properties:
+                for prop in self.inherited_properties():
+                    properties.pop(prop, None)
+
+                out.append("{}.set_properties({})".format(name,
+                                                          properties))
+        # --- End: if
+
+        if _nc:
+            nc = self.nc_get_variable(None)
+            if nc is not None:
+                out.append("{}.nc_set_variable({!r})".format(name, nc))
+        # --- End: if
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
+
     def dump(self, display=True, _key=None, _omit_properties=(),
              _prefix='', _title=None, _create_title=True, _level=0):
         '''A full description.

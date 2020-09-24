@@ -390,7 +390,7 @@ class Domain(mixin.NetCDFVariable,
     def creation_commands(self, representative_data=False,
                           namespace=None, indent=0, string=True,
                           name='domain', data_name='data',
-                          header=True):
+                          header=True, _properties=True, _nc=True):
         '''Return the commands that would create the domain construct.
 
     **Construct keys**
@@ -452,18 +452,20 @@ class Domain(mixin.NetCDFVariable,
         out = super().creation_commands(
             representative_data=representative_data, indent=indent,
             namespace=namespace, string=False, name=name,
-            header=header)
+            header=header, _properties=_properties, _nc=_nc)
 
-        nc_global_attributes = self.nc_global_attributes()
-        if nc_global_attributes:
-            if header:
-                out.append('#')
-                out.append('# netCDF global attributes')
+        if _nc:
+            nc_global_attributes = self.nc_global_attributes()
+            if nc_global_attributes:
+                if header:
+                    out.append('#')
+                    out.append('# netCDF global attributes')
 
-            out.append(
-                "{}.nc_set_global_attributes({!r})".format(
-                    name, nc_global_attributes)
-            )
+                out.append(
+                    "{}.nc_set_global_attributes({!r})".format(
+                        name, nc_global_attributes)
+                )
+        # -- End: if
 
         # Domain axis constructs
         for key, c in self.domain_axes.items():
@@ -493,7 +495,8 @@ class Domain(mixin.NetCDFVariable,
             )
             out.append(
                 "{}.set_construct(c, axes={}, key={!r}, copy=False)".format(
-                    name, self.get_data_axes(key), key))
+                    name, self.get_data_axes(key), key)
+            )
 
         # Coordinate reference constructs
         for key, c in self.coordinate_references.items():
@@ -512,7 +515,7 @@ class Domain(mixin.NetCDFVariable,
             out = ('\n' + indent).join(out)
 
         return out
-        
+
     @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
