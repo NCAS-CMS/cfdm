@@ -387,6 +387,33 @@ class Domain(mixin.NetCDFVariable,
         else:
             return string
 
+   def climatological_time_axes(self):
+        '''Return all axes which are climatological time axes.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    :Returns:
+
+        `set`
+            The set of all axes on the field which are climatological time
+            axes. If there are none, this will be an empty set.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        out = []
+        
+        for ckey, c in  self.filter_by_type('dimension_coordinate',
+                                            'auxiliary_coordinate').items():
+            if not c.is_climatology():
+                continue
+
+            out.extend(self.data_axes().get(ckey, ()))
+
+        return set(out)
+    
     def creation_commands(self, representative_data=False,
                           namespace=None, indent=0, string=True,
                           name='domain', data_name='data',
@@ -560,6 +587,35 @@ class Domain(mixin.NetCDFVariable,
             return False
 
         return True
+
+    def get_filenames(self):
+        '''Return the name of the file or files containing the data of
+    metadata constructs.
+
+    The names of the file or files containing the data of metadata
+    constructs are also returned.
+
+    :Returns:
+
+        `set`
+            The file names in normalized, absolute form. If all of the
+            data are in memory then an empty `set` is returned.
+
+    **Examples:**
+
+    >>> f = {{package}}.example_field(0)
+    >>> {{package}}.write(f, 'temp_file.nc')
+    >>> g = {{package}}.read('temp_file.nc')[0]
+    >>> g.get_filenames()
+    {'temp_file.nc'}
+
+        '''
+        out = set()
+
+        for c in self.constructs.filter_by_data().values():
+            out.update(c.get_filenames())
+
+        return out
 
     def identity(self, default=''):
         '''Return the canonical identity.

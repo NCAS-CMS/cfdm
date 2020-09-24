@@ -199,6 +199,78 @@ class Constructs(mixin.Container,
 
         return out
 
+    def _climatology(self, cell_methods=None, coordinates=None):
+        '''Set the climatology flag on approriate coordinate constructs, based
+    on the cell method constructs.
+
+    This method is called by `_set_constructs`.
+
+    .. versionadded:: 1.9.0.0
+        
+    :Parameters:
+
+        cell_methods: `dict`, optional
+            TODO
+
+        coordinates: `dict`, optional
+            TODO
+        
+    :Returns:
+
+        `None`
+
+        '''
+        out = []
+
+        domain_axes = self.filter_by_type('domain_axis')
+
+        if coordinates:
+            cell_methods = self.filter_by_type('cell_method').ordered()
+        elif cell_methods:
+            coordinates = self.filter_by_type('dimension_coordinate',
+                                              'auxiliary_coordinate')
+        else:
+            cell_methods = self.filter_by_type('cell_method').ordered()
+            coordinates = self.filter_by_type('dimension_coordinate',
+                                              'auxiliary_coordinate')
+
+        for key, cm in cell_methods.items():
+            qualifiers = cm.qualifiers()
+            if not ('within' in qualifiers or 'over' in qualifiers):
+                continue
+
+            axes = cm.get_axes(default=())
+            if len(axes) != 1:
+                continue
+
+            axis = axes[0]
+            if axis not in domain_axes:
+                continue
+
+            # Still here? Then this axis is a climatological time axis
+            out.append(axis)
+
+            # Flag the appropriate coordinates as being for
+            # climatological time.
+            for ckey, c in coordinates.items():
+                units = c.get_property('units', None)
+                if units is None or ' since ' not in units:
+                    # Construct does not have reference time units
+                    c.del_climatology(None)
+                    continue
+
+                if axes != self.data_axes().get(ckey, ()):
+                    # Construct does not span the cell method axes
+                    c.del_climatology(None)
+                    continue
+
+                # Construct spans the correct axes and has reference
+                # time units
+                c.set_climatology(True)
+        # --- End: for
+
+        return out
+
     @_manage_log_level_via_verbosity
     def _equals_cell_method(self, other, rtol=None, atol=None,
                             verbose=None, ignore_type=False,
@@ -417,6 +489,83 @@ class Constructs(mixin.Container,
             return False
 
         return True
+
+    def _set_construct(self, construct, key=None, axes=None,
+                       copy=True):
+        '''Set a metadata construct.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `_del_construct`, `_get_construct`,
+                 `_set_construct_data_axes`
+
+    :Parameters:
+
+        construct:
+            The metadata construct to be inserted.
+
+        key: `str`, optional
+            The construct identifier to be used for the construct. If
+            not set then a new, unique identifier is created
+            automatically. If the identifier already exists then the
+            exisiting construct will be replaced.
+
+            *Parameter example:*
+              ``key='cellmeasure0'``
+
+        axes: (sequence of) `str`, optional
+            The construct identifiers of the domain axis constructs
+            spanned by the data array. An exception is raised if used
+            for a metadata construct that can not have a data array,
+            i.e. domain axis, cell method and coordinate reference
+            constructs.
+
+            The axes may also be set afterwards with the
+            `_set_construct_data_axes` method.
+
+            *Parameter example:*
+              ``axes='domainaxis1'``
+
+            *Parameter example:*
+              ``axes=['domainaxis1']``
+
+            *Parameter example:*
+              ``axes=('domainaxis1', 'domainaxis0')``
+
+        copy: `bool`, optional
+            If True then return a copy of the unique selected
+            construct. By default the construct is copied.
+
+    :Returns:
+
+         `str`
+            The construct identifier for the construct.
+
+    **Examples:**
+
+    >>> key = f.set_construct(c)
+    >>> key = f.set_construct(c, copy=False)
+    >>> key = f.set_construct(c, axes='domainaxis2')
+    >>> key = f.set_construct(c, key='cellmeasure0')
+
+        '''
+        if copy:
+            # Create a deep copy of the construct
+            construct = construct.copy()
+
+        key = super()._set_construct(construct, key=key, axes=axes,
+                                     copy=False)
+
+        # Set any appropriate climatology flags
+        construct_type = construct.construct_type
+        if construct_type in ('dimension_coordinate',
+                              'auxiliary_coordinate'):
+            self._climatology(coordinates={key: construct})
+        elif construct_type == 'cell_method':
+            self._climatology(cell_methods={key: construct})
+        
+        # Return the identifier of the construct
+        return key
 
     # ----------------------------------------------------------------
     # Methods

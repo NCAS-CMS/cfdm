@@ -11,13 +11,13 @@ _implementation = implementation()
 def read(filename, external=None, extra=None, verbose=None,
          warnings=False, warn_valid=False, mask=True, domain=False,
          _implementation=_implementation):
-    '''Read field constructs from a dataset.
+    '''Read field or domain constructs from a dataset.
 
     The dataset may be a netCDF file on disk or on an OPeNDAP server,
     or a CDL file on disk (see below).
 
-    The returned field constructs are sorted by the netCDF variable
-    names of their corresponding data variables.
+    The returned constructs are sorted by the netCDF variable names of
+    their corresponding data or domain variables.
 
 
     **CDL files**
@@ -36,7 +36,6 @@ def read(filename, external=None, extra=None, verbose=None,
     constructs in memory will be created with data with all missing
     values.
 
-
     **NetCDF unlimited dimensions**
 
     Domain axis constructs that correspond to NetCDF unlimited
@@ -54,9 +53,10 @@ def read(filename, external=None, extra=None, verbose=None,
     rules in the CF conventions for resolving references to
     out-of-group netCDF variables and dimensions. The group structure
     is preserved in the field construct's netCDF interface. Groups
-    were incorporated into C-1.8. For files with groups that state
+    were incorporated into CF-1.8. For files with groups that state
     compliance to earlier versions of the CF conventions, the groups
-    will be interpreted as per the latest release of CF.
+    will be interpreted as per the latest release of the CF
+    conventions.
 
 
     **CF-compliance**
@@ -236,13 +236,14 @@ def read(filename, external=None, extra=None, verbose=None,
 
         domain: `bool`, optional
             If True then return only the domain constructs from the
-            dataset. By default only field constructs are returned.
+            dataset that are defined by CF-netCDF domain variables
+            (and not from the domains implicitly defined by CF-netCDF
+            data variables). By default only the field constructs
+            defined by CF-netCDF data variables are returned.
 
-            Domain constructs are only created from CF-netCDF domain
-            variables, not from the domains implicitly defined by
-            CF-netCDF data variables. CF-netCDF domain variables are
-            only defined from CF-1.9, so older datasets automatically
-            contain no CF-netCDF domain variables.
+            CF-netCDF domain variables are only defined from CF-1.9,
+            so older datasets automatically contain no CF-netCDF
+            domain variables.
 
             The unique domains contained by a sequence of field
             constructs are easily found with the `cfdm.unique_domains`

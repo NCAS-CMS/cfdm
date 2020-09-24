@@ -65,7 +65,7 @@ class NetCDFWrite(IOWrite):
     def _create_netcdf_group(self, nc, group_name):
         '''TODO
 
-    .. versionadded:: (cfdm) 1.8.6
+    .. ersionadded:: (cfdm) 1.8.6.0
 
     :Parameters:
 
@@ -1326,10 +1326,9 @@ class NetCDFWrite(IOWrite):
         # --- End: if
 
         extra['bounds'] = ncvar
-#        if self.implementation.is_climatology(coord):
         axes = self.implementation.get_construct_data_axes(f, coord_key)
-        for clim_axis in f.climatological_time_axes():
-            if clim_axis == axes:
+        for clim_axis in self.implementation.climatological_time_axes(f):
+            if (clim_axis,) == axes:
                 logger.info(
                     '    Setting climatological bounds'
                 )  # pragma: no cover
@@ -1337,7 +1336,6 @@ class NetCDFWrite(IOWrite):
                 extra['climatology'] = extra.pop('bounds')
                 break
         # --- End: for
-#        else:
 
         g['bounds'][coord_ncvar] = ncvar
 
@@ -1647,7 +1645,7 @@ class NetCDFWrite(IOWrite):
         '''Return the parent group in which a dimension or variable is to be
     created.
 
-    .. versionadded:: (cfdm) 1.8.6
+    .. versionadded:: (cfdm) 1.8.6.0
 
     :Parameters:
 
@@ -1679,7 +1677,7 @@ class NetCDFWrite(IOWrite):
     def _remove_group_structure(self, name, return_groups=False):
         '''Strip off any group structure from the name.
 
-    .. versionaddedd:: 1.8.6
+    .. versionaddedd:: 1.8.6.0
 
     :Parameters:
 
@@ -1722,7 +1720,7 @@ class NetCDFWrite(IOWrite):
     def _groups(self, name):
         '''Strip off any group structure from the name.
 
-    .. versionaddedd:: 1.8.6.1
+    .. versionaddedd:: 1.8.7.0
 
     :Parameters:
 
@@ -2906,7 +2904,7 @@ class NetCDFWrite(IOWrite):
 
         if domain and g['output_version'] < g['CF-1.9']:
             raise ValueError(
-                "Can't create domain variables at CF-{}. "
+                "Can't create domain variables in a CF-{} dataset. "
                 "Need CF-1.9 or later.".format(
                     g['output_version']))
 
@@ -2922,12 +2920,13 @@ class NetCDFWrite(IOWrite):
         # do terrible things to it (or are we? should review this)
         f = self.implementation.copy_construct(org_f)
 
-        # Get the construct identifiers of the domain axes that span
-        # the data
         if field:
-            data_axes = list(self.implementation.get_field_data_axes(f))
+            # Get the construct identifiers of the domain axes that
+            # span the field's data
+           data_axes = list(self.implementation.get_field_data_axes(f))
         else:
-            # Domain constructs have no data. CF-1.9
+            # Get the construct identifiers of the domain axes that
+            # define the domain. CF-1.9
             data_axes = list(self.implementation.get_domain_axes(f))
 
         # Mapping of domain axis identifiers to netCDF dimension
@@ -2976,13 +2975,14 @@ class NetCDFWrite(IOWrite):
         # coordinates
         coordinates = []
 
-        if g['output_version'] >= g['CF-1.8']:
-            if not self.implementation.conform_geometry_variables(f):
-                raise ValueError(
-                    "Can't write {!r}: node count, part node count, "
-                    "or interior ring variables have "
-                    "inconistent properties".format(f))
-        # --- End: if
+        if (
+                g['output_version'] >= g['CF-1.8'] and 
+                not self.implementation.conform_geometry_variables(f)
+        ):
+            raise ValueError(
+                "Can't write {!r}: node count, part node count, "
+                "or interior ring variables have "
+                "inconsistent properties".format(f))
 
         g['formula_terms_refs'] = [
             ref
@@ -3675,9 +3675,14 @@ class NetCDFWrite(IOWrite):
                 omit += tuple(groups)
         # --- End: if
 
+        if domain:
+            # Include the dimanions attribute on doain
+            # variables. CF-1.9
+            extra['dimensions'] = ' '.join(sorted(ncdimensions))
+        
         # Note that for domain variables the ncdimensions parameter is
-        # automatically changed to () by _write_netcdf_variable.
-        # CF-1.9
+        # automatically changed to () within the
+        # _write_netcdf_variable method.  CF-1.9
         self._write_netcdf_variable(ncvar, ncdimensions, f, omit=omit,
                                     extra=extra, data_variable=field,
                                     domain_variable=domain)
@@ -3782,7 +3787,7 @@ class NetCDFWrite(IOWrite):
         '''Find the netCDF global properties from all of the input fields and
     write them to the netCDF4.Dataset.
 
-    .. versionadded:: (cfdm) 1.8.6
+    .. versionadded:: (cfdm) 1.8.6.0
 
     :Parameters:
 
@@ -4035,6 +4040,8 @@ class NetCDFWrite(IOWrite):
     def file_close(self, filename):
         '''Close the netCDF file that has been written.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Returns:
 
         `None`
@@ -4044,6 +4051,8 @@ class NetCDFWrite(IOWrite):
 
     def file_open(self, filename, mode, fmt, fields):
         '''Open the netCDF file for writing.
+
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -4222,7 +4231,7 @@ class NetCDFWrite(IOWrite):
         group: `bool`, optional
             TODO
 
-            .. versionadded:: (cfdm) 1.8.6
+            .. versionadded:: (cfdm) 1.8.6.0
 
     :Returns:
 

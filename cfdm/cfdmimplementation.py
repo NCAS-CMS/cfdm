@@ -167,6 +167,22 @@ class CFDMImplementation(Implementation):
         '''
         return bounds.insert_dimension(position=position)
 
+    def climatological_time_axes(c):
+        '''Return all axes which are climatological time axes.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    :Parameters:
+
+        construct: field or domain construct
+
+    :Returns:
+
+        `set`
+
+        '''
+        return construct.climatological_time_axes()
+
     def conform_geometry_variables(self, field):
         '''Collate geometry variable properties.
 
@@ -534,12 +550,13 @@ class CFDMImplementation(Implementation):
 
             try:
                 geometry = c.has_geometry()
-            except AttribbuteError:
-                continue
+            except AttributeError:
+                pass
             else:
                 if geometry:
                     # This construct has geometry cells, so does not
-                    # count as being compressed for this purpose.
+                    # count as being compressed, for the current
+                    # purpose.
                     continue
             # --- End: try
 
@@ -2190,6 +2207,22 @@ class CFDMImplementation(Implementation):
 
         '''
         cell_method.set_method(method)
+
+    def set_climatology(self, construct):
+        '''Set the construct as a climatology.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    :Parameters:
+
+        construct:
+
+    :Returns:
+
+        `None`
+
+        '''
+        construct.set_climatology(True)
 
     def set_coordinate_conversion(self, coordinate_reference,
                                   coordinate_conversion):

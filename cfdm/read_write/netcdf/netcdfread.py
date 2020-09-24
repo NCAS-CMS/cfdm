@@ -528,84 +528,30 @@ class NetCDFRead(IORead):
     :Parameters:
 
         filename: `str`
-            The file name or OPenDAP URL of the dataset.
+            See `cfdm.read` for details
 
-            Relative paths are allowed, and standard tilde and shell
-            parameter expansions are applied to the string.
-
-            *Parameter example:*
-              The file ``file.nc`` in the user's home directory could
-              be described by any of the following:
-              ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
-              ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
+            .. versionadded:: (cfdm) 1.7.0
 
         extra: sequence of `str`, optional
-            Create extra, independent fields from the particular types
-            of metadata constructs. The *extra* parameter may be one,
-            or a sequence, of:
+            See `cfdm.read` for details
 
-            ==========================  ================================
-            *extra*                     Metadata constructs
-            ==========================  ================================
-            ``'field_ancillary'``       Field ancillary constructs
-            ``'domain_ancillary'``      Domain ancillary constructs
-            ``'dimension_coordinate'``  Dimension coordinate constructs
-            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-            ``'cell_measure'``          Cell measure constructs
-            ==========================  ================================
-
-            *Parameter example:*
-              To create fields from auxiliary coordinate constructs:
-              ``extra='auxiliary_coordinate'`` or
-              ``extra=['auxiliary_coordinate']``.
-
-            *Parameter example:*
-              To create fields from domain ancillary and cell measure
-              constructs: ``extra=['domain_ancillary',
-              'cell_measure']``.
+            .. versionadded:: (cfdm) 1.7.0
 
         warnings: `bool`, optional
-            If False then do not print warnings when an output field
-            construct is incomplete due to "structural
-            non-CF-compliance" of the dataset. By default such
-            warnings are displayed.
-
-            Structural non-CF-compliance occurs when it is not
-            possible to unambiguously map an element of the netCDF
-            dataset to an element of the CF data model. Other type on
-            non-CF-compliance are not checked, for example, whether or
-            not controlled vocabularies have been adhered to is not
-            checked.
+            See `cfdm.read` for details
 
         mask: `bool`, optional
-            If False then do not mask by convention when reading the
-            data of field or metadata constructs from disk. By default
-            data is masked by convention.
-
-            The masking by convention of a netCDF array depends on the
-            values of any of the netCDF variable attributes
-            ``_FillValue`` and ``missing_value``,``valid_min``,
-            ``valid_max``, ``valid_range``. See the CF conventions for
-            details.
+            See `cfdm.read` for details
 
             .. versionadded:: (cfdm) 1.8.2
 
         warn_valid: `bool`, optional
-            If True then print a warning for the presence of
-            ``valid_min``, ``valid_max`` or ``valid_range`` properties
-            on field contructs and metadata constructs that have
-            data. By default no such warning is printed
-
-            "Out-of-range" data values in the file, as defined by any
-            of these properties, are by default automatically masked,
-            which may not be as intended. See the *mask* parameter for
-            turning off all automatic masking.
+            See `cfdm.read` for details
 
             .. versionadded:: (cfdm) 1.8.3
 
         domain: `bool`, optional
-
-            TODO (copy from read.py)
+            See `cfdm.read` for details
 
             .. versionadded:: (cfdm) 1.9.0.0
 
@@ -4202,10 +4148,13 @@ class NetCDFRead(IORead):
             if bounds_ncdim not in g['variable_dimensions'].get(ncvar, ()):
                 self.implementation.nc_set_dimension(bounds, bounds_ncdim)
 
-            self.implementation.set_bounds(c, bounds, copy=False)
-
+            self.implementation.set_bounds(c, bounds, copy=False)            
+            
             if not domain_ancillary:
                 g['bounds'][field_ncvar][ncvar] = bounds_ncvar
+
+            if attribute == 'climatology':
+                self.implementation.set_climatology(c)
 
             # --------------------------------------------------------
             # Geometries

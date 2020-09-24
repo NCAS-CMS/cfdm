@@ -676,9 +676,9 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `list`
-            The list of all axes on the field which are climatological time
-            axes. If there are none, this will be an empty list.
+        `set`
+            The set of all axes on the field which are climatological time
+            axes. If there are none, this will be an empty set.
 
     **Examples:**
 
@@ -689,37 +689,17 @@ class Field(mixin.NetCDFVariable,
     {'cellmethod0': <{{repr}}CellMethod: domainaxis0: minimum within days>,
      'cellmethod1': <{{repr}}CellMethod: domainaxis0: mean over days>}
     >>> f.climatological_time_axes()
-    [('domainaxis0',), ('domainaxis0',)]
+    {'domainaxis0'}
 
     >>> g
-    <Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
+    <{{repr}}Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
     >>> print(g.cell_methods())
     Constructs:
     {'cellmethod0': <{{repr}}CellMethod: area: mean>}
     >>> g.climatological_time_axes()
-    []
+    set()
         '''
-        out = []
-
-        domain_axes = self.domain_axes
-
-        for key, cm in self.cell_methods.ordered().items():
-            qualifiers = cm.qualifiers()
-            if not ('within' in qualifiers or 'over' in qualifiers):
-                continue
-
-            axes = cm.get_axes(default=())
-            if len(axes) != 1:
-                continue
-
-            axis = axes[0]
-            if axis not in domain_axes:
-                continue
-
-            # Still here? Then this axis is a climatological time axis
-            out.append((axis,))
-
-        return out
+        return set(self.constucts._climatology())
 
     @_inplace_enabled(default=False)
     def compress(self, method, axes=None, count_properties=None,
@@ -1454,7 +1434,7 @@ class Field(mixin.NetCDFVariable,
     >>> {{package}}.write(f, 'temp_file.nc')
     >>> g = {{package}}.read('temp_file.nc')[0]
     >>> g.get_filenames()
-    {'/data/user/file1.nc'}
+    {'temp_file.nc'}
 
         '''
         out = super().get_filenames()
