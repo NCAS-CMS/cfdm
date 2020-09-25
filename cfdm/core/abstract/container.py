@@ -137,7 +137,7 @@ class Container(metaclass=DocstringRewriteMeta):
             Return *default* if the component has not been set.
 
             {{default Exception}}
-        
+
     :Returns:
 
             The removed component. If unset then *default* is

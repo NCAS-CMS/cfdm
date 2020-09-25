@@ -270,7 +270,7 @@ class PropertiesDataBounds(PropertiesData):
             geometry type has not been set.
 
             {{default Exception}}
- 
+
     :Returns:
 
         `ÌnteriorRing`
