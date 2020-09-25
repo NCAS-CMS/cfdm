@@ -1,6 +1,10 @@
 import logging
 
+from copy import deepcopy
+
 import numpy
+
+from .data import Data
 
 from . import mixin
 from . import core
@@ -32,6 +36,16 @@ class CellMethod(mixin.Container,
     .. versionadded:: (cfdm) 1.7.0
 
     '''
+    def __new__(cls, *args, **kwargs):
+        '''This must be overridden in subclasses.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+        '''
+        instance = super().__new__(cls)
+        instance._Data = Data
+        return instance
+
     def __str__(self):
         '''Called by the `str` built-in function.
 
@@ -76,6 +90,87 @@ class CellMethod(mixin.Container,
             string.append('({0})'.format(comment))
 
         return ' '.join(string)
+
+    def creation_commands(self, namespace=None, indent=0, string=True,
+                          name='c', header=True):
+        '''Return the commands that would create the cell measure construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Data.creation_commands`,
+                 `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+        TODO
+        '''
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        out = []
+
+        method = self.get_method(None)
+
+        if header:
+            out.append('#')
+            out.append("# {}:".format(self.construct_type))
+            if method is not None:
+                out[-1] += " {}".format(method)
+        # --- End: if
+
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        if method is not None:
+            out.append("{}.set_method({!r})".format(name, method))
+
+        axes = self.get_axes(None)
+        if axes is not None:
+            out.append("{}.set_axes({!r})".format(name, axes))
+
+        for term, value in self.qualifiers().items():
+            if term == 'interval':
+                value = deepcopy(value)
+                for i, data in enumerate(value[:]):
+                    if isinstance(data, self._Data):
+                        value[i] = data.creation_commands(
+                            name=None, namespace=namespace0,
+                            indent=0, string=True)
+                    else:
+                        value[i] = str(data)
+                # --- End: for
+
+                value = ', '.join(value)
+                value = "["+value+"]"
+            else:
+                value = repr(value)
+
+            out.append("{}.set_qualifier({!r}, {})".format(name, term,
+                                                           value))
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
 
     def dump(self, display=True, _title=None, _level=0):
         '''A full description of the cell method construct.

@@ -217,4 +217,16 @@ class Container:
 
         return other
 
+    def _package(self):
+        '''Return the name of the package in which this class resides.
+
+    :Returns:
+
+        `str`
+           The package name
+
+        '''
+        depth = self.__class__._docstring_package_depth(self.__class__)
+        return '.'.join(self.__module__.split('.')[0:depth + 1])
+
 # --- End: class

@@ -5,6 +5,8 @@ from . import core
 from . import CoordinateConversion
 from . import Datum
 
+from .data import Data
+
 from .decorators import _manage_log_level_via_verbosity
 
 
@@ -60,7 +62,6 @@ class CoordinateReference(mixin.NetCDFVariable,
       coordinate reference construct relates the coordinate values of
       the field to locations in a planetary reference frame.
 
-
     **NetCDF interface**
 
     The netCDF grid mapping variable name of a coordinate reference
@@ -81,6 +82,7 @@ class CoordinateReference(mixin.NetCDFVariable,
         '''
         instance = super().__new__(cls)
         instance._CoordinateConversion = CoordinateConversion
+        instance._Data = Data
         instance._Datum = Datum
         return instance
 
@@ -146,6 +148,114 @@ class CoordinateReference(mixin.NetCDFVariable,
 
         '''
         return self.identity(default=self.nc_get_variable(''))
+
+    def creation_commands(self, namespace=None, indent=0, string=True,
+                          name='c', header=True):
+        '''Return the commands that would create the field construct.
+
+    **Construct keys**
+
+    The *key* parameter of the output `set_construct` commands is
+    utilised in order minimise the number of commands needed to
+    implement cross-referencing between constructs (e.g. between a
+    coordinate reference construct and coordinate constructs). This is
+    usually not necessary when building field constructs, as by
+    default the `set_construct` method returns a unique construct key
+    for the construct being set.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Data.creation_commands`,
+                 `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+        TODO
+
+        '''
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        out = []
+
+        if header:
+            out.append('#')
+            out.append("# {}:".format(self.construct_type))
+            identity = self.identity()
+            if identity:
+                out[-1] += " {}".format(identity)
+        # -- End: if
+
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        nc = self.nc_get_variable(None)
+        if nc is not None:
+            out.append("{}.nc_set_variable({!r})".format(name, nc))
+
+        coordinates = self.coordinates()
+        if coordinates:
+            out.append("{}.set_coordinates({})".format(name,
+                                                       coordinates))
+
+        for term, value in self.datum.parameters().items():
+            if isinstance(value, self._Data):
+                value = value.creation_commands(name=None,
+                                                namespace=namespace0,
+                                                indent=0,
+                                                string=False,
+                                                header=header)
+            else:
+                value = repr(value)
+
+            out.append("{}.datum.set_parameter({!r}, {})".format(
+                name, term, value))
+
+        for term, value in self.coordinate_conversion.parameters().items():
+            if isinstance(value, self._Data):
+                value = value.creation_commands(name=None,
+                                                namespace=namespace0,
+                                                indent=0,
+                                                string=False,
+                                                header=header)
+            else:
+                value = repr(value)
+
+            out.append(
+                "{}.coordinate_conversion.set_parameter({!r}, {})".format(
+                    name, term, value)
+            )
+
+        domain_ancillaries = self.coordinate_conversion.domain_ancillaries()
+        if domain_ancillaries:
+            out.append(
+                "{}.coordinate_conversion.set_domain_ancillaries({})".format(
+                    name, domain_ancillaries)
+            )
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
 
     def dump(self, display=True, _omit_properties=None, field=None,
              key='', _level=0, _title=None, _construct_names=None,

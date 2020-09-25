@@ -82,6 +82,53 @@ class CellMeasure(mixin.NetCDFVariable,
 
         self._initialise_netcdf(source)
 
+    def creation_commands(self, representative_data=False,
+                          namespace=None, indent=0, string=True,
+                          name='c', data_name='data', header=True):
+        '''Return the commands that would create the cell measure construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Data.creation_commands`,
+                 `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{representative_data: `bool`, optional}}
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+        TODO
+
+        '''
+        out = super().creation_commands(
+            representative_data=representative_data, indent=0,
+            namespace=namespace, string=False, name=name,
+            data_name=data_name, header=header)
+
+        measure = self.get_measure(None)
+        if measure is not None:
+            out.append("{}.set_measure({!r})".format(name, measure))
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
+
     def dump(self, display=True, _omit_properties=None, _key=None,
              _level=0, _title=None, _axes=None, _axis_names=None):
         '''A full description of the cell measure construct.

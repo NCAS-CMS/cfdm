@@ -27,6 +27,9 @@ class Properties(Container):
         '''
         return '{0}'.format(self.identity(''))
 
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
     def _dump_properties(self, _prefix='', _level=0,
                          _omit_properties=None):
         '''Dump the properties.
@@ -67,6 +70,80 @@ class Properties(Container):
                               subsequent_indent=subsequent_indent))
 
         return '\n'.join(string)
+
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
+    def creation_commands(self, namespace=None, indent=0, string=True,
+                          name='c', header=True):
+        '''Return the commands that would create the construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Data.creation_commands`,
+                 `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+        TODO
+
+        '''
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        out = []
+
+        if header:
+            out.append('#')
+            out.append('#')
+
+            construct_type = getattr(self, 'construct_type', None)
+            if construct_type is not None:
+                out[-1] += " {}:".format(construct_type)
+
+            identity = self.identity()
+            if identity:
+                out[-1] += " {}".format(identity)
+        # --- End: if
+
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        properties = self.properties()
+        if properties:
+            for prop in self.inherited_properties():
+                properties.pop(prop, None)
+
+            out.append("{}.set_properties({})".format(name,
+                                                      properties))
+
+        nc = self.nc_get_variable(None)
+        if nc is not None:
+            out.append("{}.nc_set_variable({!r})".format(name, nc))
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
 
     def dump(self, display=True, _key=None, _omit_properties=(),
              _prefix='', _title=None, _create_title=True, _level=0):

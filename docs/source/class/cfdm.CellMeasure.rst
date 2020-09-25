@@ -101,6 +101,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.CellMeasure.copy
+   ~cfdm.CellMeasure.creation_commands
    ~cfdm.CellMeasure.equals
    ~cfdm.CellMeasure.uncompress
    ~cfdm.CellMeasure.get_filenames

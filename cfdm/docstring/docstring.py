@@ -3,16 +3,25 @@
 Text to be replaced is specified as a key in the returned dictionary,
 with the replacement text defined by the corresponding value.
 
-Keys must be `str` or `re.Pattern` objects.
-
-If a key is a `str` then the corresponding value must be a string.
-
-If a key is a `re.Pattern` object then the corresponding value must be
-a string or a callable, as accepted by the `re.Pattern.sub` method.
-
-Special docstring subtitutions, as defined by a classes
-`_special_docstring_substitutions` method, may be used in the
+Special docstring subtitutions, as defined by a class's
+`_docstring_special_substitutions` method, may be used in the
 replacement text, and will be substituted as ususal.
+
+Replacement text may contain other non-special substitutions.
+
+.. note:: The values are only checked once for embedded non-special
+          substitutions, so if the embedded substitution itself
+          contains a non-special substitution then the latter will
+          *not* be replaced. This restriction is to prevent the
+          possibility of infinite recursion.
+
+Keys must be `str` or `re.Pattern` objects:
+
+* If a key is a `str` then the corresponding value must be a string.
+
+* If a key is a `re.Pattern` object then the corresponding value must
+  be a string or a callable, as accepted by the `re.Pattern.sub`
+  method.
 
 .. versionaddedd:: (cfdm) 1.8.7.0
 
@@ -136,6 +145,44 @@ _docstring_substitution_definitions = {
             for increasing verbosity, the more description that is
             printed to convey information about the operation.''',
 
+        '{{namespace: `str`, optional}}':
+        '''namespace: `str`, optional
+            The name space containing classes of the {{package}}
+            package. This is prefixed to the class name in commands
+            that instantiate instances of {{package}} objects. By default,
+            or if `None`, the name space is assumed to be consistent
+            with {{package}} being imported as ``import {{package}}``.
+
+            *Parameter example:*
+              If {{package}} was imported as ``import {{package}} as xyz``
+              then set ``namespace='xyz'``
+
+            *Parameter example:*
+              If {{package}} was imported as ``from {{package}} import *``
+              then set ``namespace=''``''',
+
+        '{{representative_data: `bool`, optional}}':
+        '''representative_data: `bool`, optional
+            Return one-line representations of `Data` instances, which
+            are not executable code but prevent the data being
+            converted in its entirety to a string representation.''',
+
+        '{{indent: `int`, optional}}':
+        '''indent: `int`, optional
+           Indent each line by this many spaces. By default no
+            indentation is applied. Ignored if *string* is False.''',
+
+        '{{string: `bool`, optional}}':
+        '''string: `bool`, optional
+            If False then return each command as an element of a
+            `list`. By default the commands are concatenated into
+            a string, with a new line inserted between each command.''',
+
+        '{{header: `bool`, optional}}':
+        '''header: `bool`, optional
+            If False then do not output a comment describing the
+            components.''',
+
     # ----------------------------------------------------------------
     # Returns descriptions
     # ----------------------------------------------------------------
@@ -145,4 +192,9 @@ _docstring_substitution_definitions = {
             is printed and `None` is returned. Otherwise the
             description is returned as a string.''',
 
+    '{{returns creation_commands}}':
+    '''`str` or `list`
+            The commands in a string, with a new line inserted between
+            each command. If *string* is False then the separate
+            commands are returned as each element of a `list`.''',
 }

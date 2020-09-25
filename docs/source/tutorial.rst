@@ -2167,11 +2167,17 @@ over the same spatiotemporal domain).
 **Field creation in memory**
 ----------------------------
 
-There are three methods for creating a field construct in memory:
+There are various methods for creating a field construct in memory:
 
 * :ref:`Ab initio creation <Ab-initio-creation>`: Instantiate
   instances of field and metadata construct classes and manually
   provide the connections between them.
+..
+
+* :ref:`Command modification <Command-modification>`: Produce the
+  commands that would create an already existing field construct, and
+  then modify them.
+
 ..
 
 * :ref:`Creation by conversion <Creation-by-conversion>`: Convert a
@@ -2626,7 +2632,94 @@ The new field construct may now be inspected:
    Domain ancils   : domainancillary0(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                    : domainancillary1(atmosphere_hybrid_height_coordinate(1)) = [20.0] 1
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] m
-		  
+	
+.. _Command-modification:
+
+Command modification
+^^^^^^^^^^^^^^^^^^^^
+
+It is sometimes convenient to produce the commands that would create
+an already existing field construct, and then modify them to create
+the desired field construct. The commands are produced by the
+`~Field.creation_commands` method of the existing field construct.
+
+.. code-block:: python
+   :caption: *Produce the commands that would create an existing field
+             construct.*
+	
+   >>> q, t = cfdm.read('file.nc')
+   >>> print(q.creation_commands())
+   #
+   # field: specific_humidity
+   field = cfdm.Field()
+   field.set_properties({'Conventions': 'CF-1.8', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+   field.nc_set_variable('q')
+   data = cfdm.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
+   field.set_data(data)
+   #
+   # domain_axis: ncdim%lat
+   c = cfdm.DomainAxis()
+   c.set_size(5)
+   c.nc_set_dimension('lat')
+   field.set_construct(c, key='domainaxis0', copy=False)
+   #
+   # domain_axis: ncdim%lon
+   c = cfdm.DomainAxis()
+   c.set_size(8)
+   c.nc_set_dimension('lon')
+   field.set_construct(c, key='domainaxis1', copy=False)
+   #
+   # domain_axis:
+   c = cfdm.DomainAxis()
+   c.set_size(1)
+   field.set_construct(c, key='domainaxis2', copy=False)
+   #
+   # dimension_coordinate: latitude
+   c = cfdm.DimensionCoordinate()
+   c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+   c.nc_set_variable('lat')
+   data = cfdm.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
+   c.set_data(data)
+   b = cfdm.Bounds()
+   b.nc_set_variable('lat_bnds')
+   data = cfdm.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
+   b.set_data(data)
+   c.set_bounds(b)
+   field.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+   #
+   # dimension_coordinate: longitude
+   c = cfdm.DimensionCoordinate()
+   c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+   c.nc_set_variable('lon')
+   data = cfdm.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
+   c.set_data(data)
+   b = cfdm.Bounds()
+   b.nc_set_variable('lon_bnds')
+   data = cfdm.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
+   b.set_data(data)
+   c.set_bounds(b)
+   field.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+   #
+   # dimension_coordinate: time
+   c = cfdm.DimensionCoordinate()
+   c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+   c.nc_set_variable('time')
+   data = cfdm.Data([31.0], units='days since 2018-12-01', dtype='f8')
+   c.set_data(data)
+   field.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+   #
+   # cell_method: mean
+   c = cfdm.CellMethod()
+   c.set_method('mean')
+   c.set_axes(('area',))
+   field.set_construct(c)
+   #
+   # field data axes
+   field.set_data_axes(('domainaxis0', 'domainaxis1'))
+
+Some example fields are always available from the `cfdm.example_field`
+function.
+	  
 .. _Creating-data-from-an-array-on-disk:
 
 Creating data from an array on disk

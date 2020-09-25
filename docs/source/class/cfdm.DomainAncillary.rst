@@ -120,6 +120,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.DomainAncillary.copy
+   ~cfdm.DomainAncillary.creation_commands
    ~cfdm.DomainAncillary.equals
    ~cfdm.DomainAncillary.uncompress
    ~cfdm.DomainAncillary.get_filenames

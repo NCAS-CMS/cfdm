@@ -60,6 +60,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.DomainAxis.copy
+   ~cfdm.DomainAxis.creation_commands
    ~cfdm.DomainAxis.equals
 
 NetCDF
