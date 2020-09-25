@@ -199,76 +199,88 @@ class Constructs(mixin.Container,
 
         return out
 
-    def _climatology(self, cell_methods=None, coordinates=None):
-        '''Set the climatology flag on approriate coordinate constructs, based
-    on the cell method constructs.
+    def _del_construct(self, key, default=ValueError()):
+        '''Remove a metadata construct.
 
-    This method is called by `_set_constructs`.
+    If a domain axis construct is selected for removal then it can't
+    be spanned by any metdata construct data arrays, nor be referenced
+    by any cell method constructs.
 
-    .. versionadded:: 1.9.0.0
+    However, a domain ancillary construct may be removed even if it is
+    referenced by coordinate reference construct. In this case the
+    reference is replace with `None`.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `_get_construct`, `_set_construct`
 
     :Parameters:
 
-        cell_methods: `dict`, optional
-            TODO
+        key: `str`
+            The key of the construct to be removed.
 
-        coordinates: `dict`, optional
-            TODO
+            *Parameter example:*
+              ``key='auxiliarycoordinate0'``
+
+        default: optional
+            Return the value of the *default* parameter if the
+            construct can not be removed, or does not exist. If set to
+            an `Exception` instance then it will be raised instead.
+
 
     :Returns:
 
-        `None`
+            The removed construct.
+
+    **Examples:**
+
+    >>> x = f._del_construct('auxiliarycoordinate2')
 
         '''
-        out = []
+        out = super()._del_construct(key, default=default)
 
-        domain_axes = self.filter_by_type('domain_axis')
+        try:
+            is_cell_method = (out.construct_type == 'cell_method')
+        except AttributeError:
+            is_cell_method = False
+            
+        if is_cell_method:
+            # ----------------------------------------------------
+            # Since a cell method construct was deleted, check to
+            # see if it was for climatological time, and if so
+            # reset the climatology status of approriate
+            # coordinate constructs.
+            # ----------------------------------------------------
+            qualifiers = out.qualifiers()
+            if 'within' in qualifiers or 'over' in qualifiers:
+                axes = out.get_axes(default=())
+                if (
+                        len(axes) == 1 and
+                        axis not in self.filter_by_type('domain_axis')
+                ):
+                    coordinates = {}
+                    axes = set(axes)
+                    for ckey, c in self.filter_by_type(
+                            'dimension_coordinate',
+                            'auxiliary_coordinate').items():
+                        if axes != set(self.data_axes().get(ckey, ())):
+                            continue
 
-        if coordinates:
-            cell_methods = self.filter_by_type('cell_method').ordered()
-        elif cell_methods:
-            coordinates = self.filter_by_type('dimension_coordinate',
-                                              'auxiliary_coordinate')
-        else:
-            cell_methods = self.filter_by_type('cell_method').ordered()
-            coordinates = self.filter_by_type('dimension_coordinate',
-                                              'auxiliary_coordinate')
+                        # This coordinate construct spans the
+                        # deleted cell method axes, so unset its
+                        # climatology setting.
+                        c.set_climatology(False)
+                        coordinates[ckey] = c
 
-        for key, cm in cell_methods.items():
-            qualifiers = cm.qualifiers()
-            if not ('within' in qualifiers or 'over' in qualifiers):
-                continue
-
-            axes = cm.get_axes(default=())
-            if len(axes) != 1:
-                continue
-
-            axis = axes[0]
-            if axis not in domain_axes:
-                continue
-
-            # Still here? Then this axis is a climatological time axis
-            out.append(axis)
-
-            # Flag the appropriate coordinates as being for
-            # climatological time.
-            for ckey, c in coordinates.items():
-                units = c.get_property('units', None)
-                if units is None or ' since ' not in units:
-                    # Construct does not have reference time units
-                    c.del_climatology(None)
-                    continue
-
-                if axes != self.data_axes().get(ckey, ()):
-                    # Construct does not span the cell method axes
-                    c.del_climatology(None)
-                    continue
-
-                # Construct spans the correct axes and has reference
-                # time units
-                c.set_climatology(True)
-        # --- End: for
-
+                    # Reset the climatology settings of all
+                    # coordinate constructs. Do this because there
+                    # may still be non-deleted cell methods for
+                    # the same axes that still define
+                    # climatological time.
+                    if coordinates:
+                        self._set_climatology(coordinates=coordinates)
+        # --- End: if
+                            
         return out
 
     @_manage_log_level_via_verbosity
@@ -490,6 +502,73 @@ class Constructs(mixin.Container,
 
         return True
 
+    def _set_climatology(self, cell_methods=None, coordinates=None):
+        '''Set the climatology flag on approriate coordinate constructs, based
+    on the cell method constructs.
+
+    .. versionadded:: 1.9.0.0
+
+    :Parameters:
+
+        cell_methods: `dict`, optional
+            TODO
+
+        coordinates: `dict`, optional
+            TODO
+
+    :Returns:
+
+        `list` of `str`
+            The domain axis construct identifiers of all
+            climatological time axes. The list may contain axis
+            duplications.
+
+        '''
+        out = []
+
+        domain_axes = self.filter_by_type('domain_axis')
+
+        if coordinates:
+            cell_methods = self.filter_by_type('cell_method').ordered()
+        elif cell_methods:
+            coordinates = self.filter_by_type('dimension_coordinate',
+                                              'auxiliary_coordinate')
+        else:
+            cell_methods = self.filter_by_type('cell_method').ordered()
+            coordinates = self.filter_by_type('dimension_coordinate',
+                                              'auxiliary_coordinate')
+
+        for key, cm in cell_methods.items():
+            qualifiers = cm.qualifiers()
+            if not ('within' in qualifiers or 'over' in qualifiers):
+                continue
+
+            axes = cm.get_axes(default=())
+            if len(axes) != 1:
+                continue
+
+            axis = axes[0]
+            if axis not in domain_axes:
+                continue
+
+            # Still here? Then this axis is a climatological time axis
+            out.append(axis)
+
+            # Flag the appropriate coordinates as being for
+            # climatological time.
+            axes = set(axes)
+            for ckey, c in coordinates.items():
+                if axes != set(self.data_axes().get(ckey, ())):
+                    # Construct does not span the cell method axes
+                    continue
+
+                # Construct spans the correct axes and has reference
+                # time units
+                c.set_climatology(True)
+        # --- End: for
+
+        return out
+
     def _set_construct(self, construct, key=None, axes=None,
                        copy=True):
         '''Set a metadata construct.
@@ -560,9 +639,9 @@ class Constructs(mixin.Container,
         construct_type = construct.construct_type
         if construct_type in ('dimension_coordinate',
                               'auxiliary_coordinate'):
-            self._climatology(coordinates={key: construct})
+            self._set_climatology(coordinates={key: construct})
         elif construct_type == 'cell_method':
-            self._climatology(cell_methods={key: construct})
+            self._set_climatology(cell_methods={key: construct})
 
         # Return the identifier of the construct
         return key

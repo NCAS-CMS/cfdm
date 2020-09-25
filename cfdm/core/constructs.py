@@ -513,23 +513,31 @@ class Constructs(abstract.Container):
                             key, xid)
                     )
 
-            # Fail if the domain axis construct is referenced by a
+            # Fail if the domaain axis construct is referenced by a
             # cell method construct
-            try:
-                cell_methods = self.filter_by_type('cell_method')
-            except ValueError:
-                # Cell methods are not possible for this Constructs
-                # instance
-                pass
-            else:
-                for xid, cm in cell_methods.items():
-                    axes = cm.get_axes(())
-                    if key in axes:
-                        raise ValueError(
-                            "Can't remove domain axis construct {!r} "
-                            "that is referenced by cell method construct "
-                            "{!r}".format(key, xid)
-                        )
+#            try:
+#                cell_methods = self.filter_by_type('cell_method')
+#            except ValueError:
+#                # Cell methods are not possible for this Constructs
+#                # instance
+#                pass
+#            else:
+#                for xid, cm in cell_methods.items():
+#                    axes = cm.get_axes(())
+#                    if key in axes:
+#                        raise ValueError(
+#                            "Can't remove domain axis construct {!r} "
+#                            "that is referenced by cell method construct "
+#                            "{!r}".format(key, xid)
+#                        )
+            for xid, cm in self.filter_by_type('cell_method').items():
+                axes = cm.get_axes(())
+                if key in axes:
+                    raise ValueError(
+                        "Can't remove domain axis construct {!r} "
+                        "that is referenced by cell method construct "
+                        "{!r}".format(key, xid)
+                    )
         else:
             # Remove references to the removed construct in coordinate
             # reference constructs
@@ -1097,7 +1105,7 @@ class Constructs(abstract.Container):
 
         '''
         if types:
-            # Ignore the all but the requested construct types
+            # Ignore all but the requested construct types
             ignore = set(self._key_base)
             ignore.difference_update(set(types))
             ignore.update(self._ignore)
