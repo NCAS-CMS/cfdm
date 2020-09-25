@@ -1175,9 +1175,9 @@ class Data(Container,
     >>> d = {{package}}.Data([[0.0, 45.0], [45.0, 90.0]],
     ...                      units='degrees_east')
     >>> print(d.creation_commands())
-    data = cfdm.Data([[0.0, 45.0], [45.0, 90.0]], units='degrees_east', dtype='f8')
+    data = {{package}}.Data([[0.0, 45.0], [45.0, 90.0]], units='degrees_east', dtype='f8')
 
-    >>> d = {{package}}.Data(['N/A', 'beta', 'gamma', 'delta'],
+    >>> d = {{package}}.Data(['alpha', 'beta', 'gamma', 'delta'],
     ...                      mask = [1, 0, 0, 0])
     >>> d.creation_commands(name='d', namespace='', string=False)
     ["d = Data(['', 'beta', 'gamma', 'delta'], dtype='U5', mask=Data([True, False, False, False], dtype='b1'))"]

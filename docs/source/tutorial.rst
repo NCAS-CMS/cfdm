@@ -2167,7 +2167,7 @@ over the same spatiotemporal domain).
 **Field creation in memory**
 ----------------------------
 
-There are three methods for creating a field construct in memory:
+There are various methods for creating a field construct in memory:
 
 * :ref:`Ab initio creation <Ab-initio-creation>`: Instantiate
   instances of field and metadata construct classes and manually
