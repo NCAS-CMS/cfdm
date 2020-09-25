@@ -191,7 +191,11 @@ class PropertiesData(Properties):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if data have
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -242,7 +246,11 @@ class PropertiesData(Properties):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if data have
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 

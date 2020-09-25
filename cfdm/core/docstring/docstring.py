@@ -36,7 +36,7 @@ _docstring_substitution_definitions = {
 
     # default: optional
     '{{default Exception}}':
-    '''     If set to an `Exception` instance then it will be raised
+    '''If set to an `Exception` instance then it will be raised
             instead.''',
 
     # inplace: `bool`, optional (default True)

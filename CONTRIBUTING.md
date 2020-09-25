@@ -1,45 +1,26 @@
 Thank you for taking the time to consider making a contribution to the
 cfdm package.
 
-# General Guidelines
+Please consult the
+[dedicated guidance page](https://ncas-cms.github.io/cfdm/contributing.html)
+in the documentation for detailed guidance on contributing to cfdm.
 
-General questions, suggestions for enhancements, and reports of bugs
-may be reported in the GitHub issue tracker:
-https://github.com/NCAS-CMS/cfdm/issues
+Overall, general questions, suggestions for enhancements, and reports
+of bugs are appreciated and should be reported via the
+[GitHub issue tracker](https://github.com/NCAS-CMS/cfdm/issues).
 
-Contributions are welcome and should first be raised as issues in the
-GitHub issue tracker: https://github.com/NCAS-CMS/cfdm/issues, prior
-to submitting a pull request containing the new code made from a fork
-of the cfdm GitHub code repository: https://github.com/NCAS-CMS/cfdm.
+Code-change contributions to cfdm are also very welcome, though to
+ensure the work is in line with plans for development of the library, please
+always discuss any intended changes with the core development team in the
+first instance. The standard way to do so is also through the
+issue tracker:
 
-# Change log
+* if there is an existing issue in the tracker than you would like
+  to address, comment on that issue to indicate you would like to work on
+  it;
+* conversely, if there is not an issue corresponding to your ideas for
+  contribution, please raise a new issue outlining the idea.
 
-See the change log
-(https://github.com/NCAS-CMS/cfdm/blob/master/Changelog.rst) for the
-changes introduced by each version.
-
-# Versioning
-
-A ``CF.major.minor`` numeric version scheme is used, where ``CF`` is
-the version of the CF conventions (e.g. ``1.9``) to which a particular
-version of cfdm applies.
-
-## Major changes comprise
-
-  * changes to the API, such as
-    - changing the name of an existing function or method;
-    - changing the behaviour of an existing function or method;
-    - changing the name of an existing keyword parameter;
-    - changing the default value of an existing keyword parameter;
-    - changing the meaning of a value of an existing keyword parameter.
-    - introducing a new function or method;
-    - introducing a new keyword parameter;
-    - introducing a new permitted value of a keyword parameter;
-
- * changes to required versions of the dependencies.
-
-## Minor changes comprise
-
-  * bug fixes that do not change the API;
-  * changes to the documentation;
-  * code tidying.
+If you are not sure about any aspect related to contributing after
+reading the guidance page, do not hesitate to get in touch by posting
+a question in an issue.

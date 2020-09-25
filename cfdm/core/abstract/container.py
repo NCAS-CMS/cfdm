@@ -133,7 +133,10 @@ class Container(metaclass=DocstringRewriteMeta):
         component:
             The name of the component to be removed.
 
-        {{default: optional}}
+        default: optional
+            Return *default* if the component has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -201,7 +204,10 @@ class Container(metaclass=DocstringRewriteMeta):
         component:
             The name of the component to be returned.
 
-        {{default: optional}}
+        default: optional
+            Return *default* if the component has not been set.
+
+            {{default Exception}}
 
     :Returns:
 

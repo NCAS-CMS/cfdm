@@ -14,8 +14,8 @@ Version |release| for version |version| of the CF conventions.
    :local:
    :backlinks: entry
 
-**Report bugs**
----------------
+**Reporting bugs**
+------------------
 
 Please report bugs via a new issue in issue tracker
 (https://github.com/NCAS-CMS/cfdm/issues), using the **Bug report**
@@ -60,21 +60,22 @@ Clone your fork locally and create a branch:
     $ cd cfdm
     $ git checkout -b <your-bugfix-feature-branch-name master>
 
-Break your edits up into reasonably sized commits.
+Break your edits up into reasonably-sized commits, each representing
+a single logical change:
 
 .. code-block:: console
 	  
     $ git commit -a -m "<COMMIT MESSAGE>"
 
 Create a new changelog entry in ``Changelog.rst``. The entry should be
-entered (where ``<description>`` is a brief description of the change)
-as:
+written (where ``<description>`` should be a *brief* description of
+the change) as:
 
 .. code-block:: rst
 
    * <description> (https://github.com/NCAS-CMS/cfdm/issues/<issue number>)
 
-Run the test suite:
+Run the test suite to make sure the tests all pass:
 	
 .. code-block:: console
 
@@ -82,7 +83,7 @@ Run the test suite:
    $ python run_tests.py
 
 Add your name to the list of contributors list at
-``docs/source/contributing.rst``
+``docs/source/contributing.rst``.
 
 Finally, make sure all commits have been pushed to the remote copy of
 your fork and submit the pull request via the GitHub website, to the
@@ -90,7 +91,8 @@ your fork and submit the pull request via the GitHub website, to the
 reference the original issue in the pull request's description.
 
 Note that you can create the pull request while you're working on
-this, as it will automatically update as you add more commits.
+this, as it will automatically update as you add more commits. If it is
+a work in progress, you can mark it initially as a draft pull request.
 
 ----
 
@@ -107,4 +109,3 @@ ideas, code, and documentation to the cfdm library:
 * Martin Juckes
 * Riley Brady  
 * Sadie Bartholomew  
-

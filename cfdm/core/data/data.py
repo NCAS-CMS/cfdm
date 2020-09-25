@@ -337,7 +337,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            calendar has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -376,7 +380,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the fill
+            value has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -418,7 +426,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the units
+            has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -458,7 +470,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            calendar has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -497,7 +513,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the array
+            has not been set
+
+            {{default Exception}}
 
     :Returns:
 
@@ -524,7 +544,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the fill
+            value has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -566,7 +590,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the units
+            has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -836,7 +864,11 @@ class Data(abstract.Container):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the array
+            has not been set.
+
+            {{default Exception}}
 
     :Returns:
 

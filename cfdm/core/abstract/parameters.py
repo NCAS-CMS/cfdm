@@ -95,7 +95,11 @@ class Parameters(Container):
         parameter: `str`
             The name of the parameter to be deleted.
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            parameter has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -137,7 +141,11 @@ class Parameters(Container):
         parameter: `str`
             The name of the parameter.
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            parameter has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
