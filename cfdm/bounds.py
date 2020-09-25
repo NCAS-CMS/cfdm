@@ -117,7 +117,7 @@ class Bounds(mixin.NetCDFVariable,
         '''Return the data.
 
     Note that the data are returned in a `Data` object. Use the
-    `array` attribute of the `Data` instance to return the data as an
+   `array` attribute of the `Data` instance to return the data as an
     independent `numpy` array.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -126,7 +126,11 @@ class Bounds(mixin.NetCDFVariable,
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if data have
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 

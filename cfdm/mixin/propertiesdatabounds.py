@@ -537,7 +537,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the node
+            count variable has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -576,7 +580,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the part
+            node count variable has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -848,7 +856,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if a node
+            count variable has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -887,7 +899,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the part
+            node count variable has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -1113,7 +1129,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if bounds have
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -1159,7 +1179,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if there are
+            no bounds data.
+
+            {{default Exception}}
 
     :Returns:
 

@@ -46,8 +46,9 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
 
         default: optional
             Return the value of the *default* parameter if the
-            construct can not be removed, or does not exist. If set to
-            an `Exception` instance then it will be raised instead.
+            construct can not be removed, or does not exist.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -77,7 +78,11 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
             *Parameter example:*
               ``key='domainaxis1'``
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            construct does not exist.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -213,7 +218,11 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
             *Parameter example:*
               ``key='auxiliarycoordinate0'``
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the data
+            axes have not been set.
+
+            {{default Exception}}
 
     :Returns:
 

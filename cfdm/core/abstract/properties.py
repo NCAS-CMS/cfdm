@@ -100,7 +100,11 @@ class Properties(Container):
             *Parameter example:*
                ``prop='long_name'``
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            property has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -148,7 +152,11 @@ class Properties(Container):
             *Parameter example:*
                ``prop='standard_name'``
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            property has not been set.
+
+            {{default Exception}}
 
     :Returns:
 

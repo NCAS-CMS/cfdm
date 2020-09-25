@@ -337,7 +337,11 @@ class ConstructAccess():
             identities, and so this description may always be used as
             an *identity* argument.
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            property has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -425,7 +429,11 @@ class ConstructAccess():
             identities, and so this description may always be used as
             an *identity* argument.
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            property has not been set
+
+            {{default Exception}}
 
     :Returns:
 
@@ -510,7 +518,11 @@ class ConstructAccess():
             identities, and so this description may always be used as
             an *identity* argument.
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if a domain
+            axis construct can not be found.
+
+            {{default Exception}}
 
     :Returns:
 
