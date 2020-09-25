@@ -488,9 +488,9 @@ class Constructs(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if the
-            construct can not be removed, or does not exist. If set to
-            an `Exception` instance then it will be raised instead.
+            construct can not be removed, or does not exist.
 
+            {{default Exception}}
 
     :Returns:
 
@@ -814,8 +814,9 @@ class Constructs(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if there is
-            not exactly one construct. If set to an `Exception`
-            instance then it will be raised instead.
+            not exactly one construct.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -854,8 +855,9 @@ class Constructs(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if there is
-            not exactly one construct. If set to an `Exception`
-            instance then it will be raised instead.
+            not exactly one construct.
+
+            {{default Exception}}
 
     :Returns:
 

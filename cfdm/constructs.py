@@ -210,6 +210,10 @@ class Constructs(mixin.Container,
     referenced by coordinate reference construct. In this case the
     reference is replace with `None`.
 
+    If a climatological time cell method construct is removed then the
+    climatological status of its corresponding coordinate constructs
+    will be reviewed.
+
     .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_get_construct`, `_set_construct`
@@ -224,9 +228,9 @@ class Constructs(mixin.Container,
 
         default: optional
             Return the value of the *default* parameter if the
-            construct can not be removed, or does not exist. If set to
-            an `Exception` instance then it will be raised instead.
+            construct can not be removed, or does not exist.
 
+            {{default Exception}}
 
     :Returns:
 
@@ -234,7 +238,7 @@ class Constructs(mixin.Container,
 
     **Examples:**
 
-    >>> x = f._del_construct('auxiliarycoordinate2')
+    >>> x = c._del_construct('auxiliarycoordinate2')
 
         '''
         out = super()._del_construct(key, default=default)
