@@ -247,14 +247,13 @@ class Constructs(mixin.Container,
             is_cell_method = (out.construct_type == 'cell_method')
         except AttributeError:
             is_cell_method = False
-            
+
         if is_cell_method:
-            # ----------------------------------------------------
-            # Since a cell method construct was deleted, check to
-            # see if it was for climatological time, and if so
-            # reset the climatology status of approriate
-            # coordinate constructs.
-            # ----------------------------------------------------
+            # --------------------------------------------------------
+            # Since a cell method construct was deleted, check to see
+            # if it was for climatological time, and if so reset the
+            # climatology status of approriate coordinate constructs.
+            # --------------------------------------------------------
             qualifiers = out.qualifiers()
             if 'within' in qualifiers or 'over' in qualifiers:
                 axes = out.get_axes(default=())
@@ -270,21 +269,21 @@ class Constructs(mixin.Container,
                         if axes != set(self.data_axes().get(ckey, ())):
                             continue
 
-                        # This coordinate construct spans the
-                        # deleted cell method axes, so unset its
-                        # climatology setting.
+                        # This coordinate construct spans the deleted
+                        # cell method axes, so unset its climatology
+                        # setting.
                         c.set_climatology(False)
                         coordinates[ckey] = c
 
-                    # Reset the climatology settings of all
-                    # coordinate constructs. Do this because there
-                    # may still be non-deleted cell methods for
-                    # the same axes that still define
-                    # climatological time.
+                    # Reset the climatology settings of all the
+                    # modified coordinate constructs. Do this because
+                    # there may still be non-deleted cell methods for
+                    # the same axes that still define climatological
+                    # time.
                     if coordinates:
                         self._set_climatology(coordinates=coordinates)
         # --- End: if
-                            
+
         return out
 
     @_manage_log_level_via_verbosity
@@ -292,6 +291,7 @@ class Constructs(mixin.Container,
                             verbose=None, ignore_type=False,
                             axis1_to_axis0=None, key1_to_key0=None):
         '''Whether two cell method constructs are the same.
+
         '''
         cell_methods0 = self.filter_by_type('cell_method')
         cell_methods1 = other.filter_by_type('cell_method')

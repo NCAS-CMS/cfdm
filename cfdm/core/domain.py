@@ -6,7 +6,7 @@ from . import Constructs
 
 class Domain(mixin.ConstructAccess,
              abstract.Properties):
-    '''A domain of the CF data model.
+    '''A domain construct of the CF data model.
 
     The domain represents a set of discrete "locations" in what
     generally would be a multi-dimensional space, either in the real
@@ -86,6 +86,31 @@ class Domain(mixin.ConstructAccess,
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
+
+
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
+    @property
+    def construct_type(self):
+        '''Return a description of the construct type.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    :Returns:
+
+        `str`
+            The construct type.
+
+    **Examples:**
+
+    >>> d = {{package}}.{{class}}()
+    >>> d.construct_type
+    'domain'
+
+        '''
+        return 'domain'
+
     @property
     def constructs(self):
         '''Return the metdata constructs.

@@ -151,6 +151,75 @@ class CFDMImplementation(Implementation):
         '''
         return '<{0}: >'.format(self.__class__.__name__)
 
+    def _get_domain_compression_variable(self, variable_type,
+                                         domain):
+        '''Return the compression variable of compressed data of the given
+    type.
+
+    ..versionadded:: 1.9.0.0
+
+    :Parameters:
+
+        variable_type: `str`
+        
+        domain: Domain construct
+ 
+    :Returns:
+
+        Compression variable or `None`
+
+        '''
+        if variable_type == 'count':
+            compression_types = ('ragged contiguous',
+                                 'ragged indexed contiguous')
+        elif variable_type == 'index':
+            compression_types = ('ragged indexed',
+                                 'ragged indexed contiguous')            
+        elif variable_type == 'list':
+            compression_types = ('gathered',)
+        else:
+            raise ValueError(
+                "Invalid value for 'variable_type': {!r}".format(
+                    variable_type
+                )
+            )
+            
+        constructs = self.get_constructs(domain, data=True)
+
+        variable = None
+        for key, c in constructs.items():
+            compression_type = self.get_compression_type(c)
+            if compression_type not in compression_types:
+                continue
+            
+            data = self.get_data(c, None)
+            if data is None:
+                continue
+
+            if variable_type == 'count':
+                variable1 = data.get_count(None)
+            elif variable_type == 'index':
+                variable1 = data.get_index(None)
+            elif variable_type == 'list':
+                variable1 = data.get_list(None)
+
+            if variable1 is None:
+                continue
+
+            if (
+                    variable is not None and 
+                    not self.equal_components(variable, variable1)
+            ):
+                raise ValueError(
+                    "Can't write domain variable from {!r} that is "
+                    "associated with multiple count variables".format(domain)
+                )
+
+            variable = variable1
+        # --- End: for
+
+        return variable
+
     def bounds_insert_dimension(self, bounds, position):
         '''Insert a new dimension into bounds data.
 
@@ -481,47 +550,84 @@ class CFDMImplementation(Implementation):
         '''
         return data.compressed_array
 
-    def get_compressed_axes(self, field, key=None, construct=None):
+    def get_compressed_axes(self, field_or_domain, key=None,
+                            construct=None):
         '''Return the indices of the compressed axes.
 
     :Parameters:
 
-        field: field construct
+        field_or_domain: field or domain construct
 
         key: `str`, optional
 
         construct: optional
+            If *construct* is set must *key* be set, too.
 
     :Returns:
 
-        `list` of `int`
+        `list` of `str`
 
-        '''
+        '''     
         if construct is not None:
             data = self.get_data(construct)
-        else:
+            data_axes = self.get_construct_data_axes(field_or_domain, key)
+            return [data_axes[i] for i in self.get_data_compressed_axes(data)]
+  
+        if self.is_field(field_or_domain):
+            field = field_or_domain
             data = self.get_data(field)
-
-        if key is not None:
-            data_axes = self.get_construct_data_axes(field, key)
-        else:
             data_axes = self.get_field_data_axes(field)
+            return [data_axes[i] for i in self.get_data_compressed_axes(data)]
+ 
+        # For a domain construct, work out the compression axes from
+        # its metadata constucts.
+        domain = field_or_domain
+        
+        compression_types = (
+                'gathered',
+                'ragged indexed contiguous',
+                'ragged indexed',
+                'ragged contiguous',
+        )
 
-        return [data_axes[i] for i in self.get_data_compressed_axes(data)]
+        compressed_axes = {compression_type: set()
+                           for compression_type in compression_types}
 
-    def get_compression_type(self, construct, domain=False):
+        constructs = self.get_constructs(domain, data=True)
+       
+        for key, c in constructs.items():
+            compression_type = self.get_compression_type(c)
+            if not compression_type:
+                continue
+
+            data_axes = self.get_construct_data_axes(domain, key)
+            if not data_axes:
+                continue
+            
+            data = self.get_data(c, None)
+            if data is None:
+                continue
+
+            compressed_axes[compression_type].update(
+                [data_axes[i]
+                 for i in self.get_data_compressed_axes(data)]
+            )
+        
+        # The order of the following loop matters
+        for compression_type in compression_types:
+            if compressed_axes[compression_type]:
+                return list(compressed_axes[compression_type])
+        # --- End: for
+
+        return []
+
+    def get_compression_type(self, construct):
         '''Return the construct keys of the domain axis constructs spanned by
     a metadata construct.
 
     :Parameters:
 
         construct:
-
-        domain: `bool`, optional
-            If the construct is a domain construct then this must be
-            identifed by setting *domain* to True.
-
-            ..versionadded:: 1.9.0.0
 
     :Returns:
 
@@ -530,7 +636,7 @@ class CFDMImplementation(Implementation):
         '''
         # For a constructs with data, work out the compression type
         # from the data itself.
-        if not domain:
+        if not self.is_domain(construct):
             data = construct.get_data(None)
             if data is None:
                 return ''
@@ -548,17 +654,17 @@ class CFDMImplementation(Implementation):
             if data is None:
                 continue
 
-            try:
-                geometry = c.has_geometry()
-            except AttributeError:
-                pass
-            else:
-                if geometry:
-                    # This construct has geometry cells, so does not
-                    # count as being compressed, for the current
-                    # purpose.
-                    continue
-            # --- End: try
+#            try:
+#                geometry = c.has_geometry()
+#            except AttributeError:
+#                pass
+#            else:
+#                if geometry:
+#                    # This construct has geometry cells, so does not
+#                    # count as being compressed, for the current
+#                    # purpose.
+#                    continue
+#            # --- End: try
 
             compression_types.add(data.get_compression_type())
 
@@ -588,7 +694,7 @@ class CFDMImplementation(Implementation):
 
     :Parameters:
 
-        field: field construct
+        field: field or domain construct
 
         key: `str`
 
@@ -1301,7 +1407,12 @@ class CFDMImplementation(Implementation):
         Count variable or `None`
 
         '''
-        return construct.get_data().get_count(default=None)
+        if self.is_field(construct):
+            return construct.get_data().get_count(default=None)
+
+        # For a domain construct, get the count variable from its
+        # metadata constucts.
+        return self._get_domain_compression_variable('count', construct)
 
     def get_index(self, construct):
         '''Return the index variable of compressed data.
@@ -1315,7 +1426,12 @@ class CFDMImplementation(Implementation):
         Index variable or `None`
 
         '''
-        return construct.get_data().get_index(default=None)
+        if self.is_field(construct):
+            return construct.get_data().get_index(default=None)
+
+        # For a domain construct, get the index variable from its
+        # metadata constucts.
+        return self._get_domain_compression_variable('index', construct)
 
     def get_inherited_properties(self, parent):
         '''Return all inherited properties.
@@ -1361,7 +1477,12 @@ class CFDMImplementation(Implementation):
         List variable or `None`
 
         '''
-        return construct.get_data().get_list(default=None)
+        if self.is_field(construct):
+            return construct.get_data().get_list(default=None)
+        
+        # For a domain construct, get the list variable from its
+        # metadata constucts.
+        return self._get_domain_compression_variable('list', construct)
 
     def get_measure(self, cell_measure):
         '''Return the measure property of a cell measure construct.
@@ -2004,6 +2125,20 @@ class CFDMImplementation(Implementation):
 
         '''
         return bool(coordinate.get_geometry(None) == 'climatology')
+
+    def is_domain(self, construct):
+        '''Return True if the construct is a domain construct
+
+    :Parameters:
+
+        construct: Construct
+
+    :Returns:
+
+        `bool`
+
+        '''
+        return getattr(construct, 'construct_type', None) == 'domain'
 
     def is_field(self, construct):
         '''Return True if the construct is a field construct

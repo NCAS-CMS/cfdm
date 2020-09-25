@@ -223,6 +223,9 @@ class Domain(mixin.NetCDFVariable,
 
         return '\n'.join(string)
 
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
     def _dump_axes(self, axis_names, display=True, _level=0):
         '''Return a string containing a description of the domain axes of the
     field.
@@ -257,6 +260,9 @@ class Domain(mixin.NetCDFVariable,
         else:
             return string
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def dump(self, display=True, _omit_properties=(), _prefix='',
              _title=None, _create_title=True, _level=0):
         '''A full description of the domain construct.
@@ -405,8 +411,9 @@ class Domain(mixin.NetCDFVariable,
         '''
         out = []
 
-        for ckey, c in self.filter_by_type('dimension_coordinate',
-                                           'auxiliary_coordinate').items():
+        for ckey, c in self.constructs.filter_by_type(
+                'dimension_coordinate',
+                'auxiliary_coordinate').items():
             if not c.is_climatology():
                 continue
 
