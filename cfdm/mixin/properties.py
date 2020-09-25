@@ -325,10 +325,10 @@ class Properties(Container):
     By default the identity is the first found of the following:
 
     * The ``standard_name`` property.
-    * The ``cf_role`` property, preceeded by ``'cf_role='``.
-    * The ``axis`` property, preceeded by ``'axis='``.
-    * The ``long_name`` property, preceeded by ``'long_name='``.
-    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The ``cf_role`` property, preceded by ``'cf_role='``.
+    * The ``axis`` property, preceded by ``'axis='``.
+    * The ``long_name`` property, preceded by ``'long_name='``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
     * The value of the *default* parameter.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -395,9 +395,9 @@ class Properties(Container):
     The identities comprise:
 
     * The ``standard_name`` property.
-    * All properties, preceeded by the property name and a colon,
+    * All properties, preceded by the property name and a colon,
       e.g. ``'long_name:Air temperature'``.
-    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
 
     .. versionadded:: (cfdm) 1.7.0
 

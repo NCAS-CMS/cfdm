@@ -444,12 +444,12 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     By default the identity is the first found of the following:
 
-    * The ``standard_name`` coordinate conversion parameter, preceeded
+    * The ``standard_name`` coordinate conversion parameter, preceded
       by ``'standard_name:'``.
     * The ``grid_mapping_name`` coordinate conversion parameter,
-      preceeded by ``'grid_mapping_name:'``.
+      preceded by ``'grid_mapping_name:'``.
     * The netCDF variable name (corresponding to a netCDF grid mapping
-      variable), preceeded by ``'ncvar%'``.
+      variable), preceded by ``'ncvar%'``.
     * The value of the *default* parameter.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -500,12 +500,12 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     The identities comprise:
 
-    * The ``standard_name`` coordinate conversion parameter, preceeded
+    * The ``standard_name`` coordinate conversion parameter, preceded
       by ``'standard_name:'``.
     * The ``grid_mapping_name`` coordinate conversion parameter,
-      preceeded by ``'grid_mapping_name:'``.
+      preceded by ``'grid_mapping_name:'``.
     * The netCDF variable name (corresponding to a netCDF grid mapping
-      variable), preceeded by ``'ncvar%'``.
+      variable), preceded by ``'ncvar%'``.
 
     .. versionadded:: (cfdm) 1.7.0
 

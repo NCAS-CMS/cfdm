@@ -209,7 +209,7 @@ class DomainAxis(mixin.NetCDFDimension,
 
     The identity is the first found of the following:
 
-    1. The netCDF dimension name, preceeded by 'ncdim%'.
+    1. The netCDF dimension name, preceded by 'ncdim%'.
     2. The value of the default parameter.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -253,7 +253,7 @@ class DomainAxis(mixin.NetCDFDimension,
 
     The identities comprise:
 
-    * The netCDF dimension name, preceeded by 'ncdim%'.
+    * The netCDF dimension name, preceded by 'ncdim%'.
 
     .. versionadded:: (cfdm) 1.7.0
 

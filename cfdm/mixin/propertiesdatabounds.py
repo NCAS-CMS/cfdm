@@ -1091,9 +1091,9 @@ class PropertiesDataBounds(PropertiesData):
     The identities comprise:
 
     * The ``standard_name`` property.
-    * All properties, preceeded by the property name and a colon,
+    * All properties, preceded by the property name and a colon,
       e.g. ``'long_name:Air temperature'``.
-    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
     * The identities of the bounds, if any.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -1144,10 +1144,10 @@ class PropertiesDataBounds(PropertiesData):
     By default the identity is the first found of the following:
 
     1. The ``standard_name`` property.
-    2. The ``cf_role`` property, preceeded by ``'cf_role='``.
-    3. The ``axis`` property, preceeded by ``'axis='``.
-    4. The ``long_name`` property, preceeded by ``'long_name='``.
-    5. The netCDF variable name, preceeded by ``'ncvar%'``.
+    2. The ``cf_role`` property, preceded by ``'cf_role='``.
+    3. The ``axis`` property, preceded by ``'axis='``.
+    4. The ``long_name`` property, preceded by ``'long_name='``.
+    5. The netCDF variable name, preceded by ``'ncvar%'``.
     6. The identity of the bounds, if any.
     7. The value of the *default* parameter.
 

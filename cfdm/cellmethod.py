@@ -364,7 +364,7 @@ class CellMethod(mixin.Container,
 
     By default the identity is the first found of the following:
 
-    1. The method, preceeded by 'method:'
+    1. The method, preceded by 'method:'
     2. The value of the *default* parameter.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -408,7 +408,7 @@ class CellMethod(mixin.Container,
 
     The identities comprise:
 
-    * The method, preceeded by 'method:'.
+    * The method, preceded by 'method:'.
 
     .. versionadded:: (cfdm) 1.7.0
 
