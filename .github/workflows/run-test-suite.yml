@@ -96,12 +96,16 @@ jobs:
 
     # For the two latest OSs only, generate a coverage report:
     - name: Upload coverage report to Codecov
-      # Get coverage for the two latest distros but only one Python version to
-      # treat as representative (probably overkill to get on any more jobs).
+      # Get coverage from only one job (choose with Ubuntu Python 3.7 as
+      # representative). Note that we could use a separate workflow
+      # to setup Codecov reports, but given the amount of steps required to
+      # install including dependencies via conda, that a separate workflow
+      # would have to run anyway, it is simplest to add it in this flow.
+      # Also, it means code coverage is only generated if the test suite is
+      # passing at least for that job, avoiding useless coverage reports.
       uses: codecov/codecov-action@v1.0.13
       if: |
-        (matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest') &&
-        matrix.python-version == 3.7
+        matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
       with:
         file: ./cfdm/test/cfdm_coverage_reports/coverage.xml
         fail_ci_if_error: true
