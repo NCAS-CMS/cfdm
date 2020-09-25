@@ -170,7 +170,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if bounds have
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -213,7 +217,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            geometry type has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -257,8 +265,12 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+       default: optional
+            Return the value of the *default* parameter if the
+            geometry type has not been set.
 
+            {{default Exception}}
+ 
     :Returns:
 
         `ÌnteriorRing`
@@ -305,7 +317,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if bounds have
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -348,7 +364,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            geometry type has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -393,7 +413,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if interior
+            ring data have not been set.
+
+            {{default Exception}}
 
     :Returns:
 

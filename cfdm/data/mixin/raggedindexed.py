@@ -9,7 +9,11 @@ class RaggedIndexed:
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the index
+            variable has not been set.
+
+            {{default Exception}}
 
     :Returns:
 

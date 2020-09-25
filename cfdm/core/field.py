@@ -216,7 +216,11 @@ class Field(mixin.ConstructAccess,
             *Parameter example:*
               ``key='auxiliarycoordinate0'``
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the data
+            axes have not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -285,7 +289,11 @@ class Field(mixin.ConstructAccess,
             *Parameter example:*
               ``key='auxiliarycoordinate0'``
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the data
+            axes have not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -379,7 +387,11 @@ class Field(mixin.ConstructAccess,
             *Parameter example:*
               ``key='auxiliarycoordinate0'``
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the data
+            axes have not been set.
+
+            {{default Exception}}
 
     :Returns:
 

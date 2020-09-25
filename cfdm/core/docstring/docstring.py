@@ -35,11 +35,9 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
 
     # default: optional
-    '{{default: optional}}':
-    '''default: optional
-            Return the value of the *default* parameter if data have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.''',
+    '{{default Exception}}':
+    '''If set to an `Exception` instance then it will be raised
+            instead.''',
 
     # inplace: `bool`, optional (default True)
     '{{inplace: `bool`, optional (default True)}}':
