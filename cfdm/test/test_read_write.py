@@ -451,7 +451,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(e), 1)
         e = e[0]
         self.assertIsInstance(e, cfdm.Domain)
-                
+        print (e.dump())                
         raise ValueError('Write some more tests!')
 # --- End: class
 

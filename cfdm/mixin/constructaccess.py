@@ -11,6 +11,28 @@ class ConstructAccess():
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
+    def _set_dataset_compliance(self, value):
+        '''Set the report of problems encountered whilst reading the field
+    construct from a dataset.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `dataset_compliance`
+
+    :Parameters:
+
+        value:
+           The value of the ``dataset_compliance`` component.
+
+    :Returns:
+
+        `None`
+
+    **Examples:**
+
+        '''
+        self._set_component('dataset_compliance', value, copy=True)
+
     def _unique_construct_names(self):
         '''Return unique metadata construct names.
 
