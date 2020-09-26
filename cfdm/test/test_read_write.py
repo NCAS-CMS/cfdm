@@ -442,10 +442,17 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
         d = f.domain.copy()
 
+        tmpfile = 'delme.nc'
         cfdm.write(d, tmpfile)
-        e = cfdm.read(
+        e = cfdm.read(tmpfile, domain=False)
+        self.assertFalse(e)
         
-        raise ValueError('Write some tests!')
+        e = cfdm.read(tmpfile, domain=True)
+        self.assertEqual(len(e), 1)
+        e = e[0]
+        self.assertIsInsstance(e, cfdm.Domain)
+                
+        raise ValueError('Write some more tests!')
 # --- End: class
 
 
