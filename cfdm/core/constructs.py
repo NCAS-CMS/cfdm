@@ -1147,6 +1147,10 @@ class Constructs(abstract.Container):
             raise ValueError(
                 "Can't order multiple construct types: {!r}".format(self))
 
+        if not len(self):
+            # We can always order zero items
+            return self.copy()
+
         if self._ordered_constructs != set(self._constructs):
             raise ValueError(
                 "Can't order un-orderable construct type: {!r}".format(self))

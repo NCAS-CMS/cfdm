@@ -1306,6 +1306,17 @@ class NetCDFRead(IORead):
         # Create a field/domain from every netCDF variable (apart from
         # special variables that have already been identified as such)
         # ------------------------------------------------------------
+        if g['domain']:
+            logger.info(
+                "    Reading CF-netCDF domain variables only "
+                "(ignoring CF-netCDF data variables)"
+            )  # pragma: no cover
+        else:            
+            logger.info(
+                "    Reading CF-netCDF data variables only "
+                "(ignoring CF-netCDF domain variables)"
+            )  # pragma: no cover
+            
         all_fields = OrderedDict()
         for ncvar in g['variables']:
             if ncvar not in g['do_not_create_field']:

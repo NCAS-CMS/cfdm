@@ -2905,7 +2905,7 @@ class NetCDFWrite(IOWrite):
         logger.info('  Writing {!r}:'.format(f))  # pragma: no cover
 
         # Work out if we have a field or domain instance. CF-1.9
-        domain = isinstance(f, self.implementation.get_class('Domain'))
+        domain = self.implementation.is_domain(f)
         field = not domain
 
         if domain and g['output_version'] < g['CF-1.9']:
