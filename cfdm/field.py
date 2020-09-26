@@ -677,7 +677,7 @@ class Field(mixin.NetCDFVariable,
     :Returns:
 
         `set`
-            The set of all axes on the field which are climatological time
+            The set of all domain axes which are climatological time
             axes. If there are none, this will be an empty set.
 
     **Examples:**
@@ -698,6 +698,7 @@ class Field(mixin.NetCDFVariable,
     {'cellmethod0': <{{repr}}CellMethod: area: mean>}
     >>> g.climatological_time_axes()
     set()
+
         '''
         return set(self.constructs._set_climatology())
 

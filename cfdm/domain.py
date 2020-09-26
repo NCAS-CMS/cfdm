@@ -401,7 +401,7 @@ class Domain(mixin.NetCDFVariable,
     :Returns:
 
         `set`
-            The set of all axes on the field which are climatological time
+            The set of all domain axes which are climatological time
             axes. If there are none, this will be an empty set.
 
     **Examples:**
