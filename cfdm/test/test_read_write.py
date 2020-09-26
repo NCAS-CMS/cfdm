@@ -435,6 +435,17 @@ class read_writeTest(unittest.TestCase):
 
         self.assertFalse(f)
 
+    def test_read_write_domain(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.read(self.filename)[0]
+        d = f.domain.copy()
+
+        cfdm.write(d, tmpfile)
+        e = cfdm.read(
+        
+        raise ValueError('Write some tests!')
 # --- End: class
 
 

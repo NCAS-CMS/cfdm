@@ -1407,7 +1407,7 @@ class CFDMImplementation(Implementation):
         Count variable or `None`
 
         '''
-        if self.is_field(construct):
+        if not self.is_domain(construct):
             return construct.get_data().get_count(default=None)
 
         # For a domain construct, get the count variable from its
@@ -1426,7 +1426,7 @@ class CFDMImplementation(Implementation):
         Index variable or `None`
 
         '''
-        if self.is_field(construct):
+        if not self.is_domain(construct):
             return construct.get_data().get_index(default=None)
 
         # For a domain construct, get the index variable from its
@@ -1477,7 +1477,7 @@ class CFDMImplementation(Implementation):
         List variable or `None`
 
         '''
-        if self.is_field(construct):
+        if not self.is_domain(construct):
             return construct.get_data().get_list(default=None)
         
         # For a domain construct, get the list variable from its
