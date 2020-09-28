@@ -1,33 +1,48 @@
 #!/bin/bash
 
-# --------------------------------------------------------------------
-# Run the full test suite and produce a coverage report.
+# --------------------------------------------------------------------------
+# Run the full test suite and produce a coverage report:
 #
 # $ run_test_and_coverage
 #
 # Or to omit the generation of an html report:
 #
 # $ run_test_and_coverage --nohtml
-# --------------------------------------------------------------------
+#
+# An XML report is required by Codecov (a code coverage service providing
+# detailed reports with visualisations in-browser) so is created unless set:
+#
+# $ run_test_and_coverage --noxml
+#
+# where running with both the --nohtml and --noxml arguments will omit both
+# reports, just printing a concise result table to STDOUT.
+# --------------------------------------------------------------------------
+
 #set -x
+
 
 library=cfdm
 
-# Parse options. Note that xml is required for codecov:
-if [[ $1 == "--noxml" ]] ; then 
-    generate_xml="false"
-else
-    generate_xml="true"
-fi
-if [[ $1 == "--nohtml" ]] ; then 
-    generate_html="false"
-else
-    generate_html="true"
-fi
+# Parse arguments. Note that XML output is required for codecov:
+generate_xml="true"
+generate_html="true"
+for arg in "$@"
+do
+    if [[ $arg == "--noxml" ]]
+    then
+        generate_xml="false"
+    fi
+    if [[ $arg == "--nohtml" ]]
+    then
+        generate_html="false"
+    fi
+done
 
 if ! command -v coverage &> /dev/null
 then
-    echo "Requires the coverage module: install it e.g. via 'pip install coverage'"
+    echo \
+"Requires the coverage module: install it e.g. via \
+'pip install coverage'"
     exit 3
 fi
 
@@ -43,7 +58,7 @@ mkdir -p $cov_dir
 echo "coverage docs: https://coverage.readthedocs.io"
 if [[ $generate_html == "true" ]] ; then
     html_dir=$cov_dir/html
-    mkdir $html_dir
+    mkdir -p $html_dir
     coverage html --title "$library test suite coverage report" -d $html_dir
 
     echo "coverage HTML report URL: file://$PWD/$html_dir/index.html"
