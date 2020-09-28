@@ -118,6 +118,7 @@ Metadata constructs
    ~cfdm.Field.has_data_axes
    ~cfdm.Field.set_data_axes
    ~cfdm.Field.domain_axis_key
+   ~cfdm.Field.has_geometry
    
 .. rubric:: Attributes
    

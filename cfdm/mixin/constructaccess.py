@@ -755,6 +755,32 @@ class ConstructAccess():
 
         return keys.pop()
 
+    def has_geometry(self):
+        '''Return whether or not any coordinates have cell geometries.
+
+    .. versionadded:: (cfdm) 1.8.0
+    
+    :Returns:
+    
+        `bool`
+            True if there are geometries, otherwise False.
+        
+    **Examples:**
+
+    >>> f = {{package}}.{{class}}()
+    >>> f.has_geometry()
+    False
+
+        '''
+        for c in self.constructs.filter_by_type(
+                'auxiliary_coordinate',
+                'dimension_coordinate',
+                'domain_ancillary').values():
+            if c.has_geometry():
+                return True
+
+        return False
+
 #    # ----------------------------------------------------------------
 #    # NetCDF interface methods
 #    # ----------------------------------------------------------------

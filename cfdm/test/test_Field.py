@@ -636,6 +636,16 @@ class FieldTest(unittest.TestCase):
                                     header=h)
         # --- End: for
 
+    def test_Field_has_geometry(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f
+        self.assertFalse(f.has_geometry())
+        
+        f = cfdm.example_field(6)
+        self.assertTrue(f.has_geometry())
+
 # --- End: class
 
 
