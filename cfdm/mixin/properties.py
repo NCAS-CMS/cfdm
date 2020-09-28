@@ -27,6 +27,9 @@ class Properties(Container):
         '''
         return '{0}'.format(self.identity(''))
 
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
     def _dump_properties(self, _prefix='', _level=0,
                          _omit_properties=None):
         '''Dump the properties.
@@ -124,6 +127,7 @@ class Properties(Container):
         out.append("{} = {}{}()".format(name, namespace,
                                         self.__class__.__name__))
 
+<<<<<<< HEAD
         if _properties:
             properties = self.properties()
             if properties:
@@ -139,6 +143,19 @@ class Properties(Container):
             if nc is not None:
                 out.append("{}.nc_set_variable({!r})".format(name, nc))
         # --- End: if
+=======
+        properties = self.properties()
+        if properties:
+            for prop in self.inherited_properties():
+                properties.pop(prop, None)
+
+            out.append("{}.set_properties({})".format(name,
+                                                      properties))
+
+        nc = self.nc_get_variable(None)
+        if nc is not None:
+            out.append("{}.nc_set_variable({!r})".format(name, nc))
+>>>>>>> 3068b48404abcb16e1f128f3077b498cfd8fd1ce
 
         if string:
             indent = ' ' * indent
@@ -327,10 +344,10 @@ class Properties(Container):
     By default the identity is the first found of the following:
 
     * The ``standard_name`` property.
-    * The ``cf_role`` property, preceeded by ``'cf_role='``.
-    * The ``axis`` property, preceeded by ``'axis='``.
-    * The ``long_name`` property, preceeded by ``'long_name='``.
-    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The ``cf_role`` property, preceded by ``'cf_role='``.
+    * The ``axis`` property, preceded by ``'axis='``.
+    * The ``long_name`` property, preceded by ``'long_name='``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
     * The value of the *default* parameter.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -397,9 +414,15 @@ class Properties(Container):
     The identities comprise:
 
     * The ``standard_name`` property.
+<<<<<<< HEAD
     * All properties, preceeded by the property name and an equals
       e.g. ``'long_name=Air temperature'``.
     * The netCDF variable name, preceeded by ``'ncvar%'``.
+=======
+    * All properties, preceded by the property name and a colon,
+      e.g. ``'long_name:Air temperature'``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
+>>>>>>> 3068b48404abcb16e1f128f3077b498cfd8fd1ce
 
     .. versionadded:: (cfdm) 1.7.0
 

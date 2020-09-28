@@ -277,6 +277,7 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Data.creation_commands
    ~cfdm.Data.get_filenames
    ~cfdm.Data.source
 

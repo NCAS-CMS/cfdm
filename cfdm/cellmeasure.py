@@ -82,6 +82,53 @@ class CellMeasure(mixin.NetCDFVariable,
 
         self._initialise_netcdf(source)
 
+    def creation_commands(self, representative_data=False,
+                          namespace=None, indent=0, string=True,
+                          name='c', data_name='data', header=True):
+        '''Return the commands that would create the cell measure construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Data.creation_commands`,
+                 `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{representative_data: `bool`, optional}}
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+        TODO
+
+        '''
+        out = super().creation_commands(
+            representative_data=representative_data, indent=0,
+            namespace=namespace, string=False, name=name,
+            data_name=data_name, header=header)
+
+        measure = self.get_measure(None)
+        if measure is not None:
+            out.append("{}.set_measure({!r})".format(name, measure))
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
+
     def dump(self, display=True, _omit_properties=None, _key=None,
              _level=0, _title=None, _axes=None, _axis_names=None):
         '''A full description of the cell measure construct.
@@ -223,11 +270,11 @@ class CellMeasure(mixin.NetCDFVariable,
 
     By default the identity is the first found of the following:
 
-    * The measure, preceeded by ``'measure:'``.
+    * The measure, preceded by ``'measure:'``.
     * The ``standard_name`` property.
-    * The ``cf_role`` property, preceeded by 'cf_role='.
-    * The ``long_name`` property, preceeded by 'long_name='.
-    * The netCDF variable name, preceeded by 'ncvar%'.
+    * The ``cf_role`` property, preceded by 'cf_role='.
+    * The ``long_name`` property, preceded by 'long_name='.
+    * The netCDF variable name, preceded by 'ncvar%'.
     * The value of the default parameter.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -300,11 +347,11 @@ class CellMeasure(mixin.NetCDFVariable,
 
     The identities comprise:
 
-    * The measure property, preceeded by ``'measure:'``.
+    * The measure property, preceded by ``'measure:'``.
     * The ``standard_name`` property.
-    * All properties, preceeded by the property name and a colon,
+    * All properties, preceded by the property name and a colon,
       e.g. ``'long_name:Air temperature'``.
-    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
 
     .. versionadded:: (cfdm) 1.7.0
 

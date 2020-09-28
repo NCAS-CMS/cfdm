@@ -85,6 +85,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.InteriorRing.copy
+   ~cfdm.InteriorRing.creation_commands
    ~cfdm.InteriorRing.equals
    ~cfdm.InteriorRing.uncompress
    ~cfdm.InteriorRing.get_filenames

@@ -528,6 +528,99 @@ class PropertiesDataBounds(PropertiesData):
 
         return c
 
+    def creation_commands(self, representative_data=False,
+                          namespace=None, indent=0, string=True,
+                          name='c', data_name='data', bounds_name='b',
+                          interior_ring_name='i', header=True):
+        '''Return the commands that would create the construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Data.creation_commands`,
+                 `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{representative_data: `bool`, optional}}
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+        TODO
+
+        '''
+        if name in (data_name, bounds_name, interior_ring_name):
+            raise ValueError(
+                "The 'name' parameter can not have the same value as "
+                "any of the 'data_name', 'bounds_name', or "
+                "'interior_ring_name' parameters: {!r}".format(
+                    name)
+            )
+
+        if data_name in (name, bounds_name, interior_ring_name):
+            raise ValueError(
+                "The 'data_name' parameter can not have "
+                "the same value as any of the 'name', 'bounds_name', "
+                "or 'interior_ring_name' parameters: {!r}".format(
+                    data_name)
+            )
+
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        out = super().creation_commands(
+            representative_data=representative_data, indent=0,
+            namespace=namespace, string=False, name=name,
+            data_name=data_name, header=header)
+
+        # Geometry type
+        geometry = self.get_geometry(None)
+        if geometry is not None:
+            out.append("{}.set_geometry({!r})".format(name, geometry))
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.extend(
+                bounds.creation_commands(
+                    representative_data=representative_data, indent=0,
+                    namespace=namespace0, string=False, name=bounds_name,
+                    data_name=data_name, header=False)
+            )
+            out.append("{}.set_bounds({})".format(name, bounds_name))
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.extend(
+                interior_ring.creation_commands(
+                    representative_data=representative_data, indent=0,
+                    namespace=namespace0, string=False,
+                    name=interior_ring_name, data_name=data_name,
+                    header=False)
+            )
+            out.append("{}.set_interior_ring({})".format(name,
+                                                         interior_ring_name))
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
+
     def del_node_count(self, default=ValueError()):
         '''Remove the node count variable for geometry bounds.
 
@@ -998,9 +1091,9 @@ class PropertiesDataBounds(PropertiesData):
     The identities comprise:
 
     * The ``standard_name`` property.
-    * All properties, preceeded by the property name and a colon,
+    * All properties, preceded by the property name and a colon,
       e.g. ``'long_name:Air temperature'``.
-    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The netCDF variable name, preceded by ``'ncvar%'``.
     * The identities of the bounds, if any.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -1051,10 +1144,10 @@ class PropertiesDataBounds(PropertiesData):
     By default the identity is the first found of the following:
 
     1. The ``standard_name`` property.
-    2. The ``cf_role`` property, preceeded by ``'cf_role='``.
-    3. The ``axis`` property, preceeded by ``'axis='``.
-    4. The ``long_name`` property, preceeded by ``'long_name='``.
-    5. The netCDF variable name, preceeded by ``'ncvar%'``.
+    2. The ``cf_role`` property, preceded by ``'cf_role='``.
+    3. The ``axis`` property, preceded by ``'axis='``.
+    4. The ``long_name`` property, preceded by ``'long_name='``.
+    5. The netCDF variable name, preceded by ``'ncvar%'``.
     6. The identity of the bounds, if any.
     7. The value of the *default* parameter.
 

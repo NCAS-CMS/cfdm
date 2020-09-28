@@ -135,6 +135,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.copy
+   ~cfdm.DimensionCoordinate.creation_commands
    ~cfdm.DimensionCoordinate.equals
    ~cfdm.DimensionCoordinate.uncompress
    ~cfdm.DimensionCoordinate.get_filenames

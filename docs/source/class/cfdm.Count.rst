@@ -80,6 +80,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Count.copy
+   ~cfdm.Count.creation_commands
    ~cfdm.Count.equals
    ~cfdm.Count.get_filenames
 

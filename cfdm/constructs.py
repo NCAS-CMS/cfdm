@@ -696,10 +696,10 @@ class Constructs(mixin.Container,
     2. The identity of a one-dimensional auxiliary coordinate
        construct that spans the domain axis construct. This will
        either be the value of a ``standard_name``, ``cf_role``
-       (preceeded by ``'cf_role='``) or ``axis`` (preceeded by
+       (preceded by ``'cf_role='``) or ``axis`` (preceded by
        ``'axis='``) property, as appropriate.
-    3. The netCDF dimension name, preceeded by 'ncdim%'.
-    4. The domain axis construct key, preceeded by 'key%'.
+    3. The netCDF dimension name, preceded by 'ncdim%'.
+    4. The domain axis construct key, preceded by 'key%'.
 
     :Parameters:
 

@@ -176,6 +176,7 @@ Miscellaneous
    ~cfdm.Field.climatological_time_axes
    ~cfdm.Field.compress
    ~cfdm.Field.copy
+   ~cfdm.Field.creation_commands
    ~cfdm.Field.equals
    ~cfdm.Field.convert
    ~cfdm.Field.uncompress

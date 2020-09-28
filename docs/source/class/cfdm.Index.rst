@@ -80,6 +80,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Index.copy
+   ~cfdm.Index.creation_commands
    ~cfdm.Index.equals
    ~cfdm.Index.get_filenames
 

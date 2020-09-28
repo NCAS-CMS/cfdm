@@ -74,6 +74,70 @@ class DomainAxis(mixin.NetCDFDimension,
         '''
         return 'size({0})'.format(self.get_size(''))
 
+    def creation_commands(self, namespace=None, indent=0, string=True,
+                          name='c', header=True):
+        '''Return the commands that would create the domain axis construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+        TODO
+
+        '''
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        out = []
+
+        if header:
+            out.append('#')
+            out.append("# {}:".format(self.construct_type))
+            identity = self.identity()
+            if identity:
+                out[-1] += " {}".format(identity)
+        # --- End: if
+
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        size = self.get_size(None)
+        if size is not None:
+            out.append("{}.set_size({})".format(name, size))
+
+        nc = self.nc_get_dimension(None)
+        if nc is not None:
+            out.append("{}.nc_set_dimension({!r})".format(name, nc))
+
+        if self.nc_is_unlimited():
+            out.append("c.nc_set_unlimited({})".format(True))
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
+
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, ignore_type=False):
         '''Whether two domain axis constructs are the same.
@@ -145,7 +209,7 @@ class DomainAxis(mixin.NetCDFDimension,
 
     The identity is the first found of the following:
 
-    1. The netCDF dimension name, preceeded by 'ncdim%'.
+    1. The netCDF dimension name, preceded by 'ncdim%'.
     2. The value of the default parameter.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -189,7 +253,7 @@ class DomainAxis(mixin.NetCDFDimension,
 
     The identities comprise:
 
-    * The netCDF dimension name, preceeded by 'ncdim%'.
+    * The netCDF dimension name, preceded by 'ncdim%'.
 
     .. versionadded:: (cfdm) 1.7.0
 

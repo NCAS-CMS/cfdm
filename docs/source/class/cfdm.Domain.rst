@@ -96,6 +96,7 @@ Miscellaneous
 
    ~cfdm.Domain.climatological_time_axes
    ~cfdm.Domain.copy
+   ~cfdm.Domain.creation_commands
    ~cfdm.Domain.equals
    ~cfdm.Domain.fromconstructs
 

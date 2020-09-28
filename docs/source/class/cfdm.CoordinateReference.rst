@@ -107,6 +107,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.CoordinateReference.copy
+   ~cfdm.CoordinateReference.creation_commands
    ~cfdm.CoordinateReference.equals
 
 NetCDF

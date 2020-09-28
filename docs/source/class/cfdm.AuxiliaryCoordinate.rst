@@ -163,6 +163,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.AuxiliaryCoordinate.copy
+   ~cfdm.AuxiliaryCoordinate.creation_commands
    ~cfdm.AuxiliaryCoordinate.equals
    ~cfdm.AuxiliaryCoordinate.uncompress
    ~cfdm.AuxiliaryCoordinate.get_filenames
