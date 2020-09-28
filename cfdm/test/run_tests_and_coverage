@@ -43,7 +43,7 @@ mkdir -p $cov_dir
 echo "coverage docs: https://coverage.readthedocs.io"
 if [[ $generate_html == "true" ]] ; then
     html_dir=$cov_dir/html
-    mkdir $html_dir
+    mkdir -p $html_dir
     coverage html --title "$library test suite coverage report" -d $html_dir
 
     echo "coverage HTML report URL: file://$PWD/$html_dir/index.html"
