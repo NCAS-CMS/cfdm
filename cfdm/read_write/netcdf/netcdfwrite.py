@@ -473,12 +473,11 @@ class NetCDFWrite(IOWrite):
             return
 
         domain_axes = tuple(domain_axes)
-        print ('NC', repr(construct), domain_axes)
+
         ncdims = [g['axis_to_ncdim'][axis] for axis in domain_axes]
 
         compression_type = self.implementation.get_compression_type(construct)
         if compression_type:
-            print ('compression_type=', compression_type)
             sample_dimension_position = (
                 self.implementation.get_sample_dimension_position(construct)
             )
@@ -489,11 +488,8 @@ class NetCDFWrite(IOWrite):
                 [g['axis_to_ncdim'][axis]
                  for axis in compressed_axes]
             )
-            print ('compressed_axes=',compressed_axes)
-            print ('compressed_ncdims=',compressed_ncdims)
-            print ("g['sample_ncdim']=",g['sample_ncdim'])
             sample_ncdim = g['sample_ncdim'].get(compressed_ncdims)
-            print ('sample_ncdim = ', sample_ncdim)
+
             if compression_type == 'gathered':
                 # ----------------------------------------------------
                 # Compression by gathering
@@ -1545,7 +1541,6 @@ class NetCDFWrite(IOWrite):
         `dict`
 
         '''
-#        print ('   coord_ncdimensions=',    coord_ncdimensions)
         g = self.write_vars
 
         # Create the node count flattened data
@@ -2075,7 +2070,7 @@ class NetCDFWrite(IOWrite):
 
         # The netCDF dimensions for the auxiliary coordinate variable
         ncdimensions = self._netcdf_dimensions(f, key, coord)
-        print ('AUX', repr(coord), ncdimensions)
+
         if self._already_in_file(coord, ncdimensions):
             ncvar = g['seen'][id(coord)]['ncvar']
 
@@ -2640,7 +2635,7 @@ class NetCDFWrite(IOWrite):
 
             compressed = bool(
                 set(ncdimensions).intersection(g['sample_ncdim'].values()))
-            print (5555, repr(cfvar), ncvar, ncdimensions, compressed)
+
             self._write_data(data, cfvar, ncvar, ncdimensions,
                              unset_values=unset_values,
                              compressed=compressed,
@@ -3071,8 +3066,6 @@ class NetCDFWrite(IOWrite):
 #            if ncdim is not None:
 #                ncdim = self._netcdf_name(ncdim)
 
-#            print ('\n\n F ncdim=', ncdim)
-
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
                 if (self.implementation.get_construct_data_axes(f, key)
@@ -3280,7 +3273,7 @@ class NetCDFWrite(IOWrite):
             # For a domain, the domain axes should NOT have changed
             # since we last retrieved them. CF-1.9
             field_data_axes = tuple(data_axes)
-            
+
         data_ncdimensions = [g['axis_to_ncdim'][axis]
                              for axis in field_data_axes]
 
@@ -3292,10 +3285,9 @@ class NetCDFWrite(IOWrite):
             compressed_axes = tuple(
                 self.implementation.get_compressed_axes(f)
             )
- #            g['compressed_axes'] = compressed_axes
+#            g['compressed_axes'] = compressed_axes
             compressed_ncdims = tuple([g['axis_to_ncdim'][axis]
                                        for axis in compressed_axes])
-            print (99999999999,  compressed_axes, compressed_ncdims )
 
             if compression_type == 'gathered':
                 # ----------------------------------------------------
@@ -3352,7 +3344,7 @@ class NetCDFWrite(IOWrite):
                 count = self.implementation.get_count(f)
                 count_ncdim = self.implementation.nc_get_dimension(
                     count, default='feature')
-                print ('count_ncdim =', count_ncdim )
+
                 if not g['group']:
                     # A flat file has been requested, so strip off any
                     # group structure from the name.
@@ -3361,7 +3353,7 @@ class NetCDFWrite(IOWrite):
                 sample_ncdim = self._write_count_variable(
                     f, count,
                     ncdim=count_ncdim, create_ncdim=True)
-                print ('sample_ncdim =', sample_ncdim )
+
                 if not g['group']:
                     # A flat file has been requested, so strip off any
                     # group structure from the name.
@@ -3376,14 +3368,13 @@ class NetCDFWrite(IOWrite):
                     instance_dimension=data_ncdimensions[0])
 
                 g['sample_ncdim'][compressed_ncdims[0:2]] = index_ncdim
-                print ('YARR',  g['sample_ncdim'])
             else:
                 raise ValueError(
                     "Can't write {!r}: Unknown compression type: {!r}".format(
                         oget_courg_f, compression_type))
 
             g['sample_ncdim'][compressed_ncdims] = sample_ncdim
-            print ('FACE',  g['sample_ncdim'])
+
             if field:
                 n = len(compressed_ncdims)
                 sample_dimension = (
@@ -3404,8 +3395,7 @@ class NetCDFWrite(IOWrite):
         # --- End: if
 
         data_ncdimensions = tuple(data_ncdimensions)
-        print (111111,  data_ncdimensions)
-        
+
         # ------------------------------------------------------------
         # Create auxiliary coordinate variables, except those which
         # might be completely specified elsewhere by a transformation.

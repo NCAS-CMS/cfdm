@@ -8,30 +8,30 @@ class ConstructAccess():
     .. versionadded:: (cfdm) 1.7.0
 
     '''
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
-    def _set_dataset_compliance(self, value):
-        '''Set the report of problems encountered whilst reading the construct
-    from a dataset.
-
-    .. versionadded:: (cfdm) 1.7.0
-
-    .. seealso:: `dataset_compliance`
-
-    :Parameters:
-
-        value:
-           The value of the ``dataset_compliance`` component.
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-        '''
-        self._set_component('dataset_compliance', value, copy=True)
+#    # ----------------------------------------------------------------
+#    # Private methods
+#    # ----------------------------------------------------------------
+#    def _set_dataset_compliance(self, value):
+#        '''Set the report of problems encountered whilst reading the construct
+#    from a dataset.
+#
+#    .. versionadded:: (cfdm) 1.7.0
+#
+#    .. seealso:: `dataset_compliance`
+#
+#    :Parameters:
+#
+#        value:
+#           The value of the ``dataset_compliance`` component.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#        '''
+#        self._set_component('dataset_compliance', value, copy=True)
 
     def _unique_construct_names(self):
         '''Return unique metadata construct names.
@@ -576,75 +576,75 @@ class ConstructAccess():
             default,
             "Can't return the keys of {0} constructs".format(len(c)))
 
-    def dataset_compliance(self, display=False):
-        '''A report of problems encountered whilst reading the construct from
-    a dataset.
-
-    If the dataset is partially CF-compliant to the extent that it is
-    not possible to unambiguously map an element of the netCDF dataset
-    to an element of the CF data model, then a construct is still
-    returned by the `read` function, but may be incomplete.
-
-    Such "structural" non-compliance would occur, for example, if the
-    ``coordinates`` attribute of a CF-netCDF data variable refers to
-    another variable that does not exist, or refers to a variable that
-    spans a netCDF dimension that does not apply to the data variable.
-
-    Other types of non-compliance are not checked, such whether or not
-    controlled vocabularies have been adhered to.
-
-    .. versionadded:: (cfdm) 1.7.0
-
-    .. seealso:: `{{package}}.read`
-
-    :Parameters:
-
-        display: `bool`, optional
-            If True print the compliance report. By default the report
-            is returned as a dictionary.
-
-    :Returns:
-
-        `None` or `dict`
-            The report. If *display* is True then the report is
-            printed and `None` is returned. Otherwise the report is
-            returned as a dictionary.
-
-    **Examples:**
-
-    If no problems were encountered, an empty dictionary is returned:
-
-    >>> f.dataset_compliance()
-    {}
-
-        '''
-        d = self._get_component('dataset_compliance', {})
-
-        if not display:
-            return d
-
-        if not d:
-            print(d)
-            return
-
-        for key0, value0 in d.items():
-            print('{{{0!r}:'.format(key0))
-            print('    CF version: {0!r},'.format(value0['CF version']))
-            print('    dimensions: {0!r},'.format(value0['dimensions']))
-            print('    non-compliance: {')
-            for key1, value1 in sorted(value0['non-compliance'].items()):
-                for x in value1:
-                    print('        {!r}: ['.format(key1))
-                    print('            {{{0}}},'.format(
-                        '\n             '.join(
-                            ['{0!r}: {1!r},'.format(key2, value2)
-                             for key2, value2 in sorted(x.items())]
-                        )
-                    ))
-
-                print('        ],')
-
-            print('    },')
+#    def dataset_compliance(self, display=False):
+#        '''A report of problems encountered whilst reading the construct from
+#    a dataset.
+#
+#    If the dataset is partially CF-compliant to the extent that it is
+#    not possible to unambiguously map an element of the netCDF dataset
+#    to an element of the CF data model, then a construct is still
+#    returned by the `read` function, but may be incomplete.
+#
+#    Such "structural" non-compliance would occur, for example, if the
+#    ``coordinates`` attribute of a CF-netCDF data variable refers to
+#    another variable that does not exist, or refers to a variable that
+#    spans a netCDF dimension that does not apply to the data variable.
+#
+#    Other types of non-compliance are not checked, such whether or not
+#    controlled vocabularies have been adhered to.
+#
+#    .. versionadded:: (cfdm) 1.7.0
+#
+#    .. seealso:: `{{package}}.read`
+#
+#    :Parameters:
+#
+#        display: `bool`, optional
+#            If True print the compliance report. By default the report
+#            is returned as a dictionary.
+#
+#    :Returns:
+#
+#        `None` or `dict`
+#            The report. If *display* is True then the report is
+#            printed and `None` is returned. Otherwise the report is
+#            returned as a dictionary.
+#
+#    **Examples:**
+#
+#    If no problems were encountered, an empty dictionary is returned:
+#
+#    >>> f.dataset_compliance()
+#    {}
+#
+#        '''
+#        d = self._get_component('dataset_compliance', {})
+#
+#        if not display:
+#            return d
+#
+#        if not d:
+#            print(d)
+#            return
+#
+#        for key0, value0 in d.items():
+#            print('{{{0!r}:'.format(key0))
+#            print('    CF version: {0!r},'.format(value0['CF version']))
+#            print('    dimensions: {0!r},'.format(value0['dimensions']))
+#            print('    non-compliance: {')
+#            for key1, value1 in sorted(value0['non-compliance'].items()):
+#                for x in value1:
+#                    print('        {!r}: ['.format(key1))
+#                    print('            {{{0}}},'.format(
+#                        '\n             '.join(
+#                            ['{0!r}: {1!r},'.format(key2, value2)
+#                             for key2, value2 in sorted(x.items())]
+#                        )
+#                    ))
+#
+#                print('        ],')
+#
+#            print('    },')
 
     def domain_axis_key(self, identity, default=ValueError()):
         '''Return the key of the domain axis construct that is spanned by 1-d
@@ -755,702 +755,702 @@ class ConstructAccess():
 
         return keys.pop()
 
-    # ----------------------------------------------------------------
-    # NetCDF interface methods
-    # ----------------------------------------------------------------
-    def nc_set_component_variable(self, component, value):
-        '''Set the netCDF variable name for all components of the given type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_del_component_variable`,
-                 `nc_set_component_variable_groups`,
-                 `nc_clear_component_variable_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'interior_ring'``    Interior ring variables for
-                                   geometry coordinates
-
-
-            ``'node_count'``       Node count variables for geometry
-                                   coordinates
-
-            ``'part_node_count'``  Part node count variables for
-                                   geometry coordinates
-
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-
-            ``'list'``             List variables for compression by
-                                   gathering
-            =====================  ===================================
-
-        value: `str`
-            The netCDF variable name to be set for each component.
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_set_component_variable('interior_ring', 'interiorring_1')
-
-        '''
-        if component in ('count', 'index', 'list'):
-            variables = self._get_data_compression_variables(component)
-        elif component in ('interior_ring', 'node_count', 'part_node_count'):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_set_variable(value)
-
-    def nc_del_component_variable(self, component):
-        '''Remove the netCDF variable name for all components of the given
-    type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_set_component_variable`,
-                 `nc_set_component_variable_groups`,
-                 `nc_clear_component_variable_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'interior_ring'``    Interior ring variables for
-                                   geometry coordinates
-
-            ``'node_count'``       Node count variables for geometry
-                                   coordinates
-
-            ``'part_node_count'``  Part node count variables for
-                                   geometry coordinates
-
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-
-            ``'list'``             List variables for compression by
-                                   gathering
-
-            =====================  ===================================
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_del_component_variable('interior_ring')
-
-        '''
-        if component in ('count', 'index', 'list'):
-            variables = self._get_data_compression_variables(component)
-        elif component in ('interior_ring', 'node_count', 'part_node_count'):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_del_variable(None)
-
-    def nc_set_component_variable_groups(self, component, groups):
-        '''Set the netCDF variable groups hierarchy for all components of the
-    given type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_del_component_variable`,
-                 `nc_set_component_variable`,
-                 `nc_clear_component_variable_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'interior_ring'``    Interior ring variables for
-                                   geometry coordinates
-
-            ``'node_count'``       Node count variables for geometry
-                                   coordinates
-
-            ``'part_node_count'``  Part node count variables for
-                                   geometry coordinates
-
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-
-            ``'list'``             List variables for compression by
-                                   gathering
-            =====================  ===================================
-
-        groups: sequence of `str`
-            The new group structure for each component.
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_set_component_variable_groups('interior_ring', ['forecast'])
-
-        '''
-        if component in ('count', 'index', 'list'):
-            variables = self._get_data_compression_variables(component)
-        elif component in ('interior_ring', 'node_count', 'part_node_count'):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_set_variable_groups(groups)
-
-    def nc_clear_component_variable_groups(self, component):
-        '''Remove the netCDF variable groups hierarchy for all components of
-    the given type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_del_component_variable`,
-                 `nc_set_component_variable`,
-                 `nc_set_component_variable_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'interior_ring'``    Interior ring variables for
-                                   geometry coordinates
-
-            ``'node_count'``       Node count variables for geometry
-                                   coordinates
-
-            ``'part_node_count'``  Part node count variables for
-                                   geometry coordinates
-
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-
-            ``'list'``             List variables for compression by
-                                   gathering
-            =====================  ===================================
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_clear_component_variable_groups('interior_ring')
-
-        '''
-        if component in ('count', 'index', 'list'):
-            variables = self._get_data_compression_variables(component)
-        elif component in ('interior_ring', 'node_count', 'part_node_count'):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_clear_variable_groups()
-
-    def nc_set_component_dimension(self, component, value):
-        '''Set the netCDF dimension name for all components of the given type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_del_component_dimension`,
-                 `nc_set_component_dimension_groups`,
-                 `nc_clear_component_dimension_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'interior_ring'``    Interior ring variables for
-                                   geometry coordinates
-
-            ``'part_node_count'``  Part node count variables for
-                                   geometry coordinates
-
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-            =====================  ===================================
-
-        value: `str`
-            The netCDF dimension name to be set for each component.
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_set_component_dimension('interior_ring', 'part')
-
-        '''
-        if component in ('count', 'index'):
-            variables = self._get_data_compression_variables(component)
-        elif component in ('interior_ring', 'part_node_count'):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_set_dimension(value)
-
-    def nc_del_component_dimension(self, component):
-        '''Remove the netCDF dimension name for all components of the given
-    type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_set_component_dimension`,
-                 `nc_set_component_dimension_groups`,
-                 `nc_clear_component_dimension_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'interior_ring'``    Interior ring variables for
-                                   geometry coordinates
-
-            ``'part_node_count'``  Part node count variables for
-                                   geometry coordinates
-
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-            =====================  ===================================
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_del_component_dimension('interior_ring')
-
-        '''
-        if component in ('count', 'index'):
-            variables = self._get_data_compression_variables(component)
-        elif component in ('interior_ring', 'part_node_count'):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_del_dimension(None)
-
-    def nc_set_component_dimension_groups(self, component, groups):
-        '''Set the netCDF dimension groups hierarchy for all components of the
-    given type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_del_component_dimension`,
-                 `nc_set_component_dimension`,
-                 `nc_clear_component_dimension_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'interior_ring'``    Interior ring variables for
-                                   geometry coordinates
-
-            ``'part_node_count'``  Part node count variables for
-                                   geometry coordinates
-
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-            =====================  ===================================
-
-        groups: sequence of `str`
-            The new group structure for each component.
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_set_component_dimension_groups('interior_ring', ['forecast'])
-
-        '''
-        if component in ('count', 'index'):
-            variables = self._get_data_compression_variables(component)
-        elif component in ('interior_ring', 'part_node_count'):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_set_dimension_groups(groups)
-
-    def nc_clear_component_dimension_groups(self, component):
-        '''Remove the netCDF dimension groups hierarchy for all components of
-    the given type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_del_component_dimension`,
-                 `nc_set_component_dimension`,
-                 `nc_set_component_dimension_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'interior_ring'``    Interior ring variables for
-                                   geometry coordinates
-
-            ``'part_node_count'``  Part node count variables for
-                                   geometry coordinates
-
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-            =====================  ===================================
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_clear_component_dimension_groups('interior_ring')
-
-        '''
-        if component in ('count', 'index'):
-            variables = self._get_data_compression_variables(component)
-        elif component in ('interior_ring', 'part_node_count'):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_clear_dimension_groups()
-
-    def nc_set_component_sample_dimension(self, component, value):
-        '''Set the netCDF sample dimension name for all components of the
-    given type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_del_component_sample_dimension`,
-                 `nc_set_component_sample_dimension_groups`,
-                 `nc_clear_component_sample_dimension_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-            =====================  ===================================
-
-        value: `str`
-            The netCDF sample_dimension name to be set for each
-            component.
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_set_component_sample_dimension('count', 'obs')
-
-        '''
-        if component in ('count', 'index'):
-            variables = self._get_data_compression_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_set_sample_dimension(value)
-
-    def nc_del_component_sample_dimension(self, component):
-        '''Remove the netCDF sample dimension name for all components of the
-    given type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_set_component_sample_dimension`,
-                 `nc_set_component_sample_dimension_groups`,
-                 `nc_clear_component_sample_dimension_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-            =====================  ===================================
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_del_component_sample_dimension('count')
-
-        '''
-        if component in ('count', 'index'):
-            variables = self._get_data_compression_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_del_sample_dimension(None)
-
-    def nc_set_component_sample_dimension_groups(self, component, groups):
-        '''Set the netCDF sample dimension groups hierarchy for all components
-    of the given type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_del_component_sample_dimension`,
-                 `nc_set_component_sample_dimension`,
-                 `nc_clear_component_sample_dimension_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-            =====================  ===================================
-
-        groups: sequence of `str`
-            The new group structure for each component.
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_set_component_sample_dimension_groups('count', ['forecast'])
-
-        '''
-        if component in ('count', 'index'):
-            variables = self._get_data_compression_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_set_sample_dimension_groups(groups)
-
-    def nc_clear_component_sample_dimension_groups(self, component):
-        '''Remove the netCDF sample dimension groups hierarchy for all
-    components of the given type.
-
-    Some components exist within multiple constructs, but when written
-    to a netCDF dataset the netCDF names associated with such
-    components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
-    preferably by using this method to ensure consistency across all
-    such components.
-
-    .. versionadded:: (cfdm) 1.8.6.0
-
-    .. seealso:: `nc_del_component_sample_dimension`,
-                 `nc_set_component_sample_dimension`,
-                 `nc_set_component_sample_dimension_groups`
-
-    :Parameters:
-
-        component: `str`
-            Specify the component type. One of:
-
-            =====================  ===================================
-            *component*            Description
-            =====================  ===================================
-            ``'count'``            Count variables for contiguous
-                                   ragged arrays
-
-            ``'index'``            Index variables for indexed
-                                   ragged arrays
-            =====================  ===================================
-
-    :Returns:
-
-        `None`
-
-    **Examples:**
-
-    >>> f.nc_del_component_sample_dimension_groups('count')
-
-        '''
-        if component in ('count', 'index'):
-            variables = self._get_data_compression_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_clear_sample_dimension_groups()
+#    # ----------------------------------------------------------------
+#    # NetCDF interface methods
+#    # ----------------------------------------------------------------
+#    def nc_set_component_variable(self, component, value):
+#        '''Set the netCDF variable name for all components of the given type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_del_component_variable`,
+#                 `nc_set_component_variable_groups`,
+#                 `nc_clear_component_variable_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'interior_ring'``    Interior ring variables for
+#                                   geometry coordinates
+#
+#
+#            ``'node_count'``       Node count variables for geometry
+#                                   coordinates
+#
+#            ``'part_node_count'``  Part node count variables for
+#                                   geometry coordinates
+#
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#
+#            ``'list'``             List variables for compression by
+#                                   gathering
+#            =====================  ===================================
+#
+#        value: `str`
+#            The netCDF variable name to be set for each component.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_set_component_variable('interior_ring', 'interiorring_1')
+#
+#        '''
+#        if component in ('count', 'index', 'list'):
+#            variables = self._get_data_compression_variables(component)
+#        elif component in ('interior_ring', 'node_count', 'part_node_count'):
+#            variables = self._get_coordinate_geometry_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_set_variable(value)
+#
+#    def nc_del_component_variable(self, component):
+#        '''Remove the netCDF variable name for all components of the given
+#    type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_set_component_variable`,
+#                 `nc_set_component_variable_groups`,
+#                 `nc_clear_component_variable_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'interior_ring'``    Interior ring variables for
+#                                   geometry coordinates
+#
+#            ``'node_count'``       Node count variables for geometry
+#                                   coordinates
+#
+#            ``'part_node_count'``  Part node count variables for
+#                                   geometry coordinates
+#
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#
+#            ``'list'``             List variables for compression by
+#                                   gathering
+#
+#            =====================  ===================================
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_del_component_variable('interior_ring')
+#
+#        '''
+#        if component in ('count', 'index', 'list'):
+#            variables = self._get_data_compression_variables(component)
+#        elif component in ('interior_ring', 'node_count', 'part_node_count'):
+#            variables = self._get_coordinate_geometry_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_del_variable(None)
+#
+#    def nc_set_component_variable_groups(self, component, groups):
+#        '''Set the netCDF variable groups hierarchy for all components of the
+#    given type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_del_component_variable`,
+#                 `nc_set_component_variable`,
+#                 `nc_clear_component_variable_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'interior_ring'``    Interior ring variables for
+#                                   geometry coordinates
+#
+#            ``'node_count'``       Node count variables for geometry
+#                                   coordinates
+#
+#            ``'part_node_count'``  Part node count variables for
+#                                   geometry coordinates
+#
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#
+#            ``'list'``             List variables for compression by
+#                                   gathering
+#            =====================  ===================================
+#
+#        groups: sequence of `str`
+#            The new group structure for each component.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_set_component_variable_groups('interior_ring', ['forecast'])
+#
+#        '''
+#        if component in ('count', 'index', 'list'):
+#            variables = self._get_data_compression_variables(component)
+#        elif component in ('interior_ring', 'node_count', 'part_node_count'):
+#            variables = self._get_coordinate_geometry_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_set_variable_groups(groups)
+#
+#    def nc_clear_component_variable_groups(self, component):
+#        '''Remove the netCDF variable groups hierarchy for all components of
+#    the given type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_del_component_variable`,
+#                 `nc_set_component_variable`,
+#                 `nc_set_component_variable_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'interior_ring'``    Interior ring variables for
+#                                   geometry coordinates
+#
+#            ``'node_count'``       Node count variables for geometry
+#                                   coordinates
+#
+#            ``'part_node_count'``  Part node count variables for
+#                                   geometry coordinates
+#
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#
+#            ``'list'``             List variables for compression by
+#                                   gathering
+#            =====================  ===================================
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_clear_component_variable_groups('interior_ring')
+#
+#        '''
+#        if component in ('count', 'index', 'list'):
+#            variables = self._get_data_compression_variables(component)
+#        elif component in ('interior_ring', 'node_count', 'part_node_count'):
+#            variables = self._get_coordinate_geometry_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_clear_variable_groups()
+#
+#    def nc_set_component_dimension(self, component, value):
+#        '''Set the netCDF dimension name for all components of the given type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_del_component_dimension`,
+#                 `nc_set_component_dimension_groups`,
+#                 `nc_clear_component_dimension_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'interior_ring'``    Interior ring variables for
+#                                   geometry coordinates
+#
+#            ``'part_node_count'``  Part node count variables for
+#                                   geometry coordinates
+#
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#            =====================  ===================================
+#
+#        value: `str`
+#            The netCDF dimension name to be set for each component.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_set_component_dimension('interior_ring', 'part')
+#
+#        '''
+#        if component in ('count', 'index'):
+#            variables = self._get_data_compression_variables(component)
+#        elif component in ('interior_ring', 'part_node_count'):
+#            variables = self._get_coordinate_geometry_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_set_dimension(value)
+#
+#    def nc_del_component_dimension(self, component):
+#        '''Remove the netCDF dimension name for all components of the given
+#    type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_set_component_dimension`,
+#                 `nc_set_component_dimension_groups`,
+#                 `nc_clear_component_dimension_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'interior_ring'``    Interior ring variables for
+#                                   geometry coordinates
+#
+#            ``'part_node_count'``  Part node count variables for
+#                                   geometry coordinates
+#
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#            =====================  ===================================
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_del_component_dimension('interior_ring')
+#
+#        '''
+#        if component in ('count', 'index'):
+#            variables = self._get_data_compression_variables(component)
+#        elif component in ('interior_ring', 'part_node_count'):
+#            variables = self._get_coordinate_geometry_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_del_dimension(None)
+#
+#    def nc_set_component_dimension_groups(self, component, groups):
+#        '''Set the netCDF dimension groups hierarchy for all components of the
+#    given type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_del_component_dimension`,
+#                 `nc_set_component_dimension`,
+#                 `nc_clear_component_dimension_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'interior_ring'``    Interior ring variables for
+#                                   geometry coordinates
+#
+#            ``'part_node_count'``  Part node count variables for
+#                                   geometry coordinates
+#
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#            =====================  ===================================
+#
+#        groups: sequence of `str`
+#            The new group structure for each component.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_set_component_dimension_groups('interior_ring', ['forecast'])
+#
+#        '''
+#        if component in ('count', 'index'):
+#            variables = self._get_data_compression_variables(component)
+#        elif component in ('interior_ring', 'part_node_count'):
+#            variables = self._get_coordinate_geometry_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_set_dimension_groups(groups)
+#
+#    def nc_clear_component_dimension_groups(self, component):
+#        '''Remove the netCDF dimension groups hierarchy for all components of
+#    the given type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_del_component_dimension`,
+#                 `nc_set_component_dimension`,
+#                 `nc_set_component_dimension_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'interior_ring'``    Interior ring variables for
+#                                   geometry coordinates
+#
+#            ``'part_node_count'``  Part node count variables for
+#                                   geometry coordinates
+#
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#            =====================  ===================================
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_clear_component_dimension_groups('interior_ring')
+#
+#        '''
+#        if component in ('count', 'index'):
+#            variables = self._get_data_compression_variables(component)
+#        elif component in ('interior_ring', 'part_node_count'):
+#            variables = self._get_coordinate_geometry_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_clear_dimension_groups()
+#
+#    def nc_set_component_sample_dimension(self, component, value):
+#        '''Set the netCDF sample dimension name for all components of the
+#    given type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_del_component_sample_dimension`,
+#                 `nc_set_component_sample_dimension_groups`,
+#                 `nc_clear_component_sample_dimension_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#            =====================  ===================================
+#
+#        value: `str`
+#            The netCDF sample_dimension name to be set for each
+#            component.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_set_component_sample_dimension('count', 'obs')
+#
+#        '''
+#        if component in ('count', 'index'):
+#            variables = self._get_data_compression_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_set_sample_dimension(value)
+#
+#    def nc_del_component_sample_dimension(self, component):
+#        '''Remove the netCDF sample dimension name for all components of the
+#    given type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_set_component_sample_dimension`,
+#                 `nc_set_component_sample_dimension_groups`,
+#                 `nc_clear_component_sample_dimension_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#            =====================  ===================================
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_del_component_sample_dimension('count')
+#
+#        '''
+#        if component in ('count', 'index'):
+#            variables = self._get_data_compression_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_del_sample_dimension(None)
+#
+#    def nc_set_component_sample_dimension_groups(self, component, groups):
+#        '''Set the netCDF sample dimension groups hierarchy for all components
+#    of the given type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_del_component_sample_dimension`,
+#                 `nc_set_component_sample_dimension`,
+#                 `nc_clear_component_sample_dimension_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#            =====================  ===================================
+#
+#        groups: sequence of `str`
+#            The new group structure for each component.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_set_component_sample_dimension_groups('count', ['forecast'])
+#
+#        '''
+#        if component in ('count', 'index'):
+#            variables = self._get_data_compression_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_set_sample_dimension_groups(groups)
+#
+#    def nc_clear_component_sample_dimension_groups(self, component):
+#        '''Remove the netCDF sample dimension groups hierarchy for all
+#    components of the given type.
+#
+#    Some components exist within multiple constructs, but when written
+#    to a netCDF dataset the netCDF names associated with such
+#    components will be arbitrarily taken from one of them. The netCDF
+#    names can be set on all such occurences individually, or
+#    preferably by using this method to ensure consistency across all
+#    such components.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `nc_del_component_sample_dimension`,
+#                 `nc_set_component_sample_dimension`,
+#                 `nc_set_component_sample_dimension_groups`
+#
+#    :Parameters:
+#
+#        component: `str`
+#            Specify the component type. One of:
+#
+#            =====================  ===================================
+#            *component*            Description
+#            =====================  ===================================
+#            ``'count'``            Count variables for contiguous
+#                                   ragged arrays
+#
+#            ``'index'``            Index variables for indexed
+#                                   ragged arrays
+#            =====================  ===================================
+#
+#    :Returns:
+#
+#        `None`
+#
+#    **Examples:**
+#
+#    >>> f.nc_del_component_sample_dimension_groups('count')
+#
+#        '''
+#        if component in ('count', 'index'):
+#            variables = self._get_data_compression_variables(component)
+#        else:
+#            raise ValueError("Invalid component: {!r}".format(component))
+#
+#        for v in variables:
+#            v.nc_clear_sample_dimension_groups()
 
 # --- End: class

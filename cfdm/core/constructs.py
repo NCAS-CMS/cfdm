@@ -118,7 +118,7 @@ class Constructs(abstract.Container):
                     for cid in source._constructs.get(construct_type, ()):
                         self._construct_axes.pop(cid, None)
                         self._construct_type.pop(cid, None)
-                        
+
                     self._key_base.pop(construct_type, None)
                     self._array_constructs.remove(construct_type)
                     continue

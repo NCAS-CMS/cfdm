@@ -161,9 +161,9 @@ class CFDMImplementation(Implementation):
     :Parameters:
 
         variable_type: `str`
-        
+
         domain: Domain construct
- 
+
     :Returns:
 
         Compression variable or `None`
@@ -174,7 +174,7 @@ class CFDMImplementation(Implementation):
                                  'ragged indexed contiguous')
         elif variable_type == 'index':
             compression_types = ('ragged indexed',
-                                 'ragged indexed contiguous')            
+                                 'ragged indexed contiguous')
         elif variable_type == 'list':
             compression_types = ('gathered',)
         else:
@@ -183,7 +183,7 @@ class CFDMImplementation(Implementation):
                     variable_type
                 )
             )
-            
+
         constructs = self.get_constructs(domain, data=True)
 
         variable = None
@@ -191,7 +191,7 @@ class CFDMImplementation(Implementation):
             compression_type = self.get_compression_type(c)
             if compression_type not in compression_types:
                 continue
-            
+
             data = self.get_data(c, None)
             if data is None:
                 continue
@@ -207,7 +207,7 @@ class CFDMImplementation(Implementation):
                 continue
 
             if (
-                    variable is not None and 
+                    variable is not None and
                     not self.equal_components(variable, variable1)
             ):
                 raise ValueError(
@@ -567,22 +567,22 @@ class CFDMImplementation(Implementation):
 
         `list` of `str`
 
-        '''     
+        '''
         if construct is not None:
             data = self.get_data(construct)
             data_axes = self.get_construct_data_axes(field_or_domain, key)
             return [data_axes[i] for i in self.get_data_compressed_axes(data)]
-  
+
         if self.is_field(field_or_domain):
             field = field_or_domain
             data = self.get_data(field)
             data_axes = self.get_field_data_axes(field)
             return [data_axes[i] for i in self.get_data_compressed_axes(data)]
- 
+
         # For a domain construct, work out the compression axes from
         # its metadata constucts.
         domain = field_or_domain
-        
+
         compression_types = (
                 'gathered',
                 'ragged indexed contiguous',
@@ -594,7 +594,7 @@ class CFDMImplementation(Implementation):
                            for compression_type in compression_types}
 
         constructs = self.get_constructs(domain, data=True)
-       
+
         for key, c in constructs.items():
             compression_type = self.get_compression_type(c)
             if not compression_type:
@@ -603,7 +603,7 @@ class CFDMImplementation(Implementation):
             data_axes = self.get_construct_data_axes(domain, key)
             if not data_axes:
                 continue
-            
+
             data = self.get_data(c, None)
             if data is None:
                 continue
@@ -612,7 +612,7 @@ class CFDMImplementation(Implementation):
                 [data_axes[i]
                  for i in self.get_data_compressed_axes(data)]
             )
-        
+
         # The order of the following loop matters
         for compression_type in compression_types:
             if compressed_axes[compression_type]:
@@ -1479,7 +1479,7 @@ class CFDMImplementation(Implementation):
         '''
         if not self.is_domain(construct):
             return construct.get_data().get_list(default=None)
-        
+
         # For a domain construct, get the list variable from its
         # metadata constucts.
         return self._get_domain_compression_variable('list', construct)

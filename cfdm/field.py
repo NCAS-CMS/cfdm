@@ -30,6 +30,8 @@ class Field(mixin.NetCDFVariable,
             mixin.NetCDFGeometry,
             mixin.NetCDFGlobalAttributes,
             mixin.NetCDFGroupAttributes,
+            mixin.NetCDFComponents,
+            mixin.NetCDFUnreferenced,
             mixin.ConstructAccess,
             mixin.PropertiesData,
             core.Field):
@@ -1434,8 +1436,7 @@ class Field(mixin.NetCDFVariable,
                 c.creation_commands(namespace=namespace0,
                                     indent=0, string=False,
                                     name='c',
-                                    header=header
-                )
+                                    header=header)
             )
             out.append("{}.set_construct(c)".format(name))
 

@@ -71,7 +71,6 @@ class Domain(mixin.ConstructAccess,
                 copy = False
                 _use_data = True
             else:
-                print (9999)
                 constructs = constructs._view(ignore=('cell_method',
                                                       'field_ancillary'))
         else:
@@ -80,7 +79,6 @@ class Domain(mixin.ConstructAccess,
             _use_data = True
 
         if copy or not _use_data:
-            print ('111', constructs._ignore)
             constructs = constructs.copy(data=_use_data)
 
         self._set_component('constructs', constructs, copy=False)

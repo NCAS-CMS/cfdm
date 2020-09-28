@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 class Domain(mixin.NetCDFVariable,
              mixin.NetCDFGeometry,
              mixin.NetCDFGlobalAttributes,
+             mixin.NetCDFGroupAttributes,
+             mixin.NetCDFComponents,
+             mixin.NetCDFUnreferenced,
              mixin.ConstructAccess,
              mixin.Properties,
              core.Domain):
@@ -488,13 +491,13 @@ class Domain(mixin.NetCDFVariable,
                 indent=indent, namespace=namespace, string=False,
                 name=name, header=header
             )
-            
+
             nc_global_attributes = self.nc_global_attributes()
             if nc_global_attributes:
                 if header:
                     out.append('#')
                     out.append('# netCDF global attributes')
-                    
+
                     out.append(
                         "{}.nc_set_global_attributes({!r})".format(
                             name, nc_global_attributes)
@@ -611,10 +614,10 @@ class Domain(mixin.NetCDFVariable,
                 rtol=rtol, atol=atol, verbose=verbose,
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
-                ignore_properties=ignore_properties,                
+                ignore_properties=ignore_properties,
                 ignore_type=ignore_type):
             return False
-        print ('HERE1')
+
 #        pp = super()._equals_preprocess(other, verbose=verbose,
 #                                        ignore_type=ignore_type)
 #        if pp is True or pp is False:
@@ -634,7 +637,6 @@ class Domain(mixin.NetCDFVariable,
                 "{0}: Different metadata constructs".format(
                     self.__class__.__name__)
             )
-            print ('HERE-2')
             return False
 
         return True

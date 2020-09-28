@@ -61,7 +61,7 @@ class read_writeTest(unittest.TestCase):
         # self.test_only = ['NOTHING!!!!!']
         # self.test_only = ['test_write_filename']
         # self.test_only = ['test_read_write_unlimited']
-        self.test_only = ['test_read_write_domain']
+        # self.test_only = ['test_read_write_domain']
         # self.test_only = ['test_read_mask']
         # self.test_only = ['test_read_write_format']
         # self.test_only = ['test_read_write_Conventions']
@@ -447,14 +447,10 @@ class read_writeTest(unittest.TestCase):
         e = cfdm.read(tmpfile)
         self.assertTrue(len(e), 10)
 
-        print ('\n\n\n\n\n\n')
-        e = cfdm.read(tmpfile, domain=True, verbose=-1)
+        e = cfdm.read(tmpfile, domain=True, verbose=1)
         self.assertEqual(len(e), 1)
         e = e[0]
         self.assertIsInstance(e, cfdm.Domain)
-        print (d.dump())
-        print ('EEEEEEEEEEE')
-        print (e.dump())
         self.assertTrue(e.equals(e.copy(), verbose=3))
         self.assertTrue(d.equals(e, verbose=3))
         self.assertTrue(e.equals(d, verbose=3))
@@ -463,20 +459,14 @@ class read_writeTest(unittest.TestCase):
         g = cfdm.read(tmpfile)
         self.assertTrue(len(g), 1)
         g = g[0]
-        self.assertIsInstance(e, cfdm.Field)
+        self.assertIsInstance(g, cfdm.Field)
         self.assertTrue(g.equals(f, verbose=3))
-        
-        e = cfdm.read(tmpfile, domain=True, verbose=-1)
+
+        e = cfdm.read(tmpfile, domain=True, verbose=1)
         self.assertEqual(len(e), 1)
         e = e[0]
         self.assertIsInstance(e, cfdm.Domain)
 
-
-
-        
-
-    
-#        raise ValueError('Write some more tests!')
 # --- End: class
 
 

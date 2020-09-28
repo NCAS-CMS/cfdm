@@ -20,7 +20,11 @@ class Coordinate(PropertiesDataBounds):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            climatology status has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -66,7 +70,11 @@ class Coordinate(PropertiesDataBounds):
 
     :Parameters:
 
-        {{default: optional}}
+        default: optional
+            Return the value of the *default* parameter if the
+            climatology status has not been set.
+
+            {{default Exception}}
 
     :Returns:
 

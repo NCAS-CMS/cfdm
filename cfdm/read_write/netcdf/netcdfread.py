@@ -1311,12 +1311,12 @@ class NetCDFRead(IORead):
                 "    Reading CF-netCDF domain variables only "
                 "(ignoring CF-netCDF data variables)"
             )  # pragma: no cover
-        else:            
+        else:
             logger.info(
                 "    Reading CF-netCDF data variables only "
                 "(ignoring CF-netCDF domain variables)"
             )  # pragma: no cover
-            
+
         all_fields = OrderedDict()
         for ncvar in g['variables']:
             if ncvar not in g['do_not_create_field']:
@@ -2704,7 +2704,7 @@ class NetCDFRead(IORead):
 
         # Reset the dimensions of a domain variable
         g['domain_ncdimensions'] = {}
-        
+
         # Reset 'domain_ancillary_key'
         g['domain_ancillary_key'] = {}
 
@@ -2900,7 +2900,7 @@ class NetCDFRead(IORead):
 
         field_ncdimensions = self._ncdimensions(field_ncvar,
                                                 ncdimensions=ncdimensions)
-            
+
         field_groups = g['variable_groups'][field_ncvar]
 
         for ncdim in field_ncdimensions:
@@ -5211,8 +5211,8 @@ class NetCDFRead(IORead):
 
         if ncdimensions is None:
             domain = False
-            domain_ncdimensions= g['domain_ncdimensions'].get(ncvar)
-            if domain_ncdimensions is None:                
+            domain_ncdimensions = g['domain_ncdimensions'].get(ncvar)
+            if domain_ncdimensions is None:
                 # Get dimensions from the netCDF variable array
                 ncdimensions = g['variable_dimensions'][ncvar]
             else:
@@ -5224,7 +5224,7 @@ class NetCDFRead(IORead):
         # --- End: if
 
         ncdimensions = list(ncdimensions)
-            
+
         if self._is_char(ncvar) and variable.ndim >= 1:
             # Remove the trailing string-length dimension
             ncdimensions.pop()
