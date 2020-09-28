@@ -113,13 +113,14 @@ class Constructs(abstract.Container):
             self._constructs = source._constructs.copy()
 
             d = {}
-            for construct_type in source._array_constructs:
+            for construct_type in tuple(source._array_constructs):
                 if construct_type in self._ignore:
                     for cid in source._constructs.get(construct_type, ()):
                         self._construct_axes.pop(cid, None)
                         self._construct_type.pop(cid, None)
-                    # --- End: for
-
+                        
+                    self._key_base.pop(construct_type, None)
+                    self._array_constructs.remove(construct_type)
                     continue
 
                 if construct_type not in source._constructs:
@@ -140,10 +141,13 @@ class Constructs(abstract.Container):
                 d[construct_type] = new_v
             # --- End: for
 
-            for construct_type in source._non_array_constructs:
+            for construct_type in tuple(source._non_array_constructs):
                 if construct_type in self._ignore:
                     for cid in source._constructs.get(construct_type, ()):
                         self._construct_type.pop(cid, None)
+
+                    self._key_base.pop(construct_type, None)
+                    self._non_array_constructs.remove(construct_type)
                     continue
 
                 if construct_type not in source._constructs:
@@ -1235,11 +1239,12 @@ class Constructs(abstract.Container):
                           _view=False)
 
     def _view(self, ignore=()):
-        '''Return a new container view with the same metadata constructs.
+        '''Return a new constructs container that is a view with the same
+    metadata constructs.
 
     :Parameters:
 
-        ignore: `bool`, optional
+        ignore: sequence of `str`, optional
             TODO
 
     :Returns:

@@ -2702,6 +2702,9 @@ class NetCDFRead(IORead):
 
         field = not domain
 
+        # Reset the dimensions of a domain variable
+        g['domain_ncdimensions'] = {}
+        
         # Reset 'domain_ancillary_key'
         g['domain_ancillary_key'] = {}
 
@@ -2897,7 +2900,7 @@ class NetCDFRead(IORead):
 
         field_ncdimensions = self._ncdimensions(field_ncvar,
                                                 ncdimensions=ncdimensions)
-
+            
         field_groups = g['variable_groups'][field_ncvar]
 
         for ncdim in field_ncdimensions:
@@ -3014,8 +3017,9 @@ class NetCDFRead(IORead):
                 if ncvar in field_ncdimensions:
                     continue
 
-                cf_compliant = self._check_auxiliary_scalar_coordinate(
-                    field_ncvar, ncvar, coordinates)
+                cf_compliant = self._check_auxiliary_or_scalar_coordinate(
+                    field_ncvar, ncvar, coordinates
+                )
                 if not cf_compliant:
                     continue
 
@@ -5182,7 +5186,10 @@ class NetCDFRead(IORead):
         ncdimensions: sequence of `str`, optional
             Use these netCDF dimensions, rather than retrieving them
             from the netCDF variable itself. This allows the
-            dimensions of a domain variable to be parsed.
+            dimensions of a domain variable to be parsed. Note that
+            this only parameter only needs to be used once because the
+            parsed domain dimensions are automatically stored in
+            `self.read_var['domain_ncdimensions'][ncvar]`.
 
             .. versionadded:: (cfdm) 1.9.0.0
 
@@ -5203,10 +5210,21 @@ class NetCDFRead(IORead):
         variable = g['variables'][ncvar]
 
         if ncdimensions is None:
-            ncdimensions = g['variable_dimensions'][ncvar]
+            domain = False
+            domain_ncdimensions= g['domain_ncdimensions'].get(ncvar)
+            if domain_ncdimensions is None:                
+                # Get dimensions from the netCDF variable array
+                ncdimensions = g['variable_dimensions'][ncvar]
+            else:
+                # Use the pre-recored domain variable dimensions
+                ncdimensions = domain_ncdimensions
+                domain = True
+        else:
+            domain = True
+        # --- End: if
 
         ncdimensions = list(ncdimensions)
-
+            
         if self._is_char(ncvar) and variable.ndim >= 1:
             # Remove the trailing string-length dimension
             ncdimensions.pop()
@@ -5254,7 +5272,13 @@ class NetCDFRead(IORead):
                     break
         # --- End: if
 
-        return list(map(str, ncdimensions))
+        out = list(map(str, ncdimensions))
+
+        if domain:
+            # Record the domain variable dimensions
+            g['domain_ncdimensions'][ncvar] = out
+
+        return out
 
     def _create_gathered_array(self, gathered_array=None,
                                uncompressed_shape=None,
@@ -5771,8 +5795,8 @@ class NetCDFRead(IORead):
 
         return ok
 
-    def _check_auxiliary_scalar_coordinate(self, field_ncvar,
-                                           coord_ncvar, string):
+    def _check_auxiliary_or_scalar_coordinate(self, parent_ncvar,
+                                              coord_ncvar, string):
         '''Checks requirements
 
       * 5.requirement.5
@@ -5780,14 +5804,15 @@ class NetCDFRead(IORead):
 
     :Parameters:
 
-        field_ncvar: `str`
+        parent_ncvar: `str`
+            NetCDF name of parent data or domain variable.
 
     :Returns:
 
         `bool`
 
         '''
-        attribute = {field_ncvar+':coordinates': string}
+        attribute = {parent_ncvar+':coordinates': string}
 
         incorrectly_formatted = ('coordinate attribute',
                                  'is incorrectly formatted')
@@ -5800,9 +5825,8 @@ class NetCDFRead(IORead):
             coord_ncvar, message = self._check_missing_variable(
                 coord_ncvar, 'Auxiliary/scalar coordinate variable'
             )
-            self._add_message(field_ncvar, coord_ncvar,
-                              message=message,
-                              attribute=attribute,
+            self._add_message(parent_ncvar, coord_ncvar,
+                              message=message, attribute=attribute,
                               conformance='5.requirement.5')
             return False
 
@@ -5810,17 +5834,18 @@ class NetCDFRead(IORead):
         # parent variable's dimensions (allowing for char variables
         # with a trailing dimension)
         dimensions = self._ncdimensions(coord_ncvar)
-        parent_dimensions = self._ncdimensions(field_ncvar)
+        parent_dimensions = self._ncdimensions(parent_ncvar)
 
         if not self._dimensions_are_subset(coord_ncvar,
                                            self._ncdimensions(coord_ncvar),
-                                           self._ncdimensions(field_ncvar)):
+                                           self._ncdimensions(parent_ncvar)):
             d = self._add_message(
-                field_ncvar, coord_ncvar,
+                parent_ncvar, coord_ncvar,
                 message=incorrect_dimensions,
                 attribute=attribute,
                 dimensions=g['variable_dimensions'][coord_ncvar],
-                conformance='5.requirement.6')
+                conformance='5.requirement.6'
+            )
             return False
 
         return True
@@ -5836,7 +5861,7 @@ class NetCDFRead(IORead):
 
         return True
 
-    def _check_grid_mapping(self, field_ncvar, grid_mapping,
+    def _check_grid_mapping(self, parent_ncvar, grid_mapping,
                             parsed_grid_mapping):
         '''Checks requirements
 
@@ -5846,7 +5871,8 @@ class NetCDFRead(IORead):
 
     :Parameters:
 
-        field_ncvar: `str`
+        parent_ncvar: `str`
+            NetCDF name of parent data or domain variable.
 
         grid_mapping: `str`
 
@@ -5857,7 +5883,7 @@ class NetCDFRead(IORead):
         `bool`
 
         '''
-        attribute = {field_ncvar+':grid_mapping': grid_mapping}
+        attribute = {parent_ncvar+':grid_mapping': grid_mapping}
 
         incorrectly_formatted = ('grid_mapping attribute',
                                  'is incorrectly formatted')
@@ -5867,7 +5893,7 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         if not parsed_grid_mapping:
-            self._add_message(field_ncvar, field_ncvar,
+            self._add_message(parent_ncvar, parent_ncvar,
                               message=incorrectly_formatted,
                               attribute=attribute,
                               conformance='5.6.requirement.1')
@@ -5881,7 +5907,7 @@ class NetCDFRead(IORead):
                 grid_mapping_ncvar, message = self._check_missing_variable(
                     grid_mapping_ncvar, 'Grid mapping variable'
                 )
-                self._add_message(field_ncvar, grid_mapping_ncvar,
+                self._add_message(parent_ncvar, grid_mapping_ncvar,
                                   message=message,
                                   attribute=attribute,
                                   conformance='5.6.requirement.2')
@@ -5892,7 +5918,7 @@ class NetCDFRead(IORead):
                     coord_ncvar, message = self._check_missing_variable(
                         coord_ncvar, 'Grid mapping coordinate variable'
                     )
-                    self._add_message(field_ncvar, coord_ncvar,
+                    self._add_message(parent_ncvar, coord_ncvar,
                                       message=message,
                                       attribute=attribute,
                                       conformance='5.6.requirement.3')

@@ -424,7 +424,7 @@ class Domain(mixin.NetCDFVariable,
     def creation_commands(self, representative_data=False,
                           namespace=None, indent=0, string=True,
                           name='domain', data_name='data',
-                          header=True, _properties=True, _nc=True):
+                          header=True, _domain=True):
         '''Return the commands that would create the domain construct.
 
     **Construct keys**
@@ -483,23 +483,24 @@ class Domain(mixin.NetCDFVariable,
         elif namespace and not namespace.endswith('.'):
             namespace += '.'
 
-        out = super().creation_commands(
-            representative_data=representative_data, indent=indent,
-            namespace=namespace, string=False, name=name,
-            header=header, _properties=_properties, _nc=_nc)
-
-        if _nc:
+        if _domain:
+            out = super().creation_commands(
+                indent=indent, namespace=namespace, string=False,
+                name=name, header=header
+            )
+            
             nc_global_attributes = self.nc_global_attributes()
             if nc_global_attributes:
                 if header:
                     out.append('#')
                     out.append('# netCDF global attributes')
-
-                out.append(
-                    "{}.nc_set_global_attributes({!r})".format(
-                        name, nc_global_attributes)
-                )
-        # -- End: if
+                    
+                    out.append(
+                        "{}.nc_set_global_attributes({!r})".format(
+                            name, nc_global_attributes)
+                    )
+        else:
+            out = []
 
         # Domain axis constructs
         for key, c in self.domain_axes.items():
@@ -553,10 +554,38 @@ class Domain(mixin.NetCDFVariable,
     @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_compression=True, ignore_type=False):
+               ignore_compression=True, ignore_properties=(),
+               ignore_type=False):
         '''Whether two domains are the same.
 
     .. versionadded:: (cfdm) 1.7.0
+
+    :Parameters:
+
+        other:
+            The object to compare for equality.
+
+        {[atol: number, optional}}
+
+        {{rtol: number, optional}}
+
+        ignore_fill_value: `bool`, optional
+            If True then the ``_FillValue`` and ``missing_value``
+            properties are omitted from the comparison for the
+            metadata constructs.
+
+        ignore_properties: sequence of `str`, optional
+            The names of properties of the domain construct (not the
+            metadata constructs) to omit from the comparison. Note
+            that the ``Conventions`` property is always omitted.
+
+        {{ignore_compression: `bool`, optional}}
+
+        {{ignore_data_type: `bool`, optional}}
+
+        {{ignore_type: `bool`, optional}}
+
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
@@ -572,12 +601,26 @@ class Domain(mixin.NetCDFVariable,
     False
 
         '''
-        pp = super()._equals_preprocess(other, verbose=verbose,
-                                        ignore_type=ignore_type)
-        if pp is True or pp is False:
-            return pp
+        # ------------------------------------------------------------
+        # Check the properties
+        # ------------------------------------------------------------
+        ignore_properties = tuple(ignore_properties) + ('Conventions',)
 
-        other = pp
+        if not super().equals(
+                other,
+                rtol=rtol, atol=atol, verbose=verbose,
+                ignore_data_type=ignore_data_type,
+                ignore_fill_value=ignore_fill_value,
+                ignore_properties=ignore_properties,                
+                ignore_type=ignore_type):
+            return False
+        print ('HERE1')
+#        pp = super()._equals_preprocess(other, verbose=verbose,
+#                                        ignore_type=ignore_type)
+#        if pp is True or pp is False:
+#            return pp
+#
+#        other = pp
 
         # ------------------------------------------------------------
         # Check the constructs
@@ -591,6 +634,7 @@ class Domain(mixin.NetCDFVariable,
                 "{0}: Different metadata constructs".format(
                     self.__class__.__name__)
             )
+            print ('HERE-2')
             return False
 
         return True

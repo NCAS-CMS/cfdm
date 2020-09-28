@@ -12,8 +12,8 @@ class ConstructAccess():
     # Private methods
     # ----------------------------------------------------------------
     def _set_dataset_compliance(self, value):
-        '''Set the report of problems encountered whilst reading the field
-    construct from a dataset.
+        '''Set the report of problems encountered whilst reading the construct
+    from a dataset.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -575,6 +575,76 @@ class ConstructAccess():
         return self._default(
             default,
             "Can't return the keys of {0} constructs".format(len(c)))
+
+    def dataset_compliance(self, display=False):
+        '''A report of problems encountered whilst reading the construct from
+    a dataset.
+
+    If the dataset is partially CF-compliant to the extent that it is
+    not possible to unambiguously map an element of the netCDF dataset
+    to an element of the CF data model, then a construct is still
+    returned by the `read` function, but may be incomplete.
+
+    Such "structural" non-compliance would occur, for example, if the
+    ``coordinates`` attribute of a CF-netCDF data variable refers to
+    another variable that does not exist, or refers to a variable that
+    spans a netCDF dimension that does not apply to the data variable.
+
+    Other types of non-compliance are not checked, such whether or not
+    controlled vocabularies have been adhered to.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `{{package}}.read`
+
+    :Parameters:
+
+        display: `bool`, optional
+            If True print the compliance report. By default the report
+            is returned as a dictionary.
+
+    :Returns:
+
+        `None` or `dict`
+            The report. If *display* is True then the report is
+            printed and `None` is returned. Otherwise the report is
+            returned as a dictionary.
+
+    **Examples:**
+
+    If no problems were encountered, an empty dictionary is returned:
+
+    >>> f.dataset_compliance()
+    {}
+
+        '''
+        d = self._get_component('dataset_compliance', {})
+
+        if not display:
+            return d
+
+        if not d:
+            print(d)
+            return
+
+        for key0, value0 in d.items():
+            print('{{{0!r}:'.format(key0))
+            print('    CF version: {0!r},'.format(value0['CF version']))
+            print('    dimensions: {0!r},'.format(value0['dimensions']))
+            print('    non-compliance: {')
+            for key1, value1 in sorted(value0['non-compliance'].items()):
+                for x in value1:
+                    print('        {!r}: ['.format(key1))
+                    print('            {{{0}}},'.format(
+                        '\n             '.join(
+                            ['{0!r}: {1!r},'.format(key2, value2)
+                             for key2, value2 in sorted(x.items())]
+                        )
+                    ))
+
+                print('        ],')
+
+            print('    },')
 
     def domain_axis_key(self, identity, default=ValueError()):
         '''Return the key of the domain axis construct that is spanned by 1-d

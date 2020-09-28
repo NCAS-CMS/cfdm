@@ -836,6 +836,7 @@ class Constructs(mixin.Container,
     False
 
         '''
+        print ('HERE2')
         if self is other:
             if not _return_axis_map:
                 return True
@@ -850,7 +851,7 @@ class Constructs(mixin.Container,
                 return False
 
         if verbose == -1:
-            debug_verbose = 2
+            debug_verbose = -1 #2
         else:
             debug_verbose = 0
 
@@ -869,7 +870,7 @@ class Constructs(mixin.Container,
                                         key1_to_key0=key1_to_key0):
             if not _return_axis_map:
                 return False
-
+        print ('HERE3')
         # ------------------------------------------------------------
         # Constructs with arrays
         # ------------------------------------------------------------
@@ -879,15 +880,17 @@ class Constructs(mixin.Container,
 
         for axes0, constructs0 in axes_to_constructs0.items():
             matched_all_constructs_with_these_axes = False
-
+            print ('constructs0 =', axes0, constructs0)
+        
             len_axes0 = len(axes0)
             for axes1, constructs1 in tuple(axes_to_constructs1.items()):
-
+                print ('constructs1 = ', axes1, constructs1)
                 constructs1 = constructs1.copy()
 
                 if len_axes0 != len(axes1):
                     # axes1 and axes0 contain different number of
                     # domain axes.
+                    print ('continue 3.1')
                     continue
 
                 for construct_type in self._array_constructs:
@@ -916,6 +919,8 @@ class Constructs(mixin.Container,
                     # Check that there are matching pairs of equal
                     # constructs
                     matched_construct = True
+                    print ('role_constructs0 =',role_constructs0)
+                    print ('role_constructs1 =',role_constructs1)
                     for key0, item0 in role_constructs0.items():
                         matched_construct = False
                         for key1, item1 in tuple(role_constructs1.items()):
@@ -924,6 +929,7 @@ class Constructs(mixin.Container,
                                     self.__class__.__name__, item0, item1)
                             )  # pragma: no cover
 
+                            print ('nest')
                             if item0.equals(
                                     item1,
                                     rtol=rtol, atol=atol,
@@ -949,6 +955,7 @@ class Constructs(mixin.Container,
                     if role_constructs1:
                         # At least one construct in other is not equal
                         # to a construct in self
+                        print ('HERE3.4', role_constructs1)
                         break
 
                     # Still here? Then all constructs of this type
@@ -961,8 +968,8 @@ class Constructs(mixin.Container,
                     del axes_to_constructs1[axes1]
                     break
             # --- End: for
-
             if not matched_all_constructs_with_these_axes:
+                print ('HERE3.5', constructs1)
                 names = [self.domain_axis_identity(axis0)
                          for axis0 in axes0]
                 logger.info(
@@ -970,15 +977,17 @@ class Constructs(mixin.Container,
                     "spanning axes {1}".format(
                           self.__class__.__name__, names)
                 )
+                print ('HERE3.6', log)
                 if log:
                     logger.info('\n'.join(log))
                 if not _return_axis_map:
+                    print ('HERE4')
                     return False
             else:
                 # Map item axes in the two instances
                 axes0_to_axes1[axes0] = axes1
         # --- End: for
-
+        print ('HERE5')
         for axes0, axes1 in axes0_to_axes1.items():
             for axis0, axis1 in zip(axes0, axes1):
                 if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:

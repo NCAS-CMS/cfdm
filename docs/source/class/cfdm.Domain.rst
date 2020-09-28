@@ -170,6 +170,19 @@ Components
    ~cfdm.Domain.nc_set_component_sample_dimension_groups
    ~cfdm.Domain.nc_clear_component_sample_dimension_groups
 
+Dataset compliance
+^^^^^^^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Domain.dataset_compliance
+
 Special
 -------
 

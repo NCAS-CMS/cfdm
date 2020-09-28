@@ -75,8 +75,7 @@ class Properties(Container):
     # Methods
     # ----------------------------------------------------------------
     def creation_commands(self, namespace=None, indent=0, string=True,
-                          name='c', header=True, _properties=True,
-                          _nc=True):
+                          name='c', header=True):
         '''Return the commands that would create the construct.
 
     .. versionadded:: (cfdm) 1.8.7.0
@@ -127,23 +126,6 @@ class Properties(Container):
         out.append("{} = {}{}()".format(name, namespace,
                                         self.__class__.__name__))
 
-<<<<<<< HEAD
-        if _properties:
-            properties = self.properties()
-            if properties:
-                for prop in self.inherited_properties():
-                    properties.pop(prop, None)
-
-                out.append("{}.set_properties({})".format(name,
-                                                          properties))
-        # --- End: if
-
-        if _nc:
-            nc = self.nc_get_variable(None)
-            if nc is not None:
-                out.append("{}.nc_set_variable({!r})".format(name, nc))
-        # --- End: if
-=======
         properties = self.properties()
         if properties:
             for prop in self.inherited_properties():
@@ -155,7 +137,6 @@ class Properties(Container):
         nc = self.nc_get_variable(None)
         if nc is not None:
             out.append("{}.nc_set_variable({!r})".format(name, nc))
->>>>>>> 3068b48404abcb16e1f128f3077b498cfd8fd1ce
 
         if string:
             indent = ' ' * indent

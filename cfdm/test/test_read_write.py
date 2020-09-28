@@ -446,13 +446,37 @@ class read_writeTest(unittest.TestCase):
         cfdm.write(d, tmpfile)
         e = cfdm.read(tmpfile)
         self.assertTrue(len(e), 10)
+
+        print ('\n\n\n\n\n\n')
+        e = cfdm.read(tmpfile, domain=True, verbose=-1)
+        self.assertEqual(len(e), 1)
+        e = e[0]
+        self.assertIsInstance(e, cfdm.Domain)
+        print (d.dump())
+        print ('EEEEEEEEEEE')
+        print (e.dump())
+        self.assertTrue(e.equals(e.copy(), verbose=3))
+        self.assertTrue(d.equals(e, verbose=3))
+        self.assertTrue(e.equals(d, verbose=3))
+
+        cfdm.write([f, d], tmpfile)
+        g = cfdm.read(tmpfile)
+        self.assertTrue(len(g), 1)
+        g = g[0]
+        self.assertIsInstance(e, cfdm.Field)
+        self.assertTrue(g.equals(f, verbose=3))
         
         e = cfdm.read(tmpfile, domain=True, verbose=-1)
         self.assertEqual(len(e), 1)
         e = e[0]
         self.assertIsInstance(e, cfdm.Domain)
-        print (e.dump())                
-        raise ValueError('Write some more tests!')
+
+
+
+        
+
+    
+#        raise ValueError('Write some more tests!')
 # --- End: class
 
 
