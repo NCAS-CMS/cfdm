@@ -90,12 +90,12 @@ class CellMethod(abstract.Container):
         if source:
             try:
                 axes = source.get_axes(None)
-            except AttributeErrror:
+            except AttributeError:
                 axes = None
 
             try:
                 method = source.get_method(None)
-            except AttributeErrror:
+            except AttributeError:
                 method = None
 
             try:
@@ -140,25 +140,6 @@ class CellMethod(abstract.Container):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-#    def copy(self):
-#        '''Return a deep copy.
-#
-#    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-#
-#    .. versionadded:: (cfdm) 1.7.0
-#
-#    :Returns:
-#
-#        `{{class}}`
-#            The deep copy.
-#
-#    **Examples:**
-#
-#    >>> g = f.copy()
-#
-#        '''
-#        return type(self)(source=self, copy=True)
-
     def del_axes(self, default=ValueError()):
         '''Remove the axes of the cell method.
 
