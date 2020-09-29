@@ -46,6 +46,9 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False), str)
         self.assertIsInstance(x.dump(display=False, _key='qwerty'), str)
 
+    def test_DimensionCoordinate__init__(self):
+        c = cfdm.DimensionCoordinate(source='qwerty')
+
     def test_DimensionCoordinate_set_data(self):
         x = cfdm.DimensionCoordinate()
 
@@ -66,6 +69,19 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         with self.assertRaises(Exception):
             y = x.set_data(cfdm.Data(1))
+
+    def test_DimensionCoordinate_climatology(self):
+        x = cfdm.DimensionCoordinate()
+
+        self.assertFalse(x.is_climatology())
+        self.assertIsNone(x.get_climatology(None))
+        x.set_climatology(False)
+        self.assertFalse(x.is_climatology())
+        self.assertFalse(x.get_climatology())
+        x.set_climatology(True)
+        self.assertTrue(x.is_climatology())
+        self.assertTrue(x.del_climatology())
+        self.assertIsNone(x.del_climatology(None))
 
 # --- End: class
 
