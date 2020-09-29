@@ -759,12 +759,12 @@ class ConstructAccess():
         '''Return whether or not any coordinates have cell geometries.
 
     .. versionadded:: (cfdm) 1.8.0
-    
+
     :Returns:
-    
+
         `bool`
             True if there are geometries, otherwise False.
-        
+
     **Examples:**
 
     >>> f = {{package}}.{{class}}()

@@ -39,6 +39,9 @@ class DomainTest(unittest.TestCase):
         _ = str(d)
         self.assertIsInstance(d.dump(display=False), str)
 
+    def test_Domain__init__(self):
+        d = cfdm.Domain(source='qwerty')
+
     def test_Domain_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

@@ -460,6 +460,27 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.mask.shape, mask.shape)
         self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all())
 
+#   def test_Data_get_index(self):
+#       if self.test_only and inspect.stack()[0][3] not in self.test_only:
+#           return
+#
+#       d = cfdm.Data([[281, 279, 278, 279]])
+#       self.assertIsNone(d.get_index(default=None))
+#
+#   def test_Data_get_list(self):
+#       if self.test_only and inspect.stack()[0][3] not in self.test_only:
+#           return
+#
+#       d = cfdm.Data([[281, 279, 278, 279]])
+#       self.assertIsNone(d.get_list(default=None))
+#
+#   def test_Data_get_count(self):
+#       if self.test_only and inspect.stack()[0][3] not in self.test_only:
+#           return
+#
+#       d = cfdm.Data([[281, 279, 278, 279]])
+#       self.assertIsNone(d.get_count(default=None))
+
 # --- End: class
 
 

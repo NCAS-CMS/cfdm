@@ -365,20 +365,23 @@ class read_writeTest(unittest.TestCase):
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
             self.assertEqual(
-                g.get_property('Conventions'), ' '.join([version, other]),
+                g.get_property('Conventions'),
+                ' '.join([version, other]),
                 "{!r}, {!r}".format(
                     g.get_property('Conventions'), Conventions))
 
-        for Conventions in (version,
-                            '',
-                            ' ',
-                            ',',
-                            ', ',
-                            ):
+        for Conventions in (
+                version,
+                '',
+                ' ',
+                ',',
+                ', ',
+        ):
             Conventions = version
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
-            self.assertEqual(g.get_property('Conventions'), version,
+            self.assertEqual(g.get_property('Conventions'),
+                             version,
                              "{!r}, {!r}".format(
                                  g.get_property('Conventions'),
                                  Conventions))
@@ -390,7 +393,8 @@ class read_writeTest(unittest.TestCase):
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
             self.assertEqual(
-                g.get_property('Conventions'), ' '.join(Conventions),
+                g.get_property('Conventions'),
+                ' '.join(Conventions),
                 "{!r}, {!r}".format(
                     g.get_property('Conventions'), Conventions))
 
@@ -398,7 +402,8 @@ class read_writeTest(unittest.TestCase):
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
             self.assertEqual(
-                g.get_property('Conventions'), ' '.join([version, other]),
+                g.get_property('Conventions'),
+                ' '.join([version, other]),
                 "{!r}, {!r}".format(
                     g.get_property('Conventions'), Conventions))
 

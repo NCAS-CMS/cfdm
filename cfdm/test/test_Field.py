@@ -80,6 +80,12 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(f.dump(display=False), str)
         self.assertEqual(f.construct_type, 'field')
 
+    def test_Field__init__(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.Field(source='qwerty')
+
     def test_Field___getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -642,7 +648,7 @@ class FieldTest(unittest.TestCase):
 
         f = self.f
         self.assertFalse(f.has_geometry())
-        
+
         f = cfdm.example_field(6)
         self.assertTrue(f.has_geometry())
 

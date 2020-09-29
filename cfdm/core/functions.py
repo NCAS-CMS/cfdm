@@ -76,7 +76,7 @@ def environment(display=True, paths=True):
         out[-1] += ' ' + str(os.path.abspath(__file__))
 
     if display:
-        print('\n'.join(out))
+        print('\n'.join(out))  # pragma: no cover
     else:
         return out
 

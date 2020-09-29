@@ -818,7 +818,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             The compressed field construct, or `None` if the operation
             was in-place.
 
@@ -848,7 +848,7 @@ class Field(mixin.NetCDFVariable,
     [3 7 5 9]
     >>> g.compress('indexed', inplace=True)
     >>> g.data.get_index()
-     <{{repr}}Index: (24) >
+    <{{repr}}Index: (24) >
     >>> print(g.data.get_index().array)
     [0 0 0 1 1 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 3 3]
     >>> {{package}}.write(g, 'compressed_file_indexed.nc')
