@@ -40,12 +40,13 @@ The cfdm package is imported as follows:
          for example by running:
 
          .. code-block:: python
-            :caption: *Increase the verbosity of cfdm from the default.*
+            :caption: *Increase the verbosity of cfdm from the
+                      default.*
 
             >>> cfdm.log_level('INFO')
 
-         See :ref:`the section on 'Logging' <Logging>` for
-         more information.
+         See :ref:`the section on 'Logging' <Logging>` for more
+         information.
 
 .. _CF-version:
 
@@ -1854,8 +1855,6 @@ The `Bounds` instance inherits the descriptive properties from its
 parent coordinate construct, but it may also have its own properties
 (although setting these is not recommended).
 
-.. TODO CF-1.8 change not on bounds properties
-
 .. code-block:: python
    :caption: *Inspect the inherited and bespoke properties of a Bounds
              instance.*
@@ -1881,7 +1880,7 @@ watersheds will require more nodes than others. Such cells are called
 If a coordinate construct represents geometries then it will have a
 "geometry" attribute (not a :ref:`CF property
 <Metadata-construct-properties>`) with one of the values ``'point'``,
-'``line'`` or ``'polygon'``.
+``'line'`` or ``'polygon'``.
 
 This is illustrated with the file ``geometry.nc`` (found in the
 :ref:`sample datasets <Sample-datasets>`):
@@ -1952,13 +1951,13 @@ polygon is to be included or excluded from the cell, with values of
    [[0  1  0]
     [0 -- --]]
 
-Note it is preferable to access the data type, number of dimensions,
-dimension sizes and number of elements of the coordinate construct via
-the construct's attributes, rather than the attributes of the `Data`
-instance that provides representative values for each cell. This is
-because the representative cell values for geometries are optional,
-and if they are missing then the construct attributes are able to
-infer these attributes from the bounds.
+Note that it is preferable to access the data type, number of
+dimensions, dimension sizes and number of elements of the coordinate
+construct via the construct's attributes, rather than the attributes
+of the `Data` instance that provides representative values for each
+cell. This is because the representative cell values for geometries
+are optional, and if they are missing then the construct attributes
+are able to infer these attributes from the bounds.
   
 When a field construct containing geometries is written to disk, a
 CF-netCDF geometry container variable is automatically created, and
@@ -4768,7 +4767,3 @@ if any, are filtered out.
 .. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
 .. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
 .. _Hierarchical groups:              http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
-
-.. The code examples in this tutorial are available in an **IPython
-   Jupyter notebook** (:download:`download
-   <notebooks/tutorial.ipynb>`, 80kB) [asdasds#files]_, [assadasdsa#notebook]_.
