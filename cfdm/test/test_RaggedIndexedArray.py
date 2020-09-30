@@ -15,16 +15,20 @@ class RaggedIndexedArrayTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-    def test_RaggedIndexedArray_to_memory(self):
         compressed_data = cfdm.Data([280.0, 281.0, 279.0, 278.0, 279.5])
-
         index = cfdm.Index(data=[0, 1, 1, 1])
+        self.r = cfdm.RaggedIndexedArray(compressed_data, shape=(2, 3),
+                                         size=6, ndim=2,
+                                         index_variable=index)
 
-        r = cfdm.RaggedIndexedArray(compressed_data, shape=(2, 3),
-                                    size=6, ndim=2,
-                                    index_variable=index)
+    def test_RaggedIndexedArray_to_memory(self):
+        self.assertIsInstance(self.r.to_memory(), cfdm.RaggedIndexedArray)
 
-        r.to_memory()
+    def test_RaggedIndexedArray_get_index(self):
+        r = self.r
+        self.assertIsInstance(r.get_index(), cfdm.Index)
+        r._del_component('index_variable')
+        self.assertIsNone(r.get_index(None))
 
 # --- End: class
 
