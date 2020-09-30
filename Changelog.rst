@@ -2,17 +2,19 @@ version 1.8.7.0
 ---------------
 ----
 
-**2020-09-??**
+**2020-10-??**
 
-* New keyword parameter to `cfdm.Field.set_data`: ``inplace``
+* New class: `cfdm.core.meta.DocstringRewriteMeta`
+* New function: `cfdm.unique_domains`
 * New method: `cfdm.Field.creation_commands`
 * New method: `cfdm.Data.creation_commands`
-* New class: `cfdm.core.meta.DocstringRewriteMeta`
 * New method: `cfdm.Field._docstring_special_substitutions`
 * New method: `cfdm.Field._docstring_substitutions`
 * New method: `cfdm.Field._docstring_package_depth`
 * New method: `cfdm.Field._docstring_method_exclusions`
-* New function: `cfdm.unique_domains`
+* New keyword parameter to `cfdm.Field.set_data`: ``inplace``
+* New keyword parameter to `cfdm.write`: ``coordinates``
+  (https://github.com/NCAS-CMS/cfdm/issues/81)
 * Enabled "creation commands" methods
   (https://github.com/NCAS-CMS/cfdm/issues/53)
 * Fixed bug that caused failures when reading or writing a dataset
