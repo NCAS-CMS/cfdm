@@ -30,12 +30,10 @@ class Bounds(abstract.PropertiesData):
         {{init data: data_like, optional}}
 
         source: optional
-            Override the *properties* and *data* parameters with
-            ``source.properties()`` and ``source.get_data(None)``
+            Initialize the properties and data from those of *source*.
             respectively.
 
-            If *source* does not have one of these methods, then the
-            corresponding parameter is not set.
+            {{init source}}
 
         {{init copy: `bool`, optional}}
 

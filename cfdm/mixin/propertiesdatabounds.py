@@ -88,6 +88,8 @@ class PropertiesDataBounds(PropertiesData):
             interior ring variable, node count variable and part node
             count variable from those of *source*.
 
+            {{init source}}
+
         copy: `bool`, optional
             If False then do not deep copy input parameters prior to
             initialization. By default arguments are deep copied.

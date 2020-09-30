@@ -46,6 +46,8 @@ class ParametersDomainAncillaries(Parameters):
             Initialize the parameters and domain ancillary terms from
             those of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''
@@ -127,6 +129,7 @@ class ParametersDomainAncillaries(Parameters):
 
     :Returns:
 
+        `str`
             The removed domain ancillary key.
 
     **Examples:**

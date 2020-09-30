@@ -47,7 +47,8 @@ class DimensionCoordinate(abstract.Coordinate):
 
     **Examples:**
 
-    >>> f.construct_type
+    >>> c = {{package}}.{{class}}()
+    >>> c.construct_type
     'dimension_coordinate'
 
         '''

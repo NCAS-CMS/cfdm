@@ -124,6 +124,8 @@ class Data(Container,
             Initialize the array, units, calendar and fill value from
             those of *source*.
 
+            {{init source}}
+
         copy: `bool`, optional
             If False then do not deep copy input parameters prior to
             initialization. By default arguments are deep copied.

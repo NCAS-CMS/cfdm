@@ -47,6 +47,8 @@ class Domain(mixin.ConstructAccess,
         source: optional
             Initialize the metadata constructs from those of *source*.
 
+            {{init source}}
+
             A new domain may also be instantiated with the
             `fromconstructs` class method.
 

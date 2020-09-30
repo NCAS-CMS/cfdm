@@ -78,6 +78,8 @@ class Field(mixin.ConstructAccess,
             Initialize the properties, data and metadata constructs
             from those of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''
@@ -139,6 +141,7 @@ class Field(mixin.ConstructAccess,
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.construct_type
     'field'
 

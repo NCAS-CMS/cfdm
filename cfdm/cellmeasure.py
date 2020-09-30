@@ -73,6 +73,8 @@ class CellMeasure(mixin.NetCDFVariable,
             Initialize the measure, properties and data from those of
             *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''

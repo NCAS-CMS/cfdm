@@ -68,6 +68,8 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
             Initialize the properties, data and bounds from those of
             *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''

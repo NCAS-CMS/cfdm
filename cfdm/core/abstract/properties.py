@@ -24,6 +24,8 @@ class Properties(Container):
         source: optional
             Initialize the properties from those of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''
@@ -108,7 +110,7 @@ class Properties(Container):
 
     :Returns:
 
-            The removed property.
+            The removed property value.
 
     **Examples:**
 

@@ -54,6 +54,8 @@ class Datum(mixin.Parameters,
         source: optional
             Initialize the parameters from those of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''

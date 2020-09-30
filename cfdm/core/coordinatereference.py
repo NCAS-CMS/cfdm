@@ -103,6 +103,8 @@ class CoordinateReference(abstract.Container):
             Initialize the coordinates, datum and coordinate
             conversion from those of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''
@@ -152,7 +154,8 @@ class CoordinateReference(abstract.Container):
 
     **Examples:**
 
-    >>> f.construct_type
+    >>> c = {{package}}.{{class}}()
+    >>> c.construct_type
     'coordinate_reference'
 
         '''

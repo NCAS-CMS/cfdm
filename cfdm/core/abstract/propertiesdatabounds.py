@@ -42,6 +42,8 @@ class PropertiesDataBounds(PropertiesData):
             Initialize the properties, geometry type, data, bounds and
             interior ring from those of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''
@@ -373,6 +375,7 @@ class PropertiesDataBounds(PropertiesData):
     :Returns:
 
         `str`
+            The geometry type.
 
     **Examples:**
 

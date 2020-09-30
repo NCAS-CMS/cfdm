@@ -57,6 +57,8 @@ class DomainAxis(mixin.NetCDFDimension,
         source: optional
             Initialize the size from that of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''
