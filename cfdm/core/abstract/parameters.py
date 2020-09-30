@@ -30,6 +30,8 @@ class Parameters(Container):
         source: optional
             Initialize the parameters from those of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''
@@ -103,8 +105,7 @@ class Parameters(Container):
 
     :Returns:
 
-            The removed parameter. If the parameter has not been then
-            *default* is returned, if provided.
+            The removed parameter value.
 
     **Examples:**
 

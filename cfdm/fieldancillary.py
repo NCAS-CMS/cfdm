@@ -56,6 +56,8 @@ class FieldAncillary(mixin.NetCDFVariable,
         source: optional
             Initialize the properties and data from those of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
             If False then do not deep copy input parameters prior to
             initialization. By default arguments are deep copied.

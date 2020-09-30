@@ -17,10 +17,21 @@ class Container(metaclass=DocstringRewriteMeta):
     def __init__(self, source=None, copy=True):
         '''**Initialisation**
 
+    :Parameters:
+
+        source: optional
+            Initialize the components from those of *source*.
+
+            {{init source}}
+
+        {{init copy: `bool`, optional}}
+
         '''
         self._components = {}
 
         if source is not None:
+            # WARNING: The 'custom' dictionary is never deep copied
+            #          from source
             try:
                 custom = source._get_component('custom', {})
             except AttributeError:
@@ -42,7 +53,8 @@ class Container(metaclass=DocstringRewriteMeta):
     **Examples:**
 
     >>> import copy
-    >>> y = copy.deepcopy(x)
+    >>> f = {{package}}.{{class}}()
+    >>> g = copy.deepcopy(f)
 
         '''
         return self.copy()
@@ -99,9 +111,11 @@ class Container(metaclass=DocstringRewriteMeta):
 
     **Examples:**
 
-    >>> f = cfdm.example_field(0)
+    >>> f = {{package}}.{{class}}()
     >>> f._default(AttributeError())  # Raises Exception
-    AttributeError
+    AttributeError:
+    >>> f._default(ValueError("Missing item"))  # Raises Exception
+    ValueError: Missing item
     >>> f._default(ValueError(), message="No component")  # Raises Exception
     ValueError: No component
     >>> f._default(False)
@@ -323,6 +337,7 @@ class Container(metaclass=DocstringRewriteMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> g = f.copy()
 
         '''

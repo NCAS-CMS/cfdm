@@ -107,9 +107,9 @@ class Field(mixin.NetCDFVariable,
     def __new__(cls, *args, **kwargs):
         '''Store component classes.
 
-    NOTE: If a child class requires a different component classes than
-    the ones defined here, then they must be redefined in the child
-    class.
+    .. note:: If a child class requires a different component classes
+              than the ones defined here, then they must be redefined
+              in the child class.
 
         '''
         instance = super().__new__(cls)
@@ -138,6 +138,8 @@ class Field(mixin.NetCDFVariable,
         source: optional
             Initialize the properties, data and metadata constructs
             from those of *source*.
+
+            {{init source}}
 
         {{init copy: `bool`, optional}}
 
@@ -630,7 +632,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             A new field construct with masked values, or `None` if the
             operation was in-place.
 
@@ -835,7 +837,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             The compressed field construct, or `None` if the operation
             was in-place.
 
@@ -913,7 +915,7 @@ class Field(mixin.NetCDFVariable,
 
         :Parameters:
 
-            f: `{{class}}`
+            f: `Field`
 
             count: sequence of `int`
 
@@ -1197,13 +1199,13 @@ class Field(mixin.NetCDFVariable,
     :Parameters:
 
         data: `bool`, optional
-            If False then do not copy the data field construct, nor
-            that of any of its metadata constructs. By default all
-            data are copied.
+            If False then do not copy the data of the field construct,
+            nor the data of any of its metadata constructs. By default
+            all data are copied.
 
     :Returns:
 
-        `{{class}}`
+        `Field`
             The deep copy.
 
     **Examples:**
@@ -1772,7 +1774,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             The new field construct with expanded data axes. If the
             operation was in-place then `None` is returned.
 
@@ -1836,8 +1838,8 @@ class Field(mixin.NetCDFVariable,
     have a domain limited to that which can be inferred from the
     corresponding netCDF variable - typically only domain axis and
     dimension coordinate constructs. This will usually result in a
-    different field construct to that created with the
-    `~{{class}}.convert` method.
+    different field construct to that created with the `convert`
+    method.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -1850,14 +1852,14 @@ class Field(mixin.NetCDFVariable,
             key.
 
         full_domain: `bool`, optional
-            If False then do not create a domain, other than domain
-            axis constructs, for the new field construct. By default
-            as much of the domain as possible is copied to the new
-            field construct.
+            If False then only create domain axis constructs for the
+            domain of the new field construct. By default as much of
+            the domain as possible is copied to the new field
+            construct.
 
     :Returns:
 
-        `{{class}}`
+        `Field`
             The new field construct.
 
     **Examples:**
@@ -2782,7 +2784,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             The field construct with removed data axes. If the
             operation was in-place then `None` is returned.
 
@@ -2854,7 +2856,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             The field construct with permuted data axes. If the
             operation was in-place then `None` is returned.
 
@@ -2969,7 +2971,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             The uncompressed field construct, or `None` if the
             operation was in-place.
 

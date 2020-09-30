@@ -102,6 +102,13 @@ _docstring_substitution_definitions = {
             If False then do not deep copy input parameters prior to
             initialization. By default arguments are deep copied.''',
 
+    # init source
+    '{{init source}}':
+
+    '''Note that if, and only if, *source* is a `{{class}}` instance then
+            ``{{package}}.{{class}}(source=source)`` is equivalent to
+            ``source.copy()``.''',
+
     # data_like
     '{{data_like}}':
     '''A data_like object is any object that can be converted to

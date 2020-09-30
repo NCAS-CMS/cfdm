@@ -1172,7 +1172,7 @@ class Constructs(abstract.Container):
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1230,7 +1230,7 @@ class Constructs(abstract.Container):
 
     :Returns:
 
-        `Constructs`
+        `{{class}}`
             TODO
 
     **Examples:**

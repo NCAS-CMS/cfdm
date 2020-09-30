@@ -127,6 +127,8 @@ class CoordinateReference(mixin.NetCDFVariable,
             Initialize the coordinates, datum and coordinate
             conversion from those of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''

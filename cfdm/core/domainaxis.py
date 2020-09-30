@@ -33,6 +33,8 @@ class DomainAxis(abstract.Container):
         source:
             Initialize the size from that of source.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''
@@ -61,7 +63,8 @@ class DomainAxis(abstract.Container):
 
     **Examples:**
 
-    >>> f.construct_type
+    >>> d = {{package}}.{{class}}()
+    >>> d.construct_type
     'domain_axis'
 
         '''
