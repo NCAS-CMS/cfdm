@@ -90,12 +90,12 @@ class CellMethod(abstract.Container):
         if source:
             try:
                 axes = source.get_axes(None)
-            except AttributeErrror:
+            except AttributeError:
                 axes = None
 
             try:
                 method = source.get_method(None)
-            except AttributeErrror:
+            except AttributeError:
                 method = None
 
             try:

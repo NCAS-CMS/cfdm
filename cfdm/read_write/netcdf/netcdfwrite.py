@@ -619,7 +619,8 @@ class NetCDFWrite(IOWrite):
 
         g['dimensions'].add(ncdim)
 
-    def _write_dimension_coordinate(self, f, key, coord, ncdim):
+    def _write_dimension_coordinate(self, f, key, coord, ncdim,
+                                    coordinates):
         '''Write a coordinate variable and its bounds variable to the file.
 
     This also writes a new netCDF dimension to the file and, if
@@ -638,6 +639,11 @@ class NetCDFWrite(IOWrite):
             coordinate construct, including any groups structure. Note
             that the group structure may be different to the
             corodinate variable, and the basename.
+
+        coordinates: `list`
+           This list may get updated in-place.
+
+           .. versionadded:: (cfdm) .8.7.0
 
     :Returns:
 
@@ -739,6 +745,11 @@ class NetCDFWrite(IOWrite):
         g['key_to_ncdims'][key] = ncdimensions
 
         g['axis_to_ncdim'][axis] = seen[id(coord)]['ncdims'][0]
+
+        if g['coordinates'] and ncvar is not None:
+            # Add the dimension coordinate netCDF variable name to the
+            # 'coordinates' arttribute
+            coordinates.append(ncvar)
 
         return ncvar
 
@@ -2939,8 +2950,9 @@ class NetCDFWrite(IOWrite):
         #
         g['part_ncdim'] = None
 
-        # Initialize the list of the field's auxiliary/scalar
-        # coordinates
+        # Initialize the list of the field's auxiliary and scalar
+        # coordinate variable, and possibly its coordinate variables,
+        # too.
         coordinates = []
 
         if g['output_version'] >= g['CF-1.8']:
@@ -3033,8 +3045,6 @@ class NetCDFWrite(IOWrite):
 #            if ncdim is not None:
 #                ncdim = self._netcdf_name(ncdim)
 
-#            print ('\n\n F ncdim=', ncdim)
-
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
                 if (self.implementation.get_construct_data_axes(f, key)
@@ -3050,7 +3060,9 @@ class NetCDFWrite(IOWrite):
                     # the dimension coordinate to the file as a
                     # coordinate variable.
                     ncvar = self._write_dimension_coordinate(
-                        f, key, dim_coord, ncdim=ncdim)
+                        f, key,
+                        dim_coord, ncdim=ncdim,
+                        coordinates=coordinates)
                 else:
                     # The data array does not span this axis (and
                     # therefore the dimension coordinate must have
@@ -3065,10 +3077,10 @@ class NetCDFWrite(IOWrite):
                         # this domain axis. Therefore write the
                         # dimension coordinate to the file as a
                         # coordinate variable.
-                        ncvar = self._write_dimension_coordinate(f,
-                                                                 key,
-                                                                 dim_coord,
-                                                                 ncdim=ncdim)
+                        ncvar = self._write_dimension_coordinate(
+                            f, key,
+                            dim_coord,
+                            ncdim=ncdim, coordinates=coordinates)
 
                         # Expand the field's data array to include
                         # this domain axis
@@ -4047,7 +4059,7 @@ class NetCDFWrite(IOWrite):
               endian='native', compress=0, fletcher32=False,
               shuffle=True, scalar=True, string=True,
               extra_write_vars=None, verbose=None, warn_valid=True,
-              group=True):
+              group=True, coordinates=False):
         '''Write fields to a netCDF file.
 
     NetCDF dimension and variable names will be taken from variables'
@@ -4068,125 +4080,139 @@ class NetCDFWrite(IOWrite):
 
     :Parameters:
 
-        fields : (arbitrarily nested sequence of) `cfdm.Field`
+        fields : (sequence of) `cfdm.Field`
             The field or fields to write to the file.
 
+            See `cfdm.write` for details.
+
         filename : str
-            The output CF-netCDF file. Various type of expansion are
-            applied to the file names:
+            The output CF-netCDF file.
 
-              ====================  ======================================
-              Expansion             Description
-              ====================  ======================================
-              Tilde                 An initial component of ``~`` or
-                                    ``~user`` is replaced by that *user*'s
-                                    home directory.
-
-              Environment variable  Substrings of the form ``$name`` or
-                                    ``${name}`` are replaced by the value
-                                    of environment variable *name*.
-              ====================  ======================================
-
-            Where more than one type of expansion is used in the same
-            string, they are applied in the order given in the above
-            table.
-
-              Example: If the environment variable *MYSELF* has been set
-              to the "david", then ``'~$MYSELF/out.nc'`` is equivalent to
-              ``'~david/out.nc'``.
-
-        fmt : str, optional
-            The format of the output file. One of:
-
-            ==========================  =================================================
-            *fmt*                       Description
-            ==========================  =================================================
-            ``'NETCDF4'``               Output to a CF-netCDF4 format file
-            ``'NETCDF4_CLASSIC'``       Output to a CF-netCDF4 classic format file
-            ``'NETCDF3_CLASSIC'``       Output to a CF-netCDF3 classic format file
-            ``'NETCDF3_64BIT'``         Output to a CF-netCDF3 64-bit offset format file
-            ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format file
-            ``'NETCDF3_64BIT'``         An alias for ``'NETCDF3_64BIT_OFFSET'``
-            ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format file with extensions
-            ==========================  =================================================
-
-            By default the *fmt* is ``'NETCDF4'``. Note that the
-            netCDF3 formats may be slower than netCDF4 options.
+            See `cfdm.write` for details.
 
         overwrite: bool, optional
             If False then raise an exception if the output file
             pre-exists. By default a pre-existing output file is over
             written.
 
+            See `cfdm.write` for details.
+
         verbose : bool, optional
-            If True then print one-line summaries of each field written.
+            See `cfdm.write` for details.
+
+        file_descriptors: `dict`, optional
+            Create description of file contents netCDF global
+            attributes from the specified attributes and their values.
+
+            See `cfdm.write` for details.
+
+        global_attributes: (sequence of) `str`, optional
+            Create netCDF global attributes from the specified field
+            construct properties, rather than netCDF data variable
+            attributes.
+
+            See `cfdm.write` for details.
+
+        variable_attributes: (sequence of) `str`, optional
+            Create netCDF data variable attributes from the specified
+            field construct properties.
+
+            See `cfdm.write` for details.
+
+        external: `str`, optional
+            Write metadata constructs that have data and are marked as
+            external to the named external file. Ignored if there are
+            no such constructs.
+
+            See `cfdm.write` for details.
 
         datatype : dict, optional
             Specify data type conversions to be applied prior to writing
-            data to disk. Arrays with data types which are not specified
-            remain unchanged. By default, array data types are preserved
-            with the exception of Booleans (``numpy.dtype(bool)``, which
-            are converted to 32 bit integers.
+            data to disk.
 
-            *Parameter example:*
-              To convert 64 bit floats and integers to their 32 bit
-              counterparts: ``dtype={numpy.dtype(float):
-              numpy.dtype('float32'), numpy.dtype(int):
-              numpy.dtype('int32')}``.
+            See `cfdm.write` for details.
 
         Conventions: (sequence of) `str`, optional
-             Specify conventions to be recorded by the netCDF global
-             "Conventions" attribute. These conventions are in addition to
-             version of CF being used e.g. ``'CF-1.7'``, which must not be
-             specified. If the "Conventions" property is set on a field
-             construct then it is ignored. Note that a convention name is
-             not allowed to contain any commas.
+            Specify conventions to be recorded by the netCDF global
+             ``Conventions`` attribute.
 
-             *Parameter example:*
-               ``Conventions='UGRID-1.0'``
+            See `cfdm.write` for details.
 
-             *Parameter example:*
-               ``Conventions=['UGRID-1.0']``
+        endian: `str`, optional
+            The endian-ness of the output file.
 
-             *Parameter example:*
-               ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
+            See `cfdm.write` for details.
 
-             *Parameter example:*
-               ``Conventions='CF-1.7'``
+        compress: `int`, optional
+            Regulate the speed and efficiency of compression.
 
-             *Parameter example:*
-               ``Conventions=['CF-1.7', 'CMIP-6.2']``
+            See `cfdm.write` for details.
+
+        least_significant_digit: `int`, optional
+            Truncate the input field construct data arrays, but not
+            the data arrays of metadata constructs.
+
+            See `cfdm.write` for details.
+
+        fletcher32: `bool`, optional
+            If True then the Fletcher-32 HDF5 checksum algorithm is
+            activated to detect compression errors. Ignored if
+            *compress* is ``0``.
+
+            See `cfdm.write` for details.
+
+        shuffle: `bool`, optional
+            If True (the default) then the HDF5 shuffle filter (which
+            de-interlaces a block of data before compression by
+            reordering the bytes by storing the first byte of all of a
+            variable's values in the chunk contiguously, followed by
+            all the second bytes, and so on) is turned off.
+
+            See `cfdm.write` for details.
 
         string: `bool`, optional
-           By default string-valued construct data are written as
-           netCDF arrays of type string if the output file format is
-           ``'NETCDF4'``, or of type char with an extra dimension
-           denoting the maximum string length for any other output
-           file format (see the *fmt* parameter). If *string* is False
-           then string-valued construct data are written as netCDF
-           arrays of type char with an extra dimension denoting the
-           maximum string length, regardless of the selected output
-           file format.
+            By default string-valued construct data are written as
+            netCDF arrays of type string if the output file format is
+            ``'NETCDF4'``, or of type char with an extra dimension
+            denoting the maximum string length for any other output
+            file format (see the *fmt* parameter). If *string* is False
+            then string-valued construct data are written as netCDF
+            arrays of type char with an extra dimension denoting the
+            maximum string length, regardless of the selected output
+            file format.
+
+            See `cfdm.write` for details.
+
+            .. versionadded:: (cfdm) 1.8.0
 
         warn_valid: `bool`, optional
-            If False then do not warn for when writing "out of range"
-            data, as defined by the presence of ``valid_min``,
-            ``valid_max`` or ``valid_range`` properties on field or
-            metadata constructs that have data. By default a warning
-            is printed if any such construct has any of these
-            properties.
+            If False then do not print a warning when writing
+            "out-of-range" data, as indicated by the values, if
+            present, of any of the ``valid_min``, ``valid_max`` or
+            ``valid_range`` properties on field and metadata
+            constructs that have data.
 
-            *Parameter example:*
-              If a field construct has ``valid_max`` property with
-              value ``100`` and data with maximum value ``999``, then
-              a warning will be printed if ``warn_valid=True``.
+            See `cfdm.write` for details.
 
             .. versionadded:: (cfdm) 1.8.3
 
         group: `bool`, optional
-            TODO
+            If False then create a "flat" netCDF file, i.e. one with
+            only the root group, regardless of any group structure
+            specified by the field constructs.
+
+            See `cfdm.write` for details.
 
             .. versionadded:: (cfdm) 1.8.6
+
+        coordinates: `bool`, optional
+            If True then include CF-netCDF coordinate variable names
+            in the 'coordinates' attribute of output data
+            variables.
+
+            See `cfdm.write` for details.
+
+            .. versionadded:: (cfdm) 1.8.7.0
 
     :Returns:
 
@@ -4194,20 +4220,7 @@ class NetCDFWrite(IOWrite):
 
     **Examples:**
 
-    >>> f
-    [<CF Field: air_pressure(30, 24)>,
-     <CF Field: u_compnt_of_wind(19, 29, 24)>,
-     <CF Field: v_compnt_of_wind(19, 29, 24)>,
-     <CF Field: potential_temperature(19, 30, 24)>]
-    >>> write(f, 'file')
-
-    >>> type(f)
-    <class 'cfdm.field.FieldList'>
-    >>> cfdm.write([f, g], 'file.nc', verbose=3)
-    [<CF Field: air_pressure(30, 24)>,
-     <CF Field: u_compnt_of_wind(19, 29, 24)>,
-     <CF Field: v_compnt_of_wind(19, 29, 24)>,
-     <CF Field: potential_temperature(19, 30, 24)>]
+    See `cfdm.write` for examples.
 
         '''
         logger.info('Writing to {}'.format(fmt))  # pragma: no cover
@@ -4282,6 +4295,10 @@ class NetCDFWrite(IOWrite):
             # valid_[min|max|range] attributes?
             'warn_valid': bool(warn_valid),
             'valid_properties': set(('valid_min', 'valid_max', 'valid_range')),
+
+            # Whether or not to name dimension corodinates in the
+            # 'coordinates' attribute
+            'coordinates': bool(coordinates),
         }
         g = self.write_vars
 

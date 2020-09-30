@@ -13,6 +13,7 @@ import cfdm
 
 warnings = False
 
+# Set up temporary files
 n_tmpfiles = 6
 tmpfiles = [tempfile.mkstemp('_test_read_write.nc', dir=os.getcwd())[1]
             for i in range(n_tmpfiles)]
@@ -434,6 +435,18 @@ class read_writeTest(unittest.TestCase):
         # --- End: for
 
         self.assertFalse(f)
+
+    def test_write_coordinates(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.example_field(0)
+
+        cfdm.write(f, tmpfile, coordinates=True)
+        g = cfdm.read(tmpfile)
+
+        self.assertEqual(len(g), 1)
+        self.assertTrue(g[0].equals(f))
 
 # --- End: class
 

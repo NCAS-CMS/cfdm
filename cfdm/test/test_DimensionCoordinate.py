@@ -70,6 +70,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         with self.assertRaises(Exception):
             y = x.set_data(cfdm.Data(1))
 
+    @unittest.skip("wait until 1.9.0.0 ...")
     def test_DimensionCoordinate_climatology(self):
         x = cfdm.DimensionCoordinate()
 
