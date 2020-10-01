@@ -1736,7 +1736,7 @@ class Data(Container,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Data` or `None`
             The data with removed data axes. If the operation was
             in-place then `None` is returned.
 
@@ -1762,20 +1762,7 @@ class Data(Container,
         except ValueError as error:
             raise ValueError("Can't squeeze data: {}".format(error))
 
-#        if not d.ndim:
-#            if axes or axes == 0:
-#                raise ValueError(
-#                    "Can't squeeze data: axes {} can not be used for "
-#                    "data with shape {}".format(
-#                        axes, d.shape))
-#            return d
-
         shape = d.shape
-
-#        try:
-#            axes = self._parse_axes(axes)
-#        except ValueError as error:
-#            raise ValueError("Can't squeeze data: {}".format(error))
 
         if axes is None:
             axes = tuple([i for i, n in enumerate(shape) if n == 1])
