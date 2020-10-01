@@ -485,6 +485,9 @@ class DataTest(unittest.TestCase):
 
         self.assertTrue((d.filled(1e10).array == [[1e10, 2, 3, ]]).all())
 
+        d = cfdm.Data(['a', 'b', 'c'], mask=[1, 0, 0])
+        self.assertTrue((d.filled().array == ['', 'b', 'c']).all())
+
 # --- End: class
 
 

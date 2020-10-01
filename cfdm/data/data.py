@@ -1297,7 +1297,7 @@ class Data(Container,
 
         if fill_value is None:
             fill_value = d.get_fill_value(None)
-            if fill_value is None:  # still...
+            if fill_value is None:
                 default_fillvals = netCDF4.default_fillvals
                 fill_value = default_fillvals.get(d.dtype.str[1:], None)
                 if fill_value is None and d.dtype.kind in ('SU'):
@@ -1307,7 +1307,7 @@ class Data(Container,
                     raise ValueError(
                         "Can't determine fill value for "
                         "data type {!r}".format(d.dtype.str)
-                    )
+                    )  # pragma: no cover
         # --- End: if
 
         array = self.array
