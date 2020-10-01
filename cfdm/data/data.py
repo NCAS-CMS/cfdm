@@ -1757,20 +1757,25 @@ class Data(Container,
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if not d.ndim:
-            if axes or axes == 0:
-                raise ValueError(
-                    "Can't squeeze data: axes {} can not be used for "
-                    "data with shape {}".format(
-                        axes, d.shape))
-            return d
+        try:
+            axes = d._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError("Can't squeeze data: {}".format(error))
+
+#        if not d.ndim:
+#            if axes or axes == 0:
+#                raise ValueError(
+#                    "Can't squeeze data: axes {} can not be used for "
+#                    "data with shape {}".format(
+#                        axes, d.shape))
+#            return d
 
         shape = d.shape
 
-        try:
-            axes = self._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError("Can't squeeze data: {}".format(error))
+#        try:
+#            axes = self._parse_axes(axes)
+#        except ValueError as error:
+#            raise ValueError("Can't squeeze data: {}".format(error))
 
         if axes is None:
             axes = tuple([i for i, n in enumerate(shape) if n == 1])
