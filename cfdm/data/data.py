@@ -1758,7 +1758,7 @@ class Data(Container,
         d = _inplace_enabled_define_and_cleanup(self)
 
         if not d.ndim:
-            if axes:
+            if axes or axes == 0:
                 raise ValueError(
                     "Can't squeeze data: axes {} can not be used for "
                     "data with shape {}".format(
