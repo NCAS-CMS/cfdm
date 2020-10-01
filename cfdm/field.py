@@ -1253,6 +1253,10 @@ class Field(mixin.NetCDFVariable,
 
         {{string: `bool`, optional}}
 
+        {{name: `str`, optional}}
+
+        {{data_name: `str`, optional}}
+
         {{header: `bool`, optional}}
 
     :Returns:
@@ -1731,7 +1735,23 @@ class Field(mixin.NetCDFVariable,
         return out
 
     def has_geometry(self):
-        '''TODO'''
+        '''Whether or not any coordinate constructs have cell geometries.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    :Returns:
+
+        `bool`
+            Whether or not there is a geometry type on any coordinate
+            construct.
+
+    **Examples:**
+
+    >>> f = {{package}}.Field()
+    >>> f.has_geometry()
+    False
+
+        '''
         for c in self.coordinates.values():
             if c.has_geometry():
                 return True

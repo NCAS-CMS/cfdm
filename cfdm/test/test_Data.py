@@ -55,7 +55,6 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.any())
 
     def test_Data__repr__str(self):
-        '''Check cfdm.Data.__repr__, cfdm.Data.__str__'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -80,7 +79,6 @@ class DataTest(unittest.TestCase):
 #            return
 
     def test_Data__setitem__(self):
-        '''Check cfdm.Data.__setitem__'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -140,7 +138,6 @@ class DataTest(unittest.TestCase):
         self.assertIs(a[()], numpy.ma.masked)
 
     def test_Data_apply_masking(self):
-        '''Check cfdm.Data.apply_masking'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -218,7 +215,6 @@ class DataTest(unittest.TestCase):
 #            pass
 
     def test_Data_array(self):
-        '''Check cfdm.Data.array'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -263,7 +259,6 @@ class DataTest(unittest.TestCase):
         self.assertFalse((a2 == a).all())
 
     def test_Data_datetime_array(self):
-        '''Check cfdm.Data.datetime_array'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -286,7 +281,6 @@ class DataTest(unittest.TestCase):
         self.assertIs(dt[()], numpy.ma.masked)
 
     def test_Data_flatten(self):
-        '''Check cfdm.Data.flatten'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -319,16 +313,30 @@ class DataTest(unittest.TestCase):
                     numpy.prod([n
                                 for i, n in enumerate(d.shape) if i in axes]))
 
-            self.assertEqual(e.shape, tuple(shape))
+            self.assertEqual(e.shape, tuple(shape), axes)
             self.assertEqual(e.ndim, d.ndim-len(axes)+1)
             self.assertEqual(e.size, d.size)
 
+        for n in range(4):
+            e = d.flatten(n)
+            f = d.flatten([n])
+            self.assertTrue(e.equals(f))
+
+        with self.assertRaises(ValueError):
+            d.flatten(99)
+
+        d = cfdm.Data(9)
+        self.assertTrue(d.equals(d.flatten()))
+        self.assertTrue(d.equals(d.flatten([])))
+
+        with self.assertRaises(ValueError):
+            d.flatten(0)
+
     def test_Data_transpose(self):
-        '''Check cfdm.Data.transpose'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        a = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
+        a = numpy.arange(2 * 3 * 5).reshape(2, 1, 3, 5)
         d = cfdm.Data(a.copy())
 
         for indices in (list(range(a.ndim)), list(range(-a.ndim, 0))):
@@ -341,8 +349,16 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((d.array == a).all(), message)
         # --- End: for
 
+        with self.assertRaises(ValueError):
+            d.transpose(axes=99)
+
+        with self.assertRaises(ValueError):
+            d.transpose(axes=[1, 2, 3, 4, 5])
+
+        d = cfdm.Data(9)
+        self.assertTrue(d.equals(d.transpose()))
+
     def test_Data_unique(self):
-        '''Check cfdm.Data.unique'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -359,7 +375,6 @@ class DataTest(unittest.TestCase):
             (u.array == cfdm.Data([1, 2, 4], 'metre').array).all())
 
     def test_Data_equals(self):
-        '''Check cfdm.Data.equals'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -373,16 +388,14 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.equals(e, verbose=3))
         self.assertTrue(e.equals(d, verbose=3))
 
-    def test_Data_max_min_sum_squeeze(self):
-        '''Check cfdm.Data.maximum, cfdm.Data.minumum, cfdm.Data.sum,
-    cfdm.Data.squeeze'''
+    def test_Data_maximum_minimum_sum_squeeze(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        a = numpy.ma.arange(10*15*19).reshape(10, 1, 15, 19)
+        a = numpy.ma.arange(2 * 3 * 5).reshape(2, 1, 3, 5)
         a[0, 0, 0, 0] = numpy.ma.masked
         a[-1, -1, -1, -1] = numpy.ma.masked
-        a[5, -1, 6, 10] = numpy.ma.masked
+        a[1, -1, 1, 3] = numpy.ma.masked
         d = cfdm.Data(a)
 
         b = a.max()
@@ -399,6 +412,7 @@ class DataTest(unittest.TestCase):
         x = d.maximum(axes=[0, 3]).squeeze([0, 3])
         self.assertEqual(x.shape, b.shape)
         self.assertTrue((x.array == b).all())
+        self.assertTrue(d.maximum([0, 3]).equals(d.max([0, 3])))
 
         b = a.min()
         x = d.minimum().squeeze()
@@ -409,6 +423,7 @@ class DataTest(unittest.TestCase):
         x = d.minimum(axes=[0, 3]).squeeze([0, 3])
         self.assertEqual(x.shape, b.shape)
         self.assertTrue((x.array == b).all(), (x.shape, b.shape))
+        self.assertTrue(d.minimum([0, 3]).equals(d.min([0, 3])))
 
         b = a.sum()
         x = d.sum().squeeze()
@@ -420,8 +435,37 @@ class DataTest(unittest.TestCase):
         self.assertEqual(x.shape, b.shape)
         self.assertTrue((x.array == b).all(), (x.shape, b.shape))
 
+        with self.assertRaises(ValueError):
+            d.sum(axes=99)
+
+        with self.assertRaises(ValueError):
+            d.squeeze(axes=99)
+
+        with self.assertRaises(ValueError):
+            d.squeeze(axes=2)
+
+        with self.assertRaises(ValueError):
+            d.maximum(axes=99)
+
+        with self.assertRaises(ValueError):
+            d.minimum(axes=99)
+
+        d = cfdm.Data(9)
+        self.assertTrue(d.equals(d.squeeze()))
+
+        with self.assertRaises(ValueError):
+            d.sum(axes=0)
+
+        with self.assertRaises(ValueError):
+            d.squeeze(axes=0)
+
+        with self.assertRaises(ValueError):
+            d.minimum(axes=0)
+
+        with self.assertRaises(ValueError):
+            d.maximum(axes=0)
+
     def test_Data_dtype_mask(self):
-        '''Check cfdm.Data.dtype, cfdm.Data.mask'''
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -460,26 +504,99 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.mask.shape, mask.shape)
         self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all())
 
-#   def test_Data_get_index(self):
-#       if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#           return
-#
-#       d = cfdm.Data([[281, 279, 278, 279]])
-#       self.assertIsNone(d.get_index(default=None))
-#
-#   def test_Data_get_list(self):
-#       if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#           return
-#
-#       d = cfdm.Data([[281, 279, 278, 279]])
-#       self.assertIsNone(d.get_list(default=None))
-#
-#   def test_Data_get_count(self):
-#       if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#           return
-#
-#       d = cfdm.Data([[281, 279, 278, 279]])
-#       self.assertIsNone(d.get_count(default=None))
+    def test_Data_get_index(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cfdm.Data([[281, 279, 278, 279]])
+        self.assertIsNone(d.get_index(default=None))
+
+    def test_Data_get_list(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cfdm.Data([[281, 279, 278, 279]])
+        self.assertIsNone(d.get_list(default=None))
+
+    def test_Data_get_count(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cfdm.Data([[281, 279, 278, 279]])
+        self.assertIsNone(d.get_count(default=None))
+
+    def test_Data_filled(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cfdm.Data([[1, 2, 3]])
+        self.assertTrue((d.filled().array == [[1, 2, 3]]).all())
+
+        d[0, 0] = cfdm.masked
+        self.assertTrue(
+            (d.filled().array == [[-9223372036854775806, 2, 3, ]]).all())
+
+        d.set_fill_value(-99)
+        self.assertTrue((d.filled().array == [[-99, 2, 3, ]]).all())
+
+        self.assertTrue((d.filled(1e10).array == [[1e10, 2, 3, ]]).all())
+
+        d = cfdm.Data(['a', 'b', 'c'], mask=[1, 0, 0])
+        self.assertTrue((d.filled().array == ['', 'b', 'c']).all())
+
+    def test_Data_insert_dimension(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cfdm.Data([list(range(12))])
+        self.assertEqual(d.shape, (1, 12))
+        e = d.squeeze()
+        self.assertEqual(e.shape, (12,))
+        self.assertIsNone(d.squeeze(inplace=True))
+        self.assertEqual(d.shape, (12,))
+
+        d = cfdm.Data([list(range(12))])
+        d.transpose(inplace=True)
+        self.assertEqual(d.shape, (12, 1))
+        e = d.squeeze()
+        self.assertEqual(e.shape, (12,))
+        self.assertIsNone(d.squeeze(inplace=True))
+        self.assertEqual(d.shape, (12,))
+
+        d.insert_dimension(0, inplace=True)
+        d.insert_dimension(-1, inplace=True)
+        self.assertEqual(d.shape, (1, 12, 1))
+        e = d.squeeze()
+        self.assertEqual(e.shape, (12,))
+        e = d.squeeze(-1)
+        self.assertEqual(e.shape, (1, 12,))
+        self.assertIsNone(e.squeeze(0, inplace=True))
+        self.assertEqual(e.shape, (12,))
+
+        d = e
+        d.insert_dimension(0, inplace=True)
+        d.insert_dimension(-1, inplace=True)
+        d.insert_dimension(-1, inplace=True)
+        self.assertEqual(d.shape, (1, 12, 1, 1))
+        e = d.squeeze([0, 2])
+        self.assertEqual(e.shape, (12, 1))
+
+        array = numpy.arange(12).reshape(1, 4, 3)
+        d = cfdm.Data(array)
+        e = d.squeeze()
+        f = e.insert_dimension(0)
+        a = f.array
+        self.assertTrue(numpy.allclose(a, array))
+
+        with self.assertRaises(ValueError):
+            d.insert_dimension(1000)
+
+    def test_Data_get_compressed_dimension(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cfdm.Data([[281, 279, 278, 279]])
+        self.assertIsNone(d.get_compressed_dimension(None))
 
 # --- End: class
 

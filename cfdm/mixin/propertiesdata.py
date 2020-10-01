@@ -462,6 +462,10 @@ class PropertiesData(Properties):
 
         {{string: `bool`, optional}}
 
+        {{name: `str`, optional}}
+
+        {{data_name: `str`, optional}}
+
         {{header: `bool`, optional}}
 
     :Returns:
@@ -470,7 +474,16 @@ class PropertiesData(Properties):
 
     **Examples:**
 
-        TODO
+    >>> x = {{package}}.{{class}}(
+    ...     properties={'units': 'Kelvin',
+    ...                 'standard_name': 'air_temperature'}
+    ... )
+    >>> x.set_data([271.15, 274.15, 280])
+    >>> print(x.creation_commands(header=False))
+    c = {{package}}.{{class}}()
+    c.set_properties({'units': 'Kelvin', 'standard_name': 'air_temperature'})
+    data = {{package}}.Data([271.15, 274.15, 280.0], units='Kelvin', dtype='f8')
+    c.set_data(data)
 
         '''
         if name == data_name:

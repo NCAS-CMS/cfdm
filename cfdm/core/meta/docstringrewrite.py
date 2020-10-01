@@ -190,7 +190,8 @@ class DocstringRewriteMeta(type):
         # --- End: for
 
         # ------------------------------------------------------------
-        # TODO
+        # Now loop round the parent classes, copying any methods that
+        # they override and rewriting those docstrings.
         # ------------------------------------------------------------
         for parent in parents:
 

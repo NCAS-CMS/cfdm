@@ -153,17 +153,8 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     def creation_commands(self, namespace=None, indent=0, string=True,
                           name='c', header=True):
-        '''Return the commands that would create the field construct.
-
-    **Construct keys**
-
-    The *key* parameter of the output `set_construct` commands is
-    utilised in order minimise the number of commands needed to
-    implement cross-referencing between constructs (e.g. between a
-    coordinate reference construct and coordinate constructs). This is
-    usually not necessary when building field constructs, as by
-    default the `set_construct` method returns a unique construct key
-    for the construct being set.
+        '''Return the commands that would create the coordinate reference
+    construct.
 
     .. versionadded:: (cfdm) 1.8.7.0
 
@@ -180,13 +171,36 @@ class CoordinateReference(mixin.NetCDFVariable,
 
         {{header: `bool`, optional}}
 
+        {{name: `str`, optional}}
+
+        {{header: `bool`, optional}}
+
     :Returns:
 
         {{returns creation_commands}}
 
     **Examples:**
 
-        TODO
+    >>> x = {{package}}.CoordinateReference(
+    ...     coordinates=['dimensioncoordinate0']
+    ... )
+    >>> x.datum.set_parameter('earth_radius', 6371007)
+    >>> x.coordinate_conversion.set_parameters(
+    ...     {'standard_name', 'atmosphere_hybrid_height_coordinate',
+    ...      'computed_standard_name', 'altitude'}
+    ... )
+    >>> x.coordinate_conversion.set_domain_ancillaries(
+    ...     {'a': 'domainancillary0',
+    ...      'b': 'domainancillary1',
+    ...      'orog': 'domainancillary2'}
+    ... )
+    >>> print(x.creation_commands(header=False))
+    c = {{package}}.CoordinateReference()
+    c.set_coordinates({'dimensioncoordinate0'})
+    c.datum.set_parameter('earth_radius', 6371007)
+    c.coordinate_conversion.set_parameter('standard_name', 'atmosphere_hybrid_height_coordinate')
+    c.coordinate_conversion.set_parameter('computed_standard_name', 'altitude')
+    c.coordinate_conversion.set_domain_ancillaries({'a': 'domainancillary0', 'b': 'domainancillary1', 'orog': 'domainancillary2'})
 
         '''
         namespace0 = namespace

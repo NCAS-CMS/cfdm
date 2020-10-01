@@ -1259,42 +1259,60 @@ class Data(Container,
 
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
-        '''TODO
+        '''Replace masked elements with the fill value.
 
     .. versionadded:: (cfdm) 1.8.7.0
 
     :Parameters:
 
         fill_value: scalar, optional
-            TODO
+            The fill value. By default the fill returned by
+            `get_fill_value` is used, or if this is not set then the
+            netCDF default fill value for the data type is used (as
+            defined by `netCDF.fillvals`).
+
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
         `Data` or `None`
-            TODO
+            The filled data, or `None` if the operation was in-place.
 
     **Examples:**
 
-    TODO
+    >>> d = {{package}}.Data([[1, 2, 3]])
+    >>> print(d.filled().array)
+    [[1 2 3]]
+    >>> d[0, 0] = cfdm.masked
+    >>> print(d.filled().array)
+    [[-9223372036854775806                    2                    3]]
+    >>> d.set_fill_value(-99)
+    >>> print(d.filled().array)
+    [[-99   2   3]]
+    >>> print(d.filled(1e10).array)
+    [[10000000000           2           3]]
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
         if fill_value is None:
             fill_value = d.get_fill_value(None)
-            if fill_value is None:  # still...
+            if fill_value is None:
                 default_fillvals = netCDF4.default_fillvals
                 fill_value = default_fillvals.get(d.dtype.str[1:], None)
                 if fill_value is None and d.dtype.kind in ('SU'):
                     fill_value = default_fillvals.get('S1', None)
 
                 if fill_value is None:  # should not be None by this stage
-                    raise ValueError("TODO {}".format(d.dtype.str))
+                    raise ValueError(
+                        "Can't determine fill value for "
+                        "data type {!r}".format(d.dtype.str)
+                    )  # pragma: no cover
         # --- End: if
 
         array = self.array
 
-        if numpy.ma.isMA:
+        if numpy.ma.isMA(array):
             array = array.filled(fill_value)
 
         d._set_Array(array, copy=False)
@@ -1718,7 +1736,7 @@ class Data(Container,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Data` or `None`
             The data with removed data axes. If the operation was
             in-place then `None` is returned.
 
@@ -1739,20 +1757,12 @@ class Data(Container,
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if not d.ndim:
-            if axes:
-                raise ValueError(
-                    "Can't squeeze data: axes {} can not be used for "
-                    "data with shape {}".format(
-                        axes, d.shape))
-            return d
-
-        shape = d.shape
-
         try:
-            axes = self._parse_axes(axes)
+            axes = d._parse_axes(axes)
         except ValueError as error:
             raise ValueError("Can't squeeze data: {}".format(error))
+
+        shape = d.shape
 
         if axes is None:
             axes = tuple([i for i, n in enumerate(shape) if n == 1])
@@ -2078,7 +2088,7 @@ class Data(Container,
             logger.info(
                 "{0}: Different shapes: {1} != {2}".format(
                     self.__class__.__name__, self.shape, other.shape)
-            )
+            )  # pragma: no cover
             return False
 
         # Check that each instance has the same fill value
@@ -2089,7 +2099,7 @@ class Data(Container,
                     self.__class__.__name__,
                     self.get_fill_value(None), other.get_fill_value(None)
                 )
-            )
+            )  # pragma: no cover
             return False
 
         # Check that each instance has the same data type
@@ -2097,7 +2107,7 @@ class Data(Container,
             logger.info(
                 "{0}: Different data types: {1} != {2}".format(
                     self.__class__.__name__, self.dtype, other.dtype)
-            )
+            )  # pragma: no cover
             return False
 
         # Return now if we have been asked to not check the array
@@ -2113,7 +2123,7 @@ class Data(Container,
                 logger.info(
                     "{0}: Different {1}: {2!r} != {3!r}".format(
                         self.__class__.__name__, attr, x, y)
-                )
+                )  # pragma: no cover
                 return False
         # --- End: for
 
@@ -2129,7 +2139,7 @@ class Data(Container,
                         self.__class__.__name__,
                         compression_type,
                         other.get_compression_type())
-                )
+                )  # pragma: no cover
 
                 return False
 
@@ -2143,7 +2153,7 @@ class Data(Container,
                     logger.info(
                         "{0}: Different compressed array values".format(
                             self.__class__.__name__)
-                    )
+                    )  # pragma: no cover
                     return False
         # --- End: if
 
@@ -2268,13 +2278,14 @@ class Data(Container,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Data` or `None`
             The flattened data, or `None` if the operation was
             in-place.
 
     **Examples**
 
-    >>> d = {{package}}.{{class}}(numpy.arange(24).reshape(1, 2, 3, 4))
+    >>> import numpy
+    >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
     >>> d
     <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
     >>> print(d.array)
@@ -2324,27 +2335,29 @@ class Data(Container,
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        ndim = self.ndim
-        if not ndim:
-            if axes or axes == 0:
-                raise ValueError(
-                    "Can't flatten: "
-                    "Can't remove an axis from scalar {}".format(
-                        self.__class__.__name__))
+        try:
+            axes = d._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError("Can't flatten data: {}".format(error))
+
+        ndim = d.ndim
+
+        if ndim <= 1:
             return d
 
-        shape = list(d.shape)
-
-        # Note that it is important that the first axis in the list is
-        # the left-most flattened axis
         if axes is None:
-            axes = list(range(ndim))
+            # By default flatten all axes
+            axes = tuple(range(ndim))
         else:
-            axes = sorted(d._parse_axes(axes))
+            if len(axes) <= 1:
+                return d
 
-        n_axes = len(axes)
-        if n_axes <= 1:
-            return d
+            # Note that it is important that the first axis in the
+            # list is the left-most flattened axis
+            axes = sorted(axes)
+
+        # Save the shape before we tranpose
+        shape = list(d.shape)
 
         order = [i for i in range(ndim) if i not in axes]
         order[axes[0]:axes[0]] = axes

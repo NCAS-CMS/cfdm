@@ -93,7 +93,7 @@ class CellMethod(mixin.Container,
 
     def creation_commands(self, namespace=None, indent=0, string=True,
                           name='c', header=True):
-        '''Return the commands that would create the cell measure construct.
+        '''Return the commands that would create the cell method construct.
 
     .. versionadded:: (cfdm) 1.8.7.0
 
@@ -108,6 +108,8 @@ class CellMethod(mixin.Container,
 
         {{string: `bool`, optional}}
 
+        {{name: `str`, optional}}
+
         {{header: `bool`, optional}}
 
     :Returns:
@@ -116,7 +118,15 @@ class CellMethod(mixin.Container,
 
     **Examples:**
 
-        TODO
+    >>> x = {{package}}.CellMethod(
+    ...     axes=['area'],
+    ...     qualifiers={'over': 'land'}
+    ... )
+    >>> print(x.creation_commands(header=False))
+    c = {{package}}.CellMethod()
+    c.set_axes(('area',))
+    c.set_qualifier('over', 'land')
+
         '''
         namespace0 = namespace
         if namespace is None:

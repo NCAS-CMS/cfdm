@@ -1588,7 +1588,8 @@ class Constructs(mixin.Container,
         return out
 
     def _matching_values(self, value0, construct, value1):
-        '''TODO
+        '''Whether or not two values are the same.
+
         '''
         if value1 is not None:
             try:

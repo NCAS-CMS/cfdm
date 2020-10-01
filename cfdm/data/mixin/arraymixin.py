@@ -2,7 +2,7 @@ import numpy
 
 
 class ArrayMixin:
-    '''TODO
+    '''Mixin class for a container of an array.
 
     .. versionadded:: (cfdm) 1.8.7.0
 

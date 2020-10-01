@@ -91,6 +91,8 @@ class Properties(Container):
 
         {{string: `bool`, optional}}
 
+        {{name: `str`, optional}}
+
         {{header: `bool`, optional}}
 
     :Returns:
@@ -99,7 +101,13 @@ class Properties(Container):
 
     **Examples:**
 
-        TODO
+    >>> x = {{package}}.{{class}}(
+    ...     properties={'units': 'Kelvin',
+    ...                 'standard_name': 'air_temperature'}
+    ... )
+    >>> print(x.creation_commands(header=False))
+    c = {{package}}.{{class}}()
+    c.set_properties({'units': 'Kelvin', 'standard_name': 'air_temperature'})
 
         '''
         namespace0 = namespace
