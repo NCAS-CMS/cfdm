@@ -2088,7 +2088,7 @@ class Data(Container,
             logger.info(
                 "{0}: Different shapes: {1} != {2}".format(
                     self.__class__.__name__, self.shape, other.shape)
-            )
+            )  # pragma: no cover
             return False
 
         # Check that each instance has the same fill value
@@ -2099,7 +2099,7 @@ class Data(Container,
                     self.__class__.__name__,
                     self.get_fill_value(None), other.get_fill_value(None)
                 )
-            )
+            )  # pragma: no cover
             return False
 
         # Check that each instance has the same data type
@@ -2107,7 +2107,7 @@ class Data(Container,
             logger.info(
                 "{0}: Different data types: {1} != {2}".format(
                     self.__class__.__name__, self.dtype, other.dtype)
-            )
+            )  # pragma: no cover
             return False
 
         # Return now if we have been asked to not check the array
@@ -2123,7 +2123,7 @@ class Data(Container,
                 logger.info(
                     "{0}: Different {1}: {2!r} != {3!r}".format(
                         self.__class__.__name__, attr, x, y)
-                )
+                )  # pragma: no cover
                 return False
         # --- End: for
 
@@ -2139,7 +2139,7 @@ class Data(Container,
                         self.__class__.__name__,
                         compression_type,
                         other.get_compression_type())
-                )
+                )  # pragma: no cover
 
                 return False
 
@@ -2153,7 +2153,7 @@ class Data(Container,
                     logger.info(
                         "{0}: Different compressed array values".format(
                             self.__class__.__name__)
-                    )
+                    )  # pragma: no cover
                     return False
         # --- End: if
 
@@ -2278,13 +2278,14 @@ class Data(Container,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Data` or `None`
             The flattened data, or `None` if the operation was
             in-place.
 
     **Examples**
 
-    >>> d = {{package}}.{{class}}(numpy.arange(24).reshape(1, 2, 3, 4))
+    >>> import numpy
+    >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
     >>> d
     <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
     >>> print(d.array)
@@ -2334,27 +2335,29 @@ class Data(Container,
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        ndim = self.ndim
-        if not ndim:
-            if axes or axes == 0:
-                raise ValueError(
-                    "Can't flatten: "
-                    "Can't remove an axis from scalar {}".format(
-                        self.__class__.__name__))
+        try:
+            axes = d._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError("Can't flatten data: {}".format(error))
+
+        ndim = d.ndim
+
+        if ndim <= 1:
             return d
 
-        shape = list(d.shape)
-
-        # Note that it is important that the first axis in the list is
-        # the left-most flattened axis
         if axes is None:
-            axes = list(range(ndim))
+            # By default flatten all axes
+            axes = tuple(range(ndim))
         else:
-            axes = sorted(d._parse_axes(axes))
+            if len(axes) <= 1:
+                return d
 
-        n_axes = len(axes)
-        if n_axes <= 1:
-            return d
+            # Note that it is important that the first axis in the
+            # list is the left-most flattened axis
+            axes = sorted(axes)
+
+        # Save the shape before we tranpose
+        shape = list(d.shape)
 
         order = [i for i in range(ndim) if i not in axes]
         order[axes[0]:axes[0]] = axes
