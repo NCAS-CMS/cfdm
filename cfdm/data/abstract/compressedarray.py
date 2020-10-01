@@ -4,9 +4,7 @@ from .array import Array
 
 
 class CompressedArray(Array):
-    '''TODO Mixin class for a container of an underlying compressed array.
-
-    See `cfdm.GatheredArray` for an example implementation.
+    '''Mixin class for a container of an underlying compressed array.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -47,34 +45,6 @@ class CompressedArray(Array):
                          compression_type=compression_type, **kwargs)
 
         self._set_compressed_Array(compressed_array, copy=False)
-
-#    @abc.abstractmethod
-#    def __getitem__(self, indices):
-#        '''Return an uncompressed subspace as an independent numpy array.
-#
-#    x.__getitem__(indices) <==> x[indices]
-#
-#    The indices that define the subspace are relative to the
-#    uncompressed array.
-#
-#    Indexing follows rules that are very similar to the numpy indexing
-#    rules, the only differences being:
-#
-#    * An integer index i takes the i-th element but does not reduce
-#      the rank by one.
-#
-#    ..
-#
-#    * When two or more dimensions' indices are sequences of integers
-#      then these indices work independently along each dimension
-#      (similar to the way vector subscripts work in Fortran). This is
-#      the same behaviour as indexing on a Variable object of the
-#      netCDF4 package.
-#
-#    .. versionadded:: (cfdm) 1.7.0
-#
-#        '''
-#        raise NotImplementedError()  # pragma: no cover
 
     def _get_compressed_Array(self, default=ValueError()):
         '''Return the compressed array.

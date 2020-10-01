@@ -67,18 +67,20 @@ _docstring_substitution_definitions = {
             numbers. The default value is set by the
             `{{package}}.atol` function.''',
 
-    # rtol
-    '{{rtol: number, optional}}':
-    '''rtol: number, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the
-            `{{package}}.rtol` function.''',
+    # data_name
+    '{{data_name: `str`, optional}}':
+    '''data_name: `str`, optional
+            The name of the construct's `Data` instance created by the
+            returned commands.
 
-    # ignore_fill_value
-    '{{ignore_fill_value: `bool`, optional}}':
-    '''ignore_fill_value: `bool`, optional
-             If True then the ``_FillValue`` and ``missing_value``
-            properties are omitted from the comparison.''',
+            *Parameter example:*
+              ``name='data1'``''',
+
+    # header
+    '{{header: `bool`, optional}}':
+    '''header: `bool`, optional
+            If False then do not output a comment describing the
+            components.''',
 
     # ignore_compression
     '{{ignore_compression: `bool`, optional}}':
@@ -97,14 +99,11 @@ _docstring_substitution_definitions = {
             imply inequality, regardless of whether the elements are
             within the tolerance for equality.''',
 
-    # ignore_type
-    '{{ignore_type: `bool`, optional}}':
-    '''ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another `{{class}}` instance, or a
-            subclass of one. If *ignore_type* is True then
-            ``{{package}}.{{class}}(source=other)`` is tested, rather
-            than the ``other`` defined by the *other* parameter.''',
+    # ignore_fill_value
+    '{{ignore_fill_value: `bool`, optional}}':
+    '''ignore_fill_value: `bool`, optional
+             If True then the ``_FillValue`` and ``missing_value``
+            properties are omitted from the comparison.''',
 
     # ignore_properties
     '{{ignore_properties: sequence of `str`, optional}}':
@@ -115,6 +114,68 @@ _docstring_substitution_definitions = {
     '{{inplace: `bool`, optional}}':
     '''inplace: `bool`, optional
             If True then do the operation in-place and return `None`.''',
+
+    # ignore_type
+    '{{ignore_type: `bool`, optional}}':
+    '''ignore_type: `bool`, optional
+            Any type of object may be tested but, in general, equality
+            is only possible with another `{{class}}` instance, or a
+            subclass of one. If *ignore_type* is True then
+            ``{{package}}.{{class}}(source=other)`` is tested, rather
+            than the ``other`` defined by the *other* parameter.''',
+
+    # indent
+    '{{indent: `int`, optional}}':
+    '''indent: `int`, optional
+           Indent each line by this many spaces. By default no
+            indentation is applied. Ignored if *string* is False.''',
+
+    # name
+    '{{name: `str`, optional}}':
+    '''name: `str`, optional
+            The name of the `{{class}}` instance created by the
+            returned commands.
+
+            *Parameter example:*
+              ``name='var1'``''',
+
+    # namespace
+    '{{namespace: `str`, optional}}':
+    '''namespace: `str`, optional
+            The name space containing classes of the {{package}}
+            package. This is prefixed to the class name in commands
+            that instantiate instances of {{package}} objects. By default,
+            or if `None`, the name space is assumed to be consistent
+            with {{package}} being imported as ``import {{package}}``.
+
+            *Parameter example:*
+              If {{package}} was imported as ``import {{package}} as xyz``
+              then set ``namespace='xyz'``
+
+            *Parameter example:*
+              If {{package}} was imported as ``from {{package}} import *``
+              then set ``namespace=''``''',
+
+    # representative_data
+    '{{representative_data: `bool`, optional}}':
+    '''representative_data: `bool`, optional
+            Return one-line representations of `Data` instances, which
+            are not executable code but prevent the data being
+            converted in its entirety to a string representation.''',
+
+    # rtol
+    '{{rtol: number, optional}}':
+    '''rtol: number, optional
+            The tolerance on relative differences between real
+            numbers. The default value is set by the
+            `{{package}}.rtol` function.''',
+
+    # string
+    '{{string: `bool`, optional}}':
+    '''string: `bool`, optional
+            If False then return each command as an element of a
+            `list`. By default the commands are concatenated into
+            a string, with a new line inserted between each command.''',
 
     # verbose
     '{{verbose: `int` or `str` or `None`, optional}}':
@@ -145,56 +206,18 @@ _docstring_substitution_definitions = {
             for increasing verbosity, the more description that is
             printed to convey information about the operation.''',
 
-        '{{namespace: `str`, optional}}':
-        '''namespace: `str`, optional
-            The name space containing classes of the {{package}}
-            package. This is prefixed to the class name in commands
-            that instantiate instances of {{package}} objects. By default,
-            or if `None`, the name space is assumed to be consistent
-            with {{package}} being imported as ``import {{package}}``.
-
-            *Parameter example:*
-              If {{package}} was imported as ``import {{package}} as xyz``
-              then set ``namespace='xyz'``
-
-            *Parameter example:*
-              If {{package}} was imported as ``from {{package}} import *``
-              then set ``namespace=''``''',
-
-        '{{representative_data: `bool`, optional}}':
-        '''representative_data: `bool`, optional
-            Return one-line representations of `Data` instances, which
-            are not executable code but prevent the data being
-            converted in its entirety to a string representation.''',
-
-        '{{indent: `int`, optional}}':
-        '''indent: `int`, optional
-           Indent each line by this many spaces. By default no
-            indentation is applied. Ignored if *string* is False.''',
-
-        '{{string: `bool`, optional}}':
-        '''string: `bool`, optional
-            If False then return each command as an element of a
-            `list`. By default the commands are concatenated into
-            a string, with a new line inserted between each command.''',
-
-        '{{header: `bool`, optional}}':
-        '''header: `bool`, optional
-            If False then do not output a comment describing the
-            components.''',
-
     # ----------------------------------------------------------------
     # Returns descriptions
     # ----------------------------------------------------------------
-    '{{returns dump}}':
-    '''`str` or `None`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.''',
-
     '{{returns creation_commands}}':
     '''`str` or `list`
             The commands in a string, with a new line inserted between
             each command. If *string* is False then the separate
             commands are returned as each element of a `list`.''',
+
+    '{{returns dump}}':
+    '''`str` or `None`
+            The description. If *display* is True then the description
+            is printed and `None` is returned. Otherwise the
+            description is returned as a string.''',
 }

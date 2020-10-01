@@ -1040,19 +1040,23 @@ class Constructs(abstract.Container):
                           _use_data=data, _ignore=self._ignore)
 
     def new_identifier(self, construct_type):
-        '''Return a new, unsed construct key.
+        '''Return a new, unused construct key.
 
     .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         construct_type: `str`
-            TODO
+            The construct type for which the identifier is being
+            created.
+
+            *Parameter example:*
+              ``construct_type='dimension_coordinate'``
 
     :Returns:
 
         `str`
-            The new construct key.
+            The new construct identifier.
 
     **Examples:**
 
