@@ -179,10 +179,10 @@ Docstring substitutions
    :toctree: ../method/                   
    :template: method.rst                  
                                           
-   ~cfdm.._docstring_special_substitutions
-   ~cfdm.._docstring_substitutions        
-   ~cfdm.._docstring_package_depth        
-   ~cfdm.._docstring_method_exclusions
+   ~cfdm._docstring_special_substitutions
+   ~cfdm._docstring_substitutions        
+   ~cfdm._docstring_package_depth        
+   ~cfdm._docstring_method_exclusions
 
 Docstring substitutions                     
 -----------------------                   

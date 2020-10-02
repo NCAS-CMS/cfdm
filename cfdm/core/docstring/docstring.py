@@ -34,7 +34,22 @@ _docstring_substitution_definitions = {
     # Keyword parameter descriptions
     # ----------------------------------------------------------------
 
-    # default: optional
+    # axes int examples
+    '{{axes int examples}}':
+    '''Each axis is identified by its integer position in the
+            data. Negative integers counting from the last position
+            are allowed.
+
+            *Parameter example:*
+              ``axes=0``
+
+            *Parameter example:*
+              ``axes=-1``
+
+            *Parameter example:*
+              ``axes=[1, -2]``''',
+
+    # default Exception
     '{{default Exception}}':
     '''If set to an `Exception` instance then it will be raised
             instead.''',

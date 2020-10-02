@@ -440,9 +440,9 @@ class Constructs(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if the
-            construct can not be removed, or does not exist. If set to
-            an `Exception` instance then it will be raised instead.
+            construct can not be removed, or does not exist.
 
+            {{default Exception}}
 
     :Returns:
 
@@ -615,8 +615,7 @@ class Constructs(abstract.Container):
             The construct identifiers of the domain axis constructs
             spanned by the data array. An exception is raised if used
             for a metadata construct that can not have a data array,
-            i.e. domain axis, cell method and coordinate reference
-            constructs.
+            such as a domain axis constuct.
 
             *Parameter example:*
               ``axes='domainaxis1'``
@@ -665,8 +664,10 @@ class Constructs(abstract.Container):
 
         extra_axes = 0
         data = construct.get_data(None)
-        if (data is not None and
-                data.shape[:data.ndim - extra_axes] != axes_shape):
+        if (
+                data is not None and
+                data.shape[:data.ndim - extra_axes] != axes_shape
+        ):
             raise ValueError(
                 "Can't set {!r}: Data shape of {!r} does not match the "
                 "shape required by domain axes {}: {}".format(
@@ -680,8 +681,10 @@ class Constructs(abstract.Container):
         else:
             if bounds is not None:
                 data = bounds.get_data(None)
-                if (data is not None and
-                        data.shape[:len(axes_shape)] != axes_shape):
+                if (
+                        data is not None and
+                        data.shape[:len(axes_shape)] != axes_shape
+                ):
                     raise ValueError(
                         "Can't set {!r}: Bounds data shape of {!r} does "
                         "not match the shape required by domain axes "

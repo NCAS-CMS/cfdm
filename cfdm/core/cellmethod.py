@@ -154,8 +154,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if axes have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -165,6 +166,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_axes('domainaxis1')
     >>> c.has_axes()
     True
@@ -197,8 +199,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if the method
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+            has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -207,6 +210,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_method('minimum')
     >>> c.has_method()
     True
@@ -246,8 +250,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if the
-            qualifier has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+            qualifier has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -255,6 +260,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_qualifier('where', 'land')
     >>> c.get_qualifier('where', 'no qualifier')
     'land'
@@ -283,8 +289,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if axes have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -293,6 +300,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_axes('domainaxis1')
     >>> c.has_axes()
     True
@@ -325,8 +333,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if the method
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+            has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -335,6 +344,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_method('minimum')
     >>> c.has_method()
     True
@@ -374,8 +384,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if the
-            qualifier has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+            qualifier has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -383,6 +394,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_qualifier('where', 'land')
     >>> c.get_qualifier('where', 'no qualifier')
     'land'
@@ -414,6 +426,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_axes('domainaxis1')
     >>> c.has_axes()
     True
@@ -444,6 +457,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_method('minimum')
     >>> c.has_method()
     True
@@ -480,6 +494,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_qualifier('where', 'land')
     >>> c.has_qualifier('where')
     True
@@ -506,11 +521,13 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
+    >>> c.set_qualifier('where', 'land')
     >>> c.qualifiers()
-    {'interval': [<{{repr}}Data(): 0.1 degrees>],
-     'where': 'land'}
-
-    >>> f.qualifiers()
+    {'where': 'land'}
+    >>> c.del_qualifier('where')
+    'land'
+    >>> c.qualifiers()
     {}
 
         '''
@@ -554,6 +571,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_axes('domainaxis1')
     >>> c.has_axes()
     True
@@ -605,6 +623,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_method('minimum')
     >>> c.has_method()
     True
@@ -646,6 +665,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_qualifier('where', 'land')
     >>> c.get_qualifier('where')
     'land'

@@ -96,8 +96,9 @@ extensions = [
     'sphinx.ext.graphviz',
     # 'sphinx.ext.inheritance_diagram',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.doctest',
+    # 'sphinx.ext.doctest',
     'sphinx.ext.githubpages',
+    'sphinx.ext.doctest',
     # 'sphinxcontrib.programoutput',  # pip install sphinxcontrib-programoutput
     'sphinx_copybutton',
     'sphinx_toggleprompt',
