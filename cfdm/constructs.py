@@ -25,9 +25,7 @@ class Constructs(mixin.Container,
     * cell method constructs
     * field ancillary constructs
 
-    The container may be used by `Field` and `Domain` instances. In
-    the latter case cell method and field ancillary constructs must be
-    flagged as "ignored" (see the *_ignore* parameter).
+    The container is used by used by `Field` and `Domain` instances.
 
     The container is like a dictionary in many ways, in that it stores
     key/value pairs where the key is the unique construct key with

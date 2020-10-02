@@ -111,6 +111,7 @@ class CellMeasure(abstract.PropertiesData):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_measure('area')
     >>> c.has_measure()
     True
@@ -146,6 +147,7 @@ class CellMeasure(abstract.PropertiesData):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_measure('area')
     >>> c.has_measure()
     True
@@ -173,8 +175,9 @@ class CellMeasure(abstract.PropertiesData):
 
         default: optional
             Return the value of the *default* parameter if the measure
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+            has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -182,6 +185,7 @@ class CellMeasure(abstract.PropertiesData):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_measure('area')
     >>> c.has_measure()
     True
@@ -224,6 +228,7 @@ class CellMeasure(abstract.PropertiesData):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_measure('area')
     >>> c.has_measure()
     True

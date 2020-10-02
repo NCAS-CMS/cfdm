@@ -118,6 +118,7 @@ class PropertiesData(Properties):
     :Parameters:
 
         axes: (sequence of) `int`
+            {{axes int examples}}
 
     :Returns:
 
@@ -841,20 +842,11 @@ class PropertiesData(Properties):
 
     :Parameters:
 
-        axes: (sequence of) `int`
+        axes: (sequence of) `int`, optional
             The positions of the size one axes to be removed. By
-            default all size one axes are removed. Each axis is
-            identified by its original integer position. Negative
-            integers counting from the last position are allowed.
+            default all size one axes are removed.
 
-            *Parameter example:*
-              ``axes=0``
-
-            *Parameter example:*
-              ``axes=-2``
-
-            *Parameter example:*
-              ``axes=[2, 0]``
+            {{axes int examples}}
 
         {{inplace: `bool`, optional}}
 
@@ -898,17 +890,10 @@ class PropertiesData(Properties):
 
     :Parameters:
 
-        axes: (sequence of) `int`
-            The new axis order. By default the order is reversed. Each
-            axis in the new order is identified by its original
-            integer position. Negative integers counting from the last
-            position are allowed.
+        axes: (sequence of) `int`, optional
+            The new axis order. By default the order is reversed.
 
-            *Parameter example:*
-              ``axes=[2, 0, 1]``
-
-            *Parameter example:*
-              ``axes=[-1, 0, 1]``
+            {{axes int examples}}
 
         {{inplace: `bool`, optional}}
 

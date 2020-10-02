@@ -553,11 +553,9 @@ class Data(Container,
     :Parameters:
 
         axes: (sequence of) `int`
-            The axes of the data. May be one of, or a sequence of any
-            combination of zero or more of:
+            The axes of the data.
 
-            * The integer position of a dimension in the data
-              (negative indices allowed).
+            {{axes int examples}}
 
     :Returns:
 
@@ -1637,6 +1635,10 @@ class Data(Container,
     :Parameters:
 
         axes: (sequence of) `int`, optional
+            The axes over which to take the maximum. By default the
+            maximum over all axes is returned.
+
+            {{axes int examples}}
 
     :Returns:
 
@@ -1644,6 +1646,35 @@ class Data(Container,
             Maximum of the data along the specified axes.
 
     **Examples:**
+
+    >>> import numpy
+    >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+    >>> d
+    <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+    >>> print(d.array)
+    [[[[ 0  1  2  3]
+       [ 4  5  6  7]
+       [ 8  9 10 11]]
+      [[12 13 14 15]
+       [16 17 18 19]
+       [20 21 22 23]]]]
+    >>> e = d.max()
+    >>> e
+    <{{repr}}Data(1, 1, 1, 1): [[[[23]]]]>
+    >>> print(e.array)
+    [[[[23]]]]
+    >>> e = d.max(2)
+    >>> e
+    <{{repr}}Data(1, 2, 1, 4): [[[[8, ..., 23]]]]>
+    >>> print(e.array)
+    [[[[ 8  9 10 11]]
+      [[20 21 22 23]]]]
+    >>> e = d.max([-2, -1])
+    >>> e
+    <{{repr}}Data(1, 2, 1, 1): [[[[11, 23]]]]>
+    >>> print(e.array)
+    [[[[11]]
+      [[23]]]]
 
         '''
         # Parse the axes. By default flattened input is used.
@@ -1676,6 +1707,10 @@ class Data(Container,
     :Parameters:
 
         axes: (sequence of) `int`, optional
+            The axes over which to take the minimum. By default the
+            minimum over all axes is returned.
+
+            {{axes int examples}}
 
     :Returns:
 
@@ -1683,6 +1718,35 @@ class Data(Container,
             Minimum of the data along the specified axes.
 
     **Examples:**
+
+    >>> import numpy
+    >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+    >>> d
+    <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+    >>> print(d.array)
+    [[[[ 0  1  2  3]
+       [ 4  5  6  7]
+       [ 8  9 10 11]]
+      [[12 13 14 15]
+       [16 17 18 19]
+       [20 21 22 23]]]]
+    >>> e = d.min()
+    >>> e
+    <{{repr}}Data(1, 1, 1, 1): [[[[0]]]]>
+    >>> print(e.array)
+    [[[[0]]]]
+    >>> e = d.min(2)
+    >>> e
+    <{{repr}}Data(1, 2, 1, 4): [[[[0, ..., 15]]]]>
+    >>> print(e.array)
+    [[[[ 0  1  2  3]]
+      [[12 13 14 15]]]]
+    >>> e = d.min([-2, -1])
+    >>> e
+    <{{repr}}Data(1, 2, 1, 1): [[[[0, 12]]]]>
+    >>> print(e.array)
+    [[[[ 0]]
+      [[12]]]]
 
         '''
         # Parse the axes. By default flattened input is used.
@@ -1718,18 +1782,9 @@ class Data(Container,
 
         axes: (sequence of) `int`, optional
             The positions of the size one axes to be removed. By
-            default all size one axes are removed. Each axis is
-            identified by its original integer position. Negative
-            integers counting from the last position are allowed.
+            default all size one axes are removed.
 
-            *Parameter example:*
-              ``axes=0``
-
-            *Parameter example:*
-              ``axes=-2``
-
-            *Parameter example:*
-              ``axes=[2, 0]``
+            {{axes int examples}}
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -1799,6 +1854,10 @@ class Data(Container,
     :Parameters:
 
         axes: (sequence of) `int`, optional
+            The axes over which to calculate the sum. By default the
+            sum over all axes is returned.
+
+            {{axes int examples}}
 
     :Returns:
 
@@ -1806,6 +1865,35 @@ class Data(Container,
             The sum of the data along the specified axes.
 
     **Examples:**
+
+    >>> import numpy
+    >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+    >>> d
+    <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+    >>> print(d.array)
+    [[[[ 0  1  2  3]
+       [ 4  5  6  7]
+       [ 8  9 10 11]]
+      [[12 13 14 15]
+       [16 17 18 19]
+       [20 21 22 23]]]]
+    >>> e = d.sum()
+    >>> e
+    <{{repr}}Data(1, 1, 1, 1): [[[[276]]]]>
+    >>> print(e.array)
+    [[[[276]]]]
+    >>> e = d.sum(2)
+    >>> e
+    <{{repr}}Data(1, 2, 1, 4): [[[[12, ..., 57]]]]>
+    >>> print(e.array)
+    [[[[12 15 18 21]]
+      [[48 51 54 57]]]]
+    >>> e = d.sum([-2, -1])
+    >>> e
+    <{{repr}}Data(1, 2, 1, 1): [[[[66, 210]]]]>
+    >>> print(e.array)
+    [[[[ 66]]
+      [[210]]]]
 
         '''
         # Parse the axes. By default flattened input is used.
@@ -1837,16 +1925,9 @@ class Data(Container,
     :Parameters:
 
         axes: (sequence of) `int`
-            The new axis order. By default the order is reversed. Each
-            axis in the new order is identified by its original
-            integer position. Negative integers counting from the last
-            position are allowed.
+            The new axis order. By default the order is reversed.
 
-            *Parameter example:*
-              ``axes=[2, 0, 1]``
-
-            *Parameter example:*
-              ``axes=[-1, 0, 1]``
+            {{axes int examples}}
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -2260,18 +2341,11 @@ class Data(Container,
 
     :Parameters:
 
-        axes: (sequence of) int or str, optional
-            Select the axes.  By default all axes are flattened. The
-            *axes* argument may be one, or a sequence, of:
+        axes: (sequence of) `int`, optional
+            Select the axes. By default all axes are flattened. No
+            axes are flattened if *axes* is an empty sequence.
 
-              * An internal axis identifier. Selects this axis.
-
-            ..
-
-              * An integer. Selects the axis coresponding to the given
-                position in the list of axes of the data array.
-
-            No axes are flattened if *axes* is an empty sequence.
+            {{axes int examples}}
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
