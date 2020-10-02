@@ -319,53 +319,6 @@ class Constructs(abstract.Container):
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-#    def _default(self, default, message=None):
-#        '''Return a value or raise an Exception for a default case.
-#
-#    .. versionadded:: (cfdm) 1.7.0
-#
-#    :Parameters:
-#
-#        default:
-#            The value to return, or to raise if set to an `Exception`
-#            instance.
-#
-#        message: `str`, optional
-#            The error message to raise with *default* if it is an
-#            `Exception` instance.
-#
-#    :Returns:
-#
-#        The value of *default* if it is not an `Exception` instance.
-#
-#    **Examples:**
-#
-#    >>> f = cfdm.example_field(0)
-#    >>> c = f.get_construct('cellmethod0')
-#    >>> c
-#    <{{repr}}CellMethod: area: mean>
-#
-#    >>> c._default(AttributeError())  # Raises Exception
-#    AttributeError
-#    >>> c._default(ValueError(), message="No data")  # Raises Exception
-#    ValueError: No data
-#    >>> c._default(False)
-#    False
-#    >>> c._default('Not set')
-#    'Not set'
-#    >>> c._default(1)
-#    1
-#
-#        '''
-#        if isinstance(default, Exception):
-#            if message is not None and not default.args:
-#                default = copy(default)
-#                default.args = (message,)
-#
-#            raise default
-#
-#        return default
-
     def _del_data_axes(self, k, *d):
         '''Remove and return a construct's axes, if any.
 
