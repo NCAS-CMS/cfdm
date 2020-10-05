@@ -27,12 +27,10 @@ class CellMeasureTest(unittest.TestCase):
         self.assertEqual(len(f), 1, 'f={!r}'.format(f))
         self.f = f[0]
 
-        self.test_only = []
+    def test_CellMeasure__init__(self):
+        c = cfdm.CellMeasure(source='qwerty')
 
     def test_CellMeasure__repr__str__dump_construct_type(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         for cm in f.cell_measures.values():
@@ -42,9 +40,6 @@ class CellMeasureTest(unittest.TestCase):
             self.assertEqual(cm.construct_type, 'cell_measure')
 
     def test_CellMeasure(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
 
         cm = f.construct('measure:area')
@@ -66,6 +61,6 @@ class CellMeasureTest(unittest.TestCase):
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
-    cfdm.environment(display=False)
+    cfdm.environment()
     print('')
     unittest.main(verbosity=2)

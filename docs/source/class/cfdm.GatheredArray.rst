@@ -66,3 +66,18 @@ Special
    ~cfdm.GatheredArray.__getitem__
    ~cfdm.GatheredArray.__repr__
    ~cfdm.GatheredArray.__str__
+
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.GatherArray._docstring_special_substitutions
+   ~cfdm.GatherArray._docstring_substitutions        
+   ~cfdm.GatherArray._docstring_package_depth        
+   ~cfdm.GatherArray._docstring_method_exclusions    

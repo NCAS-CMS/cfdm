@@ -1,7 +1,0 @@
-cfdm.core.Data.__repr__
-=======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Data.__repr__

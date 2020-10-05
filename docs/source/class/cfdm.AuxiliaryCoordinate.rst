@@ -1,6 +1,8 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
+.. _cfdm-AuxiliaryCoordinate:
+
 cfdm.AuxiliaryCoordinate
 ========================
 
@@ -146,6 +148,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.AuxiliaryCoordinate.copy
+   ~cfdm.AuxiliaryCoordinate.creation_commands
    ~cfdm.AuxiliaryCoordinate.equals
    ~cfdm.AuxiliaryCoordinate.uncompress
    ~cfdm.AuxiliaryCoordinate.get_filenames
@@ -193,3 +196,18 @@ Special
    ~cfdm.AuxiliaryCoordinate.__getitem__
    ~cfdm.AuxiliaryCoordinate.__repr__
    ~cfdm.AuxiliaryCoordinate.__str__
+
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.AuxiliaryCoordinate._docstring_special_substitutions
+   ~cfdm.AuxiliaryCoordinate._docstring_substitutions        
+   ~cfdm.AuxiliaryCoordinate._docstring_package_depth        
+   ~cfdm.AuxiliaryCoordinate._docstring_method_exclusions

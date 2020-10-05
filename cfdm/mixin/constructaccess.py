@@ -5,7 +5,7 @@ class ConstructAccess():
     '''Mixin class for manipulating constructs stored in a `Constructs`
     object.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     # ----------------------------------------------------------------
@@ -14,7 +14,7 @@ class ConstructAccess():
     def _unique_construct_names(self):
         '''Return unique metadata construct names.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -54,7 +54,7 @@ class ConstructAccess():
     def _unique_domain_axis_identities(self):
         '''Return unique domain axis construct names.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -93,7 +93,7 @@ class ConstructAccess():
     def coordinate_references(self):
         '''Return coordinate reference constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -111,8 +111,8 @@ class ConstructAccess():
 
     >>> f.coordinate_references
     Constructs:
-    {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
-     'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
+    {'coordinatereference0': <{{repr}}CoordinateReference: atmosphere_hybrid_height_coordinate>,
+     'coordinatereference1': <{{repr}}CoordinateReference: rotated_latitude_longitude>}
 
         '''
         return self.constructs.filter_by_type('coordinate_reference')
@@ -121,7 +121,7 @@ class ConstructAccess():
     def domain_axes(self):
         '''Return domain axis constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -138,10 +138,10 @@ class ConstructAccess():
 
     >>> f.domain_axes
     Constructs:
-    {'domainaxis0': <DomainAxis: size(1)>,
-     'domainaxis1': <DomainAxis: size(10)>,
-     'domainaxis2': <DomainAxis: size(9)>,
-     'domainaxis3': <DomainAxis: size(1)>}
+    {'domainaxis0': <{{repr}}DomainAxis: size(1)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(10)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(9)>,
+     'domainaxis3': <{{repr}}DomainAxis: size(1)>}
 
         '''
         return self.constructs.filter_by_type('domain_axis')
@@ -150,7 +150,7 @@ class ConstructAccess():
     def auxiliary_coordinates(self):
         '''Return auxiliary coordinate constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -168,9 +168,9 @@ class ConstructAccess():
 
     >>> f.auxiliary_coordinates
     Constructs:
-    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-     'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
+    {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+     'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+     'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
         '''
         return self.constructs.filter_by_type('auxiliary_coordinate')
@@ -179,7 +179,7 @@ class ConstructAccess():
     def dimension_coordinates(self):
         '''Return dimension coordinate constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -197,10 +197,10 @@ class ConstructAccess():
 
     >>> f.dimension_coordinates
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+     'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         '''
         return self.constructs.filter_by_type('dimension_coordinate')
@@ -209,7 +209,7 @@ class ConstructAccess():
     def coordinates(self):
         '''Return dimension and auxiliary coordinate constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `auxiliary_coordinates`, `constructs`,
                  `dimension_coordinates`
@@ -228,13 +228,13 @@ class ConstructAccess():
 
     >>> f.coordinates
     Constructs:
-    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-     'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
-     'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+    {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+     'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+     'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+     'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         '''
         out = self.dimension_coordinates
@@ -245,7 +245,7 @@ class ConstructAccess():
     def domain_ancillaries(self):
         '''Return domain ancillary constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -262,9 +262,9 @@ class ConstructAccess():
 
     >>> f.domain_ancillaries
     Constructs:
-    {'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
-     'domainancillary1': <DomainAncillary: ncvar%b(1) >,
-     'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
+    {'domainancillary0': <{{repr}}DomainAncillary: ncvar%a(1) m>,
+     'domainancillary1': <{{repr}}DomainAncillary: ncvar%b(1) >,
+     'domainancillary2': <{{repr}}DomainAncillary: surface_altitude(10, 9) m>}
 
         '''
         return self.constructs.filter_by_type('domain_ancillary')
@@ -273,7 +273,7 @@ class ConstructAccess():
     def cell_measures(self):
         '''Return cell measure constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`
 
@@ -290,7 +290,7 @@ class ConstructAccess():
 
     >>> f.cell_measures
     Constructs:
-    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+    {'cellmeasure0': <{{repr}}CellMeasure: measure%area(9, 10) km2>}
 
         '''
         return self.constructs.filter_by_type('cell_measure')
@@ -301,7 +301,7 @@ class ConstructAccess():
     def construct(self, identity, default=ValueError()):
         '''Select a metadata construct by its identity.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `construct_key`, `constructs`,
                  `Constructs.filter_by_identity`, `Constructs.value`
@@ -339,8 +339,9 @@ class ConstructAccess():
 
         default: optional
             Return the value of the *default* parameter if the
-            property has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+            property has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -350,23 +351,23 @@ class ConstructAccess():
 
     >>> print(f.constructs)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: long_name=time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': {{repr}}<CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: long_name=time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
     Select the construct that has the "standard_name" property of 'latitude':
 
     >>> f.construct('latitude')
-    <DimensionCoordinate: latitude(5) degrees_north>
+    <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
 
     Select the cell method construct that has a "method" of 'mean':
 
     >>> f.construct('method:mean')
-    <CellMethod: area: mean>
+    <{{repr}}CellMethod: area: mean>
 
     Attempt to select the construct whose "standard_name" start with the
     letter 'l':
@@ -392,7 +393,7 @@ class ConstructAccess():
     def construct_key(self, identity, default=ValueError()):
         '''Select the key of a metadata construct by its identity.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `construct`, `constructs`,
                  `Constructs.filter_by_identity`, `Constructs.key`
@@ -430,8 +431,9 @@ class ConstructAccess():
 
         default: optional
             Return the value of the *default* parameter if the
-            property has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+            property has not been set
+
+            {{default Exception}}
 
     :Returns:
 
@@ -442,13 +444,13 @@ class ConstructAccess():
 
     >>> print(f.constructs)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: long_name=time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}ellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: long_name=time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
     Select the construct that has the "standard_name" property of
     'latitude':
@@ -518,8 +520,9 @@ class ConstructAccess():
 
         default: optional
             Return the value of the *default* parameter if a domain
-            axis construct can not be found. If set to an `Exception`
-            instance then it will be raised instead.
+            axis construct can not be found.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -531,14 +534,14 @@ class ConstructAccess():
 
     >>> print(f.constructs())
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: time(1) days since 1964-01-21 00:00:00 >,
-     'dimensioncoordinate1': <DimensionCoordinate: pressure(23) mbar>,
-     'dimensioncoordinate2': <DimensionCoordinate: latitude(160) degrees_north>,
-     'dimensioncoordinate3': <DimensionCoordinate: longitude(320) degrees_east>,
-     'domainaxis0': <DomainAxis: size(1)>,
-     'domainaxis1': <DomainAxis: size(23)>,
-     'domainaxis2': <DomainAxis: size(160)>,
-     'domainaxis3': <DomainAxis: size(320)>}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: time(1) days since 1964-01-21 00:00:00 >,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: pressure(23) mbar>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: latitude(160) degrees_north>,
+     'dimensioncoordinate3': <{{repr}}DimensionCoordinate: longitude(320) degrees_east>,
+     'domainaxis0': <{{repr}}DomainAxis: size(1)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(23)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(160)>,
+     'domainaxis3': <{{repr}}DomainAxis: size(320)>}
     >>> f.domain.domain_axis_key('time')
     'domainaxis0'
     >>> f.domain.domain_axis_key('longitude')

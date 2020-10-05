@@ -176,6 +176,7 @@ Mask support
    :template: method.rst
 
    ~cfdm.Data.apply_masking
+   ~cfdm.Data.filled
    ~cfdm.Data.del_fill_value
    ~cfdm.Data.get_fill_value
    ~cfdm.Data.has_fill_value
@@ -231,6 +232,8 @@ Order statistics
 
    ~cfdm.Data.maximum
    ~cfdm.Data.minimum
+   ~cfdm.Data.max
+   ~cfdm.Data.min
 
 Sums
 ^^^^
@@ -275,6 +278,7 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Data.creation_commands
    ~cfdm.Data.get_filenames
    ~cfdm.Data.source
 
@@ -307,3 +311,18 @@ Special
    ~cfdm.Data.__repr__
    ~cfdm.Data.__setitem__ 
    ~cfdm.Data.__str__
+
+Docstring substitutions                     
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.Data._docstring_special_substitutions
+   ~cfdm.Data._docstring_substitutions        
+   ~cfdm.Data._docstring_package_depth        
+   ~cfdm.Data._docstring_method_exclusions    

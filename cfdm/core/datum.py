@@ -19,7 +19,7 @@ class Datum(abstract.Parameters):
     referenced by the `CoordinateReference` instance that contains the
     datum.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
 # --- End: class

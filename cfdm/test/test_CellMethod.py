@@ -89,11 +89,59 @@ class CellMethodTest(unittest.TestCase):
 
         self.assertTrue(d.equals(c.sorted(), verbose=3))
 
+        # Init
+        c = cfdm.CellMethod(source='qwerty')
+
+    def test_CellMethod_axes(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.CellMethod()
+
+        self.assertFalse(f.has_axes())
+        self.assertIsNone(f.get_axes(None))
+        self.assertIsNone(f.set_axes(['time']))
+        self.assertTrue(f.has_axes())
+        self.assertEqual(f.get_axes(), ('time',))
+        self.assertEqual(f.del_axes(), ('time',))
+        self.assertIsNone(f.del_axes(None))
+
+    def test_CellMethod_method(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.CellMethod()
+
+        self.assertFalse(f.has_method())
+        self.assertIsNone(f.get_method(None))
+        self.assertIsNone(f.set_method('mean'))
+        self.assertTrue(f.has_method())
+        self.assertEqual(f.get_method(), 'mean')
+        self.assertEqual(f.del_method(), 'mean')
+        self.assertIsNone(f.del_method(None))
+
+    def test_CellMethod_qualifier(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.CellMethod()
+
+        self.assertEqual(f.qualifiers(), {})
+        self.assertFalse(f.has_qualifier('within'))
+        self.assertIsNone(f.get_qualifier('within', None))
+        self.assertIsNone(f.set_qualifier('within', 'years'))
+        self.assertEqual(f.qualifiers(), {'within': 'years'})
+        self.assertTrue(f.has_qualifier('within'))
+        self.assertEqual(f.get_qualifier('within'), 'years')
+        self.assertEqual(f.del_qualifier('within'), 'years')
+        self.assertIsNone(f.del_qualifier('within', None))
+        self.assertEqual(f.qualifiers(), {})
 
 # --- End: class
 
+
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
-    cfdm.environment(display=False)
+    cfdm.environment()
     print('')
     unittest.main(verbosity=2)

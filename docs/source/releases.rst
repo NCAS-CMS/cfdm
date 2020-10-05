@@ -14,6 +14,7 @@
 **CF-1.8**
 ----------
 
+* `Version 1.8.7.0 <https://ncas-cms.github.io/cfdm/1.8.7.0>`_ (2020-09-??)
 * `Version 1.8.6.0 <https://ncas-cms.github.io/cfdm/1.8.6.0>`_ (2020-07-24)
 * `Version 1.8.5 <https://ncas-cms.github.io/cfdm/1.8.5>`_ (2020-06-10)
 * `Version 1.8.4 <https://ncas-cms.github.io/cfdm/1.8.4>`_ (2020-06-08)
@@ -47,6 +48,9 @@
 **Versioning**
 --------------
 
+Finding versions
+^^^^^^^^^^^^^^^^
+
 Version |release| for version |version| of the CF conventions.
 
 The version of the CF conventions and the CF data model being used may
@@ -65,12 +69,40 @@ changed.
 
 The version identifier of the cfdm package is based on the version of
 the CF conventions to which it applies, with the addition of extra
-integer values for updates that apply to the same version of CF. See
-https://github.com/NCAS-CMS/cfdm/blob/master/CONTRIBUTING.md for
-details.
+integer values for updates that apply to the same version of CF:
 
 .. code-block:: python
    :caption: *Retrieve the version of the cfdm package.*
 	     	     
    >>> cfdm.__version__
-   '1.8.6.0'
+   '1.8.7.0'
+
+The next section outlines the scheme used to set version identifiers.
+
+Versioning strategy
+^^^^^^^^^^^^^^^^^^^
+
+A ``CF.major.minor`` numeric version scheme is used, where ``CF`` is
+the version of the CF conventions (e.g. ``1.9``) to which a particular
+version of cfdm applies.
+
+**Major** changes comprise:
+
+* changes to the API, such as:
+
+  * changing the name of an existing function or method;
+  * changing the behaviour of an existing function or method;
+  * changing the name of an existing keyword parameter;
+  * changing the default value of an existing keyword parameter;
+  * changing the meaning of a value of an existing keyword parameter.
+  * introducing a new function or method;
+  * introducing a new keyword parameter;
+  * introducing a new permitted value of a keyword parameter;
+
+* changes to required versions of the dependencies.
+
+**Minor** changes comprise:
+
+* bug fixes that do not change the API;
+* changes to the documentation;
+* code tidying.

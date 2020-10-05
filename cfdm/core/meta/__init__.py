@@ -1,0 +1,1 @@
+from .docstringrewrite import DocstringRewriteMeta

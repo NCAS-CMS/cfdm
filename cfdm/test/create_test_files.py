@@ -1261,7 +1261,7 @@ interior_ring_file_2 = _make_interior_ring_file_2(
 string_char_file = _make_string_char_file('string_char.nc')
 
 if __name__ == '__main__':
-    print('Run date:', datetime.datetime.utcnow())
+    print('Run date:', datetime.datetime.now())
     cfdm.environment()
     print()
     unittest.main(verbosity=2)

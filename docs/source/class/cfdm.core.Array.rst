@@ -49,3 +49,18 @@ Special
    :template: method.rst
 
    ~cfdm.core.Array.__deepcopy__
+
+Docstring substitutions                           
+-----------------------                        
+                                               
+.. rubric:: Methods                            
+                                               
+.. autosummary::                               
+   :nosignatures:                              
+   :toctree: ../method/                        
+   :template: method.rst                       
+                                               
+   ~cfdm.core.Array._docstring_special_substitutions
+   ~cfdm.core.Array._docstring_substitutions        
+   ~cfdm.core.Array._docstring_package_depth        
+   ~cfdm.core.Array._docstring_method_exclusions    

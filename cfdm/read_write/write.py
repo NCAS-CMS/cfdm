@@ -12,7 +12,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           datatype=None, least_significant_digit=None,
           endian='native', compress=0, fletcher32=False, shuffle=True,
           string=True, verbose=None, warn_valid=True, group=True,
-          _implementation=_implementation):
+          coordinates=False, _implementation=_implementation):
     '''Write field constructs to a netCDF file.
 
     **File format**
@@ -80,7 +80,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     `~cfdm.Data.nc_clear_hdf5_chunksizes` and
     `~cfdm.Data.nc_set_hdf5_chunksizes` metods of a `Data` instance.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `read`
 
@@ -357,6 +357,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             maximum string length, regardless of the selected output
             file format.
 
+            .. versionadded:: (cfdm) 1.8.0
+
         verbose: `int` or `str` or `None`, optional
             If an integer from ``-1`` to ``3``, or an equivalent string
             equal ignoring case to one of:
@@ -402,7 +404,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
               resulting warning may be suppressed by setting
               ``warn_valid=False``.
 
-            .. versionadded:: 1.8.3
+            .. versionadded:: (cfdm) 1.8.3
 
         group: `bool`, optional
             If False then create a "flat" netCDF file, i.e. one with
@@ -411,7 +413,15 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             defined by the netCDF interface of the field constucts and
             its components will be created and populated.
 
-            .. versionadded:: 1.8.6
+            .. versionadded:: (cfdm) 1.8.6
+
+        coordinates: `bool`, optional
+            If True then include CF-netCDF coordinate variable names
+            in the 'coordinates' attribute of output data
+            variables. By default only auxiliary and scalar coordinate
+            variables are included.
+
+            .. versionadded:: (cfdm) 1.8.7.0
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
@@ -449,4 +459,4 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      shuffle=shuffle, fletcher32=fletcher32,
                      string=string, verbose=verbose,
                      warn_valid=warn_valid, group=group,
-                     extra_write_vars=None)
+                     coordinates=coordinates, extra_write_vars=None)

@@ -21,7 +21,7 @@ class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
     "index variable" that specifies the feature that each profile
     belongs to.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
@@ -77,6 +77,8 @@ class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
       * When two or more dimension's indices are sequences of integers
         then these indices work independently along each dimension
         (similar to the way vector subscripts work in Fortran).
+
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         # ------------------------------------------------------------
@@ -136,9 +138,11 @@ class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
 
     There is no change to an array that is already in memory.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Returns:
 
-        `RaggedIndexedContiguousArray`
+        `{{class}}`
             The array that is stored in memory.
 
     **Examples:**

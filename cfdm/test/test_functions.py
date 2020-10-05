@@ -196,7 +196,8 @@ class FunctionsTest(unittest.TestCase):
             return
 
         self.assertIsInstance(cfdm.environment(display=False), list)
-        self.assertIsInstance(cfdm.environment(display=False, paths=False), list)
+        self.assertIsInstance(cfdm.environment(display=False, paths=False),
+                              list)
         self.assertIsInstance(cfdm.environment(display=False), list)
 
     def test_example_field(self):
@@ -207,17 +208,22 @@ class FunctionsTest(unittest.TestCase):
 
         for n in range(top + 1):
             f = cfdm.example_field(n)
+
             _ = f.data.array
+
             self.assertIsInstance(f.dump(display=False), str)
 
             cfdm.write(f, temp_file)
-            g = cfdm.read(temp_file)
+            g = cfdm.read(temp_file, verbose=1)
 
-            self.assertEqual(len(g), 1)
+            self.assertEqual(len(g), 1, g)
             self.assertTrue(f.equals(g[0], verbose=3), 'n={}'.format(n))
 
         with self.assertRaises(Exception):
             _ = cfdm.example_field(top + 1)
+
+        with self.assertRaises(ValueError):
+            cfdm.example_field(1, 2)
 
     def test_abspath(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -323,11 +329,23 @@ class FunctionsTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             cfdm.configuration(bad_kwarg=1e-15)
 
+    def test_unique_domains(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.example_field(0)
+        g = cfdm.example_field(1)
+
+        self.assertFalse(cfdm.unique_domains([]))
+
+        self.assertEqual(len(cfdm.unique_domains([f])), 1)
+        self.assertEqual(len(cfdm.unique_domains([f, f.copy()])), 1)
+        self.assertEqual(len(cfdm.unique_domains([f, f.copy(), g])), 2)
 # --- End: class
 
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
-    cfdm.environment(display=False)
+    cfdm.environment()
     print('')
     unittest.main(verbosity=2)

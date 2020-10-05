@@ -1,6 +1,10 @@
 import logging
 
+from copy import deepcopy
+
 import numpy
+
+from .data import Data
 
 from . import mixin
 from . import core
@@ -29,9 +33,19 @@ class CellMethod(mixin.Container,
     spacing of the original data, or the fact that the method was
     applied only over El Nino years).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
+    def __new__(cls, *args, **kwargs):
+        '''This must be overridden in subclasses.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+        '''
+        instance = super().__new__(cls)
+        instance._Data = Data
+        return instance
+
     def __str__(self):
         '''Called by the `str` built-in function.
 
@@ -43,7 +57,7 @@ class CellMethod(mixin.Container,
     cell_methods attribute then, unless they are standard names, the
     axes names will need to be modified to be netCDF dimension names.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         string = ['{0}:'.format(axis) for axis in self.get_axes(())]
@@ -77,13 +91,104 @@ class CellMethod(mixin.Container,
 
         return ' '.join(string)
 
+    def creation_commands(self, namespace=None, indent=0, string=True,
+                          name='c', header=True):
+        '''Return the commands that would create the cell method construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Data.creation_commands`,
+                 `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{name: `str`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+    >>> x = {{package}}.CellMethod(
+    ...     axes=['area'],
+    ...     qualifiers={'over': 'land'}
+    ... )
+    >>> print(x.creation_commands(header=False))
+    c = {{package}}.CellMethod()
+    c.set_axes(('area',))
+    c.set_qualifier('over', 'land')
+
+        '''
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        out = []
+
+        method = self.get_method(None)
+
+        if header:
+            out.append('#')
+            out.append("# {}:".format(self.construct_type))
+            if method is not None:
+                out[-1] += " {}".format(method)
+        # --- End: if
+
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        if method is not None:
+            out.append("{}.set_method({!r})".format(name, method))
+
+        axes = self.get_axes(None)
+        if axes is not None:
+            out.append("{}.set_axes({!r})".format(name, axes))
+
+        for term, value in self.qualifiers().items():
+            if term == 'interval':
+                value = deepcopy(value)
+                for i, data in enumerate(value[:]):
+                    if isinstance(data, self._Data):
+                        value[i] = data.creation_commands(
+                            name=None, namespace=namespace0,
+                            indent=0, string=True)
+                    else:
+                        value[i] = str(data)
+                # --- End: for
+
+                value = ', '.join(value)
+                value = "["+value+"]"
+            else:
+                value = repr(value)
+
+            out.append("{}.set_qualifier({!r}, {})".format(name, term,
+                                                           value))
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
+
     def dump(self, display=True, _title=None, _level=0):
         '''A full description of the cell method construct.
 
     Returns a description the method, all qualifiers and the axes to
     which it applies.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -93,10 +198,7 @@ class CellMethod(mixin.Container,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         indent0 = '    ' * _level
@@ -122,71 +224,31 @@ class CellMethod(mixin.Container,
     question. They are, however, taken into account when two fields
     constructs are tested for equality.
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. The data type of the
-    numbers is not taken into consideration. See the *atol* and *rtol*
-    parameters.
+    {{equals tolerance}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another cell method construct, or a subclass of
     one. See the *ignore_type* parameter.
 
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked.
+    {{equals tolerance}}
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: number, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
+        {{verbose: `int` or `str` or `None`, optional}}
 
         ignore_qualifiers: sequence of `str`, optional
             The names of qualifiers to omit from the comparison.
 
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another cell method construct, or a
-            subclass of one. If *ignore_type* is True then
-            ``CellMethod(source=other)`` is tested, rather than the
-            ``other`` defined by the *other* parameter.
+        {{ignore_type: `bool`, optional}}
 
     :Returns:
 
@@ -312,10 +374,10 @@ class CellMethod(mixin.Container,
 
     By default the identity is the first found of the following:
 
-    1. The method, preceeded by 'method:'
+    1. The method, preceded by 'method:'
     2. The value of the *default* parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -356,9 +418,9 @@ class CellMethod(mixin.Container,
 
     The identities comprise:
 
-    * The method, preceeded by 'method:'.
+    * The method, preceded by 'method:'.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 
@@ -393,7 +455,7 @@ class CellMethod(mixin.Container,
     The axes are sorted by domain axis construct identifier or
     standard name, and any intervals are sorted accordingly.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -409,21 +471,21 @@ class CellMethod(mixin.Container,
 
     **Examples:**
 
-    >>> cm = cfdm.CellMethod(axes=['domainaxis1', 'domainaxis0'],
+    >>> cm = {{package}}.CellMethod(axes=['domainaxis1', 'domainaxis0'],
     ...                      method='mean',
     ...                      qualifiers={'interval': [1, 2]})
     >>> cm
-    <CellMethod: domainaxis1: domainaxis0: mean (interval: 1 interval: 2)>
+    <{{repr}}CellMethod: domainaxis1: domainaxis0: mean (interval: 1 interval: 2)>
     >>> cm.sorted()
-    <CellMethod: domainaxis0: domainaxis1: mean (interval: 2 interval: 1)>
+    <{{repr}}CellMethod: domainaxis0: domainaxis1: mean (interval: 2 interval: 1)>
 
-    >>> cm = cfdm.CellMethod(axes=['domainaxis0', 'area'],
+    >>> cm = {{package}}.CellMethod(axes=['domainaxis0', 'area'],
     ...                      method='mean',
     ...                      qualifiers={'interval': [1, 2]})
     >>> cm
-    <CellMethod: domainaxis0: area: mean (interval: 1 interval: 2)>
+    <{{repr}}CellMethod: domainaxis0: area: mean (interval: 1 interval: 2)>
     >>> cm.sorted()
-    <CellMethod: area: domainaxis0: mean (interval: 2 interval: 1)>
+    <{{repr}}CellMethod: area: domainaxis0: mean (interval: 2 interval: 1)>
 
         '''
         new = self.copy()

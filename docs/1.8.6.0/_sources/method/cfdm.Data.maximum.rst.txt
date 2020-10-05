@@ -1,7 +1,0 @@
-cfdm.Data.maximum
-=================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.maximum

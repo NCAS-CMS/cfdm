@@ -1,6 +1,8 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
+.. _cfdm-DomainAncillary:
+
 cfdm.DomainAncillary
 ====================
 
@@ -118,6 +120,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.DomainAncillary.copy
+   ~cfdm.DomainAncillary.creation_commands
    ~cfdm.DomainAncillary.equals
    ~cfdm.DomainAncillary.uncompress
    ~cfdm.DomainAncillary.get_filenames
@@ -166,4 +169,32 @@ Special
    ~cfdm.DomainAncillary.__repr__
    ~cfdm.DomainAncillary.__str__
 
-   
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm._docstring_special_substitutions
+   ~cfdm._docstring_substitutions        
+   ~cfdm._docstring_package_depth        
+   ~cfdm._docstring_method_exclusions
+
+Docstring substitutions                     
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.DomainAncillary._docstring_special_substitutions
+   ~cfdm.DomainAncillary._docstring_substitutions        
+   ~cfdm.DomainAncillary._docstring_package_depth        
+   ~cfdm.DomainAncillary._docstring_method_exclusions    

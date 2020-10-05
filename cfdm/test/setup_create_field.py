@@ -1,6 +1,5 @@
 import datetime
 import os
-import sys
 import unittest
 
 import numpy
@@ -28,7 +27,7 @@ class create_fieldTest(unittest.TestCase):
 
         try:
             os.remove(self.filename)
-        except:
+        except Exception:
             pass
 
     def test_create_field(self):

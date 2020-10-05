@@ -40,7 +40,7 @@ class Bounds(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, source=None,
@@ -49,29 +49,19 @@ class Bounds(mixin.NetCDFVariable,
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
               *Parameter example:*
                  ``properties={'standard_name': 'grid_latitude'}``
 
-        data: `Data`, optional
-            Set the data. Ignored if the *source* parameter is set.
-
-            The data also may be set after initialisation with the
-            `set_data` method.
+        {{init data: data_like, optional}}
 
         source: optional
             Initialize the properties and data from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+            {{init source}}
+
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(properties=properties, data=data,
@@ -101,7 +91,7 @@ class Bounds(mixin.NetCDFVariable,
     Returns a description of all properties and provides selected
     values of all data arrays.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -111,10 +101,7 @@ class Bounds(mixin.NetCDFVariable,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         if _create_title and _title is None:
@@ -132,10 +119,10 @@ class Bounds(mixin.NetCDFVariable,
         '''Return the data.
 
     Note that the data are returned in a `Data` object. Use the
-    `array` attribute of the `Data` instance to return the data as an
+   `array` attribute of the `Data` instance to return the data as an
     independent `numpy` array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data`, `has_data`, `set_data`
 
@@ -143,23 +130,25 @@ class Bounds(mixin.NetCDFVariable,
 
         default: optional
             Return the value of the *default* parameter if data have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 
+        `Data`
             The data.
 
     **Examples:**
 
-    >>> d = cfdm.Data(range(10))
+    >>> d = {{package}}.Data(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -199,7 +188,7 @@ class Bounds(mixin.NetCDFVariable,
     def inherited_properties(self):
         '''Return the properties inherited from a coordinate construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `properties`
 
@@ -225,14 +214,14 @@ class Bounds(mixin.NetCDFVariable,
     By default the identity is the first found of the following:
 
     1. The ``standard_name`` property.
-    2. The ``cf_role`` property, preceeded by ``'cf_role='``.
-    3. The ``long_name`` property, preceeded by ``'long_name='``.
-    4. The netCDF variable name, preceeded by ``'ncvar%'``.
+    2. The ``cf_role`` property, preceded by ``'cf_role='``.
+    3. The ``long_name`` property, preceded by ``'long_name='``.
+    4. The netCDF variable name, preceded by ``'ncvar%'``.
     5. The value of the *default* parameter.
 
     Properties include any inherited properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 

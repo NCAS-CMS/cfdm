@@ -1,7 +1,0 @@
-cfdm.core.CoordinateReference.clear_coordinates
-===============================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.CoordinateReference.clear_coordinates

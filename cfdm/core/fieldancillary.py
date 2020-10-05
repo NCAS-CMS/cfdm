@@ -23,14 +23,14 @@ class FieldAncillary(abstract.PropertiesData):
     definition, unlike, for instance, an auxiliary coordinate
     construct or domain ancillary construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     @property
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -39,6 +39,7 @@ class FieldAncillary(abstract.PropertiesData):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.construct_type
     'field_ancillary'
 

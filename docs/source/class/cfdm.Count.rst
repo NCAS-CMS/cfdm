@@ -80,6 +80,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Count.copy
+   ~cfdm.Count.creation_commands
    ~cfdm.Count.equals
    ~cfdm.Count.get_filenames
 
@@ -152,4 +153,17 @@ Special
    ~cfdm.Count.__repr__
    ~cfdm.Count.__str__
 
-   
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.Count._docstring_special_substitutions
+   ~cfdm.Count._docstring_substitutions        
+   ~cfdm.Count._docstring_package_depth        
+   ~cfdm.Count._docstring_method_exclusions    

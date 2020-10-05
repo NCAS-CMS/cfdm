@@ -1,7 +1,0 @@
-cfdm.core.DimensionCoordinate.has_bounds
-========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.DimensionCoordinate.has_bounds

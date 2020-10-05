@@ -1,12 +1,28 @@
-version 1.8.?.?
+version 1.8.7.0
 ---------------
 ----
 
-**2020-??-??**
+**2020-10-??**
 
-* Fixed bug that occasionally caused the incorrect and writing of, and
-  failures when reading, a netCDF dataset that contains multiple
-  geometry containers (https://github.com/NCAS-CMS/cfdm/issues/65)
+* New function: `cfdm.unique_domains`
+* New method: `cfdm.Field.creation_commands`
+* New method: `cfdm.Data.creation_commands`
+* New method: `cfdm.Field._docstring_special_substitutions`
+* New method: `cfdm.Field._docstring_substitutions`
+* New method: `cfdm.Field._docstring_package_depth`
+* New method: `cfdm.Field._docstring_method_exclusions`
+* New method: `cfdm.Data.filled`
+* New keyword parameter to `cfdm.Field.set_data`: ``inplace``
+* New keyword parameter to `cfdm.write`: ``coordinates``
+  (https://github.com/NCAS-CMS/cfdm/issues/81)
+* New class: `cfdm.core.meta.DocstringRewriteMeta`
+* Enabled "creation commands" methods
+  (https://github.com/NCAS-CMS/cfdm/issues/53)
+* Fixed bug that caused failures when reading or writing a dataset
+  that contains multiple geometry containers
+  (https://github.com/NCAS-CMS/cfdm/issues/65)
+* Fixed bug that prevented the writing of multiple fields to netCDF when
+  at least one dimension was shared between some of the fields.
 
 version 1.8.6.0
 ---------------
@@ -20,7 +36,11 @@ version 1.8.6.0
   CF-1.8 (https://github.com/NCAS-CMS/cfdm/issues/13)
 * Renamed to lower-case (but otherwise identical) names all functions
   which get and set global constants: `cfdm.atol`, `cfdm.rtol`,
+<<<<<<< HEAD
   `cfdm.log_level`.  The old names e.g. `cfdm.ATOL` remain functional
+=======
+  `cfdm.log_level`. The old names e.g. `cfdm.ATOL` remain functional
+>>>>>>> ab5fa741373ef67ecf6ebd44543597c227a5a121
   as aliases.
 * New function: `cfdm.configuration`
 * New method: `cfdm.Field.nc_variable_groups`
@@ -40,11 +60,16 @@ version 1.8.6.0
 * New keyword parameter to `cfdm.write`: ``group``
 * Keyword parameter ``verbose`` to multiple methods now accepts named
   strings, not just the equivalent integer levels, to set verbosity.
-* Fixed bug in `cfdm.CompressedArray.to_memory`.
 * Added test to check that cell bounds have more dimensions than the
   data.
 * Added test to check that dimension coordinate construct data is
   1-dimensional.
+<<<<<<< HEAD
+=======
+* Fixed bug in `cfdm.CompressedArray.to_memory`.
+* Fixed bug that caused an error when a coordinate bounds variable is
+  missing from a dataset (https://github.com/NCAS-CMS/cfdm/issues/63)
+>>>>>>> ab5fa741373ef67ecf6ebd44543597c227a5a121
 * New dependency: ``netcdf_flattener>=1.2.0``
 * Changed dependency: ``cftime>=1.2.1``
 * Removed dependency: ``future``

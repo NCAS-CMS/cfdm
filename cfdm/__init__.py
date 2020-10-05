@@ -36,7 +36,6 @@ up to the user to use them in a CF-compliant way.
 '''
 import logging
 import sys
-import platform
 
 from distutils.version import LooseVersion
 
@@ -94,6 +93,7 @@ from .functions import (
     environment,
     log_level,
     rtol,
+    unique_domains,
     _log_level,
     _disable_logging,
     _reset_log_emergence_level,
@@ -108,7 +108,6 @@ from .decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-
 
 from .constructs import Constructs
 
@@ -153,6 +152,7 @@ from .read_write import (read,
 
 from .examplefield import example_field
 
+from .abstract import Container
 
 # --------------------------------------------------------------------
 # Set up basic logging for the full project with a root logger

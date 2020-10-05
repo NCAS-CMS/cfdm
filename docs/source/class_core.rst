@@ -11,8 +11,8 @@
 Version |release| for version |version| of the CF conventions.
 
 
-**Field construct class**
--------------------------
+Field construct class
+---------------------
 
 .. autosummary::
    :nosignatures:
@@ -20,8 +20,8 @@ Version |release| for version |version| of the CF conventions.
 
    cfdm.core.Field	              
 
-**Metadata construct classes**
-------------------------------
+Metadata construct classes
+--------------------------
 
 .. autosummary::
    :nosignatures:
@@ -36,8 +36,8 @@ Version |release| for version |version| of the CF conventions.
    cfdm.core.DomainAxis
    cfdm.core.FieldAncillary
 
-**Constructs class**
---------------------
+Constructs class
+----------------
 
 .. autosummary::
    :nosignatures:
@@ -45,8 +45,8 @@ Version |release| for version |version| of the CF conventions.
 
    cfdm.core.Constructs
 
-**Coordinate component classes**
---------------------------------
+Coordinate component classes
+----------------------------
 
 .. autosummary::
    :nosignatures:
@@ -55,9 +55,10 @@ Version |release| for version |version| of the CF conventions.
    cfdm.core.Bounds
    cfdm.core.CoordinateConversion
    cfdm.core.Datum
+   cfdm.core.InteriorRing
 
-**Domain class**
-----------------
+Domain class
+------------
 
 .. autosummary::
    :nosignatures:
@@ -65,8 +66,8 @@ Version |release| for version |version| of the CF conventions.
 
    cfdm.core.Domain
    
-**Data classes**
-----------------
+Data classes
+------------
 
 .. autosummary::
    :nosignatures:
@@ -76,8 +77,8 @@ Version |release| for version |version| of the CF conventions.
    cfdm.core.NumpyArray
    cfdm.core.Array
 
-**Abstract base classes**
--------------------------
+Abstract base classes
+---------------------
 
 Abstract base classes that provide the basis for constructs and
 construct components.
@@ -93,3 +94,13 @@ construct components.
    cfdm.core.abstract.Coordinate
    cfdm.core.abstract.Parameters
    cfdm.core.abstract.ParametersDomainAncillaries
+
+Miscallaneous
+-------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.core.meta.DocstringRewriteMeta
+   

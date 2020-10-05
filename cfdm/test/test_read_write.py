@@ -13,6 +13,7 @@ import cfdm
 
 warnings = False
 
+# Set up temporary files
 n_tmpfiles = 6
 tmpfiles = [tempfile.mkstemp('_test_read_write.nc', dir=os.getcwd())[1]
             for i in range(n_tmpfiles)]
@@ -155,8 +156,8 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
         for fmt in ('NETCDF4',
                     'NETCDF4_CLASSIC'):
-            for shuffle in (True, False):
-                for compress in range(10):
+            for shuffle in (True,):
+                for compress in (4,):  # range(10):
                     cfdm.write(f, tmpfile, fmt=fmt,
                                compress=compress,
                                shuffle=shuffle)
@@ -336,24 +337,15 @@ class read_writeTest(unittest.TestCase):
             self.assertTrue(f[j].data.equals(f[i].data, verbose=3),
                             "{!r} {!r}".format(f[j], f[i]))
 
+        f0 = cfdm.read(self.string_filename)
         for string0 in (True, False):
             for fmt0 in ('NETCDF4',
-                         'NETCDF3_CLASSIC',
-                         'NETCDF4_CLASSIC',
-                         'NETCDF3_64BIT',
-                         'NETCDF3_64BIT_OFFSET',
-                         'NETCDF3_64BIT_DATA'):
-                f0 = cfdm.read(self.string_filename)
+                         'NETCDF3_CLASSIC'):
                 cfdm.write(f0, tmpfile0, fmt=fmt0, string=string0)
 
                 for string1 in (True, False):
                     for fmt1 in ('NETCDF4',
-                                 'NETCDF3_CLASSIC',
-                                 'NETCDF4_CLASSIC',
-                                 'NETCDF3_64BIT',
-                                 'NETCDF3_64BIT_OFFSET',
-                                 'NETCDF3_64BIT_DATA'):
-                        f1 = cfdm.read(self.string_filename)
+                                 'NETCDF3_CLASSIC'):
                         cfdm.write(f0, tmpfile1, fmt=fmt1, string=string1)
 
                         for i, j in zip(cfdm.read(tmpfile1),
@@ -443,6 +435,18 @@ class read_writeTest(unittest.TestCase):
         # --- End: for
 
         self.assertFalse(f)
+
+    def test_write_coordinates(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.example_field(0)
+
+        cfdm.write(f, tmpfile, coordinates=True)
+        g = cfdm.read(tmpfile)
+
+        self.assertEqual(len(g), 1)
+        self.assertTrue(g[0].equals(f))
 
 # --- End: class
 

@@ -5,6 +5,8 @@ from . import core
 from . import CoordinateConversion
 from . import Datum
 
+from .data import Data
+
 from .decorators import _manage_log_level_via_verbosity
 
 
@@ -60,7 +62,6 @@ class CoordinateReference(mixin.NetCDFVariable,
       coordinate reference construct relates the coordinate values of
       the field to locations in a planetary reference frame.
 
-
     **NetCDF interface**
 
     The netCDF grid mapping variable name of a coordinate reference
@@ -72,7 +73,7 @@ class CoordinateReference(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __new__(cls, *args, **kwargs):
@@ -81,6 +82,7 @@ class CoordinateReference(mixin.NetCDFVariable,
         '''
         instance = super().__new__(cls)
         instance._CoordinateConversion = CoordinateConversion
+        instance._Data = Data
         instance._Datum = Datum
         return instance
 
@@ -125,9 +127,9 @@ class CoordinateReference(mixin.NetCDFVariable,
             Initialize the coordinates, datum and coordinate
             conversion from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy arguments prior to
-            initialization. By default arguments are deep copied.
+            {{init source}}
+
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(
@@ -144,10 +146,132 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return self.identity(default=self.nc_get_variable(''))
+
+    def creation_commands(self, namespace=None, indent=0, string=True,
+                          name='c', header=True):
+        '''Return the commands that would create the coordinate reference
+    construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Data.creation_commands`,
+                 `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{header: `bool`, optional}}
+
+        {{name: `str`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+    >>> x = {{package}}.CoordinateReference(
+    ...     coordinates=['dimensioncoordinate0']
+    ... )
+    >>> x.datum.set_parameter('earth_radius', 6371007)
+    >>> x.coordinate_conversion.set_parameters(
+    ...     {'standard_name', 'atmosphere_hybrid_height_coordinate',
+    ...      'computed_standard_name', 'altitude'}
+    ... )
+    >>> x.coordinate_conversion.set_domain_ancillaries(
+    ...     {'a': 'domainancillary0',
+    ...      'b': 'domainancillary1',
+    ...      'orog': 'domainancillary2'}
+    ... )
+    >>> print(x.creation_commands(header=False))
+    c = {{package}}.CoordinateReference()
+    c.set_coordinates({'dimensioncoordinate0'})
+    c.datum.set_parameter('earth_radius', 6371007)
+    c.coordinate_conversion.set_parameter('standard_name', 'atmosphere_hybrid_height_coordinate')
+    c.coordinate_conversion.set_parameter('computed_standard_name', 'altitude')
+    c.coordinate_conversion.set_domain_ancillaries({'a': 'domainancillary0', 'b': 'domainancillary1', 'orog': 'domainancillary2'})
+
+        '''
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        out = []
+
+        if header:
+            out.append('#')
+            out.append("# {}:".format(self.construct_type))
+            identity = self.identity()
+            if identity:
+                out[-1] += " {}".format(identity)
+        # -- End: if
+
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        nc = self.nc_get_variable(None)
+        if nc is not None:
+            out.append("{}.nc_set_variable({!r})".format(name, nc))
+
+        coordinates = self.coordinates()
+        if coordinates:
+            out.append("{}.set_coordinates({})".format(name,
+                                                       coordinates))
+
+        for term, value in self.datum.parameters().items():
+            if isinstance(value, self._Data):
+                value = value.creation_commands(name=None,
+                                                namespace=namespace0,
+                                                indent=0,
+                                                string=False,
+                                                header=header)
+            else:
+                value = repr(value)
+
+            out.append("{}.datum.set_parameter({!r}, {})".format(
+                name, term, value))
+
+        for term, value in self.coordinate_conversion.parameters().items():
+            if isinstance(value, self._Data):
+                value = value.creation_commands(name=None,
+                                                namespace=namespace0,
+                                                indent=0,
+                                                string=False,
+                                                header=header)
+            else:
+                value = repr(value)
+
+            out.append(
+                "{}.coordinate_conversion.set_parameter({!r}, {})".format(
+                    name, term, value)
+            )
+
+        domain_ancillaries = self.coordinate_conversion.domain_ancillaries()
+        if domain_ancillaries:
+            out.append(
+                "{}.coordinate_conversion.set_domain_ancillaries({})".format(
+                    name, domain_ancillaries)
+            )
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
 
     def dump(self, display=True, _omit_properties=None, field=None,
              key='', _level=0, _title=None, _construct_names=None,
@@ -157,7 +281,7 @@ class CoordinateReference(mixin.NetCDFVariable,
     Returns a description of all properties, including those of
     components.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -167,10 +291,7 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         indent0 = '    ' * _level
@@ -252,69 +373,28 @@ class CoordinateReference(mixin.NetCDFVariable,
     constructs in question. They are, however, taken into account when
     two fields constructs are tested for equality.
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. The data type of the
-    numbers is not taken into consideration. See the *atol* and *rtol*
-    parameters.
+    {{equals tolerance}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another coordinate reference construct, or a
     subclass of one. See the *ignore_type* parameter.
 
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked.
+    {{equals netCDF}}
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: number, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+        {{verbose: `int` or `str` or `None`, optional}}
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another coordinate reference
-            construct, or a subclass of one. If *ignore_type* is True
-            then ``CoordinateReference(source=other)`` is tested,
-            rather than the ``other`` defined by the *other*
-            parameter.
+        {{ignore_type: `bool`, optional}}
 
     :Returns:
 
@@ -380,15 +460,15 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     By default the identity is the first found of the following:
 
-    * The ``standard_name`` coordinate conversion parameter, preceeded
+    * The ``standard_name`` coordinate conversion parameter, preceded
       by ``'standard_name:'``.
     * The ``grid_mapping_name`` coordinate conversion parameter,
-      preceeded by ``'grid_mapping_name:'``.
+      preceded by ``'grid_mapping_name:'``.
     * The netCDF variable name (corresponding to a netCDF grid mapping
-      variable), preceeded by ``'ncvar%'``.
+      variable), preceded by ``'ncvar%'``.
     * The value of the *default* parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -436,14 +516,14 @@ class CoordinateReference(mixin.NetCDFVariable,
 
     The identities comprise:
 
-    * The ``standard_name`` coordinate conversion parameter, preceeded
+    * The ``standard_name`` coordinate conversion parameter, preceded
       by ``'standard_name:'``.
     * The ``grid_mapping_name`` coordinate conversion parameter,
-      preceeded by ``'grid_mapping_name:'``.
+      preceded by ``'grid_mapping_name:'``.
     * The netCDF variable name (corresponding to a netCDF grid mapping
-      variable), preceeded by ``'ncvar%'``.
+      variable), preceded by ``'ncvar%'``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 

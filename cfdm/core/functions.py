@@ -1,5 +1,6 @@
 import os
 import platform
+import re
 import sys
 
 import netCDF4
@@ -13,7 +14,7 @@ from . import (__version__,
 def environment(display=True, paths=True):
     '''Return the names, versions and paths of all dependencies.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -75,7 +76,7 @@ def environment(display=True, paths=True):
         out[-1] += ' ' + str(os.path.abspath(__file__))
 
     if display:
-        print('\n'.join(out))
+        print('\n'.join(out))  # pragma: no cover
     else:
         return out
 
@@ -87,7 +88,7 @@ def CF():
     by this release of the cfdm.core package, and therefore the
     version can not be changed.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 

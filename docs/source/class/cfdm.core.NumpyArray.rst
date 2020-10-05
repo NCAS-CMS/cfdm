@@ -35,3 +35,18 @@ Miscellaneous
    :template: method.rst
    
    ~cfdm.core.NumpyArray.copy
+
+Docstring substitutions                           
+-----------------------                        
+                                               
+.. rubric:: Methods                            
+                                               
+.. autosummary::                               
+   :nosignatures:                              
+   :toctree: ../method/                        
+   :template: method.rst                       
+                                               
+   ~cfdm.core.NumpyArray._docstring_special_substitutions
+   ~cfdm.core.NumpyArray._docstring_substitutions        
+   ~cfdm.core.NumpyArray._docstring_package_depth        
+   ~cfdm.core.NumpyArray._docstring_method_exclusions    

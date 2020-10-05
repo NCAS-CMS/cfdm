@@ -32,7 +32,7 @@ class DomainAncillary(mixin.NetCDFVariable,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, bounds=None,
@@ -42,38 +42,26 @@ class DomainAncillary(mixin.NetCDFVariable,
 
     :Parameters:
 
-        properties: `dict`, optional
-           Set descriptive properties. The dictionary keys are
-           property names, with corresponding values. Ignored if the
-           *source* parameter is set.
-
-           Properties may also be set after initialisation with the
-           `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
            *Parameter example:*
               ``properties={'standard_name': 'altitude'}``
 
-        data: `Data`, optional
-            Set the data array. Ignored if the *source* parameter is
-            set.
+        {{init data: data_like, optional}}
 
-            The data array may also be set after initialisation with
-            the `set_data` method.
+        {{init bounds: `Bounds`, optional}}
 
-        bounds: `Bounds`, optional
-            Set the bounds array. Ignored if the *source* parameter is
-            set.
+        {{init geometry: `str`, optional}}
 
-            The bounds array may also be set after initialisation with
-            the `set_bounds` method.
+        {{init interior_ring: `InteriorRing`, optional}}
 
         source: optional
             Initialize the properties, data and bounds from those of
             *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+            {{init source}}
+
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(properties=properties, data=data,
@@ -90,7 +78,7 @@ class DomainAncillary(mixin.NetCDFVariable,
     Returns a description of all properties, including those of
     components, and provides selected values of all data arrays.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -100,10 +88,7 @@ class DomainAncillary(mixin.NetCDFVariable,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         if _title is None:
@@ -125,148 +110,5 @@ class DomainAncillary(mixin.NetCDFVariable,
                             _omit_properties=_omit_properties,
                             _key=_key, _level=_level, _title=_title,
                             _axes=_axes, _axis_names=_axis_names)
-
-    def equals(self, other, rtol=None, atol=None, verbose=None,
-               ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_compression=True,
-               ignore_type=False):
-        '''Whether two domain ancillary constructs are the same.
-
-    Equality is strict by default. This means that:
-
-    * the same descriptive properties must be present, with the same
-      values and data types, and vector-valued properties must also
-      have same the size and be element-wise equal (see the
-      *ignore_properties* and *ignore_data_type* parameters), and
-
-    ..
-
-    * if there are data arrays then they must have same shape and data
-      type, the same missing data mask, and be element-wise equal (see
-      the *ignore_data_type* parameter).
-
-    ..
-
-    * if there are bounds then their descriptive properties (if any)
-      must be the same and their data arrays must have same shape and
-      data type, the same missing data mask, and be element-wise equal
-      (see the *ignore_properties* and *ignore_data_type* parameters).
-
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
-
-    Any compression is ignored by default, with only the arrays in
-    their uncompressed forms being compared. See the
-    *ignore_compression* parameter.
-
-    Any type of object may be tested but, in general, equality is only
-    possible with another domain ancillary construct, or a subclass of
-    one. See the *ignore_type* parameter.
-
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked.
-
-    .. versionadded:: 1.7.0
-
-    :Parameters:
-
-        other:
-            The object to compare for equality.
-
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
-
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
-
-        ignore_fill_value: `bool`, optional
-            If True then the ``_FillValue`` and ``missing_value``
-            properties are omitted from the comparison.
-
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
-        ignore_properties: sequence of `str`, optional
-            The names of properties to omit from the comparison.
-
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
-
-        ignore_compression: `bool`, optional
-            If False then the compression type and, if applicable, the
-            underlying compressed arrays must be the same, as well as
-            the arrays in their uncompressed forms. By default only
-            the arrays in their uncompressed forms are compared.
-
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another domain ancillary construct,
-            or a subclass of one. If *ignore_type* is True then
-            ``DomainAncillary(source=other)`` is tested, rather than
-            the ``other`` defined by the *other* parameter.
-
-    :Returns:
-
-        `bool`
-            Whether the two domain ancillary constructs are equal.
-
-    **Examples:**
-
-    >>> f.equals(f)
-    True
-    >>> f.equals(f.copy())
-    True
-    >>> f.equals('not a domain ancillary')
-    False
-
-    >>> g = f.copy()
-    >>> g.set_property('foo', 'bar')
-    >>> f.equals(g)
-    False
-    >>> f.equals(g, verbose=3)
-    DomainAncillary: Non-common property name: foo
-    DomainAncillary: Different properties
-    False
-
-        '''
-        return super().equals(other, rtol=rtol, atol=atol,
-                              verbose=verbose,
-                              ignore_data_type=ignore_data_type,
-                              ignore_fill_value=ignore_fill_value,
-                              ignore_properties=ignore_properties,
-                              ignore_compression=ignore_compression,
-                              ignore_type=ignore_type)
 
 # --- End: class

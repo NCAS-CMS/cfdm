@@ -1,11 +1,31 @@
 from collections import OrderedDict
 from copy import copy
 
+from . import abstract
 
-class Constructs(object):
+
+class Constructs(abstract.Container):
     '''A container for metadata constucts.
 
-    .. versionadded:: 1.7.0
+    The following metadata constructs can be included:
+
+    * auxiliary coordinate constructs
+    * coordinate reference constructs
+    * cell measure constructs
+    * dimension coordinate constructs
+    * domain ancillary constructs
+    * domain axis constructs
+    * cell method constructs
+    * field ancillary constructs
+
+    The container is used by used by `Field` and `Domain` instances.
+
+    The container is like a dictionary in many ways, in that it stores
+    key/value pairs where the key is the unique construct key with
+    correspondaing metadata construct value, and provides some of the
+    usual dictionary methods.
+
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self,
@@ -81,7 +101,13 @@ class Constructs(object):
         copy: `bool`, optional
             If False then do not deep copy metadata constructs from
             those of *source* prior to initialization. By default such
-            metadata constructs deep copied.
+            metadata constructs are deep copied.
+
+        _ignore: sequence of `str`, optional
+            Ignores the given construct types.
+
+            *Parameter example:*
+              ``_ignore=('cell_method', 'field_ancillary')``
 
         '''
         self._ignore = tuple(set(_ignore))
@@ -231,7 +257,7 @@ class Constructs(object):
 
     x.__contains__(y) <==> y in x
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return key in self._construct_type
@@ -239,7 +265,7 @@ class Constructs(object):
     def __copy__(self):
         '''Called by the `copy.copy` standard library function.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return self.shallow_copy()
@@ -247,7 +273,7 @@ class Constructs(object):
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` standard library function.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return self.copy()
@@ -257,7 +283,7 @@ class Constructs(object):
 
     x.__getitem__(y) <==> x[y]
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         construct_type = self.construct_type(key)  # ignore??
@@ -275,7 +301,7 @@ class Constructs(object):
 
     x.__iter__() <==> iter(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return iter(self._dictionary().keys())
@@ -285,7 +311,7 @@ class Constructs(object):
 
     x.__len__() <==> len(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return len(self._dictionary())
@@ -293,53 +319,6 @@ class Constructs(object):
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _default(self, default, message=None):
-        '''Return a value or raise an Exception for a default case.
-
-    .. versionadded:: 1.7.0
-
-    :Parameters:
-
-        default:
-            The value to return, or to raise if set to an `Exception`
-            instance.
-
-        message: `str`, optional
-            The error message to raise with *default* if it is an
-            `Exception` instance.
-
-    :Returns:
-
-        The value of *default* if it is not an `Exception` instance.
-
-    **Examples:**
-
-    >>> f = cfdm.example_field(0)
-    >>> c = f.get_construct('cellmethod0')
-    >>> c
-    <CellMethod: area: mean>
-
-    >>> c._default(AttributeError())  # Raises Exception
-    AttributeError
-    >>> c._default(ValueError(), message="No data")  # Raises Exception
-    ValueError: No data
-    >>> c._default(False)
-    False
-    >>> c._default('Not set')
-    'Not set'
-    >>> c._default(1)
-    1
-
-        '''
-        if isinstance(default, Exception):
-            if message is not None and not default.args:
-                default = copy(default)
-                default.args = (message,)
-
-            raise default
-
-        return default
-
     def _del_data_axes(self, k, *d):
         '''Remove and return a construct's axes, if any.
 
@@ -349,74 +328,51 @@ class Constructs(object):
         '''
         return self._construct_axes.pop(k, *d)
 
-    # ----------------------------------------------------------------
-    # Private dictionary-like methods
-    # ----------------------------------------------------------------
-    def _pop(self, k, *d):
-        '''D.pop(k[,d]) -> v, remove specified key and return the
-    corresponding value.
+    def _view(self, ignore=()):
+        '''Return a new container with a view the same metadata constructs.
 
-    If k is not found, d is returned if given, otherwise KeyError is
-    raised
+    A new `{{class}}` instance is returned that contains the same
+    metadata construct instances
 
-        '''
-        # Remove the construct axes, if any
-        self._del_data_axes(k, None)
+    .. versionadded:: (cfdm) 1.7.0
 
-        # Find the construct type
-        try:
-            construct_type = self._construct_type.pop(k)
-        except KeyError as error:
-            if d:
-                return d[0]
+    :Parameters:
 
-            raise KeyError(error)
+        ignore: sequence of `str`, optional
+            Return a view that ignores the given construct types.
 
-        # Remove and return the construct
-        return self._constructs[construct_type].pop(k, *d)
+            *Parameter example:*
+              ``ignore=('cell_method', 'field_ancillary')``
 
-    def _update(self, other):
-        '''D.update(E) -> None. Update D from E.
+    :Returns:
+
+        `{{class}}`
+            The new constructs container.
 
         '''
-        self._ignore = tuple(set(self._ignore).union(other._ignore))
+        return type(self)(source=self, _ignore=ignore, _view=True)
 
-        self._key_base.update(other._key_base)
-        self._array_constructs.update(other._array_constructs)
-        self._non_array_constructs.update(other._non_array_constructs)
-        self._ordered_constructs.update(other._ordered_constructs)
-        self._construct_axes.update(other._construct_axes)
-        self._construct_type.update(other._construct_type)
-        self._constructs.update(other._constructs)
-
-    def construct_type(self, key):
-        '''Return the type of a metadata construct for a given key.
-        '''
-        x = self._construct_type.get(key)
-        if x in self._ignore:
-            return
-
-        return x
-
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _check_construct_type(self, construct_type, default=ValueError()):
         '''Check the type of a metadata construct is valid.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         construct_type: `str`
+            The construct type to be checked.
+
+        default: `bool`, optional
+            Return the value of the *default* parameter if construct
+            type is not valid.
+
+            {{default Exception}}
 
     :Returns:
 
-        TODO
-
-    **Examples:**
-
-    TODO
+        `str` or `None`
+            Return the type of of the construct, or if the input
+            construct was given as `None`, `None` is returned.
 
         '''
         if construct_type is None:
@@ -470,7 +426,7 @@ class Constructs(object):
     referenced by coordinate reference construct. In this case the
     reference is replace with `None`.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_get_construct`, `_set_construct`
 
@@ -484,9 +440,9 @@ class Constructs(object):
 
         default: optional
             Return the value of the *default* parameter if the
-            construct can not be removed, or does not exist. If set to
-            an `Exception` instance then it will be raised instead.
+            construct can not be removed, or does not exist.
 
+            {{default Exception}}
 
     :Returns:
 
@@ -552,7 +508,7 @@ class Constructs(object):
                        copy=True):
         '''Set a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `_del_construct`, `_get_construct`,
                  `_set_construct_data_axes`
@@ -592,7 +548,7 @@ class Constructs(object):
 
         copy: `bool`, optional
             If True then return a copy of the unique selected
-            construct. By default the construct is not copied.
+            construct. By default the construct is copied.
 
     :Returns:
 
@@ -645,7 +601,7 @@ class Constructs(object):
     def _set_construct_data_axes(self, key, axes, construct=None):
         '''Set domain axis constructs for construct identifiers.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -659,8 +615,7 @@ class Constructs(object):
             The construct identifiers of the domain axis constructs
             spanned by the data array. An exception is raised if used
             for a metadata construct that can not have a data array,
-            i.e. domain axis, cell method and coordinate reference
-            constructs.
+            such as a domain axis constuct.
 
             *Parameter example:*
               ``axes='domainaxis1'``
@@ -709,8 +664,10 @@ class Constructs(object):
 
         extra_axes = 0
         data = construct.get_data(None)
-        if (data is not None and
-                data.shape[:data.ndim - extra_axes] != axes_shape):
+        if (
+                data is not None and
+                data.shape[:data.ndim - extra_axes] != axes_shape
+        ):
             raise ValueError(
                 "Can't set {!r}: Data shape of {!r} does not match the "
                 "shape required by domain axes {}: {}".format(
@@ -724,8 +681,10 @@ class Constructs(object):
         else:
             if bounds is not None:
                 data = bounds.get_data(None)
-                if (data is not None and
-                        data.shape[:len(axes_shape)] != axes_shape):
+                if (
+                        data is not None and
+                        data.shape[:len(axes_shape)] != axes_shape
+                ):
                     raise ValueError(
                         "Can't set {!r}: Bounds data shape of {!r} does "
                         "not match the shape required by domain axes "
@@ -737,12 +696,52 @@ class Constructs(object):
         self._construct_axes[key] = tuple(axes)
 
     # ----------------------------------------------------------------
+    # Private dictionary-like methods
+    # ----------------------------------------------------------------
+    def _pop(self, k, *d):
+        '''D.pop(k[,d]) -> v, remove specified key and return the
+    corresponding value.
+
+    If k is not found, d is returned if given, otherwise KeyError is
+    raised
+
+        '''
+        # Remove the construct axes, if any
+        self._del_data_axes(k, None)
+
+        # Find the construct type
+        try:
+            construct_type = self._construct_type.pop(k)
+        except KeyError as error:
+            if d:
+                return d[0]
+
+            raise KeyError(error)
+
+        # Remove and return the construct
+        return self._constructs[construct_type].pop(k, *d)
+
+    def _update(self, other):
+        '''D.update(E) -> None. Update D from E.
+
+        '''
+        self._ignore = tuple(set(self._ignore).union(other._ignore))
+
+        self._key_base.update(other._key_base)
+        self._array_constructs.update(other._array_constructs)
+        self._non_array_constructs.update(other._non_array_constructs)
+        self._ordered_constructs.update(other._ordered_constructs)
+        self._construct_axes.update(other._construct_axes)
+        self._construct_type.update(other._construct_type)
+        self._constructs.update(other._constructs)
+
+    # ----------------------------------------------------------------
     # Dictionary-like methods
     # ----------------------------------------------------------------
     def get(self, key, *default):
         '''Return the construct for construct key, if it exists, else default.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `items`, `keys`, `values`
 
@@ -752,9 +751,40 @@ class Constructs(object):
     def items(self):
         '''Return the items as (construct key, construct) pairs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `keys`, `values`
+
+    :Returns:
+
+        `dict_items`
+            The construct key and constructs respectively as key-value pairs
+            in a Python `dict_items` iterator.
+
+    **Examples:**
+
+    >>> c = {{package}}.example_field(0)
+    >>> c_items = c.constructs.items()
+    >>> print(c_items)
+    dict_items([
+         ('dimensioncoordinate0', <{{repr}}DimensionCoordinate: latitude(5) degrees_north>),
+         ('dimensioncoordinate1', <{{repr}}DimensionCoordinate: longitude(8) degrees_east>),
+         ('dimensioncoordinate2', <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >),
+         ('domainaxis0', <{{repr}}DomainAxis: size(5)>),
+         ('domainaxis1', <{{repr}}DomainAxis: size(8)>),
+         ('domainaxis2', <{{repr}}DomainAxis: size(1)>),
+         ('cellmethod0', <{{repr}}CellMethod: area: mean>)
+    ])
+    >>> type(c_items)
+    <class 'dict_items'>
+    >>> dict(c_items)
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
         '''
         return self._dictionary().items()
@@ -762,9 +792,39 @@ class Constructs(object):
     def keys(self):
         '''Return all of the construct keys, in arbitrary order.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `items`, `values`
+
+    :Returns:
+
+        `dict_keys`
+            The construct keys as a Python `dict_keys` iterator.
+
+    **Examples:**
+
+    >>> c = {{package}}.example_field(0)
+    >>> c_keys = c.constructs.keys()
+    >>> print(c_keys)
+    dict_keys([
+         'domainaxis0',
+         'domainaxis1',
+         'domainaxis2',
+         'dimensioncoordinate0',
+         'dimensioncoordinate1',
+         'dimensioncoordinate2',
+         'cellmethod0'
+    ])
+    >>> type(c_keys)
+    <class 'dict_keys'>
+    >>> list(c_keys)
+    ['domainaxis0',
+     'domainaxis1',
+     'domainaxis2',
+     'dimensioncoordinate0',
+     'dimensioncoordinate1',
+     'dimensioncoordinate2',
+     'cellmethod0']
 
         '''
         return self._construct_type.keys()
@@ -772,15 +832,66 @@ class Constructs(object):
     def values(self):
         '''Return all of the metadata constructs, in arbitrary order.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get`, `items`, `keys`
+
+    :Returns:
+
+        `dict_values`
+            The constructs as a Python `dict_values` iterator.
+
+    **Examples:**
+
+    >>> c = {{package}}.example_field(0)
+    >>> c_values = c.constructs.values()
+    >>> print(c_values)
+    dict_values([
+        <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+        <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+        <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+        <{{repr}}CellMethod: area: mean>,
+        <{{repr}}DomainAxis: size(5)>,
+        <{{repr}}DomainAxis: size(8)>,
+        <{{repr}}DomainAxis: size(1)>
+    ])
+    >>> type(c_values)
+    <class 'dict_values'>
+    >>> list(c_values)
+    [<{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     <{{repr}}DomainAxis: size(5)>,
+     <{{repr}}DomainAxis: size(8)>,
+     <{{repr}}DomainAxis: size(1)>,
+     <{{repr}}CellMethod: area: mean>]
 
         '''
         return self._dictionary().values()
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
+    def construct_type(self, key):
+        '''Return the type of a metadata construct for a given key.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `construct_types`
+
+        '''
+        x = self._construct_type.get(key)
+        if x in self._ignore:
+            return
+
+        return x
+
     def construct_types(self):
         '''Return all of the construct types for all keys.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `construct_type`
 
         '''
         out = self._construct_type.copy()
@@ -791,92 +902,38 @@ class Constructs(object):
 
         return out
 
-    def value(self, default=ValueError()):
-        '''Return the sole metadata construct.
+    def copy(self, data=True):
+        '''Return a deep copy.
 
-    .. versionadded:: 1.7.0
+    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    .. seealso:: `get`, `key`, `values`
-
-    :Parameters:
-
-        default: optional
-            Return the value of the *default* parameter if there is
-            not exactly one construct. If set to an `Exception`
-            instance then it will be raised instead.
-
-    :Returns:
-
-            The metadata construct.
-
-    **Examples:**
-
-    >>> print(c)
-    Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
-    >>> c.key(
-    'dimensioncoordinate0'
-    >>> c.value()
-    <DimensionCoordinate: latitude(5) degrees_north>
-
-        '''
-        if not self:
-            return self._default(default, "Can't return zero constructs")
-
-        if len(self) > 1:
-            return self._default(
-                default, "Can't return {} constructs".format(len(self)))
-
-        _, construct = self._dictionary().popitem()
-
-        return construct
-
-    def key(self, default=ValueError()):
-        '''Return the construct key of the sole metadata construct.
-
-    .. versionadded:: 1.7.0
-
-    .. seealso:: `get`, `keys`, `value`
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if there is
-            not exactly one construct. If set to an `Exception`
-            instance then it will be raised instead.
+        data: `bool`, optional
+            If False then do not copy data contained in the metadata
+            constructs. By default such data are copied.
 
     :Returns:
 
-        `str`
-            The construct key.
+        `{{class}}`
+            The deep copy.
 
     **Examples:**
 
-    >>> print(c)
-    Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>}
-    >>> c.key(
-    'dimensioncoordinate0'
-    >>> c.value()
-    <DimensionCoordinate: latitude(5) degrees_north>
+    >>> g = f.copy()
+    >>> g = f.copy(data=False)
 
         '''
-        if not self:
-            return self._default(default, "Can't get key for zero constructs")
-
-        if len(self) > 1:
-            return self._default(
-                default, "Can't get key for {} constructs".format(len(self)))
-
-        key, _ = self._dictionary().popitem()
-
-        return key
+        return type(self)(source=self, copy=True, _ignore=self._ignore,
+                          _view=False, _use_data=data)
 
     def data_axes(self):
         '''Return the domain axis constructs spanned by metadata construct
     data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -889,13 +946,13 @@ class Constructs(object):
 
     >>> print(c)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
     >>> c.data_axes()
     {'dimensioncoordinate0': ('domainaxis0',),
      'dimensioncoordinate1': ('domainaxis1',),
@@ -917,46 +974,120 @@ class Constructs(object):
 
             return out
 
-    def copy(self, data=True):
-        '''Return a deep copy.
+    def filter_by_type(self, *types):
+        '''Select metadata constructs by type.
 
-    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
-        data: `bool`, optional
-            If False then do not copy data contained in the metadata
-            constructs. By default such data are copied.
+        types: optional
+            Select constructs that have are of any of the given types.
+
+            A type is specified by one of the following strings:
+
+            ==========================  ================================
+            *type*                      Construct selected
+            ==========================  ================================
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'domain_axis'``           Domain axis constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ``'coordinate_reference'``  Coordinate reference constructs
+            ``'cell_method'``           Cell method constructs
+            ``'field_ancillary'``       Field ancillary constructs
+            ==========================  ================================
+
+            If no types are provided then all constructs are selected.
 
     :Returns:
 
-            The deep copy.
+        `{{class}}`
+            The selected constructs and their construct keys.
 
     **Examples:**
 
-    >>> g = f.copy()
-    >>> g = f.copy(data=False)
+    Select dimension coordinate constructs:
+
+    >>> d = c.filter_by_type('dimension_coordinate')
+
+    Select dimension coordinate and field ancillary constructs:
+
+    >>> d = c.filter_by_type('dimension_coordinate',
+        'field_ancillary')
 
         '''
-        return type(self)(source=self, copy=True, _view=False,
-                          _use_data=data, _ignore=self._ignore)
+        if types:
+            # Ignore the all but the requested construct types
+            ignore = set(self._key_base)
+            ignore.difference_update(set(types))
+            ignore.update(self._ignore)
+        else:
+            # Keep all construct types
+            ignore = self._ignore
 
-    def new_identifier(self, construct_type):
-        '''Return a new, unsed construct key.
+        return self.shallow_copy(_ignore=ignore)
 
-    .. versionadded:: 1.7.0
+    def key(self, default=ValueError()):
+        '''Return the construct key of the sole metadata construct.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `get`, `keys`, `value`
 
     :Parameters:
 
-        construct_type: `str`
-            TODO
+        default: optional
+            Return the value of the *default* parameter if there is
+            not exactly one construct. If set to an `Exception`
+            instance then it will be raised instead.
 
     :Returns:
 
         `str`
-            The new construct key.
+            The construct key.
+
+    **Examples:**
+
+    >>> print(c)
+    Constructs:
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
+    >>> c.key(
+    'dimensioncoordinate0'
+    >>> c.value()
+    <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
+
+        '''
+        if not self:
+            return self._default(default, "Can't get key for zero constructs")
+
+        if len(self) > 1:
+            return self._default(
+                default, "Can't get key for {} constructs".format(len(self)))
+
+        key, _ = self._dictionary().popitem()
+
+        return key
+
+    def new_identifier(self, construct_type):
+        '''Return a new, unused construct key.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    :Parameters:
+
+        construct_type: `str`
+            The construct type for which the identifier is being
+            created.
+
+            *Parameter example:*
+              ``construct_type='dimension_coordinate'``
+
+    :Returns:
+
+        `str`
+            The new construct identifier.
 
     **Examples:**
 
@@ -993,6 +1124,41 @@ class Constructs(object):
 
         return key
 
+    def ordered(self):
+        '''Return the constructs in their predetermined order.
+
+    For cell method constructs, the predetermined order is that in
+    which they where added.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    :Returns:
+
+         `collections.OrderedDict`
+             The constructs and their construct keys, in their
+             predetermined order.
+
+    **Examples:**
+
+    >>> print(c)
+    onstructs:
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
+    >>> c.ordered()
+    OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean>),
+                 ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
+
+        '''
+        if len(self._constructs) > 1:
+            raise ValueError(
+                "Can't order multiple construct types: {!r}".format(self))
+
+        if self._ordered_constructs != set(self._constructs):
+            raise ValueError(
+                "Can't order un-orderable construct type: {!r}".format(self))
+
+        return self._constructs[tuple(self._ordered_constructs)[0]].copy()
+
     def replace(self, key, construct, axes=None, copy=True):
         '''Replace one metadata construct with another.
 
@@ -1012,102 +1178,12 @@ class Constructs(object):
 
         self._constructs[construct_type][key] = construct
 
-    def ordered(self):
-        '''Return the constructs in their predetermined order.
-
-    For cell method constructs, the predetermined order is that in
-    which they where added.
-
-    .. versionadded:: 1.7.0
-
-    :Returns:
-
-         `collections.OrderedDict`
-             The constructs and their construct keys, in their
-             predetermined order.
-
-    **Examples:**
-
-    >>> print(c)
-    onstructs:
-    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean>,
-     'cellmethod1': <CellMethod: domainaxis3: maximum>}
-    >>> c.ordered()
-    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean>),
-                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
-
-        '''
-        if len(self._constructs) > 1:
-            raise ValueError(
-                "Can't order multiple construct types: {!r}".format(self))
-
-        if self._ordered_constructs != set(self._constructs):
-            raise ValueError(
-                "Can't order un-orderable construct type: {!r}".format(self))
-
-        return self._constructs[tuple(self._ordered_constructs)[0]].copy()
-
-    def filter_by_type(self, *types):
-        '''Select metadata constructs by type.
-
-    .. versionadded:: 1.7.0
-
-    :Parameters:
-
-        types: optional
-            Select constructs that have are of any of the given types.
-
-            A type is specified by one of the following strings:
-
-            ==========================  ================================
-            *type*                      Construct selected
-            ==========================  ================================
-            ``'domain_ancillary'``      Domain ancillary constructs
-            ``'dimension_coordinate'``  Dimension coordinate constructs
-            ``'domain_axis'``           Domain axis constructs
-            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-            ``'cell_measure'``          Cell measure constructs
-            ``'coordinate_reference'``  Coordinate reference constructs
-            ``'cell_method'``           Cell method constructs
-            ``'field_ancillary'``       Field ancillary constructs
-            ==========================  ================================
-
-            If no types are provided then all constructs are selected.
-
-    :Returns:
-
-        `Constructs`
-            The selected constructs and their construct keys.
-
-    **Examples:**
-
-    Select dimension coordinate constructs:
-
-    >>> d = c.filter_by_type('dimension_coordinate')
-
-    Select dimension coordinate and field ancillary constructs:
-
-    >>> d = c.filter_by_type('dimension_coordinate',
-        'field_ancillary')
-
-        '''
-        if types:
-            # Ignore the all but the requested construct types
-            ignore = set(self._key_base)
-            ignore.difference_update(set(types))
-            ignore.update(self._ignore)
-        else:
-            # Keep all construct types
-            ignore = self._ignore
-
-        return self.shallow_copy(_ignore=ignore)
-
     def shallow_copy(self, _ignore=None):
         '''Return a shallow copy.
 
-    ``f.shallow_copy()`` is equivalent to ``copy.copy(f)``.
+    ``copy.copy(f)`` is equivalent to ``f.shallow_copy()``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -1124,24 +1200,44 @@ class Constructs(object):
         return type(self)(source=self, copy=False, _ignore=_ignore,
                           _view=False)
 
-    def _view(self, ignore=()):
-        '''Return a new container view with the same metadata constructs.
+    def value(self, default=ValueError()):
+        '''Return the sole metadata construct.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `get`, `key`, `values`
 
     :Parameters:
 
-        ignore: `bool`, optional
-            TODO
+        default: optional
+            Return the value of the *default* parameter if there is
+            not exactly one construct. If set to an `Exception`
+            instance then it will be raised instead.
 
     :Returns:
 
-        `Constructs`
-            <TODO>
+            The metadata construct.
 
     **Examples:**
 
-    <TODO>
+    >>> print(c)
+    Constructs:
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
+    >>> c.key(
+    'dimensioncoordinate0'
+    >>> c.value()
+    <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
 
         '''
-        return type(self)(source=self, _view=True, _ignore=ignore)
+        if not self:
+            return self._default(default, "Can't return zero constructs")
+
+        if len(self) > 1:
+            return self._default(
+                default, "Can't return {} constructs".format(len(self)))
+
+        _, construct = self._dictionary().popitem()
+
+        return construct
 
 # --- End: class

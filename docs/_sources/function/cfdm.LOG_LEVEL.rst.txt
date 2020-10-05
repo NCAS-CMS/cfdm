@@ -1,7 +1,0 @@
-cfdm.LOG_LEVEL
-==============
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autofunction:: cfdm.LOG_LEVEL

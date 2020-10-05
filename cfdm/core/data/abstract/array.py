@@ -1,9 +1,7 @@
-import abc
-
-from ...abstract import Container
+from ... import abstract
 
 
-class Array(Container, metaclass=abc.ABCMeta):
+class Array(abstract.Container):
     '''Abstract base class for a container of an array.
 
     The form of the array is defined by the initialization parameters
@@ -11,7 +9,7 @@ class Array(Container, metaclass=abc.ABCMeta):
 
     See `cfdm.core.NumpyArray` for an example implementation.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, **kwargs):
@@ -28,6 +26,28 @@ class Array(Container, metaclass=abc.ABCMeta):
         for key, value in kwargs.items():
             self._set_component(key, value, copy=False)
 
+    def __array__(self, *dtype):
+        '''The numpy array interface.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    :Parameters:
+
+        dtype: optional
+            Typecode or data-type to which the array is cast.
+
+    :Returns:
+
+        `numpy.ndarray`
+            An independent numpy array of the data.
+
+        '''
+        array = self.array
+        if not dtype:
+            return array
+        else:
+            return array.astype(dtype[0], copy=False)
+
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` function.
 
@@ -37,7 +57,7 @@ class Array(Container, metaclass=abc.ABCMeta):
     taken when making in-place modifications to attributes of either
     the original or the new copy.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -51,11 +71,10 @@ class Array(Container, metaclass=abc.ABCMeta):
     # Attributes
     # ----------------------------------------------------------------
     @property
-    @abc.abstractmethod
     def dtype(self):
         '''Data-type of the data elements.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -68,11 +87,10 @@ class Array(Container, metaclass=abc.ABCMeta):
         raise NotImplementedError()  # pragma: no cover
 
     @property
-    @abc.abstractmethod
     def ndim(self):
         '''Number of array dimensions
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -98,14 +116,15 @@ class Array(Container, metaclass=abc.ABCMeta):
     1
 
         '''
-        raise NotImplementedError()  # pragma: no cover
+        raise NotImplementedError(
+            "Subclasses of cfdm.core.AbstractArray must implement 'ndim'"
+        )  # pragma: no cover
 
     @property
-    @abc.abstractmethod
     def shape(self):
         '''Tuple of array dimension sizes.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -131,14 +150,15 @@ class Array(Container, metaclass=abc.ABCMeta):
     1
 
         '''
-        raise NotImplementedError()  # pragma: no cover
+        raise NotImplementedError(
+            "Subclasses of cfdm.core.AbstractArray must implement 'shape'"
+        )  # pragma: no cover
 
     @property
-    @abc.abstractmethod
     def size(self):
         '''Number of elements in the array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -167,11 +187,10 @@ class Array(Container, metaclass=abc.ABCMeta):
         raise NotImplementedError()  # pragma: no cover
 
     @property
-    @abc.abstractmethod
     def array(self):
         '''Return an independent numpy array containing the data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -199,10 +218,11 @@ class Array(Container, metaclass=abc.ABCMeta):
     taken when making in-place modifications to attributes of either
     the original or the new copy.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
+        `{{class}}`
             The deep copy.
 
     **Examples:**

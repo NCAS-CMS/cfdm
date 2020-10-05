@@ -1,6 +1,8 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
+.. _cfdm-DomainAxis:
+
 cfdm.DomainAxis
 ===============
 
@@ -58,6 +60,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.DomainAxis.copy
+   ~cfdm.DomainAxis.creation_commands
    ~cfdm.DomainAxis.equals
 
 NetCDF
@@ -105,4 +108,17 @@ Special
    ~cfdm.DomainAxis.__repr__
    ~cfdm.DomainAxis.__str__
    
-   
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.DomainAxis._docstring_special_substitutions
+   ~cfdm.DomainAxis._docstring_substitutions        
+   ~cfdm.DomainAxis._docstring_package_depth        
+   ~cfdm.DomainAxis._docstring_method_exclusions    

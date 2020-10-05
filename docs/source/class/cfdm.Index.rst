@@ -80,6 +80,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Index.copy
+   ~cfdm.Index.creation_commands
    ~cfdm.Index.equals
    ~cfdm.Index.get_filenames
 
@@ -152,4 +153,17 @@ Special
    ~cfdm.Index.__repr__
    ~cfdm.Index.__str__
 
-   
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.Index._docstring_special_substitutions
+   ~cfdm.Index._docstring_substitutions        
+   ~cfdm.Index._docstring_package_depth        
+   ~cfdm.Index._docstring_method_exclusions    

@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-#-*-python-*-
+# -*-python-*-
 
 if __name__ == '__main__':
 
@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     def print_help(version, date):
         import subprocess
-        
+
         manpage = '''\
 .TH "CFDUMP" "1" "{0}" "{1}" "cfdump"
 .
@@ -64,7 +64,7 @@ generally abbreviated to their first and last values.
 Read external variables from the given external file. Multiple
 external files may be provided by specifying more than one
 .ft B
-\-e 
+\-e
 .ft P
 option.
 .
@@ -107,9 +107,9 @@ David Hassell
                               '-l', '-'], stdin=subprocess.PIPE)
         p.communicate(bytes(manpage, "utf8"))
 
-
-    iam   = os.path.basename(sys.argv[0])
-    usage = "USAGE: {0} [-s] [-c] [-e file [-e file] ...] [-h] file".format(iam)
+    iam = os.path.basename(sys.argv[0])
+    usage = (
+        "USAGE: {0} [-s] [-c] [-e file [-e file] ...] [-h] file".format(iam))
     short_help = '''{0}
   [-s]      Display short, one-line descriptions
   [-c]      Display complete descriptions
@@ -117,13 +117,13 @@ David Hassell
   [-h]      Display the full man page
   file      Name of netCDF file (or URL if DAP access enabled)
 cfdm package version {1} of {2}'''.format(
-    usage, cfdm.__version__, cfdm.__date__)
-    
+        usage, cfdm.__version__, cfdm.__date__)
+
     # --------------------------------------------------------------------
     # Parse command line options
     # --------------------------------------------------------------------
     try:
-        opts, infile = getopt.getopt(sys.argv[1:], "ce:hs", 
+        opts, infile = getopt.getopt(sys.argv[1:], "ce:hs",
                                      longopts=['complete',
                                                'external=',
                                                'help',
@@ -139,11 +139,11 @@ cfdm package version {1} of {2}'''.format(
         sys.exit(0)
 
     # Defaults
-    short_output    = False
+    short_output = False
     complete_output = False
-    external        = []
+    external = []
 
-    for option, arg in opts: 
+    for option, arg in opts:
         if option in ('-h', '--help'):
             print_help(cfdm.__version__, cfdm.__date__)
             sys.exit(0)
@@ -156,12 +156,12 @@ cfdm package version {1} of {2}'''.format(
         else:
             print(short_help)
             assert False, "Unhandled option: "+option
-    #--- End: for
+    # --- End: for
 
     # ----------------------------------------------------------------
     # Read the input file
     # ----------------------------------------------------------------
-    try:        
+    try:
         f = cfdm.read(infile[0], external=external)
     except Exception as error:
         print('{} ERROR reading file: {}'.format(iam, error))
@@ -170,7 +170,7 @@ cfdm package version {1} of {2}'''.format(
     # ----------------------------------------------------------------
     # Print the field construct descriptions
     # ----------------------------------------------------------------
-    for g in f:            
+    for g in f:
         if short_output:
             # Omit the angled brackets
             print(repr(g)[1:-1])
@@ -178,4 +178,3 @@ cfdm package version {1} of {2}'''.format(
             print(g)
         else:
             g.dump()
-            

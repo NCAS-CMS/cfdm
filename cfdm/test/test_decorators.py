@@ -1,6 +1,5 @@
 import copy
 import datetime
-import logging
 import unittest
 
 import cfdm
@@ -43,7 +42,7 @@ class dummyClass:
             d = None
         return d
 
-    @cfdm.decorators._inplace_enabled
+    @cfdm.decorators._inplace_enabled(False)
     def decorated_func(self, inplace):
         '''Dummy function equivalent to 'func' but a decorator manages the
            logic to specify and conduct in-place operation.
@@ -190,6 +189,6 @@ class DecoratorsTest(unittest.TestCase):
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
-    cfdm.environment(display=False)
+    cfdm.environment()
     print('')
     unittest.main(verbosity=2)

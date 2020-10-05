@@ -20,7 +20,7 @@
    introduction
    cf_data_model
    installation
-   support
+   contributing
    tutorial
    api_reference
    philosophy

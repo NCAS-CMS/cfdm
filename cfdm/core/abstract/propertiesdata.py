@@ -1,43 +1,47 @@
 import abc
 
-from . import Properties
+from ..data import Data
+
+from .properties import Properties
 
 
-class PropertiesData(Properties, metaclass=abc.ABCMeta):
-    '''Abstract base class for a data array with descriptive properties.
+class PropertiesData(Properties):
+    '''Mixin class for a data array with descriptive properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
+    def __new__(cls, *args, **kwargs):
+        '''Store component classes.
+
+    NOTE: If a child class requires a different component classes than
+    the ones defined here, then they must be redefined in the child
+    class.
+
+        '''
+        instance = super().__new__(cls)
+        instance._Data = Data
+        return instance
+
     def __init__(self, properties=None, data=None, source=None,
                  copy=True, _use_data=True):
         '''**Initialization**
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
             *Parameter example:*
               ``properties={'standard_name': 'altitude'}``
 
-        data: `Data`, optional
-            Set the data. Ignored if the *source* parameter is set.
-
-            The data also may be set after initialisation with the
-            `set_data` method.
+        {{init data: data_like, optional}}
 
         source: optional
             Initialize the properties and data from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+            {{init source}}
+
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(properties=properties, source=source,
@@ -56,6 +60,53 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
         if _use_data and data is not None:
             self.set_data(data, copy=copy)
 
+    def __array__(self, *dtype):
+        '''The numpy array interface.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    :Parameters:
+
+        dtype: optional
+            Typecode or data-type to which the array is cast.
+
+    :Returns:
+
+        `numpy.ndarray`
+            An independent numpy array of the data.
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.__array__(*dtype)
+
+        raise ValueError("{} has no data".format(self.__class__.__name__))
+
+    def __data__(self):
+        '''Defines the data interface.
+
+    Returns the data, if any.
+
+    :Returns:
+
+        `Data`
+
+    **Examples:**
+
+    >>> f = {{package}}.{{class}}()
+    >>> f.set_data([1, 2, 3])
+    >>> f.set_property('units', 'K')
+    >>> d = {{package}}.Data(f)
+    >>> d
+    <{{repr}}Data(3): [1, 2, 3] K>
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data
+
+        raise ValueError("{} has no data".format(self.__class__.__name__))
+
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -65,16 +116,16 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     ``f.data`` is equivalent to ``f.get_data()``
 
-    Note that a `Data` instance is returned. Use its `array` attribute
-    to return the data as a `numpy` array.
+    Note that a `Data` instance is returned. Use its `array`
+    attribute to return the data as a `numpy` array.
 
     The units, calendar and fill value properties are, if set,
     inserted into the data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `Data.array`, `del_data`, `get_data`, `has_data`,
-                 `set_data`
+    .. seealso:: `{{package}}.Data.array`, `del_data`, `get_data`,
+                 `has_data`, `set_data`
 
     :Returns:
 
@@ -83,13 +134,14 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> d = cfdm.Data(range(10))
-    >>> f.set_data(d)
+    >>> import numpy
+    >>> f = {{package}}.{{class}}()
+    >>> f.set_data({{package}}.Data(numpy.range(9.)))
     >>> f.has_data()
     True
     >>> d = f.data
     >>> d
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0.0, ..., 9.0]>
     >>> f.data.shape
     (10,)
 
@@ -104,12 +156,12 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    Arrays within `Data` instances are copied with a copy-on-write
-    technique. This means that a copy takes up very little extra
-    memory, even when the original contains very large data arrays,
-    and the copy operation is fast.
+    Arrays within `Data` instances are copied with a
+    copy-on-write technique. This means that a copy takes up very
+    little extra memory, even when the original contains very large
+    data arrays, and the copy operation is fast.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -119,6 +171,7 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     :Returns:
 
+        `{{class}}`
             The deep copy.
 
     **Examples:**
@@ -134,7 +187,7 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
     def del_data(self, default=ValueError()):
         '''Remove the data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `get_data`, `has_data`, `set_data`
 
@@ -142,23 +195,30 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
         default: optional
             Return the value of the *default* parameter if data have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 
+        `Data`
             The removed data.
 
     **Examples:**
 
-    >>> d = cfdm.Data(range(10))
-    >>> f.set_data(d)
+    >>> f = {{package}}.{{class}}()
+    >>> f.set_data([1, 2, 3])
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.data
+    <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <{{repr}}Data(3): [4, 5, 6]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -181,32 +241,39 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
     The units, calendar and fill value properties are, if set,
     inserted into the data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `Data.array`, `data`, `del_data`, `has_data`,
-                 `set_data`
+    .. seealso:: `{{package}}.Data.array`, `data`, `del_data`,
+                 `has_data`, `set_data`
 
     :Parameters:
 
         default: optional
             Return the value of the *default* parameter if data have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 
+        `Data`
             The data.
 
     **Examples:**
 
-    >>> d = cfdm.Data(range(10))
-    >>> f.set_data(d)
+    >>> f = {{package}}.{{class}}()
+    >>> f.set_data([1, 2, 3])
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.data
+    <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <{{repr}}Data(3): [4, 5, 6]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -255,7 +322,7 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     This is always False.
 
-    .. versionadded:: 1.7.4
+    .. versionadded:: (cfdm) 1.7.4
 
     .. seealso:: `has_data`
 
@@ -266,6 +333,7 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.has_bounds()
     False
 
@@ -275,7 +343,7 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
     def has_data(self):
         '''Whether a data has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data`, `get_data`, `set_data`
 
@@ -286,14 +354,19 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
 
     **Examples:**
 
-    >>> d = cfdm.Data(range(10))
-    >>> f.set_data(d)
+    >>> f = {{package}}.{{class}}()
+    >>> f.set_data([1, 2, 3])
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.data
+    <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <{{repr}}Data(3): [4, 5, 6]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -304,39 +377,53 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
         '''
         return self._has_component('data')
 
-    def set_data(self, data, copy=True):
+    def set_data(self, data, copy=True, inplace=True):
         '''Set the data.
 
     The units, calendar and fill value of the incoming `Data` instance
     are removed prior to insertion.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data`, `get_data`, `has_data`
 
     :Parameters:
 
-        data: `Data`
+        data: data_like
             The data to be inserted.
+
+            {{data_like}}
 
         copy: `bool`, optional
             If False then do not copy the data prior to insertion. By
             default the data are copied.
 
+        {{inplace: `bool`, optional (default True)}}
+
+            .. versionadded:: (cfdm) 1.8.7.0
+
     :Returns:
 
-        `None`
+        `None` or `{{class}}`
+            If the operation was in-place then `None` is returned,
+            otherwise return a new `{{class}}` instance containing the
+            new data.
 
     **Examples:**
 
-    >>> d = Data(range(10))
-    >>> f.set_data(d)
+    >>> f = {{package}}.{{class}}()
+    >>> f.set_data([1, 2, 3])
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.data
+    <{{repr}}Data(3): [1, 2, 3]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <{{repr}}Data(3): [4, 5, 6]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -345,9 +432,21 @@ class PropertiesData(Properties, metaclass=abc.ABCMeta):
     None
 
         '''
+        data = self._Data(data, copy=False)
+
         if copy:
             data = data.copy()
 
-        self._set_component('data', data, copy=False)
+        if inplace:
+            f = self
+        else:
+            f = self.copy(data=False)
+
+        f._set_component('data', data, copy=False)
+
+        if inplace:
+            return
+
+        return f
 
 # --- End: class

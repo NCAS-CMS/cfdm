@@ -1,6 +1,8 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
+. _cfdm-Domain:
+
 cfdm.Domain
 ===========
 
@@ -73,6 +75,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Domain.copy
+   ~cfdm.Domain.creation_commands
    ~cfdm.Domain.equals
    ~cfdm.Domain.fromconstructs
 
@@ -90,3 +93,17 @@ Special
    ~cfdm.Domain.__repr__
    ~cfdm.Domain.__str__
 
+Docstring substitutions                   
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.Domain._docstring_special_substitutions
+   ~cfdm.Domain._docstring_substitutions        
+   ~cfdm.Domain._docstring_package_depth        
+   ~cfdm.Domain._docstring_method_exclusions    

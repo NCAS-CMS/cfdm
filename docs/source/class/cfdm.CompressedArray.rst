@@ -68,3 +68,18 @@ Special
    ~cfdm.CompressedArray.__getitem__
    ~cfdm.CompressedArray.__repr__
    ~cfdm.CompressedArray.__str__
+
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.CompressedArray._docstring_special_substitutions
+   ~cfdm.CompressedArray._docstring_substitutions        
+   ~cfdm.CompressedArray._docstring_package_depth        
+   ~cfdm.CompressedArray._docstring_method_exclusions    

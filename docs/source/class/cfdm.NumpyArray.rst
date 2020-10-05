@@ -55,3 +55,18 @@ Special
    :template: method.rst
    
    ~cfdm.NumpyArray.__getitem__
+
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.NumpyArray._docstring_special_substitutions
+   ~cfdm.NumpyArray._docstring_substitutions        
+   ~cfdm.NumpyArray._docstring_package_depth        
+   ~cfdm.NumpyArray._docstring_method_exclusions    

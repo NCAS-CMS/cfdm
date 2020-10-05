@@ -1,17 +1,16 @@
-import os
-import urllib.parse
 
 import numpy
 import netCDF4
 
 from . import abstract
+
 from .numpyarray import NumpyArray
 
 
 class NetCDFArray(abstract.Array):
     '''An underlying array stored in a netCDF file.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, filename=None, ncvar=None, varid=None,
@@ -41,19 +40,19 @@ class NetCDFArray(abstract.Array):
             the variable lies, with other elements naming any parent
             groups (excluding the root group).
 
-            :Parameter example:
+            *Parameter example:*
               To specify that a variable is in the root group:
-              ``group=()` or ``group=None`
+              ``group=()`` or ``group=None``
 
-            :Parameter example:
+            *Parameter example:*
               To specify that a variable is in the group '/forecasts':
               ``group=['forecasts']``
 
-            :Parameter example:
+            *Parameter example:*
               To specify that a variable is in the group
               '/forecasts/model2': ``group=['forecasts', 'model2']``
 
-            .. versionadded:: 1.8.6
+            .. versionadded:: (cfdm) 1.8.6.0
 
         dtype: `numpy.dtype`
             The data type of the array in the netCDF file. May be
@@ -78,7 +77,7 @@ class NetCDFArray(abstract.Array):
             ``valid_max``, ``valid_range``, ``_FillValue`` and
             ``missing_value``.
 
-            .. versionadded:: 1.8.2
+            .. versionadded:: (cfdm) 1.8.2
 
     **Examples:**
 
@@ -127,6 +126,8 @@ class NetCDFArray(abstract.Array):
       * When two or more dimension's indices are sequences of integers
         then these indices work independently along each dimension
         (similar to the way vector subscripts work in Fortran).
+
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         netcdf = self.open()
@@ -233,6 +234,8 @@ class NetCDFArray(abstract.Array):
     def dtype(self):
         '''Data-type of the data elements.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     **Examples:**
 
     >>> a.dtype
@@ -246,6 +249,8 @@ class NetCDFArray(abstract.Array):
     @property
     def ndim(self):
         '''Number of array dimensions
+
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -276,6 +281,8 @@ class NetCDFArray(abstract.Array):
     def shape(self):
         '''Tuple of array dimension sizes.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     **Examples:**
 
     >>> a.shape
@@ -304,6 +311,8 @@ class NetCDFArray(abstract.Array):
     @property
     def size(self):
         '''Number of elements in the array.
+
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -334,6 +343,8 @@ class NetCDFArray(abstract.Array):
     def get_filename(self):
         '''The name of the netCDF file containing the array.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     **Examples:**
 
     >>> a.get_filename()
@@ -345,7 +356,7 @@ class NetCDFArray(abstract.Array):
     def get_group(self):
         '''The netCDF4 group structure to which the netCDF variable belongs.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6.0
 
     **Examples:**
 
@@ -357,7 +368,7 @@ class NetCDFArray(abstract.Array):
     def get_mask(self):
         '''The mask of the data array.
 
-    .. versionadded:: 1.8.2
+    .. versionadded:: (cfdm) 1.8.2
 
     **Examples:**
 
@@ -368,6 +379,8 @@ class NetCDFArray(abstract.Array):
 
     def get_ncvar(self):
         '''The name of the netCDF variable containing the array.
+
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -387,6 +400,8 @@ class NetCDFArray(abstract.Array):
     def get_varid(self):
         '''The UNIDATA netCDF interface ID of the variable containing the
     array.
+
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -409,6 +424,8 @@ class NetCDFArray(abstract.Array):
     def close(self):
         '''Close the `netCDF4.Dataset` for the file containing the data.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Returns:
 
         `None`
@@ -429,6 +446,8 @@ class NetCDFArray(abstract.Array):
     def array(self):
         '''Return an independent numpy array containing the data.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Returns:
 
         `numpy.ndarray`
@@ -445,6 +464,8 @@ class NetCDFArray(abstract.Array):
 
     def open(self):
         '''Return an open `netCDF4.Dataset` for the file containing the array.
+
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -473,9 +494,11 @@ class NetCDFArray(abstract.Array):
 
     There is no change to an array that is already in memory.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Returns:
 
-        `NetCDFArray`
+        `NumpyArray`
             The array that is stored in memory.
 
     **Examples:**

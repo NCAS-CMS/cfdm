@@ -31,14 +31,14 @@ class DimensionCoordinate(abstract.Coordinate):
     interpreted in a special way indicated by the cell method
     constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     @property
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -47,46 +47,56 @@ class DimensionCoordinate(abstract.Coordinate):
 
     **Examples:**
 
-    >>> f.construct_type
+    >>> c = {{package}}.{{class}}()
+    >>> c.construct_type
     'dimension_coordinate'
 
         '''
         return 'dimension_coordinate'
 
-    def set_data(self, data, copy=True):
+    def set_data(self, data, copy=True, inplace=True):
         '''Set the data.
 
     The units, calendar and fill value of the incoming `Data` instance
     are removed prior to insertion.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `data`, `del_data`, `get_data`, `has_data`
 
     :Parameters:
 
-        data: `Data`
+        data: data_like
             The data to be inserted. Must be 1-dimensional,
             i.e. scalar or multidimensionl data is not allowed.
+
+            {{data_like}}
 
         copy: `bool`, optional
             If False then do not copy the data prior to insertion. By
             default the data are copied.
 
+        {{inplace: `bool`, optional (default True)}}
+
+            .. versionadded:: (cfdm) 1.8.7.0
+
     :Returns:
 
-        `None`
+        `None` or `{{class}}`
+            If the operation was in-place then `None` is returned,
+            otherwise return a new `{{class}}` instance containing the
+            new data.
 
     **Examples:**
 
-    >>> d = Data(range(10))
+    >>> d = {{package}}.Data(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
     True
     >>> f.get_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.del_data()
-    <Data(10): [0, ..., 9]>
+    <{{repr}}Data(10): [0, ..., 9]>
     >>> f.has_data()
     False
     >>> print(f.get_data(None))
@@ -100,6 +110,6 @@ class DimensionCoordinate(abstract.Coordinate):
                 "Dimension coordinate construct must have 1-dimensional data. "
                 "Got {!r}".format(data))
 
-        return super().set_data(data, copy=copy)
+        return super().set_data(data, copy=copy, inplace=inplace)
 
 # --- End: class

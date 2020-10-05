@@ -32,7 +32,7 @@ class Datum(mixin.Parameters,
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
     `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, parameters=None, source=None, copy=True):
@@ -54,9 +54,9 @@ class Datum(mixin.Parameters,
         source: optional
             Initialize the parameters from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+            {{init source}}
+
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(parameters=parameters,

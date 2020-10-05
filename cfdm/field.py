@@ -10,16 +10,18 @@ from . import List
 
 from .constants import masked as cfdm_masked
 
-from .data import Data
-from .data import RaggedContiguousArray
-from .data import RaggedIndexedArray
-from .data import RaggedIndexedContiguousArray
-from .data import GatheredArray
+from .data import (
+    RaggedContiguousArray,
+    RaggedIndexedArray,
+    RaggedIndexedContiguousArray,
+    GatheredArray,
+)
 
 from .decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
+    _test_decorator_args,
 )
 
 
@@ -101,17 +103,20 @@ class Field(mixin.NetCDFVariable,
     CF-compliance issues for field constructs read from a netCDF
     dataset may be accessed with the `dataset_compliance` method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __new__(cls, *args, **kwargs):
-        '''This must be overridden in subclasses.
+        '''Store component classes.
+
+    .. note:: If a child class requires a different component classes
+              than the ones defined here, then they must be redefined
+              in the child class.
 
         '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         instance._Domain = Domain
-        instance._Data = Data
         instance._RaggedContiguousArray = RaggedContiguousArray
         instance._RaggedIndexedArray = RaggedIndexedArray
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray
@@ -127,13 +132,7 @@ class Field(mixin.NetCDFVariable,
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
             *Parameter example:*
               ``properties={'standard_name': 'air_temperature'}``
@@ -142,9 +141,9 @@ class Field(mixin.NetCDFVariable,
             Initialize the properties, data and metadata constructs
             from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+            {{init source}}
+
+        {{init copy: `bool`, optional}}
 
         '''
         # Initialize the new field with attributes and CF properties
@@ -159,7 +158,7 @@ class Field(mixin.NetCDFVariable,
 
     x.__repr__() <==> repr(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__,
@@ -170,7 +169,7 @@ class Field(mixin.NetCDFVariable,
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         title = "Field: {0}".format(self.identity(''))
@@ -274,7 +273,7 @@ class Field(mixin.NetCDFVariable,
       the same behaviour as indexing on a Variable object of the
       netCDF4 package.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -405,7 +404,7 @@ class Field(mixin.NetCDFVariable,
 
     :Parameters:
 
-        component:  `str`
+        component: `str`
 
     :Returns:
 
@@ -451,14 +450,14 @@ class Field(mixin.NetCDFVariable,
         '''Set the report of problems encountered whilst reading the field
     construct from a dataset.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `dataset_compliance`
 
     :Parameters:
 
         value:
-            The value of the data_compliance component
+           The value of the ``dataset_compliance`` component.
 
     :Returns:
 
@@ -469,6 +468,54 @@ class Field(mixin.NetCDFVariable,
         '''
         self._set_component('dataset_compliance', value, copy=True)
 
+    @property
+    def _test_docstring_substitution_property_Field(self):
+        '''Test docstring substitution on {{class}} with @property.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        print('_test_docstring_substitution_property_Field')
+
+    @property
+    @_test_decorator_args('i')
+    def _test_docstring_substitution_decorator_property(self):
+        '''Test docstring substitution on {{class}} with @property and a
+    decorator.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        print('_test_docstring_substitution_decorator_property_Field')
+
+    @staticmethod
+    def _test_docstring_substitution_staticmethod_Field():
+        '''Test docstring substitution on {{class}} with @staticmethod.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        print('_test_docstring_substitution_staticmethod_Field')
+
+    @_test_decorator_args('i')
+    @_manage_log_level_via_verbosity
+    @_inplace_enabled(default=False)
+    def _test_docstring_substitution_Field(self, inplace=False, verbose=None):
+        '''Test docstring substitution on {{class}} with two decorators.
+
+        {{inplace: `bool`, optional}}
+
+    {{package}}.{{class}}
+
+        '''
+        print('_test_docstring_substitution_Field')
+
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -476,15 +523,9 @@ class Field(mixin.NetCDFVariable,
     def field_ancillaries(self):
         '''Return field ancillary constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `get_construct`
-
-    :Parameters:
-
-        copy: `bool`, optional
-            If True then return copies of the constructs. By default
-            the constructs are not copied.
 
     :Returns:
 
@@ -499,11 +540,11 @@ class Field(mixin.NetCDFVariable,
 
     >>> print(f.field_ancillaries)
     Constructs:
-    {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+    {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
 
     >>> print(f.field_ancillaries('specific_humuidity standard_error'))
     Constructs:
-    {'fieldancillary0': <FieldAncillary: specific_humidity standard_error(10, 9) K>}
+    {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
 
         '''
         return self.constructs.filter_by_type('field_ancillary')
@@ -516,15 +557,9 @@ class Field(mixin.NetCDFVariable,
     applied. To achieve this use the `~Constructs.ordered` of the
     returned `Constructs` instance.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `constructs`, `get_construct`, `set_construct`
-
-    :Parameters:
-
-        copy: `bool`, optional
-            If True then return copies of the constructs. By default
-            the constructs are not copied.
 
     :Returns:
 
@@ -539,12 +574,12 @@ class Field(mixin.NetCDFVariable,
 
     >>> f.cell_methods
     Constructs:
-    {'cellmethod1': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-     'cellmethod0': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod1': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+     'cellmethod0': <{{repr}}CellMethod: domainaxis3: maximum>}
 
     >>> f.cell_methods.ordered()
-    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+    OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+                 ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         '''
         return self.constructs.filter_by_type('cell_method')
@@ -589,14 +624,13 @@ class Field(mixin.NetCDFVariable,
               ``valid_max``, and ``valid_range`` properties have not
               been updated.
 
-    .. versionadded:: 1.8.3
+    .. versionadded:: (cfdm) 1.8.3
 
     .. seealso:: `Data.apply_masking`, `read`, `write`
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -642,7 +676,7 @@ class Field(mixin.NetCDFVariable,
     def climatological_time_axes(self):
         '''Return all axes which are climatological time axes.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -653,11 +687,11 @@ class Field(mixin.NetCDFVariable,
     **Examples:**
 
     >>> f
-    <Field: air_temperature(time(12), latitude(145), longitude(192)) K>
+    <{{repr}}Field: air_temperature(time(12), latitude(145), longitude(192)) K>
     >>> print(f.cell_methods())
     Constructs:
-    {'cellmethod0': <CellMethod: domainaxis0: minimum within days>,
-     'cellmethod1': <CellMethod: domainaxis0: mean over days>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis0: minimum within days>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis0: mean over days>}
     >>> f.climatological_time_axes()
     [('domainaxis0',), ('domainaxis0',)]
 
@@ -665,7 +699,7 @@ class Field(mixin.NetCDFVariable,
     <Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
     >>> print(g.cell_methods())
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>}
     >>> g.climatological_time_axes()
     []
         '''
@@ -691,7 +725,7 @@ class Field(mixin.NetCDFVariable,
 
         return out
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def compress(self, method, axes=None, count_properties=None,
                  index_properties=None, list_properties=None,
                  inplace=False):
@@ -725,7 +759,7 @@ class Field(mixin.NetCDFVariable,
 
         * Compression by gathering.
 
-    .. versionadded:: 1.7.11
+    .. versionadded:: (cfdm) 1.7.11
 
     .. seealso:: `uncompress`
 
@@ -801,8 +835,7 @@ class Field(mixin.NetCDFVariable,
             *Parameter example:*
               ``list_properties={'long_name': 'uncompression indices'}``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -823,23 +856,23 @@ class Field(mixin.NetCDFVariable,
     >>> g.equals(f)
     True
 
-    >>> cfdm.write(g, 'compressed_file_contiguous.nc')
-    >>> h = cfdm.read( 'compressed_file_contiguous.nc')[0]
+    >>> {{package}}.write(g, 'compressed_file_contiguous.nc')
+    >>> h = {{package}}.read( 'compressed_file_contiguous.nc')[0]
     >>> h.equals(f)
     True
 
     >>> g.data.get_compression_type()
     'ragged contiguous'
     >>> g.data.get_count()
-    <CF Count: (4) >
+    <{{repr}}Count: (4) >
     >>> print(g.data.get_count().array)
     [3 7 5 9]
     >>> g.compress('indexed', inplace=True)
     >>> g.data.get_index()
-     <CF Index: (24) >
+     <{{repr}}Index: (24) >
     >>> print(g.data.get_index().array)
     [0 0 0 1 1 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 3 3]
-    >>> cfdm.write(g, 'compressed_file_indexed.nc')
+    >>> {{package}}.write(g, 'compressed_file_indexed.nc')
 
         '''
         def _empty_compressed_data(data, shape):
@@ -1163,17 +1196,18 @@ class Field(mixin.NetCDFVariable,
     memory, even when the original contains very large data arrays,
     and the copy operation is fast.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         data: `bool`, optional
-            If False then do not copy the data field construct, nor
-            that of any of its metadata constructs. By default all
-            data are copied.
+            If False then do not copy the data of the field construct,
+            nor the data of any of its metadata constructs. By default
+            all data are copied.
 
     :Returns:
 
+        `Field`
             The deep copy.
 
     **Examples:**
@@ -1190,6 +1224,275 @@ class Field(mixin.NetCDFVariable,
 
         return new
 
+    def creation_commands(self, representative_data=False,
+                          namespace=None, indent=0, string=True,
+                          name='field', data_name='data', header=True):
+        '''Return the commands that would create the field construct.
+
+    **Construct keys**
+
+    The *key* parameter of the output `set_construct` commands is
+    utilised in order minimise the number of commands needed to
+    implement cross-referencing between constructs (e.g. between a
+    coordinate reference construct and coordinate constructs). This is
+    usually not necessary when building field constructs, as by
+    default the `set_construct` method returns a unique construct key
+    for the construct being set.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `set_construct`,
+                 `{{package}}.Data.creation_commands`,
+                 `{{package}}.example_field`
+
+    :Parameters:
+
+        {{representative_data: `bool`, optional}}
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{name: `str`, optional}}
+
+        {{data_name: `str`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+    >>> q = {{package}}.example_field(0)
+    >>> print(q)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(q.creation_commands())
+    #
+    # field: specific_humidity
+    field = cfdm.Field()
+    field.set_properties({'Conventions': 'CF-1.8', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+    field.nc_set_variable('q')
+    data = cfdm.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
+    field.set_data(data)
+    #
+    # domain_axis: ncdim%lat
+    c = cfdm.DomainAxis()
+    c.set_size(5)
+    c.nc_set_dimension('lat')
+    field.set_construct(c, key='domainaxis0', copy=False)
+    #
+    # domain_axis: ncdim%lon
+    c = cfdm.DomainAxis()
+    c.set_size(8)
+    c.nc_set_dimension('lon')
+    field.set_construct(c, key='domainaxis1', copy=False)
+    #
+    # domain_axis:
+    c = cfdm.DomainAxis()
+    c.set_size(1)
+    field.set_construct(c, key='domainaxis2', copy=False)
+    #
+    # dimension_coordinate: latitude
+    c = cfdm.DimensionCoordinate()
+    c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+    c.nc_set_variable('lat')
+    data = cfdm.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
+    c.set_data(data)
+    b = cfdm.Bounds()
+    b.nc_set_variable('lat_bnds')
+    data = cfdm.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
+    b.set_data(data)
+    c.set_bounds(b)
+    field.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+    #
+    # dimension_coordinate: longitude
+    c = cfdm.DimensionCoordinate()
+    c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+    c.nc_set_variable('lon')
+    data = cfdm.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
+    c.set_data(data)
+    b = cfdm.Bounds()
+    b.nc_set_variable('lon_bnds')
+    data = cfdm.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
+    b.set_data(data)
+    c.set_bounds(b)
+    field.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+    #
+    # dimension_coordinate: time
+    c = cfdm.DimensionCoordinate()
+    c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+    c.nc_set_variable('time')
+    data = cfdm.Data([31.0], units='days since 2018-12-01', dtype='f8')
+    c.set_data(data)
+    field.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+    #
+    # cell_method: mean
+    c = cfdm.CellMethod()
+    c.set_method('mean')
+    c.set_axes(('area',))
+    field.set_construct(c)
+    #
+    # field data axes
+    field.set_data_axes(('domainaxis0', 'domainaxis1'))
+    >>> print(q.creation_commands(representative_data=True, namespace='',
+    ...                           indent=4, header=False))
+        field = Field()
+        field.set_properties({'Conventions': 'CF-1.8', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+        field.nc_set_variable('q')
+        data = <Data(5, 8): [[0.007, ..., 0.013]] 1>  # Representative data
+        field.set_data(data)
+        c = DomainAxis()
+        c.set_size(5)
+        c.nc_set_dimension('lat')
+        field.set_construct(c, key='domainaxis0', copy=False)
+        c = DomainAxis()
+        c.set_size(8)
+        c.nc_set_dimension('lon')
+        field.set_construct(c, key='domainaxis1', copy=False)
+        c = DomainAxis()
+        c.set_size(1)
+        field.set_construct(c, key='domainaxis2', copy=False)
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+        c.nc_set_variable('lat')
+        data = <Data(5): [-75.0, ..., 75.0] degrees_north>  # Representative data
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable('lat_bnds')
+        data = <Data(5, 2): [[-90.0, ..., 90.0]] degrees_north>  # Representative data
+        b.set_data(data)
+        c.set_bounds(b)
+        field.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+        c.nc_set_variable('lon')
+        data = <Data(8): [22.5, ..., 337.5] degrees_east>  # Representative data
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable('lon_bnds')
+        data = <Data(8, 2): [[0.0, ..., 360.0]] degrees_east>  # Representative data
+        b.set_data(data)
+        c.set_bounds(b)
+        field.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+        c.nc_set_variable('time')
+        data = <Data(1): [2019-01-01 00:00:00]>  # Representative data
+        c.set_data(data)
+        field.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+        c = CellMethod()
+        c.set_method('mean')
+        c.set_axes(('area',))
+        field.set_construct(c)
+        field.set_data_axes(('domainaxis0', 'domainaxis1'))
+
+        '''
+        if name in ('b', 'c', 'mask', 'i'):
+            raise ValueError(
+                "The 'name' parameter can not have the value {!r}".format(
+                    name)
+            )
+
+        if name == data_name:
+            raise ValueError(
+                "The 'name' parameter can not have the same value as "
+                "the 'data_name' parameters: {!r}".format(
+                    name)
+            )
+
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        out = super().creation_commands(
+            representative_data=representative_data, indent=0,
+            namespace=namespace, string=False, name=name,
+            data_name=data_name, header=header)
+
+        nc_global_attributes = self.nc_global_attributes()
+        if nc_global_attributes:
+            out.append('#')
+            out.append('# netCDF global attributes')
+            out.append("{}.nc_set_global_attributes({!r})".format(
+                name, nc_global_attributes))
+
+        # Domain axes
+        for key, c in self.domain_axes.items():
+            out.extend(
+                c.creation_commands(
+                    indent=0, string=False,
+                    namespace=namespace0, name='c',
+                    header=header)
+            )
+            out.append("{}.set_construct(c, key={!r}, copy=False)".format(
+                name, key))
+
+        # Metadata constructs with data
+        for key, c in self.constructs.filter_by_type(
+                'dimension_coordinate',
+                'auxiliary_coordinate',
+                'cell_measure',
+                'domain_ancillary',
+                'field_ancillary').items():
+            out.extend(
+                c.creation_commands(
+                    representative_data=representative_data, string=False,
+                    indent=0, namespace=namespace0, name='c',
+                    data_name=data_name,
+                    header=header)
+            )
+            out.append(
+                "{}.set_construct(c, axes={}, key={!r}, copy=False)".format(
+                    name, self.get_data_axes(key), key))
+
+        # Cell method constructs
+        for key, c in self.cell_methods.items():
+            out.extend(
+                c.creation_commands(namespace=namespace0,
+                                    indent=0, string=False,
+                                    name='c',
+                                    header=header)
+            )
+            out.append("{}.set_construct(c)".format(name))
+
+        # Coordinate reference constructs
+        for key, c in self.coordinate_references.items():
+            out.extend(
+                c.creation_commands(namespace=namespace0,
+                                    indent=0, string=False,
+                                    name='c',
+                                    header=header)
+            )
+            out.append("{}.set_construct(c)".format(name))
+
+        # Field data axes
+        data_axes = self.get_data_axes(None)
+        if data_axes is not None:
+            if header:
+                out.append('#')
+                out.append('# field data axes')
+
+            out.append("{}.set_data_axes({})".format(name, data_axes))
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
+
     def dump(self, display=True, _level=0, _title=None):
         '''A full description of the field construct.
 
@@ -1197,7 +1500,7 @@ class Field(mixin.NetCDFVariable,
     metadata constructs and their components, and provides selected
     values of all data arrays.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -1207,10 +1510,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `None` or `str`
-            The description. If *display* is True then the description
-            is printed and `None` is returned. Otherwise the
-            description is returned as a string.
+        {{returns dump}}
 
         '''
         indent = '    '
@@ -1311,95 +1611,44 @@ class Field(mixin.NetCDFVariable,
       type, the same missing data mask, and be element-wise equal (see
       the *ignore_data_type* parameter).
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
-    Any compression is ignored by default, with only the the arrays in
-    their uncompressed forms being compared. See the
-    *ignore_compression* parameter.
+    {{equals compression}}
 
     Any type of object may be tested but, in general, equality is only
     possible with another field construct, or a subclass of one. See
     the *ignore_type* parameter.
 
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked on
-    any construct.
+    {{equals netCDF}}
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: number, optional}}
 
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison, for the field
             construct and metadata constructs.
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
         ignore_properties: sequence of `str`, optional
             The names of properties of the field construct (not the
             metadata constructs) to omit from the comparison. Note
-            that the ``Conventions`` property is always omitted by
-            default.
+            that the ``Conventions`` property is always omitted.
 
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
+        {{ignore_data_type: `bool`, optional}}
 
-        ignore_compression: `bool`, optional
-            If False then the compression type and, if applicable, the
-            underlying compressed arrays must be the same, as well as
-            the arrays in their uncompressed forms. By default only
-            the arrays in their uncompressed forms are compared.
+        {{ignore_compression: `bool`, optional}}
 
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another field construct, or a
-            subclass of one. If *ignore_type* is True then
-            ``Field(source=other)`` is tested, rather than the
-            ``other`` defined by the *other* parameter.
+        {{ignore_type: `bool`, optional}}
+
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
@@ -1473,9 +1722,9 @@ class Field(mixin.NetCDFVariable,
 
     **Examples:**
 
-    >>> f = cfdm.example_field(0)
-    >>> cfdm.write(f, 'temp_file.nc')
-    >>> g = cfdm.read('temp_file.nc')[0]
+    >>> f = {{package}}.example_field(0)
+    >>> {{package}}.write(f, 'temp_file.nc')
+    >>> g = {{package}}.read('temp_file.nc')[0]
     >>> g.get_filenames()
     {'/data/user/file1.nc'}
 
@@ -1488,29 +1737,45 @@ class Field(mixin.NetCDFVariable,
         return out
 
     def has_geometry(self):
-        '''TODO'''
+        '''Whether or not any coordinate constructs have cell geometries.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    :Returns:
+
+        `bool`
+            Whether or not there is a geometry type on any coordinate
+            construct.
+
+    **Examples:**
+
+    >>> f = {{package}}.Field()
+    >>> f.has_geometry()
+    False
+
+        '''
         for c in self.coordinates.values():
             if c.has_geometry():
                 return True
 
         return False
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def insert_dimension(self, axis, position=0, inplace=False):
         '''Expand the shape of the data array.
 
     Inserts a new size 1 axis, corresponding to an existing domain
     axis construct, into the data array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `squeeze`, `transpose`
 
     :Parameters:
 
         axis: `str`
-            The construct identifier of the domain axis construct
-            corresponding to the inserted axis.
+            The identifier of the domain axis construct corresponding
+            to the inserted axis.
 
             *Parameter example:*
               ``axis='domainaxis2'``
@@ -1527,8 +1792,7 @@ class Field(mixin.NetCDFVariable,
             *Parameter example:*
               ``position=-1``
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -1590,18 +1854,18 @@ class Field(mixin.NetCDFVariable,
     (such as dimension coordinate and coordinate reference constructs)
     that define its domain.
 
-    The `cfdm.read` function allows a field construct to be derived
-    directly from a netCDF variable that corresponds to a metadata
-    construct. In this case, the new field construct will have a
-    domain limited to that which can be inferred from the
+    The `{{package}}.read` function allows a field construct to be
+    derived directly from a netCDF variable that corresponds to a
+    metadata construct. In this case, the new field construct will
+    have a domain limited to that which can be inferred from the
     corresponding netCDF variable - typically only domain axis and
     dimension coordinate constructs. This will usually result in a
-    different field construct to that created with the
-    `~Field.convert` method.
+    different field construct to that created with the `convert`
+    method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `cfdm.read`
+    .. seealso:: `{{package}}.read`
 
     :Parameters:
 
@@ -1610,10 +1874,10 @@ class Field(mixin.NetCDFVariable,
             key.
 
         full_domain: `bool`, optional
-            If False then do not create a domain, other than domain
-            axis constructs, for the new field construct. By default
-            as much of the domain as possible is copied to the new
-            field construct.
+            If False then only create domain axis constructs for the
+            domain of the new field construct. By default as much of
+            the domain as possible is copied to the new field
+            construct.
 
     :Returns:
 
@@ -1622,7 +1886,7 @@ class Field(mixin.NetCDFVariable,
 
     **Examples:**
 
-    >>> f = cfdm.read('file.nc')[0]
+    >>> f = {{package}}.read('file.nc')[0]
     >>> print(f)
     Field: air_temperature (ncvar%ta)
     ---------------------------------
@@ -1761,9 +2025,9 @@ class Field(mixin.NetCDFVariable,
     Other types of non-compliance are not checked, such whether or not
     controlled vocabularies have been adhered to.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `cfdm.read`
+    .. seealso:: `{{package}}.read`
 
     :Parameters:
 
@@ -1825,7 +2089,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_variable`,
                  `nc_set_component_variable_groups`,
@@ -1892,7 +2156,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_set_component_variable`,
                  `nc_set_component_variable_groups`,
@@ -1956,7 +2220,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_variable`,
                  `nc_set_component_variable`,
@@ -2022,7 +2286,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_variable`,
                  `nc_set_component_variable`,
@@ -2084,7 +2348,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_dimension`,
                  `nc_set_component_dimension_groups`,
@@ -2144,7 +2408,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_set_component_dimension`,
                  `nc_set_component_dimension_groups`,
@@ -2201,7 +2465,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_dimension`,
                  `nc_set_component_dimension`,
@@ -2261,7 +2525,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_dimension`,
                  `nc_set_component_dimension`,
@@ -2318,7 +2582,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_sample_dimension`,
                  `nc_set_component_sample_dimension_groups`,
@@ -2371,7 +2635,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_set_component_sample_dimension`,
                  `nc_set_component_sample_dimension_groups`,
@@ -2420,7 +2684,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_sample_dimension`,
                  `nc_set_component_sample_dimension`,
@@ -2472,7 +2736,7 @@ class Field(mixin.NetCDFVariable,
     preferably by using this method to ensure consistency across all
     such components.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `nc_del_component_sample_dimension`,
                  `nc_set_component_sample_dimension`,
@@ -2510,14 +2774,14 @@ class Field(mixin.NetCDFVariable,
         for v in variables:
             v.nc_clear_sample_dimension_groups()
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
-        '''Remove size one axes from the data array.
+        '''Remove size one axes from the data.
 
     By default all size one axes are removed, but particular size one
     axes may be selected for removal.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `insert_dimension`, `transpose`
 
@@ -2525,21 +2789,11 @@ class Field(mixin.NetCDFVariable,
 
         axes: (sequence of) `int`, optional
             The positions of the size one axes to be removed. By
-            default all size one axes are removed. Each axis is
-            identified by its original integer position. Negative
-            integers counting from the last position are allowed.
+            default all size one axes are removed.
 
-            *Parameter example:*
-              ``axes=0``
+            {{axes int examples}}
 
-            *Parameter example:*
-              ``axes=-2``
-
-            *Parameter example:*
-              ``axes=[2, 0]``
-
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -2583,27 +2837,20 @@ class Field(mixin.NetCDFVariable,
 
         return f
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def transpose(self, axes=None, constructs=False, inplace=False):
         '''Permute the axes of the data array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `insert_dimension`, `squeeze`
 
     :Parameters:
 
-        axes: (sequence of) `int`
-            The new axis order. By default the order is reversed. Each
-            axis in the new order is identified by its original
-            integer position. Negative integers counting from the last
-            position are allowed.
+        axes: (sequence of) `int`, optional
+            The new axis order. By default the order is reversed.
 
-            *Parameter example:*
-              ``axes=[2, 0, 1]``
-
-            *Parameter example:*
-              ``axes=[-1, 0, 1]``
+            {{axes int examples}}
 
         constructs: `bool`
             If True then tranpose the metadata constructs to have the
@@ -2611,8 +2858,7 @@ class Field(mixin.NetCDFVariable,
             field construct. By default, metadata constructs are not
             changed.
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
@@ -2684,7 +2930,7 @@ class Field(mixin.NetCDFVariable,
 
         return f
 
-    @_inplace_enabled
+    @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         '''Uncompress the field construct.
 
@@ -2721,14 +2967,13 @@ class Field(mixin.NetCDFVariable,
       * Compression type ``'gathered'``: Compression by gathering over
         any subset of the field construct data dimensions.
 
-    .. versionadded:: 1.7.11
+    .. versionadded:: (cfdm) 1.7.11
 
     .. seealso:: `compress`
 
     :Parameters:
 
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 

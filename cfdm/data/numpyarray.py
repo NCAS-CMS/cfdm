@@ -1,10 +1,13 @@
-from . import abstract
+from .mixin import ArrayMixin
 
-from ..core.data import NumpyArray as core_NumpyArray
+from . import mixin
+from .. import core
 
 
-class NumpyArray(abstract.Array, core_NumpyArray):
+class NumpyArray(mixin.ArrayMixin, core.NumpyArray):
     '''An underlying numpy array.
+
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __getitem__(self, indices):
@@ -25,7 +28,7 @@ class NumpyArray(abstract.Array, core_NumpyArray):
         then these indices work independently along each dimension
         (similar to the way vector subscripts work in Fortran).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return self.get_subspace(self._get_component('array'), indices,
@@ -36,14 +39,17 @@ class NumpyArray(abstract.Array, core_NumpyArray):
 
     There is no change to an array that is already in memory.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Returns:
 
-        `NumpyArray`
+        `{{class}}`
             The array that is stored in memory.
 
     **Examples:**
 
     >>> b = a.to_memory()
+
         '''
         return self
 

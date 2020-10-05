@@ -1,6 +1,5 @@
 import datetime
 import os
-import time
 import unittest
 
 import numpy
@@ -20,7 +19,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
@@ -47,6 +45,44 @@ class DimensionCoordinateTest(unittest.TestCase):
         _ = str(x)
         self.assertIsInstance(x.dump(display=False), str)
         self.assertIsInstance(x.dump(display=False, _key='qwerty'), str)
+
+    def test_DimensionCoordinate__init__(self):
+        c = cfdm.DimensionCoordinate(source='qwerty')
+
+    def test_DimensionCoordinate_set_data(self):
+        x = cfdm.DimensionCoordinate()
+
+        y = x.set_data(cfdm.Data([1, 2, 3]))
+        self.assertIsNone(y)
+        self.assertTrue(x.has_data())
+
+        # Test inplace
+        x.del_data()
+        y = x.set_data(cfdm.Data([1, 2, 3]), inplace=False)
+        self.assertIsInstance(y, cfdm.DimensionCoordinate)
+        self.assertFalse(x.has_data())
+        self.assertTrue(y.has_data())
+
+        # Exceptions should be raised for 0-d and N-d (N>=2) data
+        with self.assertRaises(Exception):
+            y = x.set_data(cfdm.Data([[1, 2, 3]]))
+
+        with self.assertRaises(Exception):
+            y = x.set_data(cfdm.Data(1))
+
+    @unittest.skip("until 1.9.0.0")
+    def test_DimensionCoordinate_climatology(self):
+        x = cfdm.DimensionCoordinate()
+
+        self.assertFalse(x.is_climatology())
+        self.assertIsNone(x.get_climatology(None))
+        x.set_climatology(False)
+        self.assertFalse(x.is_climatology())
+        self.assertFalse(x.get_climatology())
+        x.set_climatology(True)
+        self.assertTrue(x.is_climatology())
+        self.assertTrue(x.del_climatology())
+        self.assertIsNone(x.del_climatology(None))
 
 # --- End: class
 

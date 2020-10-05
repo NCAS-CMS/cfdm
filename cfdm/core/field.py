@@ -1,10 +1,14 @@
+import numpy
+
 from . import abstract
 from . import mixin
 
 from . import Constructs
+from . import Domain
 
 
-class Field(mixin.ConstructAccess, abstract.PropertiesData):
+class Field(mixin.ConstructAccess,
+            abstract.PropertiesData):
     '''A field construct of the CF data model.
 
     The field construct is central to the CF data model, and includes
@@ -31,7 +35,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     long_name and standard_name), and some netCDF global file
     attributes (e.g. history and institution).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     # ----------------------------------------------------------------
@@ -51,24 +55,21 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def __new__(cls, *args, **kwargs):
         '''This must be overridden in subclasses.
 
+    .. versionadded:: (cfdm) 1.7.0
+
         '''
         instance = super().__new__(cls)
         instance._Constructs = Constructs
+        instance._Domain = Domain
         return instance
 
-    def __init__(self, properties={}, source=None, copy=True,
+    def __init__(self, properties=None, source=None, copy=True,
                  _use_data=True):
         '''**Initialization**
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
             *Parameter example:*
                ``properties={'standard_name': 'air_temperature'}``
@@ -77,11 +78,15 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             Initialize the properties, data and metadata constructs
             from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+            {{init source}}
+
+        {{init copy: `bool`, optional}}
 
         '''
+        # To avoid mutable default argument (an anti-pattern) of properties={}
+        if properties is None:
+            properties = {}
+
         super().__init__(properties=properties, source=source,
                          copy=copy, _use_data=False)
 
@@ -127,7 +132,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -136,6 +141,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.construct_type
     'field'
 
@@ -146,7 +152,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def constructs(self):
         '''Return the metdata constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -157,13 +163,13 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
     >>> print(f.constructs)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
         '''
         return self._get_component('constructs')
@@ -174,7 +180,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
     ``f.domain`` is equivalent to ``f.get_domain()``
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_domain`
 
@@ -200,7 +206,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         '''Remove the keys of the domain axis constructs spanned by the data
     of the field or of a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_data_axes`, `has_data_axes`, `set_data_axes`
 
@@ -215,8 +221,9 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         default: optional
             Return the value of the *default* parameter if the data
-            axes have not been set. If set to an `Exception` instance
-            then it will be raised instead.
+            axes have not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -252,7 +259,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def get_domain(self):
         '''Return the domain.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `domain`
 
@@ -272,7 +279,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         '''Return the keys of the domain axis constructs spanned by the data
     of the field or of a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data_axes`, `get_data`, `set_data_axes`
 
@@ -287,8 +294,9 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         default: optional
             Return the value of the *default* parameter if the data
-            axes have not been set. If set to an `Exception` instance
-            then it will be raised instead.
+            axes have not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -325,7 +333,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         '''Whether the domain axis constructs spanned by the data of the field
     or of a metadata construct have been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data_axes`, `get_data_axes`, `set_data_axes`
 
@@ -368,7 +376,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     constructs. However, a domain ancillary construct may be removed
     even if it is referenced by coordinate reference construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_construct`, `constructs`, `has_construct`,
                  `set_construct`
@@ -384,8 +392,9 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         default: optional
             Return the value of the *default* parameter if the data
-            axes have not been set. If set to an `Exception` instance
-            then it will be raised instead.
+            axes have not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -395,7 +404,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
 
     >>> f.del_construct('auxiliarycoordinate2')
-    <AuxiliaryCoordinate: latitude(111, 106) degrees_north>
+    <{{repr}}AuxiliaryCoordinate: latitude(111, 106) degrees_north>
     >>> f.del_construct('auxiliarycoordinate2')
     ValueError: Can't get remove non-existent construct
     >>> f.del_construct('auxiliarycoordinate2', default=False)
@@ -410,20 +419,22 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         return super().del_construct(key, default=default)
 
-    def set_data(self, data, axes=None, copy=True):
+    def set_data(self, data, axes=None, copy=True, inplace=True):
         '''Set the data of the field construct.
 
     The units, calendar and fill value properties of the data object
     are removed prior to insertion.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data`, `get_data`, `has_data`, `set_data_axes`
 
     :Parameters:
 
-        data: `Data`
+        data: data_like
             The data to be inserted.
+
+            {{data_like}}
 
         axes: (sequence of) `str`, or `None`
             The identifiers of the domain axes spanned by the data
@@ -448,35 +459,64 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             If False then do not copy the data prior to insertion. By
             default the data are copied.
 
+        {{inplace: `bool`, optional (default True)}}
+
+            .. versionadded:: (cfdm) 1.8.7.0
+
     :Returns:
 
-        `None`
+        `None` or `{{class}}`
+            If the operation was in-place then `None` is returned,
+            otherwise return a new `{{class}}` instance containing the
+            new data.
 
     **Examples:**
 
-    Set the domain axis constructs spanned by the data of the field
-    construct:
-
-    >>> d
-    <Data(10, 9): [[23.6, ..., 76.8]]>
-    >>> f.set_data(d, axes=['domainaxis0', 'domainaxis1'])
-    >>> f.set_data(d)
+    >>> f = {{package}}.Field()
+    >>> f.set_data([1, 2, 3])
+    >>> f.has_data()
+    True
+    >>> f.get_data()
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.data
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> f.del_data()
+    <{{repr}}Data(3): [1, 2, 3]>
+    >>> g = f.set_data([4, 5, 6], inplace=False)
+    >>> g.data
+    <{{repr}}Data(3): [4, 5, 6]>
+    >>> f.has_data()
+    False
+    >>> print(f.get_data(None))
+    None
+    >>> print(f.del_data(None))
+    None
 
         '''
-        if axes is None:
-            existing_axes = self.get_data_axes(default=None)
-            if existing_axes is not None:
-                self.set_data_axes(axes=existing_axes, _shape=data.shape)
+        if inplace:
+            f = self
         else:
-            self.set_data_axes(axes=axes, _shape=data.shape)
+            f = self.copy(data=False)
 
-        super().set_data(data, copy=copy)
+        if axes is None:
+            existing_axes = f.get_data_axes(default=None)
+            if existing_axes is not None:
+                f.set_data_axes(axes=existing_axes, _shape=numpy.shape(data))
+        else:
+            f.set_data_axes(axes=axes, _shape=numpy.shape(data))
+
+        super(Field, f).set_data(data, copy=copy, inplace=True)
+
+        if inplace:
+            return
+
+        return f
 
     def set_data_axes(self, axes, key=None, _shape=None):
         '''Set the domain axis constructs spanned by the data of the field or
     of a metadata construct.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_data_axes`, `get_data`, `get_data_axes`,
                  `has_data_axes`

@@ -6,7 +6,7 @@ from . import abstract
 class NumpyArray(abstract.Array):
     '''A container for a numpy array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, array=None):
@@ -18,13 +18,34 @@ class NumpyArray(abstract.Array):
             The numpy array.
 
         '''
-        super().__init__(array=array)
+        super().__init__()
+
+        self._set_component('array', array, copy=False)
+
+    def __deepcopy__(self, memo):
+        '''Called by the `copy.deepcopy` function.
+
+    x.__deepcopy__() <==> copy.deepcopy(x)
+
+    Copy-on-write is employed. Therefore, after copying, care must be
+    taken when making in-place modifications to attributes of either
+    the original or the new copy.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    **Examples:**
+
+    >>> import copy
+    >>> y = copy.deepcopy(x)
+
+        '''
+        return self.copy()
 
     @property
     def dtype(self):
         '''Data-type of the data elements.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -40,7 +61,7 @@ class NumpyArray(abstract.Array):
     def ndim(self):
         '''Number of array dimensions
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -72,7 +93,7 @@ class NumpyArray(abstract.Array):
     def shape(self):
         '''Tuple of array dimension sizes.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -104,7 +125,7 @@ class NumpyArray(abstract.Array):
     def size(self):
         '''Number of elements in the array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     **Examples:**
 
@@ -135,7 +156,7 @@ class NumpyArray(abstract.Array):
     def array(self):
         '''Return an independent numpy array containing the data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -161,5 +182,31 @@ class NumpyArray(abstract.Array):
             array = array.copy()
 
         return array
+
+    def copy(self):
+        '''Return a deep copy of the array.
+
+    ``a.copy() is equivalent to ``copy.deepcopy(a)``.
+
+    Copy-on-write is employed. Therefore, after copying, care must be
+    taken when making in-place modifications to attributes of either
+    the original or the new copy.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    :Returns:
+
+        `{{class}}`
+            The deep copy.
+
+    **Examples:**
+
+    >>> b = a.copy()
+
+        '''
+        klass = self.__class__
+        new = klass.__new__(klass)
+        new.__dict__ = self.__dict__.copy()
+        return new
 
 # --- End: class

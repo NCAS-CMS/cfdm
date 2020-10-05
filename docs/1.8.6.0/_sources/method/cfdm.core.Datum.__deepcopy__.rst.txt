@@ -1,7 +1,0 @@
-cfdm.core.Datum.__deepcopy__
-============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Datum.__deepcopy__

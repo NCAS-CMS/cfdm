@@ -1,7 +1,0 @@
-cfdm.write
-==========
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autofunction:: cfdm.write

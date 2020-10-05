@@ -1,6 +1,8 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
+.. _cfdm-CellMethod:
+
 cfdm.CellMethod
 ===============
 
@@ -68,6 +70,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.CellMethod.copy
+   ~cfdm.CellMethod.creation_commands
    ~cfdm.CellMethod.equals
    ~cfdm.CellMethod.sorted
 
@@ -84,3 +87,18 @@ Special
    ~cfdm.CellMethod.__deepcopy__
    ~cfdm.CellMethod.__repr__
    ~cfdm.CellMethod.__str__
+
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.CellMethod._docstring_special_substitutions
+   ~cfdm.CellMethod._docstring_substitutions        
+   ~cfdm.CellMethod._docstring_package_depth        
+   ~cfdm.CellMethod._docstring_method_exclusions    

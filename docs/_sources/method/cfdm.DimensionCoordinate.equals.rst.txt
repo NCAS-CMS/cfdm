@@ -1,7 +1,0 @@
-cfdm.DimensionCoordinate.equals
-===============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DimensionCoordinate.equals

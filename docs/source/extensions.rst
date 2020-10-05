@@ -103,7 +103,7 @@ other component classes:
    <class 'cfdm.dimensioncoordinate.DimensionCoordinate'>
 
 
-If the API of the new implemention is changed such that a given cfdm
+If the API of the new implementation is changed such that a given cfdm
 functionality has a different API in the new implementation, then the
 new read-from-disk and write-to-disk functions defined above can still
 be used provided that the new implementation is created from a
@@ -163,7 +163,7 @@ in overridden methods.
    ... )
 
 As all classes are required for the initialization of the new
-implemenation class, this demonstrates explicitly that, in the absence
+implementation class, this demonstrates explicitly that, in the absence
 of subclasses of the other classes, the cfdm classes may be used.
 
 .. code-block:: python
@@ -194,7 +194,7 @@ other aspects it unchanged
 
 .. code-block:: python
    :caption: *Create a new read-from-disk function that uses the
-              modifed mapping.*
+              modified mapping.*
 	     
    >>> my_netcdf = my_NetCDFRead(my_implementation_2)
    >>> def my_read_3(filename, ):
@@ -215,6 +215,22 @@ In the same manner, `cfdm.read_write.netcdf.NetCDFWrite` may be
 subclassed, and a new write-to-disk function defined, to override
 aspects of the mapping from CF data model constructs to netCDF
 elements in a dataset.
+
+Documentation
+^^^^^^^^^^^^^
+
+The cfdm package uses a "docstring rewriter" that allows commonly used
+parts of class method docstrings to be written once in a central
+location, and then inserted into each class at import time. In
+addition, parts of a docstring are modified to reflect the appropriate
+package and class names. This functionality extends to subclasses of
+cfdm classes. New docstring substitutions may also be defined for the
+subclasses.
+
+See `cfdm.core.meta.DocstringRewriteMeta` for details on how to add to
+create new docstring substitutions for extensions, and how to modify
+the substitutions defined in the cfdm package.
+
 
 A complete example
 ^^^^^^^^^^^^^^^^^^

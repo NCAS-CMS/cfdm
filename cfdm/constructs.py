@@ -1,8 +1,8 @@
 import logging
-import textwrap
 from copy import deepcopy
 
 from . import core
+from . import mixin
 
 from .decorators import _manage_log_level_via_verbosity
 
@@ -10,28 +10,48 @@ from .decorators import _manage_log_level_via_verbosity
 logger = logging.getLogger(__name__)
 
 
-class Constructs(core.Constructs):
+class Constructs(mixin.Container,
+                 core.Constructs):
     '''A container for metadata constructs.
 
+    The following metadata constructs can be included:
+
+    * auxiliary coordinate constructs
+    * coordinate reference constructs
+    * cell measure constructs
+    * dimension coordinate constructs
+    * domain ancillary constructs
+    * domain axis constructs
+    * cell method constructs
+    * field ancillary constructs
+
+    The container is used by used by `Field` and `Domain` instances.
+
+    The container is like a dictionary in many ways, in that it stores
+    key/value pairs where the key is the unique construct key with
+    correspondaing metadata construct value, and provides some of the
+    usual dictionary methods.
+
+
+    **Calling**
+
     Calling a `Constructs` instance selects metadata constructs by
-    identity and is an alias for the `filter_by_identity` method.
+    identity and is an alias for the `filter_by_identity` method. For
+    example, to select constructs that have an identity of
+    'air_temperature': ``d = c('air_temperature')``.
 
-    **Examples:**
-
-    Select constructs that have a ``standard_name`` property of 'foo':
-
-    >>> d = c('foo')
-
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __call__(self, *identities):
         '''Select metadata constructs by identity.
 
     Calling a `Constructs` instance selects metadata constructs by
-    identity and is an alias for the `filter_by_identity` method.
+    identity and is an alias for the `filter_by_identity` method. For
+    example, to select constructs that have an identity of
+    'air_temperature': ``d = c('air_temperature')``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_identity`
 
@@ -64,7 +84,7 @@ class Constructs(core.Constructs):
 
     x.__repr__() <==> repr(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         construct_types = ['{0}({1})'.format(c, len(v))
@@ -79,7 +99,7 @@ class Constructs(core.Constructs):
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         out = ['Constructs:']
@@ -116,7 +136,7 @@ class Constructs(core.Constructs):
     This is useful for ascertaining whether or not two `Constructs`
     instances are equal.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -404,7 +424,7 @@ class Constructs(core.Constructs):
 
     ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -414,6 +434,7 @@ class Constructs(core.Constructs):
 
     :Returns:
 
+        `Constructs`
             The deep copy.
 
     **Examples:**
@@ -441,10 +462,10 @@ class Constructs(core.Constructs):
     2. The identity of a one-dimensional auxiliary coordinate
        construct that spans the domain axis construct. This will
        either be the value of a ``standard_name``, ``cf_role``
-       (preceeded by ``'cf_role='``) or ``axis`` (preceeded by
+       (preceded by ``'cf_role='``) or ``axis`` (preceded by
        ``'axis='``) property, as appropriate.
-    3. The netCDF dimension name, preceeded by 'ncdim%'.
-    4. The domain axis construct key, preceeded by 'key%'.
+    3. The netCDF dimension name, preceded by 'ncdim%'.
+    4. The domain axis construct key, preceded by 'key%'.
 
     :Parameters:
 
@@ -535,81 +556,36 @@ class Constructs(core.Constructs):
                _return_axis_map=False):
         '''Whether two `Constructs` instances are the same.
 
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-    differences) and ``rtol`` (the tolerance on relative differences)
-    are positive, typically very small numbers. See the *atol* and
-    *rtol* parameters.
+    {{equals tolerance}}
 
-    Any compression is ignored by default, with only the arrays in
-    their uncompressed forms being compared. See the
-    *ignore_compression* parameter.
+    {{equals compression}}
 
     Any type of object may be tested but equality is only possible
     with another `Constructs` construct, or a subclass of one.
 
-    NetCDF elements, such as netCDF variable and dimension names, do
-    not constitute part of the CF data model and so are not checked on
-    any construct.
+    {{equals netCDF}}
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         other:
             The object to compare for equality.
 
-        atol: float, optional
-            The tolerance on absolute differences between real
-            numbers. The default value is set by the `cfdm.atol`
-            function.
+        {{atol: number, optional}}
 
-        rtol: float, optional
-            The tolerance on relative differences between real
-            numbers. The default value is set by the `cfdm.rtol`
-            function.
+        {{rtol: number, optional}}
 
         ignore_fill_value: `bool`, optional
             If True then the ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison for the
             metadata constructs.
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+        {{ignore_data_type: `bool`, optional}}
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
+        {{ignore_compression: `bool`, optional}}
 
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
-        ignore_data_type: `bool`, optional
-            If True then ignore the data types in all numerical
-            comparisons. By default different numerical data types
-            imply inequality, regardless of whether the elements are
-            within the tolerance for equality.
-
-        ignore_compression: `bool`, optional
-            If False then the compression type and, if applicable, the
-            underlying compressed arrays must be the same, as well as
-            the arrays in their uncompressed forms. By default only
-            the arrays in their uncompressed forms are compared.
+        {{verbose: `int` or `str` or `None`, optional}}
 
     :Returns:
 
@@ -827,7 +803,7 @@ class Constructs(core.Constructs):
     def filter_by_axis(self, mode=None, *axes):
         '''Select metadata constructs by axes spanned by their data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_data`, `filter_by_key`, `filter_by_measure`,
                  `filter_by_method`, `filter_by_identity`,
@@ -983,7 +959,7 @@ class Constructs(core.Constructs):
     data. For example, constructs selected by this method will all
     have a `!get_data` method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_key`, `filter_by_measure`,
                  `filter_by_method`, `filter_by_identity`,
@@ -1023,7 +999,7 @@ class Constructs(core.Constructs):
     Calling a `Constructs` instance selects metadata constructs by
     identity and is an alias for the `filter_by_identity` method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1121,7 +1097,7 @@ class Constructs(core.Constructs):
     def filter_by_key(self, *keys):
         '''Select metadata constructs by key.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1177,7 +1153,7 @@ class Constructs(core.Constructs):
     def filter_by_measure(self, *measures):
         '''Select cell measure constructs by measure.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_method`, `filter_by_identity`,
@@ -1209,37 +1185,37 @@ class Constructs(core.Constructs):
 
     >>> print(t.constructs.filter_by_type('measure'))
     Constructs:
-    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
-     'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
+    {'cellmeasure0': <{{repr}}CellMeasure: measure:area(9, 10) km2>,
+     'cellmeasure1': <{{repr}}CellMeasure: measure:volume(3, 9, 10) m3>}
 
     Select cell measure constructs that have a measure of 'area':
 
     >>> print(c.filter_by_measure('area'))
     Constructs:
-    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
+    {'cellmeasure0': <{{repr}}CellMeasure: measure:area(9, 10) km2>}
 
     Select cell measure constructs that have a measure of 'area' or
     'volume':
 
     >>> print(c.filter_by_measure('area', 'volume'))
     Constructs:
-    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
-     'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
+    {'cellmeasure0': <{{repr}}CellMeasure: measure:area(9, 10) km2>,
+     'cellmeasure1': <{{repr}}CellMeasure: measure:volume(3, 9, 10) m3>}
 
     Select cell measure constructs that have a measure of start with
     the letter "a" or "v":
 
     >>> print(c.filter_by_measure(re.compile('^a|v')))
     Constructs:
-    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
-     'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
+    {'cellmeasure0': <{{repr}}CellMeasure: measure:area(9, 10) km2>,
+     'cellmeasure1': <{{repr}}CellMeasure: measure:volume(3, 9, 10) m3>}
 
     Select cell measure constructs that have a measure of any value:
 
     >>> print(c.filer_by_measure())
     Constructs:
-    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>,
-     'cellmeasure1': <CellMeasure: measure:volume(3, 9, 10) m3>}
+    {'cellmeasure0': <{{repr}}CellMeasure: measure:area(9, 10) km2>,
+     'cellmeasure1': <{{repr}}CellMeasure: measure:volume(3, 9, 10) m3>}
 
         '''
         out = self.shallow_copy()
@@ -1277,7 +1253,7 @@ class Constructs(core.Constructs):
     def filter_by_method(self, *methods):
         '''Select cell method constructs by method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_identity`,
@@ -1309,22 +1285,22 @@ class Constructs(core.Constructs):
 
     >>> print(c.constructs.filter_by_type('cell_method'))
     Constructs:
-    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-     'cellmethod1': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
 
     Select cell method constructs that have a method of 'mean':
 
     >>> print(c.filter_by_method('mean'))
     Constructs:
-    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>}
 
     Select cell method constructs that have a method of 'mean' or
     'maximum':
 
     >>> print(c.filter_by_method('mean', 'maximum'))
     Constructs:
-    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-     'cellmethod1': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
 
     Select cell method constructs that have a method that contain the
     letter 'x':
@@ -1332,14 +1308,14 @@ class Constructs(core.Constructs):
     >>> import re
     >>> print(c.filter_by_method(re.compile('x')))
     Constructs:
-    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
 
     Select cell method constructs that have a method of any value:
 
     >>> print(c.filter_by_method())
     Constructs:
-    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-     'cellmethod1': <CellMethod: domainaxis3: maximum>}
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
 
         '''
         out = self.shallow_copy()
@@ -1378,7 +1354,7 @@ class Constructs(core.Constructs):
         '''Select metadata constructs by the number of domain axis constructs
     spanned by their data.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1454,7 +1430,7 @@ class Constructs(core.Constructs):
     def filter_by_ncdim(self, *ncdims):
         '''Select domain axis constructs by netCDF dimension name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1534,7 +1510,7 @@ class Constructs(core.Constructs):
     def filter_by_ncvar(self, *ncvars):
         '''Select domain axis constructs by netCDF variable name.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1610,6 +1586,9 @@ class Constructs(core.Constructs):
         return out
 
     def _matching_values(self, value0, construct, value1):
+        '''Whether or not two values are the same.
+
+        '''
         if value1 is not None:
             try:
                 result = value0.search(value1)
@@ -1625,7 +1604,7 @@ class Constructs(core.Constructs):
     def filter_by_property(self, *mode, **properties):
         '''Select metadata constructs by property.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1746,7 +1725,7 @@ class Constructs(core.Constructs):
     def filter_by_size(self, *sizes):
         '''Select domain axis constructs by size.
 
-    .. versionadded:: 1.7.3
+    .. versionadded:: (cfdm) 1.7.3
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1818,7 +1797,7 @@ class Constructs(core.Constructs):
     def filter_by_type(self, *types):
         '''Select metadata constructs by type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1882,7 +1861,7 @@ class Constructs(core.Constructs):
     the call of that method. If no filters have been applied then the
     tuple is empty.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1902,13 +1881,13 @@ class Constructs(core.Constructs):
     **Examples:**
 
     >>> print(c)
-    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-     'coordinatereference1': <CoordinateReference: grid_mapping_name:rotated_latitude_longitude>,
-     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-     'domainaxis1': <DomainAxis: size(10)>,
-     'domainaxis2': <DomainAxis: size(9)>}
+    {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+     'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+     'coordinatereference1': <{{repr}}CoordinateReference: grid_mapping_name:rotated_latitude_longitude>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+     'domainaxis1': <{{repr}}DomainAxis: size(10)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(9)>}
     >>> c.filters_applied()
     ()
     >>> c = c.filter_by_type('dimension_coordinate', 'auxiliary_coordinate')
@@ -1925,7 +1904,7 @@ class Constructs(core.Constructs):
      {'filter_by_property': (('or',), {'axis': 'Y', 'standard_name': 'grid_latitude'})})
     >>> print(c)
     Constructs:
-    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
+    {'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>}
 
         '''
         filters = getattr(self, '_filters_applied', None)
@@ -1944,7 +1923,7 @@ class Constructs(core.Constructs):
     passed to the call of that method. If no filters have been applied
     then the tuple is empty.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -1995,7 +1974,7 @@ class Constructs(core.Constructs):
     tuple describes the last filter applied. If no filters have been
     applied then the tuple is empty.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -2026,51 +2005,51 @@ class Constructs(core.Constructs):
 
     >>> print(c)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
     >>> print(c.inverse_filter())
     Constructs:
     {}
     >>> d = c.filter_by_type('dimension_coordinate', 'cell_method')
     >>> print(d)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
     >>> print(d.inverse_filter())
     Constructs:
-    {'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
     >>> e = d.filter_by_method('mean')
     >>> print(e)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>}
     >>> print(e.inverse_filter(1))
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
     >>> print(e.inverse_filter())
     Constructs:
-    {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
     >>> print(e.inverse_filter(1).inverse_filter())
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
         '''
         out = self.unfilter(depth=depth)
@@ -2107,10 +2086,11 @@ class Constructs(core.Constructs):
 
     ``f.shallow_copy()`` is equivalent to ``copy.copy(f)``.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
+        `Constructs`
             The shallow copy.
 
     **Examples:**
@@ -2142,7 +2122,7 @@ class Constructs(core.Constructs):
     tuple describes the last filter applied. If no filters have been
     applied then the tuple is empty.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `filter_by_axis`, `filter_by_data`, `filter_by_key`,
                  `filter_by_measure`, `filter_by_method`,
@@ -2171,26 +2151,26 @@ class Constructs(core.Constructs):
 
     >>> print(c)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <DomainAxis: size(5)>,
-     'domainaxis1': <DomainAxis: size(8)>,
-     'domainaxis2': <DomainAxis: size(1)>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
     >>> d = c.filter_by_type('dimension_coordinate', 'cell_method')
     >>> print(d)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>,
-     'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
     >>> d.unfilter().equals(c)
     True
     >>> e = d.filter_by_method('mean')
     >>> print(e)
     Constructs:
-    {'cellmethod0': <CellMethod: area: mean>}
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>}
     >>> c.unfilter().equals(c)
     True
     >>> c.unfilter(0).equals(c)

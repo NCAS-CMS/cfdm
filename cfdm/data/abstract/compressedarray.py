@@ -1,17 +1,12 @@
-import abc
-
 import numpy
 
 from .array import Array
 
 
-class CompressedArray(Array, metaclass=abc.ABCMeta):
-    '''Abstract base class for a container of an underlying compressed
-    array.
+class CompressedArray(Array):
+    '''Mixin class for a container of an underlying compressed array.
 
-    See `cfdm.GatheredArray` for an example implementation.
-
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
@@ -51,34 +46,6 @@ class CompressedArray(Array, metaclass=abc.ABCMeta):
 
         self._set_compressed_Array(compressed_array, copy=False)
 
-    @abc.abstractmethod
-    def __getitem__(self, indices):
-        '''Return an uncompressed subspace as an independent numpy array.
-
-    x.__getitem__(indices) <==> x[indices]
-
-    The indices that define the subspace are relative to the
-    uncompressed array.
-
-    Indexing follows rules that are very similar to the numpy indexing
-    rules, the only differences being:
-
-    * An integer index i takes the i-th element but does not reduce
-      the rank by one.
-
-    ..
-
-    * When two or more dimensions' indices are sequences of integers
-      then these indices work independently along each dimension
-      (similar to the way vector subscripts work in Fortran). This is
-      the same behaviour as indexing on a Variable object of the
-      netCDF4 package.
-
-    .. versionadded:: 1.7.0
-
-        '''
-        raise NotImplementedError()  # pragma: no cover
-
     def _get_compressed_Array(self, default=ValueError()):
         '''Return the compressed array.
 
@@ -103,7 +70,7 @@ class CompressedArray(Array, metaclass=abc.ABCMeta):
     def _set_compressed_Array(self, array, copy=True):
         '''Set the compressed array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -305,7 +272,7 @@ class CompressedArray(Array, metaclass=abc.ABCMeta):
         '''Return the position of the compressed dimension in the compressed
     array.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_compressed_axearray`, `get_compressed_axes`,
                  `get_compressed_type`
@@ -330,7 +297,7 @@ class CompressedArray(Array, metaclass=abc.ABCMeta):
         '''
         return self._get_component('compressed_dimension', *default)
 
-    @abc.abstractmethod
+#    @abc.abstractmethod
     def to_memory(self):
         '''Bring an array on disk into memory and retain it there.
 
@@ -338,7 +305,7 @@ class CompressedArray(Array, metaclass=abc.ABCMeta):
 
     :Returns:
 
-        `CompressedArray`
+        `{{class}}`
             The array that is stored in memory.
 
     **Examples:**

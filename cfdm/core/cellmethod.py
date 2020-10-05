@@ -20,7 +20,7 @@ class CellMethod(abstract.Container):
     spacing of the original data, or the fact that the method was
     applied only over El Nino years).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, axes=None, method=None, qualifiers=None,
@@ -82,9 +82,9 @@ class CellMethod(abstract.Container):
             Initialize the axes, method and qualifiers from those of
             *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization By default parameters are deep copied.
+            {{init source}}
+
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__()
@@ -92,12 +92,12 @@ class CellMethod(abstract.Container):
         if source:
             try:
                 axes = source.get_axes(None)
-            except AttributeErrror:
+            except AttributeError:
                 axes = None
 
             try:
                 method = source.get_method(None)
-            except AttributeErrror:
+            except AttributeError:
                 method = None
 
             try:
@@ -124,7 +124,7 @@ class CellMethod(abstract.Container):
     def construct_type(self):
         '''Return a description of the construct type.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -133,7 +133,8 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
-    >>> f.construct_type
+    >>> c = {{package}}.{{class}}()
+    >>> c.construct_type
     'cell_method'
 
         '''
@@ -142,28 +143,10 @@ class CellMethod(abstract.Container):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def copy(self):
-        '''Return a deep copy.
-
-    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-    .. versionadded:: 1.7.0
-
-    :Returns:
-
-            The deep copy.
-
-    **Examples:**
-
-    >>> g = f.copy()
-
-        '''
-        return type(self)(source=self, copy=True)
-
     def del_axes(self, default=ValueError()):
         '''Remove the axes of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_axes`, `has_axes`, `set_axes`
 
@@ -171,8 +154,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if axes have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -182,6 +166,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_axes('domainaxis1')
     >>> c.has_axes()
     True
@@ -206,7 +191,7 @@ class CellMethod(abstract.Container):
     def del_method(self, default=ValueError()):
         '''Remove the method of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_method`, `has_method`, `set_method`
 
@@ -214,8 +199,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if the method
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+            has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -224,6 +210,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_method('minimum')
     >>> c.has_method()
     True
@@ -248,7 +235,7 @@ class CellMethod(abstract.Container):
     def del_qualifier(self, qualifier, default=ValueError()):
         '''Remove a qualifier of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `get_qualifier`, `has_qualifier`, `qualifiers`,
                  `set_qualifier`
@@ -263,8 +250,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if the
-            qualifier has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+            qualifier has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -272,6 +260,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_qualifier('where', 'land')
     >>> c.get_qualifier('where', 'no qualifier')
     'land'
@@ -292,7 +281,7 @@ class CellMethod(abstract.Container):
     def get_axes(self, default=ValueError()):
         '''Return the axes of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_axes`, `has_axes`, `set_axes`
 
@@ -300,8 +289,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if axes have
-            not been set. If set to an `Exception` instance then it
-            will be raised instead.
+            not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -310,6 +300,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_axes('domainaxis1')
     >>> c.has_axes()
     True
@@ -334,7 +325,7 @@ class CellMethod(abstract.Container):
     def get_method(self, default=ValueError()):
         '''Return the method of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_method`, `has_method`, `set_method`
 
@@ -342,8 +333,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if the method
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+            has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -352,6 +344,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_method('minimum')
     >>> c.has_method()
     True
@@ -376,7 +369,7 @@ class CellMethod(abstract.Container):
     def get_qualifier(self, qualifier, default=ValueError()):
         '''Return a qualifier of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_qualifier`, `has_qualifier`, `qualifiers`,
                  `set_qualifier`
@@ -391,8 +384,9 @@ class CellMethod(abstract.Container):
 
         default: optional
             Return the value of the *default* parameter if the
-            qualifier has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+            qualifier has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -400,6 +394,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_qualifier('where', 'land')
     >>> c.get_qualifier('where', 'no qualifier')
     'land'
@@ -420,7 +415,7 @@ class CellMethod(abstract.Container):
     def has_axes(self):
         '''Whether the axes of the cell method have been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_axes`, `get_axes`, `set_axes`
 
@@ -431,6 +426,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_axes('domainaxis1')
     >>> c.has_axes()
     True
@@ -450,7 +446,7 @@ class CellMethod(abstract.Container):
     def has_method(self):
         '''Whether the method of the cell method has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_axes`, `get_method`, `set_method`
 
@@ -461,6 +457,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_method('minimum')
     >>> c.has_method()
     True
@@ -480,7 +477,7 @@ class CellMethod(abstract.Container):
     def has_qualifier(self, qualifier):
         '''Whether a qualifier of the cell method has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_qualifier`, `get_qualifier`, `qualifiers`,
                  `set_qualifier`
@@ -497,6 +494,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_qualifier('where', 'land')
     >>> c.has_qualifier('where')
     True
@@ -511,7 +509,7 @@ class CellMethod(abstract.Container):
     def qualifiers(self):
         '''Return all qualifiers of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`,
                  `set_qualifier`
@@ -523,11 +521,13 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
+    >>> c.set_qualifier('where', 'land')
     >>> c.qualifiers()
-    {'interval': [<Data(): 0.1 degrees>],
-     'where': 'land'}
-
-    >>> f.qualifiers()
+    {'where': 'land'}
+    >>> c.del_qualifier('where')
+    'land'
+    >>> c.qualifiers()
     {}
 
         '''
@@ -536,7 +536,7 @@ class CellMethod(abstract.Container):
     def set_axes(self, value, copy=True):
         '''Set the axes of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_axes`, `get_axes`, `has_axes`
 
@@ -571,6 +571,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_axes('domainaxis1')
     >>> c.has_axes()
     True
@@ -604,7 +605,7 @@ class CellMethod(abstract.Container):
     def set_method(self, value, copy=True):
         '''Set the method of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_method`, `get_method`, `has_method`
 
@@ -622,6 +623,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_method('minimum')
     >>> c.has_method()
     True
@@ -641,7 +643,7 @@ class CellMethod(abstract.Container):
     def set_qualifier(self, qualifier, value, copy=True):
         '''Set a qualifier of the cell method.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`,
                  `qualifiers`
@@ -663,6 +665,7 @@ class CellMethod(abstract.Container):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_qualifier('where', 'land')
     >>> c.get_qualifier('where')
     'land'

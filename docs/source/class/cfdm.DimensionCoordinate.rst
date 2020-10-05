@@ -1,6 +1,8 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
+.. _cfdm-DimensionCoordinate:
+
 cfdm.DimensionCoordinate
 ========================
 
@@ -118,6 +120,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.copy
+   ~cfdm.DimensionCoordinate.creation_commands
    ~cfdm.DimensionCoordinate.equals
    ~cfdm.DimensionCoordinate.uncompress
    ~cfdm.DimensionCoordinate.get_filenames
@@ -166,4 +169,17 @@ Special
    ~cfdm.DimensionCoordinate.__repr__
    ~cfdm.DimensionCoordinate.__str__
 
-   
+Docstring substitutions                      
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cfdm.DimensionCoordinate._docstring_special_substitutions
+   ~cfdm.DimensionCoordinate._docstring_substitutions        
+   ~cfdm.DimensionCoordinate._docstring_package_depth        
+   ~cfdm.DimensionCoordinate._docstring_method_exclusions    

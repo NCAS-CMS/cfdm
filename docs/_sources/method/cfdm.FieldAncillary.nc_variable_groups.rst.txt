@@ -1,7 +1,0 @@
-cfdm.FieldAncillary.nc_variable_groups
-======================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.FieldAncillary.nc_variable_groups

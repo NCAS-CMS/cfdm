@@ -80,6 +80,12 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(f.dump(display=False), str)
         self.assertEqual(f.construct_type, 'field')
 
+    def test_Field__init__(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.Field(source='qwerty')
+
     def test_Field___getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -197,8 +203,6 @@ class FieldTest(unittest.TestCase):
 
         f = cfdm.example_field(0)
 
-        tmpfile = 'cfdm_test_Field_get_filenames.nc'
-
         cfdm.write(f, tmpfile)
         g = cfdm.read(tmpfile)[0]
 
@@ -292,7 +296,7 @@ class FieldTest(unittest.TestCase):
         f.set_properties(d)
         f.set_properties(d, copy=False)
 
-    def test_Field_DATA(self):
+    def test_Field_set_get_del_has_data(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -321,6 +325,15 @@ class FieldTest(unittest.TestCase):
             self.assertIsNone(f.del_data_axes(key, default=None))
             self.assertIsNone(f.get_data_axes(key, default=None))
             self.assertFalse(f.has_data_axes(key))
+
+        # Test inplace
+        f = self.f.copy()
+        d = f.del_data()
+        g = f.set_data(d, inplace=False)
+        self.assertIsInstance(g, cfdm.Field)
+        self.assertFalse(f.has_data())
+        self.assertTrue(g.has_data())
+        self.assertTrue(g.data.equals(d))
 
     def test_Field_CONSTRUCTS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -601,6 +614,43 @@ class FieldTest(unittest.TestCase):
                                     message)
                     self.assertTrue(f.equals(c, verbose=3), message)
         # --- End: for
+
+    def test_Field_creation_commands(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+
+        for rd in (False, True):
+            for indent in (0, 4):
+                for h in (False, True):
+                    for s in (False, True):
+                        for ns in (None, ''):
+                            _ = f.creation_commands(
+                                representative_data=rd,
+                                indent=indent,
+                                namespace=ns,
+                                string=s,
+                                header=h)
+                            for i in range(7):
+                                f = cfdm.example_field(i)
+                                _ = f.creation_commands(
+                                    representative_data=rd,
+                                    indent=indent,
+                                    namespace=ns,
+                                    string=s,
+                                    header=h)
+        # --- End: for
+
+    def test_Field_has_geometry(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f
+        self.assertFalse(f.has_geometry())
+
+        f = cfdm.example_field(6)
+        self.assertTrue(f.has_geometry())
 
 # --- End: class
 

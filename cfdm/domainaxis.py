@@ -37,7 +37,7 @@ class DomainAxis(mixin.NetCDFDimension,
     `nc_set_dimension`, `nc_get_dimension`, `nc_dimension_groups`,
     `nc_clear_dimension_groups` and `nc_set_dimension_groups` methods.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, size=None, source=None, copy=True):
@@ -57,9 +57,9 @@ class DomainAxis(mixin.NetCDFDimension,
         source: optional
             Initialize the size from that of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+            {{init source}}
+
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(size=size, source=source, copy=copy)
@@ -71,10 +71,81 @@ class DomainAxis(mixin.NetCDFDimension,
 
     x.__str__() <==> str(x)
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         return 'size({0})'.format(self.get_size(''))
+
+    def creation_commands(self, namespace=None, indent=0, string=True,
+                          name='c', header=True):
+        '''Return the commands that would create the domain axis construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `{{package}}.Field.creation_commands`
+
+    :Parameters:
+
+        {{namespace: `str`, optional}}
+
+        {{indent: `int`, optional}}
+
+        {{string: `bool`, optional}}
+
+        {{name: `str`, optional}}
+
+        {{header: `bool`, optional}}
+
+    :Returns:
+
+        {{returns creation_commands}}
+
+    **Examples:**
+
+    >>> x = {{package}}.DomainAxis(size=12)
+    >>> x.nc_set_dimension('time')
+    >>> print(x.creation_commands(header=False))
+    c = {{package}}.DomainAxis()
+    c.set_size(12)
+    c.nc_set_dimension('time')
+
+        '''
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + '.'
+        elif namespace and not namespace.endswith('.'):
+            namespace += '.'
+
+        out = []
+
+        if header:
+            out.append('#')
+            out.append("# {}:".format(self.construct_type))
+            identity = self.identity()
+            if identity:
+                out[-1] += " {}".format(identity)
+        # --- End: if
+
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        size = self.get_size(None)
+        if size is not None:
+            out.append("{}.set_size({})".format(name, size))
+
+        nc = self.nc_get_dimension(None)
+        if nc is not None:
+            out.append("{}.nc_set_dimension({!r})".format(name, nc))
+
+        if self.nc_is_unlimited():
+            out.append("c.nc_set_unlimited({})".format(True))
+
+        if string:
+            indent = ' ' * indent
+            out[0] = indent + out[0]
+            out = ('\n' + indent).join(out)
+
+        return out
 
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, ignore_type=False):
@@ -91,44 +162,16 @@ class DomainAxis(mixin.NetCDFDimension,
     NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
         other:
             The object to compare for equality.
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
+        {{verbose: `int` or `str` or `None`, optional}}
 
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey information about differences that lead to inequality.
-
-        ignore_type: `bool`, optional
-            Any type of object may be tested but, in general, equality
-            is only possible with another domain axis construct, or a
-            subclass of one. If *ignore_type* is True then
-            ``DomainAxis(source=other)`` is tested, rather than the
-            ``other`` defined by the *other* parameter.
+        {{ignore_type: `bool`, optional}}
 
     :Returns:
 
@@ -144,8 +187,8 @@ class DomainAxis(mixin.NetCDFDimension,
     >>> d.equals('not a domain axis')
     False
 
-    >>> d = cfdm.DomainAxis(1)
-    >>> e = cfdm.DomainAxis(99)
+    >>> d = {{package}}.DomainAxis(1)
+    >>> e = {{package}}.DomainAxis(99)
     >>> d.equals(e, verbose=3)
     DomainAxis: Different axis sizes: 1 != 99
     False
@@ -175,10 +218,10 @@ class DomainAxis(mixin.NetCDFDimension,
 
     The identity is the first found of the following:
 
-    1. The netCDF dimension name, preceeded by 'ncdim%'.
+    1. The netCDF dimension name, preceded by 'ncdim%'.
     2. The value of the default parameter.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identities`
 
@@ -219,9 +262,9 @@ class DomainAxis(mixin.NetCDFDimension,
 
     The identities comprise:
 
-    * The netCDF dimension name, preceeded by 'ncdim%'.
+    * The netCDF dimension name, preceded by 'ncdim%'.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `identity`
 

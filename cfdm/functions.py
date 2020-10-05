@@ -38,17 +38,17 @@ def configuration(atol=None, rtol=None, log_level=None):
     it by means of a specific function of the same name, e.g. via `cfdm.atol`,
     but in this case multiple constants can be set at once.
 
-    .. versionadded:: 1.8.6
+    .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `atol`, `rtol`, `log_level`
 
     :Parameters:
 
-        atol: `float`, optional
+        atol: number, optional
             The new value of absolute tolerance. The default is to not
             change the current value.
 
-        rtol: `float`, optional
+        rtol: number, optional
             The new value of relative tolerance. The default is to not
             change the current value.
 
@@ -67,9 +67,9 @@ def configuration(atol=None, rtol=None, log_level=None):
     :Returns:
 
         `dict`
-            The names and values of the project-wide constants prior to the
-            change, or the current names and values if no new values are
-            specified.
+            The names and values of the project-wide constants prior
+            to the change, or the current names and values if no new
+            values are specified.
 
     **Examples:**
 
@@ -100,6 +100,7 @@ def configuration(atol=None, rtol=None, log_level=None):
     {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
     >>> cfdm.configuration()
     {'atol': 5e-14, 'rtol': 1e-17, 'log_level': 'INFO'}
+
     '''
     return _configuration(
         new_atol=atol, new_rtol=rtol, new_log_level=log_level)
@@ -149,7 +150,7 @@ def atol(*atol):
     1 and the least value greater than 1 that is representable as a
     float).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `rtol`
 
@@ -203,7 +204,7 @@ def rtol(*rtol):
     1 and the least value greater than 1 that is representable as a
     float).
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `atol`
 
@@ -306,7 +307,7 @@ def log_level(*log_level):
 
     The default level is ``'WARNING'`` (``1``).
 
-    .. versionadded:: 1.8.4
+    .. versionadded:: (cfdm) 1.8.4
 
     :Parameters:
 
@@ -425,7 +426,7 @@ def _disable_logging(at_level=None):
 def environment(display=True, paths=True):
     '''Return the names, versions and paths of all dependencies.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
@@ -512,7 +513,7 @@ def CF():
     by this release of the cfdm package, and therefore the version can
     not be changed.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     :Returns:
 
@@ -563,3 +564,64 @@ def abspath(filename):
         return filename
 
     return os.path.abspath(filename)
+
+
+def unique_domains(fields, copy=True):
+    '''Return the unique domains used by the field constructs.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    :Parameters:
+
+        fields: seqeunce of `Field`
+            The fields to compared. May be an empty sequence.
+
+        copy: `bool`, optional
+            If False then do not copy returned domains. By default the
+            returned domains are deep copies from their parent field
+            constructs.
+
+    :Returns:
+
+        `list` of `Domain`
+            The unique domains. May be an empty list.
+
+    **Examples:**
+
+    >>> f = cfdm.example_fields(0)
+    >>> g = cfdm.example_fields(1)
+    >>> f
+    <Field: specific_humidity(latitude(5), longitude(8)) 1>
+    >>> g
+    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+    >>> cfdm.unique_domains([f, f, g])
+    [<Domain: {1, 5, 8}>, <Domain: {1, 1, 9, 10}>]
+
+    '''
+    if not fields:
+        return []
+
+    domain = fields[0].domain
+    if copy:
+        domain = domain.copy()
+
+    out = [domain]
+
+    for f in fields[1:]:
+        domain = f.domain
+
+        found_new_domain = False
+        for d in out:
+            if not d.equals(domain):
+                found_new_domain = True
+                break
+        # --- End: for
+
+        if found_new_domain:
+            if copy:
+                domain = domain.copy()
+
+            out.append(domain)
+    # --- End: for
+
+    return out

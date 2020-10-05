@@ -26,11 +26,13 @@ class Domain(mixin.ConstructAccess,
     coordinate, cell measure, coordinate reference and domain
     ancillary constructs.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __new__(cls, *args, **kwargs):
         '''This must be overridden in subclasses.
+
+    .. versionadded:: (cfdm) 1.7.0
 
         '''
         instance = super().__new__(cls)
@@ -173,7 +175,6 @@ class Domain(mixin.ConstructAccess,
 
         '''
         indent1 = '    ' * _level
-        indent2 = '    ' * (_level+1)
 
         axes = self.domain_axes
 
@@ -194,6 +195,8 @@ class Domain(mixin.ConstructAccess,
     exception of data arrays, which are abbreviated to their first and
     last values.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Parameters:
 
         display: `bool`, optional
@@ -206,7 +209,7 @@ class Domain(mixin.ConstructAccess,
 
     :Returns:
 
-        `None` or `str`
+        `str` or `None`
             If *display* is True then the description is printed and
             `None` is returned. Otherwise the description is returned
             as a string.
@@ -295,7 +298,11 @@ class Domain(mixin.ConstructAccess,
                ignore_compression=True, ignore_type=False):
         '''Whether two domains are the same.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
+
+    :Returns:
+
+        `bool`
 
     **Examples:**
 
@@ -305,6 +312,7 @@ class Domain(mixin.ConstructAccess,
     True
     >>> d.equals('not a domain')
     False
+
         '''
         pp = super()._equals_preprocess(other, verbose=verbose,
                                         ignore_type=ignore_type)

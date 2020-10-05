@@ -2,13 +2,13 @@ import abc
 
 from copy import deepcopy
 
-from . import Container
+from .container import Container
 
 
-class Properties(Container, metaclass=abc.ABCMeta):
-    '''Abstract base class for an object with descriptive properties.
+class Properties(Container):
+    '''Mixin class for an object with descriptive properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     '''
     def __init__(self, properties=None, source=None, copy=True):
@@ -16,13 +16,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     :Parameters:
 
-        properties: `dict`, optional
-            Set descriptive properties. The dictionary keys are
-            property names, with corresponding values. Ignored if the
-            *source* parameter is set.
-
-            Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.
+        {{init properties: `dict`, optional}}
 
             *Parameter example:*
                ``properties={'standard_name': 'altitude'}``
@@ -30,9 +24,9 @@ class Properties(Container, metaclass=abc.ABCMeta):
         source: optional
             Initialize the properties from those of *source*.
 
-        copy: `bool`, optional
-            If False then do not deep copy input parameters prior to
-            initialization By default parameters are deep copied.
+            {{init source}}
+
+        {{init copy: `bool`, optional}}
 
         '''
         super().__init__(source=source, copy=copy)
@@ -55,7 +49,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
     def clear_properties(self):
         '''Remove all properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_property` `properties`, `set_properties`
 
@@ -66,9 +60,11 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.properties()
     {}
-    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.set_properties({'standard_name': 'air_pressure',
+    ...                   'long_name': 'Air Pressure'})
     >>> f.properties()
     {'standard_name': 'air_pressure',
      'foo': 'bar',
@@ -93,7 +89,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
     def del_property(self, prop, default=ValueError()):
         '''Remove a property.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_properties`, `get_property`, `has_property`,
                  `properties`, `set_property`
@@ -108,15 +104,17 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
         default: optional
             Return the value of the *default* parameter if the
-            property has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+            property has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
-            The removed property.
+            The removed property value.
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -143,7 +141,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
     def get_property(self, prop, default=ValueError()):
         '''Return a property.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_property`, `has_property`, `properties`,
                  `set_property`
@@ -158,8 +156,9 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
         default: optional
             Return the value of the *default* parameter if the
-            property has not been set. If set to an `Exception`
-            instance then it will be raised instead.
+            property has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -167,6 +166,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -192,7 +192,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
     def has_property(self, prop):
         '''Whether a property has been set.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_property`, `get_property`, `properties`,
                  `set_property`
@@ -212,6 +212,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -232,7 +233,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
     def properties(self):
         '''Return all properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_properties`, `get_property`, `has_property`
                  `set_properties`
@@ -244,9 +245,11 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.properties()
     {}
-    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.set_properties({'standard_name': 'air_pressure',
+    ...                   'long_name': 'Air Pressure'})
     >>> f.properties()
     {'standard_name': 'air_pressure',
      'foo': 'bar',
@@ -269,7 +272,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
     def set_properties(self, properties, copy=True):
         '''Set properties.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `clear_properties`, `properties`, `set_property`
 
@@ -293,9 +296,11 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.properties()
     {}
-    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.set_properties({'standard_name': 'air_pressure',
+    ...                   'long_name': 'Air Pressure'})
     >>> f.properties()
     {'standard_name': 'air_pressure',
      'foo': 'bar',
@@ -323,7 +328,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
     def set_property(self, prop, value, copy=True):
         '''Set a property.
 
-    .. versionadded:: 1.7.0
+    .. versionadded:: (cfdm) 1.7.0
 
     .. seealso:: `del_property`, `get_property`, `has_property`,
                  `properties`, `set_properties`
@@ -345,6 +350,7 @@ class Properties(Container, metaclass=abc.ABCMeta):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
