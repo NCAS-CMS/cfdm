@@ -36,11 +36,7 @@ version 1.8.6.0
   CF-1.8 (https://github.com/NCAS-CMS/cfdm/issues/13)
 * Renamed to lower-case (but otherwise identical) names all functions
   which get and set global constants: `cfdm.atol`, `cfdm.rtol`,
-<<<<<<< HEAD
-  `cfdm.log_level`.  The old names e.g. `cfdm.ATOL` remain functional
-=======
   `cfdm.log_level`. The old names e.g. `cfdm.ATOL` remain functional
->>>>>>> ab5fa741373ef67ecf6ebd44543597c227a5a121
   as aliases.
 * New function: `cfdm.configuration`
 * New method: `cfdm.Field.nc_variable_groups`
@@ -64,12 +60,9 @@ version 1.8.6.0
   data.
 * Added test to check that dimension coordinate construct data is
   1-dimensional.
-<<<<<<< HEAD
-=======
 * Fixed bug in `cfdm.CompressedArray.to_memory`.
 * Fixed bug that caused an error when a coordinate bounds variable is
   missing from a dataset (https://github.com/NCAS-CMS/cfdm/issues/63)
->>>>>>> ab5fa741373ef67ecf6ebd44543597c227a5a121
 * New dependency: ``netcdf_flattener>=1.2.0``
 * Changed dependency: ``cftime>=1.2.1``
 * Removed dependency: ``future``
