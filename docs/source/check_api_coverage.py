@@ -41,7 +41,7 @@ n_missing_files = 0
 for core in ('', '_core'):
     if core:
         if package.__name__ != 'cfdm':
-            # Only check core meothods on cfdm package
+            # Only check core methods on cfdm package
             continue
         
         package = getattr(package, 'core')
@@ -59,7 +59,8 @@ for core in ('', '_core'):
         
         class_name = '.'.join([package.__name__, class_name])
         
-        rst_file = 'class/'+class_name+'.rst'
+        rst_file = os.path.join(source, 'class', class_name+'.rst')
+        
         try:
             with open(rst_file) as f:
                 rst_contents = f.read()

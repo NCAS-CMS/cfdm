@@ -37,6 +37,12 @@
   cd test_tutorial
   python ../tutorial.py
   ```
+
+* Check that the documentaion API coverage is complete:
+
+  ```bash
+  ./check_api_coverage
+  ```
   
 * Build a development copy of the documentation using to check API
   pages for any new methods are present & correct, & that the overall
