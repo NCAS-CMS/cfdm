@@ -41,7 +41,7 @@
 * Check that the documentaion API coverage is complete:
 
   ```bash
-  ./check_api_coverage
+  ./check_docs_api_coverage
   ```
   
 * Build a development copy of the documentation using to check API
