@@ -1,12 +1,12 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-cfdm.core.abstract.PropertiesData
-=================================
+cfdm.core.PropertiesData
+========================
 
 ----
 
-.. autoclass:: cfdm.core.abstract.PropertiesData
+.. autoclass:: cfdm.core.PropertiesData
    :no-members:
    :no-inherited-members:
 
@@ -21,13 +21,13 @@ Properties
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.abstract.PropertiesData.del_property
-   ~cfdm.core.abstract.PropertiesData.get_property
-   ~cfdm.core.abstract.PropertiesData.has_property
-   ~cfdm.core.abstract.PropertiesData.set_property
-   ~cfdm.core.abstract.PropertiesData.properties
-   ~cfdm.core.abstract.PropertiesData.clear_properties
-   ~cfdm.core.abstract.PropertiesData.set_properties
+   ~cfdm.core.PropertiesData.del_property
+   ~cfdm.core.PropertiesData.get_property
+   ~cfdm.core.PropertiesData.has_property
+   ~cfdm.core.PropertiesData.set_property
+   ~cfdm.core.PropertiesData.properties
+   ~cfdm.core.PropertiesData.clear_properties
+   ~cfdm.core.PropertiesData.set_properties
 
 Data
 ----
@@ -39,10 +39,10 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.abstract.PropertiesData.del_data
-   ~cfdm.core.abstract.PropertiesData.get_data
-   ~cfdm.core.abstract.PropertiesData.has_data
-   ~cfdm.core.abstract.PropertiesData.set_data
+   ~cfdm.core.PropertiesData.del_data
+   ~cfdm.core.PropertiesData.get_data
+   ~cfdm.core.PropertiesData.has_data
+   ~cfdm.core.PropertiesData.set_data
    
 .. rubric:: Attributes
    
@@ -51,7 +51,7 @@ Data
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~cfdm.core.abstract.PropertiesDataBounds.data
+   ~cfdm.core.PropertiesData.data
 
 Miscellaneous
 -------------
@@ -63,7 +63,8 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.abstract.PropertiesData.copy
+   ~cfdm.core.PropertiesData.copy
+   ~cfdm.core.PropertiesData.has_bounds
 
 Special
 -------
@@ -75,7 +76,7 @@ Special
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.abstract.PropertiesData.__deepcopy__
+   ~cfdm.core.PropertiesData.__deepcopy__
 
 Docstring substitutions
 -----------------------                                 
@@ -87,7 +88,7 @@ Docstring substitutions
    :toctree: ../method/                                 
    :template: method.rst                                
                                                         
-   ~cfdm.core.abstract.PropertiesData._docstring_special_substitutions
-   ~cfdm.core.abstract.PropertiesData._docstring_substitutions        
-   ~cfdm.core.abstract.PropertiesData._docstring_package_depth        
-   ~cfdm.core.abstract.PropertiesData._docstring_method_exclusions    
+   ~cfdm.core.PropertiesData._docstring_special_substitutions
+   ~cfdm.core.PropertiesData._docstring_substitutions        
+   ~cfdm.core.PropertiesData._docstring_package_depth        
+   ~cfdm.core.PropertiesData._docstring_method_exclusions    

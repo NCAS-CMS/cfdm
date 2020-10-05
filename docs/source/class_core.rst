@@ -87,13 +87,13 @@ construct components.
    :nosignatures:
    :toctree: class/
 
-   cfdm.abstract.Container
-   cfdm.abstract.Properties
-   cfdm.abstract.PropertiesData
-   cfdm.abstract.PropertiesDataBounds
-   cfdm.abstract.Coordinate
-   cfdm.abstract.Parameters
-   cfdm.abstract.ParametersDomainAncillaries
+   cfdm.core.Container
+   cfdm.core.Properties
+   cfdm.core.PropertiesData
+   cfdm.core.PropertiesDataBounds
+   cfdm.core.Coordinate
+   cfdm.core.Parameters
+   cfdm.core.ParametersDomainAncillaries
 
 Miscallaneous
 -------------
@@ -102,5 +102,5 @@ Miscallaneous
    :nosignatures:
    :toctree: class/
 
-   cfdm.core.meta.DocstringRewriteMeta
+   cfdm.core.DocstringRewriteMeta
    
