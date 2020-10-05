@@ -95,3 +95,4 @@ if n_undocumented_methods or n_missing_files:
         )
     )
 
+print('All methods are documented')
