@@ -99,6 +99,7 @@ Bounds
    ~cfdm.DomainAncillary.get_bounds
    ~cfdm.DomainAncillary.has_bounds
    ~cfdm.DomainAncillary.set_bounds
+   ~cfdm.DomainAncillary.get_bounds_data
    
 .. rubric:: Attributes
    
@@ -108,6 +109,42 @@ Bounds
    :template: attribute.rst
 
    ~cfdm.DomainAncillary.bounds
+
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAncillary.del_geometry
+   ~cfdm.DomainAncillary.get_geometry
+   ~cfdm.DomainAncillary.has_geometry
+   ~cfdm.DomainAncillary.set_geometry
+   ~cfdm.DomainAncillary.del_interior_ring
+   ~cfdm.DomainAncillary.get_interior_ring
+   ~cfdm.DomainAncillary.has_interior_ring
+   ~cfdm.DomainAncillary.set_interior_ring
+   ~cfdm.DomainAncillary.del_node_count
+   ~cfdm.DomainAncillary.get_node_count
+   ~cfdm.DomainAncillary.has_node_count
+   ~cfdm.DomainAncillary.set_node_count
+   ~cfdm.DomainAncillary.del_part_node_count
+   ~cfdm.DomainAncillary.get_part_node_count
+   ~cfdm.DomainAncillary.has_part_node_count
+   ~cfdm.DomainAncillary.set_part_node_count
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.DomainAncillary.interior_ring
 
 Miscellaneous
 -------------
@@ -169,22 +206,7 @@ Special
    ~cfdm.DomainAncillary.__repr__
    ~cfdm.DomainAncillary.__str__
 
-Docstring substitutions                      
------------------------                   
-                                          
-.. rubric:: Methods                       
-                                          
-.. autosummary::                          
-   :nosignatures:                         
-   :toctree: ../method/                   
-   :template: method.rst                  
-                                          
-   ~cfdm._docstring_special_substitutions
-   ~cfdm._docstring_substitutions        
-   ~cfdm._docstring_package_depth        
-   ~cfdm._docstring_method_exclusions
-
-Docstring substitutions                     
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

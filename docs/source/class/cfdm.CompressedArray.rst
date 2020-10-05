@@ -52,6 +52,9 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.CompressedArray.copy
+   ~cfdm.CompressedArray.get_subspace
+   ~cfdm.CompressedArray.source
+   ~cfdm.CompressedArray.to_memory
 
 Special
 -------
@@ -69,7 +72,7 @@ Special
    ~cfdm.CompressedArray.__repr__
    ~cfdm.CompressedArray.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

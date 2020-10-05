@@ -50,7 +50,7 @@ Special
 
    ~cfdm.core.Array.__deepcopy__
 
-Docstring substitutions                           
+Docstring substitutions
 -----------------------                        
                                                
 .. rubric:: Methods                            

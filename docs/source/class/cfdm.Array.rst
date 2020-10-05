@@ -49,6 +49,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Array.copy
+   ~cfdm.Array.get_subspace
 
 Special
 -------
@@ -66,7 +67,7 @@ Special
    ~cfdm.Array.__repr__
    ~cfdm.Array.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

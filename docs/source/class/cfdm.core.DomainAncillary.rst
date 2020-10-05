@@ -88,6 +88,34 @@ Bounds
 
    ~cfdm.core.DomainAncillary.bounds
 
+Geometries
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DomainAncillary.del_geometry
+   ~cfdm.core.DomainAncillary.get_geometry
+   ~cfdm.core.DomainAncillary.has_geometry
+   ~cfdm.core.DomainAncillary.set_geometry
+   ~cfdm.core.DomainAncillary.del_interior_ring
+   ~cfdm.core.DomainAncillary.get_interior_ring
+   ~cfdm.core.DomainAncillary.has_interior_ring
+   ~cfdm.core.DomainAncillary.set_interior_ring
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.DomainAncillary.interior_ring
+
 Miscellaneous
 -------------
 
@@ -112,7 +140,7 @@ Special
 
    ~cfdm.core.DomainAncillary.__deepcopy__
 
-Docstring substitutions                           
+Docstring substitutions
 -----------------------                        
                                                
 .. rubric:: Methods                            

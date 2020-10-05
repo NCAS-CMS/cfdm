@@ -759,25 +759,29 @@ class PropertiesData(Properties):
 
         return set()
 
-    def inherited_properties(self):
-        '''Return the properties inherited from a parent construct.
-
-    .. versionadded:: (cfdm) 1.8.6
-
-    .. seealso:: `properties`
-
-    :Returns:
-
-        `dict`
-            The inherited properties.
-
-    **Examples:**
-
-    >>> f.properties()
-    {}
-
-        '''
-        return {}
+#    def inherited_properties(self):
+#        '''Return the properties inherited from a parent construct.
+#
+#    There are always no inherited properties. This method exists as a
+#    convenience to simplify the source code.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `properties`
+#
+#    :Returns:
+#
+#        `dict`
+#            The inherited properties. Always an empty dictionary.
+#
+#    **Examples:**
+#
+#    >>> f = {{package}}.{{class}}()
+#    >>> f.inherited_properties()
+#    {}
+#
+#        '''
+#        return {}
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):

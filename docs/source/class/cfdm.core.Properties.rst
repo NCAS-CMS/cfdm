@@ -1,32 +1,33 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-cfdm.core.abstract.Parameters
-=============================
+cfdm.core.Properties
+====================
 
 ----
 
-.. autoclass:: cfdm.core.abstract.Parameters
+.. autoclass:: cfdm.core.Properties
    :no-members:
    :no-inherited-members:
 
-Parameter terms
----------------
+Properties
+----------
 
 .. rubric:: Methods
-	    
+
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.abstract.Parameters.del_parameter
-   ~cfdm.core.abstract.Parameters.get_parameter
-   ~cfdm.core.abstract.Parameters.set_parameter
-   ~cfdm.core.abstract.Parameters.parameters
-   ~cfdm.core.abstract.Parameters.clear_parameters
-   ~cfdm.core.abstract.Parameters.set_parameters
-   
+   ~cfdm.core.Properties.del_property
+   ~cfdm.core.Properties.get_property
+   ~cfdm.core.Properties.has_property
+   ~cfdm.core.Properties.set_property
+   ~cfdm.core.Properties.properties
+   ~cfdm.core.Properties.clear_properties
+   ~cfdm.core.Properties.set_properties
+  
 Miscellaneous
 -------------
 
@@ -37,7 +38,7 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.abstract.Parameters.copy
+   ~cfdm.core.Properties.copy
 
 Special
 -------
@@ -49,9 +50,9 @@ Special
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.abstract.Parameters.__deepcopy__
+   ~cfdm.core.Properties.__deepcopy__
 
-Docstring substitutions                                    
+Docstring substitutions
 -----------------------                                 
                                                         
 .. rubric:: Methods                                     
@@ -61,7 +62,7 @@ Docstring substitutions
    :toctree: ../method/                                 
    :template: method.rst                                
                                                         
-   ~cfdm.core.abstract.Parameters._docstring_special_substitutions
-   ~cfdm.core.abstract.Parameters._docstring_substitutions        
-   ~cfdm.core.abstract.Parameters._docstring_package_depth        
-   ~cfdm.core.abstract.Parameters._docstring_method_exclusions    
+   ~cfdm.core.Properties._docstring_special_substitutions
+   ~cfdm.core.Properties._docstring_substitutions        
+   ~cfdm.core.Properties._docstring_package_depth        
+   ~cfdm.core.Properties._docstring_method_exclusions    

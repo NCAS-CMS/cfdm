@@ -70,7 +70,7 @@ Special
 
    ~cfdm.core.DomainAxis.__deepcopy__
    
-Docstring substitutions                           
+Docstring substitutions
 -----------------------                        
                                                
 .. rubric:: Methods                            

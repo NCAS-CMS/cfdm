@@ -37,8 +37,8 @@ Filtering
    ~cfdm.Constructs.inverse_filter
    ~cfdm.Constructs.unfilter
 
-Constructs and keys
--------------------
+Constructs and identifiers
+--------------------------
 
 .. rubric:: Methods
 	    
@@ -49,6 +49,10 @@ Constructs and keys
 
    ~cfdm.Constructs.key
    ~cfdm.Constructs.value
+   ~cfdm.Constructs.construct_type
+   ~cfdm.Constructs.construct_types
+   ~cfdm.Constructs.domain_axis_identity
+   ~cfdm.Constructs.new_identifier
 
 Data axes
 ---------
@@ -76,6 +80,7 @@ Miscellaneous
    ~cfdm.Constructs.shallow_copy
    ~cfdm.Constructs.equals
    ~cfdm.Constructs.ordered
+   ~cfdm.Constructs.replace
 
 Dictionary-access methods
 -------------------------
@@ -113,7 +118,7 @@ Special
    ~cfdm.Constructs.__repr__
    ~cfdm.Constructs.__str__
 
-Docstring substitutions                   
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

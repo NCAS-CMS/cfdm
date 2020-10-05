@@ -103,6 +103,7 @@ Miscellaneous
    ~cfdm.CellMeasure.copy
    ~cfdm.CellMeasure.creation_commands
    ~cfdm.CellMeasure.equals
+   ~cfdm.CellMeasure.has_bounds
    ~cfdm.CellMeasure.uncompress
    ~cfdm.CellMeasure.get_filenames
 
@@ -152,7 +153,7 @@ Special
    ~cfdm.CellMeasure.__repr__
    ~cfdm.CellMeasure.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

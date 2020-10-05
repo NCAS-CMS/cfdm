@@ -102,7 +102,7 @@ Special
    ~cfdm.core.Data.__repr__
    ~cfdm.core.Data.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

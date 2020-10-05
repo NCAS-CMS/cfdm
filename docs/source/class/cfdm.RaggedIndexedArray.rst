@@ -50,6 +50,9 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.RaggedIndexedArray.copy
+   ~cfdm.RaggedIndexedArray.get_subspace
+   ~cfdm.RaggedIndexedArray.source
+   ~cfdm.RaggedIndexedArray.to_memory
 
 Special
 -------
@@ -67,7 +70,7 @@ Special
    ~cfdm.RaggedIndexedArray.__repr__
    ~cfdm.RaggedIndexedArray.__str__
 
-Docstring substitutions                   
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

@@ -140,7 +140,7 @@ Special
 
    ~cfdm.core.AuxiliaryCoordinate.__deepcopy__
 
-Docstring substitutions                     
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

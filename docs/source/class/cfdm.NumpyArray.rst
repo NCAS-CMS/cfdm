@@ -45,6 +45,7 @@ Miscellaneous
    :template: method.rst
    
    ~cfdm.NumpyArray.copy
+   ~cfdm.NumpyArray.to_memory
    
 Special
 -------
@@ -56,7 +57,7 @@ Special
    
    ~cfdm.NumpyArray.__getitem__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       
