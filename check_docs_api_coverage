@@ -9,7 +9,7 @@
 #
 # Call as:
 #
-#   $ ./check_api_coverage
+#   $ ./check_docs_api_coverage
 # --------------------------------------------------------------------
 
-python docs/source/check_api_coverage.py docs/source
+python docs/source/check_docs_api_coverage.py docs/source
