@@ -78,6 +78,10 @@ Bounds
    ~cfdm.core.DomainAncillary.get_bounds
    ~cfdm.core.DomainAncillary.has_bounds
    ~cfdm.core.DomainAncillary.set_bounds
+   ~cfdm.core.DomainAncillary.del_interior_ring
+   ~cfdm.core.DomainAncillary.get_interior_ring
+   ~cfdm.core.DomainAncillary.has_interior_ring
+   ~cfdm.core.DomainAncillary.set_interior_ring
    
 .. rubric:: Attributes
    
