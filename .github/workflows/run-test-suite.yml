@@ -94,7 +94,7 @@ jobs:
         cd cfdm/test
         ./run_tests_and_coverage --nohtml
 
-    # For the two latest OSs only, generate a coverage report:
+    # For one job only, generate a coverage report:
     - name: Upload coverage report to Codecov
       # Get coverage from only one job (choose with Ubuntu Python 3.7 as
       # representative). Note that we could use a separate workflow
