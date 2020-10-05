@@ -73,8 +73,8 @@ version 1.8.5
 
 **2020-06-10**
 
-* Fixed bug that prevented the reading of certain netCDF files, such as
-  those with at least one external variable.
+* Fixed bug that prevented the reading of certain netCDF files, such
+  as those with at least one external variable.
 
 version 1.8.4
 -------------

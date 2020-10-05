@@ -18,7 +18,7 @@ Field construct class
    :nosignatures:
    :toctree: class/
 
-   cfdm.core.Field	              
+   cfdm.core.Field
 
 Metadata construct classes
 --------------------------

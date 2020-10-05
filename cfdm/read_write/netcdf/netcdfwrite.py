@@ -313,7 +313,7 @@ class NetCDFWrite(IOWrite):
         if array.dtype.kind == 'U':
             array = array.astype('S')
 
-        array = numpy.array(tuple(array.tostring().decode('ascii')),
+        array = numpy.array(tuple(array.tobytes().decode('ascii')),
                             dtype='S1')
 
 #        else:
