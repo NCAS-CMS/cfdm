@@ -65,15 +65,15 @@ for core in ('', '_core'):
             with open(rst_file) as f:
                 rst_contents = f.read()
                 
-                for method in methods:
-                    method = '.'.join([class_name, method])
-                    if method not in rst_contents:
-                        n_undocumented_methods += 1
-                        print (
-                            "Method {} not in {}".format(
-                                method, os.path.join(source, 'class', rst_file)
-                            )
+            for method in methods:
+                method = '.'.join([class_name, method])
+                if method not in rst_contents:
+                    n_undocumented_methods += 1
+                    print (
+                        "Method {} not in {}".format(
+                            method, os.path.join(source, 'class', rst_file)
                         )
+                    )
         except FileNotFoundError:
             n_missing_files += 1
             print (
