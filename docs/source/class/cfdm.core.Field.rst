@@ -141,6 +141,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.core.Field.copy
+   ~cfdm.core.Field.has_bounds
 
 .. _core-Field-Special:
 
@@ -156,7 +157,7 @@ Special
 
    ~cfdm.core.Field.__deepcopy__
 
-Docstring substitutions                           
+Docstring substitutions
 -----------------------                        
                                                
 .. rubric:: Methods                            

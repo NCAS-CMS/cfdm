@@ -79,6 +79,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.core.CellMeasure.copy
+   ~cfdm.core.CellMeasure.has_bounds
 
 Special
 -------
@@ -92,7 +93,7 @@ Special
 
    ~cfdm.core.CellMeasure.__deepcopy__
 
-Docstring substitutions                           
+Docstring substitutions
 -----------------------                        
                                                
 .. rubric:: Methods                            

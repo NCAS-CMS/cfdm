@@ -22,8 +22,8 @@ Filtering
 
    ~cfdm.core.Constructs.filter_by_type
 
-Constructs and keys
--------------------
+Constructs and identifiers
+--------------------------
 
 .. rubric:: Methods
 	    
@@ -34,6 +34,10 @@ Constructs and keys
 
    ~cfdm.core.Constructs.key
    ~cfdm.core.Constructs.value
+   ~cfdm.core.Constructs.construct_type
+   ~cfdm.core.Constructs.construct_types
+   ~cfdm.core.Constructs.new_identifier
+   ~cfdm.core.Constructs.replace
 
 Data axes
 ---------
@@ -95,7 +99,7 @@ Special
    ~cfdm.core.Constructs.__iter__
    ~cfdm.core.Constructs.__len__
 
-Docstring substitutions                        
+Docstring substitutions
 -----------------------                        
                                                
 .. rubric:: Methods                            

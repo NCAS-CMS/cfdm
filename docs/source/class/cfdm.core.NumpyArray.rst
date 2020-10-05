@@ -36,7 +36,7 @@ Miscellaneous
    
    ~cfdm.core.NumpyArray.copy
 
-Docstring substitutions                           
+Docstring substitutions
 -----------------------                        
                                                
 .. rubric:: Methods                            

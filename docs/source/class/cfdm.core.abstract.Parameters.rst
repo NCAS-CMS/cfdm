@@ -51,7 +51,7 @@ Special
 
    ~cfdm.core.abstract.Parameters.__deepcopy__
 
-Docstring substitutions                                    
+Docstring substitutions
 -----------------------                                 
                                                         
 .. rubric:: Methods                                     

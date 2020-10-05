@@ -116,7 +116,7 @@ Special
 
    ~cfdm.core.abstract.PropertiesDataBounds.__deepcopy__
 
-Docstring substitutions                                    
+Docstring substitutions
 -----------------------                                 
                                                         
 .. rubric:: Methods                                     

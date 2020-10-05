@@ -136,7 +136,7 @@ Geometries
    ~cfdm.DimensionCoordinate.get_part_node_count
    ~cfdm.DimensionCoordinate.has_part_node_count
    ~cfdm.DimensionCoordinate.set_part_node_count
-   
+
 .. rubric:: Attributes
    
 .. autosummary::

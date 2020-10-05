@@ -120,7 +120,7 @@ _docstring_substitution_definitions = {
     # init source
     '{{init source}}':
 
-    '''Note that if, and only if, *source* is a `{{class}}` instance then
+    '''Note that if *source* is a `{{class}}` instance then
             ``{{package}}.{{class}}(source=source)`` is equivalent to
             ``source.copy()``.''',
 
