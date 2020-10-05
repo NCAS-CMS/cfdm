@@ -153,7 +153,7 @@ Special
    ~cfdm.CoordinateReference.__repr__
    ~cfdm.CoordinateReference.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                      
                                           
 .. rubric:: Methods                       

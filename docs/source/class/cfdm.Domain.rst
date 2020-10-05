@@ -93,7 +93,7 @@ Special
    ~cfdm.Domain.__repr__
    ~cfdm.Domain.__str__
 
-Docstring substitutions                   
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

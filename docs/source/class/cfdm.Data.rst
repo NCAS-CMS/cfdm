@@ -312,7 +312,7 @@ Special
    ~cfdm.Data.__setitem__ 
    ~cfdm.Data.__str__
 
-Docstring substitutions                     
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

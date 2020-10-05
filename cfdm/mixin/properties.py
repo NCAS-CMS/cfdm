@@ -136,7 +136,7 @@ class Properties(Container):
 
         properties = self.properties()
         if properties:
-            for prop in self.inherited_properties():
+            for prop in self._inherited_properties():
                 properties.pop(prop, None)
 
             out.append("{}.set_properties({})".format(name,
@@ -463,5 +463,29 @@ class Properties(Container):
             out.append('ncvar%{0}'.format(n))
 
         return out
+
+    def _inherited_properties(self):
+        '''Return the properties inherited from a parent construct.
+
+    There are always no inherited properties. This method exists as a
+    convenience to simplify the source code.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `properties`
+
+    :Returns:
+
+        `dict`
+            The inherited properties. Always an empty dictionary.
+
+    **Examples:**
+
+    >>> f = {{package}}.{{class}}()
+    >>> f._inherited_properties()
+    {}
+
+        '''
+        return {}
 
 # --- End: class

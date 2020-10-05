@@ -99,6 +99,7 @@ Bounds
    ~cfdm.DimensionCoordinate.get_bounds
    ~cfdm.DimensionCoordinate.has_bounds
    ~cfdm.DimensionCoordinate.set_bounds
+   ~cfdm.DimensionCoordinate.get_bounds_data
    
 .. rubric:: Attributes
    
@@ -108,6 +109,42 @@ Bounds
    :template: attribute.rst
 
    ~cfdm.DimensionCoordinate.bounds
+
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DimensionCoordinate.del_geometry
+   ~cfdm.DimensionCoordinate.get_geometry
+   ~cfdm.DimensionCoordinate.has_geometry
+   ~cfdm.DimensionCoordinate.set_geometry
+   ~cfdm.DimensionCoordinate.del_interior_ring
+   ~cfdm.DimensionCoordinate.get_interior_ring
+   ~cfdm.DimensionCoordinate.has_interior_ring
+   ~cfdm.DimensionCoordinate.set_interior_ring
+   ~cfdm.DimensionCoordinate.del_node_count
+   ~cfdm.DimensionCoordinate.get_node_count
+   ~cfdm.DimensionCoordinate.has_node_count
+   ~cfdm.DimensionCoordinate.set_node_count
+   ~cfdm.DimensionCoordinate.del_part_node_count
+   ~cfdm.DimensionCoordinate.get_part_node_count
+   ~cfdm.DimensionCoordinate.has_part_node_count
+   ~cfdm.DimensionCoordinate.set_part_node_count
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.DimensionCoordinate.interior_ring
 
 Miscellaneous
 -------------
@@ -169,7 +206,7 @@ Special
    ~cfdm.DimensionCoordinate.__repr__
    ~cfdm.DimensionCoordinate.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

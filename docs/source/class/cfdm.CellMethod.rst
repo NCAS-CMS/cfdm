@@ -88,7 +88,7 @@ Special
    ~cfdm.CellMethod.__repr__
    ~cfdm.CellMethod.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

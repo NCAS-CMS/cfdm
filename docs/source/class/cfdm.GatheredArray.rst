@@ -50,6 +50,9 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.GatheredArray.copy
+   ~cfdm.GatheredArray.get_subspace
+   ~cfdm.GatheredArray.source
+   ~cfdm.GatheredArray.to_memory
 
 Special
 -------
@@ -67,7 +70,7 @@ Special
    ~cfdm.GatheredArray.__repr__
    ~cfdm.GatheredArray.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

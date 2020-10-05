@@ -80,7 +80,7 @@ from .abstract import (
     Container,
     Properties,
     PropertiesData,
-    PropertiesDataBounds,    
+    PropertiesDataBounds,
     Coordinate,
     Parameters,
     ParametersDomainAncillaries,

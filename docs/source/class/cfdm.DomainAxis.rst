@@ -108,7 +108,7 @@ Special
    ~cfdm.DomainAxis.__repr__
    ~cfdm.DomainAxis.__str__
    
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

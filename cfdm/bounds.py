@@ -81,6 +81,24 @@ class Bounds(mixin.NetCDFVariable,
         self._initialise_netcdf(source)
 
     # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
+    def _inherited_properties(self):
+        '''Return the properties inherited from a coordinate construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `inherited_properties`, `properties`
+
+    :Returns:
+
+        `dict`
+            The inherited properties.
+
+        '''
+        return self.inherited_properties()
+
+    # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def dump(self, display=True, _key=None, _title=None,

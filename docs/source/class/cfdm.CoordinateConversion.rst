@@ -75,7 +75,7 @@ Special
    ~cfdm.CoordinateConversion.__repr__
    ~cfdm.CoordinateConversion.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

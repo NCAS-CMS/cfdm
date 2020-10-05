@@ -87,6 +87,7 @@ Miscellaneous
    ~cfdm.InteriorRing.copy
    ~cfdm.InteriorRing.creation_commands
    ~cfdm.InteriorRing.equals
+   ~cfdm.InteriorRing.has_bounds
    ~cfdm.InteriorRing.uncompress
    ~cfdm.InteriorRing.get_filenames
 
@@ -104,6 +105,10 @@ NetCDF
    ~cfdm.InteriorRing.nc_get_variable
    ~cfdm.InteriorRing.nc_has_variable
    ~cfdm.InteriorRing.nc_set_variable
+   ~cfdm.InteriorRing.nc_del_dimension
+   ~cfdm.InteriorRing.nc_get_dimension
+   ~cfdm.InteriorRing.nc_has_dimension
+   ~cfdm.InteriorRing.nc_set_dimension
    
 Groups
 ^^^^^^
@@ -118,6 +123,9 @@ Groups
    ~cfdm.InteriorRing.nc_variable_groups
    ~cfdm.InteriorRing.nc_clear_variable_groups
    ~cfdm.InteriorRing.nc_set_variable_groups
+   ~cfdm.InteriorRing.nc_dimension_groups
+   ~cfdm.InteriorRing.nc_clear_dimension_groups
+   ~cfdm.InteriorRing.nc_set_dimension_groups
 
 Special
 -------
@@ -134,7 +142,7 @@ Special
    ~cfdm.InteriorRing.__repr__
    ~cfdm.InteriorRing.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       
