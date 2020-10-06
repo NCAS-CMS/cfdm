@@ -10,10 +10,12 @@ from . import List
 
 from .constants import masked as cfdm_masked
 
-from .data import RaggedContiguousArray
-from .data import RaggedIndexedArray
-from .data import RaggedIndexedContiguousArray
-from .data import GatheredArray
+from .data import (
+    RaggedContiguousArray,
+    RaggedIndexedArray,
+    RaggedIndexedContiguousArray,
+    GatheredArray,
+)
 
 from .decorators import (
     _inplace_enabled,
@@ -109,9 +111,9 @@ class Field(mixin.NetCDFVariable,
     def __new__(cls, *args, **kwargs):
         '''Store component classes.
 
-    NOTE: If a child class requires a different component classes than
-    the ones defined here, then they must be redefined in the child
-    class.
+    .. note:: If a child class requires a different component classes
+              than the ones defined here, then they must be redefined
+              in the child class.
 
         '''
         instance = super().__new__(cls)
@@ -140,6 +142,8 @@ class Field(mixin.NetCDFVariable,
         source: optional
             Initialize the properties, data and metadata constructs
             from those of *source*.
+
+            {{init source}}
 
         {{init copy: `bool`, optional}}
 
@@ -632,7 +636,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             A new field construct with masked values, or `None` if the
             operation was in-place.
 
@@ -896,7 +900,7 @@ class Field(mixin.NetCDFVariable,
 
         :Parameters:
 
-            f: `{{class}}`
+            f: `Field`
 
             count: sequence of `int`
 
@@ -1180,13 +1184,13 @@ class Field(mixin.NetCDFVariable,
     :Parameters:
 
         data: `bool`, optional
-            If False then do not copy the data field construct, nor
-            that of any of its metadata constructs. By default all
-            data are copied.
+            If False then do not copy the data of the field construct,
+            nor the data of any of its metadata constructs. By default
+            all data are copied.
 
     :Returns:
 
-        `{{class}}`
+        `Field`
             The deep copy.
 
     **Examples:**
@@ -1234,6 +1238,10 @@ class Field(mixin.NetCDFVariable,
         {{indent: `int`, optional}}
 
         {{string: `bool`, optional}}
+
+        {{name: `str`, optional}}
+
+        {{data_name: `str`, optional}}
 
         {{header: `bool`, optional}}
 
@@ -1700,13 +1708,29 @@ class Field(mixin.NetCDFVariable,
 
         return out
 
-#    def has_geometry(self):
-#        '''TODO'''
-#        for c in self.coordinates.values():
-#            if c.has_geometry():
-#                return True
-#
-#        return False
+    def has_geometry(self):
+        '''Whether or not any coordinate constructs have cell geometries.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    :Returns:
+
+        `bool`
+            Whether or not there is a geometry type on any coordinate
+            construct.
+
+    **Examples:**
+
+    >>> f = {{package}}.Field()
+    >>> f.has_geometry()
+    False
+
+        '''
+        for c in self.coordinates.values():
+            if c.has_geometry():
+                return True
+
+        return False
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, axis, position=0, inplace=False):
@@ -1744,7 +1768,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             The new field construct with expanded data axes. If the
             operation was in-place then `None` is returned.
 
@@ -1808,8 +1832,8 @@ class Field(mixin.NetCDFVariable,
     have a domain limited to that which can be inferred from the
     corresponding netCDF variable - typically only domain axis and
     dimension coordinate constructs. This will usually result in a
-    different field construct to that created with the
-    `~{{class}}.convert` method.
+    different field construct to that created with the `convert`
+    method.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -1822,14 +1846,14 @@ class Field(mixin.NetCDFVariable,
             key.
 
         full_domain: `bool`, optional
-            If False then do not create a domain, other than domain
-            axis constructs, for the new field construct. By default
-            as much of the domain as possible is copied to the new
-            field construct.
+            If False then only create domain axis constructs for the
+            domain of the new field construct. By default as much of
+            the domain as possible is copied to the new field
+            construct.
 
     :Returns:
 
-        `{{class}}`
+        `Field`
             The new field construct.
 
     **Examples:**
@@ -2975,7 +2999,7 @@ class Field(mixin.NetCDFVariable,
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
-        '''Remove size one axes from the data array.
+        '''Remove size one axes from the data.
 
     By default all size one axes are removed, but particular size one
     axes may be selected for removal.
@@ -2988,24 +3012,15 @@ class Field(mixin.NetCDFVariable,
 
         axes: (sequence of) `int`, optional
             The positions of the size one axes to be removed. By
-            default all size one axes are removed. Each axis is
-            identified by its original integer position. Negative
-            integers counting from the last position are allowed.
+            default all size one axes are removed.
 
-            *Parameter example:*
-              ``axes=0``
-
-            *Parameter example:*
-              ``axes=-2``
-
-            *Parameter example:*
-              ``axes=[2, 0]``
+            {{axes int examples}}
 
         {{inplace: `bool`, optional}}
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             The field construct with removed data axes. If the
             operation was in-place then `None` is returned.
 
@@ -3055,17 +3070,10 @@ class Field(mixin.NetCDFVariable,
 
     :Parameters:
 
-        axes: (sequence of) `int`
-            The new axis order. By default the order is reversed. Each
-            axis in the new order is identified by its original
-            integer position. Negative integers counting from the last
-            position are allowed.
+        axes: (sequence of) `int`, optional
+            The new axis order. By default the order is reversed.
 
-            *Parameter example:*
-              ``axes=[2, 0, 1]``
-
-            *Parameter example:*
-              ``axes=[-1, 0, 1]``
+            {{axes int examples}}
 
         constructs: `bool`
             If True then tranpose the metadata constructs to have the
@@ -3077,7 +3085,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             The field construct with permuted data axes. If the
             operation was in-place then `None` is returned.
 
@@ -3192,7 +3200,7 @@ class Field(mixin.NetCDFVariable,
 
     :Returns:
 
-        `{{class}}` or `None`
+        `Field` or `None`
             The uncompressed field construct, or `None` if the
             operation was in-place.
 

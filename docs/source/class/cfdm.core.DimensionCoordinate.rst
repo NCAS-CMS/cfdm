@@ -88,6 +88,34 @@ Bounds
 
    ~cfdm.core.DimensionCoordinate.bounds
 
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DimensionCoordinate.del_geometry
+   ~cfdm.core.DimensionCoordinate.get_geometry
+   ~cfdm.core.DimensionCoordinate.has_geometry
+   ~cfdm.core.DimensionCoordinate.set_geometry
+   ~cfdm.core.DimensionCoordinate.del_interior_ring
+   ~cfdm.core.DimensionCoordinate.get_interior_ring
+   ~cfdm.core.DimensionCoordinate.has_interior_ring
+   ~cfdm.core.DimensionCoordinate.set_interior_ring
+
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.DimensionCoordinate.interior_ring
+
 Climatological time
 ^^^^^^^^^^^^^^^^^^^
 
@@ -127,7 +155,7 @@ Special
 
    ~cfdm.core.DimensionCoordinate.__deepcopy__
 
-Docstring substitutions                           
+Docstring substitutions
 -----------------------                        
                                                
 .. rubric:: Methods                            

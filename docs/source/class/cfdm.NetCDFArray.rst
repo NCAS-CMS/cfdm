@@ -51,6 +51,9 @@ File
    
    ~cfdm.NetCDFArray.close
    ~cfdm.NetCDFArray.open
+   ~cfdm.NetCDFArray.get_filename
+   ~cfdm.NetCDFArray.get_group
+   ~cfdm.NetCDFArray.get_mask
    
 Miscellaneous
 -------------
@@ -61,6 +64,7 @@ Miscellaneous
    :template: method.rst
    
    ~cfdm.NetCDFArray.copy
+   ~cfdm.NetCDFArray.to_memory
    
 Special
 -------
@@ -72,7 +76,7 @@ Special
    
    ~cfdm.NetCDFArray.__getitem__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

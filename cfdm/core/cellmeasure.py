@@ -49,13 +49,10 @@ class CellMeasure(abstract.PropertiesData):
         {{init data: data_like, optional}}
 
         source: optional
-            Initialise the *measure*, *properties* and *data*
-            parameters (if present) from *source*, which will be a
-            `CellMeasure` object, or a subclass of one of its parent
-            classes.
+            Initialise the measure, properties and data from those of
+            source.
 
-            *Parameter example:*
-              >>> d = CellMeasure(source=c)
+            {{init source}}
 
         {{init copy: `bool`, optional}}
 
@@ -86,7 +83,8 @@ class CellMeasure(abstract.PropertiesData):
 
     **Examples:**
 
-    >>> f.construct_type
+    >>> c = {{package}}.{{class}}()
+    >>> c.construct_type
     'cell_measure'
 
         '''
@@ -113,6 +111,7 @@ class CellMeasure(abstract.PropertiesData):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_measure('area')
     >>> c.has_measure()
     True
@@ -148,6 +147,7 @@ class CellMeasure(abstract.PropertiesData):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_measure('area')
     >>> c.has_measure()
     True
@@ -175,8 +175,9 @@ class CellMeasure(abstract.PropertiesData):
 
         default: optional
             Return the value of the *default* parameter if the measure
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+            has not been set.
+
+            {{default Exception}}
 
     :Returns:
 
@@ -184,6 +185,7 @@ class CellMeasure(abstract.PropertiesData):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_measure('area')
     >>> c.has_measure()
     True
@@ -226,6 +228,7 @@ class CellMeasure(abstract.PropertiesData):
 
     **Examples:**
 
+    >>> c = {{package}}.{{class}}()
     >>> c.set_measure('area')
     >>> c.has_measure()
     True

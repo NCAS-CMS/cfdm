@@ -70,6 +70,10 @@ Data
    :template: attribute.rst
 
    ~cfdm.Bounds.data
+   ~cfdm.Bounds.dtype
+   ~cfdm.Bounds.ndim
+   ~cfdm.Bounds.shape
+   ~cfdm.Bounds.size
 
 Miscellaneous
 -------------
@@ -82,7 +86,9 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Bounds.copy
+   ~cfdm.Bounds.creation_commands
    ~cfdm.Bounds.equals
+   ~cfdm.Bounds.has_bounds
    ~cfdm.Bounds.uncompress
    ~cfdm.Bounds.get_filenames
 
@@ -137,7 +143,7 @@ Special
    ~cfdm.Bounds.__repr__
    ~cfdm.Bounds.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

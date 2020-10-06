@@ -75,6 +75,8 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.core.FieldAncillary.copy
+   ~cfdm.core.FieldAncillary.has_bounds
+
 
 Special
 -------
@@ -88,7 +90,7 @@ Special
 
    ~cfdm.core.FieldAncillary.__deepcopy__
 
-Docstring substitutions                           
+Docstring substitutions
 -----------------------                        
                                                
 .. rubric:: Methods                            

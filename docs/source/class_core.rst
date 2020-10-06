@@ -18,7 +18,7 @@ Field construct class
    :nosignatures:
    :toctree: class/
 
-   cfdm.core.Field	              
+   cfdm.core.Field
 
 Domain construct class
 ----------------------
@@ -87,13 +87,13 @@ construct components.
    :nosignatures:
    :toctree: class/
 
-   cfdm.core.abstract.Container
-   cfdm.core.abstract.Properties
-   cfdm.core.abstract.PropertiesData
-   cfdm.core.abstract.PropertiesDataBounds
-   cfdm.core.abstract.Coordinate
-   cfdm.core.abstract.Parameters
-   cfdm.core.abstract.ParametersDomainAncillaries
+   cfdm.core.Container
+   cfdm.core.Properties
+   cfdm.core.PropertiesData
+   cfdm.core.PropertiesDataBounds
+   cfdm.core.Coordinate
+   cfdm.core.Parameters
+   cfdm.core.ParametersDomainAncillaries
 
 Miscallaneous
 -------------
@@ -102,5 +102,5 @@ Miscallaneous
    :nosignatures:
    :toctree: class/
 
-   cfdm.core.meta.DocstringRewriteMeta
+   cfdm.core.DocstringRewriteMeta
    

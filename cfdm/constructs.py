@@ -25,9 +25,7 @@ class Constructs(mixin.Container,
     * cell method constructs
     * field ancillary constructs
 
-    The container may be used by `Field` and `Domain` instances. In
-    the latter case cell method and field ancillary constructs must be
-    flagged as "ignored" (see the *_ignore* parameter).
+    The container is used by used by `Field` and `Domain` instances.
 
     The container is like a dictionary in many ways, in that it stores
     key/value pairs where the key is the unique construct key with
@@ -668,7 +666,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The deep copy.
 
     **Examples:**
@@ -1078,7 +1076,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1202,7 +1200,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1273,7 +1271,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1352,7 +1350,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1410,7 +1408,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected cell measure constructs and their construct
             keys.
 
@@ -1510,7 +1508,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected cell method constructs and their construct
             keys.
 
@@ -1610,7 +1608,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected domain axis constructs and their construct
             keys.
 
@@ -1689,7 +1687,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected domain axis constructs and their construct
             keys.
 
@@ -1770,7 +1768,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1819,7 +1817,8 @@ class Constructs(mixin.Container,
         return out
 
     def _matching_values(self, value0, construct, value1):
-        '''TODO
+        '''Whether or not two values are the same.
+
         '''
         if value1 is not None:
             try:
@@ -1877,7 +1876,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -1979,7 +1978,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected domain axis constructs and their construct
             keys.
 
@@ -2061,7 +2060,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The selected constructs and their construct keys.
 
     **Examples:**
@@ -2227,7 +2226,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The constructs, and their construct keys, that were not
             selected by the last filter applied. If no filtering has
             been applied, or the last filter was an inverse filter,
@@ -2322,7 +2321,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The shallow copy.
 
     **Examples:**
@@ -2374,7 +2373,7 @@ class Constructs(mixin.Container,
 
     :Returns:
 
-        `{{class}}`
+        `Constructs`
             The constructs, and their construct keys, that existed
             before the last filter was applied. If no filters have
             been applied then all of the constructs are returned.

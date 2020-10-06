@@ -15,16 +15,20 @@ class RaggedContiguousArrayTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-    def test_RaggedContiguousArray_to_memory(self):
         compressed_data = cfdm.Data([280.0, 281.0, 279.0, 278.0, 279.5])
+        count = cfdm.Count(data=[1, 3])
+        self.r = cfdm.RaggedContiguousArray(compressed_data, shape=(2, 3),
+                                            size=6, ndim=2,
+                                            count_variable=count)
 
-        count = cfdm.Index(data=[1, 3])
+    def test_RaggedContiguousArray_to_memory(self):
+        self.assertIsInstance(self.r.to_memory(), cfdm.RaggedContiguousArray)
 
-        r = cfdm.RaggedContiguousArray(compressed_data, shape=(2, 3),
-                                       size=6, ndim=2,
-                                       count_variable=count)
-
-        r.to_memory()
+    def test_RaggedContiguousArray_get_count(self):
+        r = self.r
+        self.assertIsInstance(r.get_count(), cfdm.Count)
+        r._del_component('count_variable')
+        self.assertIsNone(r.get_count(None))
 
 # --- End: class
 

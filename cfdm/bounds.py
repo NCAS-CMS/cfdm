@@ -59,6 +59,8 @@ class Bounds(mixin.NetCDFVariable,
         source: optional
             Initialize the properties and data from those of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''
@@ -77,6 +79,24 @@ class Bounds(mixin.NetCDFVariable,
         self._set_component('inherited_properties', inherited_properties)
 
         self._initialise_netcdf(source)
+
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
+    def _inherited_properties(self):
+        '''Return the properties inherited from a coordinate construct.
+
+    .. versionadded:: (cfdm) 1.8.7.0
+
+    .. seealso:: `inherited_properties`, `properties`
+
+    :Returns:
+
+        `dict`
+            The inherited properties.
+
+        '''
+        return self.inherited_properties()
 
     # ----------------------------------------------------------------
     # Methods

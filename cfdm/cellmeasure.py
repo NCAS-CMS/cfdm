@@ -73,6 +73,8 @@ class CellMeasure(mixin.NetCDFVariable,
             Initialize the measure, properties and data from those of
             *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''
@@ -102,6 +104,10 @@ class CellMeasure(mixin.NetCDFVariable,
 
         {{string: `bool`, optional}}
 
+        {{name: `str`, optional}}
+
+        {{data_name: `str`, optional}}
+
         {{header: `bool`, optional}}
 
     :Returns:
@@ -110,7 +116,17 @@ class CellMeasure(mixin.NetCDFVariable,
 
     **Examples:**
 
-        TODO
+    >>> x = {{package}}.CellMeasure(
+    ...     measure='area',
+    ...     properties={'units': 'm2'}
+    ... )
+    >>> x.set_data([100345.5, 123432.3, 101556.8])
+    >>> print(x.creation_commands(header=False))
+    c = {{package}}.CellMeasure()
+    c.set_properties({'units': 'm2'})
+    data = {{package}}.Data([100345.5, 123432.3, 101556.8], units='m2', dtype='f8')
+    c.set_data(data)
+    c.set_measure('area')
 
         '''
         out = super().creation_commands(

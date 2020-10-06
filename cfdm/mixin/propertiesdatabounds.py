@@ -88,6 +88,8 @@ class PropertiesDataBounds(PropertiesData):
             interior ring variable, node count variable and part node
             count variable from those of *source*.
 
+            {{init source}}
+
         copy: `bool`, optional
             If False then do not deep copy input parameters prior to
             initialization. By default arguments are deep copied.
@@ -549,6 +551,24 @@ class PropertiesDataBounds(PropertiesData):
 
         {{string: `bool`, optional}}
 
+        {{name: `str`, optional}}
+
+        {{data_name: `str`, optional}}
+
+        bounds_name: `str`, optional
+            The name of the construct's `Bounds` instance created by
+            the returned commands.
+
+            *Parameter example:*
+              ``name='bounds1'``
+
+        interior_ring_name: `str`, optional
+            The name of the construct's `InteriorRing` instance
+            created by the returned commands.
+
+            *Parameter example:*
+              ``name='ir1'``
+
         {{header: `bool`, optional}}
 
     :Returns:
@@ -557,7 +577,23 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-        TODO
+    >>> x = {{package}}.{{class}}(
+    ...     properties={'units': 'degrees_east',
+    ...                 'standard_name': 'longitude'}
+    ... )
+    >>> x.set_data([22.5, 67.5, 112.5])
+    >>> b = {{package}}.Bounds()
+    >>> b.set_data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0]])
+    >>> x.set_bounds(b)
+    >>> print(x.creation_commands(header=False))
+    c = {{package}}.{{class}}()
+    c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+    data = {{package}}.Data([22.5, 67.5, 112.5], units='degrees_east', dtype='f8')
+    c.set_data(data)
+    b = {{package}}.Bounds()
+    data = {{package}}.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0]], units='degrees_east', dtype='f8')
+    b.set_data(data)
+    c.set_bounds(b)
 
         '''
         if name in (data_name, bounds_name, interior_ring_name):
@@ -1466,20 +1502,11 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        axes: (sequence of) `int`
+        axes: (sequence of) `int`, optional
             The positions of the size one axes to be removed. By
-            default all size one axes are removed. Each axis is
-            identified by its original integer position. Negative
-            integers counting from the last position are allowed.
+            default all size one axes are removed.
 
-            *Parameter example:*
-              ``axes=0``
-
-            *Parameter example:*
-              ``axes=-2``
-
-            *Parameter example:*
-              ``axes=[2, 0]``
+            {{axes int examples}}
 
         {{inplace: `bool`, optional}}
 
@@ -1545,17 +1572,10 @@ class PropertiesDataBounds(PropertiesData):
 
     :Parameters:
 
-        axes: (sequence of) `int`
-            The new axis order. By default the order is reversed. Each
-            axis in the new order is identified by its original
-            integer position. Negative integers counting from the last
-            position are allowed.
+        axes: (sequence of) `int`, optional
+            The new axis order. By default the order is reversed.
 
-            *Parameter example:*
-              ``axes=[2, 0, 1]``
-
-            *Parameter example:*
-              ``axes=[-1, 0, 1]``
+            {{axes int examples}}
 
         {{inplace: `bool`, optional}}
 

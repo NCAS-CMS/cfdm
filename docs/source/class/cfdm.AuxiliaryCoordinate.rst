@@ -99,6 +99,7 @@ Bounds
    ~cfdm.AuxiliaryCoordinate.get_bounds
    ~cfdm.AuxiliaryCoordinate.has_bounds
    ~cfdm.AuxiliaryCoordinate.set_bounds
+   ~cfdm.AuxiliaryCoordinate.get_bounds_data
    
 .. rubric:: Attributes
    
@@ -127,6 +128,14 @@ Geometries
    ~cfdm.AuxiliaryCoordinate.get_interior_ring
    ~cfdm.AuxiliaryCoordinate.has_interior_ring
    ~cfdm.AuxiliaryCoordinate.set_interior_ring
+   ~cfdm.AuxiliaryCoordinate.del_node_count
+   ~cfdm.AuxiliaryCoordinate.get_node_count
+   ~cfdm.AuxiliaryCoordinate.has_node_count
+   ~cfdm.AuxiliaryCoordinate.set_node_count
+   ~cfdm.AuxiliaryCoordinate.del_part_node_count
+   ~cfdm.AuxiliaryCoordinate.get_part_node_count
+   ~cfdm.AuxiliaryCoordinate.has_part_node_count
+   ~cfdm.AuxiliaryCoordinate.set_part_node_count
    
 .. rubric:: Attributes
    
@@ -212,7 +221,7 @@ Special
    ~cfdm.AuxiliaryCoordinate.__repr__
    ~cfdm.AuxiliaryCoordinate.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

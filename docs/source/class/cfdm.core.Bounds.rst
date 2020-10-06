@@ -63,6 +63,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.core.Bounds.copy
+   ~cfdm.core.Bounds.has_bounds
 
 Special
 -------
@@ -76,7 +77,7 @@ Special
 
    ~cfdm.core.Bounds.__deepcopy__
 
-Docstring substitutions                           
+Docstring substitutions
 -----------------------                        
                                                
 .. rubric:: Methods                            

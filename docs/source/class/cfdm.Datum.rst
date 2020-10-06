@@ -86,7 +86,7 @@ Special
    ~cfdm.Datum.__repr__
    ~cfdm.Datum.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

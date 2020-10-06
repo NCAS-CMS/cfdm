@@ -98,6 +98,7 @@ Miscellaneous
    ~cfdm.FieldAncillary.copy
    ~cfdm.FieldAncillary.creation_commands
    ~cfdm.FieldAncillary.equals
+   ~cfdm.FieldAncillary.has_bounds
    ~cfdm.FieldAncillary.uncompress
    ~cfdm.FieldAncillary.get_filenames
 

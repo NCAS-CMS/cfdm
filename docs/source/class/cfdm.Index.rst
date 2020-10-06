@@ -52,6 +52,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Index.apply_masking
    ~cfdm.Index.del_data
    ~cfdm.Index.get_data
    ~cfdm.Index.has_data
@@ -68,7 +69,11 @@ Data
    :template: attribute.rst
 
    ~cfdm.Index.data
-
+   ~cfdm.Index.dtype
+   ~cfdm.Index.ndim 
+   ~cfdm.Index.shape
+   ~cfdm.Index.size
+   
 Miscellaneous
 -------------
 
@@ -83,6 +88,8 @@ Miscellaneous
    ~cfdm.Index.creation_commands
    ~cfdm.Index.equals
    ~cfdm.Index.get_filenames
+   ~cfdm.Index.has_bounds
+   ~cfdm.Index.uncompress
 
 NetCDF
 ------
@@ -153,7 +160,7 @@ Special
    ~cfdm.Index.__repr__
    ~cfdm.Index.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

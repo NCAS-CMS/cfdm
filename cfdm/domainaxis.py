@@ -57,6 +57,8 @@ class DomainAxis(mixin.NetCDFDimension,
         source: optional
             Initialize the size from that of *source*.
 
+            {{init source}}
+
         {{init copy: `bool`, optional}}
 
         '''
@@ -90,6 +92,8 @@ class DomainAxis(mixin.NetCDFDimension,
 
         {{string: `bool`, optional}}
 
+        {{name: `str`, optional}}
+
         {{header: `bool`, optional}}
 
     :Returns:
@@ -98,7 +102,12 @@ class DomainAxis(mixin.NetCDFDimension,
 
     **Examples:**
 
-        TODO
+    >>> x = {{package}}.DomainAxis(size=12)
+    >>> x.nc_set_dimension('time')
+    >>> print(x.creation_commands(header=False))
+    c = {{package}}.DomainAxis()
+    c.set_size(12)
+    c.nc_set_dimension('time')
 
         '''
         namespace0 = namespace
@@ -178,8 +187,8 @@ class DomainAxis(mixin.NetCDFDimension,
     >>> d.equals('not a domain axis')
     False
 
-    >>> d = cfdm.DomainAxis(1)
-    >>> e = cfdm.DomainAxis(99)
+    >>> d = {{package}}.DomainAxis(1)
+    >>> e = {{package}}.DomainAxis(99)
     >>> d.equals(e, verbose=3)
     DomainAxis: Different axis sizes: 1 != 99
     False

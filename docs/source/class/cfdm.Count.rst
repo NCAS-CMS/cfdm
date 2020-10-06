@@ -52,6 +52,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Count.apply_masking
    ~cfdm.Count.del_data
    ~cfdm.Count.get_data
    ~cfdm.Count.has_data
@@ -68,6 +69,10 @@ Data
    :template: attribute.rst
 
    ~cfdm.Count.data
+   ~cfdm.Count.dtype
+   ~cfdm.Count.ndim
+   ~cfdm.Count.shape
+   ~cfdm.Count.size 
 
 Miscellaneous
 -------------
@@ -83,6 +88,8 @@ Miscellaneous
    ~cfdm.Count.creation_commands
    ~cfdm.Count.equals
    ~cfdm.Count.get_filenames
+   ~cfdm.Count.has_bounds
+   ~cfdm.Count.uncompress
 
 NetCDF
 ------
@@ -153,7 +160,7 @@ Special
    ~cfdm.Count.__repr__
    ~cfdm.Count.__str__
 
-Docstring substitutions                      
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

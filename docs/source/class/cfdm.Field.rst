@@ -180,6 +180,8 @@ Miscellaneous
    ~cfdm.Field.creation_commands
    ~cfdm.Field.equals
    ~cfdm.Field.convert
+   ~cfdm.Field.has_bounds
+   ~cfdm.Field.has_geometry
    ~cfdm.Field.uncompress
    ~cfdm.Field.get_filenames
 

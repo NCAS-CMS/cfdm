@@ -18,7 +18,7 @@ Field construct class
    :nosignatures:
    :toctree: class/
 		 
-   cfdm.Field	              
+   cfdm.Field
 
 Domain construct class
 ----------------------

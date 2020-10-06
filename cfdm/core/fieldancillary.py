@@ -39,6 +39,7 @@ class FieldAncillary(abstract.PropertiesData):
 
     **Examples:**
 
+    >>> f = {{package}}.{{class}}()
     >>> f.construct_type
     'field_ancillary'
 

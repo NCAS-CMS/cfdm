@@ -118,6 +118,7 @@ class PropertiesData(Properties):
     :Parameters:
 
         axes: (sequence of) `int`
+            {{axes int examples}}
 
     :Returns:
 
@@ -462,6 +463,10 @@ class PropertiesData(Properties):
 
         {{string: `bool`, optional}}
 
+        {{name: `str`, optional}}
+
+        {{data_name: `str`, optional}}
+
         {{header: `bool`, optional}}
 
     :Returns:
@@ -470,7 +475,16 @@ class PropertiesData(Properties):
 
     **Examples:**
 
-        TODO
+    >>> x = {{package}}.{{class}}(
+    ...     properties={'units': 'Kelvin',
+    ...                 'standard_name': 'air_temperature'}
+    ... )
+    >>> x.set_data([271.15, 274.15, 280])
+    >>> print(x.creation_commands(header=False))
+    c = {{package}}.{{class}}()
+    c.set_properties({'units': 'Kelvin', 'standard_name': 'air_temperature'})
+    data = {{package}}.Data([271.15, 274.15, 280.0], units='Kelvin', dtype='f8')
+    c.set_data(data)
 
         '''
         if name == data_name:
@@ -745,25 +759,29 @@ class PropertiesData(Properties):
 
         return set()
 
-    def inherited_properties(self):
-        '''Return the properties inherited from a parent construct.
-
-    .. versionadded:: (cfdm) 1.8.6
-
-    .. seealso:: `properties`
-
-    :Returns:
-
-        `dict`
-            The inherited properties.
-
-    **Examples:**
-
-    >>> f.properties()
-    {}
-
-        '''
-        return {}
+#    def inherited_properties(self):
+#        '''Return the properties inherited from a parent construct.
+#
+#    There are always no inherited properties. This method exists as a
+#    convenience to simplify the source code.
+#
+#    .. versionadded:: (cfdm) 1.8.6.0
+#
+#    .. seealso:: `properties`
+#
+#    :Returns:
+#
+#        `dict`
+#            The inherited properties. Always an empty dictionary.
+#
+#    **Examples:**
+#
+#    >>> f = {{package}}.{{class}}()
+#    >>> f.inherited_properties()
+#    {}
+#
+#        '''
+#        return {}
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
@@ -828,20 +846,11 @@ class PropertiesData(Properties):
 
     :Parameters:
 
-        axes: (sequence of) `int`
+        axes: (sequence of) `int`, optional
             The positions of the size one axes to be removed. By
-            default all size one axes are removed. Each axis is
-            identified by its original integer position. Negative
-            integers counting from the last position are allowed.
+            default all size one axes are removed.
 
-            *Parameter example:*
-              ``axes=0``
-
-            *Parameter example:*
-              ``axes=-2``
-
-            *Parameter example:*
-              ``axes=[2, 0]``
+            {{axes int examples}}
 
         {{inplace: `bool`, optional}}
 
@@ -885,17 +894,10 @@ class PropertiesData(Properties):
 
     :Parameters:
 
-        axes: (sequence of) `int`
-            The new axis order. By default the order is reversed. Each
-            axis in the new order is identified by its original
-            integer position. Negative integers counting from the last
-            position are allowed.
+        axes: (sequence of) `int`, optional
+            The new axis order. By default the order is reversed.
 
-            *Parameter example:*
-              ``axes=[2, 0, 1]``
-
-            *Parameter example:*
-              ``axes=[-1, 0, 1]``
+            {{axes int examples}}
 
         {{inplace: `bool`, optional}}
 

@@ -12,7 +12,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           datatype=None, least_significant_digit=None,
           endian='native', compress=0, fletcher32=False, shuffle=True,
           string=True, verbose=None, warn_valid=True, group=True,
-          _implementation=_implementation):
+          coordinates=False, _implementation=_implementation):
     '''Write field and domain constructs to a netCDF file.
 
     **File format**
@@ -357,6 +357,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             maximum string length, regardless of the selected output
             file format.
 
+            .. versionadded:: (cfdm) 1.8.0
+
         verbose: `int` or `str` or `None`, optional
             If an integer from ``-1`` to ``3``, or an equivalent string
             equal ignoring case to one of:
@@ -413,6 +415,14 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
             .. versionadded:: (cfdm) 1.8.6
 
+        coordinates: `bool`, optional
+            If True then include CF-netCDF coordinate variable names
+            in the 'coordinates' attribute of output data
+            variables. By default only auxiliary and scalar coordinate
+            variables are included.
+
+            .. versionadded:: (cfdm) 1.8.7.0
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
             and metadata constructs and their components.
@@ -449,4 +459,4 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      shuffle=shuffle, fletcher32=fletcher32,
                      string=string, verbose=verbose,
                      warn_valid=warn_valid, group=group,
-                     extra_write_vars=None)
+                     coordinates=coordinates, extra_write_vars=None)

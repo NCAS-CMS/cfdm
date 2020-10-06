@@ -5,7 +5,7 @@ class RaggedContiguous:
 
     '''
     def get_count(self, default=ValueError()):
-        '''Return the countcount_va variable for a compressed array.
+        '''Return the count variable for a compressed array.
 
     .. versionadded:: (cfdm) 1.7.0
 

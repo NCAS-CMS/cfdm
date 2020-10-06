@@ -176,6 +176,7 @@ Mask support
    :template: method.rst
 
    ~cfdm.Data.apply_masking
+   ~cfdm.Data.filled
    ~cfdm.Data.del_fill_value
    ~cfdm.Data.get_fill_value
    ~cfdm.Data.has_fill_value
@@ -311,7 +312,7 @@ Special
    ~cfdm.Data.__setitem__ 
    ~cfdm.Data.__str__
 
-Docstring substitutions                     
+Docstring substitutions
 -----------------------                   
                                           
 .. rubric:: Methods                       

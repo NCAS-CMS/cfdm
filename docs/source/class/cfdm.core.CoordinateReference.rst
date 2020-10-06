@@ -52,6 +52,15 @@ Datum
    ~cfdm.core.CoordinateReference.get_datum
    ~cfdm.core.CoordinateReference.set_datum
 
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: arttrbute.rst
+
+   ~cfdm.core.CoordinateReference.datum
+
 Coordinate conversion
 ---------------------
 
@@ -65,6 +74,15 @@ Coordinate conversion
    ~cfdm.core.CoordinateReference.del_coordinate_conversion
    ~cfdm.core.CoordinateReference.get_coordinate_conversion
    ~cfdm.core.CoordinateReference.set_coordinate_conversion
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: arttrbute.rst
+
+   ~cfdm.core.CoordinateReference.coordinate_conversion
 
 Miscellaneous
 -------------
@@ -90,7 +108,7 @@ Special
 
    ~cfdm.core.CoordinateReference.__deepcopy__
 
-Docstring substitutions                           
+Docstring substitutions
 -----------------------                           
                                                
 .. rubric:: Methods                            
