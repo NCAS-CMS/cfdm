@@ -566,62 +566,74 @@ def abspath(filename):
     return os.path.abspath(filename)
 
 
-def unique_domains(fields, copy=True):
-    '''Return the unique domains used by the field constructs.
+def unique_constructs(constructs, copy=True):
+    '''Return the unique constructs from a sequence.
 
-    .. versionadded:: (cfdm) 1.8.7.0
+    .. versionadded:: (cfdm) 1.9.0.0
 
     :Parameters:
 
-        fields: seqeunce of `Field`
-            The fields to compared. May be an empty sequence.
+        fields: sequence of constructs
+            The constructs to be compared. The constructs may comprise
+            a mixture of types. The sequence can be empty.
 
         copy: `bool`, optional
-            If False then do not copy returned domains. By default the
-            returned domains are deep copies from their parent field
-            constructs.
+            If False then do not copy returned constructs. By default
+            they are deep copies.
 
     :Returns:
 
-        `list` of `Domain`
-            The unique domains. May be an empty list.
+        `list`
+            The unique constructs. May be an empty list.
 
     **Examples:**
 
-    >>> f = cfdm.example_fields(0)
-    >>> g = cfdm.example_fields(1)
+    >>> f = cfdm.example_field(0)
+    >>> g = cfdm.example_field(1)
     >>> f
     <Field: specific_humidity(latitude(5), longitude(8)) 1>
     >>> g
     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
-    >>> cfdm.unique_domains([f, f, g])
-    [<Domain: {1, 5, 8}>, <Domain: {1, 1, 9, 10}>]
+
+    >>> fields = [f, f, g]
+    >>> cfdm.unique_constructs(fields)
+    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+
+    >>> domains = [x.domain for x in fields]
+    >>> cfdm.unique_constructs(domains)
+    [<Domain: {latitude(5), longitude(8), time(1)}>,
+     <Domain: {atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9), time(1)}>]
+
+    >>> cfdm.unique_constructs(domains + fields + [f.domain])
+    [<Domain: {latitude(5), longitude(8), time(1)}>,
+     <Domain: {atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9), time(1)}>,
+     <Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
 
     '''
-    if not fields:
+    if not constructs:
         return []
 
-    domain = fields[0].domain
+    construct0 = constructs[0]
     if copy:
-        domain = domain.copy()
+        construct0 = construct0.copy()
 
-    out = [domain]
+    out = [construct0]
 
-    for f in fields[1:]:
-        domain = f.domain
-
-        found_new_domain = False
-        for d in out:
-            if not d.equals(domain):
-                found_new_domain = True
+    for construct in constructs[1:]:
+        is_equal = False
+        for c in out:
+            if construct.equals(c, verbose='DISABLE'):
+                is_equal = True
                 break
         # --- End: for
 
-        if found_new_domain:
+        if not is_equal:
             if copy:
-                domain = domain.copy()
+                construct = construct.copy()
 
-            out.append(domain)
+            out.append(construct)
     # --- End: for
 
     return out

@@ -28,6 +28,15 @@ Inspection
    ~cfdm.Domain.identity  
    ~cfdm.Domain.identities
 
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.Domain.construct_type
+
 Metadata constructs
 -------------------
 
@@ -100,6 +109,7 @@ Miscellaneous
    ~cfdm.Domain.creation_commands
    ~cfdm.Domain.equals
    ~cfdm.Domain.fromconstructs
+   ~cfdm.Domain.get_filenames
 
 NetCDF
 ------
@@ -114,7 +124,11 @@ NetCDF
    ~cfdm.Domain.nc_del_variable
    ~cfdm.Domain.nc_get_variable
    ~cfdm.Domain.nc_has_variable
-   ~cfdm.Domain.nc_set_variable
+   ~cfdm.Domain.nc_set_variable 
+   ~cfdm.Domain.nc_global_attributes
+   ~cfdm.Domain.nc_clear_global_attributes
+   ~cfdm.Domain.nc_set_global_attribute
+   ~cfdm.Domain.nc_set_global_attributes
    
 Groups
 ^^^^^^
@@ -127,9 +141,13 @@ Groups
    :template: method.rst
 
    ~cfdm.Domain.nc_variable_groups
-   ~cfdm.Domain.nc_clear_variable_groups
    ~cfdm.Domain.nc_set_variable_groups
-
+   ~cfdm.Domain.nc_clear_variable_groups
+   ~cfdm.Domain.nc_group_attributes
+   ~cfdm.Domain.nc_clear_group_attributes
+   ~cfdm.Domain.nc_set_group_attribute
+   ~cfdm.Domain.nc_set_group_attributes
+  
 Geometries
 ^^^^^^^^^^
 

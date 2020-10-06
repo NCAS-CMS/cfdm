@@ -2,8 +2,10 @@ version 1.9.0.0
 ---------------
 ----
 
-**202?-??-??**
+**2021-??-??**
 
+* New function: `cfdm.unique_constructs`
+* New method: `cfdm.Domain.creation_commands`
 * New method: `cfdm.Domain.climatological_time_axes`
 * New method: `cfdm.AuxiliaryCoordinate.del_climatology`
 * New method: `cfdm.AuxiliaryCoordinate.get_climatology`
@@ -20,7 +22,6 @@ version 1.8.7.0
 
 **2020-10-??**
 
-* New function: `cfdm.unique_domains`
 * New method: `cfdm.Field.creation_commands`
 * New method: `cfdm.Data.creation_commands`
 * New method: `cfdm.Field._docstring_special_substitutions`

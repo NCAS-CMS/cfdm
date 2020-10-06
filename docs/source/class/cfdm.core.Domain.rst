@@ -10,6 +10,18 @@ cfdm.core.Domain
    :no-members:
    :no-inherited-members:
 
+Inspection
+----------
+
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.Domain.construct_type
+   
 Metadata constructs
 -------------------
 

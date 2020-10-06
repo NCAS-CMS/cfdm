@@ -329,18 +329,29 @@ class FunctionsTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             cfdm.configuration(bad_kwarg=1e-15)
 
-    def test_unique_domains(self):
+    def test_unique_constructs(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         f = cfdm.example_field(0)
         g = cfdm.example_field(1)
 
-        self.assertFalse(cfdm.unique_domains([]))
+        self.assertFalse(cfdm.unique_constructs([]))
 
-        self.assertEqual(len(cfdm.unique_domains([f])), 1)
-        self.assertEqual(len(cfdm.unique_domains([f, f.copy()])), 1)
-        self.assertEqual(len(cfdm.unique_domains([f, f.copy(), g])), 2)
+        self.assertEqual(len(cfdm.unique_constructs([f])), 1)
+        self.assertEqual(len(cfdm.unique_constructs([f, f])), 1)
+        self.assertEqual(len(cfdm.unique_constructs([f, f.copy()])), 1)
+        self.assertEqual(len(cfdm.unique_constructs([f, f.copy(), g])), 2)
+
+        fields = [f, f, g]
+        domains  = [x.domain for x in (f, f, g)]
+
+        self.assertEqual(len(cfdm.unique_constructs(domains)), 2)
+        self.assertEqual(
+            len(cfdm.unique_constructs(domains + fields)), 4)
+        self.assertEqual(
+            len(cfdm.unique_constructs(domains + fields + [f.domain])), 4
+        )
 # --- End: class
 
 

@@ -100,8 +100,10 @@ class Domain(mixin.NetCDFVariable,
         source: optional
             Initialize the metadata constructs from those of *source*.
 
-            Metadata constructs may also be set after initialisation
-            with the `set_construct` method.
+            {{init source}}
+
+            A new domain may also be instantiated with the
+            `fromconstructs` class method.
 
         {{init copy: `bool`, optional}}
 
@@ -122,7 +124,8 @@ class Domain(mixin.NetCDFVariable,
         shape = str(shape)
         shape = shape[1:-1]
 
-        return '<{0}: {{{1}}}>'.format(self.__class__.__name__, shape)
+        return '<{0}: {1}>'.format(self.__class__.__name__,
+                                   self._one_line_description())
 
     def __str__(self):
         '''Called by the `str` built-in function.
@@ -147,8 +150,10 @@ class Domain(mixin.NetCDFVariable,
                   and variable.bounds.has_data()):
                 # Construct has no data but it does have bounds
                 shape = [axis_names[axis] for axis in axes]
-                shape.extend([str(n)
-                              for n in variable.bounds.data.shape[len(axes):]])
+                shape.extend(
+                    [str(n)
+                     for n in variable.bounds.data.shape[len(axes):]]
+                )
                 shape = str(tuple(shape)).replace("'", "")
                 shape = shape.replace(',)', ')')
                 x.append(shape)
@@ -194,35 +199,40 @@ class Domain(mixin.NetCDFVariable,
         # --- End: for
         if x:
             string.append('Dimension coords: {}'.format(
-                '\n                : '.join(x)))
+                '\n                : '.join(x))
+            )
 
         # Auxiliary coordinates
         x = [_print_item(self, cid, v, constructs_data_axes[cid])
              for cid, v in sorted(self.auxiliary_coordinates.items())]
         if x:
             string.append('Auxiliary coords: {}'.format(
-                '\n                : '.join(x)))
+                '\n                : '.join(x))
+            )
 
         # Cell measures
         x = [_print_item(self, cid, v, constructs_data_axes[cid])
              for cid, v in sorted(self.cell_measures.items())]
         if x:
             string.append('Cell measures   : {}'.format(
-                '\n                : '.join(x)))
+                '\n                : '.join(x))
+            )
 
         # Coordinate references
         x = sorted([str(ref)
                     for ref in list(self.coordinate_references.values())])
         if x:
             string.append('Coord references: {}'.format(
-                '\n                : '.join(x)))
+                '\n                : '.join(x))
+            )
 
         # Domain ancillary variables
         x = [_print_item(self, cid, anc, constructs_data_axes[cid])
              for cid, anc in sorted(self.domain_ancillaries.items())]
         if x:
             string.append('Domain ancils   : {}'.format(
-                '\n                : '.join(x)))
+                '\n                : '.join(x))
+            )
 
         return '\n'.join(string)
 
@@ -246,8 +256,6 @@ class Domain(mixin.NetCDFVariable,
         `str`
             A string containing the description.
 
-    **Examples:**
-
         '''
         indent1 = '    ' * _level
 
@@ -262,6 +270,17 @@ class Domain(mixin.NetCDFVariable,
             print(string)
         else:
             return string
+
+    def _one_line_description(self, axis_names_sizes=None):
+        '''
+        '''
+        if axis_names_sizes is None:
+            axis_names_sizes = self._unique_domain_axis_identities()
+        print (  axis_names_sizes)
+
+        axis_names = ', '.join(sorted(axis_names_sizes.values()))
+
+        return "{0}{{{1}}}".format(self.identity(''), axis_names)
 
     # ----------------------------------------------------------------
     # Methods
