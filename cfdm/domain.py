@@ -276,7 +276,6 @@ class Domain(mixin.NetCDFVariable,
         '''
         if axis_names_sizes is None:
             axis_names_sizes = self._unique_domain_axis_identities()
-        print (  axis_names_sizes)
 
         axis_names = ', '.join(sorted(axis_names_sizes.values()))
 

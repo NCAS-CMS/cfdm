@@ -344,7 +344,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(len(cfdm.unique_constructs([f, f.copy(), g])), 2)
 
         fields = [f, f, g]
-        domains  = [x.domain for x in (f, f, g)]
+        domains = [x.domain for x in (f, f, g)]
 
         self.assertEqual(len(cfdm.unique_constructs(domains)), 2)
         self.assertEqual(
