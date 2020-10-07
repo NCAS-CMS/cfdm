@@ -24,7 +24,7 @@ Version |release| for version |version| of the CF conventions.
 **Python versions**
 -------------------
 
-cfdm works for Python versions 3.5 or newer.
+cfdm works for Python versions 3.6 or newer.
 
 ----
 
@@ -131,7 +131,7 @@ Tests are run from within the ``cfdm/test`` directory:
 
 The cfdm package requires:
 
-* `Python <https://www.python.org/>`_, version 3.5 or newer,
+* `Python <https://www.python.org/>`_, version 3.6 or newer,
 
 * `numpy <http://www.numpy.org/>`_, version 1.15 or newer,
 

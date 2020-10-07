@@ -4,6 +4,7 @@ version 1.8.7.0
 
 **2020-10-??**
 
+* Python 3.5 support deprecated (3.5 was retired on 2020-09-13)
 * New method: `cfdm.Field.creation_commands`
 * New method: `cfdm.Data.creation_commands`
 * New method: `cfdm.Field._docstring_special_substitutions`
