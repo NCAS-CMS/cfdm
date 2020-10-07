@@ -11,7 +11,7 @@ class FieldAncillaryTest(unittest.TestCase):
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
-    f = cfdm.read(filename)[0]
+#    f = cfdm.read(filename)[0]
 
     def setUp(self):
         # Disable log messages to silence expected warnings
@@ -24,6 +24,7 @@ class FieldAncillaryTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
+        self.f = cfdm.read(self.filename)[0]
 
     def test_FieldAncillary__repr__str__dump(self):
         f = self.f.copy()

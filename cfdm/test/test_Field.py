@@ -45,7 +45,7 @@ class FieldTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)),
         'DSG_timeSeriesProfile_indexed_contiguous.nc')
 
-    f = cfdm.read(filename)[0]
+#    f = cfdm.read(filename)[0]
 
     def setUp(self):
         # Disable log messages to silence expected warnings
@@ -58,6 +58,7 @@ class FieldTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
+        self.f = cfdm.read(self.filename)[0]
 
         self.test_only = []
 #        self.test_only = ['test_Field_constructs']
