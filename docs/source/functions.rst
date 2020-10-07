@@ -50,4 +50,3 @@ Miscellaneous
    cfdm.environment
    cfdm.example_field
    cfdm.implementation
-   cfdm.unique_domains

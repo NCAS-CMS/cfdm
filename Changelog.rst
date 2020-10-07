@@ -4,7 +4,6 @@ version 1.8.7.0
 
 **2020-10-??**
 
-* New function: `cfdm.unique_domains`
 * New method: `cfdm.Field.creation_commands`
 * New method: `cfdm.Data.creation_commands`
 * New method: `cfdm.Field._docstring_special_substitutions`
