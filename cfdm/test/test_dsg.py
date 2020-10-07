@@ -33,31 +33,28 @@ atexit.register(_remove_tmpfiles)
 
 
 class DSGTest(unittest.TestCase):
-    def setUp(self):
-        # Disable log messages to silence expected warnings
-        cfdm.log_level('DISABLE')
-        # Note: to enable all messages for given methods, lines or
-        # calls (those without a 'verbose' option to do the same)
-        # e.g. to debug them, wrap them (for methods, start-to-end
-        # internally) as follows:
-        #
-        # cfdm.log_level('DEBUG')
-        # < ... test code ... >
-        # cfdm.log_level('DISABLE')
+    contiguous = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeries_contiguous.nc')
+    indexed = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeries_indexed.nc')
+    indexed_contiguous = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeriesProfile_indexed_contiguous.nc')
 
-        self.contiguous = 'DSG_timeSeries_contiguous.nc'
-        self.indexed = 'DSG_timeSeries_indexed.nc'
-        self.indexed_contiguous = 'DSG_timeSeriesProfile_indexed_contiguous.nc'
+    c = cfdm.read(contiguous)
+    i = cfdm.read(indexed)
+    ic = cfdm.read(indexed_contiguous)
 
-        a = numpy.ma.masked_all((4, 9), dtype=float)
-        a[0, 0:3] = [0.0, 1.0, 2.0]
-        a[1, 0:7] = [1.0, 11.0, 21.0, 31.0, 41.0, 51.0, 61.0]
-        a[2, 0:5] = [2.0, 102.0, 202.0, 302.0, 402.0]
-        a[3, 0:9] = [3.0, 1003.0, 2003.0, 3003.0, 4003.0,
-                     5003.0, 6003.0, 7003.0, 8003.0]
-        self.a = a
+    a = numpy.ma.masked_all((4, 9), dtype=float)
+    a[0, 0:3] = [0.0, 1.0, 2.0]
+    a[1, 0:7] = [1.0, 11.0, 21.0, 31.0, 41.0, 51.0, 61.0]
+    a[2, 0:5] = [2.0, 102.0, 202.0, 302.0, 402.0]
+    a[3, 0:9] = [3.0, 1003.0, 2003.0, 3003.0, 4003.0,
+                 5003.0, 6003.0, 7003.0, 8003.0]
 
-        b = numpy.array(
+    b = numpy.array(
             [[[20.7, -99, -99, -99],
               [10.1, 11.8, 18.2, -99],
               [11.0, 11.8, -99, -99],
@@ -140,16 +137,127 @@ class DSGTest(unittest.TestCase):
               [-99, -99, -99, -99]]]
         )
 
-        b = numpy.ma.where(b == -99, numpy.ma.masked, b)
-        self.b = b
+    b = numpy.ma.where(b == -99, numpy.ma.masked, b)
 
-        self.test_only = []
+    test_only = []
+
+    def setUp(self):
+        # Disable log messages to silence expected warnings
+        cfdm.log_level('DISABLE')
+        # Note: to enable all messages for given methods, lines or
+        # calls (those without a 'verbose' option to do the same)
+        # e.g. to debug them, wrap them (for methods, start-to-end
+        # internally) as follows:
+        #
+        # cfdm.log_level('DEBUG')
+        # < ... test code ... >
+        # cfdm.log_level('DISABLE')
+
+#        self.contiguous = 'DSG_timeSeries_contiguous.nc'
+#        self.indexed = 'DSG_timeSeries_indexed.nc'
+#        self.indexed_contiguous = 'DSG_timeSeriesProfile_indexed_contiguous.nc'
+#
+#        a = numpy.ma.masked_all((4, 9), dtype=float)
+#        a[0, 0:3] = [0.0, 1.0, 2.0]
+#        a[1, 0:7] = [1.0, 11.0, 21.0, 31.0, 41.0, 51.0, 61.0]
+#        a[2, 0:5] = [2.0, 102.0, 202.0, 302.0, 402.0]
+#        a[3, 0:9] = [3.0, 1003.0, 2003.0, 3003.0, 4003.0,
+#                     5003.0, 6003.0, 7003.0, 8003.0]
+#        self.a = a
+#
+#        b = numpy.array(
+#            [[[20.7, -99, -99, -99],
+#              [10.1, 11.8, 18.2, -99],
+#              [11.0, 11.8, -99, -99],
+#              [16.3, 20.0, -99, -99],
+#              [13.8, 18.3, -99, -99],
+#              [15.9, -99, -99, -99],
+#              [15.7, 21.2, -99, -99],
+#              [22.5, -99, -99, -99],
+#              [18.0, -99, -99, -99],
+#              [12.6, 21.7, -99, -99],
+#              [10.5, 12.9, 21.0, -99],
+#              [16.0, 19.7, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99]],
+#
+#             [[5.2, 5.8, 10.8, 13.8],
+#              [2.6, 9.2, -99, -99],
+#              [0.7, 4.0, -99, -99],
+#              [15.7, -99, -99, -99],
+#              [2.5, 16.0, -99, -99],
+#              [4.6, 9.8, -99, -99],
+#              [0.6, 3.1, -99, -99],
+#              [3.8, -99, -99, -99],
+#              [5.7, 12.9, 18.1, -99],
+#              [3.9, 6.9, 16.9, -99],
+#              [7.3, 13.8, 16.0, -99],
+#              [4.5, 9.8, 11.3, -99],
+#              [1.5, -99, -99, -99],
+#              [0.9, 4.3, 6.2, -99],
+#              [1.7, 9.9, -99, -99],
+#              [9.3, -99, -99, -99],
+#              [0.7, -99, -99, -99],
+#              [15.7, -99, -99, -99],
+#              [0.7, 1.2, -99, -99],
+#              [4.5, 12.4, 13.0, -99],
+#              [3.5, 6.8, 7.9, -99],
+#              [8.1, 12.2, -99, -99],
+#              [5.9, -99, -99, -99],
+#              [1.0, 9.6, -99, -99],
+#              [5.6, 7.8, 9.1, -99],
+#              [7.1, 9.0, 10.4, -99]],
+#
+#             [[35.2, -99, -99, -99],
+#              [34.7, 38.9, 48.1, -99],
+#              [35.2, 39.3, 39.6, -99],
+#              [40.3, 40.4, 48.0, -99],
+#              [30.0, 36.5, -99, -99],
+#              [33.3, 43.3, -99, -99],
+#              [37.7, -99, -99, -99],
+#              [33.5, -99, -99, -99],
+#              [31.9, 33.7, -99, -99],
+#              [34.1, 35.4, 41.0, -99],
+#              [30.2, 33.7, 38.7, -99],
+#              [32.4, 42.4, -99, -99],
+#              [33.2, 34.9, 39.7, -99],
+#              [33.2, -99, -99, -99],
+#              [38.5, -99, -99, -99],
+#              [37.3, 39.9, -99, -99],
+#              [30.0, 39.1, -99, -99],
+#              [36.4, 39.1, 45.6, -99],
+#              [41.0, -99, -99, -99],
+#              [31.1, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99],
+#              [-99, -99, -99, -99]]]
+#        )
+#
+#        b = numpy.ma.where(b == -99, numpy.ma.masked, b)
+#        self.b = b
+#
+#        self.test_only = []
 
     def test_DSG_contiguous(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.contiguous, verbose=1)
+        f = self.c.copy()
 
         self.assertEqual(len(f), 2)
 
@@ -208,7 +316,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.indexed)
+        f = self.i.copy()
 
         self.assertEqual(len(f), 2)
 
@@ -230,7 +338,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.indexed_contiguous)
+        f = self.ic.copy()
 
         self.assertEqual(len(f), 2)
 

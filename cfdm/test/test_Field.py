@@ -32,6 +32,21 @@ atexit.register(_remove_tmpfiles)
 
 
 class FieldTest(unittest.TestCase):
+    filename = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'test_file.nc')
+    contiguous = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeries_contiguous.nc')
+    indexed = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeries_indexed.nc')
+    indexed_contiguous = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'DSG_timeSeriesProfile_indexed_contiguous.nc')
+
+    f = cfdm.read(filename)[0]
+
     def setUp(self):
         # Disable log messages to silence expected warnings
         cfdm.log_level('DISABLE')
@@ -43,23 +58,6 @@ class FieldTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'test_file.nc')
-        self.contiguous = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'DSG_timeSeries_contiguous.nc')
-        self.indexed = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'DSG_timeSeries_indexed.nc')
-        self.indexed_contiguous = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'DSG_timeSeriesProfile_indexed_contiguous.nc')
-
-        f = cfdm.read(self.filename)
-        self.assertEqual(len(f), 1, 'f={}'.format(f))
-        self.f = f[0]
 
         self.test_only = []
 #        self.test_only = ['test_Field_constructs']
