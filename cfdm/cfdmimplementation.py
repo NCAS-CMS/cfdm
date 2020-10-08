@@ -2030,6 +2030,8 @@ class CFDMImplementation(Implementation):
     def set_bounds(self, construct, bounds, copy=True):
         '''Set the bounds component of a construct.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Parameters:
 
         construct: construct
@@ -2040,10 +2042,23 @@ class CFDMImplementation(Implementation):
 
     :Returns:
 
-        `None`
+        `str`
+            Return an empty string if the bounds were set
+            successfully, otherwise return a non-empty string
+            describing how the setting of the bounds failed bounds
 
         '''
-        construct.set_bounds(bounds, copy=copy)
+        try:
+            construct.set_bounds(bounds, copy=copy)
+        except Exception as error:
+            if not error:
+                error = "Could not set {!r} on {!r}".format(
+                    bounds, construct
+                )
+
+            return error
+
+        return ''
 
     def set_cell_measure(self, field, construct, axes, copy=True):
         '''Insert a cell_measure object into a field.
