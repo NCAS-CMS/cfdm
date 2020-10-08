@@ -416,7 +416,7 @@ class Data(Container,
             first = self.first_element()
         except Exception:
             out = ''
-            if units:
+            if units and not isreftime:
                 out += ' {0}'.format(units)
             if calendar:
                 out += ' {0}'.format(calendar)
