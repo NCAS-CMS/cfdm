@@ -4107,7 +4107,12 @@ class NetCDFRead(IORead):
             if bounds_ncdim not in g['variable_dimensions'].get(ncvar, ()):
                 self.implementation.nc_set_dimension(bounds, bounds_ncdim)
 
-            self.implementation.set_bounds(c, bounds, copy=False)
+            # Set the bounds on the parent construct
+            error = self.implementation.set_bounds(c, bounds, copy=False)
+            if error:
+                logger.warning(
+                    "WARNING: {}".format(error)
+                )
 
             if not domain_ancillary:
                 g['bounds'][field_ncvar][ncvar] = bounds_ncvar
