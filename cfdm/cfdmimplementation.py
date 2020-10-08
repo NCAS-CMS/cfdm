@@ -2045,7 +2045,7 @@ class CFDMImplementation(Implementation):
         `str`
             Return an empty string if the bounds were set
             successfully, otherwise return a non-empty string
-            describing how the setting of the bounds failed bounds
+            describing how the setting of the bounds failed.
 
         '''
         try:
