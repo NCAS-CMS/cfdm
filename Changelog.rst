@@ -16,6 +16,8 @@ version 1.8.7.0
 * New keyword parameter to `cfdm.write`: ``coordinates``
   (https://github.com/NCAS-CMS/cfdm/issues/81)
 * New class: `cfdm.core.meta.DocstringRewriteMeta`
+* Comprehensive documentation coverage of class methods.
+* Improved documentation following JOSS review.
 * Enabled "creation commands" methods
   (https://github.com/NCAS-CMS/cfdm/issues/53)
 * Fixed bug that caused failures when reading or writing a dataset
