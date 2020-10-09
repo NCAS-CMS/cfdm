@@ -15,7 +15,7 @@ version 1.8.7.0
 * New keyword parameter to `cfdm.Field.set_data`: ``inplace``
 * New keyword parameter to `cfdm.write`: ``coordinates``
   (https://github.com/NCAS-CMS/cfdm/issues/81)
-* New class: `cfdm.core.meta.DocstringRewriteMeta`
+* New class: `cfdm.core.DocstringRewriteMeta`
 * Comprehensive documentation coverage of class methods.
 * Improved documentation following JOSS review.
 * Enabled "creation commands" methods
