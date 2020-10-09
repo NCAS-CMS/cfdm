@@ -1016,7 +1016,7 @@ class CFDMImplementation(Implementation):
     A "component" is either a metadata construct or a metadata
     construct component (such as a bounds component).
 
-    .. versionadded::: 1.8.6
+    .. versionadded::: (cfdm) 1.8.6.0
 
     :Parameter:
 
@@ -1056,7 +1056,7 @@ class CFDMImplementation(Implementation):
         `bool`
 
         '''
-        raise NotImplementedError("Deprecated at version 1.8.6. "
+        raise NotImplementedError("Deprecated at version 1.8.6.0. "
                                   + "Use 'equal_components' instead.")
 
     def equal_properties(self, property_value0, property_value1):
