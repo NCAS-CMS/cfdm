@@ -12,7 +12,8 @@ class styleTest(unittest.TestCase):
         self.cfdm_dir = os.path.dirname(os.path.abspath(__file__))
         os.chdir(self.cfdm_dir)
 
-        # Note these must be specified relative to the roor dir of the repo:
+        # Note these must be specified relative to the roor dir of the
+        # repo:
         non_cfdm_dir_files = [
             'scripts/cfdump',
             'docs/source/conf.py',
@@ -32,8 +33,8 @@ class styleTest(unittest.TestCase):
         skip_dirs = (
             '__pycache__',
         )
-        # These are pycodestyle errors and warnings to explicitly ignore. For
-        # descriptions for each code see:
+        # These are pycodestyle errors and warnings to explicitly
+        # ignore. For descriptions for each code see:
         # https://pep8.readthedocs.io/en/latest/intro.html#error-codes
         pep8_check.options.ignore += (  # ignored because...
             'W605',  # ...false positives on regex and LaTeX expressions
@@ -42,10 +43,12 @@ class styleTest(unittest.TestCase):
             'E501',  # ...docstring examples include output lines >79 chars
         )
 
-        # First add Python files which lie outside of the cfdm directory:
+        # First add Python files which lie outside of the cfdm
+        # directory:
         python_files = self.non_cfdm_dir_python_paths
-        # Then find all Python source ('.py') files in the 'cfdm' directory,
-        # including all unskipped sub-directories within e.g. test directory:
+        # Then find all Python source ('.py') files in the 'cfdm'
+        # directory, including all unskipped sub-directories within
+        # e.g. test directory:
         for root_dir, dirs, filelist in os.walk('..'):  # '..' == 'cfdm/'
             if os.path.basename(root_dir) in skip_dirs:
                 continue
@@ -54,12 +57,17 @@ class styleTest(unittest.TestCase):
                 if fname.endswith('.py')
             ]
 
+        # Ignore non-existent files which lie outside of the cfdm
+        # directory
+        python_files = [python_file
+                        for python_file in python_files
+                        if os.path.isfile(python_file)]
+
         pep8_issues = pep8_check.check_files(python_files).total_errors
         self.assertEqual(
             pep8_issues, 0,
             'Detected {!s} PEP8 errors or warnings:'.format(pep8_issues)
         )
-
 
 # --- End: class
 
