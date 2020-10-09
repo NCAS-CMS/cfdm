@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.6.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.7.0</a></h1>
 
 
 
@@ -70,7 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
@@ -103,12 +103,18 @@
 <ul class="simple">
 <li><p><a class="reference internal" href="#cf-1-8" id="id5"><strong>CF-1.8</strong></a></p></li>
 <li><p><a class="reference internal" href="#cf-1-7" id="id6"><strong>CF-1.7</strong></a></p></li>
-<li><p><a class="reference internal" href="#versioning" id="id7"><strong>Versioning</strong></a></p></li>
+<li><p><a class="reference internal" href="#versioning" id="id7"><strong>Versioning</strong></a></p>
+<ul>
+<li><p><a class="reference internal" href="#finding-versions" id="id8">Finding versions</a></p></li>
+<li><p><a class="reference internal" href="#versioning-strategy" id="id9">Versioning strategy</a></p></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="cf-1-8">
 <h2><a class="toc-backref" href="#id5"><strong>CF-1.8</strong></a><a class="headerlink" href="#cf-1-8" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
+<li><p><a class="reference external" href="https://ncas-cms.github.io/cfdm/1.8.7.0">Version 1.8.7.0</a> (2020-10-09)</p></li>
 <li><p><a class="reference external" href="https://ncas-cms.github.io/cfdm/1.8.6.0">Version 1.8.6.0</a> (2020-07-24)</p></li>
 <li><p><a class="reference external" href="https://ncas-cms.github.io/cfdm/1.8.5">Version 1.8.5</a> (2020-06-10)</p></li>
 <li><p><a class="reference external" href="https://ncas-cms.github.io/cfdm/1.8.4">Version 1.8.4</a> (2020-06-08)</p></li>
@@ -139,7 +145,9 @@
 </div>
 <div class="section" id="versioning">
 <span id="id2"></span><h2><a class="toc-backref" href="#id7"><strong>Versioning</strong></a><a class="headerlink" href="#versioning" title="Permalink to this headline">¶</a></h2>
-<p>Version 1.8.6.0 for version 1.8 of the CF conventions.</p>
+<div class="section" id="finding-versions">
+<h3><a class="toc-backref" href="#id8">Finding versions</a><a class="headerlink" href="#finding-versions" title="Permalink to this headline">¶</a></h3>
+<p>Version 1.8.7.0 for version 1.8 of the CF conventions.</p>
 <p>The version of the CF conventions and the CF data model being used may
 be found with the <a class="reference internal" href="function/cfdm.CF.html#cfdm.CF" title="cfdm.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CF</span></code></a> function:</p>
 <div class="literal-block-wrapper docutils container" id="id3">
@@ -155,15 +163,43 @@ this release of the cfdm package, and therefore the version can not be
 changed.</p>
 <p>The version identifier of the cfdm package is based on the version of
 the CF conventions to which it applies, with the addition of extra
-integer values for updates that apply to the same version of CF. See
-<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/master/CONTRIBUTING.md">https://github.com/NCAS-CMS/cfdm/blob/master/CONTRIBUTING.md</a> for
-details.</p>
+integer values for updates that apply to the same version of CF:</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text"><em>Retrieve the version of the cfdm package.</em></span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">__version__</span>
-<span class="go">&#39;1.8.6.0&#39;</span>
+<span class="go">&#39;1.8.7.0&#39;</span>
 </pre></div>
 </div>
+</div>
+<p>The next section outlines the scheme used to set version identifiers.</p>
+</div>
+<div class="section" id="versioning-strategy">
+<h3><a class="toc-backref" href="#id9">Versioning strategy</a><a class="headerlink" href="#versioning-strategy" title="Permalink to this headline">¶</a></h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">CF.major.minor</span></code> numeric version scheme is used, where <code class="docutils literal notranslate"><span class="pre">CF</span></code> is
+the version of the CF conventions (e.g. <code class="docutils literal notranslate"><span class="pre">1.9</span></code>) to which a particular
+version of cfdm applies.</p>
+<p><strong>Major</strong> changes comprise:</p>
+<ul class="simple">
+<li><p>changes to the API, such as:</p>
+<ul>
+<li><p>changing the name of an existing function or method;</p></li>
+<li><p>changing the behaviour of an existing function or method;</p></li>
+<li><p>changing the name of an existing keyword parameter;</p></li>
+<li><p>changing the default value of an existing keyword parameter;</p></li>
+<li><p>changing the meaning of a value of an existing keyword parameter.</p></li>
+<li><p>introducing a new function or method;</p></li>
+<li><p>introducing a new keyword parameter;</p></li>
+<li><p>introducing a new permitted value of a keyword parameter;</p></li>
+</ul>
+</li>
+<li><p>changes to required versions of the dependencies.</p></li>
+</ul>
+<p><strong>Minor</strong> changes comprise:</p>
+<ul class="simple">
+<li><p>bug fixes that do not change the API;</p></li>
+<li><p>changes to the documentation;</p></li>
+<li><p>code tidying.</p></li>
+</ul>
 </div>
 </div>
 </div>
@@ -176,7 +212,7 @@ details.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

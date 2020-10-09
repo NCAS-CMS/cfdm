@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.RaggedIndexedArray.get_compressed_axes" href="../method/cfdm.RaggedIndexedArray.get_compressed_axes.html" />
-    <link rel="prev" title="cfdm.RaggedContiguousArray.__str__" href="../method/cfdm.RaggedContiguousArray.__str__.html" />
+    <link rel="prev" title="cfdm.RaggedContiguousArray._docstring_method_exclusions" href="../method/cfdm.RaggedContiguousArray._docstring_method_exclusions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.7.0</a></h1>
 
 
 
@@ -70,7 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.RaggedContiguousArray.__str__.html" title="previous chapter">cfdm.RaggedContiguousArray.__str__</a></li>
+      <li>Previous: <a href="../method/cfdm.RaggedContiguousArray._docstring_method_exclusions.html" title="previous chapter">cfdm.RaggedContiguousArray._docstring_method_exclusions</a></li>
       <li>Next: <a href="../method/cfdm.RaggedIndexedArray.get_compressed_axes.html" title="next chapter">cfdm.RaggedIndexedArray.get_compressed_axes</a></li>
   </ul></li>
   </ul></li>
@@ -105,8 +105,8 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.RaggedIndexedArray">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">RaggedIndexedArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">index_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/data/raggedindexedarray.py#L7-L117"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.RaggedIndexedArray" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.mixin.ragged.RaggedIndexed</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.compressedarray.CompressedArray</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">RaggedIndexedArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">index_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/data/raggedindexedarray.py#L7-L121"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.RaggedIndexedArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.mixin.raggedindexed.RaggedIndexed</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.compressedarray.CompressedArray</span></code></p>
 <p>An underlying indexed ragged array.</p>
 <p>A collection of features stored using an indexed ragged array
 combines all features along a single dimension (the “sample
@@ -116,7 +116,7 @@ are interleaved.</p>
 “index variable” that specifies the feature that each element of
 the sample dimension belongs to.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <p><strong>Initialization</strong></p>
 <dl class="field-list simple">
@@ -124,11 +124,11 @@ the sample dimension belongs to.</p>
 <dd class="field-odd"><dl class="simple">
 <dt>compressed_array: <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></dt><dd><p>The compressed array.</p>
 </dd>
-<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The uncompressed array dimension sizes.</p>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The uncompressed array dimension sizes.</p>
 </dd>
-<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Number of elements in the uncompressed array.</p>
+<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Number of elements in the uncompressed array.</p>
 </dd>
-<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The number of uncompressed array dimensions</p>
+<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The number of uncompressed array dimensions</p>
 </dd>
 <dt>index_variable: <a class="reference internal" href="cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></dt><dd><p>The index variable required to uncompress the data,
 corresponding to a CF-netCDF index variable.</p>
@@ -201,6 +201,15 @@ corresponding to a CF-netCDF index variable.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.copy.html#cfdm.RaggedIndexedArray.copy" title="cfdm.RaggedIndexedArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy of the array.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.get_subspace.html#cfdm.RaggedIndexedArray.get_subspace" title="cfdm.RaggedIndexedArray.get_subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_subspace</span></code></a></p></td>
+<td><p>Return a subspace, defined by indices, of a numpy array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.source.html#cfdm.RaggedIndexedArray.source" title="cfdm.RaggedIndexedArray.source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code></a></p></td>
+<td><p>Return the underlying array object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.to_memory.html#cfdm.RaggedIndexedArray.to_memory" title="cfdm.RaggedIndexedArray.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<td><p>Bring an array on disk into memory and retain it there.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -217,16 +226,40 @@ corresponding to a CF-netCDF index variable.</p>
 <td><p>The numpy array interface.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.__deepcopy__.html#cfdm.RaggedIndexedArray.__deepcopy__" title="cfdm.RaggedIndexedArray.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.__getitem__.html#cfdm.RaggedIndexedArray.__getitem__" title="cfdm.RaggedIndexedArray.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>x.__getitem__(indices) &lt;==&gt; x[indices]</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.__repr__.html#cfdm.RaggedIndexedArray.__repr__" title="cfdm.RaggedIndexedArray.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray.__str__.html#cfdm.RaggedIndexedArray.__str__" title="cfdm.RaggedIndexedArray.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="docstring-substitutions">
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray._docstring_special_substitutions.html#cfdm.RaggedIndexedArray._docstring_special_substitutions" title="cfdm.RaggedIndexedArray._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring subtitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray._docstring_substitutions.html#cfdm.RaggedIndexedArray._docstring_substitutions" title="cfdm.RaggedIndexedArray._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Return the docstring substitutions that apply to methods of the given class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray._docstring_package_depth.html#cfdm.RaggedIndexedArray._docstring_package_depth" title="cfdm.RaggedIndexedArray._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Return the package depth, N, for {{package}} docstring substitutions for the given class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.RaggedIndexedArray._docstring_method_exclusions.html#cfdm.RaggedIndexedArray._docstring_method_exclusions" title="cfdm.RaggedIndexedArray._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Return the names of methods to exclude from docstring substitutions for the given class.</p></td>
 </tr>
 </tbody>
 </table>
@@ -241,7 +274,7 @@ corresponding to a CF-netCDF index variable.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

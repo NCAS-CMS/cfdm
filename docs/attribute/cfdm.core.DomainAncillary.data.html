@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.7.0</a></h1>
 
 
 
@@ -70,7 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
@@ -109,17 +109,17 @@
 <code class="sig-prename descclassname">DomainAncillary.</code><code class="sig-name descname">data</code><a class="headerlink" href="#cfdm.core.DomainAncillary.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.data</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">f.get_data()</span></code></p>
-<p>Note that a <a class="reference internal" href="../class/cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance is returned. Use its <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute
-to return the data as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p>
+<p>Note that a <a class="reference internal" href="../class/cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance is returned. Use its <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>
+attribute to return the data as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p>
 <p>The units, calendar and fill value properties are, if set,
 inserted into the data.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cfdm.core.Data.array.html#cfdm.core.Data.array" title="cfdm.core.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data.array</span></code></a>, <a class="reference internal" href="../method/cfdm.core.DomainAncillary.del_data.html#cfdm.core.DomainAncillary.del_data" title="cfdm.core.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a>, <a class="reference internal" href="../method/cfdm.core.DomainAncillary.get_data.html#cfdm.core.DomainAncillary.get_data" title="cfdm.core.DomainAncillary.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a>, <a class="reference internal" href="../method/cfdm.core.DomainAncillary.has_data.html#cfdm.core.DomainAncillary.has_data" title="cfdm.core.DomainAncillary.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a>,
-<a class="reference internal" href="../method/cfdm.core.DomainAncillary.set_data.html#cfdm.core.DomainAncillary.set_data" title="cfdm.core.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p>
+<p><a class="reference internal" href="cfdm.core.Data.array.html#cfdm.core.Data.array" title="cfdm.core.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.Data.array</span></code></a>, <a class="reference internal" href="../method/cfdm.core.DomainAncillary.del_data.html#cfdm.core.DomainAncillary.del_data" title="cfdm.core.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a>, <a class="reference internal" href="../method/cfdm.core.DomainAncillary.get_data.html#cfdm.core.DomainAncillary.get_data" title="cfdm.core.DomainAncillary.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a>,
+<a class="reference internal" href="../method/cfdm.core.DomainAncillary.has_data.html#cfdm.core.DomainAncillary.has_data" title="cfdm.core.DomainAncillary.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a>, <a class="reference internal" href="../method/cfdm.core.DomainAncillary.set_data.html#cfdm.core.DomainAncillary.set_data" title="cfdm.core.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -130,13 +130,14 @@ inserted into the data.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DomainAncillary</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mf">9.</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data(10): [0, ..., 9]&gt;</span>
+<span class="go">&lt;Data(10): [0.0, ..., 9.0]&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(10,)</span>
 </pre></div>
@@ -153,7 +154,7 @@ inserted into the data.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

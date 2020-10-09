@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.6.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.7.0</a></h1>
 
 
 
@@ -70,7 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
@@ -101,9 +101,9 @@
   <div class="section" id="cfdm-core-classes">
 <span id="class-core"></span><h1><strong>cfdm.core classes</strong><a class="headerlink" href="#cfdm-core-classes" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.8.6.0 for version 1.8 of the CF conventions.</p>
+<p>Version 1.8.7.0 for version 1.8 of the CF conventions.</p>
 <div class="section" id="field-construct-class">
-<h2><strong>Field construct class</strong><a class="headerlink" href="#field-construct-class" title="Permalink to this headline">¶</a></h2>
+<h2>Field construct class<a class="headerlink" href="#field-construct-class" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -117,7 +117,7 @@
 </table>
 </div>
 <div class="section" id="metadata-construct-classes">
-<h2><strong>Metadata construct classes</strong><a class="headerlink" href="#metadata-construct-classes" title="Permalink to this headline">¶</a></h2>
+<h2>Metadata construct classes<a class="headerlink" href="#metadata-construct-classes" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -152,7 +152,7 @@
 </table>
 </div>
 <div class="section" id="constructs-class">
-<h2><strong>Constructs class</strong><a class="headerlink" href="#constructs-class" title="Permalink to this headline">¶</a></h2>
+<h2>Constructs class<a class="headerlink" href="#constructs-class" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -166,7 +166,7 @@
 </table>
 </div>
 <div class="section" id="coordinate-component-classes">
-<h2><strong>Coordinate component classes</strong><a class="headerlink" href="#coordinate-component-classes" title="Permalink to this headline">¶</a></h2>
+<h2>Coordinate component classes<a class="headerlink" href="#coordinate-component-classes" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -182,11 +182,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.core.Datum.html#cfdm.core.Datum" title="cfdm.core.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.Datum</span></code></a></p></td>
 <td><p>A datum component of a coordinate reference construct of the CF data model.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cfdm.core.InteriorRing.html#cfdm.core.InteriorRing" title="cfdm.core.InteriorRing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.InteriorRing</span></code></a></p></td>
+<td><p>An interior ring array with properties.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="domain-class">
-<h2><strong>Domain class</strong><a class="headerlink" href="#domain-class" title="Permalink to this headline">¶</a></h2>
+<h2>Domain class<a class="headerlink" href="#domain-class" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -200,7 +203,7 @@
 </table>
 </div>
 <div class="section" id="data-classes">
-<h2><strong>Data classes</strong><a class="headerlink" href="#data-classes" title="Permalink to this headline">¶</a></h2>
+<h2>Data classes<a class="headerlink" href="#data-classes" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -220,7 +223,7 @@
 </table>
 </div>
 <div class="section" id="abstract-base-classes">
-<h2><strong>Abstract base classes</strong><a class="headerlink" href="#abstract-base-classes" title="Permalink to this headline">¶</a></h2>
+<h2>Abstract base classes<a class="headerlink" href="#abstract-base-classes" title="Permalink to this headline">¶</a></h2>
 <p>Abstract base classes that provide the basis for constructs and
 construct components.</p>
 <table class="longtable docutils align-default">
@@ -229,26 +232,40 @@ construct components.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.core.abstract.Container.html#cfdm.core.abstract.Container" title="cfdm.core.abstract.Container"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.abstract.Container</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.core.Container.html#cfdm.core.Container" title="cfdm.core.Container"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.Container</span></code></a></p></td>
 <td><p>Abstract base class for storing components.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="class/cfdm.core.abstract.Properties.html#cfdm.core.abstract.Properties" title="cfdm.core.abstract.Properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.abstract.Properties</span></code></a></p></td>
-<td><p>Abstract base class for an object with descriptive properties.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cfdm.core.Properties.html#cfdm.core.Properties" title="cfdm.core.Properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.Properties</span></code></a></p></td>
+<td><p>Mixin class for an object with descriptive properties.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.core.abstract.PropertiesData.html#cfdm.core.abstract.PropertiesData" title="cfdm.core.abstract.PropertiesData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.abstract.PropertiesData</span></code></a></p></td>
-<td><p>Abstract base class for a data array with descriptive properties.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.core.PropertiesData.html#cfdm.core.PropertiesData" title="cfdm.core.PropertiesData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.PropertiesData</span></code></a></p></td>
+<td><p>Mixin class for a data array with descriptive properties.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="class/cfdm.core.abstract.PropertiesDataBounds.html#cfdm.core.abstract.PropertiesDataBounds" title="cfdm.core.abstract.PropertiesDataBounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.abstract.PropertiesDataBounds</span></code></a></p></td>
-<td><p>Abstract base class for a data array with bounds and descriptive properties.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cfdm.core.PropertiesDataBounds.html#cfdm.core.PropertiesDataBounds" title="cfdm.core.PropertiesDataBounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.PropertiesDataBounds</span></code></a></p></td>
+<td><p>Mixin class for a data array with bounds and descriptive properties.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.core.abstract.Coordinate.html#cfdm.core.abstract.Coordinate" title="cfdm.core.abstract.Coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.abstract.Coordinate</span></code></a></p></td>
-<td><p>Abstract base class for dimension and auxiliary coordinate constructs of the CF data model.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.core.Coordinate.html#cfdm.core.Coordinate" title="cfdm.core.Coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.Coordinate</span></code></a></p></td>
+<td><p>Mixin class for dimension and auxiliary coordinate constructs of the CF data model.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="class/cfdm.core.abstract.Parameters.html#cfdm.core.abstract.Parameters" title="cfdm.core.abstract.Parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.abstract.Parameters</span></code></a></p></td>
-<td><p>Abstract base class for a collection of named parameters.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cfdm.core.Parameters.html#cfdm.core.Parameters" title="cfdm.core.Parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.Parameters</span></code></a></p></td>
+<td><p>Mixin class for a collection of named parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.core.abstract.ParametersDomainAncillaries.html#cfdm.core.abstract.ParametersDomainAncillaries" title="cfdm.core.abstract.ParametersDomainAncillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.abstract.ParametersDomainAncillaries</span></code></a></p></td>
-<td><p>Abstract base class for a collection of named parameters and named domain ancillary constructs.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.core.ParametersDomainAncillaries.html#cfdm.core.ParametersDomainAncillaries" title="cfdm.core.ParametersDomainAncillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.ParametersDomainAncillaries</span></code></a></p></td>
+<td><p>Mixin class for a collection of named parameters and named domain ancillary constructs.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="miscallaneous">
+<h2>Miscallaneous<a class="headerlink" href="#miscallaneous" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.core.DocstringRewriteMeta.html#cfdm.core.DocstringRewriteMeta" title="cfdm.core.DocstringRewriteMeta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.DocstringRewriteMeta</span></code></a></p></td>
+<td><p>Modify docstrings.</p></td>
 </tr>
 </tbody>
 </table>
@@ -263,7 +280,7 @@ construct components.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

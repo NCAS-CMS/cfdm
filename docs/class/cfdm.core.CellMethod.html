@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.core.CellMethod.construct_type" href="../attribute/cfdm.core.CellMethod.construct_type.html" />
-    <link rel="prev" title="cfdm.core.CellMeasure.__deepcopy__" href="../method/cfdm.core.CellMeasure.__deepcopy__.html" />
+    <link rel="prev" title="cfdm.core.CellMeasure._docstring_method_exclusions" href="../method/cfdm.core.CellMeasure._docstring_method_exclusions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.7.0</a></h1>
 
 
 
@@ -70,7 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.core.CellMeasure.__deepcopy__.html" title="previous chapter">cfdm.core.CellMeasure.__deepcopy__</a></li>
+      <li>Previous: <a href="../method/cfdm.core.CellMeasure._docstring_method_exclusions.html" title="previous chapter">cfdm.core.CellMeasure._docstring_method_exclusions</a></li>
       <li>Next: <a href="../attribute/cfdm.core.CellMethod.construct_type.html" title="next chapter">cfdm.core.CellMethod.construct_type</a></li>
   </ul></li>
   </ul></li>
@@ -105,7 +105,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.CellMethod">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">CellMethod</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">method=None</em>, <em class="sig-param">qualifiers=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/core/cellmethod.py#L6-L674"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">CellMethod</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">method=None</em>, <em class="sig-param">qualifiers=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/core/cellmethod.py#L6-L677"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>A cell method construct of the CF data model.</p>
 <p>One or more cell method constructs describe how the cell values of
@@ -121,13 +121,13 @@ more precisely how the method was applied (e.g. recording the
 spacing of the original data, or the fact that the method was
 applied only over El Nino years).</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the axes of the cell method construct, specified
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the axes of the cell method construct, specified
 either by the construct identifiers of domain axis
 constructs, standard names, or the special string
 <code class="docutils literal notranslate"><span class="pre">'area'</span></code>.</p>
@@ -146,7 +146,7 @@ constructs, standard names, or the special string
 </dd>
 </dl>
 </dd>
-<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the axes of the cell method construct. Either one or
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the axes of the cell method construct. Either one or
 more domain axis construct identifiers or standard
 names. Ignored if the <em>source</em> parameter is set.</p>
 <p>The method may also be set after initialisation with the
@@ -156,7 +156,7 @@ names. Ignored if the <em>source</em> parameter is set.</p>
 </dd>
 </dl>
 </dd>
-<dt>qualifiers: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive qualifiers. The dictionary keys are
+<dt>qualifiers: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive qualifiers. The dictionary keys are
 qualifer names, with corresponding values. Ignored if the
 <em>source</em> parameter is set.</p>
 <p>Qualifiers may also be set after initialisation with the
@@ -170,9 +170,12 @@ qualifer names, with corresponding values. Ignored if the
 </dd>
 <dt>source: optional</dt><dd><p>Initialize the axes, method and qualifiers from those of
 <em>source</em>.</p>
+<p>Note that if <em>source</em> is a <a class="reference internal" href="#cfdm.core.CellMethod" title="cfdm.core.CellMethod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMethod</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cfdm.core.CellMethod(source=source)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
-initialization By default parameters are deep copied.</p>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
 </dd>
 </dl>
 </dd>
@@ -270,7 +273,31 @@ initialization By default parameters are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMethod.__deepcopy__.html#cfdm.core.CellMethod.__deepcopy__" title="cfdm.core.CellMethod.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="docstring-substitutions">
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMethod._docstring_special_substitutions.html#cfdm.core.CellMethod._docstring_special_substitutions" title="cfdm.core.CellMethod._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring subtitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMethod._docstring_substitutions.html#cfdm.core.CellMethod._docstring_substitutions" title="cfdm.core.CellMethod._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Return the docstring substitutions that apply to methods of the given class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMethod._docstring_package_depth.html#cfdm.core.CellMethod._docstring_package_depth" title="cfdm.core.CellMethod._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Return the package depth, N, for {{package}} docstring substitutions for the given class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMethod._docstring_method_exclusions.html#cfdm.core.CellMethod._docstring_method_exclusions" title="cfdm.core.CellMethod._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Return the names of methods to exclude from docstring substitutions for the given class.</p></td>
 </tr>
 </tbody>
 </table>
@@ -285,7 +312,7 @@ initialization By default parameters are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.NumpyArray.get_compression_type" href="../method/cfdm.NumpyArray.get_compression_type.html" />
-    <link rel="prev" title="cfdm.NetCDFArray.__getitem__" href="../method/cfdm.NetCDFArray.__getitem__.html" />
+    <link rel="prev" title="cfdm.NetCDFArray._docstring_method_exclusions" href="../method/cfdm.NetCDFArray._docstring_method_exclusions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.7.0</a></h1>
 
 
 
@@ -70,7 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.NetCDFArray.__getitem__.html" title="previous chapter">cfdm.NetCDFArray.__getitem__</a></li>
+      <li>Previous: <a href="../method/cfdm.NetCDFArray._docstring_method_exclusions.html" title="previous chapter">cfdm.NetCDFArray._docstring_method_exclusions</a></li>
       <li>Next: <a href="../method/cfdm.NumpyArray.get_compression_type.html" title="next chapter">cfdm.NumpyArray.get_compression_type</a></li>
   </ul></li>
   </ul></li>
@@ -105,9 +105,12 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.NumpyArray">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">NumpyArray</code><span class="sig-paren">(</span><em class="sig-param">array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/data/numpyarray.py#L6-L48"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NumpyArray" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.array.Array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.numpyarray.NumpyArray</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">NumpyArray</code><span class="sig-paren">(</span><em class="sig-param">array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/data/numpyarray.py#L7-L54"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NumpyArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.mixin.arraymixin.ArrayMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.numpyarray.NumpyArray</span></code></p>
 <p>An underlying numpy array.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
+</div>
 <p><strong>Initialization</strong></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -172,6 +175,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.NumpyArray.copy.html#cfdm.NumpyArray.copy" title="cfdm.NumpyArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy of the array.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.NumpyArray.to_memory.html#cfdm.NumpyArray.to_memory" title="cfdm.NumpyArray.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<td><p>Bring an array on disk into memory and retain it there.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -189,6 +195,30 @@
 </tbody>
 </table>
 </div>
+<div class="section" id="docstring-substitutions">
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.NumpyArray._docstring_special_substitutions.html#cfdm.NumpyArray._docstring_special_substitutions" title="cfdm.NumpyArray._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring subtitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.NumpyArray._docstring_substitutions.html#cfdm.NumpyArray._docstring_substitutions" title="cfdm.NumpyArray._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Return the docstring substitutions that apply to methods of the given class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.NumpyArray._docstring_package_depth.html#cfdm.NumpyArray._docstring_package_depth" title="cfdm.NumpyArray._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Return the package depth, N, for {{package}} docstring substitutions for the given class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.NumpyArray._docstring_method_exclusions.html#cfdm.NumpyArray._docstring_method_exclusions" title="cfdm.NumpyArray._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Return the names of methods to exclude from docstring substitutions for the given class.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -199,7 +229,7 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

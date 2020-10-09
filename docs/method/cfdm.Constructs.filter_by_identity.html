@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.7.0</a></h1>
 
 
 
@@ -70,7 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
@@ -106,12 +106,12 @@
 <h1>cfdm.Constructs.filter_by_identity<a class="headerlink" href="#cfdm-constructs-filter-by-identity" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Constructs.filter_by_identity">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">filter_by_identity</code><span class="sig-paren">(</span><em class="sig-param">*identities</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/constructs.py#L1020-L1119"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.filter_by_identity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">filter_by_identity</code><span class="sig-paren">(</span><em class="sig-param">*identities</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/constructs.py#L996-L1095"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.filter_by_identity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select metadata constructs by identity.</p>
 <p>Calling a <a class="reference internal" href="../class/cfdm.Constructs.html#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance selects metadata constructs by
 identity and is an alias for the <a class="reference internal" href="#cfdm.Constructs.filter_by_identity" title="cfdm.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a> method.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -128,7 +128,7 @@ identity and is an alias for the <a class="reference internal" href="#cfdm.Const
 <p>An identity is specified by a string (e.g. <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code>,
 <code class="docutils literal notranslate"><span class="pre">'long_name=time'</span></code>, etc.); or a compiled regular
 expression (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^atmosphere')</span></code>), for which
-all constructs whose identities match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>)
+all constructs whose identities match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>)
 are selected.</p>
 <p>If no identities are provided then all constructs are
 selected.</p>
@@ -143,7 +143,7 @@ four identities:</p>
 </div>
 <p>In addition, each construct also has an identity based its
 construct key (e.g. <code class="docutils literal notranslate"><span class="pre">'key%dimensioncoordinate2'</span></code>)</p>
-<p>Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code>
+<p>Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code>
 method, a construct is always described by one of its
 identities, and so this description may always be used as
 an <em>identities</em> argument.</p>
@@ -188,7 +188,7 @@ an <em>identities</em> argument.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

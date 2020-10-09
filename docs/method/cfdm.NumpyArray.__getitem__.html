@@ -21,8 +21,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Array" href="../class/cfdm.Array.html" />
-    <link rel="prev" title="cfdm.NumpyArray.copy" href="cfdm.NumpyArray.copy.html" />
+    <link rel="next" title="cfdm.NumpyArray._docstring_special_substitutions" href="cfdm.NumpyArray._docstring_special_substitutions.html" />
+    <link rel="prev" title="cfdm.NumpyArray.to_memory" href="cfdm.NumpyArray.to_memory.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.7.0</a></h1>
 
 
 
@@ -70,7 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
@@ -86,8 +86,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.NumpyArray.html">cfdm.NumpyArray</a><ul>
-      <li>Previous: <a href="cfdm.NumpyArray.copy.html" title="previous chapter">cfdm.NumpyArray.copy</a></li>
-      <li>Next: <a href="../class/cfdm.Array.html" title="next chapter">cfdm.Array</a></li>
+      <li>Previous: <a href="cfdm.NumpyArray.to_memory.html" title="previous chapter">cfdm.NumpyArray.to_memory</a></li>
+      <li>Next: <a href="cfdm.NumpyArray._docstring_special_substitutions.html" title="next chapter">cfdm.NumpyArray._docstring_special_substitutions</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -106,12 +106,12 @@
 <h1>cfdm.NumpyArray.__getitem__<a class="headerlink" href="#cfdm-numpyarray-getitem" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.NumpyArray.__getitem__">
-<code class="sig-prename descclassname">NumpyArray.</code><code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param">indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/data/numpyarray.py#L10-L32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NumpyArray.__getitem__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">NumpyArray.</code><code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param">indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/data/numpyarray.py#L13-L35"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NumpyArray.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>x.__getitem__(indices) &lt;==&gt; x[indices]</p>
 <p>Returns a subspace of the array as an independent numpy array.</p>
-<p>The indices that define the subspace must be either <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a> or
+<p>The indices that define the subspace must be either <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a> or
 a sequence that contains an index for each dimension. In the
-latter case, each dimension’s index must either be a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>
+latter case, each dimension’s index must either be a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>
 object or a sequence of two or more integers.</p>
 <p>Indexing is similar to numpy indexing. The only difference to
 numpy indexing (given the restrictions on the type of indices
@@ -124,7 +124,7 @@ then these indices work independently along each dimension
 </ul>
 </div></blockquote>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 </dd></dl>
 
@@ -138,7 +138,7 @@ then these indices work independently along each dimension
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

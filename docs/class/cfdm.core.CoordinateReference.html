@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.core.CoordinateReference.construct_type" href="../attribute/cfdm.core.CoordinateReference.construct_type.html" />
-    <link rel="prev" title="cfdm.core.CellMethod.__deepcopy__" href="../method/cfdm.core.CellMethod.__deepcopy__.html" />
+    <link rel="prev" title="cfdm.core.CellMethod._docstring_method_exclusions" href="../method/cfdm.core.CellMethod._docstring_method_exclusions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.7.0</a></h1>
 
 
 
@@ -70,7 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.core.CellMethod.__deepcopy__.html" title="previous chapter">cfdm.core.CellMethod.__deepcopy__</a></li>
+      <li>Previous: <a href="../method/cfdm.core.CellMethod._docstring_method_exclusions.html" title="previous chapter">cfdm.core.CellMethod._docstring_method_exclusions</a></li>
       <li>Next: <a href="../attribute/cfdm.core.CoordinateReference.construct_type.html" title="next chapter">cfdm.core.CoordinateReference.construct_type</a></li>
   </ul></li>
   </ul></li>
@@ -105,7 +105,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.CoordinateReference">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">CoordinateReference</code><span class="sig-paren">(</span><em class="sig-param">coordinates=None</em>, <em class="sig-param">datum=None</em>, <em class="sig-param">coordinate_conversion=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/core/coordinatereference.py#L7-L614"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">CoordinateReference</code><span class="sig-paren">(</span><em class="sig-param">coordinates=None</em>, <em class="sig-param">datum=None</em>, <em class="sig-param">coordinate_conversion=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/core/coordinatereference.py#L7-L616"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>A coordinate reference construct of the CF data model.</p>
 <p>A coordinate reference construct relates the coordinate values of
@@ -149,13 +149,13 @@ coordinate reference construct relates the coordinate values of
 the field to locations in a planetary reference frame.</p></li>
 </ul>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <p><strong>Initialization</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>coordinates: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Identify the related dimension and auxiliary coordinate
+<dt>coordinates: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Identify the related dimension and auxiliary coordinate
 constructs by their construct identifiers. Ignored if the
 <em>source</em> parameter is set.</p>
 <p>The coordinates may also be set after initialisation with
@@ -181,8 +181,11 @@ method.</p>
 </dd>
 <dt>source: optional</dt><dd><p>Initialize the coordinates, datum and coordinate
 conversion from those of <em>source</em>.</p>
+<p>Note that if <em>source</em> is a <a class="reference internal" href="#cfdm.core.CoordinateReference" title="cfdm.core.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cfdm.core.CoordinateReference(source=source)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy arguments prior to
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
 </dl>
@@ -255,6 +258,18 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></p></td>
+<td><p>Return the datum component.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="coordinate-conversion">
 <h2>Coordinate conversion<a class="headerlink" href="#coordinate-conversion" title="Permalink to this headline">¶</a></h2>
@@ -273,6 +288,18 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CoordinateReference.set_coordinate_conversion.html#cfdm.core.CoordinateReference.set_coordinate_conversion" title="cfdm.core.CoordinateReference.set_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_conversion</span></code></a></p></td>
 <td><p>Set the coordinate conversion component.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_conversion</span></code></p></td>
+<td><p>Return the coordinate conversion component.</p></td>
 </tr>
 </tbody>
 </table>
@@ -302,7 +329,31 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CoordinateReference.__deepcopy__.html#cfdm.core.CoordinateReference.__deepcopy__" title="cfdm.core.CoordinateReference.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="docstring-substitutions">
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CoordinateReference._docstring_special_substitutions.html#cfdm.core.CoordinateReference._docstring_special_substitutions" title="cfdm.core.CoordinateReference._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring subtitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CoordinateReference._docstring_substitutions.html#cfdm.core.CoordinateReference._docstring_substitutions" title="cfdm.core.CoordinateReference._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Return the docstring substitutions that apply to methods of the given class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CoordinateReference._docstring_package_depth.html#cfdm.core.CoordinateReference._docstring_package_depth" title="cfdm.core.CoordinateReference._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Return the package depth, N, for {{package}} docstring substitutions for the given class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CoordinateReference._docstring_method_exclusions.html#cfdm.core.CoordinateReference._docstring_method_exclusions" title="cfdm.core.CoordinateReference._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Return the names of methods to exclude from docstring substitutions for the given class.</p></td>
 </tr>
 </tbody>
 </table>
@@ -317,7 +368,7 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

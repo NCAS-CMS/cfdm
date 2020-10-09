@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.DomainAxis.identity" href="../method/cfdm.DomainAxis.identity.html" />
-    <link rel="prev" title="cfdm.DomainAncillary.__str__" href="../method/cfdm.DomainAncillary.__str__.html" />
+    <link rel="prev" title="cfdm.DomainAncillary._docstring_method_exclusions" href="../method/cfdm.DomainAncillary._docstring_method_exclusions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.6.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.7.0</a></h1>
 
 
 
@@ -70,7 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
@@ -85,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.DomainAncillary.__str__.html" title="previous chapter">cfdm.DomainAncillary.__str__</a></li>
+      <li>Previous: <a href="../method/cfdm.DomainAncillary._docstring_method_exclusions.html" title="previous chapter">cfdm.DomainAncillary._docstring_method_exclusions</a></li>
       <li>Next: <a href="../method/cfdm.DomainAxis.identity.html" title="next chapter">cfdm.DomainAxis.identity</a></li>
   </ul></li>
   </ul></li>
@@ -101,11 +101,11 @@
           <div class="body" role="main">
             
   <div class="section" id="cfdm-domainaxis">
-<h1>cfdm.DomainAxis<a class="headerlink" href="#cfdm-domainaxis" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>cfdm.DomainAxis<a class="headerlink" href="#cfdm-domainaxis" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.DomainAxis">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">DomainAxis</code><span class="sig-paren">(</span><em class="sig-param">size=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.6.0/cfdm/domainaxis.py#L12-L251"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAxis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">DomainAxis</code><span class="sig-paren">(</span><em class="sig-param">size=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/domainaxis.py#L12-L294"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAxis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFUnlimitedDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domainaxis.DomainAxis</span></code></p>
 <p>A domain axis construct of the CF data model.</p>
 <p>A domain axis construct specifies the number of points along an
@@ -126,13 +126,13 @@ the <a class="reference internal" href="../method/cfdm.DomainAxis.nc_set_dimensi
 <a class="reference internal" href="../method/cfdm.DomainAxis.nc_set_dimension.html#cfdm.DomainAxis.nc_set_dimension" title="cfdm.DomainAxis.nc_set_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></a>, <a class="reference internal" href="../method/cfdm.DomainAxis.nc_get_dimension.html#cfdm.DomainAxis.nc_get_dimension" title="cfdm.DomainAxis.nc_get_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></a>, <a class="reference internal" href="../method/cfdm.DomainAxis.nc_dimension_groups.html#cfdm.DomainAxis.nc_dimension_groups" title="cfdm.DomainAxis.nc_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dimension_groups</span></code></a>,
 <a class="reference internal" href="../method/cfdm.DomainAxis.nc_clear_dimension_groups.html#cfdm.DomainAxis.nc_clear_dimension_groups" title="cfdm.DomainAxis.nc_clear_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dimension_groups</span></code></a> and <a class="reference internal" href="../method/cfdm.DomainAxis.nc_set_dimension_groups.html#cfdm.DomainAxis.nc_set_dimension_groups" title="cfdm.DomainAxis.nc_set_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension_groups</span></code></a> methods.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <p><strong>Initialization</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The size of the domain axis.</p>
+<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The size of the domain axis.</p>
 <p>The size may also be set after initialisation with the
 <a class="reference internal" href="../method/cfdm.DomainAxis.set_size.html#cfdm.DomainAxis.set_size" title="cfdm.DomainAxis.set_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_size</span></code></a> method.</p>
 <dl class="simple">
@@ -141,8 +141,11 @@ the <a class="reference internal" href="../method/cfdm.DomainAxis.nc_set_dimensi
 </dl>
 </dd>
 <dt>source: optional</dt><dd><p>Initialize the size from that of <em>source</em>.</p>
+<p>Note that if <em>source</em> is a <a class="reference internal" href="#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cfdm.DomainAxis(source=source)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
 </dl>
@@ -216,7 +219,10 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.DomainAxis.copy.html#cfdm.DomainAxis.copy" title="cfdm.DomainAxis.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.DomainAxis.equals.html#cfdm.DomainAxis.equals" title="cfdm.DomainAxis.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.DomainAxis.creation_commands.html#cfdm.DomainAxis.creation_commands" title="cfdm.DomainAxis.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the domain axis construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.DomainAxis.equals.html#cfdm.DomainAxis.equals" title="cfdm.DomainAxis.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two domain axis constructs are the same.</p></td>
 </tr>
 </tbody>
@@ -283,13 +289,37 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.DomainAxis.__deepcopy__.html#cfdm.DomainAxis.__deepcopy__" title="cfdm.DomainAxis.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.DomainAxis.__repr__.html#cfdm.DomainAxis.__repr__" title="cfdm.DomainAxis.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.DomainAxis.__str__.html#cfdm.DomainAxis.__str__" title="cfdm.DomainAxis.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="docstring-substitutions">
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.DomainAxis._docstring_special_substitutions.html#cfdm.DomainAxis._docstring_special_substitutions" title="cfdm.DomainAxis._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring subtitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.DomainAxis._docstring_substitutions.html#cfdm.DomainAxis._docstring_substitutions" title="cfdm.DomainAxis._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Return the docstring substitutions that apply to methods of the given class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.DomainAxis._docstring_package_depth.html#cfdm.DomainAxis._docstring_package_depth" title="cfdm.DomainAxis._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Return the package depth, N, for {{package}} docstring substitutions for the given class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.DomainAxis._docstring_method_exclusions.html#cfdm.DomainAxis._docstring_method_exclusions" title="cfdm.DomainAxis._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Return the names of methods to exclude from docstring substitutions for the given class.</p></td>
 </tr>
 </tbody>
 </table>
@@ -304,7 +334,7 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

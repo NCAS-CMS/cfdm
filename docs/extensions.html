@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.6.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.7.0</a></h1>
 
 
 
@@ -70,7 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="support.html"><strong>Support</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
@@ -99,7 +99,7 @@
   <div class="section" id="extensions">
 <span id="id1"></span><h1><strong>Extensions</strong><a class="headerlink" href="#extensions" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.8.6.0 for version 1.8 of the CF conventions.</p>
+<p>Version 1.8.7.0 for version 1.8 of the CF conventions.</p>
 <p>The cfdm package has been designed to be subclassed, so that the
 creation of a new implementation of the CF data model, based on cfdm,
 is straight forward. For example:</p>
@@ -189,7 +189,7 @@ within the my_Field instance are still cfdm classes.</em></span><a class="header
 </pre></div>
 </div>
 </div>
-<p>If the API of the new implemention is changed such that a given cfdm
+<p>If the API of the new implementation is changed such that a given cfdm
 functionality has a different API in the new implementation, then the
 new read-from-disk and write-to-disk functions defined above can still
 be used provided that the new implementation is created from a
@@ -249,7 +249,7 @@ in overridden methods.</p>
 </div>
 </div>
 <p>As all classes are required for the initialization of the new
-implemenation class, this demonstrates explicitly that, in the absence
+implementation class, this demonstrates explicitly that, in the absence
 of subclasses of the other classes, the cfdm classes may be used.</p>
 <div class="literal-block-wrapper docutils container" id="id10">
 <div class="code-block-caption"><span class="caption-text"><em>Read the file into ‘my_Field_2’ instances.</em></span><a class="headerlink" href="#id10" title="Permalink to this code">¶</a></div>
@@ -280,7 +280,7 @@ instances.</em></span><a class="headerlink" href="#id11" title="Permalink to thi
 </div>
 <div class="literal-block-wrapper docutils container" id="id12">
 <div class="code-block-caption"><span class="caption-text"><em>Create a new read-from-disk function that uses the
-modifed mapping.</em></span><a class="headerlink" href="#id12" title="Permalink to this code">¶</a></div>
+modified mapping.</em></span><a class="headerlink" href="#id12" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_netcdf</span> <span class="o">=</span> <span class="n">my_NetCDFRead</span><span class="p">(</span><span class="n">my_implementation_2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">my_read_3</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="p">):</span>
 <span class="gp">... </span>    <span class="sd">&#39;&#39;&#39;Read my field constructs from a dataset.</span>
@@ -303,6 +303,19 @@ demonstrating that the modified mapping is being used.</em></span><a class="head
 subclassed, and a new write-to-disk function defined, to override
 aspects of the mapping from CF data model constructs to netCDF
 elements in a dataset.</p>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>The cfdm package uses a “docstring rewriter” that allows commonly used
+parts of class method docstrings to be written once in a central
+location, and then inserted into each class at import time. In
+addition, parts of a docstring are modified to reflect the appropriate
+package and class names. This functionality extends to subclasses of
+cfdm classes. New docstring substitutions may also be defined for the
+subclasses.</p>
+<p>See <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.meta.DocstringRewriteMeta</span></code> for details on how to add to
+create new docstring substitutions for extensions, and how to modify
+the substitutions defined in the cfdm package.</p>
+</div>
 <div class="section" id="a-complete-example">
 <h2>A complete example<a class="headerlink" href="#a-complete-example" title="Permalink to this headline">¶</a></h2>
 <p>See <a class="reference external" href="https://github.com/NCAS-CMS/cf-python">cf-python</a> for a
@@ -326,7 +339,7 @@ always work on its cf-python counterpart.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-07-24.
+      &copy;2020, NCAS | Page built on 2020-10-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
