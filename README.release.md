@@ -1,10 +1,11 @@
 * Change the version and date in `cfdm/core/__init__.py`
   (`__version__` and `__date__` variables)
 
-* Ensure that the requirements on dependencies & their versions are
-  up-to-date and consistent in both the `install_requires` list of the
-  `setup.py` and in the `_requires` list and `LooseVersion` checks in
-  `cfdm/core/__init__.py`.
+* Ensure that the requirements on dependencies and their versions are
+  up-to-date and consistent in both the `requirements.txt` file and in
+  `docs/source/installation.rst`; and in the `_requires` list and
+  `LooseVersion` checks in `cfdm/core/__init__.py` and
+  `cfdm/__init__.py`.
 
 * If required, change the CF conventions version in
   `cfdm/core/__init__.py` (`__cf_version__` variable)
@@ -21,11 +22,6 @@
   `docs/source/tutorial.rst`
 
 * Create a link to the new documentation in `docs/source/releases.rst`
-
-* If groups are ready then remove the Hierarchical Groups placeholders
-  in the documentation files: `setup.py`, `README.md`,
-  `docs/source/introduction.rst`, `docs/source/tutorial.rst` (and
-  delete this instruction).
 
 * Test tutorial code:
 
@@ -51,19 +47,19 @@
   the dev build.)
 
   ```bash
-  ./release_docs <vn> dev-clean # E.g. ./release_docs 1.8.6.0 dev-clean
+  ./release_docs <vn> dev-clean # E.g. ./release_docs 1.8.7.0 dev-clean
   ```
   
 * Create an archived copy of the documentation:
 
   ```bash
-  ./release_docs <vn> archive # E.g. ./release_docs 1.8.6.0 archive
+  ./release_docs <vn> archive # E.g. ./release_docs 1.8.7.0 archive
   ```
 
 * Update the latest documentation:
 
   ```bash
-  ./release_docs <vn> latest # E.g. ./release_docs 1.8.6.0 latest
+  ./release_docs <vn> latest # E.g. ./release_docs 1.8.7.0 latest
   ```
 
 * Create a source tarball:
@@ -75,7 +71,7 @@
 * Test the tarball release using
 
   ```bash
-  ./test_release <vn> # E.g. ./test_release 1.8.6.0
+  ./test_release <vn> # E.g. ./test_release 1.8.7.0
   ```
 
 * Push recent commits using
@@ -87,7 +83,7 @@
 * Tag the release:
 
   ```bash
-  ./tag <vn> # E.g. ./tag 1.8.6.0
+  ./tag <vn> # E.g. ./tag 1.8.7.0
   ```
   
 * Upload the source tarball to PyPi. Note this requires the `twine`
@@ -95,5 +91,5 @@
   privileges on PyPi.
 
   ```bash
-  ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 1.8.6.0
+  ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 1.8.7.0
   ```
