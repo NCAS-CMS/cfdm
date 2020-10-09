@@ -2,7 +2,7 @@ version 1.8.7.0
 ---------------
 ----
 
-**2020-10-??**
+**2020-10-09**
 
 * Python 3.5 support deprecated (3.5 was retired on 2020-09-13)
 * New method: `cfdm.Field.creation_commands`

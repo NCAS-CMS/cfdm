@@ -1690,7 +1690,7 @@ class NetCDFWrite(IOWrite):
     def _remove_group_structure(self, name, return_groups=False):
         '''Strip off any group structure from the name.
 
-    .. versionaddedd:: 1.8.6
+    .. versionaddedd:: (cfdm) 1.8.6.0
 
     :Parameters:
 
@@ -1733,7 +1733,7 @@ class NetCDFWrite(IOWrite):
     def _groups(self, name):
         '''Strip off any group structure from the name.
 
-    .. versionaddedd:: 1.8.6.1
+    .. versionaddedd:: (cfdm) 1.8.6.1
 
     :Parameters:
 

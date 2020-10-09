@@ -243,7 +243,7 @@ class NetCDFRead(IORead):
             The netCDF name of the the variable that is doing the
             referencing.
 
-            .. versionaddedd:: 1.8.6
+            .. versionaddedd:: (cfdm) 1.8.6.0
 
     :Returns:
 
@@ -2678,7 +2678,7 @@ class NetCDFRead(IORead):
         '''For a missing variable, return the variable name and a suitable
     message.
 
-   .. versionaddedd:: 1.8.6
+   .. versionaddedd:: (cfdm) 1.8.6.0
 
     :Parameters:
 
