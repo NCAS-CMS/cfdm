@@ -216,7 +216,7 @@ class FunctionsTest(unittest.TestCase):
             cfdm.write(f, temp_file)
             g = cfdm.read(temp_file, verbose=1)
 
-            self.assertEqual(len(g), 1, g)
+            self.assertEqual(len(g), 1)
             self.assertTrue(f.equals(g[0], verbose=3), 'n={}'.format(n))
 
         with self.assertRaises(Exception):
@@ -352,6 +352,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(
             len(cfdm.unique_constructs(domains + fields + [f.domain])), 4
         )
+
 # --- End: class
 
 

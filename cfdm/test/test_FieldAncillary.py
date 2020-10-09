@@ -8,6 +8,11 @@ import cfdm
 
 
 class FieldAncillaryTest(unittest.TestCase):
+    filename = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+
+#    f = cfdm.read(filename)[0]
+
     def setUp(self):
         # Disable log messages to silence expected warnings
         cfdm.log_level('DISABLE')
@@ -19,12 +24,10 @@ class FieldAncillaryTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+        self.f = cfdm.read(self.filename)[0]
 
     def test_FieldAncillary__repr__str__dump(self):
-        f = cfdm.read(self.filename)[0]
+        f = self.f.copy()
         x = f.field_ancillaries('ancillaryA').value()
 
         _ = repr(x)
@@ -32,13 +35,13 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False), str)
 
     def test_FieldAncillary_source(self):
-        f = cfdm.read(self.filename)[0]
+        f = self.f.copy()
 
         a = f.auxiliary_coordinates('latitude').value()
         x = cfdm.FieldAncillary(source=a)
 
     def test_FieldAncillary_properties(self):
-        f = cfdm.read(self.filename)[0]
+        f = self.f.copy()
         x = f.domain_ancillaries('ncvar%a').value()
 
         x.set_property('long_name', 'qwerty')
@@ -49,7 +52,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertIsNone(x.del_property('long_name', None))
 
     def test_FieldAncillary_insert_dimension(self):
-        f = cfdm.read(self.filename)[0]
+        f = self.f.copy()
         d = f.dimension_coordinates('grid_longitude').value()
         x = cfdm.FieldAncillary(source=d)
 
@@ -62,7 +65,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertEqual(x.shape, (9, 1))
 
     def test_FieldAncillary_transpose(self):
-        f = cfdm.read(self.filename)[0]
+        f = self.f.copy()
         a = f.auxiliary_coordinates('longitude').value()
         x = cfdm.FieldAncillary(source=a)
 
@@ -75,7 +78,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertEqual(x.shape, (10, 9))
 
     def test_FieldAncillary_squeeze(self):
-        f = cfdm.read(self.filename)[0]
+        f = self.f.copy()
         a = f.auxiliary_coordinates('longitude').value()
         x = cfdm.FieldAncillary(source=a)
 

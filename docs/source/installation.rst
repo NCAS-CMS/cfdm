@@ -24,7 +24,7 @@ Version |release| for version |version| of the CF conventions.
 **Python versions**
 -------------------
 
-cfdm works for Python versions 3.5 or newer.
+cfdm works for Python versions 3.6 or newer.
 
 ----
 
@@ -70,7 +70,7 @@ To install from source:
 1. Download the cfdm package from https://pypi.org/project/cfdm
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``1.9.0.0``):
+   you want to install, e.g. ``1.8.7.0``):
 
    .. code:: console
 	 
@@ -131,7 +131,7 @@ Tests are run from within the ``cfdm/test`` directory:
 
 The cfdm package requires:
 
-* `Python <https://www.python.org/>`_, version 3.5 or newer,
+* `Python <https://www.python.org/>`_, version 3.6 or newer,
 
 * `numpy <http://www.numpy.org/>`_, version 1.15 or newer,
 

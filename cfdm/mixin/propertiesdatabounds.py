@@ -1431,7 +1431,7 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    >>> n = cfdm.NodeCount(properties={'long_name': 'node counts'})
+    >>> n = {{package}}.NodeCount(properties={'long_name': 'node counts'})
     >>> c.set_node_count(n)
     >>> c.has_node_count()
     True
@@ -1471,7 +1471,8 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    >>> p = cfdm.PartNodeCount(properties={'long_name': 'part node counts'})
+    >>> p = {{package}}.PartNodeCount(properties={'long_name':
+    ...                                           'part node counts'})
     >>> c.set_part_node_count(p)
     >>> c.has_part_node_count()
     True

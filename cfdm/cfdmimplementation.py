@@ -1198,7 +1198,7 @@ class CFDMImplementation(Implementation):
     A "component" is either a metadata construct or a metadata
     construct component (such as a bounds component).
 
-    .. versionadded::: 1.8.6
+    .. versionadded::: (cfdm) 1.8.6.0
 
     :Parameter:
 
@@ -1238,7 +1238,7 @@ class CFDMImplementation(Implementation):
         `bool`
 
         '''
-        raise NotImplementedError("Deprecated at version 1.8.6. "
+        raise NotImplementedError("Deprecated at version 1.8.6.0. "
                                   + "Use 'equal_components' instead.")
 
     def equal_properties(self, property_value0, property_value1):
@@ -2252,6 +2252,8 @@ class CFDMImplementation(Implementation):
     def set_bounds(self, construct, bounds, copy=True):
         '''Set the bounds component of a construct.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Parameters:
 
         construct: construct
@@ -2262,10 +2264,23 @@ class CFDMImplementation(Implementation):
 
     :Returns:
 
-        `None`
+        `str`
+            Return an empty string if the bounds were set
+            successfully, otherwise return a non-empty string
+            describing how the setting of the bounds failed.
 
         '''
-        construct.set_bounds(bounds, copy=copy)
+        try:
+            construct.set_bounds(bounds, copy=copy)
+        except Exception as error:
+            if not error:
+                error = "Could not set {!r} on {!r}".format(
+                    bounds, construct
+                )
+
+            return error
+
+        return ''
 
     def set_cell_measure(self, field, construct, axes, copy=True):
         '''Insert a cell_measure object into a field.

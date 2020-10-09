@@ -20,8 +20,9 @@ version 1.8.7.0
 ---------------
 ----
 
-**2020-10-??**
+**2020-10-09**
 
+* Python 3.5 support deprecated (3.5 was retired on 2020-09-13)
 * New method: `cfdm.Field.creation_commands`
 * New method: `cfdm.Data.creation_commands`
 * New method: `cfdm.Field._docstring_special_substitutions`
@@ -32,7 +33,9 @@ version 1.8.7.0
 * New keyword parameter to `cfdm.Field.set_data`: ``inplace``
 * New keyword parameter to `cfdm.write`: ``coordinates``
   (https://github.com/NCAS-CMS/cfdm/issues/81)
-* New class: `cfdm.core.meta.DocstringRewriteMeta`
+* New class: `cfdm.core.DocstringRewriteMeta`
+* Comprehensive documentation coverage of class methods.
+* Improved documentation following JOSS review.
 * Enabled "creation commands" methods
   (https://github.com/NCAS-CMS/cfdm/issues/53)
 * Fixed bug that caused failures when reading or writing a dataset

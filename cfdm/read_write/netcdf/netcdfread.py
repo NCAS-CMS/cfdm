@@ -243,7 +243,7 @@ class NetCDFRead(IORead):
             The netCDF name of the the variable that is doing the
             referencing.
 
-            .. versionaddedd:: 1.8.6
+            .. versionaddedd:: (cfdm) 1.8.6.0
 
     :Returns:
 
@@ -2651,7 +2651,7 @@ class NetCDFRead(IORead):
         '''For a missing variable, return the variable name and a suitable
     message.
 
-   .. versionaddedd:: 1.8.6
+   .. versionaddedd:: (cfdm) 1.8.6.0
 
     :Parameters:
 
@@ -4163,7 +4163,12 @@ class NetCDFRead(IORead):
             if bounds_ncdim not in g['variable_dimensions'].get(ncvar, ()):
                 self.implementation.nc_set_dimension(bounds, bounds_ncdim)
 
-            self.implementation.set_bounds(c, bounds, copy=False)
+            # Set the bounds on the parent construct
+            error = self.implementation.set_bounds(c, bounds, copy=False)
+            if error:
+                logger.warning(
+                    "WARNING: {}".format(error)
+                )
 
             if not domain_ancillary:
                 g['bounds'][field_ncvar][ncvar] = bounds_ncvar
