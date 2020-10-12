@@ -105,14 +105,14 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
         fmt: `str`, optional
             The format of the output file. One of:
 
-            ==========================  ================================
+            ==========================  ==============================
             *fmt*                       Output file type
-            ==========================  ================================
-            ``'NETCDF4'``               NetCDF4 format file. This is the
-                                        default.
+            ==========================  ==============================
+            ``'NETCDF4'``               NetCDF4 format file. This is
+                                        the default.
 
-            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see
-                                        below)
+            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file
+                                        (see below)
 
             ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
                                         (limited to file sizes less
@@ -125,8 +125,9 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                                         ``'NETCDF3_64BIT_OFFSET'``
 
             ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
-                                        file with extensions (see below)
-            ==========================  ================================
+                                        file with extensions (see
+                                        below)
+            ==========================  ==============================
 
             By default the format is ``'NETCDF4'``.
 

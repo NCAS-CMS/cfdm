@@ -10,13 +10,13 @@ class Domain(mixin.ConstructAccess,
 
     The domain represents a set of discrete "locations" in what
     generally would be a multi-dimensional space, either in the real
-    world or in a model's simulated world. These locations correspond
-    to individual data array elements of a field construct
+    world or in a model's simulated world. The data array elements of
+    a field construct correspond to individual location of a domain.
 
     The domain construct is defined collectively by the following
     constructs of the CF data model: domain axis, dimension
     coordinate, auxiliary coordinate, cell measure, coordinate
-    reference and domain ancillary constructs; as well as properties
+    reference, and domain ancillary constructs; as well as properties
     to describe the domain.
 
     .. versionadded:: (cfdm) 1.7.0

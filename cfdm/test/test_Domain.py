@@ -73,6 +73,7 @@ class DomainTest(unittest.TestCase):
         d.set_properties({'foo': 'bar'})
         self.assertEqual(d.properties(),
                          {'long_name': 'qwerty', 'foo': 'bar'})
+
 # --- End: class
 
 

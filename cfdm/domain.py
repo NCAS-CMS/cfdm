@@ -24,13 +24,13 @@ class Domain(mixin.NetCDFVariable,
 
     The domain represents a set of discrete "locations" in what
     generally would be a multi-dimensional space, either in the real
-    world or in a model's simulated world. These locations correspond
-    to individual data array elements of a field construct
+    world or in a model's simulated world. The data array elements of
+    a field construct correspond to individual location of a domain.
 
     The domain construct is defined collectively by the following
     constructs of the CF data model: domain axis, dimension
     coordinate, auxiliary coordinate, cell measure, coordinate
-    reference and domain ancillary constructs; as well as properties
+    reference, and domain ancillary constructs; as well as properties
     to describe the domain.
 
     **NetCDF interface**
@@ -482,7 +482,105 @@ class Domain(mixin.NetCDFVariable,
 
     **Examples:**
 
-    TODO
+    >>> f = {{package}}.example_field(0)
+    >>> d = f.domain
+    >>> print(d.creation_commands())
+    #
+    # domain:
+    domain = {{package}}.Domain()
+    #
+    # domain_axis: ncdim%lat
+    c = {{package}}.DomainAxis()
+    c.set_size(5)
+    c.nc_set_dimension('lat')
+    domain.set_construct(c, key='domainaxis0', copy=False)
+    #
+    # domain_axis: ncdim%lon
+    c = {{package}}.DomainAxis()
+    c.set_size(8)
+    c.nc_set_dimension('lon')
+    domain.set_construct(c, key='domainaxis1', copy=False)
+    #
+    # domain_axis:
+    c = {{package}}.DomainAxis()
+    c.set_size(1)
+    domain.set_construct(c, key='domainaxis2', copy=False)
+    #
+    # dimension_coordinate: latitude
+    c = {{package}}.DimensionCoordinate()
+    c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+    c.nc_set_variable('lat')
+    data = {{package}}.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
+    c.set_data(data)
+    b = {{package}}.Bounds()
+    b.nc_set_variable('lat_bnds')
+    data = {{package}}.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
+    b.set_data(data)
+    c.set_bounds(b)
+    domain.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+    #
+    # dimension_coordinate: longitude
+    c = {{package}}.DimensionCoordinate()
+    c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+    c.nc_set_variable('lon')
+    data = {{package}}.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
+    c.set_data(data)
+    b = {{package}}.Bounds()
+    b.nc_set_variable('lon_bnds')
+    data = {{package}}.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
+    b.set_data(data)
+    c.set_bounds(b)
+    domain.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+    #
+    # dimension_coordinate: time
+    c = {{package}}.DimensionCoordinate()
+    c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+    c.nc_set_variable('time')
+    data = {{package}}.Data([31.0], units='days since 2018-12-01', dtype='f8')
+    c.set_data(data)
+    domain.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+    >>> print(d.creation_commands(representative_data=True, namespace='',
+    ...                           indent=4, header=False))
+        domain = Domain()
+        c = DomainAxis()
+        c.set_size(5)
+        c.nc_set_dimension('lat')
+        domain.set_construct(c, key='domainaxis0', copy=False)
+        c = DomainAxis()
+        c.set_size(8)
+        c.nc_set_dimension('lon')
+        domain.set_construct(c, key='domainaxis1', copy=False)
+        c = DomainAxis()
+        c.set_size(1)
+        domain.set_construct(c, key='domainaxis2', copy=False)
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+        c.nc_set_variable('lat')
+        data = <Data(5): [-75.0, ..., 75.0] degrees_north>  # Representative data
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable('lat_bnds')
+        data = <Data(5, 2): [[-90.0, ..., 90.0]] degrees_north>  # Representative data
+        b.set_data(data)
+        c.set_bounds(b)
+        domain.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+        c.nc_set_variable('lon')
+        data = <Data(8): [22.5, ..., 337.5] degrees_east>  # Representative data
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable('lon_bnds')
+        data = <Data(8, 2): [[0.0, ..., 360.0]] degrees_east>  # Representative data
+        b.set_data(data)
+        c.set_bounds(b)
+        domain.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+        c.nc_set_variable('time')
+        data = <Data(1): [2019-01-01 00:00:00]>  # Representative data
+        c.set_data(data)
+        domain.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
 
         '''
         if name in ('b', 'c', 'mask', 'i'):

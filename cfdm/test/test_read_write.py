@@ -448,7 +448,7 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
         d = f.domain.copy()
 
-        tmpfile = 'delme.nc'
+        # 1 domain
         cfdm.write(d, tmpfile)
         e = cfdm.read(tmpfile)
         self.assertTrue(len(e), 10)
@@ -461,6 +461,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(d.equals(e, verbose=3))
         self.assertTrue(e.equals(d, verbose=3))
 
+        # 1 field and 1 domain
         cfdm.write([f, d], tmpfile)
         g = cfdm.read(tmpfile)
         self.assertTrue(len(g), 1)
@@ -472,6 +473,20 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(e), 1)
         e = e[0]
         self.assertIsInstance(e, cfdm.Domain)
+
+        # 1 field and 2 domains
+        cfdm.write([f, d, d], tmpfile)
+        g = cfdm.read(tmpfile)
+        self.assertTrue(len(g), 1)
+        g = g[0]
+        self.assertIsInstance(g, cfdm.Field)
+        self.assertTrue(g.equals(f, verbose=3))
+
+        e = cfdm.read(tmpfile, domain=True, verbose=1)
+        self.assertEqual(len(e), 2)
+        self.assertIsInstance(e[0], cfdm.Domain)
+        self.assertIsInstance(e[1], cfdm.Domain)
+        self.assertTrue(e[0].equals(e[1]))
 
     def test_write_coordinates(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

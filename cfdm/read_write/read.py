@@ -75,9 +75,9 @@ def read(filename, external=None, extra=None, verbose=None,
     variable. Other types of non-compliance are not checked, such
     whether or not controlled vocabularies have been adhered to. The
     structural compliance of the dataset may be checked with the
-    `~cfdm.Field.dataset_compliance` method of the field construct, as
-    well as optionally displayed when the dataset is read by setting
-    the *warnings* parameter.
+    `~cfdm.Field.dataset_compliance` method of the returned
+    constructs, as well as optionally displayed when the dataset is
+    read by setting the *warnings* parameter.
 
 
     **Performance**
@@ -91,8 +91,8 @@ def read(filename, external=None, extra=None, verbose=None,
 
     .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `cfdm.write`, `cfdm.unique_domains`,
-                 `cfdm.Field.convert`, `cfdm.Field.dataset_compliance`
+    .. seealso:: `cfdm.write`, `cfdm.Field`, `cfdm.Domain`,
+                 `cfdm.unique_constructs`
 
     :Parameters:
 
@@ -133,20 +133,22 @@ def read(filename, external=None, extra=None, verbose=None,
               ``external=('cell_measure_A.nc', 'cell_measure_O.nc')``
 
         extra: (sequence of) `str`, optional
-            Create extra, independent fields from netCDF variables
-            that correspond to particular types metadata
-            constructs. The *extra* parameter may be one, or a
-            sequence, of:
 
-              ==========================  ================================
-              *extra*                     Metadata constructs
-              ==========================  ================================
-              ``'field_ancillary'``       Field ancillary constructs
-              ``'domain_ancillary'``      Domain ancillary constructs
-              ``'dimension_coordinate'``  Dimension coordinate constructs
-              ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-              ``'cell_measure'``          Cell measure constructs
-              ==========================  ================================
+            Create extra, independent fields from netCDF variables
+            that correspond to particular types metadata constructs.
+            Ignored if *domain* is True.
+
+            The *extra* parameter may be one, or a sequence, of:
+
+            ==========================  ===============================
+            *extra*                     Metadata constructs
+            ==========================  ===============================
+            ``'field_ancillary'``       Field ancillary constructs
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ==========================  ===============================
 
             *Parameter example:*
               To create fields from auxiliary coordinate constructs:
@@ -167,8 +169,6 @@ def read(filename, external=None, extra=None, verbose=None,
             parent field construct's domain as possible by using the
             `~cfdm.Field.convert` method of a returned field
             construct, instead of setting the *extra* parameter.
-
-            Ignored if *domain* is True.
 
         verbose: `int` or `str` or `None`, optional
             If an integer from ``-1`` to ``3``, or an equivalent string
@@ -235,22 +235,24 @@ def read(filename, external=None, extra=None, verbose=None,
             .. versionadded:: (cfdm) 1.8.2
 
         domain: `bool`, optional
-            If True then return only the domain constructs from the
-            dataset that are defined by CF-netCDF domain variables
-            (and not from the domains implicitly defined by CF-netCDF
-            data variables). By default only the field constructs
-            defined by CF-netCDF data variables are returned.
+            If True then return only the domain constructs that are
+            explicitly defined by CF-netCDF domain variables, ignoring
+            all CF-netCDF data variables. By default only the field
+            constructs defined by CF-netCDF data variables are
+            returned.
 
             CF-netCDF domain variables are only defined from CF-1.9,
             so older datasets automatically contain no CF-netCDF
             domain variables.
 
-            The unique domains contained by a sequence of field
-            constructs are easily found with the `cfdm.unique_domains`
-            function. For example::
+            The unique domain constructs of the dataset are easily
+            found with the `cfdm.unique_constructs` function. For
+            example::
 
+               >>> d = cfdm.read('file.nc', domain=True)
+               >>> ud = cfdm.unique_constructs(d)
                >>> f = cfdm.read('file.nc')
-               >>> d = cfdm.unique_domains(f)
+               >>> ufd = cfdm.unique_constructs(x.domain for x in f)
 
             .. versionadded:: (cfdm) 1.9.0.0
 
@@ -300,7 +302,7 @@ def read(filename, external=None, extra=None, verbose=None,
         raise IOError("Can't read non-existent file {}".format(filename))
 
     # ----------------------------------------------------------------
-    # Read the file into field contructs
+    # Read the file into field/domain contructs
     # ----------------------------------------------------------------
 
     # Initialise a netCDF read object
@@ -322,11 +324,13 @@ def read(filename, external=None, extra=None, verbose=None,
         raise IOError(
             "Can't determine format of file {} "
             "generated from CDL file {}".format(
-                filename, cdl_filename))
+                filename, cdl_filename
+            )
+        )
     else:
         raise IOError("Can't determine format of file {}".format(filename))
 
     # ----------------------------------------------------------------
-    # Return the field constructs
+    # Return the field or domain constructs
     # ----------------------------------------------------------------
     return fields

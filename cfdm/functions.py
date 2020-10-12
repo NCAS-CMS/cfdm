@@ -573,7 +573,7 @@ def unique_constructs(constructs, copy=True):
 
     :Parameters:
 
-        fields: sequence of constructs
+        constructs: sequence of constructs
             The constructs to be compared. The constructs may comprise
             a mixture of types. The sequence can be empty.
 
@@ -611,17 +611,34 @@ def unique_constructs(constructs, copy=True):
      <Field: specific_humidity(latitude(5), longitude(8)) 1>,
      <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
 
+    >>> cfdm.unique_constructs(x for x in fields)
+    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+
     '''
     if not constructs:
+        # constructs is an empty sequence
         return []
 
-    construct0 = constructs[0]
+    try:
+        # constructs is a sequence?
+        construct0 = constructs[0]
+        constructs = (c for c in constructs[1:])
+    except TypeError:
+        try:
+            # constructs is a generator?
+            construct0 = next(constructs)
+        except StopIteration:
+            # constructs is an empty generator
+            return []
+    # --- End: try
+
     if copy:
         construct0 = construct0.copy()
 
     out = [construct0]
 
-    for construct in constructs[1:]:
+    for construct in constructs:
         is_equal = False
         for c in out:
             if construct.equals(c, verbose='DISABLE'):

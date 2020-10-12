@@ -353,6 +353,16 @@ class FunctionsTest(unittest.TestCase):
             len(cfdm.unique_constructs(domains + fields + [f.domain])), 4
         )
 
+        # Test generator
+        domains = (x.domain for x in ())
+        self.assertEqual(len(cfdm.unique_constructs(domains)), 0)
+
+        domains = (x.domain for x in (f,))
+        self.assertEqual(len(cfdm.unique_constructs(domains)), 1)
+
+        domains = (x.domain for x in (f, f, g))
+        self.assertEqual(len(cfdm.unique_constructs(domains)), 2)
+
 # --- End: class
 
 
