@@ -3384,7 +3384,7 @@ class NetCDFWrite(IOWrite):
             else:
                 raise ValueError(
                     "Can't write {!r}: Unknown compression type: {!r}".format(
-                        oget_courg_f, compression_type))
+                        org_f, compression_type))
 
             g['sample_ncdim'][compressed_ncdims] = sample_ncdim
 
