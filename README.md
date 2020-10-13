@@ -107,7 +107,7 @@ Tests are run from within the ``cfdm/test`` directory:
 Citation
 ========
 
-If you use cfdm, either as a standalone application or to provide a CF
+If you use cfdm, either as a stand-alone application or to provide a CF
 data model implementation to another software library, please consider
 including the reference:
 
