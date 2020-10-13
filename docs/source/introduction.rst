@@ -14,6 +14,10 @@
 
 Version |release| for version |version| of the CF conventions.
 
+.. contents::
+   :local:
+   :backlinks: entry
+
 The Python cfdm package is a reference implementation of the
 :ref:`CF-data-model`.
 
@@ -28,12 +32,11 @@ non-conformant datasets may be created or ingested from existing
 datasets and written to new datasets. This is so that existing
 datasets which are non-CF-compliant may be processed by cfdm, ideally
 being modified in memory to be (more) CF-compliant.
-     
+
+----
     
 **Functionality**
 -----------------
-
-----
 
 The cdfm library can create field constructs ab initio, or read them
 from netCDF files, inspect, subspace and modify in memory, and write
@@ -44,7 +47,11 @@ to be read, processed, corrected and rewritten.
 It does not contain higher-level analysis functions (such as
 regidding) because the expectation is that other libraries will build
 on cfdm, inheriting its comprehensive knowledge of the CF conventions,
-to add more sophisticated methods. 
+to add more sophisticated methods.
+
+For more details see *cfdm: A Python reference implementation of the
+CF data model* in the Journal of Open Source Software:
+https://doi.org/10.21105/joss.02717
 
 .. code-block:: python
    :caption: *A simple example of reading a field construct from a
@@ -114,11 +121,38 @@ outside of a Python environment:
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
 
-Related packages
-^^^^^^^^^^^^^^^^
+**Related packages**
+--------------------
 
 The `cf-python <https://ncas-cms.github.io/cf-python>`_ package, which
 is built as an extension to cfdm, includes higher-level functionality,
 such as regridding, and statistical operations. In turn, the `cf-plot
 <http://ajheaps.github.io/cf-plot/>`_ package provides comprehensive
 visualisation of field constructs created by cf-python.
+
+**Citation**
+------------
+
+If you use cfdm, either as a stand-alone application or to provide a
+CF data model implementation to another software library, please
+consider including the reference:
+
+*Hassell et al., (2020). cfdm: A Python reference implementation of
+the CF data model. Journal of Open Source Software, 5(54), 2717,
+https://doi.org/10.21105/joss.02717*
+
+.. code-block:: bibtex
+   
+   @article{Hassell2020,
+     doi = {10.21105/joss.02717},
+     url = {https://doi.org/10.21105/joss.02717},
+     year = {2020},
+     publisher = {The Open Journal},
+     volume = {5},
+     number = {54},
+     pages = {2717},
+     author = {David Hassell and Sadie L. Bartholomew},
+     title = {cfdm: A Python reference implementation of the CF data model},
+     journal = {Journal of Open Source Software}
+   }
+
