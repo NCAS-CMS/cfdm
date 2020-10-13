@@ -103,3 +103,28 @@ Tests
 Tests are run from within the ``cfdm/test`` directory:
 
     $ python run_tests.py
+
+Citation
+========
+
+If you use cfdm, either as a standalone application or to provide a CF
+data model implementation to another software library, please consider
+including the reference:
+
+Hassell et al., (2020). cfdm: A Python reference implementation of the
+CF data model. Journal of Open Source Software, 5(54), 2717,
+https://doi.org/10.21105/joss.02717
+
+@article{Hassell2020,
+  doi = {10.21105/joss.02717},
+  url = {https://doi.org/10.21105/joss.02717},
+  year = {2020},
+  publisher = {The Open Journal},
+  volume = {5},
+  number = {54},
+  pages = {2717},
+  author = {David Hassell and Sadie L. Bartholomew},
+  title = {cfdm: A Python reference implementation of the CF data model},
+  journal = {Journal of Open Source Software}
+}
+
