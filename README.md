@@ -115,6 +115,7 @@ Hassell et al., (2020). cfdm: A Python reference implementation of the
 CF data model. Journal of Open Source Software, 5(54), 2717,
 https://doi.org/10.21105/joss.02717
 
+```
 @article{Hassell2020,
   doi = {10.21105/joss.02717},
   url = {https://doi.org/10.21105/joss.02717},
@@ -127,4 +128,4 @@ https://doi.org/10.21105/joss.02717
   title = {cfdm: A Python reference implementation of the CF data model},
   journal = {Journal of Open Source Software}
 }
-
+```
