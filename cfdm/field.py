@@ -34,7 +34,7 @@ class Field(mixin.NetCDFVariable,
             mixin.NetCDFGroupAttributes,
             mixin.NetCDFComponents,
             mixin.NetCDFUnreferenced,
-            mixin.ConstructAccess,
+            mixin.ConstructsMixin,
             mixin.PropertiesData,
             core.Field):
     '''A field construct of the CF data model.

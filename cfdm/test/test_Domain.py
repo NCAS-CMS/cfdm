@@ -3,8 +3,6 @@ import inspect
 import os
 import unittest
 
-import numpy
-
 import cfdm
 
 

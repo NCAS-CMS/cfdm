@@ -17,7 +17,7 @@ class Domain(mixin.NetCDFVariable,
              mixin.NetCDFGroupAttributes,
              mixin.NetCDFComponents,
              mixin.NetCDFUnreferenced,
-             mixin.ConstructAccess,
+             mixin.ConstructsMixin,
              mixin.Properties,
              core.Domain):
     '''A domain construct of the CF data model.
