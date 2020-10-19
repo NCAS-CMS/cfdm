@@ -4,7 +4,7 @@ from . import mixin
 from . import Constructs
 
 
-class Domain(mixin.ConstructAccess,
+class Domain(mixin.ConstructsMixin,
              abstract.Properties):
     '''A domain construct of the CF data model.
 

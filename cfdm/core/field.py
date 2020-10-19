@@ -7,7 +7,7 @@ from . import Constructs
 from . import Domain
 
 
-class Field(mixin.ConstructAccess,
+class Field(mixin.ConstructsMixin,
             abstract.PropertiesData):
     '''A field construct of the CF data model.
 
@@ -361,11 +361,10 @@ class Field(mixin.ConstructAccess,
     False
 
         '''
-        axes = self.get_data_axes(key, default=None)
-        if axes is None:
-            return False
+        if key is None:
+            return self.get_data_axes(default=None) is not None
 
-        return True
+        return super().has_data_axes(key)
 
     def del_construct(self, key, default=ValueError()):
         '''Remove a metadata construct.

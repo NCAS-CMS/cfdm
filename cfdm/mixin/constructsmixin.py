@@ -382,13 +382,6 @@ class ConstructsMixin():
             one construct is selected then it is returned, otherwise
             an exception is raised.
 
-            The identity is specified by a string
-            (e.g. ``'latitude'``, ``'long_name=time'``, etc.); or a
-            compiled regular expression
-            (e.g. ``re.compile('^atmosphere')``), for which all
-            constructs whose identities match (via `re.search`) are
-            selected.
-
             Each construct has a number of identities, and is selected
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
@@ -400,6 +393,11 @@ class ConstructsMixin():
 
             In addition, each construct also has an identity based its
             construct key (e.g. ``'key%dimensioncoordinate2'``)
+
+            An identity is specified either by a string or a compiled
+            regular expression (e.g. ``re.compile('^atmosphere')``)
+            for which all constructs whose identities match (via
+            `re.search`) are selected.
 
             Note that in the output of a `print` call or `!dump`
             method, a construct is always described by one of its
@@ -449,15 +447,7 @@ class ConstructsMixin():
 
         '''
         c = self.constructs.filter_by_identity(identity)
-        if len(c) == 1:
-            return c.value()
-
-        if not c:
-            return self._default(default,
-                                 "Can't return zero constructs")
-
-        return self._default(default,
-                             "Can't return {0} constructs".format(len(c)))
+        return c.value(default=default)
 
     def construct_key(self, identity, default=ValueError()):
         '''Select the key of a metadata construct by its identity.
@@ -543,16 +533,7 @@ class ConstructsMixin():
 
         '''
         c = self.constructs.filter_by_identity(identity)
-        if len(c) == 1:
-            return c.key()
-
-        if not c:
-            return self._default(default,
-                                 "Can't return the key of zero constructs")
-
-        return self._default(
-            default,
-            "Can't return the keys of {0} constructs".format(len(c)))
+        return c.key(default=default)
 
     def domain_axis_key(self, identity, default=ValueError()):
         '''Return the key of the domain axis construct that is spanned by 1-d

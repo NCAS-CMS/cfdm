@@ -655,12 +655,12 @@ class Constructs(mixin.ConstructsMixin,
     @property
     def constructs(self):
         '''Return the metdata constructs.
-    
+
     Returns the constructs in a new reference to the `{{class}}`
     instance. This attribute provides compatibility with the `Field`
     and `Domain` APIs for construct access.
 
-    .. versionadded:: 1.9.0.0
+    .. versionadded:: (cfdm) 1.9.0.0
 
     :Returns:
 
@@ -1843,50 +1843,6 @@ class Constructs(mixin.ConstructsMixin,
         # --- End: for
 
         return out
-
-    def get_data_axes(self, key, default=ValueError()):
-        '''Return the keys of the domain axis constructs spanned by a metadata
-    construct.
-
-    .. versionadded:: (cfdm) 1.9.0.0
-
-    .. seealso:: `data_axes`
-
-    :Parameters:
-
-        key: `str`
-            Specify a metadata construct.
-
-            *Parameter example:*
-              ``key='auxiliarycoordinate0'``
-
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set.
-
-            {{default Exception}}
-
-    :Returns:
-
-        `tuple`
-            The keys of the domain axis constructs spanned by the
-            data.
-
-    **Examples:**
-
-    >>> f.data_axes()['dimensioncoordinate2']
-    ('domainaxis1',)
-    >>> f.get_data_axes('dimensioncoordinate2')
-    ('domainaxis1',)
-
-        '''
-        try:
-            return self.data_axes()[key]
-        except KeyError
-            return self._default(
-                default,
-                "{!r} has no data axes".format(key)
-            )
 
     def _matching_values(self, value0, construct, value1):
         '''Whether or not two values are the same.

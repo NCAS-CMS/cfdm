@@ -2,9 +2,11 @@ from collections import OrderedDict
 from copy import copy
 
 from . import abstract
+from . import mixin
 
 
-class Constructs(abstract.Container):
+class Constructs(mixin.ConstructsMixin,
+                 abstract.Container):
     '''A container for metadata constucts.
 
     The following metadata constructs can be included:

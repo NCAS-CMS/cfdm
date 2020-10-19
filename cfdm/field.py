@@ -431,6 +431,7 @@ class Field(mixin.NetCDFVariable,
 
         x = [
             axis_names_sizes[axis] for axis in self.get_data_axes(default=())]
+
         axis_names = ', '.join(x)
         if axis_names:
             axis_names = '({0})'.format(axis_names)
@@ -1679,6 +1680,55 @@ class Field(mixin.NetCDFVariable,
             return False
 
         return True
+
+    def get_data_axes(self, identity=None, default=ValueError()):
+        '''Return the keys of the domain axis constructs spanned by the data
+    of the field or of a metadata construct.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `del_data_axes`, `get_data`, `set_data_axes`
+
+    :Parameters:
+
+        identity TODO
+
+        default: optional
+            Return the value of the *default* parameter if the data
+            axes have not been set.
+
+            {{default Exception}}
+
+    :Returns:
+
+        `tuple`
+            The keys of the domain axis constructs spanned by the
+            data.
+
+    **Examples:**
+
+    >>> f.get_data_axes()
+    ('domainaxis0', 'domainaxis1')
+
+    >>> f.get_data_axes('dimensioncoordinate2')
+    ('domainaxis1',)
+
+    >>> f.has_data_axes()
+    False
+    >>> f.get_data_axes(default='no axes')
+    'no axes'
+
+        '''
+        if identity is not None:
+            return super().get_data_axes(identity, default=default)
+
+        try:
+            return self._get_component('data_axes')
+        except ValueError:
+            return self._default(
+                default,
+                "{!r} has no data axes".format(self.__class__.__name__)
+            )
 
     def get_filenames(self):
         '''Return the name of the file or files containing the data.
