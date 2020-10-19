@@ -49,11 +49,35 @@ Constructs and identifiers
 
    ~cfdm.Constructs.key
    ~cfdm.Constructs.value
+   ~cfdm.Constructs.get_construct
+   ~cfdm.Constructs.has_construct
+   ~cfdm.Constructs.construct
+   ~cfdm.Constructs.construct_key
+   ~cfdm.Constructs.get_construct
+   ~cfdm.Constructs.has_construct
    ~cfdm.Constructs.construct_type
    ~cfdm.Constructs.construct_types
    ~cfdm.Constructs.domain_axis_identity
    ~cfdm.Constructs.new_identifier
+   ~cfdm.Constructs.domain_axis
+   ~cfdm.Constructs.domain_axis_key
+   ~cfdm.Constructs.auxiliary_coordinates
+   ~cfdm.Constructs.cell_measures
+   ~cfdm.Constructs.coordinate_references
+   ~cfdm.Constructs.coordinates
+   ~cfdm.Constructs.dimension_coordinates
+   ~cfdm.Constructs.domain_ancillaries
+   ~cfdm.Constructs.domain_axes
 
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.Constructs.constructs
+   
 Data axes
 ---------
 
@@ -64,6 +88,10 @@ Data axes
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Constructs.del_data_axes
+   ~cfdm.Constructs.get_data_axes
+   ~cfdm.Constructs.has_data_axes
+   ~cfdm.Constructs.set_data_axes
    ~cfdm.Constructs.data_axes
 
 Miscellaneous
@@ -81,6 +109,7 @@ Miscellaneous
    ~cfdm.Constructs.equals
    ~cfdm.Constructs.ordered
    ~cfdm.Constructs.replace
+   ~cfdm.Constructs.has_geometry
 
 Dictionary-access methods
 -------------------------

@@ -571,10 +571,10 @@ class Constructs(mixin.ConstructsMixin,
 
     **Examples:**
 
-    >>> key = f.set_construct(c)
-    >>> key = f.set_construct(c, copy=False)
-    >>> key = f.set_construct(c, axes='domainaxis2')
-    >>> key = f.set_construct(c, key='cellmeasure0')
+    >>> key = f._set_construct(c)
+    >>> key = f._set_construct(c, copy=False)
+    >>> key = f._set_construct(c, axes='domainaxis2')
+    >>> key = f._set_construct(c, key='cellmeasure0')
 
         '''
         construct_type = self._check_construct_type(construct.construct_type)
@@ -584,9 +584,7 @@ class Constructs(mixin.ConstructsMixin,
             key = self.new_identifier(construct_type)
 
         if construct_type in self._array_constructs:
-            # ---------------------------------------------------------
             # The construct could have a data array
-            # ---------------------------------------------------------
             if axes is not None:
                 self._set_construct_data_axes(key=key, axes=axes,
                                               construct=construct)
@@ -679,8 +677,8 @@ class Constructs(mixin.ConstructsMixin,
         extra_axes = 0
         data = construct.get_data(None)
         if (
-                data is not None and
-                data.shape[:data.ndim - extra_axes] != axes_shape
+                data is not None
+                and data.shape[:data.ndim - extra_axes] != axes_shape
         ):
             raise ValueError(
                 "Can't set {!r}: Data shape of {!r} does not match the "
@@ -696,8 +694,8 @@ class Constructs(mixin.ConstructsMixin,
             if bounds is not None:
                 data = bounds.get_data(None)
                 if (
-                        data is not None and
-                        data.shape[:len(axes_shape)] != axes_shape
+                        data is not None
+                        and data.shape[:len(axes_shape)] != axes_shape
                 ):
                     raise ValueError(
                         "Can't set {!r}: Bounds data shape of {!r} does "
@@ -917,6 +915,29 @@ class Constructs(mixin.ConstructsMixin,
         # --- End: if
 
         return out
+
+    @property
+    def constructs(self):
+        '''Return the metdata constructs.
+
+    Returns the constructs in a new reference to the `{{class}}`
+    instance.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    :Returns:
+
+        `{{class}}`
+            The constructs.
+
+    **Examples:**
+
+    >>> c = {{package}}.{{class}}()
+    >>> c.constructs is c
+    True
+
+        '''
+        return self
 
     def copy(self, data=True):
         '''Return a deep copy.

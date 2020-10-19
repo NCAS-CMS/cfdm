@@ -625,10 +625,10 @@ class Constructs(mixin.ConstructsMixin,
 
     **Examples:**
 
-    >>> key = f.set_construct(c)
-    >>> key = f.set_construct(c, copy=False)
-    >>> key = f.set_construct(c, axes='domainaxis2')
-    >>> key = f.set_construct(c, key='cellmeasure0')
+    >>> key = f._set_construct(c)
+    >>> key = f._set_construct(c, copy=False)
+    >>> key = f._set_construct(c, axes='domainaxis2')
+    >>> key = f._set_construct(c, key='cellmeasure0')
 
         '''
         if copy:
@@ -648,33 +648,6 @@ class Constructs(mixin.ConstructsMixin,
 
         # Return the identifier of the construct
         return key
-
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
-    @property
-    def constructs(self):
-        '''Return the metdata constructs.
-
-    Returns the constructs in a new reference to the `{{class}}`
-    instance. This attribute provides compatibility with the `Field`
-    and `Domain` APIs for construct access.
-
-    .. versionadded:: (cfdm) 1.9.0.0
-
-    :Returns:
-
-        `{{class}}`
-            The constructs.
-
-    **Examples:**
-
-    >>> c = {{package}}.{{class}}()
-    >>> c.constructs is c
-    True
-
-        '''
-        return self
 
     # ----------------------------------------------------------------
     # Methods

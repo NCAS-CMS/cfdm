@@ -34,11 +34,22 @@ Constructs and identifiers
 
    ~cfdm.core.Constructs.key
    ~cfdm.core.Constructs.value
+   ~cfdm.core.Constructs.get_construct
+   ~cfdm.core.Constructs.has_construct
    ~cfdm.core.Constructs.construct_type
    ~cfdm.core.Constructs.construct_types
    ~cfdm.core.Constructs.new_identifier
    ~cfdm.core.Constructs.replace
 
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.Constructs.constructs
+   
 Data axes
 ---------
 
@@ -49,6 +60,10 @@ Data axes
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.core.Constructs.del_data_axes
+   ~cfdm.core.Constructs.get_data_axes
+   ~cfdm.core.Constructs.has_data_axes
+   ~cfdm.core.Constructs.set_data_axes
    ~cfdm.core.Constructs.data_axes
 
 Miscellaneous

@@ -1425,7 +1425,7 @@ class Field(mixin.NetCDFVariable,
             )
         )
 
-        # Metadata constructs with data
+        # Field ancillary constructs
         for key, c in self.field_ancillaries().items():
             out.extend(
                 c.creation_commands(
