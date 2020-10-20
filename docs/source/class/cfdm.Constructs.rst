@@ -104,6 +104,7 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Constructs.climatological_time_axes
    ~cfdm.Constructs.copy
    ~cfdm.Constructs.shallow_copy
    ~cfdm.Constructs.equals
