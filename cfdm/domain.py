@@ -267,7 +267,7 @@ class Domain(mixin.NetCDFVariable,
         string = '\n'.join(w)
 
         if display:
-            print(string)
+            print(string)  # pragma: no cover
         else:
             return string
 
@@ -410,37 +410,37 @@ class Domain(mixin.NetCDFVariable,
         string = '\n'.join(string)
 
         if display:
-            print(string)
+            print(string)  # pragma: no cover
         else:
             return string
 
-    def climatological_time_axes(self):
-        '''Return all axes which are climatological time axes.
-
-    .. versionadded:: (cfdm) 1.9.0.0
-
-    :Returns:
-
-        `set`
-            The set of all domain axes which are climatological time
-            axes. If there are none, this will be an empty set.
-
-    **Examples:**
-
-    TODO
-
-        '''
-        out = []
-
-        for ckey, c in self.constructs.filter_by_type(
-                'dimension_coordinate',
-                'auxiliary_coordinate').items():
-            if not c.is_climatology():
-                continue
-
-            out.extend(self.data_axes().get(ckey, ()))
-
-        return set(out)
+#    def climatological_time_axes(self):
+#        '''Return all axes which are climatological time axes.
+#
+#    .. versionadded:: (cfdm) 1.9.0.0
+#
+#    :Returns:
+#
+#        `set`
+#            The set of all domain axes which are climatological time
+#            axes. If there are none, this will be an empty set.
+#
+#    **Examples:**
+#
+#    TODO
+#
+#        '''
+#        out = []
+#
+#        for ckey, c in self.constructs.filter_by_type(
+#                'dimension_coordinate',
+#                'auxiliary_coordinate').items():
+#            if not c.is_climatology():
+#                continue
+#
+#            out.extend(self.data_axes().get(ckey, ()))
+#
+#        return set(out)
 
     def creation_commands(self, representative_data=False,
                           namespace=None, indent=0, string=True,
@@ -614,10 +614,10 @@ class Domain(mixin.NetCDFVariable,
                     out.append('#')
                     out.append('# netCDF global attributes')
 
-                    out.append(
-                        "{}.nc_set_global_attributes({!r})".format(
-                            name, nc_global_attributes)
-                    )
+                out.append(
+                    "{}.nc_set_global_attributes({!r})".format(
+                        name, nc_global_attributes)
+                )
         else:
             out = []
 

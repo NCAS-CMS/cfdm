@@ -44,14 +44,17 @@ class DomainTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f
-
-        d = f.domain
+        d = cfdm.example_field(1).domain
         e = d.copy()
 
         self.assertTrue(d.equals(d, verbose=3))
         self.assertTrue(d.equals(e, verbose=3))
         self.assertTrue(e.equals(d, verbose=3))
+
+        e = cfdm.example_field(0).domain
+        self.assertFalse(e.equals(d))
+        e.set_property('foo', 'bar')
+        self.assertFalse(e.equals(d))
 
     def test_Domain_properties(self):
         d = cfdm.Domain()
@@ -71,6 +74,52 @@ class DomainTest(unittest.TestCase):
         d.set_properties({'foo': 'bar'})
         self.assertEqual(d.properties(),
                          {'long_name': 'qwerty', 'foo': 'bar'})
+
+    def test_Domain_del_construct(self):
+        d = cfdm.example_field(1).domain
+
+        self.assertIsInstance(d.del_construct('dimensioncoordinate1'),
+                              cfdm.DimensionCoordinate)
+
+    def test_Domain_climatological_time_axes(self):
+        d = cfdm.example_field(1).domain
+
+        self.assertIsInstance(d.climatological_time_axes(), set)
+
+    def test_Domain_creation_commands(self):
+        d = cfdm.example_field(1).domain
+
+        with self.assertRaises(ValueError):
+            x = d.creation_commands(name='c')
+
+        with self.assertRaises(ValueError):
+            x = d.creation_commands(name='data', data_name='data')
+
+        d.nc_set_global_attribute('foo', 'bar')
+        d = d.creation_commands(namespace='my_cfdm', header=True)
+
+    def test_Domain_identity(self):
+        d = cfdm.example_field(1).domain
+
+        d.nc_set_variable('qwerty')
+        self.assertEqual(d.identity(), 'ncvar%qwerty')
+
+        d.set_property('long_name', 'qwerty')
+        self.assertEqual(d.identity(), 'long_name=qwerty')
+
+    def test_Domain_identites(self):
+        d = cfdm.example_field(1).domain
+
+        d.nc_set_variable('qwerty')
+        d.set_property('cf_role', 'qwerty')
+        d.set_property('long_name', 'qwerty')
+        d.set_property('foo', 'bar')
+
+        self.assertEqual(d.identities(),
+                         ['cf_role=qwerty',
+                          'long_name=qwerty',
+                          'foo=bar',
+                          'ncvar%qwerty'])
 
 # --- End: class
 
