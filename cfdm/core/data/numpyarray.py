@@ -22,24 +22,24 @@ class NumpyArray(abstract.Array):
 
         self._set_component('array', array, copy=False)
 
-    def __deepcopy__(self, memo):
-        '''Called by the `copy.deepcopy` function.
-
-    x.__deepcopy__() <==> copy.deepcopy(x)
-
-    Copy-on-write is employed. Therefore, after copying, care must be
-    taken when making in-place modifications to attributes of either
-    the original or the new copy.
-
-    .. versionadded:: (cfdm) 1.8.7.0
-
-    **Examples:**
-
-    >>> import copy
-    >>> y = copy.deepcopy(x)
-
-        '''
-        return self.copy()
+#    def __deepcopy__(self, memo):
+#        '''Called by the `copy.deepcopy` function.
+#
+#    x.__deepcopy__() <==> copy.deepcopy(x)
+#
+#    Copy-on-write is employed. Therefore, after copying, care must be
+#    taken when making in-place modifications to attributes of either
+#    the original or the new copy.
+#
+#    .. versionadded:: (cfdm) 1.8.7.0
+#
+#    **Examples:**
+#
+#    >>> import copy
+#    >>> y = copy.deepcopy(x)
+#
+#        '''
+#        return self.copy()
 
     @property
     def dtype(self):
