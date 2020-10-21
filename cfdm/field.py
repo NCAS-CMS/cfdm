@@ -354,75 +354,6 @@ class Field(mixin.FieldDomainMixin,
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-#    def _get_data_compression_variables(self, component):
-#        '''
-#
-#        '''
-#        out = []
-#        for construct in self.constructs.filter_by_data().values():
-#            data = construct.get_data(None)
-#            if data is None:
-#                continue
-#
-#            x = getattr(data, 'get_' + component)(None)
-#            if x is None:
-#                continue
-#
-#            out.append(x)
-#
-#        for construct in self.constructs.filter_by_data().values():
-#            if not construct.has_bounds():
-#                continue
-#
-#            data = construct.get_bounds_data(None)
-#            if data is None:
-#                continue
-#
-#            x = getattr(data, 'get_' + component)(None)
-#            if x is None:
-#                continue
-#
-#            out.append(x)
-#
-#        for construct in self.coordinates.values():
-#            interior_ring = construct.get_interior_ring(None)
-#            if interior_ring is None:
-#                continue
-#
-#            data = interior_ring.get_data(None)
-#            if data is None:
-#                continue
-#
-#            x = getattr(data, 'get_' + component)(None)
-#            if x is None:
-#                continue
-#
-#            out.append(x)
-#
-#        return out
-#
-#    def _get_coordinate_geometry_variables(self, component):
-#        '''Return the list of variables for the geometry coordinates.
-#
-#    :Parameters:
-#
-#        component: `str`
-#
-#    :Returns:
-#
-#        `list'
-#
-#        '''
-#        out = []
-#        for construct in self.coordinates.values():
-#            x = getattr(construct, 'get_' + component)(None)
-#            if x is None:
-#                continue
-#
-#            out.append(x)
-#
-#        return out
-
     def _one_line_description(self, axis_names_sizes=None):
         '''
         '''
@@ -448,28 +379,6 @@ class Field(mixin.FieldDomainMixin,
             units += ' {0}'.format(calendar)
 
         return "{0}{1}{2}".format(self.identity(''), axis_names, units)
-
-#    def _set_dataset_compliance(self, value):
-#        '''Set the report of problems encountered whilst reading the field
-#    construct from a dataset.
-#
-#    .. versionadded:: (cfdm) 1.7.0
-#
-#    .. seealso:: `dataset_compliance`
-#
-#    :Parameters:
-#
-#        value:
-#           The value of the ``dataset_compliance`` component.
-#
-#    :Returns:
-#
-#        `None`
-#
-#    **Examples:**
-#
-#        '''
-#        self._set_component('dataset_compliance', value, copy=True)
 
     @property
     def _test_docstring_substitution_property_Field(self):
@@ -523,36 +432,6 @@ class Field(mixin.FieldDomainMixin,
     # Attributes
     # ----------------------------------------------------------------
     @property
-    def field_ancillaries(self):
-        '''Return field ancillary constructs.
-
-    .. versionadded:: (cfdm) 1.7.0
-
-    .. seealso:: `constructs`, `get_construct`
-
-    :Returns:
-
-        `Constructs`
-            The field ancillary constructs and their construct keys.
-
-    **Examples:**
-
-    >>> print(f.field_ancillaries)
-    Constructs:
-    {}
-
-    >>> print(f.field_ancillaries)
-    Constructs:
-    {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
-
-    >>> print(f.field_ancillaries('specific_humuidity standard_error'))
-    Constructs:
-    {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
-
-        '''
-        return self.constructs.filter_by_type('field_ancillary')
-
-    @property
     def cell_methods(self):
         '''Return cell method constructs.
 
@@ -586,6 +465,36 @@ class Field(mixin.FieldDomainMixin,
 
         '''
         return self.constructs.filter_by_type('cell_method')
+
+    @property
+    def field_ancillaries(self):
+        '''Return field ancillary constructs.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `constructs`, `get_construct`
+
+    :Returns:
+
+        `Constructs`
+            The field ancillary constructs and their construct keys.
+
+    **Examples:**
+
+    >>> print(f.field_ancillaries)
+    Constructs:
+    {}
+
+    >>> print(f.field_ancillaries)
+    Constructs:
+    {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
+
+    >>> print(f.field_ancillaries('specific_humuidity standard_error'))
+    Constructs:
+    {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
+
+        '''
+        return self.constructs.filter_by_type('field_ancillary')
 
     # ----------------------------------------------------------------
     # Methods
@@ -676,38 +585,60 @@ class Field(mixin.FieldDomainMixin,
             f = None
         return f
 
-#    def climatological_time_axes(self):
-#        '''Return all axes which are climatological time axes.
-#
-#    .. versionadded:: (cfdm) 1.7.0
-#
-#    :Returns:
-#
-#        `set`
-#            The set of all domain axes which are climatological time
-#            axes. If there are none, this will be an empty set.
-#
-#    **Examples:**
-#
-#    >>> f
-#    <{{repr}}Field: air_temperature(time(12), latitude(145), longitude(192)) K>
-#    >>> print(f.cell_methods())
-#    Constructs:
-#    {'cellmethod0': <{{repr}}CellMethod: domainaxis0: minimum within days>,
-#     'cellmethod1': <{{repr}}CellMethod: domainaxis0: mean over days>}
-#    >>> f.climatological_time_axes()
-#    {'domainaxis0'}
-#
-#    >>> g
-#    <{{repr}}Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
-#    >>> print(g.cell_methods())
-#    Constructs:
-#    {'cellmethod0': <{{repr}}CellMethod: area: mean>}
-#    >>> g.climatological_time_axes()
-#    set()
-#
-#        '''
-#        return set(self.constructs._set_climatology())
+    def climatological_time_axes(self):
+        '''Return all axes which are climatological time axes.
+
+    This is ascertained by inspecting the axes of any cell methods
+    cnstructs.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    :Returns:
+
+        `list`
+            The list of all axes on the field which are climatological
+            time axes. If there are none, this will be an empty list.
+
+    **Examples:**
+
+    >>> f
+    <{{repr}}Field: air_temperature(time(12), latitude(145), longitude(192)) K>
+    >>> print(f.cell_methods())
+    Constructs:
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis0: minimum within days>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis0: mean over days>}
+    >>> f.climatological_time_axes()
+    [('domainaxis0',), ('domainaxis0',)]
+    >>> g
+    <Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
+    >>> print(g.cell_methods())
+    Constructs:
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>}
+    >>> g.climatological_time_axes()
+    []
+
+        '''
+        out = []
+
+        domain_axes = self.domain_axes
+
+        for key, cm in self.cell_methods.ordered().items():
+            qualifiers = cm.qualifiers()
+            if not ('within' in qualifiers or 'over' in qualifiers):
+                continue
+
+            axes = cm.get_axes(default=())
+            if len(axes) != 1:
+                continue
+
+            axis = axes[0]
+            if axis not in domain_axes:
+                continue
+
+            # Still here? Then this axis is a climatological time axis
+            out.append((axis,))
+
+        return out
 
     @_inplace_enabled(default=False)
     def compress(self, method, axes=None, count_properties=None,

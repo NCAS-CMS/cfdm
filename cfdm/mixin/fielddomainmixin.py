@@ -2,7 +2,7 @@ import re
 
 
 class FieldDomainMixin():
-    '''Mixin class for TODO
+    '''Mixin class for methods common to both field and domain constructs
 
     .. versionadded:: (cfdm) 1.9.0.0
 
@@ -10,6 +10,96 @@ class FieldDomainMixin():
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
+    def _get_data_compression_variables(self, component):
+        '''TODO
+
+        '''
+        out = []
+        for construct in self.constructs.filter_by_data().values():
+            data = construct.get_data(None)
+            if data is None:
+                continue
+
+            x = getattr(data, 'get_' + component)(None)
+            if x is None:
+                continue
+
+            out.append(x)
+
+        for construct in self.constructs.filter_by_data().values():
+            if not construct.has_bounds():
+                continue
+
+            data = construct.get_bounds_data(None)
+            if data is None:
+                continue
+
+            x = getattr(data, 'get_' + component)(None)
+            if x is None:
+                continue
+
+            out.append(x)
+
+        for construct in self.coordinates.values():
+            interior_ring = construct.get_interior_ring(None)
+            if interior_ring is None:
+                continue
+
+            data = interior_ring.get_data(None)
+            if data is None:
+                continue
+
+            x = getattr(data, 'get_' + component)(None)
+            if x is None:
+                continue
+
+            out.append(x)
+
+        return out
+
+    def _get_coordinate_geometry_variables(self, component):
+        '''Return the list of variables for the geometry coordinates.
+
+    :Parameters:
+
+        component: `str`
+
+    :Returns:
+
+        `list'
+
+        '''
+        out = []
+        for construct in self.coordinates.values():
+            x = getattr(construct, 'get_' + component)(None)
+            if x is None:
+                continue
+
+            out.append(x)
+
+        return out
+
+    def _set_dataset_compliance(self, value):
+        '''Set the report of problems encountered whilst reading the field
+    construct from a dataset.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `dataset_compliance`
+
+    :Parameters:
+
+        value:
+
+           The value of the ``dataset_compliance`` component.
+
+    :Returns:
+
+        `None`
+
+        '''
+        self._set_component('dataset_compliance', value, copy=True)
+
     def _unique_construct_names(self):
         '''Return unique metadata construct names.
 
@@ -84,75 +174,6 @@ class FieldDomainMixin():
         # --- End: for
 
         return key_to_name
-
-    def _get_data_compression_variables(self, component):
-        '''
-
-        '''
-        out = []
-        for construct in self.constructs.filter_by_data().values():
-            data = construct.get_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, 'get_' + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        for construct in self.constructs.filter_by_data().values():
-            if not construct.has_bounds():
-                continue
-
-            data = construct.get_bounds_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, 'get_' + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        for construct in self.coordinates.values():
-            interior_ring = construct.get_interior_ring(None)
-            if interior_ring is None:
-                continue
-
-            data = interior_ring.get_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, 'get_' + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        return out
-
-    def _get_coordinate_geometry_variables(self, component):
-        '''Return the list of variables for the geometry coordinates.
-
-    :Parameters:
-
-        component: `str`
-
-    :Returns:
-
-        `list'
-
-        '''
-        out = []
-        for construct in self.coordinates.values():
-            x = getattr(construct, 'get_' + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        return out
 
     # ----------------------------------------------------------------
     # Attributes
@@ -366,52 +387,6 @@ class FieldDomainMixin():
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def climatological_time_axes(self):
-        '''Return all axes which are climatological time axes.
-
-    This is ascertained by inspecting the values return by the
-    coordinate constructs' `is_climatology` method.
-
-    .. versionadded:: (cfdm) 1.9.0.0
-
-    :Returns:
-
-        `set`
-            The set of all domain axes which are climatological time
-            axes. If there are none, this will be an empty set.
-
-    **Examples:**
-
-    >>> f
-    <{{repr}}Field: air_temperature(time(12), latitude(145), longitude(192)) K>
-    >>> print(f.cell_methods())
-    Constructs:
-    {'cellmethod0': <{{repr}}CellMethod: domainaxis0: minimum within days>,
-     'cellmethod1': <{{repr}}CellMethod: domainaxis0: mean over days>}
-    >>> f.climatological_time_axes()
-    {'domainaxis0'}
-
-    >>> g
-    <{{repr}}Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
-    >>> print(g.cell_methods())
-    Constructs:
-    {'cellmethod0': <{{repr}}CellMethod: area: mean>}
-    >>> g.climatological_time_axes()
-    set()
-
-        '''
-        data_axes = self.constructs.data_axes()
-
-        out = []
-
-        for ckey, c in self.coordinates.items():
-            if not c.is_climatology():
-                continue
-
-            out.extend(data_axes.get(ckey, ()))
-
-        return set(out)
-
     def construct(self, identity, default=ValueError()):
         '''Select a metadata construct by its identity.
 

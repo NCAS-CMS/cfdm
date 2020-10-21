@@ -414,33 +414,51 @@ class Domain(mixin.FieldDomainMixin,
         else:
             return string
 
-#    def climatological_time_axes(self):
-#        '''Return all axes which are climatological time axes.
-#
-#    .. versionadded:: (cfdm) 1.9.0.0
-#
-#    :Returns:
-#
-#        `set`
-#            The set of all domain axes which are climatological time
-#            axes. If there are none, this will be an empty set.
-#
-#    **Examples:**
-#
-#    TODO
-#
-#        '''
-#        out = []
-#
-#        for ckey, c in self.constructs.filter_by_type(
-#                'dimension_coordinate',
-#                'auxiliary_coordinate').items():
-#            if not c.is_climatology():
-#                continue
-#
-#            out.extend(self.data_axes().get(ckey, ()))
-#
-#        return set(out)
+    def climatological_time_axes(self):
+        '''Return all axes which are climatological time axes.
+
+    This is ascertained by inspecting the values return by the
+    coordinate constructs' `is_climatology` method.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    :Returns:
+
+        `set`
+            The set of all domain axes which are climatological time
+            axes. If there are none, this will be an empty set.
+
+    **Examples:**
+
+    >>> f
+    <{{repr}}Field: air_temperature(time(12), latitude(145), longitude(192)) K>
+    >>> print(f.cell_methods())
+    Constructs:
+    {'cellmethod0': <{{repr}}CellMethod: domainaxis0: minimum within days>,
+     'cellmethod1': <{{repr}}CellMethod: domainaxis0: mean over days>}
+    >>> f.climatological_time_axes()
+    {'domainaxis0'}
+
+    >>> g
+    <{{repr}}Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
+    >>> print(g.cell_methods())
+    Constructs:
+    {'cellmethod0': <{{repr}}CellMethod: area: mean>}
+    >>> g.climatological_time_axes()
+    set()
+
+        '''
+        data_axes = self.constructs.data_axes()
+
+        out = []
+
+        for ckey, c in self.coordinates.items():
+            if not c.is_climatology():
+                continue
+
+            out.extend(data_axes.get(ckey, ()))
+
+        return set(out)
 
     def creation_commands(self, representative_data=False,
                           namespace=None, indent=0, string=True,
