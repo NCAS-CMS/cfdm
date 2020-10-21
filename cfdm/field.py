@@ -28,13 +28,13 @@ from .decorators import (
 logger = logging.getLogger(__name__)
 
 
-class Field(mixin.NetCDFVariable,
+class Field(mixin.FieldDomainMixin,
+            mixin.NetCDFVariable,
             mixin.NetCDFGeometry,
             mixin.NetCDFGlobalAttributes,
             mixin.NetCDFGroupAttributes,
             mixin.NetCDFComponents,
             mixin.NetCDFUnreferenced,
-            mixin.ConstructsMixin,
             mixin.PropertiesData,
             core.Field):
     '''A field construct of the CF data model.
@@ -1681,7 +1681,7 @@ class Field(mixin.NetCDFVariable,
 
         return True
 
-    def get_data_axes(self, identity=None, default=ValueError()):
+    def get_data_axes(self, key=None, default=ValueError()):
         '''Return the keys of the domain axis constructs spanned by the data
     of the field or of a metadata construct.
 
@@ -1691,7 +1691,7 @@ class Field(mixin.NetCDFVariable,
 
     :Parameters:
 
-        identity TODO
+        key: `str`, optional TODO
 
         default: optional
             Return the value of the *default* parameter if the data
@@ -1719,8 +1719,8 @@ class Field(mixin.NetCDFVariable,
     'no axes'
 
         '''
-        if identity is not None:
-            return super().get_data_axes(identity, default=default)
+        if key is not None:
+            return super().get_data_axes(key, default=default)
 
         try:
             return self._get_component('data_axes')

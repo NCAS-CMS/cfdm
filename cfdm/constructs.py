@@ -10,8 +10,7 @@ from .decorators import _manage_log_level_via_verbosity
 logger = logging.getLogger(__name__)
 
 
-class Constructs(mixin.ConstructsMixin,
-                 mixin.Container,
+class Constructs(mixin.Container,
                  core.Constructs):
     '''A container for metadata constructs.
 
@@ -2188,6 +2187,42 @@ class Constructs(mixin.ConstructsMixin,
         self._filters_applied = None
         self._prefiltered = None
         return out
+
+    def get_data_axes(self, key, default=ValueError()):
+        '''Return the keys of the domain axis constructs spanned by the data
+    of a metadata construct.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    .. seealso:: TODO
+
+    :Parameters:
+
+        key: TODO
+
+        default: optional
+            Return the value of the *default* parameter if the data
+            axes have not been set.
+
+            {{default Exception}}
+
+    :Returns:
+
+        `tuple`
+            The keys of the domain axis constructs spanned by the data.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        try:
+            return self.data_axes()[key]
+        except KeyError:
+            return self._default(
+                default,
+                message="TODO can't find key"
+            )
 
     def inverse_filter(self, depth=None):
         '''Return the inverse of previous filters.

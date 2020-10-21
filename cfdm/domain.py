@@ -11,13 +11,13 @@ from .decorators import _manage_log_level_via_verbosity
 logger = logging.getLogger(__name__)
 
 
-class Domain(mixin.NetCDFVariable,
+class Domain(mixin.FieldDomainMixin,
+             mixin.NetCDFVariable,
              mixin.NetCDFGeometry,
              mixin.NetCDFGlobalAttributes,
              mixin.NetCDFGroupAttributes,
              mixin.NetCDFComponents,
              mixin.NetCDFUnreferenced,
-             mixin.ConstructsMixin,
              mixin.Properties,
              core.Domain):
     '''A domain construct of the CF data model.
@@ -758,7 +758,7 @@ class Domain(mixin.NetCDFVariable,
         return True
 
     def get_filenames(self):
-        '''Return the name of the file or files containing the data of
+        '''Return TODO the name of the file or files containing the data of
     metadata constructs.
 
     The names of the file or files containing the data of metadata
