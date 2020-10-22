@@ -1,7 +1,14 @@
+import logging
 import re
 
+from ..decorators import (
+    _manage_log_level_via_verbosity,
+)
 
-class FieldDomainMixin():
+logger = logging.getLogger(__name__)
+
+
+class FieldDomainMixin:
     '''Mixin class for methods common to both field and domain constructs
 
     .. versionadded:: (cfdm) 1.9.0.0
@@ -10,6 +17,25 @@ class FieldDomainMixin():
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
+    def _apply_masking_constructs(self):
+        '''Apply masking to metadata constructs in-place as, defined by the CF
+    conventions.
+
+    Masking is applied to all metadata constructs with data.
+
+    See `Field.apply_masking` or `Domain.apply_masking` for details
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    :Returns:
+
+        `None`
+
+        '''
+        # Apply masking to the metadata constructs
+        for c in self.constructs.filter_by_data().values():
+            c.apply_masking(inplace=True)
+
     def _get_data_compression_variables(self, component):
         '''TODO
 
@@ -78,27 +104,6 @@ class FieldDomainMixin():
             out.append(x)
 
         return out
-
-    def _set_dataset_compliance(self, value):
-        '''Set the report of problems encountered whilst reading the field
-    construct from a dataset.
-
-    .. versionadded:: (cfdm) 1.7.0
-
-    .. seealso:: `dataset_compliance`
-
-    :Parameters:
-
-        value:
-
-           The value of the ``dataset_compliance`` component.
-
-    :Returns:
-
-        `None`
-
-        '''
-        self._set_component('dataset_compliance', value, copy=True)
 
     def _unique_construct_names(self):
         '''Return unique metadata construct names.
@@ -663,6 +668,122 @@ class FieldDomainMixin():
                     identity, keys))
 
         return keys.pop()
+
+    @_manage_log_level_via_verbosity
+    def equals(self, other, rtol=None, atol=None, verbose=None,
+               ignore_data_type=False, ignore_fill_value=False,
+               ignore_properties=(), ignore_compression=True,
+               ignore_type=False):
+        '''Whether two constructs are the same.
+
+    Equality is strict by default. This means that for two constructs
+    to be considered equal they must have corresponding metadata
+    constructs and for each pair of constructs:
+
+    * the same descriptive properties must be present, with the same
+      values and data types, and vector-valued properties must also
+      have same the size and be element-wise equal (see the
+      *ignore_properties* and *ignore_data_type* parameters), and
+
+    ..
+
+    * if there are data arrays then they must have same shape and data
+      type, the same missing data mask, and be element-wise equal (see
+      the *ignore_data_type* parameter).
+
+    {{equals tolerance}}
+
+    {{equals compression}}
+
+    Any type of object may be tested but, in general, equality is only
+    possible with another field construct, or a subclass of one. See
+    the *ignore_type* parameter.
+
+    {{equals netCDF}}
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    :Parameters:
+
+        other:
+            The object to compare for equality.
+
+        {{atol: number, optional}}
+
+        {{rtol: number, optional}}
+
+        {{ignore_fill_value: `bool`, optional}}
+
+        ignore_properties: sequence of `str`, optional
+            The names of properties of the construct (not the metadata
+            constructs) to omit from the comparison. Note that the
+            ``Conventions`` property is always omitted.
+
+        {{ignore_data_type: `bool`, optional}}
+
+        {{ignore_compression: `bool`, optional}}
+
+        {{ignore_type: `bool`, optional}}
+
+        {{verbose: `int` or `str` or `None`, optional}}
+
+    :Returns:
+
+        `bool`
+            Whether the two constructs are equal.
+
+    **Examples:**
+
+    >>> f.equals(f)
+    True
+    >>> f.equals(f.copy())
+    True
+    >>> f.equals(f[...])
+    True
+    >>> f.equals('a string, not a construct')
+    False
+
+    >>> g = f.copy()
+    >>> g.set_property('foo', 'bar')
+    >>> f.equals(g)
+    False
+    >>> f.equals(g, verbose=3)
+    {{class}}: Non-common property name: foo
+    {{class}}: Different properties
+    False
+
+        '''
+        # ------------------------------------------------------------
+        # Check the properties and data
+        # ------------------------------------------------------------
+        ignore_properties = tuple(ignore_properties) + ('Conventions',)
+
+        if not super().equals(
+                other,
+                rtol=rtol, atol=atol, verbose=verbose,
+                ignore_data_type=ignore_data_type,
+                ignore_fill_value=ignore_fill_value,
+                ignore_properties=ignore_properties,
+                ignore_compression=ignore_compression,
+                ignore_type=ignore_type):
+            return False
+
+        # ------------------------------------------------------------
+        # Check the constructs
+        # ------------------------------------------------------------
+        if not self._equals(self.constructs, other.constructs,
+                            rtol=rtol, atol=atol, verbose=verbose,
+                            ignore_data_type=ignore_data_type,
+                            ignore_fill_value=ignore_fill_value,
+                            ignore_compression=ignore_compression,
+                            _ignore_type=False):
+            logger.info(
+                "{0}: Different metadata constructs".format(
+                    self.__class__.__name__)
+            )
+            return False
+
+        return True
 
     def has_geometry(self):
         '''Return whether or not any coordinates have cell geometries.

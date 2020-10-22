@@ -104,6 +104,7 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Domain.apply_masking
    ~cfdm.Domain.climatological_time_axes
    ~cfdm.Domain.copy
    ~cfdm.Domain.creation_commands

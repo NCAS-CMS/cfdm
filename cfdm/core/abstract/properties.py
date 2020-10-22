@@ -189,6 +189,26 @@ class Properties(Container):
                                  "{!r} has no {!r} property".format(
                                      self.__class__.__name__, prop))
 
+    def has_data(self):
+        '''Whether or not the construct has data.
+
+    `{{class}}` instances never have data.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    :Returns:
+
+        `False`
+
+    **Examples:**
+
+    >>> f = {{package}}.{{class}}()
+    >>> f.has_data()
+    False
+
+        '''
+        return False
+
     def has_property(self, prop):
         '''Whether a property has been set.
 

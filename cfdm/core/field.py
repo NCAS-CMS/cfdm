@@ -7,7 +7,7 @@ from . import Constructs
 from . import Domain
 
 
-class Field(mixin.ConstructsMixin,
+class Field(mixin.FieldDomainMixin,
             abstract.PropertiesData):
     '''A field construct of the CF data model.
 
@@ -147,32 +147,6 @@ class Field(mixin.ConstructsMixin,
 
         '''
         return 'field'
-
-    @property
-    def constructs(self):
-        '''Return the metdata constructs.
-
-    .. versionadded:: (cfdm) 1.7.0
-
-    :Returns:
-
-        `Constructs`
-            The constructs.
-
-    **Examples:**
-
-    >>> print(f.constructs)
-    Constructs:
-    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
-     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
-     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
-     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
-
-        '''
-        return self._get_component('constructs')
 
     @property
     def domain(self):
@@ -417,65 +391,6 @@ class Field(mixin.ConstructsMixin,
             )
 
         return self.constructs._del_construct(key, default=default)
-
-    def set_construct(self, construct, key=None, axes=None,
-                      copy=True):
-        '''Set a metadata construct.
-
-    .. versionadded:: (cfdm) 1.7.0
-
-    .. seealso:: `constructs`, `del_construct`, `get_construct`,
-                 `set_data_axes`
-
-    :Parameters:
-
-        construct:
-            The metadata construct to be inserted.
-
-        key: `str`, optional
-            The construct identifier to be used for the construct. If
-            not set then a new, unique identifier is created
-            automatically. If the identifier already exists then the
-            exisiting construct will be replaced.
-
-            *Parameter example:*
-              ``key='cellmeasure0'``
-
-        axes: (sequence of) `str`, optional
-            The construct identifiers of the domain axis constructs
-            spanned by the data array. An exception is raised if used
-            for a metadata construct that can not have a data array,
-            i.e. domain axis, cell method and coordinate reference
-            constructs.
-
-            *Parameter example:*
-              ``axes='domainaxis1'``
-
-            *Parameter example:*
-              ``axes=['domainaxis1']``
-
-            *Parameter example:*
-              ``axes=['domainaxis1', 'domainaxis0']``
-
-        copy: `bool`, optional
-            If True then set a copy of the construct. By default the
-            construct is copied.
-
-    :Returns:
-
-         `str`
-            The construct identifier for the construct.
-
-    **Examples:**
-
-    >>> key = f.set_construct(c)
-    >>> key = f.set_construct(c, copy=False)
-    >>> key = f.set_construct(c, axes='domainaxis2')
-    >>> key = f.set_construct(c, key='cellmeasure0')
-
-        '''
-        return self.constructs._set_construct(construct, key=key,
-                                              axes=axes, copy=copy)
 
     def set_data(self, data, axes=None, copy=True, inplace=True):
         '''Set the data of the field construct.

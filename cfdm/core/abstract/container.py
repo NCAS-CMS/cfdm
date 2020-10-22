@@ -11,6 +11,16 @@ from ..docstring import _docstring_substitution_definitions
 class Container(metaclass=DocstringRewriteMeta):
     '''Abstract base class for storing components.
 
+    .. warning:: The ``custom`` component dictionary is only shallow
+                 copied when initialised from the *source* parameter,
+                 regardless of the value of the *copy* parameter. This
+                 is to avoid potentially expensive deep copies of the
+                 dictionary values.
+
+                 A subclass of `Container` that requires custom
+                 dictionary values to be deep copied should ensure
+                 that this occurs its `__init__` method.
+
     .. versionadded:: (cfdm) 1.7.0
 
     '''
@@ -30,7 +40,7 @@ class Container(metaclass=DocstringRewriteMeta):
         self._components = {}
 
         if source is not None:
-            # WARNING: The 'custom' dictionary is never deep copied
+            # WARNING: The 'custom' dictionary is only shallow copied
             #          from source
             try:
                 custom = source._get_component('custom', {})

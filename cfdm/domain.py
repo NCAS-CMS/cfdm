@@ -5,8 +5,11 @@ from . import core
 
 from . import Constructs
 
-from .decorators import _manage_log_level_via_verbosity
-
+from .decorators import (
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +115,8 @@ class Domain(mixin.FieldDomainMixin,
                          copy=copy, _use_data=_use_data)
 
         self._initialise_netcdf(source)
+
+        self._set_dataset_compliance(self.dataset_compliance())
 
     def __repr__(self):
         '''Called by the `repr` built-in function.
@@ -272,7 +277,8 @@ class Domain(mixin.FieldDomainMixin,
             return string
 
     def _one_line_description(self, axis_names_sizes=None):
-        '''
+        '''TODO
+
         '''
         if axis_names_sizes is None:
             axis_names_sizes = self._unique_domain_axis_identities()
@@ -284,135 +290,68 @@ class Domain(mixin.FieldDomainMixin,
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def dump(self, display=True, _omit_properties=(), _prefix='',
-             _title=None, _create_title=True, _level=0):
-        '''A full description of the domain construct.
+    @_inplace_enabled(default=False)
+    def apply_masking(self, inplace=False):
+        '''Apply masking as defined by the CF conventions.
 
-    Returns a description of all properties, including those of
-    metadata constructs and their components, and provides selected
-    values of all data arrays.
+    Masking is applied to all metadata constructs with data.
 
-    .. versionadded:: (cfdm) 1.7.0
+    Masking is applied according to any of the following criteria that
+    are applicable:
+
+    * where data elements are equal to the value of the
+      ``missing_value`` property;
+
+    * where data elements are equal to the value of the ``_FillValue``
+      property;
+
+    * where data elements are strictly less than the value of the
+      ``valid_min`` property;
+
+    * where data elements are strictly greater than the value of the
+      ``valid_max`` property;
+
+    * where data elements are within the inclusive range specified by
+      the two values of ``valid_range`` property.
+
+    If any of the above properties have not been set the no masking is
+    applied for that method.
+
+    Elements that are already masked remain so.
+
+    .. note:: If using the `apply_masking` method on a construct that
+              has been read from a dataset with the ``mask=False``
+              parameter to the `read` function, then the mask defined
+              in the dataset can only be recreated if the
+              ``missing_value``, ``_FillValue``, ``valid_min``,
+              ``valid_max``, and ``valid_range`` properties have not
+              been updated.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    .. seealso:: `Data.apply_masking`, `read`, `write`
 
     :Parameters:
 
-        display: `bool`, optional
-            If False then return the description as a string. By
-            default the description is printed.
+        {{inplace: `bool`, optional}}
 
     :Returns:
 
-        {{returns dump}}
+        `Domain` or `None`
+            A new domain construct with masked values, or `None` if
+            the operation was in-place.
+
+    **Examples:**
+
+    TODO
 
         '''
-        indent = '    '
-        indent0 = indent * _level
-        indent1 = indent0 + indent
+        f = _inplace_enabled_define_and_cleanup(self)
 
-        if _create_title:
-            if _title is None:
-                ncvar = self.nc_get_variable(None)
-                _title = self.identity(default=None)
-                if ncvar is not None:
-                    if _title is None:
-                        _title = "ncvar%{0}".format(ncvar)
-                    else:
-                        _title += " (ncvar%{0})".format(ncvar)
-                # --- End: if
-                if _title is None:
-                    _title = ''
+        # Apply masking to the metadata constructs
+        f._apply_masking_constructs()
 
-                _title = '{0}: {1}'.format(self.__class__.__name__, _title)
-
-            line = '{0}{1}'.format(indent0, ''.ljust(len(_title), '-'))
-
-            # Title
-            string = [
-                line,
-                indent0 + _title,
-                line
-            ]
-
-            properties = super().dump(display=False,
-                                      _create_title=False,
-                                      _omit_properties=_omit_properties,
-                                      _prefix=_prefix, _title=_title,
-                                      _level=_level-1)
-            string.append(properties)
-            string.append('')
-        else:
-            string = []
-
-        axis_to_name = self._unique_domain_axis_identities()
-
-        construct_name = self._unique_construct_names()
-
-        constructs_data_axes = self.constructs.data_axes()
-
-        # Domain axes
-        axes = self._dump_axes(axis_to_name, display=False, _level=_level)
-        if axes:
-            string.append(axes)
-
-        # Dimension coordinates
-        for cid, value in sorted(self.dimension_coordinates.items()):
-            string.append('')
-            string.append(
-                value.dump(display=False, _level=_level,
-                           _title='Dimension coordinate: {0}'.format(
-                               construct_name[cid]),
-                           _axes=constructs_data_axes[cid],
-                           _axis_names=axis_to_name))
-
-        # Auxiliary coordinates
-        for cid, value in sorted(self.auxiliary_coordinates.items()):
-            string.append('')
-            string.append(
-                value.dump(display=False, _level=_level,
-                           _title='Auxiliary coordinate: {0}'.format(
-                               construct_name[cid]),
-                           _axes=constructs_data_axes[cid],
-                           _axis_names=axis_to_name))
-
-        # Domain ancillaries
-        for cid, value in sorted(self.domain_ancillaries.items()):
-            string.append('')
-            string.append(value.dump(display=False, _level=_level,
-                                     _title='Domain ancillary: {0}'.format(
-                                         construct_name[cid]),
-                                     _axes=constructs_data_axes[cid],
-                                     _axis_names=axis_to_name))
-
-        # Coordinate references
-        for cid, value in sorted(self.coordinate_references.items()):
-            string.append('')
-            string.append(
-                value.dump(
-                    display=False, _level=_level,
-                    _title='Coordinate reference: {0}'.format(
-                        construct_name[cid]),
-                    _construct_names=construct_name,
-                    _auxiliary_coordinates=tuple(self.auxiliary_coordinates),
-                    _dimension_coordinates=tuple(self.dimension_coordinates)))
-
-        # Cell measures
-        for cid, value in sorted(self.cell_measures.items()):
-            string.append('')
-            string.append(value.dump(
-                display=False, _key=cid,
-                _level=_level, _title='Cell measure: {0}'.format(
-                    construct_name[cid]),
-                _axes=constructs_data_axes[cid],
-                _axis_names=axis_to_name))
-
-        string.append('')
-
-        string = '\n'.join(string)
-
-        if display:
-            print(string)  # pragma: no cover
-        else:
-            return string
+        return f
 
     def climatological_time_axes(self):
         '''Return all axes which are climatological time axes.
@@ -429,7 +368,7 @@ class Domain(mixin.FieldDomainMixin,
             axes. If there are none, this will be an empty set.
 
     **Examples:**
-
+TODO
     >>> f
     <{{repr}}Field: air_temperature(time(12), latitude(145), longitude(192)) K>
     >>> print(f.cell_methods())
@@ -688,92 +627,135 @@ class Domain(mixin.FieldDomainMixin,
 
         return out
 
-    @_manage_log_level_via_verbosity
-    def equals(self, other, rtol=None, atol=None, verbose=None,
-               ignore_data_type=False, ignore_fill_value=False,
-               ignore_compression=True, ignore_properties=(),
-               ignore_type=False):
-        '''Whether two domains are the same.
+    def dump(self, display=True, _omit_properties=(), _prefix='',
+             _title=None, _create_title=True, _level=0):
+        '''A full description of the domain construct.
+
+    Returns a description of all properties, including those of
+    metadata constructs and their components, and provides selected
+    values of all data arrays.
 
     .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
-        other:
-            The object to compare for equality.
-
-        {[atol: number, optional}}
-
-        {{rtol: number, optional}}
-
-        ignore_fill_value: `bool`, optional
-            If True then the ``_FillValue`` and ``missing_value``
-            properties are omitted from the comparison for the
-            metadata constructs.
-
-        ignore_properties: sequence of `str`, optional
-            The names of properties of the domain construct (not the
-            metadata constructs) to omit from the comparison. Note
-            that the ``Conventions`` property is always omitted.
-
-        {{ignore_compression: `bool`, optional}}
-
-        {{ignore_data_type: `bool`, optional}}
-
-        {{ignore_type: `bool`, optional}}
-
-        {{verbose: `int` or `str` or `None`, optional}}
+        display: `bool`, optional
+            If False then return the description as a string. By
+            default the description is printed.
 
     :Returns:
 
-        `bool`
-
-    **Examples:**
-
-    >>> d.equals(d)
-    True
-    >>> d.equals(d.copy())
-    True
-    >>> d.equals('not a domain')
-    False
+        {{returns dump}}
 
         '''
-        # ------------------------------------------------------------
-        # Check the properties
-        # ------------------------------------------------------------
-        ignore_properties = tuple(ignore_properties) + ('Conventions',)
+        indent = '    '
+        indent0 = indent * _level
+        indent1 = indent0 + indent
 
-        if not super().equals(
-                other,
-                rtol=rtol, atol=atol, verbose=verbose,
-                ignore_data_type=ignore_data_type,
-                ignore_fill_value=ignore_fill_value,
-                ignore_properties=ignore_properties,
-                ignore_type=ignore_type):
-            return False
+        if _create_title:
+            if _title is None:
+                ncvar = self.nc_get_variable(None)
+                _title = self.identity(default=None)
+                if ncvar is not None:
+                    if _title is None:
+                        _title = "ncvar%{0}".format(ncvar)
+                    else:
+                        _title += " (ncvar%{0})".format(ncvar)
+                # --- End: if
+                if _title is None:
+                    _title = ''
 
-#        pp = super()._equals_preprocess(other, verbose=verbose,
-#                                        ignore_type=ignore_type)
-#        if pp is True or pp is False:
-#            return pp
-#
-#        other = pp
+                _title = '{0}: {1}'.format(self.__class__.__name__, _title)
 
-        # ------------------------------------------------------------
-        # Check the constructs
-        # ------------------------------------------------------------
-        if not self._equals(self.constructs, other.constructs,
-                            rtol=rtol, atol=atol, verbose=verbose,
-                            ignore_data_type=ignore_data_type,
-                            ignore_fill_value=ignore_fill_value,
-                            ignore_compression=ignore_compression):
-            logger.info(
-                "{0}: Different metadata constructs".format(
-                    self.__class__.__name__)
-            )
-            return False
+            line = '{0}{1}'.format(indent0, ''.ljust(len(_title), '-'))
 
-        return True
+            # Title
+            string = [
+                line,
+                indent0 + _title,
+                line
+            ]
+
+            properties = super().dump(display=False,
+                                      _create_title=False,
+                                      _omit_properties=_omit_properties,
+                                      _prefix=_prefix, _title=_title,
+                                      _level=_level-1)
+            string.append(properties)
+            string.append('')
+        else:
+            string = []
+
+        axis_to_name = self._unique_domain_axis_identities()
+
+        construct_name = self._unique_construct_names()
+
+        constructs_data_axes = self.constructs.data_axes()
+
+        # Domain axes
+        axes = self._dump_axes(axis_to_name, display=False, _level=_level)
+        if axes:
+            string.append(axes)
+
+        # Dimension coordinates
+        for cid, value in sorted(self.dimension_coordinates.items()):
+            string.append('')
+            string.append(
+                value.dump(display=False, _level=_level,
+                           _title='Dimension coordinate: {0}'.format(
+                               construct_name[cid]),
+                           _axes=constructs_data_axes[cid],
+                           _axis_names=axis_to_name))
+
+        # Auxiliary coordinates
+        for cid, value in sorted(self.auxiliary_coordinates.items()):
+            string.append('')
+            string.append(
+                value.dump(display=False, _level=_level,
+                           _title='Auxiliary coordinate: {0}'.format(
+                               construct_name[cid]),
+                           _axes=constructs_data_axes[cid],
+                           _axis_names=axis_to_name))
+
+        # Domain ancillaries
+        for cid, value in sorted(self.domain_ancillaries.items()):
+            string.append('')
+            string.append(value.dump(display=False, _level=_level,
+                                     _title='Domain ancillary: {0}'.format(
+                                         construct_name[cid]),
+                                     _axes=constructs_data_axes[cid],
+                                     _axis_names=axis_to_name))
+
+        # Coordinate references
+        for cid, value in sorted(self.coordinate_references.items()):
+            string.append('')
+            string.append(
+                value.dump(
+                    display=False, _level=_level,
+                    _title='Coordinate reference: {0}'.format(
+                        construct_name[cid]),
+                    _construct_names=construct_name,
+                    _auxiliary_coordinates=tuple(self.auxiliary_coordinates),
+                    _dimension_coordinates=tuple(self.dimension_coordinates)))
+
+        # Cell measures
+        for cid, value in sorted(self.cell_measures.items()):
+            string.append('')
+            string.append(value.dump(
+                display=False, _key=cid,
+                _level=_level, _title='Cell measure: {0}'.format(
+                    construct_name[cid]),
+                _axes=constructs_data_axes[cid],
+                _axis_names=axis_to_name))
+
+        string.append('')
+
+        string = '\n'.join(string)
+
+        if display:
+            print(string)  # pragma: no cover
+        else:
+            return string
 
     def get_filenames(self):
         '''Return TODO the name of the file or files containing the data of

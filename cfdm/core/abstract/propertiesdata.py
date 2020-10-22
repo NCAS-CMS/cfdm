@@ -341,7 +341,7 @@ class PropertiesData(Properties):
         return False
 
     def has_data(self):
-        '''Whether a data has been set.
+        '''Whether or not the construct has data.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -350,7 +350,7 @@ class PropertiesData(Properties):
     :Returns:
 
         `bool`
-            True if a data have been set, otherwise False.
+            True if data have been set, otherwise False.
 
     **Examples:**
 

@@ -1249,18 +1249,7 @@ class NetCDFGlobalAttributes(NetCDF):
         '''Return the selection of properties to be written as netCDF global
     attributes.
 
-    When multiple field constructs are being written to the same file,
-    it is only possible to create a netCDF global attribute from a
-    property that has identical values for each field construct. If
-    any field construct's property has a different value then the
-    property will not be written as a netCDF global attribute, even if
-    it has been selected as such, but will appear instead as
-    attributes on the netCDF data variables corresponding to each
-    field construct.
-
-    The standard description-of-file-contents properties are always
-    written as netCDF global attributes, if possible, so selecting
-    them is optional.
+    {{netcdf global}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -1323,18 +1312,7 @@ class NetCDFGlobalAttributes(NetCDF):
         '''Remove the selection of properties to be written as netCDF global
     attributes.
 
-    When multiple field constructs are being written to the same file,
-    it is only possible to create a netCDF global attribute from a
-    property that has identical values for each field construct. If
-    any field construct's property has a different value then the
-    property will not be written as a netCDF global attribute, even if
-    it has been selected as such, but will appear instead as
-    attributes on the netCDF data variables corresponding to each
-    field construct.
-
-    The standard description-of-file-contents properties are always
-    written as netCDF global attributes, if possible, so selecting
-    them is optional.
+    {{netcdf global}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -1375,18 +1353,7 @@ class NetCDFGlobalAttributes(NetCDF):
     def nc_set_global_attribute(self, prop, value=None):
         '''Select a property to be written as a netCDF global attribute.
 
-    When multiple field constructs are being written to the same file,
-    it is only possible to create a netCDF global attribute from a
-    property that has identical values for each field construct. If
-    any field construct's property has a different value then the
-    property will not be written as a netCDF global attribute, even if
-    it has been selected as such, but will appear instead as
-    attributes on the netCDF data variables corresponding to each
-    field construct.
-
-    The standard description-of-file-contents properties are always
-    written as netCDF global attributes, if possible, so selecting
-    them is optional.
+    {{netcdf global}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -1440,18 +1407,7 @@ class NetCDFGlobalAttributes(NetCDF):
     def nc_set_global_attributes(self, properties, copy=True):
         '''Set properties to be written as netCDF global attributes.
 
-    When multiple field constructs are being written to the same file,
-    it is only possible to create a netCDF global attribute from a
-    property that has identical values for each field construct. If
-    any field construct's property has a different value then the
-    property will not be written as a netCDF global attribute, even if
-    it has been selected as such, but will appear instead as
-    attributes on the netCDF data variables corresponding to each
-    field construct.
-
-    The standard description-of-file-contents properties are always
-    written as netCDF global attributes, if possible, so selecting
-    them is optional.
+    {{netcdf global}}
 
     .. versionadded:: (cfdm) 1.7.10
 
@@ -1781,7 +1737,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
         '''
         raise DeprecationError(
-            "Field.nc_unlimited_dimensions was deprecated at version 1.7.4 "
+            "'nc_unlimited_dimensions' was deprecated at version 1.7.4 "
             "and is no longer available. Use DomainAxis.nc_is_unlimited "
             "instead")
 
@@ -1830,7 +1786,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
         '''
         raise DeprecationError(
-            "Field.nc_set_unlimited_dimensions was deprecated at version "
+            "'nc_set_unlimited_dimensions' was deprecated at version "
             "1.7.4 and is no longer available. "
             "Use DomainAxis.nc_set_unlimited instead")
 
@@ -1867,7 +1823,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
         '''
         raise DeprecationError(
-            "Field.nc_clear_unlimited_dimensions was deprecated at version "
+            "'nc_clear_unlimited_dimensions' was deprecated at version "
             "1.7.4 and is no longer available. "
             "Use DomainAxis.nc_set_unlimited instead.")
 
@@ -2416,7 +2372,6 @@ class NetCDFHDF5(NetCDF):
         # --- End: try
 
         self._get_component('netcdf')['hdf5_chunksizes'] = tuple(chunksizes)
-
 
 # --- End: class
 
@@ -3227,8 +3182,9 @@ class NetCDFUnreferenced():
 
     :Parameters:
 
-        value:
-           The value of the ``dataset_compliance`` component.
+        value: `dict`
+           The value of the ``dataset_compliance`` component. This
+           will be deep copied.
 
     :Returns:
 
@@ -3259,9 +3215,12 @@ class NetCDFUnreferenced():
     Other types of non-compliance are not checked, such whether or not
     controlled vocabularies have been adhered to.
 
+    When a dictionary is returned, the compliance report may be
+    updated by changing the dictionary in-place.
+
     .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `{{package}}.read`
+    .. seealso:: `{{package}}.read`, `_set_dataset_compliance`
 
     :Parameters:
 

@@ -38,7 +38,7 @@ class Constructs(mixin.Container,
     Calling a `Constructs` instance selects metadata constructs by
     identity and is an alias for the `filter_by_identity` method. For
     example, to select constructs that have an identity of
-    'air_temperature': ``d = c('air_temperature')``.
+    "air_temperature": ``d = c('air_temperature')``.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -2187,42 +2187,6 @@ class Constructs(mixin.Container,
         self._filters_applied = None
         self._prefiltered = None
         return out
-
-    def get_data_axes(self, key, default=ValueError()):
-        '''Return the keys of the domain axis constructs spanned by the data
-    of a metadata construct.
-
-    .. versionadded:: (cfdm) 1.9.0.0
-
-    .. seealso:: TODO
-
-    :Parameters:
-
-        key: TODO
-
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set.
-
-            {{default Exception}}
-
-    :Returns:
-
-        `tuple`
-            The keys of the domain axis constructs spanned by the data.
-
-    **Examples:**
-
-    TODO
-
-        '''
-        try:
-            return self.data_axes()[key]
-        except KeyError:
-            return self._default(
-                default,
-                message="TODO can't find key"
-            )
 
     def inverse_filter(self, depth=None):
         '''Return the inverse of previous filters.

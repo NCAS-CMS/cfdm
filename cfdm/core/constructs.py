@@ -2,11 +2,9 @@ from collections import OrderedDict
 from copy import copy
 
 from . import abstract
-from . import mixin
 
 
-class Constructs(mixin.ConstructsMixin,
-                 abstract.Container):
+class Constructs(abstract.Container):
     '''A container for metadata constucts.
 
     The following metadata constructs can be included:
@@ -473,21 +471,6 @@ class Constructs(mixin.ConstructsMixin,
 
             # Fail if the domaain axis construct is referenced by a
             # cell method construct
-#            try:
-#                cell_methods = self.filter_by_type('cell_method')
-#            except ValueError:
-#                # Cell methods are not possible for this Constructs
-#                # instance
-#                pass
-#            else:
-#                for xid, cm in cell_methods.items():
-#                    axes = cm.get_axes(())
-#                    if key in axes:
-#                        raise ValueError(
-#                            "Can't remove domain axis construct {!r} "
-#                            "that is referenced by cell method construct "
-#                            "{!r}".format(key, xid)
-#                        )
             for xid, cm in self.filter_by_type('cell_method').items():
                 axes = cm.get_axes(())
                 if key in axes:
@@ -775,8 +758,8 @@ class Constructs(mixin.ConstructsMixin,
 
     **Examples:**
 
-    >>> c = {{package}}.example_field(0)
-    >>> c_items = c.constructs.items()
+    >>> f = {{package}}.example_field(0)
+    >>> c_items = f.constructs.items()
     >>> print(c_items)
     dict_items([
          ('dimensioncoordinate0', <{{repr}}DimensionCoordinate: latitude(5) degrees_north>),
@@ -915,29 +898,6 @@ class Constructs(mixin.ConstructsMixin,
         # --- End: if
 
         return out
-
-    @property
-    def constructs(self):
-        '''Return the metdata constructs.
-
-    Returns the constructs in a new reference to the `{{class}}`
-    instance.
-
-    .. versionadded:: (cfdm) 1.9.0.0
-
-    :Returns:
-
-        `{{class}}`
-            The constructs.
-
-    **Examples:**
-
-    >>> c = {{package}}.{{class}}()
-    >>> c.constructs is c
-    True
-
-        '''
-        return self
 
     def copy(self, data=True):
         '''Return a deep copy.

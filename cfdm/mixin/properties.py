@@ -3,9 +3,9 @@ import textwrap
 
 import numpy
 
-from . import Container
-
 from ..decorators import _manage_log_level_via_verbosity
+
+from . import Container
 
 
 logger = logging.getLogger(__name__)
@@ -212,7 +212,8 @@ class Properties(Container):
     @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_type=False):
+               ignore_properties=(), ignore_type=False,
+               ignore_compression=True):
         '''Whether two instances are the same.
 
     Equality is strict by default. This means that:
@@ -251,6 +252,9 @@ class Properties(Container):
 
         {{ignore_type: `bool`, optional}}
 
+        ignore_compression:
+            Ignored, since properties do not have data arrays.
+
     :Returns:
 
         `bool`
@@ -270,8 +274,8 @@ class Properties(Container):
     >>> p.equals(q)
     False
     >>> p.equals(q, verbose=3)
-    Field: Non-common property name: foo
-    Field: Different properties
+    {{class}}: Non-common property name: foo
+    {{class}}: Different properties
     False
 
         '''
@@ -403,15 +407,9 @@ class Properties(Container):
     The identities comprise:
 
     * The ``standard_name`` property.
-<<<<<<< HEAD
     * All properties, preceeded by the property name and an equals
       e.g. ``'long_name=Air temperature'``.
     * The netCDF variable name, preceeded by ``'ncvar%'``.
-=======
-    * All properties, preceded by the property name and a colon,
-      e.g. ``'long_name:Air temperature'``.
-    * The netCDF variable name, preceded by ``'ncvar%'``.
->>>>>>> 3068b48404abcb16e1f128f3077b498cfd8fd1ce
 
     .. versionadded:: (cfdm) 1.7.0
 

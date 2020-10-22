@@ -155,6 +155,8 @@ class Field(mixin.FieldDomainMixin,
 
         self._initialise_netcdf(source)
 
+        self._set_dataset_compliance(self.dataset_compliance())
+
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -355,7 +357,8 @@ class Field(mixin.FieldDomainMixin,
     # Private methods
     # ----------------------------------------------------------------
     def _one_line_description(self, axis_names_sizes=None):
-        '''
+        '''TODO
+
         '''
         if axis_names_sizes is None:
             axis_names_sizes = self._unique_domain_axis_identities()
@@ -499,11 +502,12 @@ class Field(mixin.FieldDomainMixin,
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    @_inplace_enabled(default=False)
     def apply_masking(self, inplace=False):
         '''Apply masking as defined by the CF conventions.
 
     Masking is applied to the field construct data as well as metadata
-    constructs' data.
+    constructs with data.
 
     Masking is applied according to any of the following criteria that
     are applicable:
@@ -552,7 +556,10 @@ class Field(mixin.FieldDomainMixin,
 
     **Examples:**
 
-    >>> print(f.data.array)
+    >>> f = {{package}}.example_field(0)
+    >>> {{package}}.write(f, 'masked.nc')
+    >>> no_mask = {{package}}.read('masked.nc', mask=False)[0]
+    >>> print(no_mask.data.array)
     [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
      9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36],
      [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
@@ -560,8 +567,8 @@ class Field(mixin.FieldDomainMixin,
      [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
     [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
      9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36]])
-    >>> masked_f = f.apply_masking()
-    >>> print(masked_f.data.array)
+    >>> masked = no_mask.apply_masking()
+    >>> print(masked.data.array)
     [[   --    --    --    --    --    --    --    --]
      [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
      [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
@@ -569,20 +576,14 @@ class Field(mixin.FieldDomainMixin,
      [   --    --    --    --    --    --    --    --]]
 
         '''
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
 
         # Apply masking to the field construct
         super(Field, f).apply_masking(inplace=True)
 
         # Apply masking to the metadata constructs
-        for c in f.constructs.filter_by_data().values():
-            c.apply_masking(inplace=True)
+        f._apply_masking_constructs()
 
-        if inplace:
-            f = None
         return f
 
     def climatological_time_axes(self):
@@ -1101,44 +1102,6 @@ class Field(mixin.FieldDomainMixin,
 
         return f
 
-    def copy(self, data=True):
-        '''Return a deep copy of the field construct.
-
-    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-    Arrays within `Data` instances are copied with a copy-on-write
-    technique. This means that a copy takes up very little extra
-    memory, even when the original contains very large data arrays,
-    and the copy operation is fast.
-
-    .. versionadded:: (cfdm) 1.7.0
-
-    :Parameters:
-
-        data: `bool`, optional
-            If False then do not copy the data of the field construct,
-            nor the data of any of its metadata constructs. By default
-            all data are copied.
-
-    :Returns:
-
-        `Field`
-            The deep copy.
-
-    **Examples:**
-
-    >>> g = f.copy()
-    >>> g = f.copy(data=False)
-    >>> g.has_data()
-    False
-
-        '''
-        new = super().copy(data=data)
-
-        new._set_dataset_compliance(self.dataset_compliance())
-
-        return new
-
     def creation_commands(self, representative_data=False,
                           namespace=None, indent=0, string=True,
                           name='field', data_name='data', header=True):
@@ -1433,7 +1396,6 @@ class Field(mixin.FieldDomainMixin,
                 _title = ''
 
             _title = 'Field: {0}'.format(_title)
-        # --- End: if
 
         line = '{0}{1}'.format(indent0, ''.ljust(len(_title), '-'))
 
@@ -1473,7 +1435,6 @@ class Field(mixin.FieldDomainMixin,
                 string.append(cm.dump(display=False,  _level=_level))
 
             string.append('')
-        # --- End: if
 
         # Field ancillaries
         for cid, value in sorted(self.field_ancillaries.items()):
@@ -1492,125 +1453,6 @@ class Field(mixin.FieldDomainMixin,
             print(string)
         else:
             return string
-
-    @_manage_log_level_via_verbosity
-    def equals(self, other, rtol=None, atol=None, verbose=None,
-               ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_compression=True,
-               ignore_type=False):
-        '''Whether two field constructs are the same.
-
-    Equality is strict by default. This means that for two field
-    constructs to be considered equal they must have corresponding
-    metadata constructs and for each pair of constructs:
-
-    * the same descriptive properties must be present, with the same
-      values and data types, and vector-valued properties must also
-      have same the size and be element-wise equal (see the
-      *ignore_properties* and *ignore_data_type* parameters), and
-
-    ..
-
-    * if there are data arrays then they must have same shape and data
-      type, the same missing data mask, and be element-wise equal (see
-      the *ignore_data_type* parameter).
-
-    {{equals tolerance}}
-
-    {{equals compression}}
-
-    Any type of object may be tested but, in general, equality is only
-    possible with another field construct, or a subclass of one. See
-    the *ignore_type* parameter.
-
-    {{equals netCDF}}
-
-    .. versionadded:: (cfdm) 1.7.0
-
-    :Parameters:
-
-        other:
-            The object to compare for equality.
-
-        {{atol: number, optional}}
-
-        {{rtol: number, optional}}
-
-        ignore_fill_value: `bool`, optional
-            If True then the ``_FillValue`` and ``missing_value``
-            properties are omitted from the comparison, for the field
-            construct and metadata constructs.
-
-        ignore_properties: sequence of `str`, optional
-            The names of properties of the field construct (not the
-            metadata constructs) to omit from the comparison. Note
-            that the ``Conventions`` property is always omitted.
-
-        {{ignore_data_type: `bool`, optional}}
-
-        {{ignore_compression: `bool`, optional}}
-
-        {{ignore_type: `bool`, optional}}
-
-        {{verbose: `int` or `str` or `None`, optional}}
-
-    :Returns:
-
-        `bool`
-            Whether the two field constructs are equal.
-
-    **Examples:**
-
-    >>> f.equals(f)
-    True
-    >>> f.equals(f.copy())
-    True
-    >>> f.equals(f[...])
-    True
-    >>> f.equals('not a Field instance')
-    False
-
-    >>> g = f.copy()
-    >>> g.set_property('foo', 'bar')
-    >>> f.equals(g)
-    False
-    >>> f.equals(g, verbose=3)
-    Field: Non-common property name: foo
-    Field: Different properties
-    False
-
-        '''
-        # ------------------------------------------------------------
-        # Check the properties and data
-        # ------------------------------------------------------------
-        ignore_properties = tuple(ignore_properties) + ('Conventions',)
-
-        if not super().equals(
-                other,
-                rtol=rtol, atol=atol, verbose=verbose,
-                ignore_data_type=ignore_data_type,
-                ignore_fill_value=ignore_fill_value,
-                ignore_properties=ignore_properties,
-                ignore_compression=ignore_compression,
-                ignore_type=ignore_type):
-            return False
-
-        # ------------------------------------------------------------
-        # Check the constructs
-        # ------------------------------------------------------------
-        if not self._equals(self.constructs, other.constructs,
-                            rtol=rtol, atol=atol, verbose=verbose,
-                            ignore_data_type=ignore_data_type,
-                            ignore_fill_value=ignore_fill_value,
-                            ignore_compression=ignore_compression,
-                            _ignore_type=False):
-            logger.info(
-                "{0}: Different metadata constructs".format(
-                    self.__class__.__name__)
-            )
-            return False
-
-        return True
 
     def get_data_axes(self, key=None, default=ValueError()):
         '''Return the keys of the domain axis constructs spanned by the data

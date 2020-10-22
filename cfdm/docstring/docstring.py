@@ -56,6 +56,20 @@ _docstring_substitution_definitions = {
             Properties may also be set after initialisation with the
             `set_properties` and `set_property` methods.''',
 
+    '{{netcdf global}}':
+    '''When multiple field or domain constructs are being written to the
+    same file, it is only possible to create a netCDF global attribute
+    from a property that has identical values for each construct. If
+    any field or domain construct's property has a different value
+    then the property will not be written as a netCDF global
+    attribute, even if it has been selected as such, but will appear
+    instead as attributes on the netCDF data variables corresponding
+    to each construct.
+
+    The standard description-of-file-contents properties are always
+    written as netCDF global attributes, if possible, so selecting
+    them is optional.''',
+
     # ----------------------------------------------------------------
     # Parameter description substitutions
     # ----------------------------------------------------------------
@@ -102,7 +116,7 @@ _docstring_substitution_definitions = {
     # ignore_fill_value
     '{{ignore_fill_value: `bool`, optional}}':
     '''ignore_fill_value: `bool`, optional
-             If True then the ``_FillValue`` and ``missing_value``
+            If True then all ``_FillValue`` and ``missing_value``
             properties are omitted from the comparison.''',
 
     # ignore_properties

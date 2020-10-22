@@ -219,9 +219,9 @@ def read(filename, external=None, extra=None, verbose=None,
             .. versionadded:: (cfdm) 1.8.3
 
         mask: `bool`, optional
-            If False then do not mask by convention when reading the
-            data of field or metadata constructs from disk. By default
-            data is masked by convention.
+            If False then do not mask by convention the data of field
+            and metadata constructs. By default all data is masked by
+            convention.
 
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
