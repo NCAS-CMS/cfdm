@@ -1,3 +1,4 @@
+import copy
 import datetime
 import inspect
 import os
@@ -264,6 +265,104 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(e.unfilter(1).unfilter().equals(c, verbose=3))
         self.assertTrue(d.unfilter(1).equals(c, verbose=3))
         self.assertTrue(c.unfilter(1).equals(c, verbose=3))
+
+    def test_Constructs_copy(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.example_field(1)
+        c = f.constructs
+
+        d = copy.copy(c)
+        d = copy.deepcopy(c)
+
+    def test_Constructs__getitem__(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.example_field(1)
+        c = f.constructs
+
+        with self.assertRaises(KeyError):
+            d = c['qwerty']
+
+        self.assertIsInstance(c['auxiliarycoordinate1'],
+                              cfdm.AuxiliaryCoordinate)
+
+        del c._constructs['auxiliary_coordinate']
+        with self.assertRaises(KeyError):
+            d = c['auxiliarycoordinate1']
+
+        with self.assertRaises(KeyError):
+            d = c['qwerty']
+
+    def test_Constructs_private(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.example_field(1)
+        c = f.domain.constructs
+
+        # _dictionary
+        self.assertIsInstance(c._dictionary(copy=True), dict)
+
+        # _construct_type_description
+        self.assertEqual(
+            c._construct_type_description('auxiliary_coordinate'),
+            'auxiliary coordinate'
+        )
+
+        # _check_construct_type
+        self.assertIsNone(c._check_construct_type(None))
+        self.assertIsNone(c._check_construct_type('cell_method', None))
+
+        x = c.copy()
+        del x._constructs['auxiliary_coordinate']
+        with self.assertRaises(KeyError):
+            d = x['auxiliarycoordinate1']
+
+        with self.assertRaises(KeyError):
+            d = x['qwerty']
+
+        # _del_construct
+        x = f.constructs.copy()
+
+        x._del_construct('domainancillary0')
+
+        with self.assertRaises(ValueError):
+            x._del_construct('domainaxis1')
+
+        x._del_construct('dimensioncoordinate3')
+        with self.assertRaises(ValueError):
+            x._del_construct('domainaxis3')
+
+        x = f.domain.constructs.copy()
+        x._del_construct('dimensioncoordinate3')
+        self.assertIsInstance(x._del_construct('domainaxis3'),
+                              cfdm.DomainAxis)
+
+        # _set_construct
+        x = f.constructs.copy()
+        with self.assertRaises(ValueError):
+            x._set_construct(
+                f.construct('cellmethod0'), axes=['domainaxis0']
+            )
+
+        # _set_construct_data_axes
+        x = f.constructs.copy()
+        with self.assertRaises(ValueError):
+            x._set_construct_data_axes('qwerty', ['domainaxis'])
+
+        with self.assertRaises(ValueError):
+            x._set_construct_data_axes('auxiliarycoordinate1', ['qwerty'])
+
+        with self.assertRaises(ValueError):
+            x._set_construct_data_axes('auxiliarycoordinate1', ['domainaxis0'])
+
+        # _pop
+        x = c.copy()
+        with self.assertRaises(KeyError):
+            x._pop('qwerty')
 
 # --- End: class
 

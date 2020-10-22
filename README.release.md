@@ -15,9 +15,15 @@
 
 * Make sure that `Changelog.rst` is up to date.
 
-* Make sure that any new attributes, methods and keyword arguments (as
-  listed in the change log) have on-line documentation. This may
-  require additions to the `.rst` files in `docs/source/class/`
+* Check that the documentation API coverage is complete:
+
+  ```bash
+  ./check_docs_api_coverage
+  ```
+
+  * If it is not complete, add any undocumented attributes, methods,
+    functions and keyword arguments (e.g. as listed in the change log)
+    to the `.rst` files in `docs/source/class/`.
 
 * Check external links to the CF conventions are up to date in
   `docs/source/tutorial.rst`
@@ -35,12 +41,6 @@
   python ../tutorial.py
   ```
 
-* Check that the documentaion API coverage is complete:
-
-  ```bash
-  ./check_docs_api_coverage
-  ```
-  
 * Build a development copy of the documentation using to check API
   pages for any new methods are present & correct, & that the overall
   formatting has not been adversely affected for comprehension by any

@@ -101,21 +101,35 @@
 <h2><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>Version 1.8.7.0 for version 1.8 of the CF conventions.</p>
-<p>The Python cfdm package is a reference implementation of the
-<a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a>.</p>
-<p>The CF data model is a complete representation of the CF (Climate and
-Forecast) metadata conventions (<a class="reference external" href="http://cfconventions.org">http://cfconventions.org</a>) for storing
-geoscientific datasets. It can describe any conceivable CF-compliant
-dataset. Therefore cfdm, a software implementation of the CF
-data model, will also be able to process any CF-compliant dataset.</p>
-<p>The cfdm package is, however, not strict about CF-compliance, so that
-non-conformant datasets may be created or ingested from existing
-datasets and written to new datasets. This is so that existing
-datasets which are non-CF-compliant may be processed by cfdm, ideally
-being modified in memory to be (more) CF-compliant.</p>
-<div class="section" id="functionality">
-<h3><strong>Functionality</strong><a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h3>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#functionality" id="id4"><strong>Functionality</strong></a></p></li>
+<li><p><a class="reference internal" href="#related-packages" id="id5"><strong>Related packages</strong></a></p></li>
+<li><p><a class="reference internal" href="#citation" id="id6"><strong>Citation</strong></a></p></li>
+<li><p><a class="reference internal" href="#references" id="id7"><strong>References</strong></a></p></li>
+</ul>
+</div>
+<p>The cfdm library implements the data model of the CF (Climate and
+Forecast) metadata conventions (<a class="reference external" href="http://cfconventions.org">http://cfconventions.org</a>) and so
+should be able to represent and manipulate all existing and
+conceivable CF-compliant datasets.</p>
+<p>The CF conventions are designed to promote the creation, processing,
+and sharing of climate and forecasting data using Network Common Data
+Form (netCDF) files and libraries
+(<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf">https://www.unidata.ucar.edu/software/netcdf</a>). They cater for data
+from model simulations as well as from observations, made in situ or
+by remote sensing platforms, of the planetary surface, ocean, and
+atmosphere. For a netCDF data variable, they provide a description of
+the physical meaning of data and of its spatial, temporal, and other
+dimensional properties. The CF data model is an abstract
+interpretation of the CF conventions that is independent of the netCDF
+encoding.</p>
+<p>For more details see <em>cfdm: A Python reference implementation of the
+CF data model</em> in the Journal of Open Source Software:
+<a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
 <hr class="docutils" />
+<div class="section" id="functionality">
+<h3><a class="toc-backref" href="#id4"><strong>Functionality</strong></a><a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h3>
 <p>The cdfm library can create field constructs ab initio, or read them
 from netCDF files, inspect, subspace and modify in memory, and write
 them to CF-netCDF dataset files. As long as it can interpret the data,
@@ -125,9 +139,9 @@ to be read, processed, corrected and rewritten.</p>
 regidding) because the expectation is that other libraries will build
 on cfdm, inheriting its comprehensive knowledge of the CF conventions,
 to add more sophisticated methods.</p>
-<div class="literal-block-wrapper docutils container" id="id1">
+<div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text"><em>A simple example of reading a field construct from a
-file and inspecting it.</em></span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+file and inspecting it.</em></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
@@ -168,8 +182,8 @@ CF field constructs, but it is largely <a class="reference internal" href="philo
 them in a CF-compliant way</span></a>.</p>
 <p>A command line tool is provided that allows inspection of datasets
 outside of a Python environment:</p>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text"><em>Inspect a dataset from the command line.</em></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text"><em>Inspect a dataset from the command line.</em></span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfdump file.nc
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
@@ -182,17 +196,71 @@ outside of a Python environment:</p>
 </pre></div>
 </div>
 </div>
+</div>
+<hr class="docutils" />
 <div class="section" id="related-packages">
-<h4>Related packages<a class="headerlink" href="#related-packages" title="Permalink to this headline">¶</a></h4>
+<h3><a class="toc-backref" href="#id5"><strong>Related packages</strong></a><a class="headerlink" href="#related-packages" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference external" href="https://ncas-cms.github.io/cf-python">cf-python</a> package, which
 is built as an extension to cfdm, includes higher-level functionality,
 such as regridding, and statistical operations. In turn, the <a class="reference external" href="http://ajheaps.github.io/cf-plot/">cf-plot</a> package provides comprehensive
 visualisation of field constructs created by cf-python.</p>
 </div>
+<hr class="docutils" />
+<div class="section" id="citation">
+<h3><a class="toc-backref" href="#id6"><strong>Citation</strong></a><a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h3>
+<p>If you use cfdm, either as a stand-alone application or to provide a
+CF data model implementation to another software library, please
+consider including the reference:</p>
+<dl class="simple">
+<dt>Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference</dt><dd><p>implementation of the CF data model. Journal of Open Source
+Software, 5(54), 2717, <a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
+</dd>
+</dl>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">Hassell2020</span><span class="p">,</span>
+  <span class="na">doi</span> <span class="p">=</span> <span class="s">{10.21105/joss.02717}</span><span class="p">,</span>
+  <span class="na">url</span> <span class="p">=</span> <span class="s">{https://doi.org/10.21105/joss.02717}</span><span class="p">,</span>
+  <span class="na">year</span> <span class="p">=</span> <span class="s">{2020}</span><span class="p">,</span>
+  <span class="na">publisher</span> <span class="p">=</span> <span class="s">{The Open Journal}</span><span class="p">,</span>
+  <span class="na">volume</span> <span class="p">=</span> <span class="s">{5}</span><span class="p">,</span>
+  <span class="na">number</span> <span class="p">=</span> <span class="s">{54}</span><span class="p">,</span>
+  <span class="na">pages</span> <span class="p">=</span> <span class="s">{2717}</span><span class="p">,</span>
+  <span class="na">author</span> <span class="p">=</span> <span class="s">{David Hassell and Sadie L. Bartholomew}</span><span class="p">,</span>
+  <span class="na">title</span> <span class="p">=</span> <span class="s">{cfdm: A Python reference implementation of the CF data model}</span><span class="p">,</span>
+  <span class="na">journal</span> <span class="p">=</span> <span class="s">{Journal of Open Source Software}</span>
+<span class="p">}</span>
+</pre></div>
 </div>
 </div>
-<div class="section" id="contents">
-<h2><strong>Contents</strong><a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<div class="section" id="references">
+<h3><a class="toc-backref" href="#id7"><strong>References</strong></a><a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt>Eaton, B., Gregory, J., Drach, B., Taylor, K., Hankin, S., Caron, J.,</dt><dd><p>Signell, R., et al. (2020). NetCDF Climate and Forecast (CF)
+Metadata Conventions. CF Conventions Committee. Retrieved from
+<a class="reference external" href="https://cfconventions.org/cf-conventions/cf-conventions.html">https://cfconventions.org/cf-conventions/cf-conventions.html</a></p>
+</dd>
+<dt>Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference</dt><dd><p>implementation of the CF data model. Journal of Open Source
+Software, 5(54), 2717, <a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
+</dd>
+<dt>Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and</dt><dd><p>Taylor, K. E. (2017). A data model of the Climate and Forecast
+metadata conventions (CF-1.6) with a software implementation
+(cf-python v2.1), Geosci. Model Dev., 10, 4619-4646,
+<a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a></p>
+</dd>
+<dt>Rew, R., and Davis, G. (1990). NetCDF: An Interface for Scientific</dt><dd><p>Data Access. IEEE Computer Graphics and Applications, 10(4),
+76–82. <a class="reference external" href="https://doi.org/10.1109/38.56302">https://doi.org/10.1109/38.56302</a></p>
+</dd>
+<dt>Rew, R., Hartnett, E., and Caron, J. (2006). NetCDF-4: Software</dt><dd><p>Implementing an Enhanced Data Model for the Geosciences. In 22nd
+International Conference on Interactive Information Processing
+Systems for Meteorology, Oceanography, and Hydrology. AMS. Retrieved
+from
+<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf">https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf</a></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="id1">
+<h2><strong>Contents</strong><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <div class="toctree-wrapper compound">
 <ul>
@@ -228,7 +296,7 @@ visualisation of field constructs created by cf-python.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-09.
+      &copy;2020, NCAS | Page built on 2020-10-15.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
