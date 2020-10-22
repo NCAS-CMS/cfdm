@@ -189,6 +189,28 @@ class Properties(Container):
                                  "{!r} has no {!r} property".format(
                                      self.__class__.__name__, prop))
 
+    def has_bounds(self):
+        '''Whether or not there are cell bounds.
+
+    This is always False.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    .. seealso:: `has_data`
+
+    :Returns:
+
+        `False`
+
+    **Examples:**
+
+    >>> f = {{package}}.{{class}}()
+    >>> f.has_bounds()
+    False
+
+        '''
+        return False
+
     def has_data(self):
         '''Whether or not the construct has data.
 
