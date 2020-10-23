@@ -3,7 +3,7 @@ import re
 
 
 class DocstringRewriteMeta(type):
-    '''Modify docstrings.
+    '''Modify docstrings at time of import.
 
     **Methodology**
 
@@ -522,6 +522,18 @@ class DocstringRewriteMeta(type):
 
     .. versionadded:: (cfdm) 1.8.7.0
 
+    :Parameters:
+
+        package_name: `str`
+
+        class_name: `str`
+
+        f: class method
+
+        method_name: `str`
+
+        config: `dict`
+        
         '''
         doc = f.__doc__
         if doc is None:
@@ -531,7 +543,6 @@ class DocstringRewriteMeta(type):
         # Do general substitutions first
         # ------------------------------------------------------------
         for key, value in config.items():
-
             # Substitute non-special substitutions embedded within
             # this value, updating the value if any are found. Note
             # that any non-special substitutions embedded within the

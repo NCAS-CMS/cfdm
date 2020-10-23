@@ -130,4 +130,5 @@ _docstring_substitution_definitions = {
             a `Data` object, i.e. `numpy` array_like objects, `Data`
             objects, and {{package}} instances that contain `Data`
             objects.''',
+
 }
