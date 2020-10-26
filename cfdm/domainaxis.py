@@ -290,7 +290,7 @@ class DomainAxis(mixin.NetCDFDimension,
         n = self.nc_get_dimension(None)
         if n is not None:
             out.append('ncdim%{0}'.format(n))
-            
+
         return out
 
 # --- End: class

@@ -470,7 +470,7 @@ class FieldDomain:
     'no construct'
 
         '''
-        if identity is None:            
+        if identity is None:
             c = self.constructs
         else:
             c = self.constructs.filter_by_identity(identity)
@@ -558,11 +558,11 @@ class FieldDomain:
     'no construct'
 
         '''
-        if identity is None:            
+        if identity is None:
             c = self.constructs
         else:
             c = self.constructs.filter_by_identity(identity)
-            
+
         return c.key(default=default)
 
     def domain_axis_key(self, identity=None, default=ValueError()):
@@ -579,7 +579,7 @@ class FieldDomain:
               axis construct.
 
               {{construct selection identity}}
-       
+
             * `None`. This is the default, which selects the dimension
               or 1-d auxiliary coordinate construct when there is only
               one of them.

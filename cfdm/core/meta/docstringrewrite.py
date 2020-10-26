@@ -533,7 +533,7 @@ class DocstringRewriteMeta(type):
         method_name: `str`
 
         config: `dict`
-        
+
         '''
         doc = f.__doc__
         if doc is None:
