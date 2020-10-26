@@ -219,7 +219,7 @@ class DomainAxis(mixin.NetCDFDimension,
     The identity is the first found of the following:
 
     1. The netCDF dimension name, preceded by 'ncdim%'.
-    2. The value of the default parameter.
+    3. The value of the default parameter.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -237,8 +237,8 @@ class DomainAxis(mixin.NetCDFDimension,
 
     **Examples:**
 
-    >>> d.nc_get_dimension()
-    'time'
+    >>> d = {{package}}.DomainAxis(size=9)
+    >>> d.nc_set_dimension('time')
     >>> d.identity()
     'ncdim%time'
     >>> d.identity(default='no identity')
@@ -270,13 +270,13 @@ class DomainAxis(mixin.NetCDFDimension,
 
     :Returns:
 
-        `list`
+        `list` of `str`
             The identities.
 
     **Examples:**
 
-    >>> d.nc_get_dimension()
-    'time'
+    >>> d = {{package}}.DomainAxis(size=9)
+    >>> d.nc_set_dimension('time')
     >>> d.identities()
     ['ncdim%time']
     >>> d.nc_del_dimension()
@@ -290,7 +290,7 @@ class DomainAxis(mixin.NetCDFDimension,
         n = self.nc_get_dimension(None)
         if n is not None:
             out.append('ncdim%{0}'.format(n))
-
+            
         return out
 
 # --- End: class

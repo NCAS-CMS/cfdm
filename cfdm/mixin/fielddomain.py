@@ -8,7 +8,7 @@ from ..decorators import (
 logger = logging.getLogger(__name__)
 
 
-class FieldDomainMixin:
+class FieldDomain:
     '''Mixin class for methods common to both field and domain constructs
 
     .. versionadded:: (cfdm) 1.9.0.0
@@ -195,7 +195,6 @@ class FieldDomainMixin:
 
         `Constructs`
             The constructs and their construct keys.
-
 
     **Examples:**
 
@@ -392,8 +391,8 @@ class FieldDomainMixin:
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def construct(self, identity, default=ValueError()):
-        '''Select a metadata construct by its identity.
+    def construct(self, identity=None, default=ValueError()):
+        '''Return a metadata construct, or its key.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -403,31 +402,31 @@ class FieldDomainMixin:
     :Parameters:
 
         identity: optional
-            Select constructs that have the given identity. If exactly
-            one construct is selected then it is returned, otherwise
-            an exception is raised.
+            Select the construct by one of
 
-            Each construct has a number of identities, and is selected
-            if any of them match any of those provided. A construct's
-            identities are those returned by its `!identities`
-            method. In the following example, the construct ``c`` has
-            four identities:
+            * A metadata construct identity.
 
-               >>> c.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
+              {{construct selection identity}}
 
-            In addition, each construct also has an identity based its
-            construct key (e.g. ``'key%dimensioncoordinate2'``)
+            * The key of a metadata construct
 
-            An identity is specified either by a string or a compiled
-            regular expression (e.g. ``re.compile('^atmosphere')``)
-            for which all constructs whose identities match (via
-            `re.search`) are selected.
+            * `None`. This is the default, which selects the metadata
+              construct when there is only one of them.
 
-            Note that in the output of a `print` call or `!dump`
-            method, a construct is always described by one of its
-            identities, and so this description may always be used as
-            an *identity* argument.
+            *Parameter example:*
+              ``identity='latitude'``
+
+            *Parameter example:*
+              ``identity='long_name=Cell Area'``
+
+            *Parameter example:*
+              ``identity='cellmeasure1'``
+
+            *Parameter example:*
+              ``identity='measure:area'``
+
+            *Parameter example:*
+              ``identity=re.compile('^lat')``
 
         default: optional
             Return the value of the *default* parameter if the
@@ -471,11 +470,15 @@ class FieldDomainMixin:
     'no construct'
 
         '''
-        c = self.constructs.filter_by_identity(identity)
+        if identity is None:            
+            c = self.constructs
+        else:
+            c = self.constructs.filter_by_identity(identity)
+
         return c.value(default=default)
 
-    def construct_key(self, identity, default=ValueError()):
-        '''Select the key of a metadata construct by its identity.
+    def construct_key(self, identity=None, default=ValueError()):
+        '''Return the key of a metadata construct.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -485,33 +488,31 @@ class FieldDomainMixin:
     :Parameters:
 
         identity: optional
-            Select constructs that have the given identity. If exactly
-            one construct is selected then it is returned, otherwise
-            an exception is raised.
+            Select the construct by one of
 
-            The identity is specified by a string
-            (e.g. ``'latitude'``, ``'long_name=time'``, etc.); or a
-            compiled regular expression
-            (e.g. ``re.compile('^atmosphere')``), for which all
-            constructs whose identities match (via `re.search`) are
-            selected.
+            * A metadata construct identity.
 
-            Each construct has a number of identities, and is selected
-            if any of them match any of those provided. A construct's
-            identities are those returned by its `!identities`
-            method. In the following example, the construct ``c`` has
-            four identities:
+              {{construct selection identity}}
 
-               >>> c.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
+            * The key of a metadata construct
 
-            In addition, each construct also has an identity based its
-            construct key (e.g. ``'key%dimensioncoordinate2'``)
+            * `None`. This is the default, which selects the metadata
+              construct when there is only one of them.
 
-            Note that in the output of a `print` call or `!dump`
-            method, a construct is always described by one of its
-            identities, and so this description may always be used as
-            an *identity* argument.
+            *Parameter example:*
+              ``identity='latitude'``
+
+            *Parameter example:*
+              ``identity='long_name=Cell Area'``
+
+            *Parameter example:*
+              ``identity='cellmeasure1'``
+
+            *Parameter example:*
+              ``identity='measure:area'``
+
+            *Parameter example:*
+              ``identity=re.compile('^lat')``
 
         default: optional
             Return the value of the *default* parameter if the
@@ -557,41 +558,37 @@ class FieldDomainMixin:
     'no construct'
 
         '''
-        c = self.constructs.filter_by_identity(identity)
+        if identity is None:            
+            c = self.constructs
+        else:
+            c = self.constructs.filter_by_identity(identity)
+            
         return c.key(default=default)
 
-    def domain_axis_key(self, identity, default=ValueError()):
+    def domain_axis_key(self, identity=None, default=ValueError()):
         '''Return the key of the domain axis construct that is spanned by 1-d
     coordinate constructs.
 
     :Parameters:
 
-        identity:
-            Select the 1-d coordinate constructs that have the given
-            identity.
+        identity: optional
+            Select the domain axis construct by one of:
 
-            An identity is specified by a string (e.g. ``'latitude'``,
-            ``'long_name=time'``, etc.); or a compiled regular
-            expression (e.g. ``re.compile('^atmosphere')``), for which
-            all constructs whose identities match (via `re.search`)
-            are selected.
+            * An identity or key of a 1-d dimension or auxiliary
+              coordinate construct that whose data spans the domain
+              axis construct.
 
-            Each coordinate construct has a number of identities, and
-            is selected if any of them match any of those provided. A
-            construct's identities are those returned by its
-            `!identities` method. In the following example, the
-            construct ``x`` has four identities:
+              {{construct selection identity}}
+       
+            * `None`. This is the default, which selects the dimension
+              or 1-d auxiliary coordinate construct when there is only
+              one of them.
 
-               >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
+            *Parameter example:*
+              ``identity='time'``
 
-            In addition, each construct also has an identity based its
-            construct key (e.g. ``'key%dimensioncoordinate2'``)
-
-            Note that in the output of a `print` call or `!dump`
-            method, a construct is always described by one of its
-            identities, and so this description may always be used as
-            an *identity* argument.
+            *Parameter example:*
+              ``identity='ncvar%y'``
 
         default: optional
             Return the value of the *default* parameter if a domain

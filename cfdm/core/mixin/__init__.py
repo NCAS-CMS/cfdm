@@ -1,1 +1,1 @@
-from .fielddomainmixin import FieldDomainMixin
+from .fielddomain import FieldDomain

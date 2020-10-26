@@ -1,4 +1,4 @@
-class FieldDomainMixin:
+class FieldDomain:
     '''Mixin class for methods common to field and domain constructs.
 
     .. versionadded:: (cfdm) 1.9.0.0

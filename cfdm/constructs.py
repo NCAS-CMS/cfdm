@@ -1241,33 +1241,34 @@ class Constructs(mixin.Container,
     :Parameters:
 
         identities: optional
-            Select constructs that have any of the given identities.
+            Identify the metadata constructs by one or more of
 
-            An identity is specified by a string (e.g. ``'latitude'``,
-            ``'long_name=time'``, etc.); or a compiled regular
-            expression (e.g. ``re.compile('^atmosphere')``), for which
-            all constructs whose identities match (via `re.search`)
-            are selected.
+            * A metadata construct identity.
 
-            If no identities are provided then all constructs are
-            selected.
+              {{construct selection identity}}
 
-            Each construct has a number of identities, and is selected
-            if any of them match any of those provided. A construct's
-            identities are those returned by its `!identities`
-            method. In the following example, the construct ``x`` has
-            four identities:
+            * The key of a metadata construct
 
-               >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
+            *Parameter example:*
+              ``identity='latitude'``
 
-            In addition, each construct also has an identity based its
-            construct key (e.g. ``'key%dimensioncoordinate2'``)
+            *Parameter example:*
+              ``'T'
 
-            Note that in the output of a `print` call or `!dump`
-            method, a construct is always described by one of its
-            identities, and so this description may always be used as
-            an *identities* argument.
+            *Parameter example:*
+              ``'latitude'``
+
+            *Parameter example:*
+              ``'long_name=Cell Area'``
+
+            *Parameter example:*
+              ``'cellmeasure1'``
+
+            *Parameter example:*
+              ``'measure:area'``
+
+            *Parameter example:*
+              ``re.compile('^lat')``
 
     :Returns:
 

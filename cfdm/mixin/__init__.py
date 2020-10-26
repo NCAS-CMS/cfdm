@@ -21,4 +21,4 @@ from .netcdf import (
     NetCDFVariable,
 )
 
-from .fielddomainmixin import FieldDomainMixin
+from .fielddomain import FieldDomain

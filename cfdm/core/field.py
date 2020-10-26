@@ -7,7 +7,7 @@ from . import Constructs
 from . import Domain
 
 
-class Field(mixin.FieldDomainMixin,
+class Field(mixin.FieldDomain,
             abstract.PropertiesData):
     '''A field construct of the CF data model.
 

@@ -14,7 +14,7 @@ from .decorators import (
 logger = logging.getLogger(__name__)
 
 
-class Domain(mixin.FieldDomainMixin,
+class Domain(mixin.FieldDomain,
              mixin.NetCDFVariable,
              mixin.NetCDFGeometry,
              mixin.NetCDFGlobalAttributes,
