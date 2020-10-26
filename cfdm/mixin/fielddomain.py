@@ -18,8 +18,7 @@ class FieldDomain:
     # Private methods
     # ----------------------------------------------------------------
     def _apply_masking_constructs(self):
-        '''Apply masking to metadata constructs in-place as, defined by the CF
-    conventions.
+        '''Apply masking to metadata constructs in-place,
 
     Masking is applied to all metadata constructs with data.
 

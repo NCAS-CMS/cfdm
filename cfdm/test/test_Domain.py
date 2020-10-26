@@ -7,7 +7,7 @@ import cfdm
 
 
 class DomainTest(unittest.TestCase):
-    def setUp(self):
+        def setUp(self):
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL('DISABLE')
         # Note: to enable all messages for given methods, lines or
@@ -24,6 +24,7 @@ class DomainTest(unittest.TestCase):
         f = cfdm.read(self.filename)
         self.assertEqual(len(f), 1, 'f={!r}'.format(f))
         self.f = f[0]
+        self.d = self.f.domain
 
         self.test_only = []
 
@@ -82,9 +83,16 @@ class DomainTest(unittest.TestCase):
                               cfdm.DimensionCoordinate)
 
     def test_Domain_climatological_time_axes(self):
-        d = cfdm.example_field(1).domain
+        f = cfdm.example_field(7)
+        d = f.domain
 
-        self.assertIsInstance(d.climatological_time_axes(), set)
+        self.assertEqual(d.climatological_time_axes(), set())
+
+        cm = cfdm.CellMethod(axes='domainaxis0', method='mean')
+        cm.set_qualifier('over', 'years')
+        f.set_construct(cm)
+
+        self.assertEqual(d.climatological_time_axes(), set(('domainaxis0',)))
 
     def test_Domain_creation_commands(self):
         d = cfdm.example_field(1).domain
@@ -120,6 +128,27 @@ class DomainTest(unittest.TestCase):
                           'long_name=qwerty',
                           'foo=bar',
                           'ncvar%qwerty'])
+
+    def test_Domain_apply_masking(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = self.d.copy()
+
+        self.assertIsNone(f.apply_masking(inplace=True))
+        self.assertTrue(f.equals(f.apply_masking()))
+
+    def test_Domain_data(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        self.assertFalse(self.d.has_data())
+
+    def test_Domain_has_bounds(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        self.assertFalse(self.d.has_bounds())
 
 # --- End: class
 

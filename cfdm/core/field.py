@@ -247,7 +247,7 @@ class Field(mixin.FieldDomain,
     >>> d = f.get_domain()
 
         '''
-        return self._Domain.fromconstructs(self.constructs)
+        return self._Domain.fromconstructs(self.constructs, copy=False)
 
     def get_data_axes(self, key=None, default=ValueError()):
         '''Return the keys of the domain axis constructs spanned by the data

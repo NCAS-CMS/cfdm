@@ -508,7 +508,7 @@ class Constructs(mixin.Container,
         '''Set the climatology flag on approriate coordinate constructs, based
     on the cell method constructs.
 
-    .. versionadded:: 1.9.0.0
+    .. versionadded:: (cfdm) 1.9.0.0
 
     :Parameters:
 

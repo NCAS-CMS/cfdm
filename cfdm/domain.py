@@ -356,7 +356,7 @@ class Domain(mixin.FieldDomain,
     def climatological_time_axes(self):
         '''Return all axes which are climatological time axes.
 
-    This is ascertained by inspecting the values return by the
+    This is ascertained by inspecting the values returned by the
     coordinate constructs' `is_climatology` method.
 
     .. versionadded:: (cfdm) 1.9.0.0
@@ -364,8 +364,8 @@ class Domain(mixin.FieldDomain,
     :Returns:
 
         `set`
-            The set of all domain axes which are climatological time
-            axes. If there are none, this will be an empty set.
+            The keys of the domain axeis constructs that are
+            climatological time axes.
 
     **Examples:**
 TODO

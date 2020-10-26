@@ -596,9 +596,9 @@ class Field(mixin.FieldDomain,
 
     :Returns:
 
-        `list`
-            The list of all axes on the field which are climatological
-            time axes. If there are none, this will be an empty list.
+        `set`
+            The keys of the domain axeis constructs that are
+            climatological time axes.
 
     **Examples:**
 
@@ -609,17 +609,17 @@ class Field(mixin.FieldDomain,
     {'cellmethod0': <{{repr}}CellMethod: domainaxis0: minimum within days>,
      'cellmethod1': <{{repr}}CellMethod: domainaxis0: mean over days>}
     >>> f.climatological_time_axes()
-    [('domainaxis0',), ('domainaxis0',)]
+    {'domainaxis0'}
     >>> g
     <Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
     >>> print(g.cell_methods())
     Constructs:
     {'cellmethod0': <{{repr}}CellMethod: area: mean>}
     >>> g.climatological_time_axes()
-    []
+    {}
 
         '''
-        out = []
+        out = set()
 
         domain_axes = self.domain_axes
 
@@ -637,7 +637,8 @@ class Field(mixin.FieldDomain,
                 continue
 
             # Still here? Then this axis is a climatological time axis
-            out.append((axis,))
+#            out.append((axis,))
+            out.add(axis)
 
         return out
 
@@ -1502,6 +1503,37 @@ class Field(mixin.FieldDomain,
                 default,
                 "{!r} has no data axes".format(self.__class__.__name__)
             )
+
+    def get_domain(self):
+        '''Return the domain.
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `domain`
+
+    :Returns:
+
+        `Domain`
+             The domain.
+
+    **Examples:**
+
+    >>> d = f.get_domain()
+
+        '''        
+        domain = self._Domain.fromconstructs(self.constructs)
+
+        # Set climatological time axes for the domain
+        climatological_time_axes = self.climatological_time_axes()
+        if climatological_time_axes:
+            coordinates = self.coordinates
+            for key, c in coordinates.items():
+                axes = self.get_data_axes(key, default=())
+                if len(axes) == 1 and axes[0] in climatological_time_axes:
+                    c.set_climatology(True)
+        # --- End: if
+            
+        return domain
 
     def get_filenames(self):
         '''Return the name of the file or files containing the data.
