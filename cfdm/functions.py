@@ -268,12 +268,15 @@ def _log_level(constants_dict, log_level):
         # a case-insensitive string of valid log level or
         # dis/en-abler, or an integer 0 to 5 corresponding to one of
         # those as converted above:
+        ok = True
         if isinstance(level, str):
             level = level.upper()
         elif _is_valid_log_level_int(level):
             level = ValidLogLevels(level).name  # convert to string ID first
+        else:
+            ok = False
 
-        if not hasattr(ValidLogLevels, level):
+        if not ok or not hasattr(ValidLogLevels, level):
             raise ValueError(
                 "Logging level {!r} is not one of the valid values '{}', "
                 "where either the string or the corrsponding integer is "
@@ -358,7 +361,7 @@ def _is_valid_log_level_int(int_log_level):
     '''Return a Boolean stating if input is a ValidLogLevels Enum integer.'''
     try:
         ValidLogLevels(int_log_level)
-    except KeyError:  # if verbose int not in Enum int constants
+    except ValueError:  # if verbose int not in Enum int constants
         return False
     return True
 
@@ -489,10 +492,7 @@ def environment(display=True, paths=True):
     if paths:
         out[-1] += ' ' + str(os.path.abspath(numpy.__file__))
 
-    try:
-        out.append('netcdf_flattener: ' + str(netcdf_flattener.__version__))
-    except AttributeError:
-        out.append('netcdf_flattener: unknown version')
+    out.append('netcdf_flattener: ' + str(netcdf_flattener.__version__))
     if paths:
         out[-1] += ' ' + str(os.path.abspath(netcdf_flattener.__file__))
 
@@ -524,7 +524,7 @@ def CF():
     **Examples:**
 
     >>> CF()
-    '1.8'
+    '1.9'
 
     '''
     return __cf_version__
