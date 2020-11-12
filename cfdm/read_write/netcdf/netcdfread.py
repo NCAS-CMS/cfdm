@@ -359,7 +359,7 @@ class NetCDFRead(IORead):
 
     @classmethod
     def cdl_to_netcdf(cls, filename):
-        '''Create temporary netCDF file from a CDL text file.
+        '''Create a temporary netCDF-4 file from a CDL text file.
 
     :Parameters:
 
@@ -383,7 +383,8 @@ class NetCDFRead(IORead):
         # ----------------------------------------------------------------
         _cached_temporary_files[tmpfile] = x
 
-        subprocess.run(['ncgen', '-v3', '-o', tmpfile, filename], check=True)
+        subprocess.run(['ncgen', '-knc4', '-o', tmpfile, filename],
+                       check=True)
 
         return tmpfile
 
