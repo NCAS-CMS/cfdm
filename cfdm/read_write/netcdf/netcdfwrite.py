@@ -467,8 +467,7 @@ class NetCDFWrite(IOWrite):
         g = self.write_vars
 
         domain_axes = self.implementation.get_construct_data_axes(field, key)
-
-        if not domain_axes:
+        if domain_axes is None:
             # No data
             return
 
@@ -1552,7 +1551,6 @@ class NetCDFWrite(IOWrite):
         `dict`
 
         '''
-#        print ('   coord_ncdimensions=',    coord_ncdimensions)
         g = self.write_vars
 
         # Create the node count flattened data
