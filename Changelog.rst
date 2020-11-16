@@ -1,3 +1,13 @@
+version 1.8.7.1
+---------------
+----
+
+**2020-??-??**
+
+* Fixed bug that caused a failure when writing a dataset that contains
+  a scalar domain ancillary construct
+  (https://github.com/NCAS-CMS/cfdm/issues/??)
+
 version 1.8.7.0
 ---------------
 ----

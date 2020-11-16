@@ -520,10 +520,15 @@ class CFDMImplementation(Implementation):
 
     :Returns:
 
-        `tuple`
+        `tuple` or `None`
+            The axes (may be an empty tuple), or `None` if there is no
+            data.
 
         '''
-        return field.constructs.data_axes()[key]
+        try:
+            return field.constructs.data_axes()[key]
+        except KeyError:
+            return None
 
     def get_constructs(self, field, axes=None, data=False):
         '''Return constructs that span particular axes.
