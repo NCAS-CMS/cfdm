@@ -38,7 +38,7 @@ Compression
 
    ~cfdm.Array.get_compression_type
    
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

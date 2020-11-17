@@ -270,7 +270,7 @@ Compression by convention
 
    ~cfdm.Data.compressed_array
 
-Miscellaneous
+Miscallaneous
 -------------
    
 .. autosummary::

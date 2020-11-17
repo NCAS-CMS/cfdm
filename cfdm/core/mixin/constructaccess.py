@@ -24,7 +24,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         '''Remove a metadata construct.
 
     If a domain axis construct is selected for removal then it can't
-    be spanned by any metdata construct data, nor the field
+    be spanned by any metadata construct data, nor the field
     construct's data; nor be referenced by any cell method constructs.
 
     However, a domain ancillary construct may be removed even if it is

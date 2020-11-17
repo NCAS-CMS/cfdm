@@ -419,7 +419,7 @@ class Constructs(abstract.Container):
         '''Remove a metadata construct.
 
     If a domain axis construct is selected for removal then it can't
-    be spanned by any metdata construct data arrays, nor be referenced
+    be spanned by any metadata construct data arrays, nor be referenced
     by any cell method constructs.
 
     However, a domain ancillary construct may be removed even if it is

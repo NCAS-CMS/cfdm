@@ -78,7 +78,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     HDF5 chunksizes may be set on construct's data. See the
     `~cfdm.Data.nc_hdf5_chunksizes`,
     `~cfdm.Data.nc_clear_hdf5_chunksizes` and
-    `~cfdm.Data.nc_set_hdf5_chunksizes` metods of a `Data` instance.
+    `~cfdm.Data.nc_set_hdf5_chunksizes` methods of a `Data` instance.
 
     .. versionadded:: (cfdm) 1.7.0
 

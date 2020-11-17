@@ -59,7 +59,7 @@ Properties
    ~cfdm.CellMethod.set_qualifier
    ~cfdm.CellMethod.qualifiers
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

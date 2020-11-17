@@ -2085,7 +2085,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2152,7 +2152,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2216,7 +2216,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2282,7 +2282,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2344,7 +2344,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2404,7 +2404,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2461,7 +2461,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2521,7 +2521,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2578,7 +2578,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2631,7 +2631,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2680,7 +2680,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2732,7 +2732,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2853,8 +2853,8 @@ class Field(mixin.NetCDFVariable,
             {{axes int examples}}
 
         constructs: `bool`
-            If True then tranpose the metadata constructs to have the
-            same relative domain axis order as the data of tranposed
+            If True then transpose the metadata constructs to have the
+            same relative domain axis order as the data of transposed
             field construct. By default, metadata constructs are not
             changed.
 

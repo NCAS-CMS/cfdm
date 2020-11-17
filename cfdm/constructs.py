@@ -954,7 +954,7 @@ class Constructs(mixin.Container,
     def filter_by_data(self):
         '''Select metadata constructs by whether they could contain data.
 
-    Selection is not based on whether they thay actually have data,
+    Selection is not based on whether they actually have data,
     rather by whether the construct supports the inclusion of
     data. For example, constructs selected by this method will all
     have a `!get_data` method.

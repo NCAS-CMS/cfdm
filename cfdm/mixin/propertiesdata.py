@@ -911,9 +911,9 @@ class PropertiesData(Properties):
 
     >>> f.shape
     (19, 73, 96)
-    >>> f.tranpose().shape
+    >>> f.transpose().shape
     (96, 73, 19)
-    >>> f.tranpose([1, 0, 2]).shape
+    >>> f.transpose([1, 0, 2]).shape
     (73, 19, 96)
 
         '''

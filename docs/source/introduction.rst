@@ -51,7 +51,7 @@ cfdm does not enforce CF-compliance, allowing non-compliant datasets
 to be read, processed, corrected and rewritten.
 
 It does not contain higher-level analysis functions (such as
-regidding) because the expectation is that other libraries will build
+regridding) because the expectation is that other libraries will build
 on cfdm, inheriting its comprehensive knowledge of the CF conventions,
 to add more sophisticated methods.
 

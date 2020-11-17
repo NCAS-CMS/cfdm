@@ -38,7 +38,7 @@ Constants
    cfdm.LOG_LEVEL
    cfdm.configuration
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. autosummary::

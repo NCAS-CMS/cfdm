@@ -1590,9 +1590,9 @@ class PropertiesDataBounds(PropertiesData):
 
     >>> f.shape
     (19, 73, 96)
-    >>> f.tranpose().shape
+    >>> f.transpose().shape
     (96, 73, 19)
-    >>> g = f.tranpose([1, 0, 2])
+    >>> g = f.transpose([1, 0, 2])
     >>> g.shape
     (73, 19, 96)
     >>> f.bounds.shape

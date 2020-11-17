@@ -119,7 +119,7 @@ Modification
    ~cfdm.core.PropertiesDataBounds.del_bounds
    ~cfdm.core.PropertiesDataBounds.set_bounds
       
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods
