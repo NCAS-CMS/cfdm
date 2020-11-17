@@ -27,7 +27,7 @@ def configuration(atol=None, rtol=None, log_level=None):
     * `log_level`
 
     These are all constants that apply throughout `cfdm`, except for in
-    specific functions only if overriden by the corresponding keyword
+    specific functions only if overridden by the corresponding keyword
     argument to that function.
 
     The value of `None`, either taken by default or supplied as a value,
@@ -300,7 +300,7 @@ def log_level(*log_level):
 
     For example, when set to ``'WARNING'`` (or equivalently ``1``),
     all messages categorised as ``'DEBUG'`` or ``'INFO'`` will be
-    supressed, and only warnings will emerge.
+    suppressed, and only warnings will emerge.
 
     See https://ncas-cms.github.io/cfdm/tutorial.html#logging for a
     detailed breakdown on the levels and configuration possibilities.
@@ -544,7 +544,7 @@ def abspath(filename):
     :Returns:
 
         `str`
-            The normalized absolutized version of *filename*.
+            The normalized absolutised version of *filename*.
 
     **Examples:**
 

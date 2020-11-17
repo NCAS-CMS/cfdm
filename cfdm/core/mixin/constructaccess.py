@@ -24,7 +24,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         '''Remove a metadata construct.
 
     If a domain axis construct is selected for removal then it can't
-    be spanned by any metdata construct data, nor the field
+    be spanned by any metadata construct data, nor the field
     construct's data; nor be referenced by any cell method constructs.
 
     However, a domain ancillary construct may be removed even if it is
@@ -161,7 +161,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
             automatically. If the identifier already exists then the
-            exisiting construct will be replaced.
+            existing construct will be replaced.
 
             *Parameter example:*
               ``key='cellmeasure0'``

@@ -39,7 +39,7 @@ Inspection
    ~cfdm.GatheredArray.shape
    ~cfdm.GatheredArray.size
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

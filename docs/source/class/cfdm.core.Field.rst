@@ -128,9 +128,9 @@ Domain
 
    ~cfdm.core.Field.domain
 
-.. _core-Field-Miscellaneous:
+.. _core-Field-Miscallaneous:
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

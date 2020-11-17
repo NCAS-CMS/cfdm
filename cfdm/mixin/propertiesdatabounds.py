@@ -457,10 +457,10 @@ class PropertiesDataBounds(PropertiesData):
     applied for that method.
 
     The cell bounds, if any, are also masked according to the same
-    criteria as the parent constuct. If, however, any of the relevant
+    criteria as the parent construct. If, however, any of the relevant
     properties are explicitly set on the bounds instance then their
     values will be used in preference to those of the parent
-    contsruct.
+    construct.
 
     Elements that are already masked remain so.
 
@@ -1590,9 +1590,9 @@ class PropertiesDataBounds(PropertiesData):
 
     >>> f.shape
     (19, 73, 96)
-    >>> f.tranpose().shape
+    >>> f.transpose().shape
     (96, 73, 19)
-    >>> g = f.tranpose([1, 0, 2])
+    >>> g = f.transpose([1, 0, 2])
     >>> g.shape
     (73, 19, 96)
     >>> f.bounds.shape

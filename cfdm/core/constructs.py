@@ -5,7 +5,7 @@ from . import abstract
 
 
 class Constructs(abstract.Container):
-    '''A container for metadata constucts.
+    '''A container for metadata constructs.
 
     The following metadata constructs can be included:
 
@@ -22,7 +22,7 @@ class Constructs(abstract.Container):
 
     The container is like a dictionary in many ways, in that it stores
     key/value pairs where the key is the unique construct key with
-    correspondaing metadata construct value, and provides some of the
+    corresponding metadata construct value, and provides some of the
     usual dictionary methods.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -419,7 +419,7 @@ class Constructs(abstract.Container):
         '''Remove a metadata construct.
 
     If a domain axis construct is selected for removal then it can't
-    be spanned by any metdata construct data arrays, nor be referenced
+    be spanned by any metadata construct data arrays, nor be referenced
     by any cell method constructs.
 
     However, a domain ancillary construct may be removed even if it is
@@ -531,7 +531,7 @@ class Constructs(abstract.Container):
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
             automatically. If the identifier already exists then the
-            exisiting construct will be replaced.
+            existing construct will be replaced.
 
             *Parameter example:*
               ``key='cellmeasure0'``
@@ -624,7 +624,7 @@ class Constructs(abstract.Container):
             The construct identifiers of the domain axis constructs
             spanned by the data array. An exception is raised if used
             for a metadata construct that can not have a data array,
-            such as a domain axis constuct.
+            such as a domain axis construct.
 
             *Parameter example:*
               ``axes='domainaxis1'``

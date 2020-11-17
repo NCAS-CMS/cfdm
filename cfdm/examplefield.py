@@ -20,7 +20,7 @@ def example_field(n, _implementation=_implementation):
             *n*    Description
             =====  ===================================================
             ``0``  A field construct with properties as well as a
-                   cell method constuct and dimension coordinate
+                   cell method construct and dimension coordinate
                    constructs with bounds.
 
             ``1``  A field construct with properties as well as at

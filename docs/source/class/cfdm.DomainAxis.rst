@@ -49,7 +49,7 @@ Size
    ~cfdm.DomainAxis.get_size
    ~cfdm.DomainAxis.set_size
    
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

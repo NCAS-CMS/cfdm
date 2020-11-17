@@ -161,9 +161,9 @@ Domain
 
    ~cfdm.Field.domain
 
-.. _Field-Miscellaneous:
+.. _Field-Miscallaneous:
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods
