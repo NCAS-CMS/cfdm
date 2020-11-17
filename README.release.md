@@ -50,7 +50,63 @@
   ```bash
   ./release_docs <vn> dev-clean # E.g. ./release_docs 1.8.7.0 dev-clean
   ```
-  
+
+* Check that no typos or spelling mistakes have been introduced to the
+  documentation:
+
+  * Run a dummy build of the documentation to detect invalid words:
+
+     ```console
+     $ cd docs
+     $ make spelling build
+     ```
+
+  * If there are words raised with 'Spell check' warnings for the dummy
+    build, such as:
+
+    ```bash
+    /home/sadie/cf-python/docs/source/class/cf.NetCDFArray.rst:18: Spell check: isw: element in the sequence isw the name of the group in which.
+    Writing /home/sadie/cf-python/docs/spelling/class/cf.NetCDFArray.spelling
+    /home/sadie/cf-python/docs/source/class/cf.Query.rst:3: Spell check: encapulates:  object encapulates a condition, such as.
+    ```
+
+    they may or may not be typos or mis-spellings. Address all the warnings
+    (except those relating to files under `docs/source/class/`,
+    `/attribute` or `/function` which will be fixed along with the origin
+    docstrings after a 'latest' build) as follows:
+
+    * If there are words that are in fact valid, add the valid words to
+      the list of false positives for the spelling checker extension,
+      `docs/source/spelling_false_positives.txt`.
+    * Correct any words that are not valid in the codebase under `cf` or
+      in the `docs/source` content files.
+
+  * Note that, in the case there are many words raised as warnings, it
+    helps to automate the above steps. The following commands are a means
+    to do this processing:
+
+    1. Copy all 'spell check' warnings (there will be 'Writing to ...' lines
+       interspersed which can be removed by command so can be copied here too)
+       output to STDOUT during the build to a file (here we use
+       `spellings-file-1` as an example name).
+    2. Cut all 'Writing to ...' lines interspersed with the warnings by
+       running `sed -i '/^riting/d' spellings-file-1`.
+    3. Cut all of the invalid words detected from the warning messages via
+       `cat spellings-file-1 | cut -d':' -f 4 > spellings-file-2`
+    4. Sift through these new words and remove any words that are true
+       positives i.e. typos or mis-spellings. Correct them in the
+       docstrings or documentation source files. If there are many
+       instances across the docs, it helps to do a substitution of all
+       occurences, e.g. via `find . -type f | xargs sed -i 's/<typo>/<correction>/g'`,
+       though take care to have spaces surrounding words which may be
+       part of other words, e.g. use
+       `find . -type f | xargs sed -i 's/ ot / to /g'` to correct `ot` to `to`.
+    5. Remove the leading whitespace character on each line and add
+       all the new words to the current list of false positives:
+       `sed 's/^.//' spellings-file-2 >> docs/source/spelling_false_positives.txt`
+    6. Remove duplicate words and sort alphabetically via:
+       `sort -u -o docs/source/spelling_false_positives.txt docs/source/spelling_false_positives.txt`
+
 * Create an archived copy of the documentation:
 
   ```bash
