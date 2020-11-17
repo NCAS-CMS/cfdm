@@ -444,9 +444,9 @@ toggleprompt_offset_right = 25  # stops toggle and copy buttons overlapping
 
 
 # Spelling extension configuration: set British English and false positives
-spelling_lang='en_GB'
-tokenizer_lang='en_GB'
-spelling_word_list_filename='spelling_false_positives.txt'
+spelling_lang = 'en_GB'
+tokenizer_lang = 'en_GB'
+spelling_word_list_filename = 'spelling_false_positives.txt'
 
 
 link_release = re.search('(\d+\.\d+\.\d+\.\d+)', release).groups()[0]
