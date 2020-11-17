@@ -96,3 +96,14 @@ Classes that support the creation and storage of compressed arrays.
    cfdm.RaggedIndexedContiguousArray
    cfdm.CompressedArray
 
+
+Miscellaneous classses
+----------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.Constant
+   cfdm.Configuration
+

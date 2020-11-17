@@ -55,8 +55,8 @@ def configuration(atol=None, rtol=None, log_level=None):
         log_level: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
             be specified either as a string equal (ignoring case) to
-            the named set of log levels or identifier 'DISABLE', or an
-            integer code corresponding to each of these, namely:
+            the named set of log levels or identifier ``'DISABLE'``,
+            or an integer code corresponding to each of these, namely:
 
             * ``'DISABLE'`` (``0``);
             * ``'WARNING'`` (``1``);
@@ -176,7 +176,7 @@ def atol(*arg):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `rtol`
+    .. seealso:: `rtol`, `configuration`
 
     :Parameters:
 
@@ -256,7 +256,7 @@ def rtol(*arg):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `atol`
+    .. seealso:: `atol`, `configuration`
 
     :Parameters:
 
@@ -393,13 +393,15 @@ def log_level(*arg):
 
     .. versionadded:: (cfdm) 1.8.4
 
+    .. seealso:: `configuration`
+
     :Parameters:
 
          log_level: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
             be specified either as a string equal (ignoring case) to
-            the named set of log levels or identifier 'DISABLE', or an
-            integer code corresponding to each of these, namely:
+            the named set of log levels or identifier ``'DISABLE'``,
+            or an integer code corresponding to each of these, namely:
 
             * ``'DISABLE'`` (``0``);
             * ``'WARNING'`` (``1``);
