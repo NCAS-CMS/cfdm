@@ -78,7 +78,7 @@ if LooseVersion(netcdf_flattener.__version__) < LooseVersion(_minimum_vn):
             _minimum_vn,
             netcdf_flattener.__version__, netcdf_flattener.__file__))
 
-from .constants import masked
+from .constants import Constant, masked
 
 # Internal ones passed on so they can be used in cf-python (see
 # comment below)
@@ -97,6 +97,7 @@ from .functions import (
     _disable_logging,
     _reset_log_emergence_level,
     _is_valid_log_level_int,
+    Configuration,
 )
 
 # Though these are internal-use methods, include them in the namespace

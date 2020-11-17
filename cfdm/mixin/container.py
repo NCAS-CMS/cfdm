@@ -73,7 +73,7 @@ class Container:
     An alias is necessary to avoid a name clash with the keyword argument
     of identical name (`atol`) in calling functions.
         '''
-        return atol()
+        return atol().value
 
     @property
     def _rtol(self):
@@ -82,7 +82,7 @@ class Container:
     An alias is necessary to avoid a name clash with the keyword argument
     of identical name (`rtol`) in calling functions.
         '''
-        return rtol()
+        return rtol().value
 
     def _equals(self, x, y, rtol=None, atol=None,
                 ignore_data_type=False, **kwargs):

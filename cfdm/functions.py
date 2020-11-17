@@ -13,7 +13,7 @@ from . import (__version__,
                __cf_version__,
                __file__)
 
-from .constants import CONSTANTS, ValidLogLevels
+from .constants import CONSTANTS, ValidLogLevels, Constant
 
 
 def configuration(atol=None, rtol=None, log_level=None):
@@ -44,15 +44,15 @@ def configuration(atol=None, rtol=None, log_level=None):
 
     :Parameters:
 
-        atol: number, optional
+        atol: number or `Constant`, optional
             The new value of absolute tolerance. The default is to not
             change the current value.
 
-        rtol: number, optional
+        rtol: number or `Constant`, optional
             The new value of relative tolerance. The default is to not
             change the current value.
 
-        log_level: `str` or `int`, optional
+        log_level: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
             be specified either as a string equal (ignoring case) to
             the named set of log levels or identifier 'DISABLE', or an
@@ -66,10 +66,10 @@ def configuration(atol=None, rtol=None, log_level=None):
 
     :Returns:
 
-        `dict`
-            The names and values of the project-wide constants prior
-            to the change, or the current names and values if no new
-            values are specified.
+         `Configuration`
+            The dictionary-like object containing the names and values
+            of the project-wide constants prior to the change, or the
+            current names and values if no new values are specified.
 
     **Examples:**
 
@@ -101,6 +101,21 @@ def configuration(atol=None, rtol=None, log_level=None):
     >>> cfdm.configuration()
     {'atol': 5e-14, 'rtol': 1e-17, 'log_level': 'INFO'}
 
+    Use as a context manager:
+
+    >>> print(cfdm.configuration())
+    {'atol': 2.220446049250313e-16,
+     'rtol': 2.220446049250313e-16,
+     'log_level': 'WARNING'}
+    >>> with cfdm.configuration(atol=9, rtol=10):
+    ...     print(cfdm.configuration())
+    ...
+    {'atol': 9.0, 'rtol': 10.0, 'log_level': 'WARNING'}
+    >>> print(cfdm.configuration())
+    {'atol': 2.220446049250313e-16,
+     'rtol': 2.220446049250313e-16,
+     'log_level': 'WARNING'}
+
     '''
     return _configuration(
         new_atol=atol, new_rtol=rtol, new_log_level=log_level)
@@ -119,8 +134,16 @@ def _configuration(**kwargs):
     explicitly listed, but the very similar logic applied for each keyword
     can be consolidated by iterating over the full dictionary of input kwargs.
 
+    :Returns:
+
+        `Configuration`
+            The names and values of the project-wide constants prior
+            to the change, or the current names and values if no new
+            values are specified.
+
     '''
     old = {name.lower(): val for name, val in CONSTANTS.items()}
+
     # Filter out 'None' kwargs from configuration() defaults. Note that this
     # does not filter out '0' or 'True' values, which is important as the user
     # might be trying to set those, as opposed to None emerging as default.
@@ -132,13 +155,14 @@ def _configuration(**kwargs):
         'new_rtol': rtol,
         'new_log_level': log_level,
     }
+
     for setting_alias, new_value in kwargs.items():  # for all input kwargs...
         reset_mapping[setting_alias](new_value)  # ...run corresponding func
 
-    return old
+    return Configuration(**old)
 
 
-def atol(*atol):
+def atol(*arg):
     '''The tolerance on absolute differences when testing for numerically
     tolerant equality.
 
@@ -156,43 +180,69 @@ def atol(*atol):
 
     :Parameters:
 
-        atol: `float`, optional
+        atol: `float` or `Constant`, optional
             The new value of absolute tolerance. The default is to not
             change the current value.
 
     :Returns:
 
-        `float`
+        `Constant`
             The value prior to the change, or the current value if no
             new value was specified.
 
     **Examples:**
 
-    >>> atol()
+    >>> cfdm.atol()
+    <Constant: 2.220446049250313e-16>
+    >>> str(cfdm.atol())
+    '2.220446049250313e-16'
+    >>> cfdm.atol().value
     2.220446049250313e-16
-    >>> old = atol(1e-10)
-    >>> atol()
-    1e-10
-    >>> atol(old)
-    1e-10
-    >>> atol()
+    >>> float(cfdm.atol())
+    2.220446049250313e-16
+
+    >>> old = cfdm.atol(1e-10)
+    >>> cfdm.atol()
+    <Constant: 2.220446049250313e-16>
+    >>> cfdm.atol(old)
+    <Constant: 1e-10>
+    >>> cfdm.atol()
+    <Constant: 2.220446049250313e-16>
+
+    Use as a context manager:
+
+    >>> print(cfdm.atol())
+    2.220446049250313e-16
+     >>> with cfdm.atol(1e-5):
+    ...     print(cfdm.atol(), cfdm.atol(2e-30), cfdm.atol())
+    ...
+    1e-05 1e-05 2e-30
+    >>> print(cfdm.atol())
     2.220446049250313e-16
 
     '''
     old = CONSTANTS['ATOL']
-    if atol:
-        CONSTANTS['ATOL'] = float(atol[0])
+    if arg:
+        arg = arg[0]
+        try:
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
 
-    return old
+        CONSTANTS['ATOL'] = float(arg)
+
+    return Constant(old, _func=atol)
 
 
 def ATOL(*new_atol):
     '''Alias for `cfdm.atol`.
+
     '''
     return atol(*new_atol)
 
 
-def rtol(*rtol):
+def rtol(*arg):
     '''The tolerance on relative differences when testing for numerically
     tolerant equality.
 
@@ -210,59 +260,94 @@ def rtol(*rtol):
 
     :Parameters:
 
-        rtol: `float`, optional
+        rtol: `float` or `Constant`, optional
             The new value of relative tolerance. The default is to not
             change the current value.
 
     :Returns:
 
-        `float`
+        `Constant`
             The value prior to the change, or the current value if no
             new value was specified.
 
     **Examples:**
 
-    >>> rtol()
+    >>> cfdm.rtol()
+    <Constant: 2.220446049250313e-16>
+    >>> str(cfdm.rtol())
+    '2.220446049250313e-16'
+    >>> cfdm.rtol().value
     2.220446049250313e-16
-    >>> old = rtol(1e-10)
-    >>> rtol()
-    1e-10
-    >>> rtol(old)
-    1e-10
-    >>> rtol()
+    >>> float(cfdm.rtol())
+    2.220446049250313e-16
+
+    >>> old = cfdm.rtol(1e-10)
+    >>> cfdm.rtol()
+    <Constant: 2.220446049250313e-16>
+    >>> cfdm.rtol(old)
+    <Constant: 1e-10>
+    >>> cfdm.rtol()
+    <Constant: 2.220446049250313e-16>
+
+    Use as a context manager:
+
+    >>> print(cfdm.rtol())
+    2.220446049250313e-16
+    >>> with cfdm.rtol(1e-5):
+    ...     print(cfdm.rtol(), cfdm.rtol(2e-30), cfdm.rtol())
+    ...
+    1e-05 1e-05 2e-30
+    >>> print(cfdm.rtol())
     2.220446049250313e-16
 
     '''
     old = CONSTANTS['RTOL']
-    if rtol:
-        CONSTANTS['RTOL'] = float(rtol[0])
+    if arg:
+        arg = arg[0]
+        try:
+            # Check for Constants instance
+            arg = arg.value
+        except AttributeError:
+            pass
 
-    return old
+        CONSTANTS['RTOL'] = float(arg)
+
+    return Constant(old, _func=rtol)
 
 
 def RTOL(*new_rtol):
     '''Alias for `cfdm.rtol`.
+
     '''
     return rtol(*new_rtol)
 
 
-def _log_level(constants_dict, log_level):
-    ''' Equivalent to log_level, but with dict to modify as an argument.
+def _log_level(constants_dict, arg):
+    '''Equivalent to log_level, but with dict to modify as an argument.
 
-    This internal function is designed specifically so that a different
-    constants_dict can be manipulated with setting or reading of the
-    log level, without the constants dictionary becoming a user-facing
-    argument. log_level is the only function of the pair documented for use.
+    This internal function is designed specifically so that a
+    different constants_dict can be manipulated with setting or
+    reading of the log level, without the constants dictionary
+    becoming a user-facing argument. log_level is the only function of
+    the pair documented for use.
 
-    Overall, this means that cf-python can import these functions and use
-    them such that it can manipulate (its own separate) log_level constant.
+    Overall, this means that cf-python can import these functions and
+    use them such that it can manipulate (its own separate) log_level
+    constant.
 
-    Note: relies on the mutability of arguments (here the constants_dict).
+    Note: relies on the mutability of arguments (here the
+    constants_dict).
+
     '''
     old = constants_dict['LOG_LEVEL']
 
-    if log_level:
-        level = log_level[0]
+    if arg:
+        level = arg[0]
+        try:
+            # Check for Constants instance
+            level = level.value
+        except AttributeError:
+            pass
 
         # Ensuring it is a valid level specifier to set & use, either
         # a case-insensitive string of valid log level or
@@ -282,16 +367,15 @@ def _log_level(constants_dict, log_level):
                                        for val in ValidLogLevels]), old
                 )
             )
+
         # Safe to reset now as guaranteed to be valid:
         constants_dict['LOG_LEVEL'] = level
         _reset_log_emergence_level(level)
 
-    # --- End: if
-
-    return old
+    return Constant(old, _func=log_level)
 
 
-def log_level(*log_level):
+def log_level(*arg):
     '''The minimal level of seriousness of log messages which are shown.
 
     This can be adjusted to filter out potentially-useful log messages
@@ -311,7 +395,7 @@ def log_level(*log_level):
 
     :Parameters:
 
-        log_level: `str` or `int`, optional
+         log_level: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
             be specified either as a string equal (ignoring case) to
             the named set of log levels or identifier 'DISABLE', or an
@@ -325,7 +409,7 @@ def log_level(*log_level):
 
     :Returns:
 
-        `str`
+        `Constant`
             The value prior to the change, or the current value if no
             new value was specified (or if one was specified but was
             not valid). Note the string name, rather than the
@@ -345,21 +429,25 @@ def log_level(*log_level):
     'DISABLE'
 
     '''
-    return _log_level(CONSTANTS, log_level)
+    return _log_level(CONSTANTS, arg)
 
 
 def LOG_LEVEL(*new_log_level):
     '''Alias for `cfdm.log_level`.
+
     '''
     return log_level(*new_log_level)
 
 
 def _is_valid_log_level_int(int_log_level):
-    '''Return a Boolean stating if input is a ValidLogLevels Enum integer.'''
+    '''Return a Boolean stating if input is a ValidLogLevels Enum integer.
+
+    '''
     try:
         ValidLogLevels(int_log_level)
     except KeyError:  # if verbose int not in Enum int constants
         return False
+
     return True
 
 
@@ -382,6 +470,12 @@ def _reset_log_emergence_level(level, logger=None):
     need for deactivation is over lies with methods that call this.
 
     '''
+    try:
+        # Check for Constants instance
+        level = level.value
+    except AttributeError:
+        pass
+
     if logger:
         use_logger = logging.getLogger(logger)
     else:  # apply to root, which all other (module) loggers inherit from
@@ -536,6 +630,8 @@ def abspath(filename):
     If a string containing URL is provided then it is returned
     unchanged.
 
+    .. versionadded:: (cfdm) 1.7.0
+
     :Parameters:
 
         filename: `str`
@@ -564,3 +660,32 @@ def abspath(filename):
         return filename
 
     return os.path.abspath(filename)
+
+
+class Configuration(dict):
+    '''A dictionary-like container for the global constants with context
+    manager support.
+
+    .. versionadded:: (cfdm) 1.8.8.0
+
+    '''
+    __slots__ = ('_func',)
+
+    def __new__(cls, *args, **kwargs):
+        instance = super().__new__(cls)
+        instance._func = configuration
+        return instance
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self._func(**self)
+
+    def __repr__(self):
+        return "<{0}: {1!r}>".format(
+            self.__class__.__name__, super().__repr__()
+        )
+
+    def __str__(self):
+        return super().__repr__()

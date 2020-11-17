@@ -329,6 +329,57 @@ class FunctionsTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             cfdm.configuration(bad_kwarg=1e-15)
 
+    def test_context_managers(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # rtol and atol
+        for func in (
+                cfdm.atol,
+                cfdm.rtol,
+        ):
+            old = func()
+            new = old * 2
+            with func(new):
+                self.assertEqual(func(), new)
+                self.assertEqual(func(new * 2), new)
+                self.assertEqual(func(), new * 2)
+
+            self.assertEqual(func(), old)
+
+        # log_level
+        func = cfdm.log_level
+
+        org = func('DETAIL')
+        old = func()
+        new = 'DEBUG'
+        with func(new):
+            self.assertEqual(func(), new)
+
+        self.assertEqual(func(), old)
+        func(org)
+
+        # Full configuration
+        func = cfdm.configuration
+
+        org = func(rtol=10, atol=20, log_level='DETAIL')
+        old = func()
+        new = dict(rtol=10 * 2, atol=20 * 2, log_level='DEBUG')
+        with func(**new):
+            self.assertEqual(func(), new)
+
+        self.assertEqual(func(), old)
+        func(**org)
+
+        org = func(rtol=cfdm.Constant(10), atol=20, log_level='DETAIL')
+        old = func()
+        new = dict(rtol=cfdm.Constant(10 * 2), atol=20 * 2, log_level='DEBUG')
+        with func(**new):
+            self.assertEqual(func(), new)
+
+        self.assertEqual(func(), old)
+        func(**org)
+
 # --- End: class
 
 

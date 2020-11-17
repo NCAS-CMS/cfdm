@@ -3,6 +3,8 @@ import sys
 
 from enum import Enum
 
+from functools import total_ordering
+
 import numpy
 
 
@@ -58,3 +60,242 @@ could be done as follows:
 
 '''
 masked = numpy.ma.masked
+
+
+@total_ordering
+class Constant:
+    '''A container for a global constant with context manager support.
+
+    Conversion to `int`, `float` and `str` is with the usual built-in
+    functions:
+
+       >>> c = cfdm.Constant(1.9)
+       >>>  int(c)
+       1
+       >>> float(c)
+       1.9
+       >>> str(c)
+       '1.9'
+
+    Augmented arithmetic assignments (``+=``, ``-=``, ``*=``, ``/=``,
+    ``//=``) update `Constant` objects in-place:
+
+       >>> c = cfdm.Constant(20)
+       >>> c /= 2
+       >>> c
+       <Constant: 10.0>
+       >>> c += c
+       <Constant: 20.0>
+
+       >>> c = cfdm.Constant('New_')
+       >>> c *= 2
+       <Constant: 'New_New_'>
+
+    All other binary arithmetic operations (``+``, ``-``, ``*``,
+    ``/``, ``//``) return a new scalar value, even if both operands
+    are `Constant` instances:
+
+       >>> c = cfdm.Constant(20)
+       >>> c * c
+       400
+       >>> c * 3
+       60
+       >>> 2 - c
+       -38
+
+       >>> c = cfdm.Constant('New_')
+       >>> c * 2
+       'New_New_'
+
+    Rich comparison operations are possible between other `Constant`
+    instances as well as any scalar value:
+
+       >>> c = cfdm.Constant(20)
+       >>> d = cfdm.Constant(1)
+       >>> d < c
+       True
+       >>> c != 20
+       False
+       >>> 20 == c
+       True
+
+       >>> c = cfdm.Constant('new')
+       >>> d = cfdm.Constant('old')
+       >>> c == d
+       False
+       >>> c == 'new'
+       True
+       >>> c != 3
+       True
+       >>> 3 == c
+       False
+
+    `Constant` instances are hashable.
+
+    .. versionadded:: (cfdm) 1.8.8.0
+
+    '''
+    __slots__ = ('_func',  'value', '_type')
+
+    def __init__(self, value, _func=None):
+        '''**Initialization**
+
+    :Parameters:
+
+        value:
+            A value for the constant.
+
+        _func: function, optional
+            A function that gets and sets the constant. Required if
+            the object is to be used a context manager. This function
+            takes a `Constant` instance as its unique argument and
+            returns the constant as it was prior to the function being
+            called.
+
+        '''
+        self.value = value
+        self._func = _func
+
+    def __enter__(self):
+        if getattr(self, '_func', None) is None:
+            raise AttributeError(
+                "Can't use {!r} as a context manager because the '_func' "
+                "attribute is not defined".format(self))
+
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self._func(self)
+
+    def __float__(self):
+        return float(self.value)
+
+    def __int__(self):
+        return int(self.value)
+
+    def __eq__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        return self.value == other
+
+    def __lt__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        return self.value < other
+
+    def __iadd__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        self.value += other
+        return self
+
+    def __ifloordiv__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        self.value //= other
+        return self
+
+    def __imul__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        self.value *= other
+        return self
+
+    def __isub__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        self.value -= other
+        return self
+
+    def __itruediv__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        self.value /= other
+        return self
+
+    def __add__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        return self.value + other
+
+    def __floordiv__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        return self.value // other
+
+    def __mul__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        return self.value * other
+
+    def __sub__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        return self.value - other
+
+    def __truediv__(self, other):
+        try:
+            other = other.value
+        except AttributeError:
+            pass
+
+        return self.value / other
+
+    def __radd__(self, other):
+        return other + self.value
+
+    def __rfloordiv__(self, other):
+        return other // self.value
+
+    def __rmul__(self, other):
+        return other * self.value
+
+    def __rsub__(self, other):
+        return other - self.value
+
+    def __rtruediv__(self, other):
+        return other / self.value
+
+    def __hash__(self):
+        return hash(self.value)
+
+    def __repr__(self):
+        return "<{0}: {1!r}>".format(
+            self.__class__.__name__, self.value
+        )
+
+    def __str__(self):
+        return str(self.value)
