@@ -410,7 +410,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             If False then create a "flat" netCDF file, i.e. one with
             only the root group, regardless of any group structure
             specified by the field constructs. By default any groups
-            defined by the netCDF interface of the field constucts and
+            defined by the netCDF interface of the field constructs and
             its components will be created and populated.
 
             .. versionadded:: (cfdm) 1.8.6

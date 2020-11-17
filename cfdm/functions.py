@@ -544,7 +544,7 @@ def abspath(filename):
     :Returns:
 
         `str`
-            The normalized absolutized version of *filename*.
+            The normalized absolutised version of *filename*.
 
     **Examples:**
 

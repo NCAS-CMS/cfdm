@@ -457,10 +457,10 @@ class PropertiesDataBounds(PropertiesData):
     applied for that method.
 
     The cell bounds, if any, are also masked according to the same
-    criteria as the parent constuct. If, however, any of the relevant
+    criteria as the parent construct. If, however, any of the relevant
     properties are explicitly set on the bounds instance then their
     values will be used in preference to those of the parent
-    contsruct.
+    construct.
 
     Elements that are already masked remain so.
 

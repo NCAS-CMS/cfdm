@@ -29,7 +29,7 @@ class Constructs(mixin.Container,
 
     The container is like a dictionary in many ways, in that it stores
     key/value pairs where the key is the unique construct key with
-    correspondaing metadata construct value, and provides some of the
+    corresponding metadata construct value, and provides some of the
     usual dictionary methods.
 
 
@@ -1991,7 +1991,7 @@ class Constructs(mixin.Container,
             filter. By default the inverse is relative to the
             constructs selected by all previously applied
             filters. ``N`` may be larger than the total number of
-            filters applied, which results in the default bahaviour.
+            filters applied, which results in the default behaviour.
 
     :Returns:
 
@@ -2138,7 +2138,7 @@ class Constructs(mixin.Container,
             ``N``-th most recently applied filter. By default the
             constructs from before all previously applied filters are
             returned. ``N`` may be larger than the total number of
-            filters applied, which results in the default bahaviour.
+            filters applied, which results in the default behaviour.
 
     :Returns:
 

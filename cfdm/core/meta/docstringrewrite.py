@@ -466,7 +466,7 @@ class DocstringRewriteMeta(type):
     of names of methods to be excluded. These exclusions will also
     apply to any child classes.
 
-    Exclsusions may be defined for any reason, but in particular may
+    Exclusions may be defined for any reason, but in particular may
     be required if a method has a non-rewriteable docstring. An
     example of method that has a non-rewritable docstring is when the
     method is a 'method_descriptor' object, such as `list.append`: any
