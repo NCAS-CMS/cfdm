@@ -7,6 +7,8 @@ import os
 import tempfile
 import unittest
 
+import numpy
+
 import cfdm
 
 
@@ -359,6 +361,12 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(func(), old)
         func(org)
 
+        del org._func
+        with self.assertRaises(AttributeError):
+            with org:
+                pass
+        # --- End: with
+
         # Full configuration
         func = cfdm.configuration
 
@@ -379,6 +387,99 @@ class FunctionsTest(unittest.TestCase):
 
         self.assertEqual(func(), old)
         func(**org)
+
+    def test_Constant(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        c = cfdm.Constant(20)
+        d = cfdm.Constant(10)
+        e = cfdm.Constant(999)
+
+        self.assertIsInstance(hash(c), int)
+        self.assertIsInstance(repr(c), str)
+
+        self.assertEqual(float(c), 20.0)
+        self.assertEqual(int(c), 20)
+        self.assertEqual(str(c), '20')
+
+        # Binary operations
+        self.assertEqual(c, 20)
+        self.assertEqual(20, c)
+        self.assertEqual(c, c)
+        self.assertEqual(c, copy.deepcopy(c))
+        self.assertEqual(c, numpy.array(20))
+
+        self.assertNotEqual(c, 999)
+        self.assertNotEqual(999, c)
+        self.assertNotEqual(c, d)
+        self.assertNotEqual(c, numpy.array(999))
+        self.assertNotEqual(numpy.array(999), c)
+
+        self.assertLess(c, 999)
+        self.assertLessEqual(c, 999)
+        self.assertGreater(c, 10)
+        self.assertGreaterEqual(c, 10)
+
+        self.assertGreater(999, c)
+        self.assertGreaterEqual(999, c)
+        self.assertLess(10, c)
+        self.assertLessEqual(10, c)
+
+        self.assertLess(c, e)
+        self.assertLessEqual(c, e)
+        self.assertGreater(c, d)
+        self.assertGreaterEqual(c, d)
+
+        self.assertEqual(c + 10, 30)
+        self.assertEqual(c - 10, 10)
+        self.assertEqual(c / 10, 2)
+        self.assertEqual(c * 10, 200)
+        self.assertEqual(c // 10, 2)
+
+        self.assertEqual(c + d, 30)
+        self.assertEqual(c - d, 10)
+        self.assertEqual(c / d, 2)
+        self.assertEqual(c * d, 200)
+        self.assertEqual(c // d, 2)
+
+        self.assertEqual(20 + d, 30)
+        self.assertEqual(20 - d, 10)
+        self.assertEqual(20 / d, 2)
+        self.assertEqual(20 * d, 200)
+        self.assertEqual(20 // d, 2)
+
+        c = cfdm.Constant(20)
+        c -= 10
+        self.assertEqual(c, 10)
+        c += 10
+        self.assertEqual(c, 20)
+        c *= 10
+        self.assertEqual(c, 200)
+        c /= 10
+        self.assertEqual(c, 20)
+        c //= 10
+        self.assertEqual(c, 2)
+
+        # Unary operations
+        c = cfdm.Constant(-20)
+        self.assertEqual(-c, 20)
+        self.assertEqual(abs(c), 20)
+        self.assertEqual(+c, -20)
+
+        # Copy
+        c = cfdm.atol().copy()
+        del c._func
+        self.assertEqual(c, c.copy())
+
+    def test_Configuration(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        c = cfdm.configuration()
+
+        self.assertIsInstance(repr(c), str)
+        self.assertEqual(str(c), str(dict(**c)))
 
 # --- End: class
 

@@ -4,6 +4,8 @@ import platform
 import sys
 import urllib.parse
 
+from copy import deepcopy
+
 from functools import total_ordering
 
 import netCDF4
@@ -925,34 +927,19 @@ class Constant:
         return self
 
     def __add__(self, other):
-        try:
-            return self.value + other
-        except TypeError:
-            return NotImplemented
+        return self.value + other
 
     def __floordiv__(self, other):
-        try:
-            return self.value // other
-        except TypeError:
-            return NotImplemented
+        return self.value // other
 
     def __mul__(self, other):
-        try:
-            return self.value * other
-        except TypeError:
-            return NotImplemented
+        return self.value * other
 
     def __sub__(self, other):
-        try:
-            return self.value - other
-        except TypeError:
-            return NotImplemented
+        return self.value - other
 
     def __truediv__(self, other):
-        try:
-            return self.value / other
-        except TypeError:
-            return NotImplemented
+        return self.value / other
 
     def __radd__(self, other):
         return other + self.value
