@@ -31,7 +31,7 @@ def _inplace_enabled(operation_method=None, *, default=False):
     variable storing the relevant instance for use throughout the
     method to ``_inplace_enabled_define_and_cleanup(self)``.
 
-    :Parmaeters:
+    :Parameters:
 
         operation_method: method
 
@@ -236,3 +236,22 @@ def _test_decorator_args(*dec_args):
         return precede_with_kwarg_deprecation_check
 
     return deprecated_kwarg_check_decorator
+
+
+def _display_or_return(method):
+    '''A wrapper for TODO ... .'''
+
+    @wraps(method)
+    def end_with_display_or_return_logic(self, *args, **kwargs):
+        '''A wrapper for TODO ... .'''
+        string = method(self, *args, **kwargs)
+
+        # display=True is always default, so if display not provided, set True
+        display = kwargs.get('display', True)
+
+        if display:
+            print(string)
+        else:
+            return string
+
+    return end_with_display_or_return_logic
