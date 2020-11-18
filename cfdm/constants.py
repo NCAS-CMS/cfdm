@@ -64,9 +64,15 @@ could be done as follows:
 masked = numpy.ma.masked
 
 
-#@total_ordering
+@total_ordering
 class Constant:
-    '''A container for a global constant with context manager support.
+    '''A container for a constant with context manager support.
+
+    The constant value is accessed via the `value` attribute:
+
+       >>> c = cfdm.Constant(1.9)
+       >>> c.value
+       1.9
 
     Conversion to `int`, `float` and `str` is with the usual built-in
     functions:
@@ -83,6 +89,8 @@ class Constant:
     ``//=``) update `Constant` objects in-place:
 
        >>> c = cfdm.Constant(20)
+       >>> c.value
+       20
        >>> c /= 2
        >>> c
        <Constant: 10.0>
@@ -93,11 +101,13 @@ class Constant:
        >>> c *= 2
        <Constant: 'New_New_'>
 
-    All supported binary arithmetic operations (``+``, ``-``, ``*``,
-    ``/``, ``//``) return a new scalar value, even if both operands
-    are `Constant` instances:
+    Binary arithmetic operations (``+``, ``-``, ``*``, ``/``, ``//``)
+    are equivalent to the operation acting on the `Constant` object's
+    `value` attribute:
 
        >>> c = cfdm.Constant(20)
+       >>> c.value
+       20
        >>> c * c
        400
        >>> c * 3
@@ -109,10 +119,25 @@ class Constant:
        >>> c * 2
        'New_New_'
 
-    All supported unary arithmetic operations (``+``, ``-``, `abs`)
-    return a new scalar value:
+    Care is required when the right hand side operand is a `numpy`
+    array
+
+       >>> import numpy
+       >>> c * numpy.array([1, 2, 3])
+       array([20, 40, 60])
+       >>> d = numpy.array([1, 2, 3]) * c
+       >>> d
+       array([10, 20, 30], dtype=object)
+       >>> type(d[0])
+       int
+
+    Unary arithmetic operations (``+``, ``-``, `abs`) are equivalent
+    to the operation acting on the `Constant` object's `value`
+    attribute:
 
        >>> c = cfdm.Constant(-20)
+       >>> c.value
+       -20
        >>> -c
        20
        >>> abs(c)
@@ -120,11 +145,15 @@ class Constant:
        >>> +c
        -20
 
-    Rich comparison operations are possible between other `Constant`
-    instances as well as any scalar value:
+    Rich comparison operations are equivalent to the operation acting
+    on the `Constant` object's `value` attribute:
 
        >>> c = cfdm.Constant(20)
        >>> d = cfdm.Constant(1)
+       >>> c.value
+       20
+       >>> d.value
+       1
        >>> d < c
        True
        >>> c != 20
@@ -143,14 +172,21 @@ class Constant:
        >>> 3 == c
        False
 
+       >>> import numpy
+       >>> c = cfdm.Constant(20)
+       >>> c < numpy.array([10, 20, 30])
+       array([False, False,  True])
+       >>> numpy.array([10, 20, 30]) >= c
+       array([False,  True,  True])
+
     `Constant` instances are hashable.
 
     **Context manager**
 
     The `Constant` instance can be used as a context manager that upon
-    exit executes the function defined by its `!_func` attribute, with
-    itself as an argument. For instance, the `Constant` instance ``c``
-    would execute ``c._func(c)`` upon exit.
+    exit executes the function defined by the `_func` attribute, with
+    the `value` attribute as an argument. For example, the `Constant`
+    instance ``c`` would execute ``c._func(c.value)`` upon exit.
 
     .. versionadded:: (cfdm) 1.8.8.0
 
@@ -167,8 +203,7 @@ class Constant:
 
         _func: function, optional
             A function that that is executed upon exit from a context
-            manager, that takes the `Constant` instance itself as its
-            argument.
+            manager, that takes the *value* parameter as its argument.
 
         '''
         self.value = value
@@ -189,14 +224,12 @@ class Constant:
         '''Exit the runtime context.
 
         '''
-        self._func(self)
+        self._func(self.value)
 
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` function.
 
     x.__deepcopy__() <==> copy.deepcopy(x)
-
-    .. versionadded:: (cfdm) 1.8.8.0
 
         '''
         return self.copy()
@@ -208,19 +241,9 @@ class Constant:
         return int(self.value)
 
     def __eq__(self, other):
-        try:
-            other = other.value
-        except AttributeError:
-            pass
-
         return self.value == other
 
     def __lt__(self, other):
-        try:
-            other = other.value
-        except AttributeError:
-            pass
-
         return self.value < other
 
     def __abs__(self):
@@ -233,89 +256,54 @@ class Constant:
         return self.value
 
     def __iadd__(self, other):
-        try:
-            other = other.value
-        except AttributeError:
-            pass
-
         self.value += other
         return self
 
     def __ifloordiv__(self, other):
-        try:
-            other = other.value
-        except AttributeError:
-            pass
-
         self.value //= other
         return self
 
     def __imul__(self, other):
-        try:
-            other = other.value
-        except AttributeError:
-            pass
-
         self.value *= other
         return self
 
     def __isub__(self, other):
-        try:
-            other = other.value
-        except AttributeError:
-            pass
-
         self.value -= other
         return self
 
     def __itruediv__(self, other):
-        try:
-            other = other.value
-        except AttributeError:
-            pass
-
         self.value /= other
         return self
 
     def __add__(self, other):
         try:
-            other = other.value
-        except AttributeError:
-            pass
-
-        return self.value + other
+            return self.value + other
+        except TypeError:
+            return NotImplemented
 
     def __floordiv__(self, other):
         try:
-            other = other.value
-        except AttributeError:
-            pass
-
-        return self.value // other
+            return self.value // other
+        except TypeError:
+            return NotImplemented
 
     def __mul__(self, other):
         try:
-            other = other.value
-        except AttributeError:
-            pass
-
-        return self.value * other
+            return self.value * other
+        except TypeError:
+            return NotImplemented
 
     def __sub__(self, other):
         try:
-            other = other.value
-        except AttributeError:
-            pass
-
-        return self.value - other
+            return self.value - other
+        except TypeError:
+            return NotImplemented
 
     def __truediv__(self, other):
         try:
-            other = other.value
-        except AttributeError:
-            pass
-
-        return self.value / other
+            return self.value / other
+        except TypeError:
+            return NotImplemented
 
     def __radd__(self, other):
         return other + self.value
@@ -333,16 +321,25 @@ class Constant:
         return other / self.value
 
     def __hash__(self):
-        return hash(self.value)
+        return hash((self.value, getattr(self, '_func', None)))
 
     def __repr__(self):
+        '''Called by the `repr` built-in function.
+
+        '''
         return "<{0}: {1!r}>".format(
             self.__class__.__name__, self.value
         )
 
     def __str__(self):
+        '''Called by the `str` built-in function.
+
+        '''
         return str(self.value)
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def copy(self):
         '''Return a deep copy.
 

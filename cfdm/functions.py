@@ -73,30 +73,47 @@ def configuration(atol=None, rtol=None, log_level=None):
 
     **Examples:**
 
-    >>> cfdm.configuration()  # view full global configuration of constants
+    View full global configuration of constants:
+
+    >>> cfdm.configuration()
+    <Configuration: {'atol': 2.220446049250313e-16,
+                     'rtol': 2.220446049250313e-16,
+                     'log_level': 'WARNING'}>
+    >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING'}
-    >>> cfdm.log_level('DEBUG')  # make a change to one constant...
-    'WARNING'
-    >>> cfdm.configuration()  # ...and it is reflected in the configuration
+
+    Make a change to one constant and see that it is reflected in the
+    configuration:
+
+    >>> cfdm.log_level('DEBUG')
+    <Constant: 'WARNING'>
+    >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG'}
 
-    >>> cfdm.configuration()['atol']  # access specific values by key querying
+    Access specific values by key querying, noting the equivalency to
+    using its bespoke function:
+
+    >>> cfdm.configuration()['atol']
     2.220446049250313e-16
-    >>> cfdm.configuration()['atol'] == cfdm.atol()  # note the equivalency
+    >>> cfdm.configuration()['atol'] == cfdm.atol()
     True
 
-    >>> cfdm.configuration(atol=5e-14, log_level='INFO')  # set multiple items
+    Set multiple constants simultaneously:
+
+    >>> print(cfdm.configuration(atol=5e-14, log_level='INFO'))
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG'}
-    >>> cfdm.configuration()
+    >>> print(cfdm.configuration())
     {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
 
-    >>> cfdm.configuration(rtol=1e-17)  # equivalent to setting cfdm.rtol(1e-17)
+    Set a single constant without using its bespoke function:
+
+    >>> print(cfdm.configuration(rtol=1e-17))
     {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
     >>> cfdm.configuration()
     {'atol': 5e-14, 'rtol': 1e-17, 'log_level': 'INFO'}
@@ -167,8 +184,8 @@ def atol(*arg):
     tolerant equality.
 
     Two real numbers ``x`` and ``y`` are considered equal if
-    ``abs(x-y) <= atol + rtol*abs(y)``, where atol (the tolerance on
-    absolute differences) and rtol (the tolerance on relative
+    ``abs(x-y) <= atol + rtol*abs(y)``, where ``atol`` (the tolerance
+    on absolute differences) and ``rtol`` (the tolerance on relative
     differences) are positive, typically very small numbers. By
     default both are set to the system epsilon (the difference between
     1 and the least value greater than 1 that is representable as a
@@ -194,6 +211,8 @@ def atol(*arg):
 
     >>> cfdm.atol()
     <Constant: 2.220446049250313e-16>
+    >>> print(cfdm.atol())
+    2.220446049250313e-16
     >>> str(cfdm.atol())
     '2.220446049250313e-16'
     >>> cfdm.atol().value
@@ -247,8 +266,8 @@ def rtol(*arg):
     tolerant equality.
 
     Two real numbers ``x`` and ``y`` are considered equal if
-    ``abs(x-y) <= atol + rtol*abs(y)``, where atol (the tolerance on
-    absolute differences) and rtol (the tolerance on relative
+    ``abs(x-y) <= atol + rtol*abs(y)``, where ``atol`` (the tolerance
+    on absolute differences) and ``rtol`` (the tolerance on relative
     differences) are positive, typically very small numbers. By
     default both are set to the system epsilon (the difference between
     1 and the least value greater than 1 that is representable as a
@@ -274,6 +293,8 @@ def rtol(*arg):
 
     >>> cfdm.rtol()
     <Constant: 2.220446049250313e-16>
+    >>> print(cfdm.rtol())
+    2.220446049250313e-16
     >>> str(cfdm.rtol())
     '2.220446049250313e-16'
     >>> cfdm.rtol().value
@@ -337,6 +358,16 @@ def _log_level(constants_dict, arg):
 
     Note: relies on the mutability of arguments (here the
     constants_dict).
+
+    :Parameters:
+
+        constants_dict: `dict`
+
+        arg: `tuple`
+
+    :Returns:
+
+        `Constant`
 
     '''
     old = constants_dict['LOG_LEVEL']
@@ -419,16 +450,31 @@ def log_level(*arg):
 
     **Examples:**
 
-    >>> log_level()  # get the current value
+    >>> cfdm.log_level()
+    <Constant: 'WARNING'>
+    >>> print(cfdm.log_level())
+    WARNING
+    >>> str(cfdm.log_level())
     'WARNING'
-    >>> log_level('INFO')  # change the value to 'INFO'
-    'WARNING'
-    >>> log_level()
-    'INFO'
-    >>> log_level(0)  # set to 'DISABLE' via corresponding integer
-    'INFO'
-    >>> log_level()
-    'DISABLE'
+
+    >>> old = log_level('INFO')
+    >>> cfdm.log_level()
+    <Constant: 'WARNING'>
+    >>> cfdm.log_level(old)
+    <Constant: 'INFO'>
+    >>> cfdm.log_level()
+    <Constant: 'WARNING'>
+
+    Use as a context manager:
+
+    >>> print(cfdm.log_level())
+    WARNING
+    >>> with cfdm.log_level('DETAIL'):
+    ...     print(cfdm.log_level(), cfdm.log_level(-1), cfdm.log_level())
+    ...
+    DETAIL DETAIL DEBUG
+    >>> print(cfdm.log_level())
+    WARNING
 
     '''
     return _log_level(CONSTANTS, arg)
@@ -515,7 +561,8 @@ def _disable_logging(at_level=None):
         logging.disable(getattr(logging, at_level))
     else:
         # *level* kwarg is required for Python v<=3.6, but defaults to
-        # CRITICAL in 3.7 so in future when support only v>=3.7, can remove
+        # CRITICAL in 3.7 so in future when support only v>=3.7, can
+        # remove
         logging.disable(level=logging.CRITICAL)
 
 
@@ -550,7 +597,7 @@ def environment(display=True, paths=True):
     netCDF4: 1.5.3 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
     cftime: 1.2.1 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
     numpy: 1.16.2 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    cfdm: 1.8.6.0
+    cfdm: 1.8.8.0
 
     >>> environment(paths=False)
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
@@ -560,7 +607,7 @@ def environment(display=True, paths=True):
     netCDF4: 1.5.3
     cftime: 1.2.1
     numpy: 1.16.2
-    cfdm: 1.8.6.0
+    cfdm: 1.8.8.0
 
     '''
     out = []
@@ -668,6 +715,24 @@ class Configuration(dict):
     '''A dictionary-like container for the global constants with context
     manager support.
 
+    Initialization is as for a `dict`, and all of the `dict` methods
+    are available with the same behaviours (`clear`, `copy`,
+    `fromkeys`, `get`, `items`, `keys`, `pop`, `popitem`,
+    `setdefault`, `update`, `values`):
+
+       >>> c = cfdm.Configuration(atol=0.1, rtol=0.2, log_level='INFO')
+       >>> c
+       <Configuration: {'atol': 0.1, 'rtol': 0.2, 'log_level': 'INFO'}>
+       >>> print(c)
+       {'atol': 0.1, 'rtol': 0.2, 'log_level': 'INFO'}
+       >>> c.pop('atol')
+       0.1
+       >>> c
+       <Configuration: {'rtol': 0.2, 'log_level': 'INFO'}>
+       >>> c.clear()
+       >>> c
+       <Configuration: {}>
+
     .. versionadded:: (cfdm) 1.8.8.0
 
     '''
@@ -679,13 +744,22 @@ class Configuration(dict):
         return instance
 
     def __enter__(self):
+        '''Enter the runtime context.
+
+        '''
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
+        '''Exit the runtime context.
+
+        '''
         self._func(**self)
 
     def __repr__(self):
-        return "<{0}: {1!r}>".format(
+        '''Called by the `repr` built-in function.
+
+        '''
+        return "<{0}: {1}>".format(
             self.__class__.__name__, super().__repr__()
         )
 

@@ -103,8 +103,13 @@ class Container:
         '''
         if rtol is None:
             rtol = self._rtol
+        else:
+            rtol = float(rtol)
+
         if atol is None:
             atol = self._atol
+        else:
+            atol = float(atol)
 
         kwargs['ignore_data_type'] = ignore_data_type
         kwargs['rtol'] = rtol

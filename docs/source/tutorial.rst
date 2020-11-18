@@ -2872,10 +2872,10 @@ Creating compressed constructs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ----
 
-.. _Copying-and-equality:
+.. _Copying:
 
-**Copying and equality**
-------------------------
+**Copying**
+-----------
 
 A field construct may be copied with its `~Field.copy` method. This
 produces a "deep copy", i.e. the new field construct is completely
@@ -2923,10 +2923,12 @@ that a copy takes up very little memory, even when the original
 constructs contain very large data arrays, and the copy operation is
 fast.
 
+----
+
 .. _Equality:
 
-Equality
-^^^^^^^^
+**Equality**
+------------
 
 Whether or not two field constructs are the same is tested with either
 field construct's `~Field.equals` method.
@@ -2975,16 +2977,16 @@ a float). Their values may be inspected and changed with the
    :caption: *The atol and rtol functions allow the numerical equality
              tolerances to be inspected and changed.*
       
-   >>> cfdm.atol()
+   >>> print(cfdm.atol())
    2.220446049250313e-16
-   >>> cfdm.rtol()
+   >>> print(cfdm.rtol())
    2.220446049250313e-16
    >>> original = cfdm.rtol(0.00001)
-   >>> cfdm.rtol()
+   >>> print(cfdm.rtol())
    1e-05
-   >>> cfdm.rtol(original)
+   >>> print(cfdm.rtol(original))
    1e-05
-   >>> cfdm.rtol()
+   >>> print(cfdm.rtol())
    2.220446049250313e-16
 
 Note that the above equation is not symmetric in :math:`x` and
@@ -4633,6 +4635,7 @@ messaging:
 
 * **globally** i.e. for all cfdm operations, by setting the
   `cfdm.log_level` which controls the project-wide logging;
+  
 * **for a specific function only** (for many functions) by setting
   that function's *verbose* keyword (which overrides the global
   setting for the duration of the function call).
