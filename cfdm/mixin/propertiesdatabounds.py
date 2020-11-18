@@ -8,6 +8,7 @@ from . import PropertiesData
 from ..functions import rtol, atol
 
 from ..decorators import (
+    _display_or_return,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
@@ -742,6 +743,7 @@ class PropertiesDataBounds(PropertiesData):
                 "{!r} has no part node count variable".format(
                     self.__class__.__name__))
 
+    @_display_or_return
     def dump(self, display=True, _key=None, _omit_properties=None,
              _prefix='', _title=None, _create_title=True, _level=0,
              _axes=None, _axis_names=None):
@@ -802,12 +804,7 @@ class PropertiesDataBounds(PropertiesData):
                 _level=_level, _axes=_axes,
                 _axis_names=_axis_names))
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)
-        else:
-            return string
+        return '\n'.join(string)
 
     @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,

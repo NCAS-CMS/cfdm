@@ -22,6 +22,7 @@ from .decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
     _test_decorator_args,
+    _display_or_return,
 )
 
 
@@ -1493,6 +1494,7 @@ class Field(mixin.NetCDFVariable,
 
         return out
 
+    @_display_or_return
     def dump(self, display=True, _level=0, _title=None):
         '''A full description of the field construct.
 
@@ -1582,12 +1584,7 @@ class Field(mixin.NetCDFVariable,
 
         string.append(self.get_domain().dump(display=False))
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)
-        else:
-            return string
+        return '\n'.join(string)
 
     @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,

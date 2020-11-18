@@ -7,7 +7,8 @@ from . import Datum
 
 from .data import Data
 
-from .decorators import _manage_log_level_via_verbosity
+from .decorators import (_manage_log_level_via_verbosity,
+                         _display_or_return)
 
 
 logger = logging.getLogger(__name__)
@@ -273,6 +274,7 @@ class CoordinateReference(mixin.NetCDFVariable,
 
         return out
 
+    @_display_or_return
     def dump(self, display=True, _omit_properties=None, field=None,
              key='', _level=0, _title=None, _construct_names=None,
              _auxiliary_coordinates=None, _dimension_coordinates=None):
@@ -349,12 +351,7 @@ class CoordinateReference(mixin.NetCDFVariable,
             for identifier in sorted(self.coordinates()):
                 string.append('{0}Coordinate: {1}'.format(indent1, identifier))
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)
-        else:
-            return string
+        return '\n'.join(string)
 
     @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,
