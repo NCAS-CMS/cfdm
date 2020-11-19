@@ -114,7 +114,7 @@ class DecoratorsTest(unittest.TestCase):
             cfdm.log_level(level)  # reset to level
 
             # Default verbose(=None) cases: log_level should determine output
-            with self.assertLogs(level=cfdm.log_level()) as catch:
+            with self.assertLogs(level=cfdm.log_level().value) as catch:
                 test_class.decorated_logging_func()
 
                 for msg in log_message:
@@ -129,7 +129,7 @@ class DecoratorsTest(unittest.TestCase):
             # Highest verbosity case (note -1 == 'DEBUG', highest verbosity):
             # all messages should appear, regardless of global log_level:
             for argument in (-1, 'DEBUG', 'debug', 'Debug', 'DeBuG'):
-                with self.assertLogs(level=cfdm.log_level()) as catch:
+                with self.assertLogs(level=cfdm.log_level().value) as catch:
                     test_class.decorated_logging_func(verbose=argument)
                     for msg in log_message:
                         self.assertIn(msg, catch.output)
@@ -138,7 +138,7 @@ class DecoratorsTest(unittest.TestCase):
             # 'DISABLE' (see note above): only warning messages should appear,
             # regardless of global log_level value set:
             for argument in (1, 'WARNING', 'warning', 'Warning', 'WaRning'):
-                with self.assertLogs(level=cfdm.log_level()) as catch:
+                with self.assertLogs(level=cfdm.log_level().value) as catch:
                     test_class.decorated_logging_func(verbose=argument)
                     for msg in log_message:
                         if msg.split(":")[0] == 'WARNING':
@@ -149,7 +149,7 @@ class DecoratorsTest(unittest.TestCase):
             # Boolean cases for testing backwards compatibility...
 
             # ... verbose=True should be equivalent to verbose=3 now:
-            with self.assertLogs(level=cfdm.log_level()) as catch:
+            with self.assertLogs(level=cfdm.log_level().value) as catch:
                 test_class.decorated_logging_func(verbose=True)
                 for msg in log_message:
                     if msg.split(":")[0] == 'DEBUG':

@@ -1,7 +1,7 @@
 import re
 
 
-class ConstructAccess():
+class ConstructAccess:
     '''Mixin class for manipulating constructs stored in a `Constructs`
     object.
 
