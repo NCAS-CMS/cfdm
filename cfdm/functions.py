@@ -139,10 +139,14 @@ def configuration(atol=None, rtol=None, log_level=None):
 
     '''
     return _configuration(
-        new_atol=atol, new_rtol=rtol, new_log_level=log_level)
+        Configuration,
+        new_atol=atol,
+        new_rtol=rtol,
+        new_log_level=log_level
+    )
 
 
-def _configuration(**kwargs):
+def _configuration(_Configuration, **kwargs):
     '''Internal helper function to provide the logic for `cfdm.configuration`.
 
     We delegate from the user-facing `cfdm.configuration` for two main reasons:
@@ -154,6 +158,11 @@ def _configuration(**kwargs):
     2) because the user-facing function must have the appropriate keywords
     explicitly listed, but the very similar logic applied for each keyword
     can be consolidated by iterating over the full dictionary of input kwargs.
+
+    :Parameters:
+
+        _Configuration: class
+            The `Configuration` class to be returned.
 
     :Returns:
 
@@ -180,7 +189,7 @@ def _configuration(**kwargs):
     for setting_alias, new_value in kwargs.items():  # for all input kwargs...
         reset_mapping[setting_alias](new_value)  # ...run corresponding func
 
-    return Configuration(**old)
+    return _Configuration(**old)
 
 
 def atol(*arg):
@@ -347,7 +356,7 @@ def RTOL(*new_rtol):
     return rtol(*new_rtol)
 
 
-def _log_level(constants_dict, arg):
+def _log_level(constants_dict, arg, _Constant, _func):
     '''Equivalent to log_level, but with dict to modify as an argument.
 
     This internal function is designed specifically so that a
@@ -369,6 +378,12 @@ def _log_level(constants_dict, arg):
 
         arg: `tuple`
 
+        _Constant: class
+            The `Constant` class to be returned.
+
+        _func: function
+            The callback function for setting the log level.
+
     :Returns:
 
         `Constant`
@@ -379,7 +394,7 @@ def _log_level(constants_dict, arg):
     if arg:
         level = arg[0]
         try:
-            # Check for Constants instance
+            # Check for Constant instance
             level = level.value
         except AttributeError:
             pass
@@ -407,7 +422,7 @@ def _log_level(constants_dict, arg):
         constants_dict['LOG_LEVEL'] = level
         _reset_log_emergence_level(level)
 
-    return Constant(old, _func=log_level)
+    return _Constant(old, _func=_func)
 
 
 def log_level(*arg):
@@ -432,7 +447,7 @@ def log_level(*arg):
 
     :Parameters:
 
-         log_level: `str` or `int` or `Constant`, optional
+         arg: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
             be specified either as a string equal (ignoring case) to
             the named set of log levels or identifier ``'DISABLE'``,
@@ -481,7 +496,7 @@ def log_level(*arg):
     WARNING
 
     '''
-    return _log_level(CONSTANTS, arg)
+    return _log_level(CONSTANTS, arg, Constant, log_level)
 
 
 def LOG_LEVEL(*new_log_level):
@@ -1026,6 +1041,9 @@ class Configuration(dict):
     __slots__ = ('_func',)
 
     def __new__(cls, *args, **kwargs):
+        '''Must override this method in subclasses.
+
+        '''
         instance = super().__new__(cls)
         instance._func = configuration
         return instance
