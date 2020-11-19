@@ -308,7 +308,7 @@ class DocstringRewriteMeta(type):
     # ----------------------------------------------------------------
     @classmethod
     def _docstring_special_substitutions(cls):
-        '''Return the special docstring subtitutions.
+        '''Return the special docstring substitutions.
 
     ``{{class}}`` is replaced by the name of the class.
 
@@ -346,9 +346,9 @@ class DocstringRewriteMeta(type):
     dictionary, with the replacement text defined by the corresponding
     value.
 
-    Special docstring subtitutions, as defined by a class's
+    Special docstring substitutions, as defined by a class's
     `_docstring_special_substitutions` method, may be used in the
-    replacement text, and will be substituted as ususal.
+    replacement text, and will be substituted as usual.
 
     Replacement text may contain other non-special substitutions.
 
@@ -466,8 +466,8 @@ class DocstringRewriteMeta(type):
     of names of methods to be excluded. These exclusions will also
     apply to any child classes.
 
-    Exclsusions may be defined for any reason, but in particular may
-    be required if a method has a non-rewriteable docstring. An
+    Exclusions may be defined for any reason, but in particular may
+    be required if a method has a non-rewritable docstring. An
     example of method that has a non-rewritable docstring is when the
     method is a 'method_descriptor' object, such as `list.append`: any
     class that inherits such such a method will need to exclude it,
@@ -491,7 +491,7 @@ class DocstringRewriteMeta(type):
 
         `set`
             The names of the methods to exclude from the docstring
-            substutition process.
+            substitution process.
 
         '''
         out = [

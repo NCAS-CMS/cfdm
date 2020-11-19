@@ -16,6 +16,19 @@ version 1.9.0.0
 * New method: `cfdm.DimensionCoordinate.is_climatology`
 * New method: `cfdm.DimensionCoordinate.set_climatology`
 
+version 1.8.8.0
+---------------
+----
+
+**2020-??-??**
+
+* Global constants can now be controlled by a context manager
+  (https://github.com/NCAS-CMS/cfdm/issues/100)
+* Fixed bug that caused a failure when writing a dataset that contains
+  a scalar domain ancillary construct
+  (https://github.com/NCAS-CMS/cfdm/issues/98)
+>>>>>>> master
+
 version 1.8.7.0
 ---------------
 ----

@@ -74,7 +74,7 @@ Data
    ~cfdm.Index.shape
    ~cfdm.Index.size
    
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

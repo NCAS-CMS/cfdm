@@ -467,8 +467,7 @@ class NetCDFWrite(IOWrite):
         g = self.write_vars
 
         domain_axes = self.implementation.get_construct_data_axes(field, key)
-
-        if not domain_axes:
+        if domain_axes is None:
             # No data
             return
 
@@ -926,7 +925,7 @@ class NetCDFWrite(IOWrite):
 
         `dict`
             A representation off the CF-netCDF geometry container
-            variable for field constuct. If there is no geometry
+            variable for field construct. If there is no geometry
             container then the dictionary is empty.
 
         '''

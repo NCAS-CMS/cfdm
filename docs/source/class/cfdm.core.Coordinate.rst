@@ -134,7 +134,7 @@ Modification
    ~cfdm.core.Coordinate.del_bounds
    ~cfdm.core.Coordinate.set_bounds
       
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

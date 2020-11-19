@@ -197,7 +197,7 @@ class Domain(mixin.FieldDomain,
 
         constructs: `Constructs`
             The constructs from which to create the new domain. Cell
-            method and field ancillary constucts are ignored.
+            method and field ancillary constructs are ignored.
 
         copy: `bool`, optional
             If True then deep copy the metadata constructs prior to

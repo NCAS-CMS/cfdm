@@ -7,7 +7,7 @@ import cfdm
 
 
 class DomainTest(unittest.TestCase):
-        def setUp(self):
+    def setUp(self):
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL('DISABLE')
         # Note: to enable all messages for given methods, lines or
@@ -135,8 +135,8 @@ class DomainTest(unittest.TestCase):
 
         d = self.d.copy()
 
-        self.assertIsNone(f.apply_masking(inplace=True))
-        self.assertTrue(f.equals(f.apply_masking()))
+        self.assertIsNone(d.apply_masking(inplace=True))
+        self.assertTrue(d.equals(d.apply_masking()))
 
     def test_Domain_data(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

@@ -920,7 +920,7 @@ Data mask
 ^^^^^^^^^
 
 There is always a data mask, which may be thought of as a separate
-data array of booleans with the same shape as the original data. The
+data array of Booleans with the same shape as the original data. The
 data mask is `False` where the the data has values, and `True` where
 the data is missing. The data mask may be inspected with the
 `~cfdm.Data.mask` attribute of the data instance, which returns the
@@ -2903,10 +2903,10 @@ Creating compressed constructs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ----
 
-.. _Copying-and-equality:
+.. _Copying:
 
-**Copying and equality**
-------------------------
+**Copying**
+-----------
 
 A field construct may be copied with its `~Field.copy` method. This
 produces a "deep copy", i.e. the new field construct is completely
@@ -2954,10 +2954,12 @@ that a copy takes up very little memory, even when the original
 constructs contain very large data arrays, and the copy operation is
 fast.
 
+----
+
 .. _Equality:
 
-Equality
-^^^^^^^^
+**Equality**
+------------
 
 Whether or not two field constructs are the same is tested with either
 field construct's `~Field.equals` method.
@@ -3002,26 +3004,43 @@ between 1 and the least value greater than 1 that is representable as
 a float). Their values may be inspected and changed with the
 `cfdm.atol` and `cfdm.rtol` functions:
 
-.. code-block:: python
-   :caption: *The atol and rtol functions allow the numerical equality
-             tolerances to be inspected and changed.*
-      
-   >>> cfdm.atol()
-   2.220446049250313e-16
-   >>> cfdm.rtol()
-   2.220446049250313e-16
-   >>> original = cfdm.rtol(0.00001)
-   >>> cfdm.rtol()
-   1e-05
-   >>> cfdm.rtol(original)
-   1e-05
-   >>> cfdm.rtol()
-   2.220446049250313e-16
-
 Note that the above equation is not symmetric in :math:`x` and
 :math:`y`, so that for two fields ``f1`` and ``f2``, ``f1.equals(f2)``
 may be different from ``f2.equals(f1)`` in some rare cases.
    
+.. code-block:: python
+   :caption: *The atol and rtol functions allow the numerical equality
+             tolerances to be inspected and changed.*
+      
+   >>> print(cfdm.atol())
+   2.220446049250313e-16
+   >>> print(cfdm.rtol())
+   2.220446049250313e-16
+   >>> original = cfdm.rtol(0.00001)
+   >>> print(cfdm.rtol())
+   1e-05
+   >>> print(cfdm.rtol(original))
+   1e-05
+   >>> print(cfdm.rtol())
+   2.220446049250313e-16
+
+The :math:`a_{tol}` and :math:`r_{tol}` constants may be set for a
+runtime context established when executing a `with` statement.
+
+.. code-block:: python
+   :caption: *Evaluate equality in a runtime contenxt with a different
+             value of 'atol'.*
+	     
+   >>> t2 = t - 0.00001
+   >>> t.equals(t2)
+   False
+   >>> with cf.atol(1e-5):
+   ...     print(t.equals(t2))
+   ...
+   True
+   >>> t.equals(t2)
+   False
+
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
@@ -3129,7 +3148,7 @@ Method                                               Description
 `~Field.nc_clear_variable_groups`                    Remove the netCDF group structure
 					             
 `~Field.nc_geometry_variable_groups`                 Return the netCDF geometry
-                                                     variable ggroup structure
+                                                     variable group structure
 					             
 `~Field.nc_set_geometry_variable_groups`             Set the netCDF geometry
                                                      variable group structure
@@ -4664,6 +4683,7 @@ messaging:
 
 * **globally** i.e. for all cfdm operations, by setting the
   `cfdm.log_level` which controls the project-wide logging;
+  
 * **for a specific function only** (for many functions) by setting
   that function's *verbose* keyword (which overrides the global
   setting for the duration of the function call).

@@ -51,7 +51,7 @@ Data axes
 
    ~cfdm.core.Constructs.data_axes
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

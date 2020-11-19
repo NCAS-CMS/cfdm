@@ -359,7 +359,7 @@ class NetCDFRead(IORead):
 
     @classmethod
     def cdl_to_netcdf(cls, filename):
-        '''Create temporary netCDF file from a CDL text file.
+        '''Create a temporary netCDF-4 file from a CDL text file.
 
     :Parameters:
 
@@ -383,7 +383,8 @@ class NetCDFRead(IORead):
         # ----------------------------------------------------------------
         _cached_temporary_files[tmpfile] = x
 
-        subprocess.run(['ncgen', '-v3', '-o', tmpfile, filename], check=True)
+        subprocess.run(['ncgen', '-knc4', '-o', tmpfile, filename],
+                       check=True)
 
         return tmpfile
 
@@ -3915,7 +3916,7 @@ class NetCDFRead(IORead):
 
     def _create_auxiliary_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None, nodes=False):
-        '''Create an auxiliary coordinate constuct.
+        '''Create an auxiliary coordinate construct.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -3942,7 +3943,7 @@ class NetCDFRead(IORead):
 
     :Returns:
 
-            The auxiliary coordinate constuct.
+            The auxiliary coordinate construct.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
@@ -3953,7 +3954,7 @@ class NetCDFRead(IORead):
 
     def _create_dimension_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
-        '''Create a dimension coordinate constuct.
+        '''Create a dimension coordinate construct.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -3973,7 +3974,7 @@ class NetCDFRead(IORead):
 
     :Returns:
 
-            The dimension coordinate constuct.
+            The dimension coordinate construct.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
@@ -3989,7 +3990,7 @@ class NetCDFRead(IORead):
 
     :Returns:
 
-        The domain ancillary constuct.
+        The domain ancillary construct.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,

@@ -26,7 +26,7 @@ Inspection
    ~cfdm.core.Array.size
    ~cfdm.core.Array.array
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

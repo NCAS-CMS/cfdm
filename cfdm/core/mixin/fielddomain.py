@@ -153,7 +153,7 @@ class FieldDomain:
             The construct identifier to be used for the construct. If
             not set then a new, unique identifier is created
             automatically. If the identifier already exists then the
-            exisiting construct will be replaced.
+            existing construct will be replaced.
 
             *Parameter example:*
               ``key='cellmeasure0'``

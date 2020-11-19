@@ -20,7 +20,7 @@ CF_VERSION = $(shell grep "^__cf_version__" ../cfdm/core/__init__.py | cut -d "=
 ID         = $(shell echo $$$$)
 X          = Library version $(VERSION) for CF-$(CF_VERSION)
 
-.PHONY: help html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest
+.PHONY: help html spelling dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest
 
 help:
 	@echo "Please use \`make <target> <builddir>' where <target> is one of"
@@ -41,16 +41,21 @@ help:
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 
-#clean:
-#	-rm -rf $(BUILDDIR)/*
-
-
+clean:
+	$(if $(BUILDDIR),,$(error BUILDDIR to clean must be defined))
+	-rm -rf $(BUILDDIR)/*
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
 	@echo
 	@echo "$(X)"
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)"
+
+spelling:
+	$(SPHINXBUILD) -b spelling $(ALLSPHINXOPTS) $(BUILDDIR)/spelling
+	@echo
+	@echo "Spelling check dummy build finished..."
+	@echo "Results are in $(BUILDDIR)/spelling."
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml

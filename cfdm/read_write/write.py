@@ -78,7 +78,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     HDF5 chunksizes may be set on construct's data. See the
     `~cfdm.Data.nc_hdf5_chunksizes`,
     `~cfdm.Data.nc_clear_hdf5_chunksizes` and
-    `~cfdm.Data.nc_set_hdf5_chunksizes` metods of a `Data` instance.
+    `~cfdm.Data.nc_set_hdf5_chunksizes` methods of a `Data` instance.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -411,7 +411,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             If False then create a "flat" netCDF file, i.e. one with
             only the root group, regardless of any group structure
             specified by the field constructs. By default any groups
-            defined by the netCDF interface of the field constucts and
+            defined by the netCDF interface of the field constructs and
             its components will be created and populated.
 
             .. versionadded:: (cfdm) 1.8.6

@@ -1520,7 +1520,7 @@ class Field(mixin.FieldDomain,
 
     >>> d = f.get_domain()
 
-        '''        
+        '''
         domain = self._Domain.fromconstructs(self.constructs)
 
         # Set climatological time axes for the domain
@@ -1532,7 +1532,7 @@ class Field(mixin.FieldDomain,
                 if len(axes) == 1 and axes[0] in climatological_time_axes:
                     c.set_climatology(True)
         # --- End: if
-            
+
         return domain
 
     def get_filenames(self):
@@ -1914,8 +1914,8 @@ class Field(mixin.FieldDomain,
             {{axes int examples}}
 
         constructs: `bool`
-            If True then tranpose the metadata constructs to have the
-            same relative domain axis order as the data of tranposed
+            If True then transpose the metadata constructs to have the
+            same relative domain axis order as the data of transposed
             field construct. By default, metadata constructs are not
             changed.
 

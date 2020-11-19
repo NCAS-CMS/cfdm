@@ -73,7 +73,7 @@ class Coordinate(PropertiesDataBounds):
     c.set_bounds(b)
 
         '''
-        return super().creation_commands(            
+        return super().creation_commands(
             representative_data=False, namespace=None,
             indent=0, string=True, name='c',
             data_name='data', bounds_name='b',

@@ -500,6 +500,23 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(g), 1)
         self.assertTrue(g[0].equals(f))
 
+    def test_write_scalar_domain_ancillary(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.example_field(1)
+
+        # Create scalar domain ancillary
+        d = f.construct('ncvar%a')
+        d.del_data()
+        d.set_data(10)
+        d.del_bounds()
+
+        key = f.construct_key('ncvar%a')
+        f.set_data_axes((), key=key)
+
+        cfdm.write(f, tmpfile)
+
 # --- End: class
 
 

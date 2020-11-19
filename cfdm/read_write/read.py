@@ -204,7 +204,7 @@ def read(filename, external=None, extra=None, verbose=None,
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
-            on field contructs and metadata constructs that have
+            on field constructs and metadata constructs that have
             data. By default no such warning is issued.
 
             "Out-of-range" data values in the file, as defined by any

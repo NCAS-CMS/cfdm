@@ -78,8 +78,8 @@ Data classes
    cfdm.NumpyArray
    cfdm.Array
 
-Data compression classses
--------------------------
+Data compression classes
+------------------------
 
 Classes that support the creation and storage of compressed arrays.
 
@@ -95,4 +95,15 @@ Classes that support the creation and storage of compressed arrays.
    cfdm.RaggedIndexedArray
    cfdm.RaggedIndexedContiguousArray
    cfdm.CompressedArray
+
+
+Miscellaneous classses
+----------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.Constant
+   cfdm.Configuration
 

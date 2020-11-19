@@ -33,12 +33,12 @@ Constants
    cfdm.atol
    cfdm.rtol
    cfdm.log_level
+   cfdm.configuration
    cfdm.ATOL
    cfdm.RTOL
    cfdm.LOG_LEVEL
-   cfdm.configuration
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. autosummary::
