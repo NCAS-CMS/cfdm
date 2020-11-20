@@ -265,81 +265,6 @@ def ATOL(*new_atol):
     return atol(*new_atol)
 
 
-def rtol(*arg):
-    '''The tolerance on relative differences when testing for numerically
-    tolerant equality.
-
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``abs(x-y) <= atol + rtol*abs(y)``, where ``atol`` (the tolerance
-    on absolute differences) and ``rtol`` (the tolerance on relative
-    differences) are positive, typically very small numbers. By
-    default both are set to the system epsilon (the difference between
-    1 and the least value greater than 1 that is representable as a
-    float).
-
-    .. versionadded:: (cfdm) 1.7.0
-
-    .. seealso:: `atol`, `configuration`
-
-    :Parameters:
-
-        rtol: `float` or `Constant`, optional
-            The new value of relative tolerance. The default is to not
-            change the current value.
-
-    :Returns:
-
-        `Constant`
-            The value prior to the change, or the current value if no
-            new value was specified.
-
-    **Examples:**
-
-    >>> cfdm.rtol()
-    <Constant: 2.220446049250313e-16>
-    >>> print(cfdm.rtol())
-    2.220446049250313e-16
-    >>> str(cfdm.rtol())
-    '2.220446049250313e-16'
-    >>> cfdm.rtol().value
-    2.220446049250313e-16
-    >>> float(cfdm.rtol())
-    2.220446049250313e-16
-
-    >>> old = cfdm.rtol(1e-10)
-    >>> cfdm.rtol()
-    <Constant: 2.220446049250313e-16>
-    >>> cfdm.rtol(old)
-    <Constant: 1e-10>
-    >>> cfdm.rtol()
-    <Constant: 2.220446049250313e-16>
-
-    Use as a context manager:
-
-    >>> print(cfdm.rtol())
-    2.220446049250313e-16
-    >>> with cfdm.rtol(1e-5):
-    ...     print(cfdm.rtol(), cfdm.rtol(2e-30), cfdm.rtol())
-    ...
-    1e-05 1e-05 2e-30
-    >>> print(cfdm.rtol())
-    2.220446049250313e-16
-
-    '''
-    old = CONSTANTS['RTOL']
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
-
-        CONSTANTS['RTOL'] = float(arg)
-
-    return Constant(old, _func=rtol)
-
-
 def RTOL(*new_rtol):
     '''Alias for `cfdm.rtol`.
 
@@ -1052,3 +977,114 @@ class Configuration(dict):
 
     def __str__(self):
         return super().__repr__()
+
+
+class ConstantAccess:
+    '''
+
+    '''
+    # Define the dictionary that stores the constant values
+    _CONSTANTS = CONSTANTS
+
+    # Define the `Constant` object that contains a constant value
+    _Constant = Constant
+
+    def __new__(cls, *arg):
+        '''Return a `Constant` instance during class creation.
+
+        '''
+        name, arg = cls._func(*arg)
+        old = cls._CONSTANTS[name]
+        if arg:
+            cls._CONSTANTS[name] = arg[0]
+
+        return cls._Constant(old, _func=cls)
+
+    def _func(*arg):
+        '''Method that parses a new value for the constant.
+
+    :Returns:
+
+        `str`, `tuple`
+            The key of the _CONSTANTS dictionary that contains the
+            constant value; and a tuple containg the parsed
+            argument. If no new value was given then this empty tuple
+            is empty.
+
+        '''
+        raise NotImplementedError("Subclasses must implement _func")
+
+
+class rtol(ConstantAccess):
+    '''The tolerance on relative differences when testing for numerically
+    tolerant equality.
+
+    Two real numbers ``x`` and ``y`` are considered equal if
+    ``abs(x-y) <= atol + rtol*abs(y)``, where ``atol`` (the tolerance
+    on absolute differences) and ``rtol`` (the tolerance on relative
+    differences) are positive, typically very small numbers. By
+    default both are set to the system epsilon (the difference between
+    1 and the least value greater than 1 that is representable as a
+    float).
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `atol`, `configuration`
+
+    :Parameters:
+
+        rtol: `float` or `Constant`, optional
+            The new value of relative tolerance. The default is to not
+            change the current value.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples:**
+
+    >>> cfdm.rtol()
+    <Constant: 2.220446049250313e-16>
+    >>> print(cfdm.rtol())
+    2.220446049250313e-16
+    >>> str(cfdm.rtol())
+    '2.220446049250313e-16'
+    >>> cfdm.rtol().value
+    2.220446049250313e-16
+    >>> float(cfdm.rtol())
+    2.220446049250313e-16
+
+    >>> old = cfdm.rtol(1e-10)
+    >>> cfdm.rtol()
+    <Constant: 2.220446049250313e-16>
+    >>> cfdm.rtol(old)
+    <Constant: 1e-10>
+    >>> cfdm.rtol()
+    <Constant: 2.220446049250313e-16>
+
+    Use as a context manager:
+
+    >>> print(cfdm.rtol())
+    2.220446049250313e-16
+    >>> with cfdm.rtol(1e-5):
+    ...     print(cfdm.rtol(), cfdm.rtol(2e-30), cfdm.rtol())
+    ...
+    1e-05 1e-05 2e-30
+    >>> print(cfdm.rtol())
+    2.220446049250313e-16
+
+    '''
+    def _func(*arg):
+        if arg:
+            arg = arg[0]
+            try:
+                # Check for Constants instance
+                arg = arg.value
+            except AttributeError:
+                pass
+
+            arg = (float(arg),)
+
+        return 'RTOL', arg
