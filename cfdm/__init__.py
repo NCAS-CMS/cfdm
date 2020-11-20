@@ -92,7 +92,7 @@ from .functions import (
     configuration,
     environment,
     log_level,
-    rtol,
+    rtol, child,
     _log_level,
     _disable_logging,
     _reset_log_emergence_level,

@@ -34,6 +34,19 @@ class DocstringRewriteMeta(type):
         # ------------------------------------------------------------
         docstring_rewrite = {}
 
+        if 'child' in class_name:
+            print('\n\n',parents)
+            print (attrs)
+
+        if '__doc__' not in attrs:
+            print(99)
+            for parent in parents[::-1]:
+                print (dir(parent))
+                print (parent.__doc__)
+                print(parent.__bases__[0].__doc__)
+                attrs['__doc__'] = getattr(parent, '__doc__', None)
+        if 'child' in class_name:
+            print (attrs)
         for parent in parents[::-1]:
             parent_docstring_rewrite = getattr(
                 parent, '_docstring_substitutions', None)
@@ -66,7 +79,8 @@ class DocstringRewriteMeta(type):
         package_depth = 0
         for parent in parents[::-1]:
             parent_depth = getattr(
-                parent, '_docstring_package_depth', None)
+                parent, '_docstring_package_depth', None
+            )
             if parent_depth is not None:
                 package_depth = parent_depth(parent)
             else:
@@ -91,7 +105,8 @@ class DocstringRewriteMeta(type):
         method_exclusions = []
         for parent in parents[::-1]:
             parent_exclusions = getattr(
-                parent, '_docstring_method_exclusions', None)
+                parent, '_docstring_method_exclusions', None
+            )
             if parent_exclusions is not None:
                 method_exclusions.extend(parent_exclusions(parent))
             else:
@@ -111,8 +126,8 @@ class DocstringRewriteMeta(type):
 
             # Skip special methods that aren't functions
             if (
-                    attr_name.startswith('__') and
-                    not inspect.isfunction(attr)
+                    attr_name.startswith('__')
+                    and not inspect.isfunction(attr)
             ):
                 continue
 
@@ -300,8 +315,30 @@ class DocstringRewriteMeta(type):
                                                  attr_name]))
         # --- End: for
 
+        # Rewrite the new class docstring
+        doc = DocstringRewriteMeta._docstring_update(
+            package_name,
+            class_name,
+            None,
+            None,
+            docstring_rewrite,
+            class__doc__=attrs.get('__doc__')
+        )
+
+        if doc is not None:
+            attrs['__doc__'] = doc
+
         # Create the class
         return super().__new__(cls, class_name, parents, attrs)
+#
+#        # Rewrite the new class docstring
+#        DocstringRewriteMeta._docstring_update(package_name,
+#                                               class_name, new,
+#                                               class_name,
+#                                               docstring_rewrite,
+#                                               is_class=True)
+#
+#        return new
 
     # ----------------------------------------------------------------
     # Private methods
@@ -517,21 +554,24 @@ class DocstringRewriteMeta(type):
 
     @classmethod
     def _docstring_update(cls, package_name, class_name, f,
-                          method_name, config):
+                          method_name, config, class__doc__=None):
         '''Perform docstring substitutions on a method at time of import.
 
     .. versionadded:: (cfdm) 1.8.7.0
 
         '''
-        doc = f.__doc__
+        if class__doc__ is not None:
+            doc = class__doc__
+        else:
+            doc = f.__doc__
+
         if doc is None:
-            return
+            return 
 
         # ------------------------------------------------------------
         # Do general substitutions first
         # ------------------------------------------------------------
         for key, value in config.items():
-
             # Substitute non-special substitutions embedded within
             # this value, updating the value if any are found. Note
             # that any non-special substitutions embedded within the
@@ -569,6 +609,9 @@ class DocstringRewriteMeta(type):
         # ----------------------------------------------------------------
         # Set the rewritten docstring on the method
         # ----------------------------------------------------------------
-        f.__doc__ = doc
+        if class__doc__ is None:
+            f.__doc__ = doc
 
+        return doc
+        
 # --- End: class

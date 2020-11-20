@@ -46,6 +46,11 @@ _docstring_substitution_definitions = {
     '''NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.''',
 
+    '{{netCDF variable}}':
+    '''The netCDF variable name of the construct may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+    `nc_has_variable` methods.''',
+
     # properties: `dict`, optional
     '{{init properties: `dict`, optional}}':
     '''properties: `dict`, optional

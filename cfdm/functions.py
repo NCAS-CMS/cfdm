@@ -17,6 +17,10 @@ from . import (__version__,
                __cf_version__,
                __file__)
 
+from .core import DocstringRewriteMeta
+
+from .docstring import _docstring_substitution_definitions
+
 from .constants import CONSTANTS, ValidLogLevels
 
 
@@ -214,7 +218,7 @@ def atol(*arg):
     **Examples:**
 
     >>> cfdm.atol()
-    <Constant: 2.220446049250313e-16>
+    <Constant: 2.220446049250313e-16>>
     >>> print(cfdm.atol())
     2.220446049250313e-16
     >>> str(cfdm.atol())
@@ -979,7 +983,7 @@ class Configuration(dict):
         return super().__repr__()
 
 
-class ConstantAccess:
+class ConstantAccess(metaclass=DocstringRewriteMeta):
     '''
 
     '''
@@ -1000,6 +1004,35 @@ class ConstantAccess:
 
         return cls._Constant(old, _func=cls)
 
+    def __docstring_substitutions__(self):
+        '''Define docstring substitutions that apply to this class and all of
+    its subclasses.
+
+    These are in addtion to, and take precendence over, docstring
+    substitutions defined by the base classes of this class.
+
+    See `_docstring_substitutions` for details.
+
+    .. versionaddedd:: (cfdm) 1.8.8.0
+
+    :Returns:
+
+        `dict`
+            The docstring substitutions that have been applied.
+
+        '''
+        return _docstring_substitution_definitions
+
+    def __docstring_package_depth__(self):
+        '''Return the package depth for {{package}} docstring substitutions.
+
+    See `_docstring_package_depth` for details.
+
+    .. versionaddedd:: (cfdm) 1.8.8.0
+
+        '''
+        return 0
+
     def _func(*arg):
         '''Method that parses a new value for the constant.
 
@@ -1019,13 +1052,15 @@ class rtol(ConstantAccess):
     '''The tolerance on relative differences when testing for numerically
     tolerant equality.
 
+    NAME: {{class}}
+
     Two real numbers ``x`` and ``y`` are considered equal if
-    ``abs(x-y) <= atol + rtol*abs(y)``, where ``atol`` (the tolerance
-    on absolute differences) and ``rtol`` (the tolerance on relative
-    differences) are positive, typically very small numbers. By
-    default both are set to the system epsilon (the difference between
-    1 and the least value greater than 1 that is representable as a
-    float).
+    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
+    differences) and ``rtol`` (the tolerance on relative differences)
+    are positive, typically very small numbers. The values of ``atol``
+    and ``rtol`` are initialised to the system epsilon (the difference
+    between 1 and the least value greater than 1 that is representable
+    as a float).
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -1045,38 +1080,49 @@ class rtol(ConstantAccess):
 
     **Examples:**
 
-    >>> cfdm.rtol()
+    >>> {{package}}.rtol()
     <Constant: 2.220446049250313e-16>
-    >>> print(cfdm.rtol())
+    >>> print({{package}}.rtol())
     2.220446049250313e-16
-    >>> str(cfdm.rtol())
+    >>> str({{package}}.rtol())
     '2.220446049250313e-16'
-    >>> cfdm.rtol().value
+    >>> {{package}}.rtol().value
     2.220446049250313e-16
-    >>> float(cfdm.rtol())
+    >>> float({{package}}.rtol())
     2.220446049250313e-16
 
-    >>> old = cfdm.rtol(1e-10)
-    >>> cfdm.rtol()
+    >>> old = {{package}}.rtol(1e-10)
+    >>> {{package}}.rtol()
     <Constant: 2.220446049250313e-16>
-    >>> cfdm.rtol(old)
+    >>> {{package}}.rtol(old)
     <Constant: 1e-10>
-    >>> cfdm.rtol()
+    >>> {{package}}.rtol()
     <Constant: 2.220446049250313e-16>
 
     Use as a context manager:
 
-    >>> print(cfdm.rtol())
+    >>> print({{package}}.rtol())
     2.220446049250313e-16
-    >>> with cfdm.rtol(1e-5):
-    ...     print(cfdm.rtol(), cfdm.rtol(2e-30), cfdm.rtol())
+    >>> with {{package}}.rtol(1e-5):
+    ...     print({{package}}.rtol(), {{package}}.rtol(2e-30), {{package}}.rtol())
     ...
     1e-05 1e-05 2e-30
-    >>> print(cfdm.rtol())
+    >>> print({{package}}.rtol())
     2.220446049250313e-16
 
     '''
     def _func(*arg):
+        '''Method that parses a new value for the constant.
+
+    :Returns:
+
+        `str`, `tuple`
+            The key of the _CONSTANTS dictionary that contains the
+            constant value; and a tuple containg the parsed
+            argument. If no new value was given then this empty tuple
+            is empty.
+
+        '''
         if arg:
             arg = arg[0]
             try:
@@ -1088,3 +1134,10 @@ class rtol(ConstantAccess):
             arg = (float(arg),)
 
         return 'RTOL', arg
+
+
+class child(rtol):
+    pass
+
+class grandchild(child):
+    pass
