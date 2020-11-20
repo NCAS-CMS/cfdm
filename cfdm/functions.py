@@ -13,6 +13,8 @@ import cftime
 import numpy
 import netcdf_flattener
 
+from . import core
+
 from . import (__version__,
                __cf_version__,
                __file__)
@@ -629,38 +631,28 @@ def environment(display=True, paths=True):
     cfdm: 1.8.8.0
 
     '''
-    out = []
-
-    out.append('Platform: ' + str(platform.platform()))
-    out.append('HDF5 library: ' + str(netCDF4. __hdf5libversion__))
-    out.append('netcdf library: ' + str(netCDF4.__netcdf4libversion__))
-
-    out.append('python: ' + str(platform.python_version()))
-    if paths:
-        out[-1] += ' ' + str(sys.executable)
-
-    out.append('netCDF4: ' + str(netCDF4.__version__))
-    if paths:
-        out[-1] += ' ' + str(os.path.abspath(netCDF4.__file__))
-
-    out.append('cftime: ' + str(cftime.__version__))
-    if paths:
-        out[-1] += ' ' + str(os.path.abspath(cftime.__file__))
-
-    out.append('numpy: ' + str(numpy.__version__))
-    if paths:
-        out[-1] += ' ' + str(os.path.abspath(numpy.__file__))
+    out = core.environment(display=False, paths=paths)  # get all core env
 
     try:
-        out.append('netcdf_flattener: ' + str(netcdf_flattener.__version__))
+        netcdf_flattener_version = netcdf_flattener.__version__
     except AttributeError:
-        out.append('netcdf_flattener: unknown version')
-    if paths:
-        out[-1] += ' ' + str(os.path.abspath(netcdf_flattener.__file__))
+        netcdf_flattener_version = 'unknown version'
 
-    out.append('cfdm: ' + str(__version__))
-    if paths:
-        out[-1] += ' ' + str(os.path.abspath(__file__))
+    dependency_version_paths_mapping = {
+        'cftime': (cftime.__version__, os.path.abspath(cftime.__file__)),
+        'netcdf_flattener': (
+            netcdf_flattener_version,
+            os.path.abspath(netcdf_flattener.__file__)
+        ),
+        'cfdm': (__version__, os.path.abspath(__file__)),
+    }
+    string = '{0}: {1!s}'
+    if paths:  # include path information, else exclude, when unpacking tuple
+        string += ' {2!s}'
+    out.extend(
+        [string.format(dep, *info)
+         for dep, info in dependency_version_paths_mapping.items()]
+    )
 
     if display:
         print('\n'.join(out))  # pragma: no cover
