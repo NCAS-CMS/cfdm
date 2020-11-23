@@ -34,19 +34,6 @@ class DocstringRewriteMeta(type):
         # ------------------------------------------------------------
         docstring_rewrite = {}
 
-        if 'child' in class_name:
-            print('\n\n',parents)
-            print (attrs)
-
-        if '__doc__' not in attrs:
-            print(99)
-            for parent in parents[::-1]:
-                print (dir(parent))
-                print (parent.__doc__)
-                print(parent.__bases__[0].__doc__)
-                attrs['__doc__'] = getattr(parent, '__doc__', None)
-        if 'child' in class_name:
-            print (attrs)
         for parent in parents[::-1]:
             parent_docstring_rewrite = getattr(
                 parent, '_docstring_substitutions', None)
@@ -264,7 +251,6 @@ class DocstringRewriteMeta(type):
                         attr = type(f)(f.__code__, f.__globals__,
                                        f.__name__, f.__defaults__,
                                        f.__closure__)
-
                         # Make sure that the keyword argument defaults
                         # are set correctly. In general they will be,
                         # but not if there is a variable number of
@@ -310,35 +296,72 @@ class DocstringRewriteMeta(type):
                     attrs[attr_name] = attr
 
                 except Exception as error:
-                    raise RuntimeError(str(error) + ': ' +
-                                       '.'.join([parent.__name__,
-                                                 attr_name]))
+                    pass
+#                    raise RuntimeError(str(error) + ': ' +
+#                                       '.'.join([parent.__name__,
+#                                                 attr_name]))
         # --- End: for
 
-        # Rewrite the new class docstring
-        doc = DocstringRewriteMeta._docstring_update(
-            package_name,
-            class_name,
-            None,
-            None,
-            docstring_rewrite,
-            class__doc__=attrs.get('__doc__')
-        )
+        # ------------------------------------------------------------
+        # Rewrite the docstring of the class itself.
+        #
+        # The method is as follows:
+        #
+        # 1. If __doc__ contains substitutions then save the
+        #    unsubstituted docstring in __doc_template__, rewrite the
+        #    docstring, and save it in __doc__.
+        #
+        # 2. If __doc__ is not None and does not contain substitutions
+        #    then set __doc_template___ to None.
+        #
+        # 3. If __doc__ is None then search back through the parent
+        #    classes until you found one with a non-None __doc__ AND a
+        #    non-None __doc_template__. If such a parent exists then
+        #    copy its __doc_template__ to the child class's
+        #    __doc_template__, rewrite it, and save the rewritten
+        #    docstring to the child class's __doc__.
+        #
+        # ------------------------------------------------------------
+        doc = attrs.get('__doc__')
+        doc_template = None
+        set_doc_template_to_None = False
 
-        if doc is not None:
+        if doc is None:
+            for parent in parents[::-1]:
+                x = getattr(parent, '__doc__', None)
+                if x is not None:
+                    doc_template = getattr(parent, '__doc_template__', None)
+                    if doc_template is not None:
+                        break
+            # --- End: for
+
+            if doc_template is None:
+                set_doc_template_to_None = True
+        # --- End: for
+
+        if doc_template is not None:
+            doc = doc_template
+
+        if doc is not None and '{{' in doc:
+            doc_template = doc
+            doc = DocstringRewriteMeta._docstring_update(package_name,
+                                                         class_name,
+                                                         None,
+                                                         None,
+                                                         docstring_rewrite,
+                                                         class__doc__=doc)
             attrs['__doc__'] = doc
 
+            if set_doc_template_to_None:
+                doc_template = None
+        # --- End: if
+
+        attrs['__doc_template__'] = doc_template
+
+        # ------------------------------------------------------------
         # Create the class
+        # ------------------------------------------------------------
         return super().__new__(cls, class_name, parents, attrs)
-#
-#        # Rewrite the new class docstring
-#        DocstringRewriteMeta._docstring_update(package_name,
-#                                               class_name, new,
-#                                               class_name,
-#                                               docstring_rewrite,
-#                                               is_class=True)
-#
-#        return new
 
     # ----------------------------------------------------------------
     # Private methods
@@ -564,9 +587,9 @@ class DocstringRewriteMeta(type):
             doc = class__doc__
         else:
             doc = f.__doc__
-
-        if doc is None:
-            return 
+            if doc is None or '{{' not in doc:
+                return doc
+        # --- End: if
 
         # ------------------------------------------------------------
         # Do general substitutions first
@@ -613,5 +636,5 @@ class DocstringRewriteMeta(type):
             f.__doc__ = doc
 
         return doc
-        
+
 # --- End: class

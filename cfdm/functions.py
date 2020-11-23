@@ -19,9 +19,21 @@ from . import (__version__,
 
 from .core import DocstringRewriteMeta
 
+from .core.docstring import (_docstring_substitution_definitions
+                             as _core_docstring_substitution_definitions)
+
 from .docstring import _docstring_substitution_definitions
 
 from .constants import CONSTANTS, ValidLogLevels
+
+
+# --------------------------------------------------------------------
+# Merge core and non-core docstring sustituion dictionaries
+# --------------------------------------------------------------------
+_subs = _docstring_substitution_definitions.copy()
+_subs.update(_core_docstring_substitution_definitions)
+_docstring_substitution_definitions = _subs
+del _subs
 
 
 def configuration(atol=None, rtol=None, log_level=None):
@@ -84,7 +96,7 @@ def configuration(atol=None, rtol=None, log_level=None):
     View full global configuration of constants:
 
     >>> cfdm.configuration()
-    <Configuration: {'atol': 2.220446049250313e-16,
+    <{{repr}}Configuration: {'atol': 2.220446049250313e-16,
                      'rtol': 2.220446049250313e-16,
                      'log_level': 'WARNING'}>
     >>> print(cfdm.configuration())
@@ -96,7 +108,7 @@ def configuration(atol=None, rtol=None, log_level=None):
     configuration:
 
     >>> cfdm.log_level('DEBUG')
-    <Constant: 'WARNING'>
+    <{{repr}}Constant: 'WARNING'>
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
@@ -143,10 +155,14 @@ def configuration(atol=None, rtol=None, log_level=None):
 
     '''
     return _configuration(
-        new_atol=atol, new_rtol=rtol, new_log_level=log_level)
+        Configuration,
+        new_atol=atol,
+        new_rtol=rtol,
+        new_log_level=log_level
+    )
 
 
-def _configuration(**kwargs):
+def _configuration(_Configuration, **kwargs):
     '''Internal helper function to provide the logic for `cfdm.configuration`.
 
     We delegate from the user-facing `cfdm.configuration` for two main reasons:
@@ -184,99 +200,10 @@ def _configuration(**kwargs):
     for setting_alias, new_value in kwargs.items():  # for all input kwargs...
         reset_mapping[setting_alias](new_value)  # ...run corresponding func
 
-    return Configuration(**old)
+    return _Configuration(**old)
 
 
-def atol(*arg):
-    '''The tolerance on absolute differences when testing for numerically
-    tolerant equality.
-
-    Two real numbers ``x`` and ``y`` are considered equal if
-    ``abs(x-y) <= atol + rtol*abs(y)``, where ``atol`` (the tolerance
-    on absolute differences) and ``rtol`` (the tolerance on relative
-    differences) are positive, typically very small numbers. By
-    default both are set to the system epsilon (the difference between
-    1 and the least value greater than 1 that is representable as a
-    float).
-
-    .. versionadded:: (cfdm) 1.7.0
-
-    .. seealso:: `rtol`, `configuration`
-
-    :Parameters:
-
-        atol: `float` or `Constant`, optional
-            The new value of absolute tolerance. The default is to not
-            change the current value.
-
-    :Returns:
-
-        `Constant`
-            The value prior to the change, or the current value if no
-            new value was specified.
-
-    **Examples:**
-
-    >>> cfdm.atol()
-    <Constant: 2.220446049250313e-16>>
-    >>> print(cfdm.atol())
-    2.220446049250313e-16
-    >>> str(cfdm.atol())
-    '2.220446049250313e-16'
-    >>> cfdm.atol().value
-    2.220446049250313e-16
-    >>> float(cfdm.atol())
-    2.220446049250313e-16
-
-    >>> old = cfdm.atol(1e-10)
-    >>> cfdm.atol()
-    <Constant: 2.220446049250313e-16>
-    >>> cfdm.atol(old)
-    <Constant: 1e-10>
-    >>> cfdm.atol()
-    <Constant: 2.220446049250313e-16>
-
-    Use as a context manager:
-
-    >>> print(cfdm.atol())
-    2.220446049250313e-16
-     >>> with cfdm.atol(1e-5):
-    ...     print(cfdm.atol(), cfdm.atol(2e-30), cfdm.atol())
-    ...
-    1e-05 1e-05 2e-30
-    >>> print(cfdm.atol())
-    2.220446049250313e-16
-
-    '''
-    old = CONSTANTS['ATOL']
-    if arg:
-        arg = arg[0]
-        try:
-            # Check for Constants instance
-            arg = arg.value
-        except AttributeError:
-            pass
-
-        CONSTANTS['ATOL'] = float(arg)
-
-    return Constant(old, _func=atol)
-
-
-def ATOL(*new_atol):
-    '''Alias for `cfdm.atol`.
-
-    '''
-    return atol(*new_atol)
-
-
-def RTOL(*new_rtol):
-    '''Alias for `cfdm.rtol`.
-
-    '''
-    return rtol(*new_rtol)
-
-
-def _log_level(constants_dict, arg):
+def _Xlog_level(constants_dict, arg, _Constant, func):
     '''Equivalent to log_level, but with dict to modify as an argument.
 
     This internal function is designed specifically so that a
@@ -326,9 +253,9 @@ def _log_level(constants_dict, arg):
             raise ValueError(
                 "Logging level {!r} is not one of the valid values '{}', "
                 "where either the string or the corrsponding integer is "
-                "accepted. Value remains as it was, at '{}'.".format(
+                "accepted. Value remains as it was.".format(
                     level, ", '".join([val.name + "' = " + str(val.value)
-                                       for val in ValidLogLevels]), old
+                                       for val in ValidLogLevels])
                 )
             )
 
@@ -336,10 +263,10 @@ def _log_level(constants_dict, arg):
         constants_dict['LOG_LEVEL'] = level
         _reset_log_emergence_level(level)
 
-    return Constant(old, _func=log_level)
+    return _Constant(old, _func=func)
 
 
-def log_level(*arg):
+def Xlog_level(*arg):
     '''The minimal level of seriousness of log messages which are shown.
 
     This can be adjusted to filter out potentially-useful log messages
@@ -384,7 +311,7 @@ def log_level(*arg):
     **Examples:**
 
     >>> cfdm.log_level()
-    <Constant: 'WARNING'>
+    <{{repr}}Constant: 'WARNING'>
     >>> print(cfdm.log_level())
     WARNING
     >>> str(cfdm.log_level())
@@ -392,11 +319,11 @@ def log_level(*arg):
 
     >>> old = log_level('INFO')
     >>> cfdm.log_level()
-    <Constant: 'WARNING'>
+    <{{repr}}Constant: 'WARNING'>
     >>> cfdm.log_level(old)
-    <Constant: 'INFO'>
+    <{{repr}}Constant: 'INFO'>
     >>> cfdm.log_level()
-    <Constant: 'WARNING'>
+    <{{repr}}Constant: 'WARNING'>
 
     Use as a context manager:
 
@@ -410,7 +337,7 @@ def log_level(*arg):
     WARNING
 
     '''
-    return _log_level(CONSTANTS, arg)
+    return _log_level(CONSTANTS, arg, Constant, log_level)
 
 
 def LOG_LEVEL(*new_log_level):
@@ -645,19 +572,19 @@ def abspath(filename):
 
 
 @total_ordering
-class Constant:
+class Constant(metaclass=DocstringRewriteMeta):
     '''A container for a constant with context manager support.
 
     The constant value is accessed via the `value` attribute:
 
-       >>> c = cfdm.Constant(1.9)
+       >>> c = {{package}}.{{class}}(1.9)
        >>> c.value
        1.9
 
     Conversion to `int`, `float` and `str` is with the usual built-in
     functions:
 
-       >>> c = cfdm.Constant(1.9)
+       >>> c = {{package}}.{{class}}(1.9)
        >>> int(c)
        1
        >>> float(c)
@@ -666,26 +593,26 @@ class Constant:
        '1.9'
 
     Augmented arithmetic assignments (``+=``, ``-=``, ``*=``, ``/=``,
-    ``//=``) update `Constant` objects in-place:
+    ``//=``) update `{{class}}` objects in-place:
 
-       >>> c = cfdm.Constant(20)
+       >>> c = {{package}}.{{class}}(20)
        >>> c.value
        20
        >>> c /= 2
        >>> c
-       <Constant: 10.0>
+       <{{repr}}{{class}}: 10.0>
        >>> c += c
-       <Constant: 20.0>
+       <{{repr}}{{class}}: 20.0>
 
-       >>> c = cfdm.Constant('New_')
+       >>> c = {{package}}.{{class}}('New_')
        >>> c *= 2
-       <Constant: 'New_New_'>
+       <{{repr}}{{class}}: 'New_New_'>
 
     Binary arithmetic operations (``+``, ``-``, ``*``, ``/``, ``//``)
     are equivalent to the operation acting on the `Constant` object's
     `value` attribute:
 
-       >>> c = cfdm.Constant(20)
+       >>> c = {{package}}.{{class}}(20)
        >>> c.value
        20
        >>> c * c
@@ -695,7 +622,7 @@ class Constant:
        >>> 2 - c
        -38
 
-       >>> c = cfdm.Constant('New_')
+       >>> c = {{package}}.{{class}}('New_')
        >>> c * 2
        'New_New_'
 
@@ -712,10 +639,10 @@ class Constant:
        int
 
     Unary arithmetic operations (``+``, ``-``, `abs`) are equivalent
-    to the operation acting on the `Constant` object's `value`
+    to the operation acting on the `{{class}}` object's `value`
     attribute:
 
-       >>> c = cfdm.Constant(-20)
+       >>> c = {{package}}.{{class}}(-20)
        >>> c.value
        -20
        >>> -c
@@ -726,10 +653,10 @@ class Constant:
        -20
 
     Rich comparison operations are equivalent to the operation acting
-    on the `Constant` object's `value` attribute:
+    on the `{{class}}` object's `value` attribute:
 
-       >>> c = cfdm.Constant(20)
-       >>> d = cfdm.Constant(1)
+       >>> c = {{package}}.{{class}}(20)
+       >>> d = {{package}}.{{class}}(1)
        >>> c.value
        20
        >>> d.value
@@ -741,8 +668,8 @@ class Constant:
        >>> 20 == c
        True
 
-       >>> c = cfdm.Constant('new')
-       >>> d = cfdm.Constant('old')
+       >>> c = {{package}}.{{class}}('new')
+       >>> d = {{package}}.{{class}}('old')
        >>> c == d
        False
        >>> c == 'new'
@@ -753,20 +680,21 @@ class Constant:
        False
 
        >>> import numpy
-       >>> c = cfdm.Constant(20)
+       >>> c = {{package}}.{{class}})
        >>> c < numpy.array([10, 20, 30])
        array([False, False,  True])
        >>> numpy.array([10, 20, 30]) >= c
        array([False,  True,  True])
 
-    `Constant` instances are hashable.
+    `{{class}}` instances are hashable.
 
     **Context manager**
 
-    The `Constant` instance can be used as a context manager that upon
-    exit executes the function defined by the `_func` attribute, with
-    the `value` attribute as an argument. For example, the `Constant`
-    instance ``c`` would execute ``c._func(c.value)`` upon exit.
+    The `{{class}}` instance can be used as a context manager that
+    upon exit executes the function defined by the `_func` attribute,
+    with the `value` attribute as an argument. For example, the
+    `{{class}}` instance ``c`` would execute ``c._func(c.value)`` upon
+    exit.
 
     .. versionadded:: (cfdm) 1.8.8.0
 
@@ -788,6 +716,35 @@ class Constant:
         '''
         self.value = value
         self._func = _func
+
+    def __docstring_substitutions__(self):
+        '''Define docstring substitutions that apply to this class and all of
+    its subclasses.
+
+    These are in addtion to, and take precendence over, docstring
+    substitutions defined by the base classes of this class.
+
+    See `_docstring_substitutions` for details.
+
+    .. versionaddedd:: (cfdm) 1.8.8.0
+
+    :Returns:
+
+        `dict`
+            The docstring substitutions that have been applied.
+
+        '''
+        return _docstring_substitution_definitions
+
+    def __docstring_package_depth__(self):
+        '''Return the package depth for {{package}} docstring substitutions.
+
+    See `_docstring_package_depth` for details.
+
+    .. versionaddedd:: (cfdm) 1.8.8.0
+
+        '''
+        return 0
 
     def __enter__(self):
         '''Enter the runtime context.
@@ -914,7 +871,7 @@ class Constant:
 
     :Returns:
 
-        `Constant`
+        `{{class}}`
             The deep copy.
 
         '''
@@ -927,37 +884,84 @@ class Constant:
         return out
 
 
-class Configuration(dict):
+class Configuration(dict, metaclass=DocstringRewriteMeta):
     '''A dictionary-like container for the global constants with context
     manager support.
 
-    Initialization is as for a `dict`, and all of the `dict` methods
-    are available with the same behaviours (`clear`, `copy`,
+    Initialization is as for a `dict`, and nearly all of the `dict`
+    methods are available with the same behaviours (`clear`,
     `fromkeys`, `get`, `items`, `keys`, `pop`, `popitem`,
     `setdefault`, `update`, `values`):
 
-       >>> c = cfdm.Configuration(atol=0.1, rtol=0.2, log_level='INFO')
+       >>> c = {{package}}.{{class}}(atol=0.1, rtol=0.2, log_level='INFO')
        >>> c
-       <Configuration: {'atol': 0.1, 'rtol': 0.2, 'log_level': 'INFO'}>
+       <{{repr}}{{class}}: {'atol': 0.1, 'rtol': 0.2, 'log_level': 'INFO'}>
        >>> print(c)
        {'atol': 0.1, 'rtol': 0.2, 'log_level': 'INFO'}
        >>> c.pop('atol')
        0.1
        >>> c
-       <Configuration: {'rtol': 0.2, 'log_level': 'INFO'}>
+       <{{repr}}{{class}}: {'rtol': 0.2, 'log_level': 'INFO'}>
        >>> c.clear()
        >>> c
-       <Configuration: {}>
+       <{{repr}}{{class}}: {}>
+
+    The `copy` method return a deep copy, rather than a shallow one.
+
+    **Context manager**
+
+    The `{{class}}` instance can be used as a context manager that
+    upon exit executes the function defined by the `_func` attribute,
+    with the class itself as input *kwargs* parameters. For example,
+    the `{{class}}` instance ``c`` would execute ``c._func(**c)`` upon
+    exit.
 
     .. versionadded:: (cfdm) 1.8.8.0
 
     '''
-    __slots__ = ('_func',)
-
     def __new__(cls, *args, **kwargs):
+        '''
+        '''
         instance = super().__new__(cls)
         instance._func = configuration
         return instance
+
+    def __docstring_substitutions__(self):
+        '''Define docstring substitutions that apply to this class and all of
+    its subclasses.
+
+    These are in addtion to, and take precendence over, docstring
+    substitutions defined by the base classes of this class.
+
+    See `_docstring_substitutions` for details.
+
+    .. versionaddedd:: (cfdm) 1.8.8.0
+
+    :Returns:
+
+        `dict`
+            The docstring substitutions that have been applied.
+
+        '''
+        return _docstring_substitution_definitions
+
+    def __docstring_package_depth__(self):
+        '''Return the package depth for {{package}} docstring substitutions.
+
+    See `_docstring_package_depth` for details.
+
+    .. versionaddedd:: (cfdm) 1.8.8.0
+
+        '''
+        return 0
+
+    def __deepcopy__(self, memo):
+        '''Called by the `copy.deepcopy` function.
+
+    x.__deepcopy__() <==> copy.deepcopy(x)
+
+        '''
+        return self.copy()
 
     def __enter__(self):
         '''Enter the runtime context.
@@ -982,9 +986,34 @@ class Configuration(dict):
     def __str__(self):
         return super().__repr__()
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
+    def copy(self):
+        '''Return a deep copy.
+
+    ``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
+
+    .. versionadded:: (cfdm) 1.8.8.0
+
+    :Returns:
+
+        `{{class}}`
+            The deep copy.
+
+        '''
+        out = type(self)(**deepcopy(self),
+                         _func=getattr(self, '_func', None))
+
+        if not hasattr(self, '_func'):
+            del out._func
+
+        return out
+
 
 class ConstantAccess(metaclass=DocstringRewriteMeta):
-    '''
+    '''Base class for classes masquerading as functions that access
+    package-wide constants.
 
     '''
     # Define the dictionary that stores the constant values
@@ -993,14 +1022,24 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
     # Define the `Constant` object that contains a constant value
     _Constant = Constant
 
+    # Define the key of the _CONSTANTS dictionary that contains the
+    # constant value
+    _name = None
+
     def __new__(cls, *arg):
         '''Return a `Constant` instance during class creation.
 
         '''
-        name, arg = cls._func(*arg)
-        old = cls._CONSTANTS[name]
+        old = cls._CONSTANTS[cls._name]
         if arg:
-            cls._CONSTANTS[name] = arg[0]
+            arg = arg[0]
+            try:
+                # Check for Constants instance
+                arg = arg.value
+            except AttributeError:
+                pass
+
+            cls._CONSTANTS[cls._name] = cls._parse(cls, arg)
 
         return cls._Constant(old, _func=cls)
 
@@ -1033,26 +1072,116 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
         '''
         return 0
 
-    def _func(*arg):
-        '''Method that parses a new value for the constant.
+    def _parse(cls, arg):
+        '''Parse a new constant value.
+
+    .. versionaddedd:: (cfdm) 1.8.8.0
+
+    :Parameter:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
 
     :Returns:
 
-        `str`, `tuple`
-            The key of the _CONSTANTS dictionary that contains the
-            constant value; and a tuple containg the parsed
-            argument. If no new value was given then this empty tuple
-            is empty.
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
 
         '''
-        raise NotImplementedError("Subclasses must implement _func")
+        raise NotImplementedError("Subclasses must implement '_parse'")
+
+
+class atol(ConstantAccess):
+    '''The tolerance on absolute differences when testing for numerically
+    tolerant equality.
+
+    Two real numbers ``x`` and ``y`` are considered equal if
+    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
+    differences) and ``rtol`` (the tolerance on relative differences)
+    are positive, typically very small numbers. The values of ``atol``
+    and ``rtol`` are initialised to the system epsilon (the difference
+    between 1 and the least value greater than 1 that is representable
+    as a float).
+
+    .. versionadded:: (cfdm) 1.7.0
+
+    .. seealso:: `rtol`, `configuration`
+
+    :Parameters:
+
+        arg: `float` or `Constant`, optional
+            The new value of relative tolerance. The default is to not
+            change the current value.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples:**
+
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: 2.220446049250313e-16>
+    >>> print({{package}}.{{class}}())
+    2.220446049250313e-16
+    >>> str({{package}}.{{class}}())
+    '2.220446049250313e-16'
+    >>> {{package}}.{{class}}().value
+    2.220446049250313e-16
+    >>> float({{package}}.{{class}}())
+    2.220446049250313e-16
+
+    >>> old = {{package}}.{{class}}(1e-10)
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: 2.220446049250313e-16>
+    >>> {{package}}.{{class}}(old)
+    <{{repr}}Constant: 1e-10>
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: 2.220446049250313e-16>
+
+    Use as a context manager:
+
+    >>> print({{package}}.{{class}}())
+    2.220446049250313e-16
+    >>> with {{package}}.{{class}}(1e-5):
+    ...     print({{package}}.{{class}}(), {{package}}.{{class}}(2e-30), {{package}}.{{class}}())
+    ...
+    1e-05 1e-05 2e-30
+    >>> print({{package}}.{{class}}())
+    2.220446049250313e-16
+
+    '''
+    _name = 'ATOL'
+
+    def _parse(cls, arg):
+        '''Parse a new constant value.
+
+    .. versionaddedd:: (cfdm) 1.8.8.0
+
+    :Parameters:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
+
+    :Returns:
+
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
+
+        '''
+        return float(arg)
 
 
 class rtol(ConstantAccess):
     '''The tolerance on relative differences when testing for numerically
     tolerant equality.
-
-    NAME: {{class}}
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -1068,7 +1197,7 @@ class rtol(ConstantAccess):
 
     :Parameters:
 
-        rtol: `float` or `Constant`, optional
+        arg: `float` or `Constant`, optional
             The new value of relative tolerance. The default is to not
             change the current value.
 
@@ -1080,64 +1209,202 @@ class rtol(ConstantAccess):
 
     **Examples:**
 
-    >>> {{package}}.rtol()
-    <Constant: 2.220446049250313e-16>
-    >>> print({{package}}.rtol())
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: 2.220446049250313e-16>
+    >>> print({{package}}.{{class}}())
     2.220446049250313e-16
-    >>> str({{package}}.rtol())
+    >>> str({{package}}.{{class}}())
     '2.220446049250313e-16'
-    >>> {{package}}.rtol().value
+    >>> {{package}}.{{class}}().value
     2.220446049250313e-16
-    >>> float({{package}}.rtol())
+    >>> float({{package}}.{{class}}())
     2.220446049250313e-16
 
-    >>> old = {{package}}.rtol(1e-10)
-    >>> {{package}}.rtol()
-    <Constant: 2.220446049250313e-16>
-    >>> {{package}}.rtol(old)
-    <Constant: 1e-10>
-    >>> {{package}}.rtol()
-    <Constant: 2.220446049250313e-16>
+    >>> old = {{package}}.{{class}}(1e-10)
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: 2.220446049250313e-16>
+    >>> {{package}}.{{class}}(old)
+    <{{repr}}Constant: 1e-10>
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: 2.220446049250313e-16>
 
     Use as a context manager:
 
-    >>> print({{package}}.rtol())
+    >>> print({{package}}.{{class}}())
     2.220446049250313e-16
-    >>> with {{package}}.rtol(1e-5):
-    ...     print({{package}}.rtol(), {{package}}.rtol(2e-30), {{package}}.rtol())
+    >>> with {{package}}.{{class}}(1e-5):
+    ...     print({{package}}.{{class}}(), {{package}}.{{class}}(2e-30), {{package}}.{{class}}())
     ...
     1e-05 1e-05 2e-30
-    >>> print({{package}}.rtol())
+    >>> print({{package}}.{{class}}())
     2.220446049250313e-16
 
     '''
-    def _func(*arg):
-        '''Method that parses a new value for the constant.
+    _name = 'RTOL'
+
+    def _parse(cls, arg):
+        '''Parse a new constant value.
+
+    .. versionaddedd:: (cfdm) 1.8.8.0
+
+    :Parameters:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
 
     :Returns:
 
-        `str`, `tuple`
-            The key of the _CONSTANTS dictionary that contains the
-            constant value; and a tuple containg the parsed
-            argument. If no new value was given then this empty tuple
-            is empty.
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
 
         '''
-        if arg:
-            arg = arg[0]
-            try:
-                # Check for Constants instance
-                arg = arg.value
-            except AttributeError:
-                pass
-
-            arg = (float(arg),)
-
-        return 'RTOL', arg
+        return float(arg)
 
 
-class child(rtol):
-    pass
+class log_level(ConstantAccess):
+    '''The minimal level of seriousness of log messages which are shown.
 
-class grandchild(child):
-    pass
+    This can be adjusted to filter out potentially-useful log messages
+    generated by cfdm at runtime, such that any messages marked as
+    having a severity below the level set will not be reported.
+
+    For example, when set to ``'WARNING'`` (or equivalently ``1``),
+    all messages categorised as ``'DEBUG'`` or ``'INFO'`` will be
+    supressed, and only warnings will emerge.
+
+    See https://ncas-cms.github.io/cfdm/tutorial.html#logging for a
+    detailed breakdown on the levels and configuration possibilities.
+
+    The default level is ``'WARNING'`` (``1``).
+
+    .. versionadded:: (cfdm) 1.8.4
+
+    .. seealso:: `configuration`
+
+    :Parameters:
+
+         log_level: `str` or `int` or `Constant`, optional
+            The new value of the minimal log severity level. This can
+            be specified either as a string equal (ignoring case) to
+            the named set of log levels or identifier ``'DISABLE'``,
+            or an integer code corresponding to each of these, namely:
+
+            * ``'DISABLE'`` (``0``);
+            * ``'WARNING'`` (``1``);
+            * ``'INFO'`` (``2``);
+            * ``'DETAIL'`` (``3``);
+            * ``'DEBUG'`` (``-1``).
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified (or if one was specified but was
+            not valid). Note the string name, rather than the
+            equivalent integer, will always be returned.
+
+    **Examples:**
+
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: 'WARNING'>
+    >>> print({{package}}.{{class}}())
+    WARNING
+    >>> str({{package}}.{{class}}())
+    'WARNING'
+
+    >>> old = {{package}}.{{class}}('INFO')
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: 'WARNING'>
+    >>> {{package}}.{{class}}(old)
+    <{{repr}}Constant: 'INFO'>
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: 'WARNING'>
+
+    Use as a context manager:
+
+    >>> print({{package}}.{{class}}())
+    WARNING
+    >>> with {{package}}.{{class}}('DETAIL'):
+    ...     print({{package}}.class}}(), {{package}}.{{class}}(-1), {{package}}.{{class}}())
+    ...
+    DETAIL DETAIL DEBUG
+    >>> print({{package}}.{{class}}())
+    WARNING
+
+    '''
+    _name = 'LOG_LEVEL'
+
+    # Define the valid log levels
+    _ValidLogLevels = ValidLogLevels
+
+    # Function that returns a Boolean stating if input is a
+    # ValidLogLevels Enum integer
+    _is_valid_log_level_int = _is_valid_log_level_int
+
+    # Function that re-sets minimum level for displayed log messages
+    # of a logger
+    _reset_log_emergence_level = _reset_log_emergence_level
+
+    def _parse(cls, arg):
+        '''Parse a new constant value.
+
+    It is assumed that the `_is_valid_log_level_int` and
+    `_reset_log_emergence_level` are defined within the namespace.
+
+    .. versionaddedd:: (cfdm) 1.8.8.0
+
+    :Parameters:
+
+        cls:
+            This class.
+
+        arg:
+            The given new constant value.
+
+    :Returns:
+
+            A version of the new constant value suitable for insertion
+            into the `CONSTANTS` dictionary.
+
+        '''
+        # Ensuring it is a valid level specifier to set & use, either
+        # a case-insensitive string of valid log level or
+        # dis/en-abler, or an integer 0 to 5 corresponding to one of
+        # those as converted above:
+        if isinstance(arg, str):
+            arg = arg.upper()
+        elif cls._is_valid_log_level_int(arg):
+            # Convert to string ID first
+            arg = cls._ValidLogLevels(arg).name
+
+        if not hasattr(cls._ValidLogLevels, arg):
+            raise ValueError(
+                "Logging level {!r} is not one of the valid values '{}', "
+                "where either the string or the corrsponding integer is "
+                "accepted. Value remains as it was.".format(
+                    arg, ", '".join([val.name + "' = " + str(val.value)
+                                     for val in cls._ValidLogLevels])
+                )
+            )
+
+        # Safe to reset now as guaranteed to be valid:
+        cls._reset_log_emergence_level(arg)
+
+        return arg
+
+
+def ATOL(*new_atol):
+    '''Alias for `cfdm.atol`.
+
+    '''
+    return atol(*new_atol)
+
+
+def RTOL(*new_rtol):
+    '''Alias for `cfdm.rtol`.
+
+    '''
+    return rtol(*new_rtol)
