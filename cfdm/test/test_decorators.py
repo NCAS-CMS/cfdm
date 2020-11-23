@@ -4,6 +4,8 @@ import unittest
 
 import cfdm
 
+from unittest.mock import patch
+
 
 # Note: it is important we test on the cfdm logging config rather than the
 # generic Python module logging (i.e. 'cfdm.logging' not just 'logging').
@@ -23,6 +25,8 @@ class dummyClass:
         self.detail_message = "In practice this will be very detailed."
         self.info_message = "This should be short and sweet"
         self.warning_message = "Best pay attention to this!"
+
+        self.dummy_string = "foo bar baz"
 
     def copy(self):
         return copy.deepcopy(self)  # note a shallow copy is not sufficient
@@ -50,6 +54,26 @@ class dummyClass:
         d = cfdm.decorators._inplace_enabled_define_and_cleanup(self)
         d._list.append(2)
         return d
+
+    def print_or_return_string(self, display=True):
+        '''Dummy function to either print or return a given string.
+
+           It prints the string if the display argument is True, else
+           it returns it.
+        '''
+        string = self.dummy_string
+
+        if display:
+            print(string)
+        else:
+            return string
+
+    @cfdm.decorators._display_or_return
+    def print_or_return_string_by_decorator(self, display=True):
+        '''Dummy function equivalent to 'print_or_return_string' but a
+           decorator manages the logic to print if display argument is True.
+        '''
+        return self.dummy_string
 
     @cfdm.decorators._manage_log_level_via_verbosity
     def decorated_logging_func(self, verbose=None):
@@ -183,6 +207,31 @@ class DecoratorsTest(unittest.TestCase):
                 for msg in log_message:  # nothing else should be logged
                     self.assertNotIn(msg, catch.output)
 
+    @patch('builtins.print')
+    def test_display_or_return(self, mock_print):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        test_class = dummyClass()
+
+        # Compare results with display=False:
+        res_1 = test_class.print_or_return_string(display=False)
+        res_2 = test_class.print_or_return_string_by_decorator(display=False)
+        self.assertEqual(res_1, res_2)
+        mock_print.assert_not_called()  # checks nothing was printed to STDOUT
+
+        # Compare results with display=True:
+        res_3 = test_class.print_or_return_string_by_decorator(display=True)
+        mock_print.assert_called_with(test_class.dummy_string)
+        # Should print rather than return, so returns None by default:
+        self.assertEqual(res_3, None)
+
+        new_string = "Let's change it up"
+        test_class.dummy_string = new_string
+        # Compare defaults, where default should be display=True i.e. to print
+        res_4 = test_class.print_or_return_string_by_decorator()
+        mock_print.assert_called_with(new_string)
+        self.assertEqual(res_4, None)
 
 # --- End: class
 

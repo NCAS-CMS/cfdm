@@ -108,6 +108,7 @@ from .decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
+    _display_or_return,
 )
 
 from .constructs import Constructs
