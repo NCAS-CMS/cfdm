@@ -22,7 +22,7 @@ INPLACE_ENABLED_PLACEHOLDER = '_to_assign'
 def _inplace_enabled(operation_method=None, *, default=False):
     '''A decorator enabling operations to be applied in-place.
 
-    If the decorated method has keyword argument *inplace* being equal
+    If the decorated method has keyword argument ``inplace`` being equal
     to True, the function will be performed on `self` and return None,
     otherwise it will operate on a copy of ``self`` and return the
     processed copy.
@@ -238,13 +238,21 @@ def _test_decorator_args(*dec_args):
     return deprecated_kwarg_check_decorator
 
 
-def _display_or_return(method):
-    '''A wrapper for TODO ... .'''
+def _display_or_return(method_with_display_kwarg):
+    '''A decorator enabling a string to be printed rather than returned.
 
-    @wraps(method)
+    If the decorated method has keyword argument ``display`` being equal
+    to True, by default or from being set as such, the function will
+    print the output that would otherwise be returned and return `None`.
+
+    :Parameters:
+
+        method_with_display_kwarg: method
+
+    '''
+    @wraps(method_with_display_kwarg)
     def end_with_display_or_return_logic(self, *args, **kwargs):
-        '''A wrapper for TODO ... .'''
-        string = method(self, *args, **kwargs)
+        string = method_with_display_kwarg(self, *args, **kwargs)
 
         # display=True is always default, so if display not provided, set True
         display = kwargs.get('display', True)
