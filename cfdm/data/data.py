@@ -407,10 +407,13 @@ class Data(Container,
         units = self.get_units(None)
         calendar = self.get_calendar(None)
 
+        isreftime = False
         if units is not None:
-            isreftime = ('since' in units)
-        else:
-            isreftime = False
+            if isinstance(units, str):
+                isreftime = 'since' in units
+            else:
+                units = '??'
+        # --- End: if
 
         try:
             first = self.first_element()
