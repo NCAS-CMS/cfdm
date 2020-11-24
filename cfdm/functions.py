@@ -28,7 +28,9 @@ from .constants import CONSTANTS, ValidLogLevels
 
 
 # --------------------------------------------------------------------
-# Merge core and non-core docstring sustituion dictionaries
+# Merge core and non-core docstring substitution dictionaries without
+# overwriting either of them (in the absence of a dictionary union
+# operator).
 # --------------------------------------------------------------------
 _subs = _docstring_substitution_definitions.copy()
 _subs.update(_core_docstring_substitution_definitions)
@@ -879,6 +881,27 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
     '''Base class for classes masquerading as functions that access
     package-wide constants.
 
+    Subclasses must implement or inherit a method called `_parse` as
+    follows:
+
+       def _parse(cls, arg):
+          """Parse a new constant value.
+
+       :Parameter:
+
+            cls:
+                This class.#
+
+            arg:
+                The given new constant value.
+
+       :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
+
+           """
+
     '''
     # Define the dictionary that stores the constant values
     _CONSTANTS = CONSTANTS
@@ -935,27 +958,6 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
 
         '''
         return 0
-
-    def _parse(cls, arg):
-        '''Parse a new constant value.
-
-    .. versionaddedd:: (cfdm) 1.8.8.0
-
-    :Parameter:
-
-        cls:
-            This class.
-
-        arg:
-            The given new constant value.
-
-    :Returns:
-
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
-
-        '''
-        raise NotImplementedError("Subclasses must implement '_parse'")
 
 
 class atol(ConstantAccess):

@@ -337,7 +337,7 @@ class DocstringRewriteMeta(type):
 
             if doc_template is None:
                 set_doc_template_to_None = True
-        # --- End: for
+        # --- End: if
 
         if doc_template is not None:
             doc = doc_template
@@ -349,7 +349,7 @@ class DocstringRewriteMeta(type):
                                                          None,
                                                          None,
                                                          docstring_rewrite,
-                                                         class__doc__=doc)
+                                                         class_docstring=doc)
             attrs['__doc__'] = doc
 
             if set_doc_template_to_None:
@@ -577,14 +577,14 @@ class DocstringRewriteMeta(type):
 
     @classmethod
     def _docstring_update(cls, package_name, class_name, f,
-                          method_name, config, class__doc__=None):
+                          method_name, config, class_docstring=None):
         '''Perform docstring substitutions on a method at time of import.
 
     .. versionadded:: (cfdm) 1.8.7.0
 
         '''
-        if class__doc__ is not None:
-            doc = class__doc__
+        if class_docstring is not None:
+            doc = class_docstring
         else:
             doc = f.__doc__
             if doc is None or '{{' not in doc:
@@ -632,7 +632,7 @@ class DocstringRewriteMeta(type):
         # ----------------------------------------------------------------
         # Set the rewritten docstring on the method
         # ----------------------------------------------------------------
-        if class__doc__ is None:
+        if class_docstring is None:
             f.__doc__ = doc
 
         return doc

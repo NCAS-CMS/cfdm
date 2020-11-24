@@ -98,6 +98,7 @@ from .functions import (
     _is_valid_log_level_int,
     Configuration,
     Constant,
+    ConstantAccess,
 )
 
 # Though these are internal-use methods, include them in the namespace
