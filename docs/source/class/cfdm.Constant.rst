@@ -22,8 +22,8 @@ Inspection
    
    ~cfdm.Constant.value
 
-Miscellaneous
--------------
+Copying
+-------
 
 .. rubric:: Methods
 
