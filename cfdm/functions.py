@@ -887,7 +887,7 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
        :Parameter:
 
             cls:
-                This class.#
+                This class.
 
             arg:
                 The given new constant value.
