@@ -55,7 +55,7 @@ File
    ~cfdm.NetCDFArray.get_group
    ~cfdm.NetCDFArray.get_mask
    
-Miscellaneous
+Miscallaneous
 -------------
 
 .. autosummary::

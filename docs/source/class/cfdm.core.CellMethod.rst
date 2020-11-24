@@ -46,7 +46,7 @@ Properties
    ~cfdm.core.CellMethod.set_qualifier
    ~cfdm.core.CellMethod.qualifiers
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

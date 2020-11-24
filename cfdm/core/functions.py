@@ -53,27 +53,20 @@ def environment(display=True, paths=True):
     cfdm.core: 1.8.0
 
     '''
-    out = []
-
-    out.append('Platform: ' + str(platform.platform()))
-    out.append('HDF5 library: ' + str(netCDF4. __hdf5libversion__))
-    out.append('netcdf library: ' + str(netCDF4.__netcdf4libversion__))
-
-    out.append('python: ' + str(platform.python_version()))
-    if paths:
-        out[-1] += ' ' + str(sys.executable)
-
-    out.append('netCDF4: ' + str(netCDF4.__version__))
-    if paths:
-        out[-1] += ' ' + str(os.path.abspath(netCDF4.__file__))
-
-    out.append('numpy: ' + str(numpy.__version__))
-    if paths:
-        out[-1] += ' ' + str(os.path.abspath(numpy.__file__))
-
-    out.append('cfdm.core: ' + str(__version__))
-    if paths:
-        out[-1] += ' ' + str(os.path.abspath(__file__))
+    dependency_version_paths_mapping = {
+        'Platform': (platform.platform(), ''),
+        'HDF5 library': (netCDF4.__hdf5libversion__, ''),
+        'netcdf library': (netCDF4.__netcdf4libversion__, ''),
+        'Python': (platform.python_version(), sys.executable),
+        'netCDF4': (netCDF4.__version__, os.path.abspath(netCDF4.__file__)),
+        'numpy': (numpy.__version__, os.path.abspath(numpy.__file__)),
+        'cfdm.core': (__version__, os.path.abspath(__file__)),
+    }
+    string = '{0}: {1!s}'
+    if paths:  # include path information, else exclude, when unpacking tuple
+        string += ' {2!s}'
+    out = [string.format(dep, *info)
+           for dep, info in dependency_version_paths_mapping.items()]
 
     if display:
         print('\n'.join(out))  # pragma: no cover

@@ -68,7 +68,7 @@ Data
 
    ~cfdm.core.CellMeasure.data
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

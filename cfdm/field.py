@@ -22,6 +22,7 @@ from .decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
     _test_decorator_args,
+    _display_or_return,
 )
 
 
@@ -1491,6 +1492,7 @@ class Field(mixin.NetCDFVariable,
 
         return out
 
+    @_display_or_return
     def dump(self, display=True, _level=0, _title=None):
         '''A full description of the field construct.
 
@@ -1580,12 +1582,7 @@ class Field(mixin.NetCDFVariable,
 
         string.append(self.get_domain().dump(display=False))
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)
-        else:
-            return string
+        return '\n'.join(string)
 
     @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,
@@ -2083,7 +2080,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2150,7 +2147,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2214,7 +2211,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2280,7 +2277,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2342,7 +2339,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2402,7 +2399,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2459,7 +2456,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2519,7 +2516,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2576,7 +2573,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2629,7 +2626,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2678,7 +2675,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2730,7 +2727,7 @@ class Field(mixin.NetCDFVariable,
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
-    names can be set on all such occurences individually, or
+    names can be set on all such occurrences individually, or
     preferably by using this method to ensure consistency across all
     such components.
 
@@ -2851,8 +2848,8 @@ class Field(mixin.NetCDFVariable,
             {{axes int examples}}
 
         constructs: `bool`
-            If True then tranpose the metadata constructs to have the
-            same relative domain axis order as the data of tranposed
+            If True then transpose the metadata constructs to have the
+            same relative domain axis order as the data of transposed
             field construct. By default, metadata constructs are not
             changed.
 

@@ -150,7 +150,7 @@ class Field(mixin.ConstructAccess,
 
     @property
     def constructs(self):
-        '''Return the metdata constructs.
+        '''Return the metadata constructs.
 
     .. versionadded:: (cfdm) 1.7.0
 

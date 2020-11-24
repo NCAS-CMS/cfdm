@@ -2441,7 +2441,7 @@ class NetCDFUnlimitedDimension(NetCDF):
 
         `bool`
             The existing unlimited status. True and False signify
-            "unlimited" and "not unlimited" repectively.
+            "unlimited" and "not unlimited" respectively.
 
     **Examples:**
 
@@ -2473,7 +2473,7 @@ class NetCDFUnlimitedDimension(NetCDF):
 
         value: `bool`
             The new unlimited status. True and False signify
-            "unlimited" and "not unlimited" repectively.
+            "unlimited" and "not unlimited" respectively.
 
     :Returns:
 

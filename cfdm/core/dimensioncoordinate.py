@@ -68,7 +68,7 @@ class DimensionCoordinate(abstract.Coordinate):
 
         data: data_like
             The data to be inserted. Must be 1-dimensional,
-            i.e. scalar or multidimensionl data is not allowed.
+            i.e. scalar or multidimensional data is not allowed.
 
             {{data_like}}
 

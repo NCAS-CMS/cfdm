@@ -96,7 +96,7 @@ Coordinate conversion
 	      
    ~cfdm.CoordinateReference.coordinate_conversion
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

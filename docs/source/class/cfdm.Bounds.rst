@@ -75,7 +75,7 @@ Data
    ~cfdm.Bounds.shape
    ~cfdm.Bounds.size
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

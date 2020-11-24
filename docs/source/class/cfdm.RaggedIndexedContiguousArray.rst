@@ -40,7 +40,7 @@ Inspection
    ~cfdm.RaggedIndexedContiguousArray.shape
    ~cfdm.RaggedIndexedContiguousArray.size
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

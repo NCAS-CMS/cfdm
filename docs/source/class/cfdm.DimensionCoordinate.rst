@@ -146,7 +146,7 @@ Geometries
 
    ~cfdm.DimensionCoordinate.interior_ring
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

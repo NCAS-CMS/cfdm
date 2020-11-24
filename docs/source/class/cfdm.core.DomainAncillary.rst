@@ -116,7 +116,7 @@ Geometries
 
    ~cfdm.core.DomainAncillary.interior_ring
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

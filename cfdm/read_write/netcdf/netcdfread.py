@@ -593,7 +593,7 @@ class NetCDFRead(IORead):
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
-            on field contructs and metadata constructs that have
+            on field constructs and metadata constructs that have
             data. By default no such warning is printed
 
             "Out-of-range" data values in the file, as defined by any
@@ -3860,7 +3860,7 @@ class NetCDFRead(IORead):
 
     def _create_auxiliary_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None, nodes=False):
-        '''Create an auxiliary coordinate constuct.
+        '''Create an auxiliary coordinate construct.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -3887,7 +3887,7 @@ class NetCDFRead(IORead):
 
     :Returns:
 
-            The auxiliary coordinate constuct.
+            The auxiliary coordinate construct.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
@@ -3898,7 +3898,7 @@ class NetCDFRead(IORead):
 
     def _create_dimension_coordinate(self, field_ncvar, ncvar, f,
                                      bounds_ncvar=None):
-        '''Create a dimension coordinate constuct.
+        '''Create a dimension coordinate construct.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -3918,7 +3918,7 @@ class NetCDFRead(IORead):
 
     :Returns:
 
-            The dimension coordinate constuct.
+            The dimension coordinate construct.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
@@ -3934,7 +3934,7 @@ class NetCDFRead(IORead):
 
     :Returns:
 
-        The domain ancillary constuct.
+        The domain ancillary construct.
 
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
