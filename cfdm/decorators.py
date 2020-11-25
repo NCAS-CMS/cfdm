@@ -22,7 +22,7 @@ INPLACE_ENABLED_PLACEHOLDER = '_to_assign'
 def _inplace_enabled(operation_method=None, *, default=False):
     '''A decorator enabling operations to be applied in-place.
 
-    If the decorated method has keyword argument ``inplace`` being equal
+    If the decorated method has keyword argument *inplace* being equal
     to True, the function will be performed on `self` and return None,
     otherwise it will operate on a copy of ``self`` and return the
     processed copy.
@@ -241,7 +241,7 @@ def _test_decorator_args(*dec_args):
 def _display_or_return(method_with_display_kwarg):
     '''A decorator enabling a string to be printed rather than returned.
 
-    If the decorated method has keyword argument ``display`` being equal
+    If the decorated method has keyword argument *display* being equal
     to True, by default or from being set as such, the function will
     print the output that would otherwise be returned and return `None`.
 
