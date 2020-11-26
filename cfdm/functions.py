@@ -219,7 +219,7 @@ def _configuration(_Configuration, **kwargs):
         for setting_alias, old_value in old_values.items():
             reset_mapping[setting_alias](old_value)
 
-        # Raise the exception            
+        # Raise the exception
         raise
 
     return _Configuration(**old)
