@@ -82,7 +82,7 @@ class Domain(mixin.ConstructAccess,
     # ----------------------------------------------------------------
     @property
     def constructs(self):
-        '''Return the metdata constructs.
+        '''Return the metadata constructs.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -149,7 +149,7 @@ class Domain(mixin.ConstructAccess,
 
         constructs: `Constructs`
             The constructs from which to create the new domain. Cell
-            method and field ancillary constucts are ignored.
+            method and field ancillary constructs are ignored.
 
         copy: `bool`, optional
             If True then deep copy the metadata constructs prior to

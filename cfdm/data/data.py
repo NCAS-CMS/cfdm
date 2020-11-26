@@ -2430,7 +2430,7 @@ class Data(Container,
             # list is the left-most flattened axis
             axes = sorted(axes)
 
-        # Save the shape before we tranpose
+        # Save the shape before we transpose
         shape = list(d.shape)
 
         order = [i for i in range(ndim) if i not in axes]

@@ -53,7 +53,7 @@ Data
 
    ~cfdm.core.PropertiesData.data
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

@@ -883,7 +883,7 @@ Data mask
 ^^^^^^^^^
 
 There is always a data mask, which may be thought of as a separate
-data array of booleans with the same shape as the original data. The
+data array of Booleans with the same shape as the original data. The
 data mask is `False` where the the data has values, and `True` where
 the data is missing. The data mask may be inspected with the
 `~cfdm.Data.mask` attribute of the data instance, which returns the
@@ -3008,7 +3008,7 @@ runtime context established using a `with` statement.
    1e-05
    >>> print(cfdm.atol())
    2.220446049250313e-16
-
+   
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
@@ -3116,7 +3116,7 @@ Method                                               Description
 `~Field.nc_clear_variable_groups`                    Remove the netCDF group structure
 					             
 `~Field.nc_geometry_variable_groups`                 Return the netCDF geometry
-                                                     variable ggroup structure
+                                                     variable group structure
 					             
 `~Field.nc_set_geometry_variable_groups`             Set the netCDF geometry
                                                      variable group structure

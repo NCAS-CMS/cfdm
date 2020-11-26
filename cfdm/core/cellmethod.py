@@ -66,7 +66,7 @@ class CellMethod(abstract.Container):
 
         qualifiers: `dict`, optional
             Set descriptive qualifiers. The dictionary keys are
-            qualifer names, with corresponding values. Ignored if the
+            qualifier names, with corresponding values. Ignored if the
             *source* parameter is set.
 
             Qualifiers may also be set after initialisation with the

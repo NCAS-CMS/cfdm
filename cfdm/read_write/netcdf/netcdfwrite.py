@@ -923,7 +923,7 @@ class NetCDFWrite(IOWrite):
 
         `dict`
             A representation off the CF-netCDF geometry container
-            variable for field constuct. If there is no geometry
+            variable for field construct. If there is no geometry
             container then the dictionary is empty.
 
         '''
@@ -3370,7 +3370,7 @@ class NetCDFWrite(IOWrite):
             axes = self.implementation.get_construct_data_axes(f, key)
             if len(axes) > 1 or axes[0] in data_axes:
                 # This auxiliary coordinate construct spans at least
-                # one of the dimensions of the field constuct's data
+                # one of the dimensions of the field construct's data
                 # array.
                 coordinates = self._write_auxiliary_coordinate(f, key,
                                                                aux_coord,

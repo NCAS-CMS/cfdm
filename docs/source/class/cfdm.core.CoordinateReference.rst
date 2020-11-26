@@ -84,7 +84,7 @@ Coordinate conversion
 
    ~cfdm.core.CoordinateReference.coordinate_conversion
 
-Miscellaneous
+Miscallaneous
 -------------
 
 .. rubric:: Methods

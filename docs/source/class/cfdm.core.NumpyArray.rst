@@ -26,7 +26,7 @@ Inspection
    ~cfdm.core.NumpyArray.shape
    ~cfdm.core.NumpyArray.size
       
-Miscellaneous
+Miscallaneous
 -------------
 
 .. autosummary::
