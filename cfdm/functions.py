@@ -199,8 +199,21 @@ def _configuration(_Configuration, **kwargs):
         'new_log_level': log_level,
     }
 
-    for setting_alias, new_value in kwargs.items():  # for all input kwargs...
-        reset_mapping[setting_alias](new_value)  # ...run corresponding func
+    old_values = {}
+
+    try:
+        # Run the corresponding func for all input kwargs
+        for setting_alias, new_value in kwargs.items():
+            reset_mapping[setting_alias](new_value)
+            setting = setting_alias.replace('new_', '', 1)
+            old_values[setting_alias] = old[setting]
+    except ValueError:
+        # Reset any constants that were changed prior to the exception
+        for setting_alias, old_value in old_values.items():
+            reset_mapping[setting_alias](old_value)
+
+        # Raise the exception            
+        raise
 
     return _Configuration(**old)
 
