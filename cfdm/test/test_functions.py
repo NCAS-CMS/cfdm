@@ -4,6 +4,8 @@ import datetime
 import inspect
 import logging
 import os
+import platform
+import sys
 import tempfile
 import unittest
 
@@ -197,10 +199,29 @@ class FunctionsTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        self.assertIsInstance(cfdm.environment(display=False), list)
-        self.assertIsInstance(cfdm.environment(display=False, paths=False),
-                              list)
-        self.assertIsInstance(cfdm.environment(display=False), list)
+        e = cfdm.environment(display=False)
+        ep = cfdm.environment(display=False, paths=False)
+
+        self.assertIsInstance(e, list)
+        self.assertIsInstance(ep, list)
+
+        components = ['Platform: ', 'netCDF4: ', 'numpy: ', 'cftime: ']
+        for component in components:
+            self.assertTrue(any(s.startswith(component) for s in e))
+            self.assertTrue(any(s.startswith(component) for s in ep))
+        for component in [
+            'cfdm: {} {}'.format(
+                cfdm.__version__, os.path.abspath(cfdm.__file__)),
+            'Python: {} {}'.format(
+                platform.python_version(), sys.executable),
+        ]:
+            self.assertIn(component, e)
+            self.assertNotIn(component, ep)  # paths shouldn't be present here
+        for component in [
+            'cfdm: {}'.format(cfdm.__version__),
+            'Python: {}'.format(platform.python_version()),
+        ]:
+            self.assertIn(component, ep)
 
     def test_example_field(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
