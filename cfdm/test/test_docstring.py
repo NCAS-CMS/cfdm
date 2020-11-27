@@ -53,6 +53,104 @@ class DocstringTest(unittest.TestCase):
         self.subclasses_of_PropertiesDataBounds = _get_all_abbrev_subclasses(
             cfdm.mixin.propertiesdatabounds.PropertiesDataBounds)
 
+    def test_class_docstring_rewrite(self):
+
+        class parent(metaclass=cfdm.core.meta.DocstringRewriteMeta):
+            pass
+
+        class child(parent):
+            pass
+
+        class grandchild(child):
+            pass
+
+        self.assertIsNone(parent.__doc__)
+        self.assertIsNone(child.__doc__)
+        self.assertIsNone(grandchild.__doc__)
+
+        class parent(metaclass=cfdm.core.meta.DocstringRewriteMeta):
+            '''No sub 0'''
+
+        class child(parent):
+            pass
+
+        class grandchild(child):
+            pass
+
+        self.assertEqual(parent.__doc__, 'No sub 0')
+        self.assertIsNone(child.__doc__)
+        self.assertIsNone(grandchild.__doc__)
+
+        class parent(metaclass=cfdm.core.meta.DocstringRewriteMeta):
+            '''{{class}}'''
+
+        class child(parent):
+            pass
+
+        class grandchild(child):
+            pass
+
+        self.assertEqual(parent.__doc__, 'parent')
+        self.assertEqual(child.__doc__, 'child')
+        self.assertEqual(grandchild.__doc__, 'grandchild')
+
+        class child(parent):
+            '''No sub 1'''
+
+        class grandchild(child):
+            pass
+
+        class greatgrandchild(grandchild):
+            pass
+
+        self.assertEqual(parent.__doc__, 'parent')
+        self.assertEqual(child.__doc__, 'No sub 1')
+        self.assertIsNone(grandchild.__doc__)
+        self.assertIsNone(greatgrandchild.__doc__)
+
+        class greatgrandchild(grandchild):
+            '''No sub 3'''
+
+        self.assertEqual(parent.__doc__, 'parent')
+        self.assertEqual(child.__doc__, 'No sub 1')
+        self.assertIsNone(grandchild.__doc__)
+        self.assertEqual(greatgrandchild.__doc__,  'No sub 3')
+
+        class grandchild(child):
+            '''No sub 2'''
+
+        class greatgrandchild(grandchild):
+            pass
+
+        self.assertEqual(parent.__doc__, 'parent')
+        self.assertEqual(child.__doc__, 'No sub 1')
+        self.assertEqual(grandchild.__doc__,  'No sub 2')
+        self.assertIsNone(greatgrandchild.__doc__)
+
+        class grandchild(child):
+            '''Sub 2 {{class}}'''
+
+        class greatgrandchild(grandchild):
+            pass
+
+        self.assertEqual(parent.__doc__, 'parent')
+        self.assertEqual(child.__doc__, 'No sub 1')
+        self.assertEqual(grandchild.__doc__,  'Sub 2 grandchild')
+        self.assertEqual(greatgrandchild.__doc__,  'Sub 2 greatgrandchild')
+
+        class parent(metaclass=cfdm.core.meta.DocstringRewriteMeta):
+            pass
+
+        class child(parent):
+            '''{{class}}'''
+
+        class grandchild(child):
+            pass
+
+        self.assertIsNone(parent.__doc__)
+        self.assertEqual(child.__doc__, 'child')
+        self.assertEqual(grandchild.__doc__, 'grandchild')
+
     def test_docstring(self):
         # Test that all {{ occurrences have been substituted
         for klass in self.subclasses_of_Container:

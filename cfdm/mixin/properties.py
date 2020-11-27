@@ -3,9 +3,10 @@ import textwrap
 
 import numpy
 
-from ..decorators import _manage_log_level_via_verbosity
-
 from . import Container
+
+from ..decorators import (_manage_log_level_via_verbosity,
+                          _display_or_return)
 
 
 logger = logging.getLogger(__name__)
@@ -153,6 +154,7 @@ class Properties(Container):
 
         return out
 
+    @_display_or_return
     def dump(self, display=True, _key=None, _omit_properties=(),
              _prefix='', _title=None, _create_title=True, _level=0):
         '''A full description.
@@ -202,12 +204,7 @@ class Properties(Container):
         if properties:
             string.append(properties)
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)
-        else:
-            return string
+        return '\n'.join(string)
 
     @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,

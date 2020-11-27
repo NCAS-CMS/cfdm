@@ -22,6 +22,7 @@ from .decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
     _test_decorator_args,
+    _display_or_return,
 )
 
 
@@ -64,9 +65,7 @@ class Field(mixin.FieldDomain,
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netCDF variable}}
 
     The selection of properties to be written as netCDF global
     attributes may be accessed with the `nc_global_attributes`,
@@ -1360,6 +1359,7 @@ class Field(mixin.FieldDomain,
 
         return out
 
+    @_display_or_return
     def dump(self, display=True, _level=0, _title=None):
         '''A full description of the field construct.
 
@@ -1448,12 +1448,7 @@ class Field(mixin.FieldDomain,
         string.append(self.get_domain().dump(display=False,
                                              _create_title=False))
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)
-        else:
-            return string
+        return '\n'.join(string)
 
     def get_data_axes(self, key=None, default=ValueError()):
         '''Return the keys of the domain axis constructs spanned by the data

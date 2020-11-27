@@ -9,7 +9,9 @@ from .decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
+    _display_or_return,
 )
+
 
 logger = logging.getLogger(__name__)
 
@@ -244,6 +246,7 @@ class Domain(mixin.FieldDomain,
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
+    @_display_or_return
     def _dump_axes(self, axis_names, display=True, _level=0):
         '''Return a string containing a description of the domain axes of the
     field.
@@ -269,12 +272,7 @@ class Domain(mixin.FieldDomain,
         w = sorted(["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
                     for axis in axes])
 
-        string = '\n'.join(w)
-
-        if display:
-            print(string)  # pragma: no cover
-        else:
-            return string
+        return '\n'.join(w)
 
     def _one_line_description(self, axis_names_sizes=None):
         '''TODO
@@ -329,7 +327,7 @@ class Domain(mixin.FieldDomain,
 
     .. versionadded:: (cfdm) 1.9.0.0
 
-    .. seealso:: `Data.apply_masking`, `read`, `write`
+    .. seealso:: `{{package}}.Data.apply_masking`, `read`, `write`
 
     :Parameters:
 
@@ -627,6 +625,7 @@ TODO
 
         return out
 
+    @_display_or_return
     def dump(self, display=True, _omit_properties=(), _prefix='',
              _title=None, _create_title=True, _level=0):
         '''A full description of the domain construct.
@@ -750,12 +749,7 @@ TODO
 
         string.append('')
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)  # pragma: no cover
-        else:
-            return string
+        return '\n'.join(string)
 
     def get_filenames(self):
         '''Return TODO the name of the file or files containing the data of

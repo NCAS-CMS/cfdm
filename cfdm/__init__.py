@@ -94,12 +94,12 @@ from .functions import (
     log_level,
     rtol,
     unique_constructs,
-    _log_level,
     _disable_logging,
     _reset_log_emergence_level,
     _is_valid_log_level_int,
     Configuration,
     Constant,
+    ConstantAccess,
 )
 
 # Though these are internal-use methods, include them in the namespace
@@ -109,6 +109,7 @@ from .decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
+    _display_or_return,
 )
 
 from .constructs import Constructs

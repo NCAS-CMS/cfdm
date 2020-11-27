@@ -5,6 +5,7 @@ from ..data import Data
 from . import Properties
 
 from ..decorators import (
+    _display_or_return,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
@@ -545,6 +546,7 @@ class PropertiesData(Properties):
 
         return out
 
+    @_display_or_return
     def dump(self, display=True, _key=None, _omit_properties=(),
              _prefix='', _title=None, _create_title=True, _level=0,
              _axes=None, _axis_names=None):
@@ -599,12 +601,7 @@ class PropertiesData(Properties):
                                                          shape,
                                                          str(data)))
 
-        string = '\n'.join(string)
-
-        if display:
-            print(string)
-        else:
-            return string
+        return '\n'.join(string)
 
     @_manage_log_level_via_verbosity
     def equals(self, other, rtol=None, atol=None, verbose=None,

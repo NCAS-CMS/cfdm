@@ -331,6 +331,16 @@ class FunctionsTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             cfdm.configuration(bad_kwarg=1e-15)
 
+        old = cfdm.configuration()
+        try:
+            cfdm.configuration(atol=888, rtol=999, log_level='BAD')
+        except ValueError:
+            self.assertEqual(cfdm.configuration(), old)
+        else:
+            raise RuntimeError(
+                "A ValueError should have been raised, but wasn't"
+            )
+
     def test_unique_constructs(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

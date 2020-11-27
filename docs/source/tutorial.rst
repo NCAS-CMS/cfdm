@@ -3002,7 +3002,7 @@ on relative differences) are positive, typically very small
 numbers. By default both are set to the system epsilon (the difference
 between 1 and the least value greater than 1 that is representable as
 a float). Their values may be inspected and changed with the
-`cfdm.atol` and `cfdm.rtol` functions:
+`cfdm.atol` and `cfdm.rtol` functions.
 
 Note that the above equation is not symmetric in :math:`x` and
 :math:`y`, so that for two fields ``f1`` and ``f2``, ``f1.equals(f2)``
@@ -3025,22 +3025,21 @@ may be different from ``f2.equals(f1)`` in some rare cases.
    2.220446049250313e-16
 
 The :math:`a_{tol}` and :math:`r_{tol}` constants may be set for a
-runtime context established when executing a `with` statement.
+runtime context established using a `with` statement.
 
 .. code-block:: python
-   :caption: *Evaluate equality in a runtime contenxt with a different
-             value of 'atol'.*
+   :caption: *Create a runtime contenxt with a different value of
+             'atol'.*
 	     
-   >>> t2 = t - 0.00001
-   >>> t.equals(t2)
-   False
-   >>> with cf.atol(1e-5):
-   ...     print(t.equals(t2))
-   ...
-   True
-   >>> t.equals(t2)
-   False
-
+   >>> print(cfdm.atol())
+   2.220446049250313e-16
+   >>> with cfdm.atol(1e-5):
+   ...     print(cfdm.atol())
+   ...     
+   1e-05
+   >>> print(cfdm.atol())
+   2.220446049250313e-16
+   
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
