@@ -500,6 +500,10 @@ def unique_constructs(constructs, copy=True):
         # constructs is an empty sequence
         return []
 
+    # ----------------------------------------------------------------
+    # Find the first construct in the sequence and create an iterator
+    # for the rest
+    # ----------------------------------------------------------------
     try:
         # constructs is a sequence?
         construct0 = constructs[0]
@@ -516,8 +520,13 @@ def unique_constructs(constructs, copy=True):
     if copy:
         construct0 = construct0.copy()
 
+    # Initialise the output list
     out = [construct0]
 
+    # ----------------------------------------------------------------
+    # Loop round the iterator, adding any "new" constructs to the
+    # output list
+    # ----------------------------------------------------------------
     for construct in constructs:
         is_equal = False
         for c in out:

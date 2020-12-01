@@ -151,10 +151,12 @@ class Domain(mixin.FieldDomain,
                 shape = str(tuple(shape)).replace("'", "")
                 shape = shape.replace(',)', ')')
                 x.append(shape)
-            elif (variable.construct_type in ('auxiliary_coordinate',
-                                              'domain_ancillary')
-                  and variable.has_bounds()
-                  and variable.bounds.has_data()):
+            elif (
+                    variable.construct_type in ('auxiliary_coordinate',
+                                                'domain_ancillary')
+                    and variable.has_bounds()
+                    and variable.bounds.has_data()
+            ):
                 # Construct has no data but it does have bounds
                 shape = [axis_names[axis] for axis in axes]
                 shape.extend(
@@ -164,8 +166,10 @@ class Domain(mixin.FieldDomain,
                 shape = str(tuple(shape)).replace("'", "")
                 shape = shape.replace(',)', ')')
                 x.append(shape)
-            elif (hasattr(variable, 'nc_get_external')
-                  and variable.nc_get_external()):
+            elif (
+                    hasattr(variable, 'nc_get_external')
+                    and variable.nc_get_external()
+            ):
                 ncvar = variable.nc_get_variable(None)
                 if ncvar is not None:
                     x.append(' (external variable: ncvar%{})'.format(ncvar))
@@ -175,10 +179,12 @@ class Domain(mixin.FieldDomain,
 
             if variable.has_data():
                 x.append(' = {0}'.format(variable.data))
-            elif (variable.construct_type in ('auxiliary_coordinate',
-                                              'domain_ancillary')
-                  and variable.has_bounds()
-                  and variable.bounds.has_data()):
+            elif (
+                    variable.construct_type in ('auxiliary_coordinate',
+                                                'domain_ancillary')
+                    and variable.has_bounds()
+                    and variable.bounds.has_data()
+            ):
                 # Construct has no data but it does have bounds data
                 x.append(' = {0}'.format(variable.bounds.data))
 
@@ -237,8 +243,8 @@ class Domain(mixin.FieldDomain,
         x = [_print_item(self, cid, anc, constructs_data_axes[cid])
              for cid, anc in sorted(self.domain_ancillaries.items())]
         if x:
-            string.append('Domain ancils   : {}'.format(
-                '\n                : '.join(x))
+            string.append(
+                'Domain ancils   : {}'.format('\n                : '.join(x))
             )
 
         return '\n'.join(string)

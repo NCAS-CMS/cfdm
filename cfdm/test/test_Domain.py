@@ -7,6 +7,12 @@ import cfdm
 
 
 class DomainTest(unittest.TestCase):
+    filename = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'test_file.nc'
+    )
+    f = cfdm.read(filename)[0]
+    d = f.domain
+
     def setUp(self):
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL('DISABLE')
@@ -18,25 +24,30 @@ class DomainTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
-        f = cfdm.read(self.filename)
-        self.assertEqual(len(f), 1, 'f={!r}'.format(f))
-        self.f = f[0]
-        self.d = self.f.domain
-
         self.test_only = []
 
     def test_Domain__repr__str__dump(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = self.f.domain
+        d = cfdm.example_field(1).domain
 
+        # repr
         _ = repr(d)
+
+        # str
         _ = str(d)
+
+        # dump
         self.assertIsInstance(d.dump(display=False), str)
+
+        d.nc_set_variable('domain1')
+        for title in (None, 'title'):
+            _ = d.dump(display=False, _title=title)
+
+        d.nc_del_variable()
+        for title in (None, 'title'):
+            _ = d.dump(display=False, _title=title)
 
     def test_Domain__init__(self):
         d = cfdm.Domain(source='qwerty')
@@ -54,6 +65,7 @@ class DomainTest(unittest.TestCase):
 
         e = cfdm.example_field(0).domain
         self.assertFalse(e.equals(d))
+
         e.set_property('foo', 'bar')
         self.assertFalse(e.equals(d))
 

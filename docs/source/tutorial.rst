@@ -71,29 +71,6 @@ Note, however, that datasets of different versions may be :ref:`read
 <Reading-datasets>` from, or :ref:`written <Writing-to-disk>` to,
 disk.
 
-
-
-----
-
-.. _Field-construct:
-
-**Field construct**
--------------------
-
-The central construct (i.e. element) to CF is the :term:`field
-construct`. The field construct, that corresponds to a CF-netCDF data
-variable, includes all of the metadata to describe it:
-
-    * descriptive properties that apply to field construct as a whole
-      (e.g. the standard name),
-    * a data array, and
-    * "metadata constructs" that describe the locations of each cell
-      of the data array, and the physical nature of each cell's datum.
-
-A field construct is stored in a `cfdm.Field` instance, and henceforth
-the phrase "field construct" will be assumed to mean "`cfdm.Field`
-instance".
-
 ----
 
 .. _Field-and-domain-constructs:
@@ -111,13 +88,15 @@ includes all of the metadata to describe it:
       (e.g. the standard name),
     * a data array, and
     * "metadata constructs" that describe the locations of each cell
-      of the data array, and the physical nature of each cell's datum.
+      (i.e. the "domain") of the data array, and the physical nature
+      of each cell's datum.
 
 Likewise, the domain construct, that corresponds to a CF-netCDF domain
-variable, includes all of the metadata to describe it:
+variable or to the domain of a field construct, includes all of the
+metadata to describe it:
 
     * descriptive properties that apply to field construct as a whole
-      (e.g. the standard name), and
+      (e.g. the long name), and
     * metadata constructs that describe the locations of each cell of
       the domain.
 
