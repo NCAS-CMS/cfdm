@@ -1226,8 +1226,10 @@ class NetCDFRead(IORead):
                         g['do_not_create_field'].add(ncvar)
                 # --- End: for
 
-                if (sample_dimension is not None and
-                        instance_dimension is not None):
+                if (
+                        sample_dimension is not None
+                        and instance_dimension is not None
+                ):
                     # ------------------------------------------------
                     # There are DSG indexed contiguous ragged arrays
                     # ------------------------------------------------
@@ -1292,7 +1294,8 @@ class NetCDFRead(IORead):
         if g['CF>=1.7']:
             logger.info(
                 "    External variables: {}".format(
-                    sorted(g['external_variables']))
+                    sorted(g['external_variables'])
+                )
             )  # pragma: no cover
             logger.info(
                 "    External files    : {}".format(g['external_files']),
@@ -1300,7 +1303,8 @@ class NetCDFRead(IORead):
 
             if g['external_files'] and g['external_variables']:
                 self._get_variables_from_external_files(
-                    netcdf_external_variables)
+                    netcdf_external_variables
+                )
         # --- End: if
 
         # ------------------------------------------------------------
@@ -1318,13 +1322,14 @@ class NetCDFRead(IORead):
                 "(ignoring CF-netCDF domain variables)"
             )  # pragma: no cover
 
-        all_fields = OrderedDict()
+        all_fields_or_domains = OrderedDict()
         for ncvar in g['variables']:
             if ncvar not in g['do_not_create_field']:
                 field_or_domain = self._create_field_or_domain(
-                    ncvar, domain=g['domain'])
+                    ncvar, domain=g['domain']
+                )
                 if field_or_domain is not None:
-                    all_fields[ncvar] = field_or_domain
+                    all_fields_or_domains[ncvar] = field_or_domain
         # --- End: for
 
         # ------------------------------------------------------------
@@ -1333,14 +1338,17 @@ class NetCDFRead(IORead):
         if g['CF>=1.7']:
             unreferenced_external_variables = (
                 g['external_variables'].difference(
-                    g['referenced_external_variables']))
+                    g['referenced_external_variables']
+                )
+            )
             for ncvar in unreferenced_external_variables:
                 self._add_message(
                     None, ncvar,
                     message=('External variable',
                              'is not referenced in file'),
                     attribute={
-                        'external_variables': netcdf_external_variables}
+                        'external_variables': netcdf_external_variables
+                    }
                 )
         # --- End: if
 
@@ -1358,24 +1366,25 @@ class NetCDFRead(IORead):
         # Discard fields/domains created from netCDF variables that
         # are referenced by other netCDF variables
         # ------------------------------------------------------------
-        fields = OrderedDict()
-        for ncvar, f in all_fields.items():
+        fields_or_domains = OrderedDict()
+        for ncvar, f in all_fields_or_domains.items():
             if self._is_unreferenced(ncvar):
-                fields[ncvar] = f
+                fields_or_domains[ncvar] = f
         # --- End: for
 
-        referenced_variables = [ncvar for ncvar in sorted(all_fields)
+        referenced_variables = [ncvar
+                                for ncvar in sorted(all_fields_or_domains)
                                 if not self._is_unreferenced(ncvar)]
-        unreferenced_variables = [ncvar for ncvar in sorted(all_fields)
+        unreferenced_variables = [ncvar
+                                  for ncvar in sorted(all_fields_or_domains)
                                   if self._is_unreferenced(ncvar)]
 
-#        xx = []
         for ncvar in referenced_variables[:]:
             if all(referencer in referenced_variables
                    for referencer in g['referencers'][ncvar]):
                 referenced_variables.remove(ncvar)
                 unreferenced_variables.append(ncvar)
-                fields[ncvar] = all_fields[ncvar]
+                fields_or_domains[ncvar] = all_fields_or_domains[ncvar]
         # --- End: for
 
         logger.info(
@@ -1395,30 +1404,35 @@ class NetCDFRead(IORead):
         )  # pragma: no cover
 
         # ------------------------------------------------------------
-        # If requested, reinstate fields created from netCDF variables
-        # that are referenced by other netCDF variables.
+        # If requested, reinstate fields/domains created from netCDF
+        # variables that are referenced by other netCDF variables.
         # ------------------------------------------------------------
         self_referenced = {}
         if g['extra'] and not g['domain']:
-            fields0 = list(fields.values())
+            fields_or_domains0 = list(fields_or_domains.values())
             for construct_type in g['extra']:
-                for f in fields0:
+                for f in fields_or_domains0:
                     for construct in (
                             g['get_constructs'][construct_type](f).values()):
                         ncvar = self.implementation.nc_get_variable(construct)
-                        if ncvar not in all_fields:
+                        if ncvar not in all_fields_or_domains:
                             continue
 
-                        if ncvar not in fields:
-                            fields[ncvar] = all_fields[ncvar]
+                        if ncvar not in fields_or_domains:
+                            fields_or_domains[ncvar] = (
+                                all_fields_or_domains[ncvar]
+                            )
                         else:
-                            self_referenced[ncvar] = all_fields[ncvar]
+                            self_referenced[ncvar] = (
+                                all_fields_or_domains[ncvar]
+                            )
         # --- End: if
 
         if not self_referenced:
-            items = fields.items()
+            items = fields_or_domains.items()
         else:
-            items = tuple(fields.items()) + tuple(self_referenced.items())
+            items = (tuple(fields_or_domains.items())
+                     + tuple(self_referenced.items()))
 
         out = [x[1] for x in sorted(items)]
 
@@ -2686,22 +2700,28 @@ class NetCDFRead(IORead):
     :Parameters:
 
         field_ncvar: `str`
-            The name of the netCDF variable to be turned into a field.
+            The name of the netCDF variable to be turned into a field
+            or domain construct.
 
         domain: `bool`, otpional
-            If True then only read and parse domain variables. By
-            default only data variables are read and parsed.
+            If True then only read and parse domain variables into
+            domain consrtucts. By default only data variables are read
+            and parsed into field constructs.
 
             .. versionadded:: (cfdm) 1.9.0.0
 
     :Returns:
 
-        Field construct
+        Field or Domain construct
 
         '''
         g = self.read_vars
 
         field = not domain
+        if field:
+            construct_type = 'Field'
+        else:
+            construct_type = 'Domain'
 
         # Reset the dimensions of a domain variable
         g['domain_ncdimensions'] = {}
@@ -2718,14 +2738,9 @@ class NetCDFRead(IORead):
             'non-compliance': {}
         }
 
-        if field:
-            construct = 'Field'
-        else:
-            construct = 'Domain'
-
         logger.info(
             "    Converting netCDF variable {}({}) to a {}:".format(
-                field_ncvar, ', '.join(dimensions), construct)
+                field_ncvar, ', '.join(dimensions), construct_type)
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -2768,13 +2783,13 @@ class NetCDFRead(IORead):
                     pass
 
                 unpacked_dtype = numpy.result_type(*values)
-        # --- End: for
+        # --- End: if
 
         # Initialise node_coordinates_as_bounds
         g['node_coordinates_as_bounds'] = set()
 
         # ------------------------------------------------------------
-        # Initialize the field/domain with properties
+        # Initialize the field/domain
         # ------------------------------------------------------------
         if field:
             # Create a field construct
@@ -2797,7 +2812,9 @@ class NetCDFRead(IORead):
         # Store the netCDF variable name of the field/domain
         self.implementation.nc_set_variable(f, field_ncvar)
 
+        # ------------------------------------------------------------
         # Store the netCDF global attributes for the field/domain
+        # ------------------------------------------------------------
         x = g['global_attributes'].copy()
         for k, v in g['global_attributes'].items():
             if (
@@ -2851,7 +2868,8 @@ class NetCDFRead(IORead):
         # field/domain
         # ------------------------------------------------------------
         has_dimensions_attr = self.implementation.has_property(
-            f, 'dimensions')
+            f, 'dimensions'
+        )
         ndim = g['variables'][field_ncvar].ndim
 
         if field:
@@ -2871,9 +2889,9 @@ class NetCDFRead(IORead):
             ncdimensions = None
         else:
             if (
-                    not g['CF>=1.9'] or
-                    not has_dimensions_attr or
-                    ndim >= 1
+                    not g['CF>=1.9']
+                    or not has_dimensions_attr
+                    or ndim >= 1
             ):
                 # ----------------------------------------------------
                 # This netCDF variable is not scalar, or does not have
@@ -2894,10 +2912,12 @@ class NetCDFRead(IORead):
             # v1.9.0.0)
             # --------------------------------------------------------
             domain_dimensions = self.implementation.del_property(
-                f, 'dimensions', None)
+                f, 'dimensions', None
+            )
 
             ncdimensions = self._split_string_by_white_space(
-                field_ncvar, domain_dimensions, variables=True)
+                field_ncvar, domain_dimensions, variables=True
+            )
 
         field_ncdimensions = self._ncdimensions(field_ncvar,
                                                 ncdimensions=ncdimensions)
@@ -4180,8 +4200,10 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Geometries
             # --------------------------------------------------------
-            if (geometry is not None
-                    and bounds_ncvar in geometry['node_coordinates']):
+            if (
+                    geometry is not None
+                    and bounds_ncvar in geometry['node_coordinates']
+            ):
                 # Record the netCDF node dimension name
                 count = self.implementation.get_count(bounds)
                 node_ncdim = self.implementation.nc_get_sample_dimension(count)
@@ -4740,9 +4762,11 @@ class NetCDFRead(IORead):
 
         dimensions = g['variable_dimensions'][ncvar]
 
-        if ((uncompress_override is not None and uncompress_override) or
-                not compression or
-                not set(compression).intersection(dimensions)):
+        if (
+                (uncompress_override is not None and uncompress_override)
+                or not compression
+                or not set(compression).intersection(dimensions)
+        ):
             # --------------------------------------------------------
             # The array is not compressed (or not to be uncompressed)
             # --------------------------------------------------------
@@ -5653,7 +5677,7 @@ class NetCDFRead(IORead):
             # Check that the variable exists in the file, or if not
             # that it is listed in the 'external_variables' global
             # file attribute
-            if (not unknown_external and ncvar not in g['variables']):
+            if not unknown_external and ncvar not in g['variables']:
                 self._add_message(field_ncvar, ncvar,
                                   message=missing_variable,
                                   attribute=attribute,
@@ -5663,9 +5687,12 @@ class NetCDFRead(IORead):
 
             if not unknown_external:
                 dimensions = self._ncdimensions(ncvar)
-                if (not unknown_external and not
-                    self._dimensions_are_subset(ncvar, dimensions,
-                                                parent_dimensions)):
+                if (
+                        not unknown_external
+                        and not self._dimensions_are_subset(
+                            ncvar, dimensions,
+                            parent_dimensions)
+                ):
                     # The cell measure variable's dimensions do NOT span a
                     # subset of the parent variable's dimensions.
                     self._add_message(

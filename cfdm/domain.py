@@ -511,29 +511,29 @@ TODO
         c = DimensionCoordinate()
         c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
         c.nc_set_variable('lat')
-        data = <Data(5): [-75.0, ..., 75.0] degrees_north>  # Representative data
+        data = <{{repr}}Data(5): [-75.0, ..., 75.0] degrees_north>  # Representative data
         c.set_data(data)
         b = Bounds()
         b.nc_set_variable('lat_bnds')
-        data = <Data(5, 2): [[-90.0, ..., 90.0]] degrees_north>  # Representative data
+        data = <{{repr}}Data(5, 2): [[-90.0, ..., 90.0]] degrees_north>  # Representative data
         b.set_data(data)
         c.set_bounds(b)
         domain.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
         c = DimensionCoordinate()
         c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
         c.nc_set_variable('lon')
-        data = <Data(8): [22.5, ..., 337.5] degrees_east>  # Representative data
+        data = <{{repr}}Data(8): [22.5, ..., 337.5] degrees_east>  # Representative data
         c.set_data(data)
         b = Bounds()
         b.nc_set_variable('lon_bnds')
-        data = <Data(8, 2): [[0.0, ..., 360.0]] degrees_east>  # Representative data
+        data = <{{repr}}Data(8, 2): [[0.0, ..., 360.0]] degrees_east>  # Representative data
         b.set_data(data)
         c.set_bounds(b)
         domain.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
         c = DimensionCoordinate()
         c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
         c.nc_set_variable('time')
-        data = <Data(1): [2019-01-01 00:00:00]>  # Representative data
+        data = <{{repr}}Data(1): [2019-01-01 00:00:00]>  # Representative data
         c.set_data(data)
         domain.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
 
