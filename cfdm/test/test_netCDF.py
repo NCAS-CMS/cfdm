@@ -47,6 +47,23 @@ class NetCDFTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
+        nc_group_structure_names = [
+            None,
+            '/',
+            'group/...',
+            'group/',
+            'group/.../',
+            '/group/.../',
+        ]
+        self.nc_grouped_dimension_names = [
+            obj.replace("...", "ncdim") for obj in nc_group_structure_names
+            if obj is not None
+        ]
+        self.nc_grouped_variable_names = [
+            obj.replace("...", "ncvar") for obj in nc_group_structure_names
+            if obj is not None
+        ]
+
     def test_netCDF_variable_dimension(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -68,23 +85,9 @@ class NetCDFTest(unittest.TestCase):
         f.nc_set_variable('/ncvar/qwerty')
         self.assertEqual(f.nc_get_variable(), '/ncvar/qwerty')
 
-        with self.assertRaises(ValueError):
-            f.nc_set_variable(None)
-
-        with self.assertRaises(ValueError):
-            f.nc_set_variable('/')
-
-        with self.assertRaises(ValueError):
-            f.nc_set_variable('group/ncvar')
-
-        with self.assertRaises(ValueError):
-            f.nc_set_variable('group/')
-
-        with self.assertRaises(ValueError):
-            f.nc_set_variable('group/ncvar/')
-
-        with self.assertRaises(ValueError):
-            f.nc_set_variable('/group/ncvar/')
+        for nc_var_name in self.nc_grouped_variable_names:
+            with self.assertRaises(ValueError):
+                f.nc_set_variable(nc_var_name)
 
         d = cfdm.DomainAxis()
 
@@ -103,23 +106,9 @@ class NetCDFTest(unittest.TestCase):
         d.nc_set_dimension('/ncdim/qwerty')
         self.assertEqual(d.nc_get_dimension(), '/ncdim/qwerty')
 
-        with self.assertRaises(ValueError):
-            d.nc_set_dimension(None)
-
-        with self.assertRaises(ValueError):
-            d.nc_set_dimension('/')
-
-        with self.assertRaises(ValueError):
-            d.nc_set_dimension('group/ncdim')
-
-        with self.assertRaises(ValueError):
-            d.nc_set_dimension('group/')
-
-        with self.assertRaises(ValueError):
-            d.nc_set_dimension('group/ncdim/')
-
-        with self.assertRaises(ValueError):
-            d.nc_set_dimension('/group/ncdim/')
+        for nc_dim_name in self.nc_grouped_dimension_names:
+            with self.assertRaises(ValueError):
+                d.nc_set_dimension(nc_dim_name)
 
         d = cfdm.Count()
 
@@ -138,23 +127,9 @@ class NetCDFTest(unittest.TestCase):
         d.nc_set_sample_dimension('/ncdim/qwerty')
         self.assertEqual(d.nc_get_sample_dimension(), '/ncdim/qwerty')
 
-        with self.assertRaises(ValueError):
-            d.nc_set_sample_dimension(None)
-
-        with self.assertRaises(ValueError):
-            d.nc_set_sample_dimension('/')
-
-        with self.assertRaises(ValueError):
-            d.nc_set_sample_dimension('group/ncdim')
-
-        with self.assertRaises(ValueError):
-            d.nc_set_sample_dimension('group/')
-
-        with self.assertRaises(ValueError):
-            d.nc_set_sample_dimension('group/ncdim/')
-
-        with self.assertRaises(ValueError):
-            d.nc_set_sample_dimension('/group/ncdim/')
+        for nc_dim_name in self.nc_grouped_dimension_names:
+            with self.assertRaises(ValueError):
+                d.nc_set_sample_dimension(nc_dim_name)
 
         # ------------------------------------------------------------
         # Global attributes
@@ -274,20 +249,9 @@ class NetCDFTest(unittest.TestCase):
         f.nc_set_geometry_variable('/ncvar/qwerty')
         self.assertEqual(f.nc_get_geometry_variable(), '/ncvar/qwerty')
 
-        with self.assertRaises(ValueError):
-            f.nc_set_geometry_variable('group/ncvar')
-
-        with self.assertRaises(ValueError):
-            f.nc_set_geometry_variable('group/')
-
-        with self.assertRaises(ValueError):
-            f.nc_set_geometry_variable('group/ncvar/')
-
-        with self.assertRaises(ValueError):
-            f.nc_set_geometry_variable('/group/ncvar/')
-
-        with self.assertRaises(ValueError):
-            f.nc_set_geometry_variable('/')
+        for nc_var_name in self.nc_grouped_variable_names:
+            with self.assertRaises(ValueError):
+                f.nc_set_geometry_variable(nc_var_name)
 
     def test_netCDF_group_attributes(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
