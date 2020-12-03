@@ -153,7 +153,8 @@ from .cfdmimplementation import (CFDMImplementation,
 from .read_write import (read,
                          write)
 
-from .examplefield import example_field
+from .examplefield import (example_field,
+                           example_fields)
 
 from .abstract import Container
 

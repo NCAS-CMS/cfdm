@@ -11,6 +11,8 @@ def example_field(n, _implementation=_implementation):
 
     .. versionadded:: (cfdm) 1.8.0
 
+    .. seealso:: `cfdm.example_fields`
+
     :Parameters:
 
         n: `int`
@@ -54,8 +56,9 @@ def example_field(n, _implementation=_implementation):
 
     :Returns:
 
-        `Field`
-            The example field construct.
+        `Field` or `int`
+            The example field construct, or if *n_field* is True, the
+            number of field constructs that are avaiable.
 
     **Examples:**
 
@@ -3251,3 +3254,105 @@ def example_field(n, _implementation=_implementation):
         f.set_construct(c)
 
     return f
+
+
+def example_fields(*n, _func=example_field):
+    '''Return example field constructs.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    .. seealso:: `cfdm.example_field`
+
+    :Parameters:
+
+        n: zero or more `int`, optional
+            Select the example field constructs to return, any
+            combination of:
+
+            =====  ===================================================
+            *n*    Description
+            =====  ===================================================
+            ``0``  A field construct with properties as well as a
+                   cell method construct and dimension coordinate
+                   constructs with bounds.
+
+            ``1``  A field construct with properties as well as at
+                   least one of every type of metadata construct.
+
+            ``2``  A field construct that contains a monthly time
+                   series at each latitude-longitude location.
+
+            ``3``  A field construct that contains discrete sampling
+                   geometry (DSG) "timeSeries" features.
+
+            ``4``  A field construct that contains discrete sampling
+                   geometry (DSG) "timeSeriesProfile" features.
+
+            ``5``  A field construct that contains a 12 hourly time
+                   series at each latitude-longitude location.
+
+            ``6``  A field construct that has polygon geometry
+                   coordinate cells with interior ring variables.
+
+            ``7``  A field construct that has rotated pole dimension
+                   coordinate constructs and 2-d latitude and
+                   longitude auxiliary coordinate constructs.
+            =====  ===================================================
+
+            If no individual field constructs are selected then all
+            available field constructs will be returned.
+
+            Field constructs may be selected multiple time, and will
+            be output in the order that they are given.
+
+            See the `cfdm.example_field` for details.
+
+        _func: function
+            The function that selects an individual field constuct.
+
+    :Returns:
+
+       `list`
+            The example field constructs.
+
+    **Examples**
+
+    >>> cfdm.example_fields()
+    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
+     <Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
+     <Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1>,
+     <Field: air_temperature(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) K>,
+     <Field: air_potential_temperature(time(118), latitude(5), longitude(8)) K>,
+     <Field: precipitation_amount(cf_role=timeseries_id(2), time(4))>,
+     <Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>]
+
+    >>> cfdm.example_fields(7, 1)
+    [<Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>,
+     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+
+    >>> cfdm.example_fields(3)
+    [<Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1>]
+
+    >>> cfdm.example_fields(3, 3, 4)
+    [<Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1>,
+     <Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1>,
+     <Field: air_temperature(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) K>]
+
+    See the `cfdm.example_field` for more details.
+
+    '''
+    if not n:
+        out = []
+        i = 0
+        while True:
+            try:
+                out.append(_func(i))
+            except ValueError:
+                break
+            else:
+                i += 1
+    else:
+        out = [_func(i) for i in n]
+
+    return out
