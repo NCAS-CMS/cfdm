@@ -130,9 +130,12 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
     concern) that this approach may not be thread-safe.
 
     '''
+    # Note that 'self' can be included in '*args' for any function calls
+    # below, such that this decorator will work for both methods and
+    # functions that are not bound to classes.
 
     @wraps(method_with_verbose_kwarg)
-    def verbose_override_wrapper(self, *args, **kwargs):
+    def verbose_override_wrapper(*args, **kwargs):
         # Increment indicates that one decorated function has started
         # execution
         calls[0] += 1
@@ -183,7 +186,7 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
         # After method completes, re-set any changes to log level or
         # enabling
         try:
-            return method_with_verbose_kwarg(self, *args, **kwargs)
+            return method_with_verbose_kwarg(*args, **kwargs)
         except Exception:
             raise
         finally:  # so that crucial 'teardown' code runs even if
