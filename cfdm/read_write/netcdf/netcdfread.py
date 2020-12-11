@@ -4738,7 +4738,11 @@ class NetCDFRead(IORead):
 
                         i = dimensions.index(ncdim)
                         if i != 0:
-                            raise ValueError("TODO 1")
+                            raise ValueError(
+                                "Data can only be created when the netCDF "
+                                "dimension spanned by the data variable is the "
+                                "left-most dimension in the ragged array."
+                            )
 
                         uncompressed_shape = list(array.shape)
                         uncompressed_shape[i:i+1] = [
@@ -4763,7 +4767,11 @@ class NetCDFRead(IORead):
 
                         i = dimensions.index(ncdim)
                         if i != 0:
-                            raise ValueError("TODO 2")
+                            raise ValueError(
+                                "Data can only be created when the netCDF "
+                                "dimension spanned by the data variable is the "
+                                "left-most dimension in the ragged array."
+                            )
 
                         uncompressed_shape = list(array.shape)
                         uncompressed_shape[i:i+1] = [
@@ -4784,7 +4792,11 @@ class NetCDFRead(IORead):
 
                         i = dimensions.index(ncdim)
                         if i != 0:
-                            raise ValueError("TODO 3")
+                            raise ValueError(
+                                "Data can only be created when the netCDF "
+                                "dimension spanned by the data variable is the "
+                                "left-most dimension in the ragged array."
+                            )
 
                         uncompressed_shape = list(array.shape)
                         uncompressed_shape[i:i+1] = [
