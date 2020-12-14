@@ -1105,53 +1105,6 @@ assigning them to any other value.
      [270.9  -2.0 273.2 261.7 271.6 265.8 273.0    -- 266.4]
      [276.4  -2.0 276.3 266.1  -4.0 268.1 277.0    --  -5.0]]]
 
-Manipulating dimensions
-^^^^^^^^^^^^^^^^^^^^^^^
-
-The dimensions of a field construct's data may be reordered, have size
-one dimensions removed and have new new size one dimensions included
-by using the following field construct methods:
-
-=========================  ===========================================
-Method                     Description
-=========================  ===========================================
-`~Field.transpose`         Reorder data dimensions
-
-`~Field.squeeze`           Remove size one data dimensions
-	   
-`~Field.insert_dimension`  Insert a new size one data dimension. The
-                           new dimension must correspond to an
-                           existing size one domain axis construct.
-=========================  ===========================================
-
-.. code-block:: python
-   :caption: *Remove all size one dimensions from the data, noting
-             that metadata constructs which span the corresponding
-             domain axis construct are not affected.*
-
-   >>> t
-   <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
-   >>> t2 = t.squeeze()
-   >>> t2
-   <Field: air_temperature(grid_latitude(10), grid_longitude(9)) K>   
-   >>> print(t2.dimension_coordinates)
-   Constructs:
-   {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-
-.. code-block:: python
-   :caption: *Insert a new size one dimension, corresponding to a size
-             one domain axis construct, and then reorder the
-             dimensions.*
-
-   >>> t3 = t2.insert_dimension(axis='domainaxis3', position=1)
-   >>> t3
-   <Field: air_temperature(grid_latitude(10), time(1), grid_longitude(9)) K>  
-   >>> t3.transpose([2, 0, 1])
-   <Field: air_temperature(grid_longitude(9), grid_latitude(10), time(1)) K>
-
 ----
 
 .. _Subspacing:
