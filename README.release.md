@@ -34,9 +34,7 @@
 
   ```bash
   export PYTHONPATH=$PWD:$PYTHONPATH
-  cd docs/source
   ./test_tutorial_code
-  cd -
   ```
 
 * Build a development copy of the documentation using to check API

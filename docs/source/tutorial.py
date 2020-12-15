@@ -98,13 +98,6 @@ print(t.data.array)
 t.data[0, :, -2] = cfdm.masked
 t.data[0, 5, -2] = -6
 print(t.data.array)
-t
-t2 = t.squeeze()
-t2
-print(t2.dimension_coordinates)
-t3 = t2.insert_dimension(axis='domainaxis3', position=1)
-t3
-t3.transpose([2, 0, 1])
 print(q)
 new = q[::-1, 0]
 print(new)
