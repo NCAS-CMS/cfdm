@@ -46,7 +46,7 @@ Domain ancillary terms
    ~cfdm.core.ParametersDomainAncillaries.clear_domain_ancillaries
    ~cfdm.core.ParametersDomainAncillaries.set_domain_ancillaries
    
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

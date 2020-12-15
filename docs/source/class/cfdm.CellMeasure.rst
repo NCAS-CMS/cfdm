@@ -90,7 +90,7 @@ Data
    ~cfdm.CellMeasure.shape
    ~cfdm.CellMeasure.size
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

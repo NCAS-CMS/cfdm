@@ -64,7 +64,7 @@ Data
 
    ~cfdm.core.FieldAncillary.data
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

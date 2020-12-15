@@ -1,5 +1,7 @@
+absolutised
 abspath
 Allyn
+arg
 args
 atol
 ATOL
@@ -42,16 +44,20 @@ FieldAncillary
 FillValue
 fmt
 fromconstructs
+fromkeys
+func
 GatheredArray
 Geosci
 getitem
 Hankin
 Hartnett
+hashable
 hdf
 inplace
 int
 InteriorRing
 iter
+iterable
 Juckes
 kwargs
 lat
@@ -75,6 +81,7 @@ Nino
 nonzero
 NumpyArray
 ParametersDomainAncillaries
+popitem
 PropertiesData
 PropertiesDataBounds
 py
@@ -87,6 +94,7 @@ repr
 Rew
 rtol
 RTOL
+setdefault
 setitem
 Signell
 situ
@@ -99,6 +107,7 @@ subspaced
 subspacing
 Subspacing
 superceded
+th
 timeseries
 timeSeries
 timeSeriesProfile

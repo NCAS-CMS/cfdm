@@ -74,7 +74,7 @@ Data
    ~cfdm.InteriorRing.shape
    ~cfdm.InteriorRing.size
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

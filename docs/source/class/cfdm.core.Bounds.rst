@@ -52,7 +52,7 @@ Data
 
    ~cfdm.core.Bounds.data
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

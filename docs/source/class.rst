@@ -97,8 +97,8 @@ Classes that support the creation and storage of compressed arrays.
    cfdm.CompressedArray
 
 
-Miscellaneous classses
-----------------------
+Miscellaneous classes
+---------------------
 
 .. autosummary::
    :nosignatures:

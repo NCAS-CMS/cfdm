@@ -80,7 +80,7 @@ Mask support
    ~cfdm.core.Data.has_fill_value
    ~cfdm.core.Data.set_fill_value
 
-Miscallaneous
+Miscellaneous
 -------------
    
 .. autosummary::

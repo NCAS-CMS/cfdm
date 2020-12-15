@@ -38,7 +38,7 @@ Metadata constructs
 
    ~cfdm.core.Domain.constructs
    
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

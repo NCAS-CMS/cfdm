@@ -28,7 +28,7 @@ Properties
    ~cfdm.core.Properties.clear_properties
    ~cfdm.core.Properties.set_properties
   
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

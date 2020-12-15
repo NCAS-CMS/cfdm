@@ -64,7 +64,7 @@ Metadata constructs
    ~cfdm.Domain.domain_ancillaries
    ~cfdm.Domain.domain_axes
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

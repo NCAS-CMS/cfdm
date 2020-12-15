@@ -85,7 +85,7 @@ Data
    ~cfdm.FieldAncillary.shape
    ~cfdm.FieldAncillary.size
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods
