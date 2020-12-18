@@ -978,7 +978,7 @@ class PropertiesDataBounds(PropertiesData):
 
     .. versionadded:: (cfdm) 1.8.0
 
-    .. seealso:: del_node_count`, `has_node_count`, `set_node_count`
+    .. seealso:: `del_node_count`, `has_node_count`, `set_node_count`
 
     :Parameters:
 
