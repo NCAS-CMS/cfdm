@@ -102,7 +102,7 @@ extensions = [
     # 'sphinxcontrib.programoutput',  # pip install sphinxcontrib-programoutput
     'sphinx_copybutton',
     'sphinx_toggleprompt',
-    #'sphinxcontrib.spelling',
+    'sphinxcontrib.spelling',
 ]
 
 # Boolean indicating whether to scan all found documents for
