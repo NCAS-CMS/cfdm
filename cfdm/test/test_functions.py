@@ -503,6 +503,12 @@ class FunctionsTest(unittest.TestCase):
         del c._func
         self.assertEqual(c, c.copy())
 
+        # Bool
+        self.assertTrue(cfdm.Constant(1))
+        self.assertTrue(cfdm.Constant(True))
+        self.assertFalse(cfdm.Constant(0))
+        self.assertFalse(cfdm.Constant(False))
+
     def test_Configuration(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
