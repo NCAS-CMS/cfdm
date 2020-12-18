@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.7.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.8.0</a></h1>
 
 
 
@@ -96,10 +96,12 @@
 
           <div class="body" role="main">
             
+
+
   <div class="section" id="extensions">
 <span id="id1"></span><h1><strong>Extensions</strong><a class="headerlink" href="#extensions" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.8.7.0 for version 1.8 of the CF conventions.</p>
+<p>Version 1.8.8.0 for version 1.8 of the CF conventions.</p>
 <p>The cfdm package has been designed to be subclassed, so that the
 creation of a new implementation of the CF data model, based on cfdm,
 is straight forward. For example:</p>
@@ -109,7 +111,7 @@ class.</em></span><a class="headerlink" href="#id2" title="Permalink to this cod
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">my_Field</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;I am a {!r} instance&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;I am a </span><span class="si">{!r}</span><span class="s1"> instance&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
 <span class="gp">... </span>            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -154,13 +156,13 @@ used in the tutorial, using the new my_read function.</em></span><a class="heade
 demonstrating that it is a my_Field instance from the
 new implementation that has the inherited functionality
 of a cfdm.Field instance.</em></span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
 <span class="go">&lt;class &#39;__main__.my_Field&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
 <span class="go">I am a &#39;my_Field&#39; instance</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
 <span class="go">&lt;my_Field: specific_humidity(latitude(5), longitude(8)) 1&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
 <span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
 <span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
@@ -182,9 +184,9 @@ other component classes:</p>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text"><em>Demonstrate that the metadata construct classes of
 within the my_Field instance are still cfdm classes.</em></span><a class="headerlink" href="#id8" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
 <span class="go">&lt;class &#39;__main__.my_Field&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)))</span>
 <span class="go">&lt;class &#39;cfdm.dimensioncoordinate.DimensionCoordinate&#39;&gt;</span>
 </pre></div>
 </div>
@@ -256,7 +258,7 @@ of subclasses of the other classes, the cfdm classes may be used.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_read_2</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">,</span>
 <span class="gp">... </span>                              <span class="n">_implementation</span><span class="o">=</span><span class="n">my_implementation2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">my_read_2</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
 <span class="go">&lt;my_Field_2: specific_humidity(latitude(5), longitude(8)) 1&gt;</span>
 </pre></div>
 </div>
@@ -273,7 +275,7 @@ instances.</em></span><a class="headerlink" href="#id11" title="Permalink to thi
 <span class="gp">... </span><span class="sd">    an OPeNDAP server location, using my modified mapping</span>
 <span class="gp">... </span><span class="sd">    from netCDF to the CF data model.</span>
 <span class="gp">... </span><span class="sd">        &#39;&#39;&#39;</span>
-<span class="gp">... </span>        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Reading dataset using my modified mapping&quot;</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading dataset using my modified mapping&quot;</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -294,7 +296,7 @@ modified mapping.</em></span><a class="headerlink" href="#id12" title="Permalink
 demonstrating that the modified mapping is being used.</em></span><a class="headerlink" href="#id13" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">my_read_3</span><span class="p">(</span><span class="s1">&#39;~/cfdm/docs/source/sample_files/file.nc&#39;</span><span class="p">)</span>
 <span class="go">Reading dataset using my modified mapping</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
 <span class="go">&lt;my_Field_2: specific_humidity(latitude(5), longitude(8)) 1&gt;</span>
 </pre></div>
 </div>
@@ -332,6 +334,7 @@ always work on its cf-python counterpart.</p>
 </div>
 
 
+
           </div>
           
         </div>
@@ -339,11 +342,11 @@ always work on its cf-python counterpart.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-09.
+      &copy;2020, NCAS | Page built on 2020-12-18.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

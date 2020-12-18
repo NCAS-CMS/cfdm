@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.7.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.8.0</a></h1>
 
 
 
@@ -100,12 +100,14 @@
 
           <div class="body" role="main">
             
+
+
   <div class="section" id="cfdm-netcdfarray">
 <h1>cfdm.NetCDFArray<a class="headerlink" href="#cfdm-netcdfarray" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.NetCDFArray">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">NetCDFArray</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">ncvar=None</em>, <em class="sig-param">varid=None</em>, <em class="sig-param">group=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">mask=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/data/netcdfarray.py#L10-L509"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NetCDFArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">NetCDFArray</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">ncvar=None</em>, <em class="sig-param">varid=None</em>, <em class="sig-param">group=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">mask=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.8.0/cfdm/data/netcdfarray.py#L10-L509"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NetCDFArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.array.Array</span></code></p>
 <p>An underlying array stored in a netCDF file.</p>
 <div class="versionadded">
@@ -127,7 +129,7 @@ the array. Required if <em>ncvar</em> is not set, ignored if
 <dt>group: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the netCDF4 group to which the netCDF variable
 belongs. By default, or if <em>group</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or an empty
 sequence, it assumed to be in the root group. The last
-element in the sequence isw the name of the group in which
+element in the sequence is the name of the group in which
 the variable lies, with other elements naming any parent
 groups (excluding the root group).</p>
 <dl class="simple">
@@ -295,7 +297,7 @@ the netCDF variable attributes <code class="docutils literal notranslate"><span 
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.NetCDFArray._docstring_special_substitutions.html#cfdm.NetCDFArray._docstring_special_substitutions" title="cfdm.NetCDFArray._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
-<td><p>Return the special docstring subtitutions.</p></td>
+<td><p>Return the special docstring substitutions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.NetCDFArray._docstring_substitutions.html#cfdm.NetCDFArray._docstring_substitutions" title="cfdm.NetCDFArray._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
 <td><p>Return the docstring substitutions that apply to methods of the given class.</p></td>
@@ -312,6 +314,7 @@ the netCDF variable attributes <code class="docutils literal notranslate"><span 
 </div>
 
 
+
           </div>
           
         </div>
@@ -319,11 +322,11 @@ the netCDF variable attributes <code class="docutils literal notranslate"><span 
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-09.
+      &copy;2020, NCAS | Page built on 2020-12-18.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 
