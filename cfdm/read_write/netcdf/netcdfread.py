@@ -1097,7 +1097,7 @@ class NetCDFRead(IORead):
         #       'eastward_wind': {'model': 'climate1'}}
         g['variable_group_attributes'] = variable_group_attributes
 
-        # TODO
+        # Mapped components of a flattened version of the netCDF file
         g['flattener_variables'] = flattener_variables
         g['flattener_dimensions'] = flattener_dimensions
         g['flattener_attributes'] = flattener_attributes
@@ -2360,7 +2360,7 @@ class NetCDFRead(IORead):
 
     def _check_external_variables(self, external_variables,
                                   parsed_external_variables):
-        '''TODO
+        '''Check that named external variables do not exist in the file.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -6012,7 +6012,7 @@ class NetCDFRead(IORead):
 
     def _check_interior_ring(self, field_ncvar, geometry_ncvar,
                              interior_ring, parsed_interior_ring):
-        '''TODO
+        '''Check all interior ring variables exist in the file.
 
     :Returns:
 
@@ -6059,7 +6059,7 @@ class NetCDFRead(IORead):
         return ok
 
     def _check_instance_dimension(self, parent_ncvar, instance_dimension):
-        '''asdasd
+        '''Check that the instance dimension name is a netCDF dimension.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -6088,7 +6088,7 @@ class NetCDFRead(IORead):
         return True
 
     def _check_sample_dimension(self, parent_ncvar, sample_dimension):
-        '''asdasd
+        '''Check that the sample dimension name is a netCDF dimension.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -6101,7 +6101,6 @@ class NetCDFRead(IORead):
                         being used for a collection of features.
 
         '''
-        # Check that the sample dimension name is a netCDF dimension
         return sample_dimension in self.read_vars['internal_dimension_sizes']
 
     def _split_string_by_white_space(self, parent_ncvar, string,
