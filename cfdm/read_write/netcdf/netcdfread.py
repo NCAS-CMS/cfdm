@@ -5598,7 +5598,6 @@ class NetCDFRead(IORead):
                         dimensions=g['variable_dimensions'][ncvar],
                         conformance='7.2.requirement.4')
                     ok = False
-                    continue
         # --- End: for
 
         return ok
@@ -5719,7 +5718,6 @@ class NetCDFRead(IORead):
                                   attribute=attribute,
                                   dimensions=g['variable_dimensions'][ncvar])
                 ok = False
-                continue
         # --- End: for
 
         return ok
@@ -5883,7 +5881,6 @@ class NetCDFRead(IORead):
                                   message=missing_dimension,
                                   attribute=attribute)
                 ok = False
-                continue
         # --- End: for
 
         return ok
@@ -5929,7 +5926,6 @@ class NetCDFRead(IORead):
                                   message=message,
                                   attribute=attribute)
                 ok = False
-                continue
         # --- End: for
 
         return ok
@@ -5967,7 +5963,6 @@ class NetCDFRead(IORead):
                                   message=message,
                                   attribute=attribute)
                 ok = False
-                continue
         # --- End: for
 
         return ok
@@ -6005,7 +6000,6 @@ class NetCDFRead(IORead):
                                   message=message,
                                   attribute=attribute)
                 ok = False
-                continue
         # --- End: for
 
         return ok
@@ -6053,7 +6047,6 @@ class NetCDFRead(IORead):
                                   message=message,
                                   attribute=attribute)
                 ok = False
-                continue
         # --- End: for
 
         return ok
