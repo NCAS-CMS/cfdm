@@ -1586,12 +1586,12 @@ class NetCDFRead(IORead):
             )
 
     def _customize_read_vars(self):
-        '''TODO
+        '''Customize the read parameters.
 
     .. versionadded:: (cfdm) 1.7.3
 
         '''
-        pass
+        pass  # TODO do something here?
 
     def _get_variables_from_external_files(self, netcdf_external_variables):
         '''Get external variables from external files.
@@ -2243,7 +2243,7 @@ class NetCDFRead(IORead):
                                           sample_dimension=None,
                                           element_dimension=None,
                                           instance_dimension=None):
-        '''TODO
+        '''Set the DSG ragged contiguous compression global attributes.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -2299,7 +2299,7 @@ class NetCDFRead(IORead):
                                        indexed_sample_dimension=None,
                                        element_dimension=None,
                                        instance_dimension=None):
-        '''TODO
+        '''Set the DSG ragged indexed compression global attributes.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -3711,7 +3711,7 @@ class NetCDFRead(IORead):
     def _add_message(self, field_ncvar, ncvar, message=None,
                      attribute=None, dimensions=None, variable=None,
                      conformance=None):
-        '''TODO
+        '''Store and log a message describing a problem with a field component.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -5386,7 +5386,7 @@ class NetCDFRead(IORead):
     # ================================================================
     def _check_bounds(self, field_ncvar, parent_ncvar, attribute,
                       bounds_ncvar):
-        '''TODO
+        '''Check a bounds variable spans the correct dimensions.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -5777,7 +5777,7 @@ class NetCDFRead(IORead):
         return True
 
     def _dimensions_are_subset(self, ncvar, dimensions, parent_dimensions):
-        '''Return True if TODO
+        '''Return True if dimensions are a subset of the parent dimensions. 
 
         '''
         if not set(dimensions).issubset(parent_dimensions):
@@ -5855,7 +5855,7 @@ class NetCDFRead(IORead):
         return True
 
     def _check_compress(self, parent_ncvar, compress, parsed_compress):
-        '''TODO
+        '''Check compressed dimension is valid and exists in the file.
 
         '''
         attribute = {parent_ncvar+':compress': compress}
@@ -5888,7 +5888,7 @@ class NetCDFRead(IORead):
     def _check_node_coordinates(self, field_ncvar, geometry_ncvar,
                                 node_coordinates,
                                 parsed_node_coordinates):
-        '''TODO
+        '''Check node coordinate variables are valid and exist in the file.
 
         '''
         attribute = {geometry_ncvar+':node_coordinates': node_coordinates}
@@ -5932,7 +5932,7 @@ class NetCDFRead(IORead):
 
     def _check_node_count(self, field_ncvar, geometry_ncvar,
                           node_count, parsed_node_count):
-        '''TODO
+        '''Check node count variable is valid and exists in the file.
 
         '''
         attribute = {geometry_ncvar+':node_count': node_count}
@@ -5969,7 +5969,7 @@ class NetCDFRead(IORead):
 
     def _check_part_node_count(self, field_ncvar, geometry_ncvar,
                                part_node_count, parsed_part_node_count):
-        '''TODO
+        '''Check part node count variable is valid and exists in the file.
 
         '''
         if part_node_count is None:
