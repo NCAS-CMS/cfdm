@@ -5777,7 +5777,7 @@ class NetCDFRead(IORead):
         return True
 
     def _dimensions_are_subset(self, ncvar, dimensions, parent_dimensions):
-        '''Return True if dimensions are a subset of the parent dimensions. 
+        '''Return True if dimensions are a subset of the parent dimensions.
 
         '''
         if not set(dimensions).issubset(parent_dimensions):

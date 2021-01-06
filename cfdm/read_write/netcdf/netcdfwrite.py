@@ -104,7 +104,7 @@ class NetCDFWrite(IOWrite):
 
 #        if force_use_existing:
 #            if ncvar is None:
-#                raise ValueError("asdasdads TODO")
+#                raise ValueError()
 #
 #            return ncvar
 
@@ -339,7 +339,8 @@ class NetCDFWrite(IOWrite):
             array.set_fill_value(fill_value)
 
         if array.dtype.kind != 'S':
-            raise ValueError("AAAAAAAAARRRRRRRRRRRRRRRGGGGGGGGGGHHHHHHHH")
+            raise ValueError(
+                "Array must have string data type.")
 
 #            new = numpy.ma.array(new, mask=mask, fill_value=fill_value)
 
@@ -3027,7 +3028,7 @@ class NetCDFWrite(IOWrite):
                 self.implementation.set_property(
                     field_coordinates[key], 'computed_standard_name', csn)
             elif x != csn:
-                raise ValueError(";sdm p8whw=0[")
+                raise ValueError("Standard name could not be computed.")
         # --- End: for
 
         dimension_coordinates = (
