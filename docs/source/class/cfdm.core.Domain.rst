@@ -80,6 +80,8 @@ Miscellaneous
 
    ~cfdm.core.Domain.copy
    ~cfdm.core.Domain.fromconstructs
+   ~cfdm.core.Domain.has_bounds
+   ~cfdm.core.Domain.has_data
 
 Special
 -------

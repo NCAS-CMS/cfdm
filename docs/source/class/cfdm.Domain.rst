@@ -111,6 +111,8 @@ Miscellaneous
    ~cfdm.Domain.equals
    ~cfdm.Domain.fromconstructs
    ~cfdm.Domain.get_filenames
+   ~cfdm.Domain.has_bounds
+   ~cfdm.Domain.has_data
 
 NetCDF
 ------
