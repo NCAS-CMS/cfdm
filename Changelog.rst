@@ -4,7 +4,9 @@ version 1.9.0.0
 
 **2021-??-??**
 
-* New function: `cfdm.unique_constructs`
+* Conversion of `cfdm.Domain` to a non-abstract that may be read from
+  and written to a netCDF dataset
+  (https://github.com/NCAS-CMS/cfdm/issues/111)
 * New method: `cfdm.Domain.creation_commands`
 * New method: `cfdm.Domain.climatological_time_axes`
 * New method: `cfdm.AuxiliaryCoordinate.del_climatology`
@@ -15,6 +17,7 @@ version 1.9.0.0
 * New method: `cfdm.DimensionCoordinate.get_climatology`
 * New method: `cfdm.DimensionCoordinate.is_climatology`
 * New method: `cfdm.DimensionCoordinate.set_climatology`
+* New function: `cfdm.unique_constructs`
 
 version 1.8.8.0
 ---------------
