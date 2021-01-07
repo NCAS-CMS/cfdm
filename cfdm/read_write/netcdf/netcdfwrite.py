@@ -219,7 +219,7 @@ class NetCDFWrite(IOWrite):
         return array.flatten()
 
     def _write_attributes(self, parent, ncvar, extra=None, omit=()):
-        '''TODO
+        '''Write netCDF attributes to the netCDF file.
 
     :Parameters:
 
@@ -755,7 +755,7 @@ class NetCDFWrite(IOWrite):
 
     def _write_count_variable(self, f, count_variable, ncdim=None,
                               create_ncdim=True):
-        '''TODO
+        ''' Write a count variable to the netCDF file.
 
         '''
         g = self.write_vars
@@ -847,7 +847,7 @@ class NetCDFWrite(IOWrite):
         return sample_dimension
 
     def _write_list_variable(self, f, list_variable, compress):
-        '''TODO
+        '''Write a list variable to the netCDF file.
 
         '''
         g = self.write_vars
@@ -1901,7 +1901,7 @@ class NetCDFWrite(IOWrite):
                 'part_ncdim': ncdim}
 
     def _write_interior_ring(self, coord, bounds, encodings):
-        '''TODO
+        '''Write an interior ring variable to the netCDF file.
 
     .. versionadded:: (cfdm) 1.8.0
 
@@ -2703,7 +2703,7 @@ class NetCDFWrite(IOWrite):
 
     def _write_data(self, data, cfvar, ncvar, ncdimensions,
                     unset_values=(), compressed=False, attributes=None):
-        '''TODO
+        '''Write a data array to the netCDF file.
 
     :Parameters:
 
@@ -2873,7 +2873,7 @@ class NetCDFWrite(IOWrite):
 
     def _write_field(self, f, add_to_seen=False,
                      allow_data_insert_dimension=True):
-        '''TODO
+        '''Write a field construct to the netCDF file.
 
     .. versionadded:: (cfdm) 1.7.0
 
