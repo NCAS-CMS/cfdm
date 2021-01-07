@@ -52,7 +52,7 @@ Data
 
    ~cfdm.core.InteriorRing.data
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

@@ -1121,53 +1121,6 @@ assigning them to any other value.
      [270.9  -2.0 273.2 261.7 271.6 265.8 273.0    -- 266.4]
      [276.4  -2.0 276.3 266.1  -4.0 268.1 277.0    --  -5.0]]]
 
-Manipulating dimensions
-^^^^^^^^^^^^^^^^^^^^^^^
-
-The dimensions of a field construct's data may be reordered, have size
-one dimensions removed and have new new size one dimensions included
-by using the following field construct methods:
-
-=========================  ===========================================
-Method                     Description
-=========================  ===========================================
-`~Field.transpose`         Reorder data dimensions
-
-`~Field.squeeze`           Remove size one data dimensions
-	   
-`~Field.insert_dimension`  Insert a new size one data dimension. The
-                           new dimension must correspond to an
-                           existing size one domain axis construct.
-=========================  ===========================================
-
-.. code-block:: python
-   :caption: *Remove all size one dimensions from the data, noting
-             that metadata constructs which span the corresponding
-             domain axis construct are not affected.*
-
-   >>> t
-   <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
-   >>> t2 = t.squeeze()
-   >>> t2
-   <Field: air_temperature(grid_latitude(10), grid_longitude(9)) K>   
-   >>> print(t2.dimension_coordinates)
-   Constructs:
-   {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-
-.. code-block:: python
-   :caption: *Insert a new size one dimension, corresponding to a size
-             one domain axis construct, and then reorder the
-             dimensions.*
-
-   >>> t3 = t2.insert_dimension(axis='domainaxis3', position=1)
-   >>> t3
-   <Field: air_temperature(grid_latitude(10), time(1), grid_longitude(9)) K>  
-   >>> t3.transpose([2, 0, 1])
-   <Field: air_temperature(grid_longitude(9), grid_latitude(10), time(1)) K>
-
 ----
 
 .. _Subspacing:
@@ -2307,7 +2260,7 @@ The domain axis constructs spanned by a metadata construct's data may
 be changed after insertion with the `~Field.set_data_axes` method of
 the field construct.
 
-.. Code Block 1
+.. Code Block Start 1
    
 .. code-block:: python
    :caption: *Create a field construct with properties; data; and
@@ -2386,6 +2339,8 @@ the field construct.
    Q.set_construct(dimY, axes=axisY)
    Q.set_construct(dimX, axes=axisX)
 
+.. Code Block End 1
+
 .. code-block:: python
    :caption: *Inspect the new field construct.* 
 	  
@@ -2455,7 +2410,7 @@ Here is a more complete example which creates a field construct that
 contains every type of metadata construct (again, data arrays have
 been generated with dummy values using `numpy.arange`):
 
-.. Code Block 2
+.. Code Block Start 2
    
 .. code-block:: python
    :caption: *Create a field construct that contains at least one
@@ -2616,6 +2571,8 @@ been generated with dummy values using `numpy.arange`):
                     data=cfdm.Data(numpy.arange(90.).reshape(9, 10)))
    
    tas.set_construct(cell_measure, axes=[axis_X, axis_Y])
+
+.. Code Block End 2
 
 The new field construct may now be inspected:
 
@@ -4280,7 +4237,7 @@ the equivalent uncompressed field construct and then compress it with
 its `~Field.compress` method, which also compresses the metadata
 constructs as required.
    
-.. Code Block 3
+.. Code Block Start 3
 
 .. code-block:: python
    :caption: *Create a field construct and then compress it.*
@@ -4312,6 +4269,8 @@ constructs as required.
               count_properties={'long_name': 'number of obs for this timeseries'},
               inplace=True)
 		
+.. Code Block End 3
+
 The new field construct can now be inspected and written to a netCDF file:
 
 .. code-block:: python
@@ -4369,7 +4328,7 @@ array that is stored in one of three special array objects:
 `RaggedContiguousArray`, `RaggedIndexedArray` or
 `RaggedIndexedContiguousArray`.
 
-.. Code Block 4
+.. Code Block Start 4
 
 .. code-block:: python
    :caption: *Create a field construct with compressed data.*
@@ -4408,6 +4367,7 @@ array that is stored in one of three special array objects:
    # Set the data for the field
    T.set_data(cfdm.Data(array), axes=[Y, X])
 
+.. Code Block End 4
    
 .. _Gathering:
 
@@ -4530,7 +4490,7 @@ initializing a `Data` instance with a gathered array that is stored in
 the special `GatheredArray` array object. The following code creates a
 simple field construct with an underlying gathered array:
 
-.. Code Block 5
+.. Code Block Start 5
 
 .. code-block:: python
    :caption: *Create a field construct with compressed data.*
@@ -4567,6 +4527,8 @@ simple field construct with an underlying gathered array:
 
    # Set the data for the field
    P.set_data(cfdm.Data(array), axes=[T, Y, X])
+
+.. Code Block End 5
 
 Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the

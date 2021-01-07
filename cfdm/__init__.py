@@ -57,7 +57,7 @@ except ImportError as error1:
     raise ImportError(_error0+str(error1))
 
 # Check the version of cftime
-_minimum_vn = '1.2.1'
+_minimum_vn = '1.3.0'
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad cftime version: cfdm requires cftime>={}. "
@@ -69,7 +69,7 @@ try:
 except ImportError as error1:
     raise ImportError(_error0+str(error1))
 
-# Check the version of cftime
+# Check the version of netcdf_flattener
 _minimum_vn = '1.2.0'
 if LooseVersion(netcdf_flattener.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(

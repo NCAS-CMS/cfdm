@@ -10,7 +10,7 @@ cfdm.core.Container
    :no-members:
    :no-inherited-members:
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

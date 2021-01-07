@@ -41,7 +41,7 @@ Compression
    ~cfdm.CompressedArray.get_compressed_dimension
    ~cfdm.CompressedArray.get_compression_type
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

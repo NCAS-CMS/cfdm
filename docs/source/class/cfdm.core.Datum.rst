@@ -28,7 +28,7 @@ Parameters
    ~cfdm.core.Datum.clear_parameters
    ~cfdm.core.Datum.set_parameters
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

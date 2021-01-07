@@ -20,14 +20,14 @@ version 1.8.8.0
 ---------------
 ----
 
-**2020-??-??**
+**2020-12-18**
 
 * The setting of global constants can now be controlled by a context
   manager (https://github.com/NCAS-CMS/cfdm/issues/100)
 * Fixed bug that caused a failure when writing a dataset that contains
   a scalar domain ancillary construct
   (https://github.com/NCAS-CMS/cfdm/issues/98)
->>>>>>> master
+* Changed dependency: ``cftime>=1.3.0``
 
 version 1.8.7.0
 ---------------

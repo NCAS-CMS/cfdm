@@ -95,7 +95,7 @@ construct components.
    cfdm.core.Parameters
    cfdm.core.ParametersDomainAncillaries
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. autosummary::

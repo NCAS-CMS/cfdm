@@ -46,7 +46,7 @@ Size
 
    ~cfdm.core.DomainAxis.construct_type
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

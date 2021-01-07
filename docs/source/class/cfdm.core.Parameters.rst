@@ -28,7 +28,7 @@ Parameter terms
    ~cfdm.core.Parameters.clear_parameters
    ~cfdm.core.Parameters.set_parameters
    
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

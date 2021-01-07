@@ -38,7 +38,7 @@ Constants
    cfdm.RTOL
    cfdm.LOG_LEVEL
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. autosummary::

@@ -46,7 +46,7 @@ Domain ancillary terms
    ~cfdm.core.CoordinateConversion.clear_domain_ancillaries
    ~cfdm.core.CoordinateConversion.set_domain_ancillaries
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

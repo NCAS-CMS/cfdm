@@ -26,10 +26,15 @@ Keys must be `str` or `re.Pattern` objects:
 .. versionaddedd:: (cfdm) 1.8.7.0
 
 '''
+from ..core import CF
+
+
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # General docstring susbstitutions
     # ----------------------------------------------------------------
+    '{{VN}}': CF(),
+
     '{{equals tolerance}}':
     '''Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -78,7 +83,6 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # Parameter description substitutions
     # ----------------------------------------------------------------
-
     # atol
     '{{atol: number, optional}}':
     '''atol: number, optional

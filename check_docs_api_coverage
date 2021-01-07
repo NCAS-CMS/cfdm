@@ -10,6 +10,10 @@
 # Call as:
 #
 #   $ ./check_docs_api_coverage
+#
+# Returns non-zero return code if any methods were not documented
 # --------------------------------------------------------------------
 
 python docs/source/check_docs_api_coverage.py docs/source
+rc=$?
+exit $?

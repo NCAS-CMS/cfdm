@@ -14,6 +14,7 @@
 **CF-1.8**
 ----------
 
+* `Version 1.8.8.0 <https://ncas-cms.github.io/cfdm/1.8.8.0>`_ (2020-12-18)
 * `Version 1.8.7.0 <https://ncas-cms.github.io/cfdm/1.8.7.0>`_ (2020-10-09)
 * `Version 1.8.6.0 <https://ncas-cms.github.io/cfdm/1.8.6.0>`_ (2020-07-24)
 * `Version 1.8.5 <https://ncas-cms.github.io/cfdm/1.8.5>`_ (2020-06-10)

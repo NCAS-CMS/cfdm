@@ -103,7 +103,7 @@ jobs:
       # would have to run anyway, it is simplest to add it in this flow.
       # Also, it means code coverage is only generated if the test suite is
       # passing at least for that job, avoiding useless coverage reports.
-      uses: codecov/codecov-action@v1.0.13
+      uses: codecov/codecov-action@v1
       if: |
         matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
       with:

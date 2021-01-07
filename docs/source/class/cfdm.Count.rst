@@ -74,7 +74,7 @@ Data
    ~cfdm.Count.shape
    ~cfdm.Count.size 
 
-Miscallaneous
+Miscellaneous
 -------------
 
 .. rubric:: Methods

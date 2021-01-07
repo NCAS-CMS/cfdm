@@ -555,8 +555,8 @@ class Constant(metaclass=DocstringRewriteMeta):
        >>> c.value
        1.9
 
-    Conversion to `int`, `float` and `str` is with the usual built-in
-    functions:
+    Conversion to `int`, `float`, `str` and `bool` is with the usual
+    built-in functions:
 
        >>> c = {{package}}.{{class}}(1.9)
        >>> int(c)
@@ -565,6 +565,8 @@ class Constant(metaclass=DocstringRewriteMeta):
        1.9
        >>> str(c)
        '1.9'
+       >>> bool(c)
+       True
 
     Augmented arithmetic assignments (``+=``, ``-=``, ``*=``, ``/=``,
     ``//=``) update `{{class}}` objects in-place:
@@ -744,6 +746,9 @@ class Constant(metaclass=DocstringRewriteMeta):
 
         '''
         return self.copy()
+
+    def __bool__(self):
+        return bool(self.value)
 
     def __float__(self):
         return float(self.value)
@@ -1248,7 +1253,7 @@ class log_level(ConstantAccess):
 
     For example, when set to ``'WARNING'`` (or equivalently ``1``),
     all messages categorised as ``'DEBUG'`` or ``'INFO'`` will be
-    supressed, and only warnings will emerge.
+    suppressed, and only warnings will emerge.
 
     See https://ncas-cms.github.io/cfdm/tutorial.html#logging for a
     detailed breakdown on the levels and configuration possibilities.

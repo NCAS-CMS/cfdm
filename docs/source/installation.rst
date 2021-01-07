@@ -138,7 +138,7 @@ The cfdm package requires:
 * `netCDF4 <https://pypi.org/project/netCDF4/>`_, version 1.5.3 or
   newer,
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.2.1 or
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.3.0 or
   newer,
 
 * `netcdf_flattener <https://pypi.org/project/netcdf-flattener/>`_,
