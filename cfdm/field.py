@@ -556,6 +556,13 @@ class Field(mixin.FieldDomain,
     **Examples:**
 
     >>> f = {{package}}.example_field(0)
+    >>> f.data[[0, -1]] = numpy.ma.masked
+    >>> print(f.data.array)
+    [[   --    --    --    --    --    --    --    --]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [   --    --    --    --    --    --    --    --]]
     >>> {{package}}.write(f, 'masked.nc')
     >>> no_mask = {{package}}.read('masked.nc', mask=False)[0]
     >>> print(no_mask.data.array)

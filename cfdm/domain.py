@@ -346,7 +346,21 @@ class Domain(mixin.FieldDomain,
 
     **Examples:**
 
-    TODO
+    >>> d = cfdm.example_field(0).domain
+    >>> x = d.construct('longitude')
+    >>> x.data[[0, -1]] = cfdm.masked
+    >>> print(x.data.array)
+    [-- 67.5 112.5 157.5 202.5 247.5 292.5 --]
+    >>> cfdm.write(d, 'masked.nc')
+    >>> no_mask = {{package}}.read('masked.nc', domain=True, mask=False)[0]
+    >>> no_mask_x = no_mask.construct('longitude')
+    >>> print(no_mask_x.data.array)
+    [9.96920997e+36 6.75000000e+01 1.12500000e+02 1.57500000e+02
+     2.02500000e+02 2.47500000e+02 2.92500000e+02 9.96920997e+36]
+    >>> masked = no_mask.apply_masking()
+    >>> masked_x = masked.construct('longitude')
+    >>> print(masked_x.data.array)
+    [-- 67.5 112.5 157.5 202.5 247.5
 
         '''
         f = _inplace_enabled_define_and_cleanup(self)
@@ -371,22 +385,9 @@ class Domain(mixin.FieldDomain,
             climatological time axes.
 
     **Examples:**
-TODO
-    >>> f
-    <{{repr}}Field: air_temperature(time(12), latitude(145), longitude(192)) K>
-    >>> print(f.cell_methods())
-    Constructs:
-    {'cellmethod0': <{{repr}}CellMethod: domainaxis0: minimum within days>,
-     'cellmethod1': <{{repr}}CellMethod: domainaxis0: mean over days>}
-    >>> f.climatological_time_axes()
-    {'domainaxis0'}
 
-    >>> g
-    <{{repr}}Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
-    >>> print(g.cell_methods())
-    Constructs:
-    {'cellmethod0': <{{repr}}CellMethod: area: mean>}
-    >>> g.climatological_time_axes()
+    >>> d = cfdm.example_field(0)
+    >>> d.climatological_time_axes()
     set()
 
         '''
