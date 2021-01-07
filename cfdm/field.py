@@ -1531,10 +1531,10 @@ class Field(mixin.FieldDomain,
         return domain
 
     def get_filenames(self):
-        '''Return the name of the file or files containing the data.
+        '''Return the names of the files containing the data.
 
-    The names of the file or files containing the data of metadata
-    constructs are also returned.
+    The names of the files containing the data of the field
+    constructs and of any metadata constructs are returned.
 
     :Returns:
 

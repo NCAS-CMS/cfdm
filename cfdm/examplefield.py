@@ -177,7 +177,7 @@ def example_field(n, _implementation=_implementation):
     if not 0 <= n <= 7:
         raise ValueError(
             "Must select an example field construct with an "
-            "integer argument between 0 and 7 inclusive. Got {!r}".format(n)
+            f"integer argument between 0 and 7 inclusive. Got {n!r}"
         )
 
     # For safety given the private second argument which we might not

@@ -131,8 +131,7 @@ class Domain(mixin.FieldDomain,
         shape = str(shape)
         shape = shape[1:-1]
 
-        return '<{0}: {1}>'.format(self.__class__.__name__,
-                                   self._one_line_description())
+        return f"<{self.__class__.__name__}: {self._one_line_description()}>"
 
     def __str__(self):
         '''Called by the `str` built-in function.
@@ -144,7 +143,7 @@ class Domain(mixin.FieldDomain,
             '''Private function called by __str__
 
             '''
-            x = [variable.identity(default='key%{0}'.format(cid))]
+            x = [variable.identity(default=f"key%{cid}")]
 
             if variable.has_data():
                 shape = [axis_names[axis] for axis in axes]
@@ -172,13 +171,13 @@ class Domain(mixin.FieldDomain,
             ):
                 ncvar = variable.nc_get_variable(None)
                 if ncvar is not None:
-                    x.append(' (external variable: ncvar%{})'.format(ncvar))
+                    x.append(f" (external variable: ncvar%{ncvar})")
                 else:
                     x.append(' (external variable)')
             # --- End: if
 
             if variable.has_data():
-                x.append(' = {0}'.format(variable.data))
+                x.append(f" = {variable.data}")
             elif (
                     variable.construct_type in ('auxiliary_coordinate',
                                                 'domain_ancillary')
@@ -186,7 +185,7 @@ class Domain(mixin.FieldDomain,
                     and variable.bounds.has_data()
             ):
                 # Construct has no data but it does have bounds data
-                x.append(' = {0}'.format(variable.bounds.data))
+                x.append(f" = {variable.bounds.data}")
 
             return ''.join(x)
         # --- End: def
@@ -201,51 +200,46 @@ class Domain(mixin.FieldDomain,
         for axis_cid in sorted(self.domain_axes):
             for cid, dim in list(self.dimension_coordinates.items()):
                 if constructs_data_axes[cid] == (axis_cid,):
-                    name = dim.identity(default='key%{0}'.format(cid))
-                    y = '{0}({1})'.format(name, dim.get_data().size)
+                    name = dim.identity(default=f"key%{cid}")
+                    y = f"{name}({dim.get_data().size})"
                     if y != axis_names[axis_cid]:
-                        y = '{0}({1})'.format(name, axis_names[axis_cid])
+                        y = f"{name}({axis_names[axis_cid]})"
                     if dim.has_data():
-                        y += ' = {0}'.format(dim.get_data())
+                        y += f" = {dim.get_data()}"
 
                     x.append(y)
         # --- End: for
         if x:
-            string.append('Dimension coords: {}'.format(
-                '\n                : '.join(x))
-            )
+            x = '\n                : '.join(x)
+            string.append(f"Dimension coords: {x}")
 
         # Auxiliary coordinates
         x = [_print_item(self, cid, v, constructs_data_axes[cid])
              for cid, v in sorted(self.auxiliary_coordinates.items())]
         if x:
-            string.append('Auxiliary coords: {}'.format(
-                '\n                : '.join(x))
-            )
+            x = '\n                : '.join(x)
+            string.append(f"Auxiliary coords: {x}")
 
         # Cell measures
         x = [_print_item(self, cid, v, constructs_data_axes[cid])
              for cid, v in sorted(self.cell_measures.items())]
         if x:
-            string.append('Cell measures   : {}'.format(
-                '\n                : '.join(x))
-            )
+            x = '\n                : '.join(x)
+            string.append(f"Cell measures   : {x}")
 
         # Coordinate references
         x = sorted([str(ref)
                     for ref in list(self.coordinate_references.values())])
         if x:
-            string.append('Coord references: {}'.format(
-                '\n                : '.join(x))
-            )
+            x = '\n                : '.join(x)
+            string.append(f"Coord references: {x}")
 
         # Domain ancillary variables
         x = [_print_item(self, cid, anc, constructs_data_axes[cid])
              for cid, anc in sorted(self.domain_ancillaries.items())]
         if x:
-            string.append(
-                'Domain ancils   : {}'.format('\n                : '.join(x))
-            )
+            x = '\n                : '.join(x)
+            string.append(f"Domain ancils   : {x}")
 
         return '\n'.join(string)
 
@@ -275,13 +269,18 @@ class Domain(mixin.FieldDomain,
 
         axes = self.domain_axes
 
-        w = sorted(["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
+        w = sorted([f"{indent1}Domain Axis: {axis_names[axis]}"
                     for axis in axes])
 
         return '\n'.join(w)
 
     def _one_line_description(self, axis_names_sizes=None):
-        '''TODO
+        '''Return a one-line description of the domain.
+
+    :Returns:
+
+        `str`
+            The description.
 
         '''
         if axis_names_sizes is None:
@@ -289,7 +288,7 @@ class Domain(mixin.FieldDomain,
 
         axis_names = ', '.join(sorted(axis_names_sizes.values()))
 
-        return "{0}{{{1}}}".format(self.identity(''), axis_names)
+        return f"{self.identity('')}{{{axis_names}}}"
 
     # ----------------------------------------------------------------
     # Methods
@@ -546,15 +545,13 @@ TODO
         '''
         if name in ('b', 'c', 'mask', 'i'):
             raise ValueError(
-                "The 'name' parameter can not have the value {!r}".format(
-                    name)
+                f"The 'name' parameter can not have the value {name!r}"
             )
 
         if name == data_name:
             raise ValueError(
                 "The 'name' parameter can not have the same value as "
-                "the 'data_name' parameter: {!r}".format(
-                    name)
+                f"the 'data_name' parameter: {name!r}"
             )
 
         namespace0 = namespace
@@ -576,8 +573,8 @@ TODO
                     out.append('# netCDF global attributes')
 
                 out.append(
-                    "{}.nc_set_global_attributes({!r})".format(
-                        name, nc_global_attributes)
+                    f"{name}.nc_set_global_attributes("
+                    f"{nc_global_attributes!r})"
                 )
         else:
             out = []
@@ -591,8 +588,7 @@ TODO
                     header=header)
             )
             out.append(
-                "{}.set_construct(c, key={!r}, copy=False)".format(
-                    name, key)
+                f"{name}.set_construct(c, key={key!r}, copy=False)"
             )
 
         # Metadata constructs with data
@@ -609,8 +605,8 @@ TODO
                     header=header)
             )
             out.append(
-                "{}.set_construct(c, axes={}, key={!r}, copy=False)".format(
-                    name, self.get_data_axes(key), key)
+                f"{name}.set_construct("
+                f"c, axes={self.get_data_axes(key)}, key={key!r}, copy=False)"
             )
 
         # Coordinate reference constructs
@@ -622,7 +618,7 @@ TODO
                     name='c',
                     header=header)
             )
-            out.append("{}.set_construct(c)".format(name))
+            out.append(f"{name}.set_construct(c)")
 
         if string:
             indent = ' ' * indent
@@ -663,16 +659,16 @@ TODO
                 _title = self.identity(default=None)
                 if ncvar is not None:
                     if _title is None:
-                        _title = "ncvar%{0}".format(ncvar)
+                        _title = f"ncvar%{ncvar}"
                     else:
-                        _title += " (ncvar%{0})".format(ncvar)
+                        _title += f" (ncvar%{ncvar})"
                 # --- End: if
                 if _title is None:
                     _title = ''
 
-                _title = '{0}: {1}'.format(self.__class__.__name__, _title)
+                _title = f"{self.__class__.__name__}: {_title}"
 
-            line = '{0}{1}'.format(indent0, ''.ljust(len(_title), '-'))
+            line = f"{indent0}{''.ljust(len(_title), '-')}"
 
             # Title
             string = [
@@ -706,30 +702,33 @@ TODO
         for cid, value in sorted(self.dimension_coordinates.items()):
             string.append('')
             string.append(
-                value.dump(display=False, _level=_level,
-                           _title='Dimension coordinate: {0}'.format(
-                               construct_name[cid]),
-                           _axes=constructs_data_axes[cid],
-                           _axis_names=axis_to_name))
+                value.dump(
+                    display=False, _level=_level,
+                    _title=f"Dimension coordinate: {construct_name[cid]}",
+                    _axes=constructs_data_axes[cid],
+                    _axis_names=axis_to_name)
+            )
 
         # Auxiliary coordinates
         for cid, value in sorted(self.auxiliary_coordinates.items()):
             string.append('')
             string.append(
-                value.dump(display=False, _level=_level,
-                           _title='Auxiliary coordinate: {0}'.format(
-                               construct_name[cid]),
-                           _axes=constructs_data_axes[cid],
-                           _axis_names=axis_to_name))
+                value.dump(
+                    display=False, _level=_level,
+                    _title=f"Auxiliary coordinate: {construct_name[cid]}",
+                    _axes=constructs_data_axes[cid],
+                    _axis_names=axis_to_name)
+            )
 
         # Domain ancillaries
         for cid, value in sorted(self.domain_ancillaries.items()):
             string.append('')
-            string.append(value.dump(display=False, _level=_level,
-                                     _title='Domain ancillary: {0}'.format(
-                                         construct_name[cid]),
-                                     _axes=constructs_data_axes[cid],
-                                     _axis_names=axis_to_name))
+            string.append(value.dump(
+                display=False, _level=_level,
+                _title=f"Domain ancillary: {construct_name[cid]}",
+                _axes=constructs_data_axes[cid],
+                _axis_names=axis_to_name)
+            )
 
         # Coordinate references
         for cid, value in sorted(self.coordinate_references.items()):
@@ -737,8 +736,7 @@ TODO
             string.append(
                 value.dump(
                     display=False, _level=_level,
-                    _title='Coordinate reference: {0}'.format(
-                        construct_name[cid]),
+                    _title=f"Coordinate reference: {construct_name[cid]}",
                     _construct_names=construct_name,
                     _auxiliary_coordinates=tuple(self.auxiliary_coordinates),
                     _dimension_coordinates=tuple(self.dimension_coordinates)))
@@ -748,8 +746,7 @@ TODO
             string.append('')
             string.append(value.dump(
                 display=False, _key=cid,
-                _level=_level, _title='Cell measure: {0}'.format(
-                    construct_name[cid]),
+                _level=_level, _title=f"Cell measure: {construct_name[cid]}",
                 _axes=constructs_data_axes[cid],
                 _axis_names=axis_to_name))
 
@@ -758,11 +755,8 @@ TODO
         return '\n'.join(string)
 
     def get_filenames(self):
-        '''Return TODO the name of the file or files containing the data of
-    metadata constructs.
-
-    The names of the file or files containing the data of metadata
-    constructs are also returned.
+        '''Return the names of the files containing the data of the metadata
+    constructs.
 
     :Returns:
 
@@ -772,10 +766,10 @@ TODO
 
     **Examples:**
 
-    >>> f = {{package}}.example_field(0)
-    >>> {{package}}.write(f, 'temp_file.nc')
-    >>> g = {{package}}.read('temp_file.nc')[0]
-    >>> g.get_filenames()
+    >>> d = {{package}}.example_field(0).domain
+    >>> {{package}}.write(d, 'temp_file.nc')
+    >>> e = {{package}}.read('temp_file.nc', domain=True)[0]
+    >>> e.get_filenames()
     {'temp_file.nc'}
 
         '''
@@ -835,12 +829,12 @@ TODO
         for prop in ('cf_role', 'long_name'):
             n = self.get_property(prop, None)
             if n is not None:
-                return '{0}={1}'.format(prop, n)
+                return f"{prop}={n}"
         # --- End: for
 
         n = self.nc_get_variable(None)
         if n is not None:
-            return 'ncvar%{0}'.format(n)
+            return f"ncvar%{n}"
 
         return default
 
@@ -881,17 +875,17 @@ TODO
         out = []
 
         if cf_role is not None:
-            out.append('cf_role={}'.format(cf_role))
+            out.append(f"cf_role={cf_role}")
 
         if long_name is not None:
-            out.append('long_name={}'.format(long_name))
+            out.append(f"long_name={long_name}")
 
-        out += ['{0}={1}'.format(prop, value)
+        out += [f"{prop}={value}"
                 for prop, value in sorted(properties.items())]
 
         n = self.nc_get_variable(None)
         if n is not None:
-            out.append('ncvar%{0}'.format(n))
+            out.append(f"ncvar%{n}")
 
         return out
 

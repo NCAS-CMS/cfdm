@@ -74,10 +74,10 @@ class Coordinate(PropertiesDataBounds):
 
         '''
         return super().creation_commands(
-            representative_data=False, namespace=None,
-            indent=0, string=True, name='c',
-            data_name='data', bounds_name='b',
-            interior_ring_name='i', header=True,
-            _coordinate=True)
+            representative_data=representative_data,
+            namespace=namespace, indent=0, string=string, name='c',
+            data_name='data', bounds_name='b', interior_ring_name='i',
+            header=header, _coordinate=True
+        )
 
 # --- End: class

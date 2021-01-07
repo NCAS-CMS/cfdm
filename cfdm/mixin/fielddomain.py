@@ -137,9 +137,8 @@ class FieldDomain:
                     continue
 
                 for key in keys:
-                    key_to_name[key] = '{0}{{{1}}}'.format(
-                        name,
-                        re.findall('\d+$', key)[0])
+                    x = re.findall('\d+$', key)[0]
+                    key_to_name[key] = f"{name}{{{x}}}"
         # --- End: for
 
         return key_to_name
@@ -168,13 +167,11 @@ class FieldDomain:
 
         for (name, size), keys in name_to_keys.items():
             if len(keys) == 1:
-                key_to_name[keys[0]] = '{0}({1})'.format(name, size)
+                key_to_name[keys[0]] = f"{name}({size})"
             else:
                 for key in keys:
-                    key_to_name[key] = '{0}{{{1}}}({2})'.format(
-                        name,
-                        re.findall('\d+$', key)[0],
-                        size)
+                    x = re.findall('\d+$', key)[0]
+                    key_to_name[key] = f"{name}{{{x}}}({size})"
         # --- End: for
 
         return key_to_name
@@ -630,8 +627,8 @@ class FieldDomain:
         if not len(c):
             return self._default(
                 default,
-                "No 1-d coordinate constructs have identity {!r}".format(
-                    identity))
+                f"No 1-d coordinate constructs have identity {identity!r}"
+            )
 
         data_axes = constructs.data_axes()
         domain_axes = constructs.filter_by_type('domain_axis')
@@ -653,15 +650,16 @@ class FieldDomain:
             return self._default(
                 default,
                 "1-d coordinate constructs selected with identity "
-                "{!r} have not been assigned a domain axis constructs".format(
-                    coord))
+                f"{coord!r} have not been assigned a domain axis constructs"
+            )
 
         if len(keys) > 1:
             return self._default(
                 default,
                 "Multiple 1-d coordinate constructs selected "
-                "with identity {!r} span multiple domain axes: {!r}".format(
-                    identity, keys))
+                f"with identity {identity!r} span multiple domain axes: "
+                f"{keys!r}"
+            )
 
         return keys.pop()
 
@@ -774,8 +772,7 @@ class FieldDomain:
                             ignore_compression=ignore_compression,
                             _ignore_type=False):
             logger.info(
-                "{0}: Different metadata constructs".format(
-                    self.__class__.__name__)
+                f"{self.__class__.__name__}: Different metadata constructs"
             )
             return False
 

@@ -98,7 +98,7 @@ class FieldDomain:
         if c is None:
             return self._default(
                 default,
-                message="{!r} construct does not exist".format(key)
+                message=f"{key!r} construct does not exist"
             )
 
         return c
@@ -240,8 +240,8 @@ class FieldDomain:
             return self._default(
                 default,
                 message=(
-                    '{!r} has no data axes for the metadata construct '
-                    '{!r}'.format(self.__class__.__name__, key)
+                    f"{self.__class__.__name__!r} has no data axes for "
+                    f"the metadata construct {key!r}"
                 )
             )
 
@@ -289,8 +289,8 @@ class FieldDomain:
             return self._default(
                 default,
                 message=(
-                    '{!r} has no data axes for the metadata construct '
-                    '{!r}'.format(self.__class__.__name__, key)
+                    f"{self.__class__.__name__!r} has no data axes for the "
+                    f"metadata construct {key!r}"
                 )
             )
         else:

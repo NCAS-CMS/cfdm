@@ -602,16 +602,14 @@ class PropertiesDataBounds(PropertiesData):
             raise ValueError(
                 "The 'name' parameter can not have the same value as "
                 "any of the 'data_name', 'bounds_name', or "
-                "'interior_ring_name' parameters: {!r}".format(
-                    name)
+                f"'interior_ring_name' parameters: {name!r}"
             )
 
         if data_name in (name, bounds_name, interior_ring_name):
             raise ValueError(
                 "The 'data_name' parameter can not have "
                 "the same value as any of the 'name', 'bounds_name', "
-                "or 'interior_ring_name' parameters: {!r}".format(
-                    data_name)
+                f"or 'interior_ring_name' parameters: {data_name!r}"
             )
 
         namespace0 = namespace

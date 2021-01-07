@@ -56,8 +56,8 @@ class Coordinate(PropertiesDataBounds):
             return self._del_component('climatology')
         except ValueError:
             return self._default(
-                default, "{!r} has no climatology setting".format(
-                    self.__class__.__name__)
+                default,
+                f"{self.__class__.__name__!r} has no climatology setting"
             )
 
     def get_climatology(self, default=ValueError()):
@@ -105,8 +105,8 @@ class Coordinate(PropertiesDataBounds):
             return self._get_component('climatology')
         except ValueError:
             return self._default(
-                default, "{!r} has no climatology setting".format(
-                    self.__class__.__name__)
+                default,
+                f"{self.__class__.__name__!r} has no climatology setting"
             )
 
     def is_climatology(self):
@@ -193,9 +193,9 @@ class Coordinate(PropertiesDataBounds):
             if units is not None and ' since ' not in units:
                 # Construct does not have reference time units
                 raise ValueError(
-                    "Can't set {!r} set as climatological: "
-                    "Incorrect units: {!r}".format(self, units)
-                    )
+                    f"Can't set {self!r} set as climatological: "
+                    f"Incorrect units: {units!r}"
+                )
         # --- End: if
 
         self._set_component('climatology', climatology, copy=False)
