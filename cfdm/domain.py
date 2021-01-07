@@ -360,8 +360,8 @@ class Domain(mixin.FieldDomain,
     def climatological_time_axes(self):
         '''Return all axes which are climatological time axes.
 
-    This is ascertained by inspecting the values returned by the
-    coordinate constructs' `is_climatology` method.
+    This is ascertained by inspecting the values returned by each
+    coordinate construct's `is_climatology` method.
 
     .. versionadded:: (cfdm) 1.9.0.0
 
