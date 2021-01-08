@@ -63,7 +63,7 @@ class NetCDFWrite(IOWrite):
         ))
 
     def _create_netcdf_group(self, nc, group_name):
-        '''TODO
+        '''Create a new netCDF4 group object.
 
     .. versionadded:: (cfdm) 1.8.6
 
@@ -84,7 +84,7 @@ class NetCDFWrite(IOWrite):
 
     def _create_netcdf_variable_name(self, parent, default):
         #                            force_use_existing=False):
-        '''TODO
+        '''Create an appropriate name for a netCDF variable.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -912,7 +912,7 @@ class NetCDFWrite(IOWrite):
         return ncvar
 
     def _create_geometry_container(self, field):
-        '''TODO
+        '''Create a geometry container variable in the netCDF file.
 
     .. versionadded:: (cfdm) 1.8.0
 
@@ -1621,7 +1621,8 @@ class NetCDFWrite(IOWrite):
 
     :Returns:
 
-        TODO
+        The netCDF dimension name, or else the value of the *default*
+        parameter.
 
         '''
         ncdim = None
@@ -1757,7 +1758,7 @@ class NetCDFWrite(IOWrite):
         return groups
 
     def _get_node_ncdimension(self, bounds, default=None):
-        '''TODO
+        '''Get the netCDF dimension from a node count variable.
 
     .. versionadded:: (cfdm) 1.8.0
 
@@ -2353,7 +2354,7 @@ class NetCDFWrite(IOWrite):
         return external
 
     def _createVariable(self, **kwargs):
-        '''TODO
+        '''Create a variable in the netCDF file.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -3655,7 +3656,7 @@ class NetCDFWrite(IOWrite):
             g['xxx'].extend(xxx)
 
     def _create_vertical_datum(self, ref, coord_key):
-        '''Deal with a vertical datum
+        '''Deal with a vertical datum.
 
     .. versionaddedd:: 1.7.0
 
