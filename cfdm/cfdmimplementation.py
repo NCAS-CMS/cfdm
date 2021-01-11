@@ -204,7 +204,7 @@ class CFDMImplementation(Implementation):
         return True
 
     def construct_insert_dimension(self, construct, position):
-        '''Insert a new dimension into metedata construct data.
+        '''Insert a new dimension into metadata construct data.
 
     :Parameters:
 

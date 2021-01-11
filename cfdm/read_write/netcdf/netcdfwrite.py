@@ -2670,13 +2670,13 @@ class NetCDFWrite(IOWrite):
         return kwargs
 
     def _transform_strings(self, construct, data, ncdimensions):
-        '''TODO
+        '''Transform metadata construct arrays with string data type.
 
     .. versionadded:: (cfdm) 1.7.3
 
     :Parameters:
 
-        construct:
+        construct: metadata construct object
 
         data: Data instance or `None`
 
@@ -2779,8 +2779,6 @@ class NetCDFWrite(IOWrite):
         # Copy the array into the netCDF variable
         g['nc'][ncvar][...] = array
 
-        self._aaa(ncvar, array)
-
     def _check_valid(self, cfvar, array, attributes):
         '''Check array for out-of-range values, as defined by the
     valid_[min|max|range] attributes.
@@ -2846,12 +2844,6 @@ class NetCDFWrite(IOWrite):
             out += 1
 
         return bool(out)
-
-    def _aaa(self, ncvar, array):
-        '''TODO
-
-        '''
-        g = self.write_vars
 
     def _convert_to_char(self, data):
         '''Convert string data into character data
