@@ -2569,7 +2569,8 @@ class NetCDFWrite(IOWrite):
 
         kwargs.update(g['netcdf_compression'])
 
-        # TODO
+        # Note: this is a trivial assignment in standalone cfdm, but required
+        # for non-trivial customisation applied by subclasses e.g. in cf-python
         kwargs = self._customize_createVariable(cfvar, kwargs)
 
         logger.info(
@@ -2646,17 +2647,26 @@ class NetCDFWrite(IOWrite):
         }
 
     def _customize_createVariable(self, cfvar, kwargs):
-        '''TODO
+        '''Customise keyword arguments for `netCDF4.Dataset.createVariable`.
 
     .. versionadded:: (cfdm) 1.7.6
 
     :Parameters:
 
-        cfvar: CFDM instance that contains data
+        cfvar: cfdm instance that contains data
 
         kwargs: `dict`
 
+    :Returns:
+
+        `dict`
+            Dictionary of keyword arguments to be passed to
+            `netCDF4.Dataset.createVariable`.
+
         '''
+        # This method is trivial but the intention is that subclasses will
+        # override it to perform any desired customisation. Notably see
+        # the equivalent method in cf-python which is non-trivial.
         return kwargs
 
     def _transform_strings(self, construct, data, ncdimensions):
