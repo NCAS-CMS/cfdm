@@ -1966,7 +1966,7 @@ class Constructs(mixin.Container,
     instance being returned.
 
     If the *depth* parameter is set to *N* then the inverse is
-    relative to the constructs selected by the *N*\ -th most recently
+    relative to the constructs selected by the *N*-th most recently
     applied filter.
 
     A history of the filters that have been applied is returned in a
@@ -2114,7 +2114,7 @@ class Constructs(mixin.Container,
     before all previously applied filters.
 
     If the *depth* parameter is set to *N* then the unfiltered
-    constructs are those that existed before the *N*\ -th most
+    constructs are those that existed before the *N*-th most
     recently applied filter.
 
     A history of the filters that have been applied is returned in a

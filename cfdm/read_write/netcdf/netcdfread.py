@@ -483,7 +483,7 @@ class NetCDFRead(IORead):
                 line = fh.readline()
 
                 # Match comment and blank lines at the top of the file
-                while re.match('^\s*//|^\s*$', line):
+                while re.match(r'^\s*//|^\s*$', line):
                     line = fh.readline()
 
                 if line.startswith('netcdf '):
@@ -803,11 +803,11 @@ class NetCDFRead(IORead):
 
         all_conventions = re.split(',', Conventions)
         if all_conventions[0] == Conventions:
-            all_conventions = re.split('\s+', Conventions)
+            all_conventions = re.split(r'\s+', Conventions)
 
         file_version = None
         for c in all_conventions:
-            if not re.match('^CF-\d', c):
+            if not re.match(r'^CF-\d', c):
                 continue
 
             file_version = re.sub('^CF-', '', c)
@@ -4966,8 +4966,8 @@ class NetCDFRead(IORead):
         #
         #   ['lat:', 'mean', '(', 'interval:', '1', 'hour', ')']
         # ------------------------------------------------------------
-        cell_methods = re.sub('\((?=[^\s])', '( ', cell_methods_string)
-        cell_methods = re.sub('(?<=[^\s])\)', ' )', cell_methods).split()
+        cell_methods = re.sub(r'\((?=[^\s])', '( ', cell_methods_string)
+        cell_methods = re.sub(r'(?<=[^\s])\)', ' )', cell_methods).split()
 
         while cell_methods:
             cm = {}
@@ -5015,10 +5015,10 @@ class NetCDFRead(IORead):
             if cell_methods[0].endswith('('):
                 cell_methods.pop(0)
 
-                if not (re.search('^(interval|comment):$', cell_methods[0])):
+                if not (re.search(r'^(interval|comment):$', cell_methods[0])):
                     cell_methods.insert(0, 'comment:')
 
-                while not re.search('^\)$', cell_methods[0]):
+                while not re.search(r'^\)$', cell_methods[0]):
                     term = cell_methods.pop(0)[:-1]
 
                     if term == 'interval':

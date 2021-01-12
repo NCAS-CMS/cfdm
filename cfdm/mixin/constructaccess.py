@@ -46,7 +46,7 @@ class ConstructAccess:
                 for key in keys:
                     key_to_name[key] = '{0}{{{1}}}'.format(
                         name,
-                        re.findall('\d+$', key)[0])
+                        re.findall(r'\d+$', key)[0])
         # --- End: for
 
         return key_to_name
@@ -80,7 +80,7 @@ class ConstructAccess:
                 for key in keys:
                     key_to_name[key] = '{0}{{{1}}}({2})'.format(
                         name,
-                        re.findall('\d+$', key)[0],
+                        re.findall(r'\d+$', key)[0],
                         size)
         # --- End: for
 

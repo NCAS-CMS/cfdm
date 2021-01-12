@@ -62,7 +62,7 @@ def _get_year():
 
 
 def _get_date():
-    '''Get the current calendar year.
+    '''Get the current date.
 
     '''
     return str(datetime.date.today())
@@ -449,7 +449,7 @@ tokenizer_lang = 'en_GB'
 spelling_word_list_filename = 'spelling_false_positives.txt'
 
 
-link_release = re.search('(\d+\.\d+\.\d+\.\d+)', release).groups()[0]
+link_release = re.search(r'(\d+\.\d+\.\d+\.\d+)', release).groups()[0]
 
 
 def linkcode_resolve(domain, info):

@@ -3955,7 +3955,7 @@ class NetCDFWrite(IOWrite):
         # --- End: if
 
         for i, c in enumerate(g['Conventions'][:]):
-            x = re.search('CF-(\d.*)', c)
+            x = re.search(r'CF-(\d.*)', c)
             if x:
                 g['Conventions'].pop(i)
         # --- End: for
